@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research OS</title>
+  <script src="/lucide.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">R</span><span>Research OS</span></div>
+      <button class="primary full" id="newProject"><i data-lucide="plus"></i>新研究项目</button>
+      <div class="side-label">项目</div>
+      <nav id="projectList" class="project-list"></nav>
+      <div class="service-links">
+        <a href="/api/n8n/open" target="_blank"><i data-lucide="workflow"></i>n8n</a>
+        <a href="http://127.0.0.1:5000" target="_blank"><i data-lucide="chart-no-axes-combined"></i>MLflow</a>
+        <a href="http://127.0.0.1:9001" target="_blank"><i data-lucide="database"></i>MinIO</a>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">新研究项目</h1>
+          <div id="projectMeta" class="muted">Idea clarification</div>
+        </div>
+        <div class="top-actions">
+          <span class="health" id="health"><span></span>连接中</span>
+          <button class="icon-btn" id="refresh" title="刷新"><i data-lucide="refresh-cw"></i></button>
+        </div>
+      </header>
+
+      <section id="newView" class="new-view">
+        <div class="chat-pane">
+          <div id="messages" class="messages">
+            <div class="message assistant">
+              <div class="avatar">AI</div>
+              <div class="bubble">请描述你的研究 Idea。先不要整理格式，我会逐项确认目标、假设、数据、资源、成功标准与合规边界。</div>
+            </div>
+          </div>
+          <form id="chatForm" class="composer">
+            <label class="attach-btn" title="添加材料"><i data-lucide="paperclip"></i><input id="fileInput" type="file" multiple></label>
+            <textarea id="chatInput" rows="2" placeholder="输入研究 Idea 或回答澄清问题" required></textarea>
+            <button class="send-btn" title="发送"><i data-lucide="send"></i></button>
+          </form>
+          <div id="fileQueue" class="file-queue"></div>
+        </div>
+        <aside class="spec-pane">
+          <div class="pane-heading"><h2>ResearchIdea / ProjectSpec</h2><span id="specStatus" class="badge neutral">待澄清</span></div>
+          <div id="specContent" class="spec-empty">规格将在澄清完成后生成。</div>
+          <button id="confirmProject" class="primary full hidden"><i data-lucide="check"></i>确认并创建项目</button>
+        </aside>
+      </section>
+
+      <section id="projectView" class="project-view hidden">
+        <nav class="tabs" id="tabs">
+          <button class="active" data-tab="overview"><i data-lucide="layout-dashboard"></i>概览</button>
+          <button data-tab="literature"><i data-lucide="library"></i>文献</button>
+          <button data-tab="experiments"><i data-lucide="flask-conical"></i>实验</button>
+          <button data-tab="artifacts"><i data-lucide="image"></i>产物</button>
+          <button data-tab="approvals"><i data-lucide="stamp"></i>审批</button>
+          <button data-tab="policies"><i data-lucide="shield-check"></i>策略</button>
+          <button data-tab="reports"><i data-lucide="file-text"></i>报告</button>
+        </nav>
+
+        <div class="project-layout">
+          <div class="tab-content">
+            <div id="tab-overview" class="tab-panel"></div>
+            <div id="tab-literature" class="tab-panel hidden"></div>
+            <div id="tab-experiments" class="tab-panel hidden"></div>
+            <div id="tab-artifacts" class="tab-panel hidden"></div>
+            <div id="tab-approvals" class="tab-panel hidden"></div>
+            <div id="tab-policies" class="tab-panel hidden"></div>
+            <div id="tab-reports" class="tab-panel hidden"></div>
+          </div>
+          <aside class="project-chat">
+            <div class="pane-heading"><h2>项目对话</h2><span class="badge live">监督中</span></div>
+            <div id="projectMessages" class="messages compact"></div>
+            <form id="projectChatForm" class="composer compact">
+              <textarea id="projectChatInput" rows="2" placeholder="解释、建议或明确提出变更" required></textarea>
+              <button class="send-btn" title="发送"><i data-lucide="send"></i></button>
+            </form>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

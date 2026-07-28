@@ -1,0 +1,12 @@
+.env
+__pycache__/
+.pytest_cache/
+*.pyc
+projects/*
+!projects/.gitkeep
+artifacts/*
+!artifacts/.gitkeep
+postgres-data/
+minio-data/
+mlflow-data/
+n8n-data/

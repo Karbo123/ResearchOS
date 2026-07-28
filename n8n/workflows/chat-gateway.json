@@ -1,0 +1,10 @@
+{
+  "id":"research-os-chat","name":"Research OS - Chat Gateway","active":true,"settings":{"executionOrder":"v1"},
+  "nodes":[
+    {"id":"chat","name":"Project Chat","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"webhookId":"e556f03a-4655-4fdb-a72d-11f7fc6d8c02","parameters":{"httpMethod":"POST","path":"research-os/chat","responseMode":"responseNode","options":{}}},
+    {"id":"validate","name":"Validated Chat Tool","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[260,0],"parameters":{"method":"POST","url":"http://api:8080/api/chat","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify($('Project Chat').item.json.body) }}","options":{"timeout":60000}}},
+    {"id":"response","name":"Chat Response","type":"n8n-nodes-base.respondToWebhook","typeVersion":1.4,"position":[520,0],"parameters":{"respondWith":"json","responseBody":"={{ JSON.stringify($json) }}"}}
+  ],
+  "connections":{"Project Chat":{"main":[[{"node":"Validated Chat Tool","type":"main","index":0}]]},"Validated Chat Tool":{"main":[[{"node":"Chat Response","type":"main","index":0}]]}},
+  "versionId":"893bedeb-2589-4748-a452-e1a6a10a9003","meta":{"templateCredsSetupCompleted":true},"tags":[]
+}

@@ -1,0 +1,134 @@
+# 运维与交接说明
+
+## 首次部署检查
+
+1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。
+2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
+3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`，并确保 PowerShell 中的 `CODEX_BRIDGE_SECRET` 与 `.env` 完全相同。
+4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，再运行 `docker compose up --build -d`。
+5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
+6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
+
+`.env` 中的 PostgreSQL、MinIO、n8n 加密密钥和 Owner 凭据与现有 Docker volume 绑定。初始化 volume 后直接修改这些值通常不会自动迁移已有数据；应先备份并执行恢复/轮换方案。
+
+## 日常命令
+
+```powershell
+docker compose up -d
+docker compose ps
+docker compose logs --tail=100 api runner n8n
+docker compose stop
+```
+
+从 `http://127.0.0.1:8080` 使用研究面板。侧边栏 n8n 链接会访问 `/api/n8n/open` 并取得 Cookie；`http://127.0.0.1:5678` 主要用于排障。
+
+## n8n 自动登录
+
+n8n 当前版本已不支持旧的 `N8N_BASIC_AUTH_*` 和 `N8N_USER_MANAGEMENT_DISABLED`。本项目保留一个内部本地 Owner：API 调用官方 Login/Owner Setup，转发 n8n 签发的 HttpOnly Cookie，不伪造 JWT，也不把密码写进浏览器页面或聊天。
+
+若 `.env` Owner 凭据与数据库不一致，先备份再重置：
+
+```powershell
+docker compose exec -T postgres pg_dump -U research -d research_os --schema=n8n --file=/tmp/n8n-backup.sql
+docker compose cp postgres:/tmp/n8n-backup.sql artifacts/n8n-backup.sql
+docker compose exec -T n8n n8n user-management:reset
+docker compose restart n8n api
+```
+
+再次打开 `/api/n8n/open` 会初始化 `.env` 中的 Owner。该模式只适用于 `127.0.0.1` 个人实例；服务器或多人部署必须关闭自动登录入口并使用正常账户、SSO 或反向代理认证。
+
+当前 Compose 固定 n8n `1.121.0`，并设置 `N8N_BLOCK_ENV_ACCESS_IN_NODE=true`、`N8N_GIT_NODE_DISABLE_BARE_REPOS=true`。三个内置工作流通过 Compose 私有 DNS 的固定 `http://api:8080` 地址调用 Research API，因此不需要向节点开放环境变量。如果以后修改内部服务名，应同时修改 `n8n/workflows/*.json`，然后重建 n8n 以重新导入并激活工作流。
+
+## 常见排障
+
+- 项目未进入 `awaiting_experiment_approval`：查看项目 `tasks`、`/api/projects/{id}/audit` 和 n8n 日志。
+- n8n webhook 404：确认三个工作流为 Active，且数据库存在 `research-os/start` 与 `research-os/chat` 路径。
+- 文献部分失败：`/api/search` 会返回 `provider_errors`，其他提供方继续落库；外部 API 限流不应伪造结果。
+- Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
+- 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
+- Codex Bridge 不通：检查 `artifacts/codex-bridge.stderr.log`、8092 健康端点、Bridge secret 和 Windows Codex 配置。
+
+## 项目状态控制
+
+Web UI 概览页提供暂停、恢复和取消。暂停会立即阻止新的检索、创新性评估、实验/编译计划和 Runner 提交，并尝试取消 queued/running 实验与任务；响应中的 `runner_outcomes` 和 `cancellation_errors` 用于判断 Runner 是否真正停止。恢复只允许 paused 项目，并使用 `project_paused` 检查点恢复稳定阶段。cancelled 项目不能恢复。
+
+API 示例：
+
+```powershell
+Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"pause","reason":"maintenance"}' http://127.0.0.1:8080/api/projects/<project_id>/state
+Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"resume","reason":"maintenance completed"}' http://127.0.0.1:8080/api/projects/<project_id>/state
+```
+
+项目状态变更与 Runner 取消结果都会写入 `audit_events` 和 `checkpoints`。若 `cancellation_errors` 非空，先恢复 Runner 连通性，再次调用暂停/取消以重试仍处于活动状态的 run。
+
+## 修改配置
+
+1. 修改 `.env` 或版本化 Schema/工作流。
+2. 执行 Compose、Python、JSON 和测试校验。
+3. `docker compose up -d --build`，再检查服务日志和健康端点。
+4. 高成本实验、依赖安装、覆盖/删除、发布和代码变更必须通过 Proposal 审批。
+
+推荐校验：
+
+```powershell
+docker compose config --quiet
+python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
+docker compose exec -T api pytest -q
+python scripts/acceptance_test.py
+```
+
+## 数据恢复
+
+- 项目代码与 Idea：`projects/<slug>/.git`。
+- 业务/n8n/MLflow 元数据：PostgreSQL volume 或 `pg_dump`。
+- MLflow 大文件：MinIO volume；Runner 文件：`artifacts/`。
+- 恢复后启动服务，并执行低成本 `demo_classification` 与一次 LaTeX 编译验证。
+
+数据库备份可能包含密码哈希或凭据密文，Bridge 日志和 `.env` 也属于敏感本地文件，不应提交或外发。
+
+## 备份与恢复演练
+
+至少同时保护四类数据：PostgreSQL 业务/n8n/MLflow 元数据、`projects/` Git 工作区、`artifacts/` Runner 文件，以及 MinIO/n8n 命名 volume。只备份其中一类不能完整恢复谱系。
+
+创建本地备份目录并导出数据库：
+
+```powershell
+New-Item -ItemType Directory -Force artifacts\backups | Out-Null
+docker compose exec -T postgres pg_dump -U research -d research_os > artifacts\backups\research_os.sql
+```
+
+停机后备份命名 volume（Compose 项目名固定为 `research-os`）：
+
+```powershell
+docker compose stop
+docker run --rm -v research-os_postgres-data:/source:ro -v "${PWD}\artifacts\backups:/backup" alpine tar -czf /backup/postgres-data.tgz -C /source .
+docker run --rm -v research-os_minio-data:/source:ro -v "${PWD}\artifacts\backups:/backup" alpine tar -czf /backup/minio-data.tgz -C /source .
+docker run --rm -v research-os_n8n-data:/source:ro -v "${PWD}\artifacts\backups:/backup" alpine tar -czf /backup/n8n-data.tgz -C /source .
+docker compose start
+```
+
+同时使用受控备份工具复制 `projects/` 和 `artifacts/`；不要把备份加入 Git。恢复应先在新建的空白测试实例中演练：核对 `.env`、恢复 PostgreSQL/volume/文件、启动服务，再验证一个项目的 Idea 版本、审批、MLflow Run、PNG/PLY 下载和 Git commit。未经目标路径和 volume 名称复核，不要向现有 volume 原位解压覆盖。
+
+建议周期：活跃开发期间每日数据库和 `projects/` 增量备份，每周完整 volume 备份；重大升级、Owner 重置和数据库结构变化前额外做一次完整快照。MVP 尚未自动实现备份轮换和恢复演练，这是 `P2-HA-021` 的范围。
+
+## 升级与回滚
+
+1. 阅读 `TODO.md`、需求审计和镜像变更说明，确认是否涉及数据库或 n8n 凭据格式。
+2. 完成上述全量备份并记录当前 `docker compose images`、`.env` 配置版本和最新验收 JSON。
+3. 修改固定镜像版本、依赖或工作流后，运行 Compose/Python/JSON/文档同步检查。
+4. 使用 `docker compose up --build -d` 重建；检查日志后运行容器测试与低成本验收。
+5. 回滚时恢复旧代码/镜像和匹配的数据库/volume 快照。不要只回滚容器镜像而继续使用已迁移的数据。
+
+## 文档同步交接
+
+重大更新必须同步英文 `README.md`、中文 `README.zh-CN.md`、`.env.example`、相关 `docs/`、`TODO.md`，并在原始需求覆盖变化时更新需求审计。两份 README 顶部的 `DOCS_SYNC_VERSION` 和 `ACCEPTANCE_PROJECT` 必须一致。
+
+```powershell
+python scripts/check_docs_sync.py
+```
+
+界面或可视化变化时，使用真实项目重新生成 `docs/assets/` 截图，确认无 Secret、非空、无元素重叠且浏览器控制台无错误。合成实验截图只能表述为系统链路证据，不能充当科学结果。
+
+## 验收证据
+
+`python scripts/acceptance_test.py` 使用真实 `gpt-5.6-sol/high` Bridge，运行时间受模型和外部 API 延迟影响。JSON 结果只记录项目 ID、指标、产物类型、PDF 哈希、MLflow Run ID 和依赖计数，不记录认证 token。最近一次完整结果位于 `artifacts/acceptance/acceptance-20260729-012750.json`，包含 3 篇开放 PDF 页码证据、5 种子策略计划、结构化违规拒绝和 Runner 二次校验。

@@ -1,0 +1,15 @@
+{
+  "id": "research-os-main",
+  "name": "Research OS - Automated Research Main",
+  "active": true,
+  "settings": {"executionOrder": "v1", "saveManualExecutions": true},
+  "nodes": [
+    {"id":"start","name":"Research Start","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"webhookId":"b025475f-7101-4f7e-934a-0e0ec3d00c01","parameters":{"httpMethod":"POST","path":"research-os/start","responseMode":"responseNode","options":{}}},
+    {"id":"search","name":"Search Papers and BibTeX","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[260,0],"retryOnFail":true,"maxTries":3,"waitBetweenTries":5000,"parameters":{"method":"POST","url":"http://api:8080/api/search","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify({ project_id: $('Research Start').item.json.body.project_id, limit: 8 }) }}","options":{"timeout":60000}}},
+    {"id":"novelty","name":"Evaluate Novelty and Feasibility","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[520,0],"parameters":{"url":"=http://api:8080/api/projects/{{$('Research Start').item.json.body.project_id}}/novelty","options":{"timeout":60000}}},
+    {"id":"plan","name":"Generate Experiment Plan","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[780,0],"parameters":{"method":"POST","url":"=http://api:8080/api/projects/{{$('Research Start').item.json.body.project_id}}/experiment-plan","options":{"timeout":60000}}},
+    {"id":"respond","name":"Return Pending Approval","type":"n8n-nodes-base.respondToWebhook","typeVersion":1.4,"position":[1040,0],"parameters":{"respondWith":"json","responseBody":"={{ JSON.stringify({ status: 'awaiting_user_approval', proposal: $json }) }}"}}
+  ],
+  "connections":{"Research Start":{"main":[[{"node":"Search Papers and BibTeX","type":"main","index":0}]]},"Search Papers and BibTeX":{"main":[[{"node":"Evaluate Novelty and Feasibility","type":"main","index":0}]]},"Evaluate Novelty and Feasibility":{"main":[[{"node":"Generate Experiment Plan","type":"main","index":0}]]},"Generate Experiment Plan":{"main":[[{"node":"Return Pending Approval","type":"main","index":0}]]}},
+  "versionId":"9320610f-bc55-42cb-81bc-35e298f90201","meta":{"templateCredsSetupCompleted":true},"tags":[]
+}

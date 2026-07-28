@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-os.local/schemas/research-project-spec.schema.json",
+  "title": "ResearchIdea / ProjectSpec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "idea", "feasibility", "feasibility_notes", "required_approvals", "policies"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "idea": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "research_question", "domain", "hypotheses", "expected_contributions", "keywords", "target_venues", "constraints", "success_criteria", "risks", "open_questions"],
+      "properties": {
+        "title": {"type": "string", "minLength": 3, "maxLength": 240},
+        "research_question": {"type": "string", "minLength": 10},
+        "domain": {"type": "string", "minLength": 2},
+        "hypotheses": {"type": "array", "items": {"type": "string"}},
+        "expected_contributions": {"type": "array", "items": {"type": "string"}},
+        "keywords": {"type": "array", "items": {"type": "string"}, "maxItems": 30},
+        "target_venues": {"type": "array", "items": {"type": "string"}},
+        "available_data": {"type": ["string", "null"]},
+        "constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "compute": {"type": ["string", "null"]},
+            "budget_usd": {"type": ["number", "null"], "minimum": 0},
+            "deadline": {"type": ["string", "null"]},
+            "data_access": {"type": ["string", "null"]}
+          }
+        },
+        "success_criteria": {"type": "array", "items": {"type": "string"}},
+        "risks": {"type": "array", "items": {"type": "string"}},
+        "open_questions": {"type": "array", "items": {"type": "string"}},
+        "ethics_and_compliance": {"type": ["string", "null"]}
+      }
+    },
+    "feasibility": {"enum": ["low", "medium", "high", "blocked"]},
+    "feasibility_notes": {"type": "array", "items": {"type": "string"}},
+    "required_approvals": {"type": "array", "items": {"type": "string"}},
+    "candidate_modifications": {"type": "array", "items": {"type": "string"}},
+    "policies": {"type": "array", "items": {"type": "string"}}
+  }
+}
