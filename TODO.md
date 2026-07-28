@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-29 02:42（Asia/Shanghai）
+最后更新：2026-07-29 02:54（Asia/Shanghai）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`REPO-025`；提交并推送当前 MVP，同时建立重大更新自动提交规则。
+- 当前进行中：无。下一优先项为 `P0-RELATED-002`，尚未开始。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260729-012750.json`。
 - 最新测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`（验收结束后为 cancelled）。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -75,8 +75,9 @@
   - 维护要求：`AGENTS.md` 明确重大更新必须实时同步 README 双语版、配置示例、TODO、需求审计和相关 docs；CI/测试可检测双语 README 关键版本标记漂移。
   - 验证：`python scripts/check_docs_sync.py` 通过（17 个对应二级章节、相同同步版本与验收项目）；真实验收项目四张 JPEG 截图非空且浏览器控制台错误为 0；`docker compose config --quiet` 通过；API 容器 `12 passed`；3 个 Schema 与 3 个 n8n 工作流 JSON 均解析通过。
 
-- [~] `REPO-025` 将当前 MVP 安全提交并推送到 `Karbo123/ResearchOS.git`，并建立重大更新自动提交约定。
+- [x] `REPO-025` 将当前 MVP 安全提交并推送到 `Karbo123/ResearchOS.git`，并建立重大更新自动提交约定。
   - 完成标准：只提交仓库内非敏感文件；配置 GitHub `origin`；提交前通过文档同步、Compose/Python/JSON/API 测试；使用当前 Windows Git 凭据推送当前分支；在 `AGENTS.md` 写明重大更新的自动 commit/push 触发、检查和禁止提交 Secret 规则。
+  - 验证：远程初始状态为空；`origin=https://github.com/Karbo123/ResearchOS.git`；首次提交 `d13f175` 已推送到 `origin/main`；暂存扫描排除了 `.env`、运行产物、项目工作区、数据库备份和常见 token/私钥模式；`git diff --cached --check`、`python scripts/check_docs_sync.py`、Compose 配置、Python 编译和 API `12 passed` 均通过。完成记录随后以独立 commit 推送。
 
 ## 已完成基线
 
@@ -97,3 +98,4 @@
 - 2026-07-29：完成 `P0-EVIDENCE-001`；新增开放学术域名 allowlist、HTTPS/重定向复验、25 MB 上限、PDF magic、pypdf 页码提取、PDF/quote SHA-256、BibTeX、Artifact/Dependency、PostgreSQL metadata 和 Git 证据归档。修复 API/Runner 非 root 共享目录所有权冲突及 Runner 启动前异常悬挂。
 - 2026-07-29：`DOCS-024` 进入截图与文档实现阶段；从验收项目 `8c40dc70-519a-4c87-99ac-d37003a56640` 保存概览、文献、产物和策略页真实截图，浏览器控制台错误为 0。
 - 2026-07-29：完成 `DOCS-024`；英文 `README.md` 成为 GitHub 风格默认入口，新增同步中文 `README.zh-CN.md`、四张真实 UI JPEG、详细配置/安装/使用/安全/备份/升级/排障说明、`.env.example` 注释、`AGENTS.md` 双语同步契约和 `scripts/check_docs_sync.py` 自动检查。Compose、Python、JSON、12 个容器测试和浏览器验证通过。
+- 2026-07-29：完成 `REPO-025`；设置 `origin` 为 `https://github.com/Karbo123/ResearchOS.git`，以 `d13f175` 将 57 个非敏感源码/文档/Schema/工作流/截图文件推送到 `main`，并在 `AGENTS.md`、双语 README 中记录重大更新自动 commit/push 契约。
