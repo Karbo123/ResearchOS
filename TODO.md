@@ -2,7 +2,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-29 02:54（Asia/Shanghai）
+最后更新：2026-07-29 02:46（Asia/Shanghai）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
@@ -36,6 +36,10 @@
   - 完成标准：支持受控 Python、C++/CMake、Conda 环境和可选 GPU；非 root、镜像 digest、网络策略、磁盘/CPU/GPU/内存/PID 配额、超时、取消和完整日志均有集成测试。
 - [ ] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
+- [ ] `P0-REPRO-026` 为每次实验建立不可变、可复核但不追踪大文件的代码与环境快照。
+  - 完成标准：实验开始前要求项目 Git 工作树干净；将已批准的代码/配置变更提交并创建 `run/<run_id>` tag；记录项目仓库 commit、Research OS 主仓库 commit、Runner 镜像 digest、ProjectSpec/策略/配置/随机种子、依赖锁文件和数据 manifest/hash；输出与源码快照建立 PostgreSQL 依赖关系。
+  - 大文件策略：Git 只追踪源码、配置、BibTeX/LaTeX、manifest、哈希和小型元数据；Git 禁止追踪 PDF、PLY/PCD、PNG、模型权重、数据集、数据库备份、源码 bundle、Docker layer、Conda/package cache 和日志归档。源码 bundle、环境报告、数据/模型清单和大型产物保存到 MinIO 或受控 `artifacts/`，数据库只保存 URI、大小、SHA-256、版本和有效性元数据；主仓库 `.gitignore`、大小门禁和测试必须验证这一点。
+  - 完成验证：用一次真实实验检查 Run ID 可恢复对应源码快照、配置、环境 digest、数据 manifest 和全部输出；模拟未提交修改、丢失本地源码和大文件误 `git add` 时均应拒绝或给出结构化错误，不得把备份大文件推送到 GitHub。
 
 ## P1：材料理解、结果检查与协作
 
@@ -99,3 +103,4 @@
 - 2026-07-29：`DOCS-024` 进入截图与文档实现阶段；从验收项目 `8c40dc70-519a-4c87-99ac-d37003a56640` 保存概览、文献、产物和策略页真实截图，浏览器控制台错误为 0。
 - 2026-07-29：完成 `DOCS-024`；英文 `README.md` 成为 GitHub 风格默认入口，新增同步中文 `README.zh-CN.md`、四张真实 UI JPEG、详细配置/安装/使用/安全/备份/升级/排障说明、`.env.example` 注释、`AGENTS.md` 双语同步契约和 `scripts/check_docs_sync.py` 自动检查。Compose、Python、JSON、12 个容器测试和浏览器验证通过。
 - 2026-07-29：完成 `REPO-025`；设置 `origin` 为 `https://github.com/Karbo123/ResearchOS.git`，以 `d13f175` 将 57 个非敏感源码/文档/Schema/工作流/截图文件推送到 `main`，并在 `AGENTS.md`、双语 README 中记录重大更新自动 commit/push 契约。
+- 2026-07-29：根据用户要求新增 `P0-REPRO-026`；明确每次实验代码/环境快照与大文件隔离策略，后续实现不得把备份、数据、模型权重、源码 bundle 或日志归档纳入 Git 跟踪。
