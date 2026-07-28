@@ -77,7 +77,7 @@
 
 - [x] `REPO-025` 将当前 MVP 安全提交并推送到 `Karbo123/ResearchOS.git`，并建立重大更新自动提交约定。
   - 完成标准：只提交仓库内非敏感文件；配置 GitHub `origin`；提交前通过文档同步、Compose/Python/JSON/API 测试；使用当前 Windows Git 凭据推送当前分支；在 `AGENTS.md` 写明重大更新的自动 commit/push 触发、检查和禁止提交 Secret 规则。
-  - 验证：远程初始状态为空；`origin=https://github.com/Karbo123/ResearchOS.git`；首次提交 `d13f175` 已推送到 `origin/main`；暂存扫描排除了 `.env`、运行产物、项目工作区、数据库备份和常见 token/私钥模式；`git diff --cached --check`、`python scripts/check_docs_sync.py`、Compose 配置、Python 编译和 API `12 passed` 均通过。完成记录随后以独立 commit 推送。
+  - 验证：远程初始状态为空；`origin=https://github.com/Karbo123/ResearchOS.git`；首次提交 `d13f175` 与最终完成记录 `fddf64f` 均已推送到 `origin/main`；暂存扫描排除了 `.env`、运行产物、项目工作区、数据库备份和常见 token/私钥模式；`git diff --cached --check`、`python scripts/check_docs_sync.py`、Compose 配置、Python 编译和 API `12 passed` 均通过。
 
 ## 已完成基线
 
