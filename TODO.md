@@ -127,7 +127,7 @@
 - [x] `DOCS-033` 归档此前未完成工作并把当前已完成代码安全纳入 Git。
   - 范围：只更新 TODO/必要说明、审查现有变更、排除 Secret/运行产物/大文件、运行零成本验证、提交并推送当前分支；不实现任何 P0/P1/P2 待处理功能，不运行完整验收。
   - 完成标准：TODO 状态不再把暂停任务标为进行中；双语 README 与需求审计说明完整回归仍待批准；`git diff --check`、文档同步、Idea case 门禁、Compose/JSON/Python/JS 检查和现有 17 项容器测试证据有效；提交推送到 `origin/main`。
-  - 验证结果：`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py`、Python 编译、Node 语法、JSON 解析、`docker compose config --quiet` 和 `git diff --check` 均通过；未运行完整验收、其他 Idea、真实模型或外部学术 API。本次功能/文档归档提交为 `db1c72b`，待本条记录提交后推送。
+  - 验证结果：`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py`、Python 编译、Node 语法、JSON 解析、`docker compose config --quiet` 和 `git diff --check` 均通过；未运行完整验收、其他 Idea、真实模型或外部学术 API。本次功能/文档归档提交为 `db1c72b`，本条记录提交为 `dc3b519`，两者均已推送到 `origin/main`。
 
 - [x] `DOCS-024` 建立 GitHub 风格英文主 README、同步中文 README、真实 UI 截图和详细安装/配置/使用教程。
   - 完成标准：英文 `README.md` 默认入口、`README.zh-CN.md` 中文入口；两版章节与事实同步；包含真实 Research OS 页面截图、架构、快速开始、Windows Codex Bridge、环境变量、操作流程、安全、备份、升级、测试、故障排查和项目边界。
@@ -162,3 +162,4 @@
 - 2026-07-29：新增 `P0-CLARIFY-027`、`P1-CHAT-UX-028` 和 `P2-INSTALLER-029`；开始将固定九问澄清替换为自适应 AI 对话，加入 Luna/Terra/Sol 可配置分级路由和真实等待反馈；记录 Windows 单 EXE 安装器的安全、许可与干净 VM 验收边界。
 - 2026-07-29：完成 `P0-IDEA-CASES-030` 与 `P1-CLARIFY-MODE-031`；建立 `tests/idea-cases` 唯一测试输入源、严格加载/静态门禁、默认全自动/可选详细模式、Bridge/Schema/工具契约与 PostgreSQL metadata 审计。静态检查、Compose、双语文档同步、17 项容器测试、浏览器桌面/窄屏和单次 MNIST/Terra 真实调用通过；按用户要求暂停，未运行其他 Idea、完整验收、commit 或 push。
 - 2026-07-29：完成 `DOCS-033`；将暂停的自适应澄清回归、完整回归、聊天 UX 剩余测试、单 EXE 安装器验收及其余原始需求缺口写入 TODO，修正文档中的状态/测试数量，完成零成本检查，并以 `db1c72b` 归档当前安全源码与文档；未执行任何待处理功能。
+- 2026-07-29：`DOCS-033` 的最终记录提交 `dc3b519` 已推送到 `origin/main`；工作区不再有本次任务的未提交变更，待处理 TODO 仍保持未执行状态。
