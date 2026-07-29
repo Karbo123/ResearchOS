@@ -97,11 +97,15 @@ services:
     restart: unless-stopped
 
   runner:
-    build: ./apps/runner
+    build:
+      context: .
+      dockerfile: apps/runner/Dockerfile
     environment:
       <<: *app-env
       RUNNER_SHARED_SECRET: ${RUNNER_SHARED_SECRET:-runner-dev-secret}
       RUNNER_MAX_SECONDS: ${RUNNER_MAX_SECONDS:-600}
+      RUNNER_IMAGE_DIGEST: ${RUNNER_IMAGE_DIGEST:-unavailable}
+      RESEARCH_OS_COMMIT: ${RESEARCH_OS_COMMIT:-unavailable}
       MPLCONFIGDIR: /tmp/matplotlib
       XDG_CACHE_HOME: /tmp/cache
     volumes:

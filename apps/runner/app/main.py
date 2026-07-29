@@ -25,6 +25,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.model_selection import train_test_split
 
+from reproducibility import ReproducibilityError, ReproducibilityContract, runtime_identity, validate_snapshot_contract
+
 
 class PolicyConstraints(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -42,6 +44,7 @@ class SubmitRequest(BaseModel):
     config: dict = Field(default_factory=dict)
     random_seeds: list[int] = Field(min_length=1, max_length=10)
     policy_constraints: PolicyConstraints = Field(default_factory=PolicyConstraints)
+    reproducibility: ReproducibilityContract
 
     @field_validator("experiment_type")
     @classmethod
@@ -206,6 +209,26 @@ def execute(request: SubmitRequest):
         ensure_running()
         time.sleep(min(0.1, delay_deadline - time.monotonic()))
 
+    expected_projects_root = Path(os.getenv("PROJECTS_ROOT", "/workspace/projects")).resolve()
+    project_slug = str(request.config.get("project_slug", "")).strip()
+    project_root = (expected_projects_root / project_slug).resolve()
+    if not project_slug or project_root.parent != expected_projects_root:
+        update_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
+            "code": "invalid_project_workspace",
+            "message": "Runner project workspace is outside the fixed projects root.",
+        }))
+        return
+    try:
+        validate_snapshot_contract(
+            request.reproducibility,
+            project_root=project_root,
+            artifacts_root=ARTIFACTS_ROOT,
+            runner_image_digest=runtime_identity()["runner_image_digest"],
+        )
+    except ReproducibilityError as exc:
+        update_state(key, status="failed", finished_at=utcnow(), error=json.dumps(exc.as_dict(), ensure_ascii=False))
+        return
+
     run_dir = (ARTIFACTS_ROOT / str(request.project_id) / key).resolve()
     if ARTIFACTS_ROOT not in run_dir.parents:
         return
@@ -215,7 +238,8 @@ def execute(request: SubmitRequest):
         execution_log = run_dir / "execution.log"
         execution_log.write_text(
             f"run_id={key}\nproject_id={request.project_id}\nexperiment_type={request.experiment_type}\n"
-            f"policy_constraints={request.policy_constraints.model_dump_json()}\nstarted_at={utcnow()}\n",
+            f"policy_constraints={request.policy_constraints.model_dump_json()}\n"
+            f"reproducibility={request.reproducibility.model_dump_json()}\nstarted_at={utcnow()}\n",
             encoding="utf-8",
         )
         mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
@@ -228,7 +252,14 @@ def execute(request: SubmitRequest):
             project_root = (Path(os.getenv("PROJECTS_ROOT", "/workspace/projects")) / project_slug).resolve() if project_slug else None
             git_commit = read_git_commit(project_root) if project_root and project_root.parent == Path(os.getenv("PROJECTS_ROOT", "/workspace/projects")).resolve() else "unavailable"
             mlflow.log_params({
-                "git_commit": git_commit, "runner_image": "research-os-runner:local",
+                "git_commit": git_commit,
+                "research_os_git_commit": request.reproducibility.research_os_git_commit,
+                "runner_image_digest": request.reproducibility.runner_image_digest,
+                "runner_image_digest_verified": str(request.reproducibility.runner_image_digest_verified),
+                "run_tag": request.reproducibility.run_tag,
+                "snapshot_manifest_sha256": request.reproducibility.snapshot_manifest_sha256,
+                "source_snapshot_sha256": request.reproducibility.source_snapshot_sha256,
+                "data_version": request.reproducibility.data_version,
                 "python": platform.python_version(), "random_seeds": ",".join(map(str, request.random_seeds)),
                 "policy_minimum_random_seed_count": request.policy_constraints.minimum_random_seed_count,
                 "policy_explicit_approval_required": request.policy_constraints.explicit_approval_required,
@@ -308,7 +339,15 @@ def execute(request: SubmitRequest):
                 item["metadata"].update({
                     "config": request.config, "random_seeds": request.random_seeds,
                     "policy_constraints": request.policy_constraints.model_dump(mode="json"),
-                    "git_commit": git_commit, "mlflow_run_id": mlflow_id, "data_version": "synthetic-v1",
+                    "git_commit": git_commit, "mlflow_run_id": mlflow_id,
+                    "data_version": request.reproducibility.data_version,
+                    "research_os_git_commit": request.reproducibility.research_os_git_commit,
+                    "runner_image_digest": request.reproducibility.runner_image_digest,
+                    "runner_image_digest_verified": request.reproducibility.runner_image_digest_verified,
+                    "run_tag": request.reproducibility.run_tag,
+                    "snapshot_manifest_sha256": request.reproducibility.snapshot_manifest_sha256,
+                    "source_snapshot_sha256": request.reproducibility.source_snapshot_sha256,
+                    "reproducibility": request.reproducibility.model_dump(mode="json"),
                 })
         with LOCK:
             cancelled = RUNS[key]["status"] == "cancelled"
@@ -322,17 +361,42 @@ def execute(request: SubmitRequest):
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "allowed_experiments": ["demo_classification", "point_cloud_demo", "compile_latex"]}
+    return {
+        "status": "ok",
+        "allowed_experiments": ["demo_classification", "point_cloud_demo", "compile_latex"],
+        "reproducibility": runtime_identity(),
+    }
 
 
 @app.post("/v1/runs", status_code=202)
 def submit(request: SubmitRequest, x_runner_secret: str | None = Header(default=None)):
     authenticate(x_runner_secret)
     key = str(request.run_id)
+    expected_projects_root = Path(os.getenv("PROJECTS_ROOT", "/workspace/projects")).resolve()
+    project_slug = str(request.config.get("project_slug", "")).strip()
+    project_root = (expected_projects_root / project_slug).resolve()
+    if not project_slug or project_root.parent != expected_projects_root:
+        raise HTTPException(status_code=409, detail={
+            "code": "invalid_project_workspace",
+            "message": "Runner project workspace is outside the fixed projects root.",
+        })
+    try:
+        validate_snapshot_contract(
+            request.reproducibility,
+            project_root=project_root,
+            artifacts_root=ARTIFACTS_ROOT,
+            runner_image_digest=runtime_identity()["runner_image_digest"],
+        )
+    except ReproducibilityError as exc:
+        raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
     with LOCK:
         if key in RUNS:
             raise HTTPException(status_code=409, detail="run already exists")
-        RUNS[key] = {"run_id": key, "status": "queued", "metrics": {}, "artifacts": [], "mlflow_run_id": None, "error": None, "started_at": None, "finished_at": None}
+        RUNS[key] = {
+            "run_id": key, "status": "queued", "metrics": {}, "artifacts": [],
+            "mlflow_run_id": None, "error": None, "started_at": None, "finished_at": None,
+            "reproducibility": request.reproducibility.model_dump(mode="json"),
+        }
         CANCEL_EVENTS[key] = threading.Event()
         persist_state(key)
     threading.Thread(target=execute, args=(request,), daemon=True).start()

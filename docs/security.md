@@ -7,6 +7,7 @@
 3. Runner 再次校验 `extra=forbid`，只执行枚举化任务；LaTeX 使用固定 `paper/main.tex` 和固定 `latexmk` 参数。
 4. 高成本实验、代码/配置变更、依赖安装、删除、外发和论文编译先进入 `proposals`，明确批准后才执行。
 5. Secret 只通过容器环境或 secret manager 注入，不写入项目 Git、聊天或实验配置。
+6. 实验快照只从固定项目 Git 根和受控 `artifacts/` 根生成；相对路径、Git 状态、tag、manifest 和 SHA-256 均由 API 与 Runner 双重校验。
 
 ## Adaptive clarification agent
 
@@ -22,6 +23,16 @@
 - 生产环境为 Runner 增加独立 Docker network，默认拒绝出站网络；按数据源或任务临时授权。
 - 每个真实 GPU 任务应在独立容器/作业中执行，并加磁盘配额、超时、取消、镜像 digest 和命令模板 ID。
 - 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。生产环境还需恶意文件扫描和解压炸弹防护。
+
+## Experiment snapshot boundary
+
+Before a run is submitted, the project Git worktree must be clean. The API rejects tracked or untracked PDF, image, PLY/PCD, dataset, model-weight, database-backup, runtime-log, source-bundle, cache, forbidden-directory, or oversized file paths. It then creates an annotated immutable `run/<run_id>` tag and writes a controlled recovery bundle under `artifacts/reproducibility/<project_id>/<run_id>/`.
+
+The bundle contains `source.tar`, ProjectSpec, policy, effective configuration and seeds, environment identity, data/model manifests, dependency lock-file hashes, and `snapshot.json`. It contains hashes and metadata rather than silently copying external datasets or model weights. PostgreSQL stores artifact rows and `artifact_dependencies`; the source tar is downloadable only through the API artifact route.
+
+The API validates the project commit and snapshot before enqueueing. The Runner validates the fixed workspace, clean status, tag target, snapshot manifest, every snapshot file hash, and the configured Runner identity again before execution. `RUNNER_IMAGE_DIGEST=unavailable` is explicitly unverified local-development state; a release deployment must set a full `sha256:<64 hex>` digest. A local image name or build fingerprint is not a substitute for an immutable release identity.
+
+The project `.gitignore` is part of this boundary, but it is not the only control: the snapshot module scans both indexed files and working-tree entries, and the Runner rechecks the contract. Never add backups, logs, datasets, model weights, Docker layers, package caches, or source archives with a force-add or by bypassing the API.
 
 ## Source and publication policy
 

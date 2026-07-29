@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-4 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-5 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -31,6 +31,7 @@
 - 明确区分 `metadata-only` 候选和带 PDF 哈希、页码/章节、原文 quote 与来源 URL 的 `fulltext-evidence`。
 - 高成本实验、代码/配置/LaTeX 修改、安装依赖、覆盖/删除及对外发布必须先生成方案并得到明确审批。
 - 以非 root、资源受限 Runner 执行少量白名单实验，通过自托管 MLflow 与 MinIO 记录指标和产物。
+- 批准的实验进入 Runner 前必须保持项目工作树干净，创建不可变的 `run/<run_id>` tag，并在受控产物目录保存带哈希的源码、环境、数据、模型和配置快照。
 - 生成可检查、可下载并带谱系的 PNG/PDF/JSON/PLY，而不是只返回一段 LLM 结论。
 - 在同一项目对话中暂停、从检查点恢复、取消、修改 Idea，并生成日报/周报。
 
@@ -80,8 +81,8 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub 仅为候选来源。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
 | 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
-| 实验执行 | **已实现（有限范围）** | 三个 Runner 白名单任务，非 root、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物。 |
-| 产物谱系 | **已实现（MVP）** | Idea 版本、实验、Git commit、数据版本、配置、MLflow Run、产物与依赖元数据。 |
+| 实验执行 | **已实现（有限范围）** | 三个 Runner 白名单任务，非 root、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
+| 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
 | 通用科研自治 | **部分实现/路线图** | 官方仓库核验、通用 Python/C++/Conda/GPU、语义失效传播、外部通知、证据驱动 Related Work 与完整论文仍待实现。 |
 
 ## 前置条件
@@ -162,7 +163,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查新颖性/可行性结果和实验 Proposal；核对随机种子、预算、数据版本、预期产物及风险后再批准。
-7. 打开**实验**和**产物**页，下载指标 JSON、日志、PNG、点云预览、PLY 与编译 PDF，并核对每个产物的谱系。
+7. 打开**实验**和**产物**页，下载指标 JSON、日志、PNG、点云预览、PLY 与编译 PDF，并核对每个产物的谱系。对具体 Run 查看 `/api/experiments/{run_id}/reproducibility` 并下载受控源码快照。
 8. 在项目对话中要求解释、建议或提出变更。执行型请求会转换为结构化 Proposal 并等待批准，不会静默执行。
 9. 在**策略**页添加“所有实验至少使用五个随机种子”等长期规则。批准后的策略保存在 PostgreSQL，并在计划、API 提交和 Runner 三处强制执行。
 10. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。已取消项目是终止状态，不能恢复。
@@ -220,6 +221,8 @@ python scripts/acceptance_test.py
 | `GITHUB_TOKEN` | 可选 | 提高 GitHub API 配额；仓库结果在交叉验证前仍只是候选。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |
 | `RUNNER_SHARED_SECRET`、`RUNNER_MAX_SECONDS` | 是 | API 到 Runner 的凭据和受限任务最大执行时间。 |
+| `RUNNER_IMAGE_DIGEST` | 发布必需；本地可用占位值 | 期望的不可变 Runner 镜像 digest，例如 `sha256:<64 位十六进制字符>`。本地开发的 `unavailable` 会被记录为未核验，不能作为发布身份。 |
+| `RESEARCH_OS_COMMIT` | 发布必需；本地可自动探测 | 每次运行记录的 Research OS 完整 40 位 Git commit。容器部署应显式设置；宿主机 API 可自动探测仓库 commit。 |
 | `REPORT_TIMEZONE` | 是 | n8n 定时与报告时区，默认 `Asia/Shanghai`。 |
 
 `DATABASE_URL`、`RUNNER_URL`、`MLFLOW_TRACKING_URI`、`PROJECTS_ROOT`、`ARTIFACTS_ROOT` 与固定 n8n webhook URL 等内部变量由 `docker-compose.yml` 生成，不应作为用户侧 Secret 暴露。
@@ -229,6 +232,7 @@ python scripts/acceptance_test.py
 ```text
 projects/<project-slug>/       Git 仓库、配置、BibTeX、LaTeX、检查点
 artifacts/                     Runner 产物、验收 JSON、受控日志
+                               reproducibility/<project_id>/<run_id>/ 快照
 PostgreSQL                     项目、Idea 版本、论文、证据、任务、实验、
                                Proposal、策略、反馈、检查点、产物、依赖与审计
 MinIO volume                   MLflow 产物仓库与大型实验文件
@@ -236,6 +240,8 @@ Docker volumes                 postgres-data、minio-data、n8n-data
 ```
 
 每个生成产物应携带或可查询到 `project_id`、`idea_version`、实验/Run ID、Git commit、数据版本、配置、MLflow Run ID、SHA-256 与有效性/依赖状态。结果失效时，UI 会保留记录并标记无效，而不是静默继续使用。
+
+每次提交的 Run 还会有一个受控可复现包：带注释的 `run/<run_id>` tag、`source.tar`、ProjectSpec、策略、有效配置、环境报告、数据/模型清单、依赖锁文件哈希和顶层 `snapshot.json`。数据库保存 URI、大小、SHA-256、有效性与 `artifact_dependencies`；大文件和备份留在 Git 之外。Runner 执行前会再次检查 tag、干净工作树、快照哈希和镜像身份。要达到发布级声明，仍需配置 `RUNNER_IMAGE_DIGEST` 并完成完整实时验收。
 
 ## 安全模型
 
@@ -311,6 +317,7 @@ python scripts/acceptance_test.py
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |
 | 检索论文数量较少 | 检查 `provider_errors`；外部 API 可能限流或不返回 DOI，系统只记录缺失，绝不伪造结果。 |
 | Runner 请求被拒绝 | 查看结构化策略错误与待审批 Proposal；暂停/取消状态和随机种子不足都是强制闸门。 |
+| Runner 请求被快照闸门拒绝 | 查看 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing` 或 `snapshot_manifest_missing` 等结构化错误；提交源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。 |
 | 产物下载 404 | 检查 `valid` 状态与 `artifacts/` 路径。失效产物会保留元数据，但不得继续使用。 |
 | Windows 文件权限看起来异常 | API 拥有可写项目/产物挂载；Runner 以只读方式挂载项目，只能写受控产物。 |
 

@@ -7,6 +7,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
+from .reproducibility import ReproducibilityContract
+
 
 class RiskLevel(str, Enum):
     low = "low"
@@ -220,11 +222,14 @@ class ExperimentRequest(BaseModel):
 
 
 class RunnerSubmitRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     run_id: UUID
     project_id: UUID
     experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[int]
+    reproducibility: ReproducibilityContract
 
 
 class ArtifactInfo(BaseModel):
@@ -245,6 +250,7 @@ class RunnerStatus(BaseModel):
     error: str | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
+    reproducibility: ReproducibilityContract | None = None
 
 
 class PolicyUpdate(BaseModel):

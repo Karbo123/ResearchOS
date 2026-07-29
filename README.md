@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-4 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-5 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -31,6 +31,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 - Distinguish `metadata-only` candidates from `fulltext-evidence` records with PDF hash, page/section locator, quote, and source URL.
 - Require a proposal and explicit approval before expensive experiments, code/config/LaTeX changes, dependency installation, overwrite/delete, or external publication.
 - Run a small allowlisted experiment set as a non-root, resource-limited Runner and record metrics in self-hosted MLflow with MinIO artifacts.
+- Before an approved run enters the Runner, require a clean project worktree, create an immutable `run/<run_id>` tag, and retain a hashed source/environment/data/model/config snapshot under controlled artifacts.
 - Produce inspectable PNG/PDF/JSON/PLY outputs with download links and project lineage instead of returning only an LLM paragraph.
 - Pause, resume from a checkpoint, cancel, revise an Idea, and generate daily/weekly reports from the same project conversation.
 
@@ -80,8 +81,8 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 | Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX; GitHub is a candidate source only. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
 | Human supervision | **Implemented (MVP)** | Proposal/approval/audit for experiments, Idea revisions, policies, and LaTeX; pause/resume/cancel gates. |
-| Experiments | **Implemented (bounded)** | Three allowlisted Runner tasks, non-root execution, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts. |
-| Lineage | **Implemented (MVP)** | Idea version, experiment, Git commit, data version, config, MLflow run, artifact and dependency metadata. |
+| Experiments | **Implemented (bounded)** | Three allowlisted Runner tasks, non-root execution, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. |
+| Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A release image digest still must be configured and live acceptance remains pending. |
 | General research autonomy | **Partial / roadmap** | Official repository verification, general Python/C++/Conda/GPU jobs, semantic invalidation, external notifications, evidence-grounded Related Work, and full paper writing remain open. |
 
 ## Prerequisites
@@ -162,7 +163,7 @@ The Research OS sidebar opens n8n through `/api/n8n/open`. The API logs into the
 4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
 6. Inspect the novelty/feasibility result and the experiment Proposal. Approve it only after checking seeds, budget, data version, expected artifacts, and risks.
-7. Open the **Experiments** and **Artifacts** pages. Download metrics JSON, execution logs, PNG plots, point-cloud previews, PLY, and the compiled PDF; compare each artifact's lineage fields.
+7. Open the **Experiments** and **Artifacts** pages. Download metrics JSON, execution logs, PNG plots, point-cloud previews, PLY, and the compiled PDF; compare each artifact's lineage fields. For a run, inspect `/api/experiments/{run_id}/reproducibility` and download the controlled source snapshot.
 8. Use the project chat for explanations, suggestions, or a proposed change. An execution request becomes a structured Proposal and waits for approval; it is never silently applied.
 9. Add durable rules such as “all experiments use at least five random seeds” through the **Policies** page. Approved rules are stored in PostgreSQL and enforced at plan generation, API submission, and Runner validation.
 10. Pause, resume, cancel, revise the Idea, or request a partial rerun from the appropriate checkpoint. A cancelled project is terminal.
@@ -220,6 +221,8 @@ The latest complete acceptance record has a sanitized, versioned copy at [`accep
 | `GITHUB_TOKEN` | Optional | Raises GitHub API limits; repository results remain unverified candidates until cross-checked. |
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional | Optional Semantic Scholar quota credential. |
 | `RUNNER_SHARED_SECRET`, `RUNNER_MAX_SECONDS` | Yes | API-to-Runner credential and maximum bounded task duration. |
+| `RUNNER_IMAGE_DIGEST` | Release required; local placeholder allowed | Expected immutable Runner image digest, for example `sha256:<64 hex characters>`. `unavailable` is recorded as unverified in local development and is not a release identity. |
+| `RESEARCH_OS_COMMIT` | Release required; local auto-detection allowed | Full 40-character Research OS Git commit recorded with each run. Set it explicitly in containers; the host API can auto-detect the repository commit. |
 | `REPORT_TIMEZONE` | Yes | n8n schedule and report timezone; default `Asia/Shanghai`. |
 
 Compose-internal variables such as `DATABASE_URL`, `RUNNER_URL`, `MLFLOW_TRACKING_URI`, `PROJECTS_ROOT`, `ARTIFACTS_ROOT`, and fixed n8n webhook URLs are generated by `docker-compose.yml`; do not expose them as user-facing secrets.
@@ -229,6 +232,7 @@ Compose-internal variables such as `DATABASE_URL`, `RUNNER_URL`, `MLFLOW_TRACKIN
 ```text
 projects/<project-slug>/       Git repository, configs, BibTeX, LaTeX, checkpoints
 artifacts/                     Runner outputs, acceptance JSON, controlled logs
+                               reproducibility/<project_id>/<run_id>/ snapshots
 PostgreSQL                     projects, idea_versions, papers, evidence, tasks,
                                experiments, proposals, policies, feedback,
                                checkpoints, artifacts, dependencies, audits
@@ -237,6 +241,8 @@ Docker volumes                 postgres-data, minio-data, n8n-data
 ```
 
 Every generated artifact should carry or be queryable by `project_id`, `idea_version`, experiment/run ID, Git commit, data version, config, MLflow run ID, SHA-256, and validity/dependency status. If a result is invalidated, the UI keeps the record visible and marks it invalid instead of silently reusing it.
+
+Each submitted run also has a controlled reproducibility bundle: an annotated `run/<run_id>` tag, `source.tar`, ProjectSpec, policy, effective config, environment report, data/model manifests, dependency lock-file hashes, and a top-level `snapshot.json`. The database stores their URI, size, SHA-256, validity and `artifact_dependencies`; large files and backups remain outside Git. The Runner rechecks the tag, clean worktree, snapshot hashes and image identity before execution. A configured `RUNNER_IMAGE_DIGEST` and full live acceptance are still required for release-grade claims.
 
 ## Security model
 
@@ -312,6 +318,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 | Webhook 404 | Confirm the three built-in workflows are Active and n8n was recreated after workflow JSON changes. |
 | Search returns fewer papers | Inspect `provider_errors`; external APIs may rate-limit or return no DOI. Missing results are recorded, never fabricated. |
 | Runner request rejected | Inspect the structured policy error and pending Proposal; paused/cancelled projects and insufficient seeds are enforced gates. |
+| Runner request rejected by the snapshot gate | Inspect structured errors such as `project_worktree_dirty`, `git_policy_violation`, `project_source_missing`, or `snapshot_manifest_missing`; commit source/config changes and keep the project Git worktree clean before retrying. |
 | Artifact download is 404 | Check its `valid` state and the `artifacts/` path. Invalidated outputs remain metadata but should not be reused. |
 | Windows file permissions look unusual | The API owns the writable project/artifact mounts; Runner mounts projects read-only and writes controlled outputs only. |
 

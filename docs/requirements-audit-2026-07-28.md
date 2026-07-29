@@ -29,6 +29,8 @@
 
 2026-07-29 澄清交互增量：新项目聊天增加严格的 `automatic|detailed` 模式，默认全自动并尽量减少追问，详细模式根据真实缺口扩大了解范围；两者均禁止固定问卷。测试 Idea、后续确认事实和项目对话输入统一迁移到 `tests/idea-cases/*.json`，严格加载器拒绝未知字段、路径覆盖和运行时注入。本轮因用户额度限制，只允许 `mnist-cnn` 做一次真实模型调用，其他公开用例不发送给模型；完整多用例回归已登记为 `P0-REGRESSION-032`，等待用户批准 case ID 和成本上限后才能运行。
 
+2026-07-29 可复现快照增量：`P0-REPRO-026` 已接入本地实验提交和 Runner 执行门禁。批准实验要求项目 Git 工作树干净、Git 文件扩展名/目录/10 MB 大小门禁通过，并创建不可变 `run/<run_id>` tag；受控 `artifacts/reproducibility/<project_id>/<run_id>/` 保存 `source.tar`、ProjectSpec、策略、有效配置/随机种子、环境、数据/模型清单、依赖锁文件哈希和 `snapshot.json`。API 与 Runner 各校验一次，PostgreSQL 写入 `Artifact`/`ArtifactDependency`/`Checkpoint` 谱系，并提供 `/api/experiments/{run_id}/reproducibility` 查询和源码下载入口。当前本地 Compose 使用 `RUNNER_IMAGE_DIGEST=unavailable`，因此镜像身份仍未核验；本轮没有运行完整真实模型/学术 API 验收。
+
 ## 逐项覆盖
 
 | 原始能力 | 判定 | 实际状态 |
@@ -45,10 +47,11 @@
 | 文献综述、研究空白、新颖性判断 | 部分实现 | 端点会明确拒绝仅凭元数据作强结论；尚不能生成全文证据支撑的 Related Work 或可靠研究空白。 |
 | Idea 专属实验与统计计划 | 部分实现 | 生成固定合成分类演示计划；不是按 Idea 自动选择真实数据集、基线、消融、统计检验和评价指标。 |
 | Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、配额、超时、取消、日志和 LaTeX 已实现；没有通用 Python/C++/Conda/GPU 作业。 |
+| 实验可复现快照与 Git 大文件门禁 | 已实现（本地 MVP，发布身份未核验） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 仍需配置真实 digest，完整实时验收仍待执行。 |
 | 数值分析与失败诊断 | 部分实现 | Python 计算均值、标准差、混淆矩阵并写 MLflow；没有面向任意日志/CSV/多模态结果的自动诊断闭环。 |
 | PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
-| 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；没有 W&B/TensorBoard、GPU 轨迹、连续资源曲线或镜像 digest。 |
-| PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本；Runner 使用受控文件系统，MLflow artifact 使用 MinIO。缺少正式迁移工具和细粒度数据库角色。 |
+| 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；快照会记录配置的 Runner digest，但本地默认值可能未核验；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |
+| PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
 | 日报/周报与推送 | 部分实现 | n8n 每日/每周定时生成报告并存入 Web UI；未接入飞书、Slack、Telegram、邮件，也不完整统计资源/API 成本和关键 Agent 决策。 |
 | 同一项目对话监督 | 部分实现 | 对话、反馈、解释/建议与变更分类可持久化；分类主要靠关键词，不是健壮的结构化意图模型。 |
 | Proposal、diff、审批、审计 | 部分实现 | 实验、Idea 修订、配置和 LaTeX 有两阶段流程；代码补丁、依赖安装、删除、外发只有契约/提案模型，没有完整执行器。 |
@@ -67,7 +70,8 @@
 2. 合成实验只能验证系统编排和产物链，不能证明用户研究 Idea 的科学结论。
 3. 未识别的自由文本策略会明确标为人工规则；只有结构化显示为 enforced 的约束才会自动执行。
 4. n8n 自动登录仅适用于本机个人部署；任何能访问本机端口的进程都可能进入控制面，不能暴露到局域网或公网。
+5. 本地 Runner 镜像默认使用 `unavailable` 占位身份；在配置正式镜像 digest 并完成真实 Runner/外部 API 验收前，只能称为本地可复核 MVP，不能作发布级复现声明。
 
 ## 达到原始目标仍需完成
 
-优先级最高的是基于现有 PDF 页码证据生成可逐句追踪的 Related Work、官方代码验证与许可后下载、Idea 专属实验规划和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。完成这些之前，系统应继续标记为 MVP。
+优先级最高的是为快照门禁配置并锁定正式 Runner 镜像 digest、完成一次真实实验的源码/环境/数据清单恢复验收，随后继续基于现有 PDF 页码证据生成可逐句追踪的 Related Work、官方代码验证与许可后下载、Idea 专属实验规划和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。完成这些之前，系统应继续标记为 MVP。

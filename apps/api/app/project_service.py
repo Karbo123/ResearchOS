@@ -45,7 +45,7 @@ def initialize_project(project_id: UUID, slug: str, spec: ProjectSpec) -> Path:
         encoding="utf-8",
     )
     (root / ".gitignore").write_text(
-        "experiments/runs/\nartifacts/\n*.pdf\n*.pth\n*.ckpt\n*.ply\n*.pcd\n",
+        "experiments/runs/\nartifacts/\nsource-bundles/\nlogs/\n*.pdf\n*.png\n*.jpg\n*.jpeg\n*.gif\n*.webp\n*.ply\n*.pcd\n*.pth\n*.pt\n*.ckpt\n*.onnx\n*.safetensors\n*.npy\n*.npz\n*.parquet\n*.db\n*.sqlite\n*.bak\n*.log\n.env\n.venv/\n.conda/\n__pycache__/\n",
         encoding="utf-8",
     )
     (root / "configs" / "demo-experiment.json").write_text(

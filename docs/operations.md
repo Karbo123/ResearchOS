@@ -9,6 +9,17 @@
 5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
 
+首次启动后可做零成本健康检查：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8080/api/health
+Invoke-WebRequest http://127.0.0.1:5678 -UseBasicParsing
+Invoke-WebRequest http://127.0.0.1:5000 -UseBasicParsing
+docker compose exec -T runner python -c print(1)
+```
+
+API 应返回 `status=ok`，n8n 和 MLflow 应返回 HTTP 200。Runner 不发布宿主机端口；其启动日志和 API 发起实验前的 `/health` 探针用于确认 Runner 可用。
+
 `.env` 中的 PostgreSQL、MinIO、n8n 加密密钥和 Owner 凭据与现有 Docker volume 绑定。初始化 volume 后直接修改这些值通常不会自动迁移已有数据；应先备份并执行恢复/轮换方案。
 
 ## 自适应模型路由
@@ -44,6 +55,18 @@ docker compose stop
 
 从 `http://127.0.0.1:8080` 使用研究面板。侧边栏 n8n 链接会访问 `/api/n8n/open` 并取得 Cookie；`http://127.0.0.1:5678` 主要用于排障。
 
+## 实验快照门禁
+
+实验提交前，项目工作区必须是 Git 干净树。API 会拒绝未提交的源代码或配置修改、被禁止的大文件/目录、缺失项目 Git 工作区和无法探测的 Runner 健康状态；随后创建 `run/<run_id>` annotated tag，并在 `artifacts/reproducibility/<project_id>/<run_id>/` 保存 `source.tar`、ProjectSpec、策略、有效配置、环境、数据/模型清单、依赖锁文件哈希和 `snapshot.json`。
+
+API 创建实验后，Runner 在入队和实际执行前再次校验项目 commit、tag、manifest、所有快照文件 SHA-256、固定项目根和镜像身份。查看或下载某次 Run 的快照：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
+```
+
+返回中的 `recovery.source_snapshot_url` 是受控源码恢复包，不是项目 Git 中的文件。默认 `RUNNER_IMAGE_DIGEST=unavailable` 会被记录为未核验；发布部署必须设置真实 `sha256:<64 hex>` digest，并重新进行完整实时验收。
+
 ## n8n 自动登录
 
 n8n 当前版本已不支持旧的 `N8N_BASIC_AUTH_*` 和 `N8N_USER_MANAGEMENT_DISABLED`。本项目保留一个内部本地 Owner：API 调用官方 Login/Owner Setup，转发 n8n 签发的 HttpOnly Cookie，不伪造 JWT，也不把密码写进浏览器页面或聊天。
@@ -67,6 +90,7 @@ docker compose restart n8n api
 - n8n webhook 404：确认三个工作流为 Active，且数据库存在 `research-os/start` 与 `research-os/chat` 路径。
 - 文献部分失败：`/api/search` 会返回 `provider_errors`，其他提供方继续落库；外部 API 限流不应伪造结果。
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
+- Runner 在快照门禁被拒：检查结构化错误 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing`、`snapshot_manifest_missing` 或 `runner_image_changed`；提交项目源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。
 - 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
 - Codex Bridge 不通：检查 8092 健康端点、Bridge secret、三级模型白名单、Codex CLI 与 Windows Codex 配置；API 回复会用 `fallback_used=true` 明确标出本地降级。
 
@@ -94,10 +118,14 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 ```powershell
 docker compose config --quiet
+python scripts/check_idea_case_sources.py
+python scripts/check_docs_sync.py
 python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
 docker compose exec -T api pytest -q
 python scripts/acceptance_test.py
 ```
+
+完整验收会调用真实模型、外部学术 API 和 Runner；用户未明确批准范围时只运行前四项零成本检查。`py_compile` 在部分 Windows 工作区可能因历史容器生成的 root-owned `__pycache__` 失败，此时应在 API/Runner 容器内执行语法检查，并把权限原因记录到 TODO。
 
 ## 数据恢复
 
@@ -153,4 +181,4 @@ python scripts/check_docs_sync.py
 
 ## 验收证据
 
-`python scripts/acceptance_test.py` 使用真实 `gpt-5.6-sol/high` Bridge，运行时间受模型和外部 API 延迟影响。JSON 结果只记录项目 ID、指标、产物类型、PDF 哈希、MLflow Run ID 和依赖计数，不记录认证 token。最近一次完整结果位于 `artifacts/acceptance/acceptance-20260729-012750.json`，包含 3 篇开放 PDF 页码证据、5 种子策略计划、结构化违规拒绝和 Runner 二次校验。
+`python scripts/acceptance_test.py` 使用真实 `gpt-5.6-sol/high` Bridge，运行时间受模型和外部 API 延迟影响。JSON 结果只记录项目 ID、指标、产物类型、PDF 哈希、MLflow Run ID 和依赖计数，不记录认证 token。最近一次完整结果位于 `artifacts/acceptance/acceptance-20260729-012750.json`，包含 3 篇开放 PDF 页码证据、5 种子策略计划、结构化违规拒绝和 Runner 二次校验；该历史基线不包含本轮可复现快照门禁的完整实时验收。当前本地 Compose/容器回归只证明服务与门禁代码可启动，不能替代配置发布镜像 digest 后的全链路验收。

@@ -6,12 +6,14 @@ flowchart LR
   N["n8n workflows"] --> API
   API --> PG["PostgreSQL\nsource of truth"]
   API --> GIT["Per-project Git repository"]
+  API --> SNAP["Reproducibility snapshot\ncontrolled artifacts"]
   API --> EXT["Crossref / OpenAlex / S2 / arXiv / DBLP / DOI / GitHub APIs"]
   API -->|"approved allowlisted request"| RUN["Restricted Runner"]
   RUN --> MLF["MLflow tracking"]
   MLF --> MINIO["MinIO artifacts"]
   RUN --> FS["Controlled artifact filesystem"]
   API --> FS
+  SNAP --> FS
   U -->|"preview / download"| API
 ```
 
@@ -45,6 +47,14 @@ Idea 修订创建新版本并进入 `impact_review`。当前 MVP 保守地将项
 
 项目策略先生成 `config_change` Proposal，明确批准后才写入 `policies`。策略编译器识别中英文随机种子下限、引用 DOI/来源与原文证据要求，以及高成本/对外操作审批要求。实验计划按当前规则生成，`POST /api/experiments` 重新读取数据库策略，Runner 再校验受限策略快照；策略在批准后变化时，旧 Proposal 不能绕过新规则。无法识别的自由文本规则会保留并显示为人工规则，不会虚假标记为自动执行。
 
+## 实验可复现快照
+
+批准的实验进入 Runner 前，API 在固定项目 Git 工作区执行一次可复现快照门禁：工作树必须干净，Git 索引与状态中的文件必须通过扩展名、目录和 10 MB 单文件大小门禁，然后从当前 commit 创建不可变的 `run/<run_id>` annotated tag。`git archive` 生成的 `source.tar` 不写回项目仓库，而是保存到 `artifacts/reproducibility/<project_id>/<run_id>/`。
+
+同一目录保存 ProjectSpec、策略、有效实验配置和随机种子、Runner 环境报告、数据清单、模型清单、依赖锁文件哈希以及顶层 `snapshot.json`。每个文件记录相对 URI、大小和 SHA-256；数据库写入 `Artifact` 和 `ArtifactDependency`，并把快照契约放入实验配置与检查点。`GET /api/experiments/{run_id}/reproducibility` 会重新校验这些内容，并提供源码快照下载入口。
+
+API 提交和 Runner 执行各自校验：项目 commit、tag 指向、快照 manifest、全部文件哈希、固定项目根和 Runner 镜像身份必须一致。项目 Git 只保留源码、配置、BibTeX/LaTeX、证据 JSON、manifest 和哈希；PDF、PLY/PCD、图片、数据集、模型权重、数据库备份、日志归档、源码 bundle 与缓存通过项目 `.gitignore` 和快照门禁排除。`RUNNER_IMAGE_DIGEST=unavailable` 只适用于本地开发，不能作为发布级身份。
+
 ## PostgreSQL entities
 
 | Table | Purpose |
@@ -55,7 +65,7 @@ Idea 修订创建新版本并进入 `impact_review`。当前 MVP 保守地将项
 | `papers`, `evidence` | 文献元数据、BibTeX 和可追溯证据 |
 | `proposals` | diff/影响/成本与两阶段审批 |
 | `experiments` | Runner、配置、指标和 MLflow Run ID |
-| `artifacts` | PNG/PLY/PDF/JSON 的依赖元数据与有效性 |
+| `artifacts` | PNG/PLY/PDF/JSON 及可复现快照的依赖元数据与有效性 |
 | `policies` | 独立于聊天历史的长期规则 |
 | `reports`, `audit_events` | 定期报告与审计轨迹 |
 | `tasks`, `checkpoints` | 异步编排状态与可恢复检查点 |
@@ -75,9 +85,16 @@ projects/<slug>/
   code/                    reviewed source repositories
   configs/                 experiment configs; Git tracked
   experiments/runs/        generated run state; ignored
+  source-bundles/          generated source archives; ignored
+  logs/                    runtime logs; ignored
   paper/                   LaTeX, BibTeX, figures/tables; Git tracked
   reports/                 generated project reports
   artifacts/               metadata links; large binaries ignored
+
+artifacts/reproducibility/<project_id>/<run_id>/
+  snapshot.json            manifest and hashes
+  source.tar               controlled source recovery bundle
+  *.json                   ProjectSpec, policy, config, environment and input manifests
 ```
 
 API 用户可写项目目录；Runner 以独立 UID 运行，只使用固定项目根和受控 artifact 根。生产环境应将代码输入挂载为只读，为每个 run 创建独立可写卷，并将数据库、Runner 和 MinIO 放入无公网入口的内部网络。

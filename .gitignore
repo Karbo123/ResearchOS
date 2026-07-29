@@ -6,6 +6,31 @@ projects/*
 !projects/.gitkeep
 artifacts/*
 !artifacts/.gitkeep
+
+# Reproducibility policy: source/config text is versioned, runtime and large
+# research files remain in controlled artifacts or MinIO and are never staged.
+projects/*/experiments/runs/
+projects/*/artifacts/
+projects/*/source-bundles/
+projects/*/logs/
+projects/*/*.pdf
+projects/*/*.png
+projects/*/*.jpg
+projects/*/*.jpeg
+projects/*/*.ply
+projects/*/*.pcd
+projects/*/*.pth
+projects/*/*.pt
+projects/*/*.ckpt
+projects/*/*.onnx
+projects/*/*.safetensors
+projects/*/*.npy
+projects/*/*.npz
+projects/*/*.parquet
+projects/*/*.db
+projects/*/*.sqlite
+projects/*/*.bak
+projects/*/*.log
 postgres-data/
 minio-data/
 mlflow-data/

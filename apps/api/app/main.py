@@ -25,6 +25,7 @@ from .models import (
     Report, RepositoryRecord, Task, UploadedFile,
 )
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
+from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
 from .llm import clarify_idea_with_llm, model_catalog, router_thresholds
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .policy_engine import (
@@ -433,7 +434,14 @@ def project_detail(project_id: UUID):
                 "fulltext_evidence_count": fulltext_counts.get(p.id, 0), **p.metadata_json,
             } for p in papers],
             "proposals": [{"id": str(p.id), "kind": p.kind, "status": p.status, "summary": p.summary, "reason": p.reason, "impact": p.impact, "diff": p.diff, "estimated_cost_usd": p.estimated_cost_usd, "payload": p.payload} for p in proposals],
-            "experiments": [{"id": str(e.id), "status": e.status, "experiment_type": e.experiment_type, "metrics": e.metrics, "mlflow_run_id": e.mlflow_run_id, "error": e.error} for e in experiments],
+            "experiments": [{
+                "id": str(e.id), "status": e.status, "experiment_type": e.experiment_type,
+                "metrics": e.metrics, "mlflow_run_id": e.mlflow_run_id, "error": e.error,
+                "reproducibility": {
+                    key: (e.config or {}).get("_reproducibility", {}).get(key)
+                    for key in ("run_tag", "project_git_commit", "research_os_git_commit", "data_version", "snapshot_manifest_sha256", "source_snapshot_sha256")
+                } if (e.config or {}).get("_reproducibility") else None,
+            } for e in experiments],
             "artifacts": [{"id": str(a.id), "name": a.name, "kind": a.kind, "mime_type": a.mime_type, "url": f"/api/artifacts/{a.id}", "metadata": a.metadata_json, "valid": a.valid} for a in artifacts],
             "policies": [{
                 "id": str(p.id), "rule": p.rule, "rationale": p.rationale,
@@ -770,15 +778,152 @@ async def submit_experiment(request: ExperimentRequest):
                 "expected": expected_payload,
                 "received": requested_payload,
             })
-        config = dict(request.config)
-        config["project_slug"] = project.slug
-        experiment = Experiment(project_id=request.project_id, proposal_id=request.proposal_id, experiment_type=request.experiment_type, config=config)
-        session.add(experiment); session.flush()
-        run_id = experiment.id
+        idea = session.scalar(select(IdeaVersion).where(IdeaVersion.project_id == project.id).order_by(desc(IdeaVersion.version)))
+        if not idea:
+            raise HTTPException(409, detail={
+                "code": "project_spec_missing",
+                "message": "A versioned ProjectSpec is required before an experiment can start.",
+            })
+        active_policies = session.scalars(select(Policy).where(Policy.project_id == project.id, Policy.active.is_(True))).all()
+        uploaded_files = session.scalars(select(UploadedFile).where(UploadedFile.project_id == project.id).order_by(UploadedFile.created_at)).all()
+        project_slug = project.slug
+        project_spec = idea.spec
+        idea_version = idea.version
+        policy_records = [
+            {"id": str(policy.id), "rule": policy.rule, "rationale": policy.rationale, "active": policy.active}
+            for policy in active_policies
+        ]
+        uploaded_records = [
+            {
+                "id": str(uploaded.id), "name": uploaded.name, "relative_path": uploaded.relative_path,
+                "mime_type": uploaded.mime_type, "size_bytes": uploaded.size_bytes, "sha256": uploaded.sha256,
+            }
+            for uploaded in uploaded_files
+        ]
+    effective_config = dict(request.config)
+    effective_config["project_slug"] = project_slug
+    run_id = uuid.uuid4()
+
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            runner_health_response = await client.get(f"{RUNNER_URL}/health")
+            runner_health_response.raise_for_status()
+            runner_health = runner_health_response.json()
+        runner_environment = runner_health.get("reproducibility") or {
+            "runner_image_digest": "unavailable",
+            "runner_image_digest_verified": False,
+        }
+        snapshot = create_reproducibility_snapshot(
+            project_root=(PROJECTS_ROOT / project_slug).resolve(),
+            artifacts_root=ARTIFACTS_ROOT,
+            project_id=request.project_id,
+            run_id=run_id,
+            idea_version=idea_version,
+            project_spec=project_spec,
+            policies=policy_records,
+            experiment_type=request.experiment_type,
+            effective_config=effective_config,
+            random_seeds=request.random_seeds,
+            uploaded_files=uploaded_records,
+            runner_environment=runner_environment,
+        )
+    except ReproducibilityError as exc:
+        raise HTTPException(409, detail=exc.as_dict()) from exc
+    except (httpx.HTTPError, ValueError) as exc:
+        raise HTTPException(503, detail={
+            "code": "runner_environment_unavailable",
+            "message": "Runner environment identity could not be captured; the experiment was not started.",
+        }) from exc
+
+    contract = snapshot["contract"]
+    with session_scope() as session:
+        project = require_active_project(session, request.project_id, "recording experiment snapshot")
+        proposal = session.get(Proposal, request.proposal_id)
+        if not proposal or proposal.status != "approved":
+            raise HTTPException(409, "approved proposal required")
+        experiment = Experiment(
+            id=run_id,
+            project_id=request.project_id,
+            proposal_id=request.proposal_id,
+            experiment_type=request.experiment_type,
+            config={**effective_config, "_reproducibility": contract},
+        )
+        session.add(experiment)
+        session.flush()
+        for item in snapshot["artifacts"]:
+            role = item["role"]
+            mime_type = "application/json" if role != "source_snapshot" else "application/x-tar"
+            metadata = {
+                "reproducibility": True,
+                "snapshot_role": role,
+                "run_id": str(run_id),
+                "run_tag": contract["run_tag"],
+                "project_git_commit": contract["project_git_commit"],
+                "research_os_git_commit": contract["research_os_git_commit"],
+                "data_version": contract["data_version"],
+                "size_bytes": item["size_bytes"],
+                "validity": "verified_at_submission",
+            }
+            artifact_row = Artifact(
+                project_id=project.id,
+                experiment_id=run_id,
+                kind=f"reproducibility_{role}",
+                name=Path(item["relative_path"]).name,
+                relative_path=item["relative_path"],
+                mime_type=mime_type,
+                sha256=item["sha256"],
+                metadata_json=metadata,
+                valid=True,
+            )
+            session.add(artifact_row)
+            session.flush()
+            upstream = [
+                ("experiment", str(run_id), "snapshot_for"),
+                ("idea_version", str(contract["idea_version"]), "captured_from"),
+                ("project_git_commit", contract["project_git_commit"], "captured_at"),
+                ("run_tag", contract["run_tag"], "recovered_by"),
+                ("data_version", contract["data_version"], "captured_data"),
+                ("policy_snapshot", contract["policy_sha256"], "captured_policy"),
+            ]
+            if contract["research_os_git_commit"] != "unavailable":
+                upstream.append(("research_os_commit", contract["research_os_git_commit"], "captured_with"))
+            for upstream_type, upstream_id, relation in upstream:
+                session.add(ArtifactDependency(
+                    project_id=project.id,
+                    artifact_id=artifact_row.id,
+                    upstream_type=upstream_type,
+                    upstream_id=upstream_id,
+                    relation=relation,
+                ))
+        session.add(Checkpoint(
+            project_id=project.id,
+            stage="experiment_snapshot_created",
+            idea_version=contract["idea_version"],
+            git_commit=contract["project_git_commit"],
+            data_version=contract["data_version"],
+            state={
+                "run_id": str(run_id),
+                "run_tag": contract["run_tag"],
+                "snapshot_manifest_path": contract["snapshot_manifest_path"],
+                "snapshot_manifest_sha256": contract["snapshot_manifest_sha256"],
+                "source_snapshot_path": contract["source_snapshot_path"],
+                "source_snapshot_sha256": contract["source_snapshot_sha256"],
+                "research_os_git_commit": contract["research_os_git_commit"],
+                "runner_image_digest": contract["runner_image_digest"],
+            },
+        ))
+        audit(session, "experiment.snapshot_created", project.id, {
+            "run_id": str(run_id),
+            "project_git_commit": contract["project_git_commit"],
+            "run_tag": contract["run_tag"],
+            "snapshot_manifest_sha256": contract["snapshot_manifest_sha256"],
+            "data_version": contract["data_version"],
+        })
     payload = {
         "run_id": str(run_id), "project_id": str(request.project_id),
-        "experiment_type": request.experiment_type, "config": config,
+        "experiment_type": request.experiment_type, "config": effective_config,
         "random_seeds": request.random_seeds,
+        "reproducibility": contract,
         "policy_constraints": {
             "minimum_random_seed_count": constraints.minimum_random_seed_count,
             "explicit_approval_required": bool(
@@ -904,6 +1049,49 @@ async def cancel_experiment(run_id: UUID):
         experiment = session.get(Experiment, run_id); experiment.status = "cancelled"; experiment.finished_at = datetime.now(timezone.utc)
         audit(session, "experiment.cancelled", project_id, {"run_id": str(run_id)}, "local-user")
     return response.json()
+
+
+@app.get("/api/experiments/{run_id}/reproducibility")
+def experiment_reproducibility(run_id: UUID):
+    with session_scope() as session:
+        experiment = session.get(Experiment, run_id)
+        if not experiment:
+            raise HTTPException(404, "experiment not found")
+        project = session.get(Project, experiment.project_id)
+        if not project:
+            raise HTTPException(404, "project not found")
+        contract = (experiment.config or {}).get("_reproducibility")
+        if not contract:
+            raise HTTPException(404, "reproducibility snapshot not found")
+        try:
+            contract = validate_snapshot_contract(
+                contract,
+                project_root=(PROJECTS_ROOT / project.slug).resolve(),
+                artifacts_root=ARTIFACTS_ROOT,
+            ).model_dump(mode="json")
+            validation = {"status": "verified", "message": "Current project and snapshot hashes match."}
+        except ReproducibilityError as exc:
+            validation = {"status": "needs_review", "error": exc.as_dict()}
+        snapshot_artifacts = [
+            item for item in session.scalars(select(Artifact).where(Artifact.experiment_id == run_id)).all()
+            if (item.metadata_json or {}).get("reproducibility") is True
+        ]
+        source = next((item for item in snapshot_artifacts if (item.metadata_json or {}).get("snapshot_role") == "source_snapshot"), None)
+        return {
+            "run_id": str(run_id),
+            "contract": contract,
+            "validation": validation,
+            "artifacts": [{
+                "id": str(item.id), "name": item.name, "role": (item.metadata_json or {}).get("snapshot_role"),
+                "relative_path": item.relative_path, "size_bytes": (item.metadata_json or {}).get("size_bytes"),
+                "sha256": item.sha256, "url": f"/api/artifacts/{item.id}", "valid": item.valid,
+            } for item in snapshot_artifacts],
+            "recovery": {
+                "source_snapshot_artifact_id": str(source.id) if source else None,
+                "source_snapshot_url": f"/api/artifacts/{source.id}" if source else None,
+                "note": "The source tar is a controlled recovery bundle; it is not tracked in the project Git repository.",
+            },
+        }
 
 
 @app.get("/api/artifacts/{artifact_id}")

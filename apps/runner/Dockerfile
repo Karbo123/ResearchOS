@@ -10,9 +10,10 @@ RUN sed -i \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home --uid 10002 runner
 WORKDIR /app
-COPY requirements.txt .
+COPY apps/runner/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-COPY app ./app
+COPY apps/runner/app ./app
+COPY apps/api/app/reproducibility.py ./reproducibility.py
 RUN mkdir -p /workspace/artifacts /workspace/projects && chown -R runner:runner /app /workspace
 USER runner
 EXPOSE 8010
