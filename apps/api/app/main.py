@@ -26,7 +26,7 @@ from .models import (
 )
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
 from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
-from .llm import clarify_idea_with_llm, model_catalog, router_thresholds
+from .llm import LLMRequestError, clarify_idea_with_llm, model_catalog, router_thresholds
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
@@ -171,13 +171,15 @@ def trigger_research_workflow(project_id: UUID, task_id: UUID) -> None:
 
 @app.get("/api/health")
 def health():
+    provider = os.getenv("RESEARCH_LLM_PROVIDER", "").strip() or None
     return {
         "status": "ok",
         "service": "research-os-api",
         "llm": {
-            "provider": "codex_bridge" if os.getenv("CODEX_BRIDGE_URL") else "openai_api" if os.getenv("OPENAI_API_KEY") else "deterministic_fallback",
+            "provider": provider,
             "routing": {"models": model_catalog(), "thresholds": router_thresholds()},
-            "codex_bridge_configured": bool(os.getenv("CODEX_BRIDGE_URL")),
+            "provider_configured": bool(provider),
+            "codex_bridge_configured": provider == "codex_bridge" and bool(os.getenv("CODEX_BRIDGE_URL")),
         },
     }
 
@@ -285,13 +287,16 @@ def chat(request: ChatRequest):
         draft_before = json.loads(json.dumps(conversation.draft))
         conversation_id = conversation.id
 
-    outcome = clarify_idea_with_llm(
-        request.message,
-        current_draft=draft_before,
-        transcript=transcript,
-        attachment_count=len(request.attachments),
-        clarification_mode=request.clarification_mode,
-    )
+    try:
+        outcome = clarify_idea_with_llm(
+            request.message,
+            current_draft=draft_before,
+            transcript=transcript,
+            attachment_count=len(request.attachments),
+            clarification_mode=request.clarification_mode,
+        )
+    except LLMRequestError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
     with session_scope() as session:
         conversation = session.get(ConversationSession, conversation_id)
         if not conversation or conversation.project_id:
@@ -305,7 +310,7 @@ def chat(request: ChatRequest):
         ]))[:12]
         draft["risks"] = list(dict.fromkeys([
             *(draft.get("risks") or []),
-            *[item for item in outcome.result.risk_flags if item != "adaptive_model_unavailable"],
+            *outcome.result.risk_flags,
         ]))[:20]
         conversation.draft = draft
         conversation.pending_field = None
@@ -314,7 +319,6 @@ def chat(request: ChatRequest):
             outcome.result.ready_for_confirmation
             and not outcome.result.unresolved_items
             and not schema_gaps
-            and not outcome.fallback_used
         )
         spec = build_spec(draft) if ready else None
         if ready:
@@ -330,7 +334,6 @@ def chat(request: ChatRequest):
             "model_tier": outcome.route.tier,
             "model": outcome.route.model,
             "reasoning_effort": outcome.route.reasoning_effort,
-            "fallback_used": outcome.fallback_used,
             "assumptions": assumptions,
             "unresolved_items": outcome.result.unresolved_items,
             "clarification_mode": request.clarification_mode,
@@ -345,7 +348,6 @@ def chat(request: ChatRequest):
             model_tier=outcome.route.tier,
             model=outcome.route.model,
             reasoning_effort=outcome.route.reasoning_effort,
-            fallback_used=outcome.fallback_used,
             clarification_mode=request.clarification_mode,
         )
 

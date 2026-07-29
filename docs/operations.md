@@ -4,7 +4,7 @@
 
 1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。
 2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
-3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 会从仓库根目录未跟踪的 `.env` 读取允许的 Bridge/模型配置；无需把 Codex `auth.json` 挂载进 Docker。
+3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 只从仓库根目录未跟踪的 `.env` 读取非敏感 Bridge/provider/模型配置；项目代码不读取宿主机 Codex 配置目录，也不把 Codex `auth.json`、token 或 Cookie 复制到 `.env` 或挂载进 Docker。
 4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，首次部署再运行 `docker compose up --build -d`。镜像已经存在时使用日常启动命令 `docker compose up -d`，不要为普通启动重复构建。
 5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
@@ -36,7 +36,7 @@ Invoke-RestMethod http://127.0.0.1:8092/health
 Invoke-RestMethod http://127.0.0.1:8080/api/health
 ```
 
-聊天响应中的 `model_tier`、`model`、`reasoning_effort` 与 `fallback_used` 是本轮实际路由证据。若 `fallback_used=true`，说明模型主链失败，系统只做安全候选推断，不允许进入项目确认。
+成功聊天响应中的 `model_tier`、`model`、`reasoning_effort` 是本轮实际路由证据。模型调用失败时 `/api/chat` 返回结构化 `502/503/504` 错误，不生成规则回复，也不写入助手消息；检查错误中的 `code` 和 Bridge/API 日志后再重试。
 
 ## Windows 单 EXE 安装器
 
@@ -104,7 +104,7 @@ docker compose restart n8n api
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
 - Runner 在快照门禁被拒：检查结构化错误 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing`、`snapshot_manifest_missing` 或 `runner_image_changed`；提交项目源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。
 - 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
-- Codex Bridge 不通：检查 8092 健康端点、Bridge secret、三级模型白名单、Codex CLI 与 Windows Codex 配置；API 回复会用 `fallback_used=true` 明确标出本地降级。
+- Codex Bridge 不通：检查 8092 健康端点、`RESEARCH_LLM_PROVIDER`、Bridge Secret、三级模型白名单、`.env` 中的 `CODEX_MODEL_*`/`CODEX_CUSTOM_*` 配置和 Codex CLI；API 会返回结构化模型错误，不会切换 provider 或生成本地回复。
 
 ## 项目状态控制
 

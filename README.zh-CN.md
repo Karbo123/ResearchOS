@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-8 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-9 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -67,16 +67,16 @@ flowchart LR
     ML --> MI[("MinIO\n大文件产物")]
     API --> S["学术检索\nCrossref/OpenAlex/S2/arXiv/DBLP"]
     API --> B["Windows Codex Bridge\n127.0.0.1:8092"]
-    B --> C["当前 Codex 认证与提供方\nLuna low / Terra medium / Sol high"]
+    B --> C[".env 提供方/模型覆盖\nLuna low / Terra medium / Sol high"]
 ```
 
-API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。现阶段引入无限制 ReAct 循环只会增加成本和执行面。Windows Bridge 复用宿主机 Codex 的提供方与认证，并启动临时、只读沙箱中的 Codex 进程；`auth.json` 永远不会挂载进 Docker。
+API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。现阶段引入无限制 ReAct 循环只会增加成本和执行面。Windows Bridge 只接收项目 `.env` 中的非敏感提供方/模型/推理覆盖，并启动临时、只读沙箱中的 Codex 进程。Research OS 不读取宿主机 Codex 配置目录、不复制 `auth.json`；CLI 如需认证由 CLI 自己处理，认证文件不会挂载进 Docker。
 
 ## 能力矩阵
 
 | 范围 | MVP 状态 | 当前真实能力 |
 | --- | --- | --- |
-| Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema、本地降级。 |
+| Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema 和结构化模型错误。模型调用失败不会切换提供方，也不会生成规则回复。 |
 | 项目初始化 | **已实现** | UUID、Git 工作区、目录、Idea v1、PostgreSQL 状态、检查点和 n8n 触发。 |
 | 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub 仅为候选来源。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
@@ -92,7 +92,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 - Docker Compose v2（运行 `docker compose version` 检查）。
 - 至少 8 GB 可用内存；同时运行 MLflow、n8n、PostgreSQL、MinIO、API 和 Runner 时建议准备 12–16 GB。
 - 使用 Codex Bridge 或本地校验脚本时，宿主机需要 Python 3.12+。
-- 使用默认 Bridge 路径时，需要已安装可用的 Codex CLI，并存在 `C:\Users\<你的用户名>\.codex\config.toml`。
+- 需要已安装可用的 Codex CLI；非敏感提供方/模型设置复制到项目 `.env`，CLI 认证按 CLI 运行环境单独配置。
 
 ## Windows 快速开始
 
@@ -119,7 +119,7 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 ### 启动宿主机 Codex Bridge
 
-Bridge 必须运行在 Windows 宿主机上，才能复用当前 Codex 的认证与提供方配置。它只从未跟踪的本地 `.env` 读取允许的 Bridge/模型配置，健康端点不会输出 Secret。在另一个 PowerShell 窗口中启动：
+Bridge 运行在 Windows 宿主机上，只从未跟踪的本地 `.env` 读取允许的非敏感 Bridge/提供方/模型配置；它不读取宿主机 Codex 配置目录，健康端点不会输出 Secret。在另一个 PowerShell 窗口中启动：
 
 ```powershell
 python scripts/codex_llm_bridge.py
@@ -131,7 +131,7 @@ python scripts/codex_llm_bridge.py
 Invoke-RestMethod http://127.0.0.1:8092/health
 ```
 
-默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。Bridge 仍从 Codex 配置读取提供方和认证，并调用 `codex exec --ephemeral --sandbox read-only`；不会把 Codex 认证文件挂载到任何容器。
+默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。Bridge 将 `.env` 中的提供方/模型/推理值显式传给 `codex exec --ephemeral --sandbox read-only`。模型服务失败时 API 返回结构化错误，不切换提供方，也不生成本地回复。
 
 ### 构建并启动 Compose
 
@@ -225,8 +225,11 @@ python scripts/acceptance_test.py
 | `MINIO_ROOT_USER`、`MINIO_ROOT_PASSWORD` | 是 | MinIO 管理凭据，MLflow 使用它把产物保存到 `research-artifacts`。 |
 | `N8N_ENCRYPTION_KEY` | 是 | 必须长期保持不变的 n8n 加密密钥；丢失后已存凭据可能无法解密。 |
 | `N8N_LOCAL_OWNER_EMAIL`、`N8N_LOCAL_OWNER_PASSWORD` | 自动登录必需 | 仅供 `/api/n8n/open` 使用的本地 Owner，密码只在服务端使用，不渲染到页面。 |
-| `OPENAI_API_KEY`、`OPENAI_BASE_URL` | 可选 | 直接 OpenAI 兼容 API 降级路径；使用 Codex Bridge 时留空。 |
+| `RESEARCH_LLM_PROVIDER` | 是 | 显式选择唯一模型服务：`codex_bridge` 或 `openai`。调用失败就是 API 错误，不自动切换提供方。 |
+| `OPENAI_API_KEY`、`OPENAI_BASE_URL` | 仅 `RESEARCH_LLM_PROVIDER=openai` 时必需 | 直接 OpenAI 兼容模型服务；选择 `codex_bridge` 时永远不会使用。 |
 | `CODEX_BRIDGE_URL`、`CODEX_BRIDGE_SECRET`、`CODEX_BRIDGE_TIMEOUT_SECONDS` | 推荐 | Compose 到宿主机的 Bridge URL、本地共享 Secret 和超时。 |
+| `CODEX_MODEL_PROVIDER`、`CODEX_MODEL_DEFAULT`、`CODEX_REASONING_DEFAULT` | 宿主 Bridge 必需 | 显式传给 Codex CLI 的提供方 key 和默认值。 |
+| `CODEX_CUSTOM_PROVIDER_NAME`、`CODEX_CUSTOM_BASE_URL`、`CODEX_CUSTOM_WIRE_API` | `CODEX_MODEL_PROVIDER=custom` 时必需 | 显式传给 CLI 的非敏感自定义提供方名称、地址和 `responses`/`chat` 协议。 |
 | `RESEARCH_MODEL_SIMPLE`、`RESEARCH_REASONING_SIMPLE` | 是 | 简单轮次路由，默认 `gpt-5.6-luna` 与 `low`。 |
 | `RESEARCH_MODEL_MEDIUM`、`RESEARCH_REASONING_MEDIUM` | 是 | 中等轮次路由，默认 `gpt-5.6-terra` 与 `medium`。 |
 | `RESEARCH_MODEL_COMPLEX`、`RESEARCH_REASONING_COMPLEX` | 是 | 复杂轮次路由，默认 `gpt-5.6-sol` 与 `high`。 |
@@ -333,7 +336,7 @@ python scripts/acceptance_test.py
 | 现象 | 检查项 |
 | --- | --- |
 | Docker 提示 Linux engine 不可用 | Docker Desktop → Settings/General → 启用 WSL2 backend，切换到 Linux containers，然后运行 `docker info`。 |
-| API 已启动，但 Idea 澄清显示本地降级 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、Bridge Secret/模型白名单是否一致、Codex CLI 是否可访问，以及 `docker compose logs api`；响应元数据会明确显示 `fallback_used=true`。 |
+| API 已启动，但 Idea 澄清失败 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、`RESEARCH_LLM_PROVIDER`、Bridge Secret/模型白名单、`.env` 中的 `CODEX_MODEL_*`/`CODEX_CUSTOM_*`、Codex CLI 以及 `docker compose logs api`。API 会返回结构化模型错误，不生成降级回复。 |
 | n8n 要求输入密码 | 从 Research OS 侧边栏或 `/api/n8n/open` 打开；确认 `.env` Owner 与 n8n 数据库一致。不要关闭用户管理。 |
 | n8n 自动登录返回 503/401 | 确认 n8n 正常、Owner 密码至少 12 位、`N8N_INTERNAL_URL` 为 `http://n8n:5678`，然后重启 `api n8n`。 |
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |

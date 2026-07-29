@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-8 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-9 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -67,16 +67,16 @@ flowchart LR
     ML --> MI[("MinIO\nartifacts")]
     API --> S["Academic search\nCrossref/OpenAlex/S2/arXiv/DBLP"]
     API --> B["Windows Codex Bridge\n127.0.0.1:8092"]
-    B --> C["Current Codex auth/provider\nLuna low / Terra medium / Sol high"]
+    B --> C[".env provider/model overrides\nLuna low / Terra medium / Sol high"]
 ```
 
-The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. An unrestricted ReAct loop would add cost and an unnecessary execution surface at this stage. The Windows Bridge reuses the host Codex provider/authentication and invokes an ephemeral read-only Codex process; `auth.json` is never mounted into Docker.
+The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. An unrestricted ReAct loop would add cost and an unnecessary execution surface at this stage. The Windows Bridge receives non-sensitive provider/model/reasoning overrides from the project `.env` and invokes an ephemeral read-only Codex process. Research OS never reads the host Codex configuration directory or copies `auth.json`; any authentication needed by the CLI remains owned by the CLI process and is never mounted into Docker.
 
 ## Capability matrix
 
 | Area | MVP status | What is real today |
 | --- | --- | --- |
-| Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, safe fallback. |
+| Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, and structured model errors. Failed model calls do not switch providers or generate rule-based replies. |
 | Project initialization | **Implemented** | UUID, Git workspace, directories, Idea v1, PostgreSQL records, checkpoints, n8n trigger. |
 | Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX; GitHub is a candidate source only. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
@@ -92,7 +92,7 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 - Docker Compose v2 (`docker compose version`).
 - At least 8 GB free memory; 12–16 GB is more comfortable when MLflow, n8n, PostgreSQL, MinIO, API, and Runner are all running.
 - Python 3.12+ on the host if you want the Codex Bridge or local validation scripts.
-- A local Codex CLI installation and a working `C:\Users\<you>\.codex\config.toml` when using the default Bridge path.
+- A local Codex CLI installation. Non-sensitive provider/model settings are copied into the project `.env`; CLI authentication is configured separately by the CLI environment when required.
 
 ## Quick start on Windows
 
@@ -119,7 +119,7 @@ Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N
 
 ### Start the host Codex Bridge
 
-The Bridge must run on Windows because it reuses the current Codex authentication/provider configuration. It loads only its allowlisted Bridge/model settings from the untracked local `.env`; it does not expose them in health output. Start it in a second PowerShell window:
+The Bridge runs on Windows and loads only its allowlisted non-sensitive Bridge/provider/model settings from the untracked local `.env`; it does not read the host Codex configuration directory or expose settings in health output. Start it in a second PowerShell window:
 
 ```powershell
 python scripts/codex_llm_bridge.py
@@ -131,7 +131,7 @@ Check that it reports the three configured routes and `auth_exposed=false`:
 Invoke-RestMethod http://127.0.0.1:8092/health
 ```
 
-Default routes are `gpt-5.6-luna`/low for simple turns, `gpt-5.6-terra`/medium for medium turns, and `gpt-5.6-sol`/high for complex turns. The API selects the tier using deterministic configurable thresholds; the model cannot promote itself. The Bridge still reads the provider and authentication from Codex configuration and invokes `codex exec --ephemeral --sandbox read-only`; no Codex authentication file is mounted into any container.
+Default routes are `gpt-5.6-luna`/low for simple turns, `gpt-5.6-terra`/medium for medium turns, and `gpt-5.6-sol`/high for complex turns. The API selects the tier using deterministic configurable thresholds; the model cannot promote itself. The Bridge passes the `.env` provider/model/reasoning values to `codex exec --ephemeral --sandbox read-only`. If the selected model service fails, the API returns a structured error; it does not switch providers or create a local reply.
 
 ### Build and start Compose
 
@@ -227,8 +227,11 @@ The latest complete acceptance record has a sanitized, versioned copy at [`accep
 | `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` | Yes | MinIO administration credentials. MLflow uses them to store artifacts in `research-artifacts`. |
 | `N8N_ENCRYPTION_KEY` | Yes | Stable n8n encryption key. Keep it across restarts; losing it can make stored n8n credentials unreadable. |
 | `N8N_LOCAL_OWNER_EMAIL`, `N8N_LOCAL_OWNER_PASSWORD` | Yes for auto-login | Internal local Owner used only by `/api/n8n/open`. The password is server-side and never rendered into the UI. |
-| `OPENAI_API_KEY`, `OPENAI_BASE_URL` | Optional | Direct OpenAI-compatible fallback. Leave blank when using the Codex Bridge. |
+| `RESEARCH_LLM_PROVIDER` | Yes | Explicitly selects exactly one model service: `codex_bridge` or `openai`. A failed call is an API error; there is no automatic provider switch. |
+| `OPENAI_API_KEY`, `OPENAI_BASE_URL` | Required only when `RESEARCH_LLM_PROVIDER=openai` | Direct OpenAI-compatible model service. It is never used when `RESEARCH_LLM_PROVIDER=codex_bridge`. |
 | `CODEX_BRIDGE_URL`, `CODEX_BRIDGE_SECRET`, `CODEX_BRIDGE_TIMEOUT_SECONDS` | Recommended | Compose-to-host Bridge URL, shared local secret, and request timeout. |
+| `CODEX_MODEL_PROVIDER`, `CODEX_MODEL_DEFAULT`, `CODEX_REASONING_DEFAULT` | Required for the host Bridge | Provider key and defaults passed explicitly to the Codex CLI. |
+| `CODEX_CUSTOM_PROVIDER_NAME`, `CODEX_CUSTOM_BASE_URL`, `CODEX_CUSTOM_WIRE_API` | Required for `CODEX_MODEL_PROVIDER=custom` | Non-sensitive custom provider display name, base URL, and `responses`/`chat` wire API passed to the CLI. |
 | `RESEARCH_MODEL_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Simple-turn route; defaults to `gpt-5.6-luna` and `low`. |
 | `RESEARCH_MODEL_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Medium-turn route; defaults to `gpt-5.6-terra` and `medium`. |
 | `RESEARCH_MODEL_COMPLEX`, `RESEARCH_REASONING_COMPLEX` | Yes | Complex-turn route; defaults to `gpt-5.6-sol` and `high`. |
@@ -336,7 +339,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 | Symptom | Check |
 | --- | --- |
 | Docker says the Linux engine is unavailable | Docker Desktop → Settings/General → enable the WSL2 backend, switch to Linux containers, then retry `docker info`. |
-| API is up but idea clarification says local safe fallback | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, the Bridge secret/model allowlist match, Codex CLI access, and `docker compose logs api`. The response metadata explicitly reports `fallback_used=true`. |
+| API is up but idea clarification fails | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, `RESEARCH_LLM_PROVIDER`, the Bridge secret/model allowlist, `.env` `CODEX_MODEL_*`/`CODEX_CUSTOM_*` values, Codex CLI access, and `docker compose logs api`. The API returns a structured model error and does not generate a fallback reply. |
 | n8n asks for a password | Open the Research OS sidebar link or `/api/n8n/open`; verify Owner values in `.env` match the n8n database. Do not disable user management. |
 | n8n auto-login returns 503/401 | Check n8n is running, Owner password length is at least 12, `N8N_INTERNAL_URL` resolves to `http://n8n:5678`, and restart `api n8n`. |
 | Webhook 404 | Confirm the three built-in workflows are Active and n8n was recreated after workflow JSON changes. |

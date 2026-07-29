@@ -116,7 +116,6 @@ class ChatResponse(BaseModel):
     model_tier: Literal["simple", "medium", "complex"] | None = None
     model: str | None = None
     reasoning_effort: str | None = None
-    fallback_used: bool = False
     clarification_mode: Literal["automatic", "detailed"] = "automatic"
 
 

@@ -2,13 +2,14 @@ from uuid import uuid4
 import json
 from pathlib import Path
 
+import httpx
 import pytest
 from pydantic import ValidationError
 
 from scripts.idea_case_loader import IDEA_CASES_ROOT, load_enabled_idea_cases, load_idea_case
 
 from app.clarification import build_spec, initial_draft, required_spec_gaps
-from app.llm import _fallback_result, _system_prompt, clarification_mode_instruction, select_model_route
+from app.llm import LLMRequestError, _system_prompt, clarification_mode_instruction, clarify_idea_with_llm, select_model_route
 from app.policy_engine import compile_policy_constraints, experiment_policy_violations, seeds_for_constraints
 from app.evidence_pipeline import validate_open_pdf_url
 from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest
@@ -42,15 +43,36 @@ def test_short_idea_requires_a_research_question():
     assert all(field in required_spec_gaps(draft) for field in case.expect["missing_fields_contains"])
 
 
-def test_mnist_idea_uses_medium_tier_and_fallback_infers_domain():
+def test_mnist_idea_uses_medium_tier():
     case = load_idea_case("mnist-cnn")
     draft = initial_draft(case.initial_message)
     route = select_model_route(case.initial_message, draft)
-    result = _fallback_result(case.initial_message, draft, case.clarification_mode)
     assert route.tier == case.expect["model_tier"]
-    assert all(term in (result.draft.domain or "") for term in case.expect["fallback_domain_contains"])
-    assert all(term not in result.assistant_reply for term in case.expect["reply_excludes"])
-    assert result.ready_for_confirmation is False
+
+
+def test_model_failure_is_an_error_and_never_switches_provider(monkeypatch):
+    case = load_idea_case("mnist-cnn")
+    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "codex_bridge")
+    monkeypatch.setenv("CODEX_BRIDGE_URL", "http://bridge.invalid")
+    monkeypatch.setenv("OPENAI_API_KEY", "must-not-be-used")
+
+    def bridge_failure(*args, **kwargs):
+        raise httpx.TimeoutException("bridge timed out")
+
+    monkeypatch.setattr("app.llm.httpx.post", bridge_failure)
+    monkeypatch.setattr("app.llm.OpenAI", lambda *args, **kwargs: pytest.fail("provider switch attempted"))
+    with pytest.raises(LLMRequestError) as error:
+        clarify_idea_with_llm(case.initial_message, clarification_mode=case.clarification_mode)
+    assert error.value.code == "llm_timeout"
+    assert error.value.status_code == 504
+
+
+def test_model_provider_must_be_explicit(monkeypatch):
+    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "")
+    with pytest.raises(LLMRequestError) as error:
+        clarify_idea_with_llm("简短研究想法")
+    assert error.value.code == "llm_provider_not_configured"
+    assert error.value.status_code == 503
 
 
 def test_router_uses_simple_and_complex_cost_tiers():

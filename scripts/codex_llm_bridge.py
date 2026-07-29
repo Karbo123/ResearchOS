@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import shutil
 import subprocess
 import tempfile
@@ -18,7 +17,9 @@ def _load_local_env() -> None:
     """Load only Bridge-related settings from the local untracked .env file."""
     allowed = {
         "CODEX_BRIDGE_SECRET", "CODEX_BRIDGE_TIMEOUT_SECONDS", "CODEX_BRIDGE_HOST", "CODEX_BRIDGE_PORT",
-        "CODEX_CONFIG_PATH", "CODEX_CLI_PATH", "RESEARCH_MODEL_SIMPLE", "RESEARCH_REASONING_SIMPLE",
+        "CODEX_CLI_PATH", "CODEX_MODEL_PROVIDER", "CODEX_MODEL_DEFAULT", "CODEX_REASONING_DEFAULT",
+        "CODEX_CUSTOM_PROVIDER_NAME", "CODEX_CUSTOM_BASE_URL", "CODEX_CUSTOM_WIRE_API",
+        "RESEARCH_MODEL_SIMPLE", "RESEARCH_REASONING_SIMPLE",
         "RESEARCH_MODEL_MEDIUM", "RESEARCH_REASONING_MEDIUM", "RESEARCH_MODEL_COMPLEX",
         "RESEARCH_REASONING_COMPLEX",
     }
@@ -37,23 +38,15 @@ def _load_local_env() -> None:
 
 
 _load_local_env()
-CONFIG_PATH = Path(os.getenv("CODEX_CONFIG_PATH", Path.home() / ".codex" / "config.toml"))
 INITIAL_SCHEMA_PATH = ROOT / "schemas" / "codex-initial-idea.schema.json"
 CLARIFICATION_SCHEMA_PATH = ROOT / "schemas" / "codex-clarification.schema.json"
 BRIDGE_SECRET = os.getenv("CODEX_BRIDGE_SECRET", "research-os-codex-bridge-local")
 MAX_REQUEST_BYTES = 200_000
 
 
-def _config_value(name: str, default: str) -> str:
-    try:
-        content = CONFIG_PATH.read_text(encoding="utf-8")
-    except OSError:
-        return default
-    match = re.search(rf'^\s*{re.escape(name)}\s*=\s*"([^"]+)"\s*$', content, re.MULTILINE)
-    return match.group(1) if match else default
-
-
-MODEL_PROVIDER = _config_value("model_provider", "openai")
+MODEL_PROVIDER = os.getenv("CODEX_MODEL_PROVIDER", "").strip()
+DEFAULT_MODEL = os.getenv("CODEX_MODEL_DEFAULT", "").strip()
+DEFAULT_REASONING = os.getenv("CODEX_REASONING_DEFAULT", "").strip()
 MODEL_CATALOG = {
     "simple": {
         "model": os.getenv("RESEARCH_MODEL_SIMPLE", "gpt-5.6-luna"),
@@ -64,10 +57,8 @@ MODEL_CATALOG = {
         "reasoning_effort": os.getenv("RESEARCH_REASONING_MEDIUM", "medium"),
     },
     "complex": {
-        "model": os.getenv("RESEARCH_MODEL_COMPLEX", _config_value("model", "gpt-5.6-sol")),
-        "reasoning_effort": os.getenv(
-            "RESEARCH_REASONING_COMPLEX", _config_value("model_reasoning_effort", "high")
-        ),
+        "model": os.getenv("RESEARCH_MODEL_COMPLEX") or DEFAULT_MODEL or "gpt-5.6-sol",
+        "reasoning_effort": os.getenv("RESEARCH_REASONING_COMPLEX") or DEFAULT_REASONING or "high",
     },
 }
 
@@ -82,6 +73,32 @@ def _json_response(handler: BaseHTTPRequestHandler, status: int, body: dict[str,
     handler.wfile.write(payload)
 
 
+def _codex_config_overrides(model: str, reasoning_effort: str) -> list[str]:
+    if not MODEL_PROVIDER:
+        raise RuntimeError("CODEX_MODEL_PROVIDER is not configured")
+    overrides = [
+        f"model_provider={json.dumps(MODEL_PROVIDER)}",
+        f"model={json.dumps(model)}",
+        f"model_reasoning_effort={json.dumps(reasoning_effort)}",
+    ]
+    if MODEL_PROVIDER == "custom":
+        provider_name = os.getenv("CODEX_CUSTOM_PROVIDER_NAME", "").strip()
+        base_url = os.getenv("CODEX_CUSTOM_BASE_URL", "").strip()
+        wire_api = os.getenv("CODEX_CUSTOM_WIRE_API", "").strip()
+        if not provider_name or not base_url or wire_api not in {"responses", "chat"}:
+            raise RuntimeError(
+                "custom Codex provider requires CODEX_CUSTOM_PROVIDER_NAME, CODEX_CUSTOM_BASE_URL, "
+                "and CODEX_CUSTOM_WIRE_API=responses or chat"
+            )
+        section = "model_providers.custom"
+        overrides.extend([
+            f"{section}.name={json.dumps(provider_name)}",
+            f"{section}.base_url={json.dumps(base_url)}",
+            f"{section}.wire_api={json.dumps(wire_api)}",
+        ])
+    return overrides
+
+
 def _run_codex(input_data: dict[str, Any], prompt: str, schema_path: Path, model: str, reasoning_effort: str) -> dict[str, Any]:
     codex = os.getenv("CODEX_CLI_PATH") or shutil.which("codex")
     if not codex:
@@ -89,6 +106,9 @@ def _run_codex(input_data: dict[str, Any], prompt: str, schema_path: Path, model
     full_prompt = f"{prompt}\n\nINPUT_DATA={json.dumps(input_data, ensure_ascii=False)}"
     with tempfile.TemporaryDirectory(prefix="research-os-codex-") as temp_dir:
         output_path = Path(temp_dir) / "result.json"
+        config_args: list[str] = []
+        for override in _codex_config_overrides(model, reasoning_effort):
+            config_args.extend(["--config", override])
         command = [
             codex,
             "exec",
@@ -99,8 +119,7 @@ def _run_codex(input_data: dict[str, Any], prompt: str, schema_path: Path, model
             "--ignore-rules",
             "--model",
             model,
-            "--config",
-            f'model_reasoning_effort="{reasoning_effort}"',
+            *config_args,
             "--cd",
             temp_dir,
             "--output-schema",
@@ -227,7 +246,7 @@ class Handler(BaseHTTPRequestHandler):
             "status": "ok",
             "models": MODEL_CATALOG,
             "provider": MODEL_PROVIDER,
-            "config_source": str(CONFIG_PATH),
+            "config_source": "environment",
             "auth_exposed": False,
         })
 

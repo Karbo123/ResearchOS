@@ -40,7 +40,6 @@ def main() -> None:
     assert result["model_tier"] == expected["model_tier"]
     assert result["model"] == expected["model"]
     assert result["clarification_mode"] == case.clarification_mode
-    assert result["fallback_used"] is False
     assert any(term in result["reply"] for term in expected["reply_contains_any"])
     assert all(term not in result["reply"] for term in expected["reply_excludes"])
     safe_result = {
@@ -52,7 +51,6 @@ def main() -> None:
         "model_tier": result["model_tier"],
         "model": result["model"],
         "reasoning_effort": result["reasoning_effort"],
-        "fallback_used": result["fallback_used"],
         "reply": result["reply"],
         "missing_fields": result["missing_fields"],
     }

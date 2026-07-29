@@ -25,6 +25,12 @@
 
 ## P0：科研可信度与执行安全
 
+- [x] `P0-LLM-036` 移除所有模型调用降级、隐式切换和宿主 Codex 配置读取。
+  - 范围：Bridge 或其他模型提供商调用失败必须返回结构化 API 错误；不得切换到另一提供商、规则猜测、关键词回复或写入伪造助手消息。Bridge 只从项目环境变量读取非敏感模型/provider 配置，不读取 Windows Codex `config.toml`，不读取或复制认证文件。
+  - 完成标准：API、Bridge、Schema、工具契约、前端错误显示、测试、双语 README、运维/安全文档、需求审计、`AGENTS.md` 和 `TODO.md` 一致；错误路径有自动化验证，成功路径仍保留严格结构化输出。
+  - 验证要求：`docker compose config --quiet`、Python/JSON/文档同步检查、API 容器测试、聊天 UX 测试、`git diff --check`；不为本任务调用真实模型或外部学术 API。
+  - 验证结果：删除 API 规则回复、自动 provider 切换和 `fallback_used` 契约；Bridge 只从项目 `.env` 读取非敏感配置，健康端点返回 `config_source=environment`；模型失败单测覆盖超时、显式 Bridge 优先和未配置 provider（API 容器 `23 passed`）；`docker compose config --quiet`、API/Runner Python 编译、`check_docs_sync.py`、`check_idea_case_sources.py`、7 个 Schema/Workflow JSON、`node --test scripts/test_chat_ux.mjs`（5 passed）和 `git diff --check` 通过；未调用真实模型或外部学术 API。
+
 - [x] `P0-IDEA-CASES-030` 建立公开、唯一、可审计的 Idea 测试用例目录。
   - 完成标准：所有用于 Idea 澄清、模型路由的输入与后续回答均保存为独立 UTF-8 JSON 文本文件；测试加载器只读取仓库内固定目录，拒绝重复 ID、未知字段、非法模式和命令行临时 Idea；测试脚本、单元测试和验收脚本不得隐藏、硬编码或运行时增添测试 Idea。
   - 文档要求：测试目录 README、项目级 `AGENTS.md`、双语 README 和需求审计都明确唯一来源规则及新增/修改用例方法。
@@ -36,9 +42,9 @@
   - 背景：此前 `clarification.py` 使用固定 `QUESTIONS/ORDER`，即使 Idea 已包含 PyTorch、CUDA、CNN、MNIST 等明确语义，也可能机械追问领域；该编排缺陷的代码修复已完成，但尚未经过全部公开用例和异常路径回归。
   - 完成标准：每轮模型基于当前结构化草稿、对话上下文和用户新消息，推断有充分依据的领域/关键词，标记假设与不确定项，自适应生成少量高信息增益问题；不得再按固定问题清单逐项轮询；数据授权和资源信息不得因推断而绕过确认。
   - 模型路由：默认简单任务 `gpt-5.6-luna`、中等任务 `gpt-5.6-terra`、复杂任务 `gpt-5.6-sol`，模型名、复杂度阈值和各层推理强度均可由 `.env` 配置；每轮响应与审计元数据记录实际层级/模型，Codex Bridge 不暴露宿主认证文件。
-  - 降级要求：模型不可用时允许进入明确标识的本地降级模式，但不得恢复固定九问队列；降级模式从明显关键词生成候选并请求一次性确认，不能静默创建项目。
-  - 验证：MNIST/CNN 输入应主动识别为机器学习/深度学习/计算机视觉/图像分类并询问真正缺失的实验约束；短输入仍需澄清；结构化输出、模型路由和失败降级均有测试。
-  - 已完成部分：固定问题队列已移除；Luna/Terra/Sol 路由、严格输出、默认全自动/可选详细模式、降级路径和 MNIST 单轮真实验证已实现。
+  - 失败要求：模型不可用时必须返回明确的结构化错误；不得进入本地规则回复、固定问题队列或其他自动降级路径。
+  - 验证：MNIST/CNN 输入应主动识别为机器学习/深度学习/计算机视觉/图像分类并询问真正缺失的实验约束；短输入仍需澄清；结构化输出、模型路由和模型失败报错均有测试。
+  - 已完成部分：固定问题队列已移除；Luna/Terra/Sol 路由、严格输出、默认全自动/可选详细模式和 MNIST 单轮真实验证已实现。
   - 剩余工作：经用户批准后运行所有公开用例的多轮收敛、超时、并发和 Bridge/API 失败回归；在此之前不得把本项标记完成。
 
 - [ ] `P0-REGRESSION-032` 对最新 Idea 澄清主链执行成本受控的完整端到端回归。
@@ -80,14 +86,14 @@
   - 完成标准：开启时显示“全自动模式”，AI 基于可靠线索尽量推断并只询问阻碍规格或执行的少量关键问题；关闭时显示“详细模式”，AI 自适应覆盖目标、假设、贡献、数据、资源、评估、统计、时间和发表信息，但不得恢复固定问题队列。
   - 契约与审计：前端、Pydantic 请求、Codex Bridge 输入和模型提示使用严格 `automatic|detailed` 枚举；默认 `automatic`；每条用户与助手消息的数据库 metadata 记录实际模式。
   - 验证：测试覆盖默认值、两种模式的提示/问题预算、非法值拒绝和 metadata；浏览器检查默认开启、切换文案、发送期间等待反馈、窄屏布局和无控制台错误。
-  - 验证结果：浏览器确认默认“全自动模式”、关闭后“详细模式”、发送期间输入与开关锁定、完成后恢复、桌面/窄屏无重叠且控制台错误为 0；MNIST 唯一真实调用为 `medium / gpt-5.6-terra / medium`、`fallback=false`，只追问两组关键约束且未再次询问领域；PostgreSQL 最新用户/助手 metadata 均为 `clarification_mode=automatic`。截图：`docs/assets/research-os-adaptive-chat.png`；脱敏运行证据：被 Git 忽略的 `artifacts/idea-tests/mnist-cnn-browser-latest.json`。
+  - 验证结果：浏览器确认默认“全自动模式”、关闭后“详细模式”、发送期间输入与开关锁定、完成后恢复、桌面/窄屏无重叠且控制台错误为 0；MNIST 唯一真实调用为 `medium / gpt-5.6-terra / medium`，只追问两组关键约束且未再次询问领域；PostgreSQL 最新用户/助手 metadata 均为 `clarification_mode=automatic`。截图：`docs/assets/research-os-adaptive-chat.png`；脱敏运行证据：被 Git 忽略的 `artifacts/idea-tests/mnist-cnn-browser-latest.json`。
 
 - [x] `P1-CHAT-UX-028` 完成新项目与项目监督对话等待反馈的剩余自动化回归。
   - 完成标准：发送后立即禁用重复提交并显示思考/结构化更新等阶段、耗时和非伪造的等待提示；完成、失败和超时状态清晰可见；键盘、窄屏和重复提交有测试；不能把不确定等待时间显示为虚假的精确百分比。
   - 验证：浏览器实际提交 Idea，截图确认加载反馈可见、完成后正确消失、布局无重叠且控制台无错误。
   - 已完成部分：新项目聊天已有不确定进度条、耗时、阶段提示、重复发送锁定、模式锁定和失败提示；MNIST 桌面/窄屏浏览器验证通过。
-  - 本轮范围：补充 Ctrl/Cmd+Enter 键盘提交、统一请求超时/断线错误分类、恢复后可重试，以及新项目/项目监督聊天的自动化回归；不改变 API 契约。本轮真实验证只使用 `tests/idea-cases/mnist-cnn.json`；Bridge 恢复后最多进行一次实际模型调用，不调用其他 Idea 或外部学术 API。Bridge 未监听期间的前一次请求仅验证本地降级，不计入模型调用。
-  - 验证结果：`node --test scripts/test_chat_ux.mjs`（5 passed）；真实浏览器仅使用 `mnist-cnn`，宿主 Bridge 成功返回 `medium / gpt-5.6-terra / medium` 且 `fallback_used=false`；页面实际显示等待状态、完成回复后释放输入框/模式开关，两个状态节点隐藏，桌面无水平溢出，截图已通过浏览器工具检查，未调用其他 Idea 或外部学术 API。脱敏记录：`artifacts/idea-tests/mnist-cnn-browser-rule-update.json`。
+  - 本轮范围：补充 Ctrl/Cmd+Enter 键盘提交、统一请求超时/断线错误分类、恢复后可重试，以及新项目/项目监督聊天的自动化回归；不改变 API 契约。本轮真实验证只使用 `tests/idea-cases/mnist-cnn.json`；Bridge 恢复后最多进行一次实际模型调用，不调用其他 Idea 或外部学术 API。Bridge 未监听期间的前一次请求只验证失败提示和重试路径，不计入模型调用。
+  - 验证结果：`node --test scripts/test_chat_ux.mjs`（5 passed）；真实浏览器仅使用 `mnist-cnn`，宿主 Bridge 成功返回 `medium / gpt-5.6-terra / medium`；页面实际显示等待状态、完成回复后释放输入框/模式开关，两个状态节点隐藏，桌面无水平溢出，截图已通过浏览器工具检查，未调用其他 Idea 或外部学术 API。脱敏记录：`artifacts/idea-tests/mnist-cnn-browser-rule-update.json`。
 
 - [ ] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将提取结果纳入澄清与规划。
   - 完成标准：保留原文件、MIME、SHA-256、解析器版本和派生文本；恶意文件扫描、压缩炸弹和大小限制有测试。
@@ -128,7 +134,7 @@
 ## 文档与开发体验
 
 - [x] `DOCS-035` 删除完整真实验收必须等待用户扩大授权的项目规则。
-  - 范围：删除 `AGENTS.md` 第 89 行的完整验收等待门槛；保留第 42 行高成本实验、代码/配置/依赖和对外发布的 Proposal/明确批准/隔离执行要求；Bridge 恢复后最多进行一次 `mnist-cnn` 模型提交且不调用外部学术 API，Bridge 未监听期间的降级请求不计入模型调用。
+  - 范围：删除 `AGENTS.md` 第 89 行的完整验收等待门槛；保留第 42 行高成本实验、代码/配置/依赖和对外发布的 Proposal/明确批准/隔离执行要求；Bridge 恢复后最多进行一次 `mnist-cnn` 模型提交且不调用外部学术 API，Bridge 未监听期间的失败请求不计入模型调用。
   - 完成标准：`AGENTS.md`、TODO、运维说明和实际验证范围一致；定向浏览器验证完成后记录脱敏产物，不把其他 Idea 或 token 写入仓库。
   - 验证结果：删除 `AGENTS.md` 原第 89 行；保留原第 42 行高成本执行审批；`docs/operations.md`、双语 README 同步，`python scripts/check_docs_sync.py` 通过；实际范围为 `mnist-cnn` 单一用例、一次成功模型调用、零外部学术 API。
 
@@ -185,4 +191,5 @@
 - 2026-07-29：`P1-CHAT-UX-028` 仍为 `[~]`；剩余解除条件是用户批准一次公开 Idea 的真实浏览器提交并检查完成/失败状态，不能用无模型回归替代。
 - 2026-07-29：`P1-CHAT-UX-028` 实现提交 `ed738ee` 已创建，包含前端状态逻辑、无模型回归、双语文档和需求审计更新；待 TODO 记录提交后推送。
 - 2026-07-29：`DOCS-034` 提交 `996e942` 已创建，待最终复核后推送；本次提交未包含 `.env`、凭据、运行产物或数据库/volume 内容。
-- 2026-07-29：完成 `DOCS-035` 与 `P1-CHAT-UX-028`；删除 `AGENTS.md` 原第 89 行的完整验收等待门槛，保留高成本实验审批；以宿主权限启动 Codex Bridge，`mnist-cnn` 浏览器真实调用成功（`gpt-5.6-terra`/medium，`fallback_used=false`），等待/恢复、无溢出和脱敏验证记录通过；未调用其他 Idea 或外部学术 API。
+- 2026-07-29：完成 `DOCS-035` 与 `P1-CHAT-UX-028`；删除 `AGENTS.md` 原第 89 行的完整验收等待门槛，保留高成本实验审批；以宿主权限启动 Codex Bridge，`mnist-cnn` 浏览器真实调用成功（`gpt-5.6-terra`/medium），等待/恢复、无溢出和脱敏验证记录通过；未调用其他 Idea 或外部学术 API。
+- 2026-07-29：完成 `P0-LLM-036`；模型调用失败现在返回结构化 API 错误，禁止自动切换 provider、规则/关键词回复和伪造助手消息；Bridge 改为只使用项目 `.env` 的非敏感配置，健康端点不再返回宿主 Codex 路径；同步 API/Bridge、Schema、测试、双语 README、运维/安全、需求审计和 `AGENTS.md`，未运行真实模型或外部学术 API，提交记录随后补入本条。

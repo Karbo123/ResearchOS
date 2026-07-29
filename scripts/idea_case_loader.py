@@ -17,7 +17,7 @@ CASE_FIELDS = {
 }
 EXPECT_FIELDS = {
     "phase", "missing_fields_contains", "model_tier", "model",
-    "reply_contains_any", "reply_excludes", "fallback_domain_contains",
+    "reply_contains_any", "reply_excludes",
     "final_feasibility",
 }
 
@@ -76,7 +76,7 @@ def _validate(raw: Any, source_path: Path) -> IdeaCase:
     expect = raw["expect"]
     if not isinstance(expect, dict) or not expect or set(expect) - EXPECT_FIELDS:
         raise ValueError(f"{source_path.name}: expect contains unsupported or empty fields")
-    for field in ("missing_fields_contains", "reply_contains_any", "reply_excludes", "fallback_domain_contains"):
+    for field in ("missing_fields_contains", "reply_contains_any", "reply_excludes"):
         if field in expect:
             _string_list(expect[field], f"{source_path.name}: expect.{field}")
     for field in ("phase", "model_tier", "model", "final_feasibility"):

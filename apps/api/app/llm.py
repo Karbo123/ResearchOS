@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import json
 import os
-import re
 from dataclasses import dataclass
 from typing import Any, Literal
 
 import httpx
 from openai import OpenAI
 
-from .clarification import initial_draft, required_spec_gaps
+from .clarification import initial_draft
 from .schemas import AdaptiveClarificationResult
 
 
@@ -28,7 +27,19 @@ class ModelRoute:
 class ClarificationOutcome:
     result: AdaptiveClarificationResult
     route: ModelRoute
-    fallback_used: bool = False
+
+
+class LLMRequestError(RuntimeError):
+    """A model request failed and must be surfaced to the API caller."""
+
+    def __init__(self, code: str, message: str, status_code: int = 502):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+        self.status_code = status_code
+
+    def as_dict(self) -> dict[str, str]:
+        return {"code": self.code, "message": self.message}
 
 
 MODEL_ENV = {
@@ -148,63 +159,76 @@ def _merge_draft(current: dict[str, Any], proposed: dict[str, Any]) -> dict[str,
     return merged
 
 
-def _fallback_domain(text: str) -> tuple[str | None, list[str]]:
-    lowered = text.lower()
-    candidates: list[str] = []
-    if any(term in lowered for term in ("pytorch", "tensorflow", "cnn", "mnist", "minist", "深度学习")):
-        candidates.extend(["Machine Learning", "Deep Learning"])
-    if any(term in lowered for term in ("cnn", "mnist", "minist", "图像分类", "computer vision")):
-        candidates.extend(["Computer Vision", "Image Classification"])
-    if any(term in lowered for term in ("point cloud", "点云", "3d")):
-        candidates.extend(["3D Computer Vision", "Point Cloud Understanding"])
-    unique = list(dict.fromkeys(candidates))
-    return (" / ".join(unique) if unique else None), unique
+def _merge_model_result(current_draft: dict[str, Any], result: AdaptiveClarificationResult) -> AdaptiveClarificationResult:
+    result.draft = type(result.draft).model_validate(
+        _merge_draft(current_draft, result.draft.model_dump())
+    )
+    return result
 
 
-def _fallback_result(
-    message: str,
+def _bridge_clarification(
+    bridge_url: str,
+    payload: dict[str, Any],
+    route: ModelRoute,
     current_draft: dict[str, Any],
-    clarification_mode: ClarificationMode = "automatic",
-) -> AdaptiveClarificationResult:
-    draft = _merge_draft(current_draft, {})
-    combined = f"{draft.get('research_question') or ''} {message}"
-    domain, candidates = _fallback_domain(combined)
-    if domain and not draft.get("domain"):
-        draft["domain"] = domain
-    keywords = re.findall(r"[A-Za-z][A-Za-z0-9+._-]{1,}|[\u4e00-\u9fff]{2,8}", combined)
-    draft["keywords"] = list(dict.fromkeys([*(draft.get("keywords") or []), *keywords]))[:20]
-    gaps = required_spec_gaps(draft)
-    assumptions = [f"领域候选由明确技术词推断：{', '.join(candidates)}"] if candidates else []
-    if domain and clarification_mode == "automatic":
-        reply = (
-            f"我从 PyTorch/CNN/MNIST 等线索推测该项目属于 {domain}。"
-            "这看起来首先是一个可复现的工程基准，而不是尚已证明的新研究贡献。"
-            "为尽量少打断你，请只补充当前会阻碍执行的两点：可用 GPU/时间预算，以及你希望做工程复现"
-            "还是需要区别于标准基线的研究创新。公开 MNIST 将作为待你纠正的默认假设。"
+    clarification_mode: ClarificationMode,
+) -> ClarificationOutcome:
+    try:
+        response = httpx.post(
+            f"{bridge_url}/v1/clarify-idea",
+            json={
+                "input": payload,
+                "model_tier": route.tier,
+                "model": route.model,
+                "reasoning_effort": route.reasoning_effort,
+                "clarification_mode": clarification_mode,
+            },
+            headers={"X-Codex-Bridge-Secret": os.getenv("CODEX_BRIDGE_SECRET", "")},
+            timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
         )
-    elif domain:
-        reply = (
-            f"我从现有技术线索推测该项目属于 {domain}，但详细模式会进一步核对方案。"
-            "请成组补充：核心假设与预期贡献；数据来源、许可和划分；GPU/预算/期限；基线、指标、"
-            "统计检验与随机种子；目标会议或交付形式；以及隐私和失败判据。已明确的信息无需重复。"
+        response.raise_for_status()
+        result = AdaptiveClarificationResult.model_validate(response.json()["result"])
+    except httpx.TimeoutException as exc:
+        raise LLMRequestError("llm_timeout", "模型服务调用超时，请检查模型服务状态后重试。", 504) from exc
+    except httpx.HTTPError as exc:
+        raise LLMRequestError("llm_request_failed", "模型服务调用失败，请检查模型服务状态后重试。") from exc
+    except (KeyError, TypeError, ValueError) as exc:
+        raise LLMRequestError("llm_invalid_response", "模型服务返回了无效的结构化结果。") from exc
+    return ClarificationOutcome(result=_merge_model_result(current_draft, result), route=route)
+
+
+def _openai_clarification(
+    payload: dict[str, Any],
+    route: ModelRoute,
+    current_draft: dict[str, Any],
+    clarification_mode: ClarificationMode,
+) -> ClarificationOutcome:
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        raise LLMRequestError("llm_provider_not_configured", "已选择 openai，但 OPENAI_API_KEY 未配置。", 503)
+    try:
+        client = OpenAI(
+            api_key=api_key,
+            base_url=os.getenv("OPENAI_BASE_URL") or None,
+            timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
+            max_retries=1,
         )
-    elif clarification_mode == "detailed":
-        reply = (
-            "AI 澄清服务暂时不可用，我已保留你的 Idea。详细模式下请成组补充研究对象、核心假设、"
-            "预期贡献、数据许可、算力与成本、基线和统计方法、期限/目标 venue 及失败判据；恢复后会继续自适应分析。"
+        response = client.responses.parse(
+            model=route.model,
+            reasoning={"effort": route.reasoning_effort},
+            input=[
+                {"role": "system", "content": _system_prompt(clarification_mode)},
+                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
+            ],
+            text_format=AdaptiveClarificationResult,
         )
-    else:
-        reply = (
-            "AI 澄清服务暂时不可用，我已保留你的 Idea，但没有静默猜测关键事实。"
-            "为尽量少打断你，请只补充研究对象、可用数据/算力和成功标准；恢复后会继续自适应分析。"
-        )
-    return AdaptiveClarificationResult(
-        draft=draft,
-        assistant_reply=reply,
-        ready_for_confirmation=False,
-        unresolved_items=gaps,
-        assumptions=assumptions,
-        risk_flags=["adaptive_model_unavailable"],
+    except Exception as exc:
+        raise LLMRequestError("llm_request_failed", "模型服务调用失败，请检查模型服务状态后重试。") from exc
+    if not response.output_parsed:
+        raise LLMRequestError("llm_invalid_response", "模型服务没有返回结构化结果。")
+    return ClarificationOutcome(
+        result=_merge_model_result(current_draft, response.output_parsed),
+        route=route,
     )
 
 
@@ -219,56 +243,16 @@ def clarify_idea_with_llm(
     transcript = transcript or []
     route = select_model_route(message, current_draft, attachment_count)
     payload = _prompt_payload(message, current_draft, transcript, clarification_mode)
-    bridge_url = os.getenv("CODEX_BRIDGE_URL", "").rstrip("/")
-    if bridge_url:
-        try:
-            response = httpx.post(
-                f"{bridge_url}/v1/clarify-idea",
-                json={
-                    "input": payload,
-                    "model_tier": route.tier,
-                    "model": route.model,
-                    "reasoning_effort": route.reasoning_effort,
-                    "clarification_mode": clarification_mode,
-                },
-                headers={"X-Codex-Bridge-Secret": os.getenv("CODEX_BRIDGE_SECRET", "")},
-                timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
-            )
-            response.raise_for_status()
-            result = AdaptiveClarificationResult.model_validate(response.json()["result"])
-            result.draft = type(result.draft).model_validate(
-                _merge_draft(current_draft, result.draft.model_dump())
-            )
-            return ClarificationOutcome(result=result, route=route)
-        except (httpx.HTTPError, KeyError, ValueError):
-            pass
-    if os.getenv("OPENAI_API_KEY"):
-        try:
-            client = OpenAI(
-                api_key=os.environ["OPENAI_API_KEY"],
-                base_url=os.getenv("OPENAI_BASE_URL") or None,
-                timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
-                max_retries=1,
-            )
-            response = client.responses.parse(
-                model=route.model,
-                reasoning={"effort": route.reasoning_effort},
-                input=[
-                    {"role": "system", "content": _system_prompt(clarification_mode)},
-                    {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
-                ],
-                text_format=AdaptiveClarificationResult,
-            )
-            if response.output_parsed:
-                result = response.output_parsed
-                result.draft = type(result.draft).model_validate(
-                    _merge_draft(current_draft, result.draft.model_dump())
-                )
-                return ClarificationOutcome(result=result, route=route)
-        except Exception:
-            pass
-    return ClarificationOutcome(
-        result=_fallback_result(message, current_draft, clarification_mode),
-        route=route,
-        fallback_used=True,
+    provider = os.getenv("RESEARCH_LLM_PROVIDER", "").strip().lower()
+    if provider == "codex_bridge":
+        bridge_url = os.getenv("CODEX_BRIDGE_URL", "").rstrip("/")
+        if not bridge_url:
+            raise LLMRequestError("llm_provider_not_configured", "已选择 codex_bridge，但 CODEX_BRIDGE_URL 未配置。", 503)
+        return _bridge_clarification(bridge_url, payload, route, current_draft, clarification_mode)
+    if provider == "openai":
+        return _openai_clarification(payload, route, current_draft, clarification_mode)
+    raise LLMRequestError(
+        "llm_provider_not_configured",
+        "未配置有效的模型服务提供商，请设置 RESEARCH_LLM_PROVIDER=codex_bridge 或 openai。",
+        503,
     )

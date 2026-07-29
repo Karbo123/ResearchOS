@@ -12,7 +12,7 @@ TEST_SOURCES = [
     ROOT / "scripts" / "test_mnist_idea.py",
     *sorted((ROOT / "apps" / "api" / "tests").glob("test_*.py")),
 ]
-IDEA_FUNCTIONS = {"clarify", "initial_draft", "select_model_route", "_fallback_result"}
+IDEA_FUNCTIONS = {"clarify", "initial_draft", "select_model_route"}
 
 
 def call_name(node: ast.Call) -> str | None:

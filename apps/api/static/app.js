@@ -12,7 +12,7 @@ async function api(path, options = {}) {
     ...fetchOptions,
     headers: {"Content-Type": "application/json", ...(optionHeaders || {})},
   }, timeoutMs);
-  if (!response.ok) { const body = await response.json().catch(() => ({})); const detail=body.detail; throw new Error(typeof detail === "string" ? detail : detail ? JSON.stringify(detail) : `${response.status} ${response.statusText}`); }
+  if (!response.ok) { const body = await response.json().catch(() => ({})); const detail=body.detail; const message=detail && typeof detail === "object" ? detail.message : detail; throw new Error(typeof message === "string" ? message : `${response.status} ${response.statusText}`); }
   return response.json();
 }
 function toast(message) { const el = $("toast"); el.textContent = message; el.classList.remove("hidden"); setTimeout(() => el.classList.add("hidden"), 3200); }
@@ -51,8 +51,8 @@ function startAiProgress({progressId, formId, elapsedId, stageId, project = fals
 }
 
 function modelMeta(result) {
-  if (!result.model) return result.fallback_used ? "本地降级模式" : "";
-  return `${result.model_tier || "adaptive"} · ${result.model} · reasoning ${result.reasoning_effort || "default"}${result.fallback_used ? " · 本地降级" : ""}`;
+  if (!result.model) return "";
+  return `${result.model_tier || "adaptive"} · ${result.model} · reasoning ${result.reasoning_effort || "default"}`;
 }
 
 function renderSpec(spec) {
