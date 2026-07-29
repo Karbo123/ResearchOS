@@ -30,7 +30,7 @@ Name: "{app}\projects"
 Name: "{app}\artifacts"
 
 [Files]
-Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".git\*,.env,projects\*,artifacts\*,postgres-data\*,minio-data\*,mlflow-data\*,n8n-data\*,installer\windows\build\*,installer\windows\dist\*,.venv-installer\*,scripts\codex_llm_bridge.py,scripts\test_codex_llm_bridge.py,__pycache__\*,*.pyc"
+Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".git\*,.env,projects\*,artifacts\*,postgres-data\*,minio-data\*,mlflow-data\*,n8n-data\*,installer\windows\build\*,installer\windows\dist\*,.venv-installer\*,__pycache__\*,*.pyc"
 
 [Icons]
 Name: "{group}\Research OS"; Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\installer\windows\bootstrap.ps1"" -InstallRoot ""{app}"" -StartOnly"; WorkingDir: "{app}"
