@@ -243,4 +243,4 @@
 - P0-RUNNER-007 验证：Runner 标准库测试 4 passed，API 容器 32 passed，内部健康端点确认 one-spawned-process-per-run、docker_socket_mounted=false、arbitrary_commands=false。
 - P0-RUNNER-007 提交：`92fe1ef` 已推送到 `origin/main`；TODO 记录随合并提交更新。
 - 2026-07-30：完成本轮 `P0-IMPACT-008` 实体级影响分析部分；发现 Idea 审批仍会使项目全部有效 Artifact 失效，新增只读依赖图分析、审批时重新计算、局部 Artifact 失效和审计记录；补齐数据/代码根与检查点建议。验证通过：API `38 passed`、Compose/JSON/Idea case/文档同步/`git diff --check`；提交 `c559704` 已创建，P0-IMPACT-008 继续保持 `[~]`，因为自动主题重跑和 Runner 检查点恢复尚未实现。
-- 2026-07-30：开始 `P1-UPLOAD-009`；新增受限材料解析和摘要上下文，前端改为先上传/解析再请求模型，失败直接阻止本轮调用；图片保持 metadata-only，ZIP 只读清单，不解压或执行。同步双语 README、架构、运维、安全和需求审计。验证：API 容器 `42 passed`、`py_compile`、Compose、文档同步、Idea case、前端 UX `5 passed`、`git diff --check` 和浏览器设置面板桌面/窄屏检查通过；图片 OCR、独立恶意样本扫描和大规模材料库仍未实现，任务保持 `[~]`。
+- 2026-07-30：开始 `P1-UPLOAD-009`；新增受限材料解析和摘要上下文，前端改为先上传/解析再请求模型，失败直接阻止本轮调用；图片保持 metadata-only，ZIP 只读清单，不解压或执行。同步双语 README、架构、运维、安全和需求审计。验证：API 容器 `42 passed`、`py_compile`、Compose、文档同步、Idea case、前端 UX `5 passed`、`git diff --check` 和浏览器设置面板桌面/窄屏检查通过；图片 OCR、独立恶意样本扫描和大规模材料库仍未实现，任务保持 `[~]`。实现提交：`00441b5` 已推送到 `origin/main`。
