@@ -70,7 +70,7 @@ flowchart LR
     B --> C[".env 提供方/模型覆盖\nLuna low / Terra medium / Sol high"]
 ```
 
-API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。现阶段引入无限制 ReAct 循环只会增加成本和执行面。Windows Bridge 只接收项目 `.env` 中的非敏感提供方/模型/推理覆盖，并启动临时、只读沙箱中的 Codex 进程。Research OS 不读取宿主机 Codex 配置目录、不复制 `auth.json`；CLI 如需认证由 CLI 自己处理，认证文件不会挂载进 Docker。
+API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。现阶段引入无限制 ReAct 循环只会增加成本和执行面。Windows Bridge 只接收项目 `.env` 中的允许提供方/模型/推理配置和用户明确迁移的 `OPENAI_API_KEY`，并启动临时、只读沙箱中的 Codex 进程。Bridge 运行时不读取宿主机 Codex 配置目录或 `auth.json`；一次性迁移只能复制这个 key 的值，不能复制整个认证对象、token 或 Cookie，认证文件不会挂载进 Docker。
 
 ## 能力矩阵
 
@@ -92,7 +92,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 - Docker Compose v2（运行 `docker compose version` 检查）。
 - 至少 8 GB 可用内存；同时运行 MLflow、n8n、PostgreSQL、MinIO、API 和 Runner 时建议准备 12–16 GB。
 - 使用 Codex Bridge 或本地校验脚本时，宿主机需要 Python 3.12+。
-- 需要已安装可用的 Codex CLI；非敏感提供方/模型设置复制到项目 `.env`，CLI 认证按 CLI 运行环境单独配置。
+- 需要已安装可用的 Codex CLI；将提供方/模型设置和需要的 `OPENAI_API_KEY` 放入项目未跟踪 `.env`，不要复制整个 `auth.json`、token 或 Cookie。
 
 ## Windows 快速开始
 
@@ -115,11 +115,11 @@ Copy-Item .env.example .env
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-请分别为 `POSTGRES_PASSWORD`、`MINIO_ROOT_PASSWORD`、`N8N_ENCRYPTION_KEY`、`N8N_LOCAL_OWNER_PASSWORD`、`RUNNER_SHARED_SECRET` 和 `CODEX_BRIDGE_SECRET` 生成不同值。不要提交 `.env`。
+请分别为 `POSTGRES_PASSWORD`、`MINIO_ROOT_PASSWORD`、`N8N_ENCRYPTION_KEY`、`N8N_LOCAL_OWNER_PASSWORD`、`RUNNER_SHARED_SECRET` 和 `CODEX_BRIDGE_SECRET` 生成不同值。如果宿主 Codex CLI 需要环境认证，只迁移 `OPENAI_API_KEY` 到 `.env`。不要提交 `.env` 或源 `auth.json`。
 
 ### 启动宿主机 Codex Bridge
 
-Bridge 运行在 Windows 宿主机上，只从未跟踪的本地 `.env` 读取允许的非敏感 Bridge/提供方/模型配置；它不读取宿主机 Codex 配置目录，健康端点不会输出 Secret。在另一个 PowerShell 窗口中启动：
+Bridge 运行在 Windows 宿主机上，只从未跟踪的本地 `.env` 读取允许的 Bridge/提供方/模型配置和 `OPENAI_API_KEY`；它不读取宿主机 Codex 配置目录，健康端点不会输出凭据。在另一个 PowerShell 窗口中启动：
 
 ```powershell
 python scripts/codex_llm_bridge.py
@@ -226,7 +226,7 @@ python scripts/acceptance_test.py
 | `N8N_ENCRYPTION_KEY` | 是 | 必须长期保持不变的 n8n 加密密钥；丢失后已存凭据可能无法解密。 |
 | `N8N_LOCAL_OWNER_EMAIL`、`N8N_LOCAL_OWNER_PASSWORD` | 自动登录必需 | 仅供 `/api/n8n/open` 使用的本地 Owner，密码只在服务端使用，不渲染到页面。 |
 | `RESEARCH_LLM_PROVIDER` | 是 | 显式选择唯一模型服务：`codex_bridge` 或 `openai`。调用失败就是 API 错误，不自动切换提供方。 |
-| `OPENAI_API_KEY`、`OPENAI_BASE_URL` | 仅 `RESEARCH_LLM_PROVIDER=openai` 时必需 | 直接 OpenAI 兼容模型服务；选择 `codex_bridge` 时永远不会使用。 |
+| `OPENAI_API_KEY`、`OPENAI_BASE_URL` | `OPENAI_API_KEY` 用于直接 `openai` 或宿主 CLI 环境认证；`OPENAI_BASE_URL` 仅直接 `openai` 时必需 | API 只在显式选择 `openai` 时使用这些配置。宿主 Bridge 只可将 `OPENAI_API_KEY` 传给 Codex CLI，运行时不会从 `auth.json` 读取。 |
 | `CODEX_BRIDGE_URL`、`CODEX_BRIDGE_SECRET`、`CODEX_BRIDGE_TIMEOUT_SECONDS` | 推荐 | Compose 到宿主机的 Bridge URL、本地共享 Secret 和超时。 |
 | `CODEX_MODEL_PROVIDER`、`CODEX_MODEL_DEFAULT`、`CODEX_REASONING_DEFAULT` | 宿主 Bridge 必需 | 显式传给 Codex CLI 的提供方 key 和默认值。 |
 | `CODEX_CUSTOM_PROVIDER_NAME`、`CODEX_CUSTOM_BASE_URL`、`CODEX_CUSTOM_WIRE_API` | `CODEX_MODEL_PROVIDER=custom` 时必需 | 显式传给 CLI 的非敏感自定义提供方名称、地址和 `responses`/`chat` 协议。 |

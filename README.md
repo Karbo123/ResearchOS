@@ -70,7 +70,7 @@ flowchart LR
     B --> C[".env provider/model overrides\nLuna low / Terra medium / Sol high"]
 ```
 
-The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. An unrestricted ReAct loop would add cost and an unnecessary execution surface at this stage. The Windows Bridge receives non-sensitive provider/model/reasoning overrides from the project `.env` and invokes an ephemeral read-only Codex process. Research OS never reads the host Codex configuration directory or copies `auth.json`; any authentication needed by the CLI remains owned by the CLI process and is never mounted into Docker.
+The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. An unrestricted ReAct loop would add cost and an unnecessary execution surface at this stage. The Windows Bridge receives allowlisted provider/model/reasoning settings and the explicitly migrated `OPENAI_API_KEY` from the project `.env`, then invokes an ephemeral read-only Codex process. The Bridge does not read the host Codex configuration directory or `auth.json` at runtime; a one-time migration may copy only that key's value, never the full auth object, tokens, or cookies, and credentials are never mounted into Docker.
 
 ## Capability matrix
 
@@ -92,7 +92,7 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 - Docker Compose v2 (`docker compose version`).
 - At least 8 GB free memory; 12–16 GB is more comfortable when MLflow, n8n, PostgreSQL, MinIO, API, and Runner are all running.
 - Python 3.12+ on the host if you want the Codex Bridge or local validation scripts.
-- A local Codex CLI installation. Non-sensitive provider/model settings are copied into the project `.env`; CLI authentication is configured separately by the CLI environment when required.
+- A local Codex CLI installation. Copy provider/model settings and, when environment authentication is required, only `OPENAI_API_KEY` from the local Codex auth into the untracked project `.env`; never copy the full `auth.json` object, tokens, or cookies.
 
 ## Quick start on Windows
 
@@ -115,11 +115,11 @@ Edit `.env` before the first start. Replace every `change-me`, `replace-with`, a
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N8N_ENCRYPTION_KEY`, `N8N_LOCAL_OWNER_PASSWORD`, `RUNNER_SHARED_SECRET`, and `CODEX_BRIDGE_SECRET`. Do not commit `.env`.
+Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N8N_ENCRYPTION_KEY`, `N8N_LOCAL_OWNER_PASSWORD`, `RUNNER_SHARED_SECRET`, and `CODEX_BRIDGE_SECRET`. If the host Codex CLI needs environment authentication, migrate only its `OPENAI_API_KEY` into `.env`. Do not commit `.env` or the source `auth.json`.
 
 ### Start the host Codex Bridge
 
-The Bridge runs on Windows and loads only its allowlisted non-sensitive Bridge/provider/model settings from the untracked local `.env`; it does not read the host Codex configuration directory or expose settings in health output. Start it in a second PowerShell window:
+The Bridge runs on Windows and loads only its allowlisted Bridge/provider/model settings and `OPENAI_API_KEY` from the untracked local `.env`; it does not read the host Codex configuration directory or expose credentials in health output. Start it in a second PowerShell window:
 
 ```powershell
 python scripts/codex_llm_bridge.py
@@ -228,7 +228,7 @@ The latest complete acceptance record has a sanitized, versioned copy at [`accep
 | `N8N_ENCRYPTION_KEY` | Yes | Stable n8n encryption key. Keep it across restarts; losing it can make stored n8n credentials unreadable. |
 | `N8N_LOCAL_OWNER_EMAIL`, `N8N_LOCAL_OWNER_PASSWORD` | Yes for auto-login | Internal local Owner used only by `/api/n8n/open`. The password is server-side and never rendered into the UI. |
 | `RESEARCH_LLM_PROVIDER` | Yes | Explicitly selects exactly one model service: `codex_bridge` or `openai`. A failed call is an API error; there is no automatic provider switch. |
-| `OPENAI_API_KEY`, `OPENAI_BASE_URL` | Required only when `RESEARCH_LLM_PROVIDER=openai` | Direct OpenAI-compatible model service. It is never used when `RESEARCH_LLM_PROVIDER=codex_bridge`. |
+| `OPENAI_API_KEY`, `OPENAI_BASE_URL` | `OPENAI_API_KEY` is required for direct `openai` or host CLI environment auth; `OPENAI_BASE_URL` is required only for direct `openai` | The API uses these for the explicit `openai` provider. The host Bridge may pass only `OPENAI_API_KEY` to the Codex CLI; it is never read from `auth.json` at runtime. |
 | `CODEX_BRIDGE_URL`, `CODEX_BRIDGE_SECRET`, `CODEX_BRIDGE_TIMEOUT_SECONDS` | Recommended | Compose-to-host Bridge URL, shared local secret, and request timeout. |
 | `CODEX_MODEL_PROVIDER`, `CODEX_MODEL_DEFAULT`, `CODEX_REASONING_DEFAULT` | Required for the host Bridge | Provider key and defaults passed explicitly to the Codex CLI. |
 | `CODEX_CUSTOM_PROVIDER_NAME`, `CODEX_CUSTOM_BASE_URL`, `CODEX_CUSTOM_WIRE_API` | Required for `CODEX_MODEL_PROVIDER=custom` | Non-sensitive custom provider display name, base URL, and `responses`/`chat` wire API passed to the CLI. |

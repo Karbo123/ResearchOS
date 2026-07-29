@@ -14,7 +14,7 @@
 - 澄清 Agent 每轮只接收最新消息、当前草稿和最多 12 条最近对话，输出严格 `codex-clarification.schema.json`；它没有浏览、Shell、文件、SQL 或外部工具权限。
 - 复杂度与成本层级由 API 的确定性评分选择；Bridge 按 `simple/medium/complex` allowlist 二次核对模型和推理强度，拒绝调用方指定任意模型。
 - 明显领域可以作为可纠正假设推断；数据权限、GPU/预算、截止时间、新颖性、引用和结果不得臆造。
-- Bridge 只从项目 `.env` 读取明确允许的非敏感 provider、模型和推理键，不读取宿主机 Codex 配置目录，也不读取、复制或返回 `auth.json`、token、Cookie 或其他 Secret；健康端点只显示模型目录、提供方、配置来源和 `auth_exposed=false`。
+- Bridge 只从项目 `.env` 读取明确允许的 provider、模型、推理键和单独迁移的 `OPENAI_API_KEY`；运行时不读取宿主机 Codex 配置目录或 `auth.json`，也不复制或返回认证对象、refresh token、Cookie 或其他 Secret。健康端点只显示模型目录、提供方、配置来源和 `auth_exposed=false`。
 - 模型失败必须返回结构化 API 错误；系统不切换未显式选择的 provider，不生成规则/关键词回复，不静默继续，也不写入助手消息。
 
 ## Container policy

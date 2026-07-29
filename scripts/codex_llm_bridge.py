@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _load_local_env() -> None:
-    """Load only Bridge-related settings from the local untracked .env file."""
+    """Load allowlisted Bridge settings, including the explicitly migrated API key."""
     allowed = {
         "CODEX_BRIDGE_SECRET", "CODEX_BRIDGE_TIMEOUT_SECONDS", "CODEX_BRIDGE_HOST", "CODEX_BRIDGE_PORT",
         "CODEX_CLI_PATH", "CODEX_MODEL_PROVIDER", "CODEX_MODEL_DEFAULT", "CODEX_REASONING_DEFAULT",
@@ -22,6 +22,7 @@ def _load_local_env() -> None:
         "RESEARCH_MODEL_SIMPLE", "RESEARCH_REASONING_SIMPLE",
         "RESEARCH_MODEL_MEDIUM", "RESEARCH_REASONING_MEDIUM", "RESEARCH_MODEL_COMPLEX",
         "RESEARCH_REASONING_COMPLEX",
+        "OPENAI_API_KEY",
     }
     try:
         lines = (ROOT / ".env").read_text(encoding="utf-8").splitlines()
@@ -135,6 +136,7 @@ def _run_codex(input_data: dict[str, Any], prompt: str, schema_path: Path, model
             text=True,
             encoding="utf-8",
             errors="replace",
+            env=os.environ.copy(),
             timeout=int(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
             check=False,
         )

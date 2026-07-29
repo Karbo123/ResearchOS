@@ -2,9 +2,9 @@
 
 ## 首次部署检查
 
-1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。
+1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。若宿主 Codex CLI 需要环境认证，只将 `auth.json` 中的 `OPENAI_API_KEY` 值迁移到 `.env`，不要复制整个认证文件。
 2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
-3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 只从仓库根目录未跟踪的 `.env` 读取非敏感 Bridge/provider/模型配置；项目代码不读取宿主机 Codex 配置目录，也不把 Codex `auth.json`、token 或 Cookie 复制到 `.env` 或挂载进 Docker。
+3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 只从仓库根目录未跟踪的 `.env` 读取允许的 Bridge/provider/模型配置和 `OPENAI_API_KEY`；运行时代码不读取宿主机 Codex 配置目录或 `auth.json`，也不把整个认证文件、token 或 Cookie 复制到 `.env` 或挂载进 Docker。
 4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，首次部署再运行 `docker compose up --build -d`。镜像已经存在时使用日常启动命令 `docker compose up -d`，不要为普通启动重复构建。
 5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
@@ -104,7 +104,7 @@ docker compose restart n8n api
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
 - Runner 在快照门禁被拒：检查结构化错误 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing`、`snapshot_manifest_missing` 或 `runner_image_changed`；提交项目源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。
 - 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
-- Codex Bridge 不通：检查 8092 健康端点、`RESEARCH_LLM_PROVIDER`、Bridge Secret、三级模型白名单、`.env` 中的 `CODEX_MODEL_*`/`CODEX_CUSTOM_*` 配置和 Codex CLI；API 会返回结构化模型错误，不会切换 provider 或生成本地回复。
+- Codex Bridge 不通：检查 8092 健康端点、`RESEARCH_LLM_PROVIDER`、Bridge Secret、三级模型白名单、`.env` 中的 `CODEX_MODEL_*`/`CODEX_CUSTOM_*` 配置、`OPENAI_API_KEY` 是否已按需迁移和 Codex CLI；API 会返回结构化模型错误，不会切换 provider 或生成本地回复。
 
 ## 项目状态控制
 

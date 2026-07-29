@@ -2,7 +2,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-29（Asia/Shanghai，P0-REPRO-026 实验可复现快照仍在进行）
+最后更新：2026-07-29（Asia/Shanghai，P0-LLM-037 本地模型密钥迁移已完成）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
@@ -30,6 +30,11 @@
   - 完成标准：API、Bridge、Schema、工具契约、前端错误显示、测试、双语 README、运维/安全文档、需求审计、`AGENTS.md` 和 `TODO.md` 一致；错误路径有自动化验证，成功路径仍保留严格结构化输出。
   - 验证要求：`docker compose config --quiet`、Python/JSON/文档同步检查、API 容器测试、聊天 UX 测试、`git diff --check`；不为本任务调用真实模型或外部学术 API。
   - 验证结果：删除 API 规则回复、自动 provider 切换和 `fallback_used` 契约；Bridge 只从项目 `.env` 读取非敏感配置，健康端点返回 `config_source=environment`；模型失败单测覆盖超时、显式 Bridge 优先和未配置 provider（API 容器 `23 passed`）；`docker compose config --quiet`、API/Runner Python 编译、`check_docs_sync.py`、`check_idea_case_sources.py`、7 个 Schema/Workflow JSON、`node --test scripts/test_chat_ux.mjs`（5 passed）和 `git diff --check` 通过；未调用真实模型或外部学术 API。
+
+- [x] `P0-LLM-037` 将本机 Codex API key 迁移到项目未跟踪 `.env` 并接入宿主模型调用。
+  - 范围：一次性从本机 `auth.json` 读取已授权的 `OPENAI_API_KEY`，写入项目 `.env`；Bridge 启动时只读取 `.env` 中的 key，并通过子进程环境提供给 Codex CLI。不得复制整个 `auth.json`，不得在日志、健康端点、Git 或聊天中暴露 key；后续运行代码不再读取 `.codex` 目录。
+  - 完成标准：宿主 Bridge 使用项目 `.env` 中的 key，健康端点不返回 key；源 `auth.json` 仍由 Codex 保管但不再由运行时代码读取，项目只使用未跟踪 `.env` 作为 Bridge 的 Secret 输入；`.env.example`、Compose、安全/运维文档、`AGENTS.md` 和 TODO 一致，自动化验证 key 未进入输出和暂存区。
+  - 验证结果：`OPENAI_API_KEY` 在项目 `.env` 中恰好 1 个且非空，`.env` 仍由 Git 忽略；Bridge `http://127.0.0.1:8092/health` 返回 `config_source=environment` 和 `auth_exposed=false`；离线子进程环境测试 `1 passed`；API 容器 `23 passed`；Compose、双语文档同步、Bridge/API/Runner Python 检查和服务健康检查通过；未调用真实模型或外部学术 API。
 
 - [x] `P0-IDEA-CASES-030` 建立公开、唯一、可审计的 Idea 测试用例目录。
   - 完成标准：所有用于 Idea 澄清、模型路由的输入与后续回答均保存为独立 UTF-8 JSON 文本文件；测试加载器只读取仓库内固定目录，拒绝重复 ID、未知字段、非法模式和命令行临时 Idea；测试脚本、单元测试和验收脚本不得隐藏、硬编码或运行时增添测试 Idea。
@@ -193,3 +198,4 @@
 - 2026-07-29：`DOCS-034` 提交 `996e942` 已创建，待最终复核后推送；本次提交未包含 `.env`、凭据、运行产物或数据库/volume 内容。
 - 2026-07-29：完成 `DOCS-035` 与 `P1-CHAT-UX-028`；删除 `AGENTS.md` 原第 89 行的完整验收等待门槛，保留高成本实验审批；以宿主权限启动 Codex Bridge，`mnist-cnn` 浏览器真实调用成功（`gpt-5.6-terra`/medium），等待/恢复、无溢出和脱敏验证记录通过；未调用其他 Idea 或外部学术 API。
 - 2026-07-29：完成 `P0-LLM-036`；模型调用失败现在返回结构化 API 错误，禁止自动切换 provider、规则/关键词回复和伪造助手消息；Bridge 改为只使用项目 `.env` 的非敏感配置，健康端点不再返回宿主 Codex 路径；同步 API/Bridge、Schema、测试、双语 README、运维/安全、需求审计和 `AGENTS.md`，未运行真实模型或外部学术 API。提交：`ab21258`；验证：API `23 passed`、Compose/文档/Idea case/JSON/Python/Node 检查通过。
+- 2026-07-29：完成 `P0-LLM-037`；按用户要求仅将本机 `auth.json` 的 `OPENAI_API_KEY` 值迁移到未跟踪 `.env`，Bridge 运行时不读取 `.codex`，只通过子进程环境传递该 key；同步 `.env.example`、`AGENTS.md`、双语 README、运维/安全和需求审计。健康端点、离线 Bridge 环境测试、API `23 passed`、Compose、文档同步和服务检查通过；未调用真实模型或外部学术 API。

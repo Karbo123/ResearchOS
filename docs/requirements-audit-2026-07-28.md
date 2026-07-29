@@ -6,10 +6,10 @@
 
 ## 本轮真实验收
 
-- 配置来源：项目未跟踪 `.env` 中的非敏感 provider、模型和推理配置；Bridge 代码不读取宿主机 Codex 配置目录
+- 配置来源：项目未跟踪 `.env` 中的 provider、模型、推理配置和单独迁移的 `OPENAI_API_KEY`；Bridge 运行时代码不读取宿主机 Codex 配置目录或 `auth.json`
 - 模型：`gpt-5.6-sol`
 - 推理强度：`high`
-- Bridge：宿主机调用；项目不读取、复制或挂载 `auth.json`，认证由 Codex CLI 自己处理
+- Bridge：宿主机调用；一次性迁移只复制 `auth.json` 中的 `OPENAI_API_KEY` 值，运行时不读取、复制或挂载整个 `auth.json`，Bridge 通过子进程环境向 Codex CLI 提供该 key
 - 结果文件：`artifacts/acceptance/acceptance-20260729-012750.json`
 - 测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`
 - 结果：全部自动验收断言通过
