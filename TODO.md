@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-29（Asia/Shanghai，暂停任务已归档；正在完成文档审计与 Git 归档）
+最后更新：2026-07-29（Asia/Shanghai，文档审计与 Git 归档已完成）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：仅 `DOCS-033`，负责把此前未完成事项准确归档并提交当前已完成代码；不执行任何待处理功能。
+- 当前进行中：无。此前未完成事项均已记录为待处理，等待用户明确批准后再执行。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260729-012750.json`。
 - 最新测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`（验收结束后为 cancelled）。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -124,9 +124,10 @@
 
 ## 文档与开发体验
 
-- [~] `DOCS-033` 归档此前未完成工作并把当前已完成代码安全纳入 Git。
+- [x] `DOCS-033` 归档此前未完成工作并把当前已完成代码安全纳入 Git。
   - 范围：只更新 TODO/必要说明、审查现有变更、排除 Secret/运行产物/大文件、运行零成本验证、提交并推送当前分支；不实现任何 P0/P1/P2 待处理功能，不运行完整验收。
   - 完成标准：TODO 状态不再把暂停任务标为进行中；双语 README 与需求审计说明完整回归仍待批准；`git diff --check`、文档同步、Idea case 门禁、Compose/JSON/Python/JS 检查和现有 17 项容器测试证据有效；提交推送到 `origin/main`。
+  - 验证结果：`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py`、Python 编译、Node 语法、JSON 解析、`docker compose config --quiet` 和 `git diff --check` 均通过；未运行完整验收、其他 Idea、真实模型或外部学术 API。本次功能/文档归档提交为 `db1c72b`，待本条记录提交后推送。
 
 - [x] `DOCS-024` 建立 GitHub 风格英文主 README、同步中文 README、真实 UI 截图和详细安装/配置/使用教程。
   - 完成标准：英文 `README.md` 默认入口、`README.zh-CN.md` 中文入口；两版章节与事实同步；包含真实 Research OS 页面截图、架构、快速开始、Windows Codex Bridge、环境变量、操作流程、安全、备份、升级、测试、故障排查和项目边界。
@@ -160,3 +161,4 @@
 - 2026-07-29：根据用户要求新增 `P0-REPRO-026`；明确每次实验代码/环境快照与大文件隔离策略，后续实现不得把备份、数据、模型权重、源码 bundle 或日志归档纳入 Git 跟踪。
 - 2026-07-29：新增 `P0-CLARIFY-027`、`P1-CHAT-UX-028` 和 `P2-INSTALLER-029`；开始将固定九问澄清替换为自适应 AI 对话，加入 Luna/Terra/Sol 可配置分级路由和真实等待反馈；记录 Windows 单 EXE 安装器的安全、许可与干净 VM 验收边界。
 - 2026-07-29：完成 `P0-IDEA-CASES-030` 与 `P1-CLARIFY-MODE-031`；建立 `tests/idea-cases` 唯一测试输入源、严格加载/静态门禁、默认全自动/可选详细模式、Bridge/Schema/工具契约与 PostgreSQL metadata 审计。静态检查、Compose、双语文档同步、17 项容器测试、浏览器桌面/窄屏和单次 MNIST/Terra 真实调用通过；按用户要求暂停，未运行其他 Idea、完整验收、commit 或 push。
+- 2026-07-29：完成 `DOCS-033`；将暂停的自适应澄清回归、完整回归、聊天 UX 剩余测试、单 EXE 安装器验收及其余原始需求缺口写入 TODO，修正文档中的状态/测试数量，完成零成本检查，并以 `db1c72b` 归档当前安全源码与文档；未执行任何待处理功能。
