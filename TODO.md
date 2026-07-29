@@ -243,7 +243,7 @@
   - P0-RUNNER-007 当前实现：`runner-launcher` 是唯一 Docker socket 控制边界；每个 Run 使用新的非 root 作业容器、固定 `python -m app.worker` 入口、白名单任务模板、固定内部网络、受控继承挂载、CPU/内存/PID/每 Run 磁盘限制、超时、取消和结构化终态监控。用户不能提交镜像、命令、路径、网络或环境字段；模型失败和主题不支持不触发任何 fallback。
   - P0-RUNNER-007 当前缺口：GPU、通用 Python/C++/Conda 和真正 Docker volume 级磁盘隔离尚未实现；未运行无关分类/点云实验，任务继续保持 [~]。
 - P0-RUNNER-007 验证：`docker compose build runner runner-launcher` 与服务重建成功；Runner 容器测试 `6 passed`，launcher 契约/真实 Docker socket 测试 `6 passed`，显式 per-run 容器集成测试 `7 passed`（仅用不存在项目验证结构化启动失败并清理临时容器，不调用模型/无关实验）；API `54 passed`；`docker compose config --quiet`、`check_docs_sync.py`、`check_idea_case_sources.py`、`node --test scripts/test_chat_ux.mjs`（5 passed）和 `git diff --check` 通过。主题专属 Runner 仍未实现，任务保持 `[~]`。
-- P0-RUNNER-007 提交：`efacc9d` 已在本批次创建；推送完成后记录远程状态。
+- P0-RUNNER-007 提交：`efacc9d` 已创建并与 `d0ad650` 一起推送到 `origin/main`。
 - 2026-07-30：完成本轮 `P0-IMPACT-008` 实体级影响分析部分；发现 Idea 审批仍会使项目全部有效 Artifact 失效，新增只读依赖图分析、审批时重新计算、局部 Artifact 失效和审计记录；补齐数据/代码根与检查点建议。验证通过：API `38 passed`、Compose/JSON/Idea case/文档同步/`git diff --check`；提交 `c559704` 已创建，P0-IMPACT-008 继续保持 `[~]`，因为自动主题重跑和 Runner 检查点恢复尚未实现。
 - 2026-07-30：开始 `P1-UPLOAD-009`；新增受限材料解析和摘要上下文，前端改为先上传/解析再请求模型，失败直接阻止本轮调用；图片保持 metadata-only，ZIP 只读清单，不解压或执行。同步双语 README、架构、运维、安全和需求审计。验证：API 容器 `42 passed`、`py_compile`、Compose、文档同步、Idea case、前端 UX `5 passed`、`git diff --check` 和浏览器设置面板桌面/窄屏检查通过；图片 OCR、独立恶意样本扫描和大规模材料库仍未实现，任务保持 `[~]`。实现提交：`00441b5` 已推送到 `origin/main`。
 - 2026-07-30：继续 `P0-IMPACT-008`；完成检查点局部重跑 Proposal、前端入口、审批/提交二次一致性校验和篡改 payload 测试。当前只支持人工审批后的原白名单重跑，不自动执行，不切换模型，不用无关演示实验替代。API `54 passed`、前端语法/UX、Compose、Idea case、文档同步和 `git diff --check` 通过；任务继续保持 `[~]`，等待主题 Runner 与自动检查点恢复。
