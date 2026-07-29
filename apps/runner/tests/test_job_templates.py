@@ -14,6 +14,9 @@ class JobTemplateTests(unittest.TestCase):
         self.assertTrue(all(template.memory_mb > 0 and template.pid_limit > 0 and template.disk_mb > 0 for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.network_policy == "internal-mlflow-only" for template in TASK_TEMPLATES.values()))
 
+    def test_runner_uses_the_fixed_per_run_container_executor(self):
+        self.assertEqual(runner_main.EXECUTOR_URL, "http://runner-launcher:8020")
+
     def test_template_validation_rejects_commands_paths_network_and_unknown_fields(self):
         validate_template_config("demo_classification", {"project_slug": "project", "n_samples": 100})
         for field in ("command", "path", "url", "network", "image"):
@@ -22,12 +25,12 @@ class JobTemplateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_template_config("point_cloud_demo", {"project_slug": "project", "learning_rate": 0.1})
 
-    def test_supervisor_terminal_state_cannot_be_overwritten_by_late_child_update(self):
+    def test_worker_state_updates_persist_directly(self):
         with TemporaryDirectory() as directory:
-            with patch.object(runner_main, "RUNS", {"run": {"run_id": "run", "status": "cancelled"}}), \
+            with patch.object(runner_main, "RUNS", {"run": {"run_id": "run", "status": "queued"}}), \
                     patch.object(runner_main, "STATE_ROOT", Path(directory)):
-                runner_main._persist_child_state("run", {"status": "running"})
-                self.assertEqual(runner_main.RUNS["run"]["status"], "cancelled")
+                runner_main.update_state("run", status="running")
+                self.assertEqual(runner_main.RUNS["run"]["status"], "running")
 
     def test_job_environment_declares_bounded_internal_policy(self):
         from app.job_isolation import job_environment

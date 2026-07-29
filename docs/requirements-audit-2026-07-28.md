@@ -49,9 +49,9 @@
 
 ## Runner 隔离增量（2026-07-30）
 
-- Runner 现在为每个 Run 启动一个新的非 root `spawn` 子进程，并在子进程内应用 CPU、内存和 PID 限制；监控器负责超时和进程组取消，并保护父进程已经写入的取消/失败终态。
-- Runner 仅加入 Compose 的 `runner-internal` 内部网络，未挂载 Docker socket；任务契约拒绝任意 command、path、URL、network 和 image 字段。健康端点返回 `one-spawned-process-per-run`、`docker_socket_mounted=false` 和 `arbitrary_commands=false`。
-- 这不是每 Run 独立容器，也没有完成 GPU、通用 Python/C++/Conda 环境和磁盘配额；`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
+- Runner supervisor 现在通过唯一的 `runner-launcher` 服务为每个 Run 创建新的非 root 作业容器；launcher 使用固定镜像、固定 `python -m app.worker` 入口、固定内部网络、受控继承挂载和模板级 CPU/内存/PID 限制，Runner supervisor/API 不挂载 Docker socket。
+- Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 累计目录配额与 Linux 单文件 `RLIMIT_FSIZE` 仍是当前磁盘边界，尚未实现真正的 Docker volume 存储配额。
+- 当前已是每 Run 独立容器，但没有完成 GPU、通用 Python/C++/Conda 环境和真正 volume 级磁盘配额；`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
 
 ## 逐项覆盖
 
@@ -88,7 +88,7 @@
 
 2026-07-30 代码来源可信链增量：`P0-CODE-003` 已实现候选仓库的 GitHub/GitLab 元数据、论文记录与 `CITATION.cff`/README 双源匹配，保存已知 SPDX、40 位 commit 和验证来源；未知许可证、未固定 commit、未验证候选或未批准 Proposal 均不能触发下载。批准后仅下载受限归档，拒绝路径穿越、符号链接和特殊文件，写入 SHA-256、下载时间、论文关系和项目 Git 提交。作者主页/数据集/模型的通用定位仍未实现；本增量已完成测试和文档同步，`P0-CODE-003` 标记为 `[x]`。
 
-2026-07-30 Runner 隔离增量：`P0-RUNNER-007` 为白名单模板增加每 Run 磁盘配额、Linux `RLIMIT_FSIZE` 单文件上限、累计目录大小检查和结构化超限错误，并公开模板配额。独立 per-run 容器、GPU、通用 Python/C++/Conda 和更细磁盘卷隔离仍未实现，任务保持 `[~]`。
+2026-07-30 Runner 隔离增量：`P0-RUNNER-007` 新增唯一 Docker launcher 和每 Run 独立非 root 作业容器；固定镜像、入口、内部网络、受控挂载、CPU/内存/PID/超时/取消和白名单契约均由容器内代码执行。累计目录配额、Linux `RLIMIT_FSIZE` 单文件上限和结构化超限错误继续保留；真正 volume 级磁盘配额、GPU、通用 Python/C++/Conda 仍未实现，任务保持 `[~]`。
 
 ## 关键风险
 

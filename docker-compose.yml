@@ -104,7 +104,33 @@ services:
       - runner-internal
     restart: unless-stopped
 
+  runner-launcher:
+    build:
+      context: ./apps/runner-launcher
+    environment:
+      RUNNER_SHARED_SECRET: ${RUNNER_SHARED_SECRET:-runner-dev-secret}
+      RUNNER_JOB_IMAGE: research-os-runner
+      RUNNER_CONTAINER_NAME: research-os-runner
+      RUNNER_NETWORK: research-os-runner-internal
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      RUNNER_IMAGE_DIGEST: ${RUNNER_IMAGE_DIGEST:-unavailable}
+      RESEARCH_OS_COMMIT: ${RESEARCH_OS_COMMIT:-unavailable}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # The launcher is the sole Docker-control boundary; Runner and API have no socket.
+    user: "0:0"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: ["ALL"]
+    depends_on:
+      mlflow:
+        condition: service_started
+    networks:
+      - runner-internal
+    restart: unless-stopped
+
   runner:
+    container_name: research-os-runner
     build:
       context: .
       dockerfile: apps/runner/Dockerfile
@@ -112,6 +138,8 @@ services:
       <<: *app-env
       RUNNER_SHARED_SECRET: ${RUNNER_SHARED_SECRET:-runner-dev-secret}
       RUNNER_MAX_SECONDS: ${RUNNER_MAX_SECONDS:-600}
+      RUNNER_EXECUTOR_URL: http://runner-launcher:8020
+      RUNNER_EXECUTOR_TIMEOUT_SECONDS: ${RUNNER_EXECUTOR_TIMEOUT_SECONDS:-15}
       RUNNER_IMAGE_DIGEST: ${RUNNER_IMAGE_DIGEST:-unavailable}
       RESEARCH_OS_COMMIT: ${RESEARCH_OS_COMMIT:-unavailable}
       MPLCONFIGDIR: /tmp/matplotlib
@@ -130,6 +158,8 @@ services:
     cpus: 2.0
     depends_on:
       mlflow:
+        condition: service_started
+      runner-launcher:
         condition: service_started
     networks:
       - runner-internal
@@ -209,4 +239,5 @@ volumes:
 
 networks:
   runner-internal:
+    name: research-os-runner-internal
     internal: true

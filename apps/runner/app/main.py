@@ -3,10 +3,7 @@ from __future__ import annotations
 import hashlib
 import errno
 import json
-import multiprocessing as mp
 import os
-import queue
-import signal
 import subprocess
 import threading
 import time
@@ -16,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import UUID
 
+import httpx
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -23,14 +21,13 @@ import mlflow
 import numpy as np
 import psutil
 from fastapi import FastAPI, Header, HTTPException
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator, model_validator
 from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.model_selection import train_test_split
 
 from reproducibility import ReproducibilityError, ReproducibilityContract, runtime_identity, validate_snapshot_contract
-from .job_isolation import apply_job_limits, job_environment
 from .job_templates import TASK_TEMPLATES, validate_template_config
 
 
@@ -48,7 +45,7 @@ class SubmitRequest(BaseModel):
     project_id: UUID
     experiment_type: str
     config: dict = Field(default_factory=dict)
-    random_seeds: list[int] = Field(min_length=1, max_length=10)
+    random_seeds: list[StrictInt] = Field(min_length=1, max_length=10)
     policy_constraints: PolicyConstraints = Field(default_factory=PolicyConstraints)
     reproducibility: ReproducibilityContract
 
@@ -82,11 +79,11 @@ ARTIFACTS_ROOT = Path(os.getenv("ARTIFACTS_ROOT", "/workspace/artifacts")).resol
 STATE_ROOT = ARTIFACTS_ROOT / ".runner-state"
 SHARED_SECRET = os.getenv("RUNNER_SHARED_SECRET", "runner-dev-secret")
 MAX_SECONDS = int(os.getenv("RUNNER_MAX_SECONDS", "600"))
+EXECUTOR_URL = os.getenv("RUNNER_EXECUTOR_URL", "http://runner-launcher:8020")
+EXECUTOR_TIMEOUT_SECONDS = float(os.getenv("RUNNER_EXECUTOR_TIMEOUT_SECONDS", "15"))
 RUNS: dict[str, dict] = {}
 CANCEL_EVENTS: dict[str, threading.Event] = {}
-PROCESSES: dict[str, mp.Process] = {}
 LOCK = threading.Lock()
-CHILD_STATE_QUEUE = None
 
 
 class RunCancelled(Exception):
@@ -123,10 +120,7 @@ def persist_state(key: str) -> None:
 def update_state(key: str, **values) -> None:
     with LOCK:
         RUNS[key].update(values)
-        if CHILD_STATE_QUEUE is not None:
-            CHILD_STATE_QUEUE.put(values)
-        else:
-            persist_state(key)
+        persist_state(key)
 
 
 @app.on_event("startup")
@@ -185,91 +179,6 @@ def enforce_disk_quota(run_dir: Path, template) -> int:
     if actual_bytes > limit_bytes:
         raise DiskQuotaExceeded(limit_bytes, actual_bytes)
     return actual_bytes
-
-
-def _child_entry(request: SubmitRequest, state_queue, cancel_event) -> None:
-    """Run one allowlisted template in a fresh process with child-only limits."""
-    global CHILD_STATE_QUEUE
-    if hasattr(os, "setsid"):
-        os.setsid()
-    key = str(request.run_id)
-    CHILD_STATE_QUEUE = state_queue
-    RUNS[key] = {
-        "run_id": key, "status": "queued", "metrics": {}, "artifacts": [],
-        "mlflow_run_id": None, "error": None, "started_at": None, "finished_at": None,
-        "reproducibility": request.reproducibility.model_dump(mode="json"),
-    }
-    CANCEL_EVENTS[key] = cancel_event
-    try:
-        template = validate_template_config(request.experiment_type, request.config)
-        os.environ.update(job_environment(template))
-        limits = apply_job_limits(template, MAX_SECONDS)
-        update_state(key, task_template=template.task_id, resource_limits=limits)
-        execute(request)
-    except Exception as exc:
-        update_state(key, status="failed", finished_at=utcnow(), error=f"job bootstrap failed: {exc}")
-
-
-def _persist_child_state(key: str, values: dict) -> None:
-    """Merge child updates without reopening a supervisor-owned terminal state."""
-    with LOCK:
-        current = RUNS.get(key)
-        if current is None:
-            return
-        if current.get("status") in {"succeeded", "failed", "cancelled"}:
-            return
-        current.update(values)
-        persist_state(key)
-
-
-def _terminate_process(process: mp.Process) -> None:
-    """Stop the isolated process group, including a bounded task subprocess."""
-    if not process.is_alive():
-        return
-    try:
-        if hasattr(os, "killpg") and process.pid:
-            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-        else:
-            process.terminate()
-    except (OSError, AttributeError):
-        process.terminate()
-
-
-def _monitor_job(request: SubmitRequest, process: mp.Process, state_queue) -> None:
-    key = str(request.run_id)
-    template = validate_template_config(request.experiment_type, request.config)
-    deadline = time.monotonic() + min(MAX_SECONDS, template.max_runtime_seconds)
-    while True:
-        if process.is_alive():
-            if time.monotonic() > deadline:
-                _terminate_process(process)
-                _persist_child_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
-                    "code": "job_timeout",
-                    "message": "The isolated Runner job exceeded its runtime limit.",
-                    "max_runtime_seconds": min(MAX_SECONDS, template.max_runtime_seconds),
-                }))
-                continue
-            try:
-                _persist_child_state(key, state_queue.get(timeout=0.2))
-            except queue.Empty:
-                continue
-        else:
-            try:
-                while True:
-                    _persist_child_state(key, state_queue.get_nowait())
-            except queue.Empty:
-                break
-    process.join(timeout=1)
-    with LOCK:
-        terminal = RUNS.get(key, {}).get("status") in {"succeeded", "failed", "cancelled"}
-    if not terminal:
-        update_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
-            "code": "job_process_exited",
-            "message": "The isolated Runner job process exited without a terminal result.",
-            "exit_code": process.exitcode,
-        }))
-    with LOCK:
-        PROCESSES.pop(key, None)
 
 
 def write_point_cloud(run_dir: Path, seed: int) -> tuple[Path, Path]:
@@ -491,12 +400,77 @@ def health():
             for name, template in TASK_TEMPLATES.items()
         },
         "job_isolation": {
-            "mode": "one-spawned-process-per-run",
+            "mode": "one-container-per-run",
             "docker_socket_mounted": False,
+            "executor_url": EXECUTOR_URL,
             "arbitrary_commands": False,
         },
         "reproducibility": runtime_identity(),
     }
+
+
+def _merge_worker_state(key: str) -> dict | None:
+    path = STATE_ROOT / f"{key}.json"
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, OSError, ValueError):
+        return None
+    with LOCK:
+        if key not in RUNS:
+            return state
+        if RUNS[key].get("status") in {"succeeded", "failed", "cancelled"}:
+            return RUNS[key]
+        RUNS[key].update(state)
+        return RUNS[key]
+
+
+def _monitor_container_job(request: SubmitRequest) -> None:
+    key = str(request.run_id)
+    deadline = time.monotonic() + min(MAX_SECONDS, validate_template_config(request.experiment_type, request.config).max_runtime_seconds)
+    while True:
+        state = _merge_worker_state(key)
+        if state and state.get("status") in {"succeeded", "failed", "cancelled"}:
+            with LOCK:
+                persist_state(key)
+            return
+        if time.monotonic() > deadline:
+            try:
+                with httpx.Client(timeout=EXECUTOR_TIMEOUT_SECONDS) as client:
+                    client.post(f"{EXECUTOR_URL}/v1/jobs/{key}/cancel", headers={"X-Runner-Secret": SHARED_SECRET})
+            except httpx.HTTPError:
+                pass
+            with LOCK:
+                RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps({
+                    "code": "job_timeout",
+                    "message": "The isolated per-run container exceeded its runtime limit.",
+                    "max_runtime_seconds": min(MAX_SECONDS, validate_template_config(request.experiment_type, request.config).max_runtime_seconds),
+                }))
+                persist_state(key)
+            return
+        try:
+            with httpx.Client(timeout=EXECUTOR_TIMEOUT_SECONDS) as client:
+                response = client.get(f"{EXECUTOR_URL}/v1/jobs/{key}", headers={"X-Runner-Secret": SHARED_SECRET})
+                response.raise_for_status()
+                container_state = response.json()
+            with LOCK:
+                RUNS[key]["container_status"] = container_state.get("status")
+                persist_state(key)
+            if container_state.get("status") in {"exited", "dead"}:
+                state = _merge_worker_state(key)
+                if not state or state.get("status") not in {"succeeded", "failed", "cancelled"}:
+                    with LOCK:
+                        RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps({
+                            "code": "job_container_exited_without_result",
+                            "message": "The isolated per-run container exited without a terminal result.",
+                            "exit_code": container_state.get("exit_code"),
+                        }))
+                        persist_state(key)
+                return
+        except (httpx.HTTPError, ValueError):
+            # A transient executor observation error keeps the bounded observation
+            # loop alive; timeout produces a structured failure.
+            pass
+        time.sleep(0.5)
 
 
 @app.post("/v1/runs", status_code=202)
@@ -528,28 +502,31 @@ def submit(request: SubmitRequest, x_runner_secret: str | None = Header(default=
             "mlflow_run_id": None, "error": None, "started_at": None, "finished_at": None,
             "reproducibility": request.reproducibility.model_dump(mode="json"),
         }
-        CANCEL_EVENTS[key] = mp.get_context("spawn").Event()
         persist_state(key)
-    context = mp.get_context("spawn")
-    state_queue = context.Queue()
-    process = context.Process(target=_child_entry, args=(request, state_queue, CANCEL_EVENTS[key]), daemon=True)
-    with LOCK:
-        PROCESSES[key] = process
     try:
-        process.start()
-    except Exception as exc:
+        with httpx.Client(timeout=EXECUTOR_TIMEOUT_SECONDS) as client:
+            response = client.post(
+                f"{EXECUTOR_URL}/v1/jobs",
+                json=request.model_dump(mode="json"),
+                headers={"X-Runner-Secret": SHARED_SECRET},
+            )
+            response.raise_for_status()
+            launch_result = response.json()
+    except (httpx.HTTPError, ValueError) as exc:
         with LOCK:
-            PROCESSES.pop(key, None)
             RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps({
-                "code": "job_process_start_failed",
-                "message": "The isolated Runner job process could not be started.",
+                "code": "job_container_launch_failed",
+                "message": "The fixed per-run job container could not be launched; no alternate executor was used.",
             }))
             persist_state(key)
         raise HTTPException(status_code=503, detail={
-            "code": "job_process_start_failed",
-            "message": "The isolated Runner job process could not be started.",
+            "code": "job_container_launch_failed",
+            "message": "The fixed per-run job container could not be launched; no alternate executor was used.",
         }) from exc
-    threading.Thread(target=_monitor_job, args=(request, process, state_queue), daemon=True).start()
+    with LOCK:
+        RUNS[key].update({"container_id": launch_result.get("container_id"), "isolation_mode": "one-container-per-run"})
+        persist_state(key)
+    threading.Thread(target=_monitor_container_job, args=(request,), daemon=True).start()
     return RUNS[key]
 
 
@@ -570,10 +547,24 @@ def cancel(run_id: UUID, x_runner_secret: str | None = Header(default=None)):
             raise HTTPException(status_code=404, detail="run not found")
         if RUNS[key]["status"] in {"succeeded", "failed", "cancelled"}:
             raise HTTPException(status_code=409, detail="run is already terminal")
-        CANCEL_EVENTS[key].set()
+    try:
+        with httpx.Client(timeout=EXECUTOR_TIMEOUT_SECONDS) as client:
+            response = client.post(
+                f"{EXECUTOR_URL}/v1/jobs/{key}/cancel",
+                headers={"X-Runner-Secret": SHARED_SECRET},
+            )
+            response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(status_code=409, detail={
+            "code": "job_container_cancel_rejected",
+            "message": "The per-run container rejected cancellation; inspect its terminal state.",
+        }) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=503, detail={
+            "code": "job_container_cancel_failed",
+            "message": "The per-run container could not be reached for cancellation.",
+        }) from exc
+    with LOCK:
         RUNS[key].update(status="cancelled", finished_at=utcnow())
         persist_state(key)
-        process = PROCESSES.get(key)
-    if process is not None:
-        _terminate_process(process)
         return RUNS[key]
