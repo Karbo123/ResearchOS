@@ -4,12 +4,13 @@ import json
 import os
 from dataclasses import dataclass
 from typing import Any, Literal
+from uuid import UUID
 
 from openai import OpenAI
 
 from .clarification import initial_draft
 from .model_settings import public_settings, route_settings
-from .schemas import AdaptiveClarificationResult
+from .schemas import AdaptiveClarificationResult, ExperimentPlan
 
 
 ModelTier = Literal["simple", "medium", "complex"]
@@ -215,3 +216,54 @@ def clarify_idea_with_llm(
             503,
         )
     return _openai_clarification(payload, route, current_draft, clarification_mode)
+
+
+def _experiment_plan_system_prompt() -> str:
+    return (
+        "You are the Research OS experiment planning agent. Generate one strict, evidence-backed, "
+        "topic-specific experiment plan for the supplied ProjectSpec. Use only the supplied ProjectSpec, "
+        "verified page-level evidence, and active policy snapshot. Do not invent datasets, repository code, "
+        "licenses, compute availability, budgets, numeric results, or citations. Never return a generic "
+        "classification, point-cloud, synthetic demo, or unrelated baseline plan. Every section must be "
+        "specific to the research question and should cite relevant source_evidence_ids or basis_evidence_ids "
+        "when the choice is informed by literature. Include at least one data source, baseline, metric, "
+        "ablation, statistical test, risk, and success criterion. Random seeds must satisfy the policy. "
+        "The plan is a proposal only: do not claim that an experiment ran, and do not include shell commands, "
+        "paths, arbitrary code, or runner arguments. Return only the requested strict structured object."
+    )
+
+
+def generate_experiment_plan_with_llm(payload: dict[str, Any], project_id: UUID, idea_version: int) -> ExperimentPlan:
+    """Generate a plan through the configured complex tier; every failure is surfaced."""
+    try:
+        settings = route_settings("complex")
+    except (OSError, RuntimeError, ValueError) as exc:
+        raise LLMRequestError("llm_provider_not_configured", "复杂层模型配置无效，请检查模型设置。", 503) from exc
+    if not settings["key"] or not settings["url"]:
+        raise LLMRequestError("llm_provider_not_configured", "复杂层模型的 URL 或 key 未配置。", 503)
+    route = ModelRoute(tier="complex", model=settings["model"], reasoning_effort=settings["reasoning_effort"])
+    try:
+        client = OpenAI(
+            api_key=settings["key"],
+            base_url=settings["url"],
+            timeout=float(os.getenv("MODEL_REQUEST_TIMEOUT_SECONDS", "240")),
+            max_retries=0,
+        )
+        response = client.responses.parse(
+            model=route.model,
+            reasoning={"effort": route.reasoning_effort},
+            input=[
+                {"role": "system", "content": _experiment_plan_system_prompt()},
+                {"role": "user", "content": json.dumps({
+                    "project_id": str(project_id),
+                    "idea_version": idea_version,
+                    "planning_context": payload,
+                }, ensure_ascii=False)},
+            ],
+            text_format=ExperimentPlan,
+        )
+    except Exception as exc:
+        raise LLMRequestError("llm_request_failed", "实验计划模型服务调用失败，请检查模型服务状态后重试。") from exc
+    if not response.output_parsed:
+        raise LLMRequestError("llm_invalid_response", "实验计划模型没有返回结构化结果。")
+    return response.output_parsed

@@ -9,6 +9,10 @@
 5. Secret 只通过容器环境或 secret manager 注入，不写入项目 Git、聊天或实验配置。
 6. 实验快照只从固定项目 Git 根和受控 `artifacts/` 根生成；相对路径、Git 状态、tag、manifest 和 SHA-256 均由 API 与 Runner 双重校验。
 
+## Topic-specific planning boundary
+
+The experiment-plan endpoint accepts only the current ProjectSpec, stored page-level evidence, and the active policy snapshot. The structured model response is validated again before it becomes a pending Proposal: evidence IDs must belong to the current project and include a verified quote, locator, PDF hash, source URL, and BibTeX; seeds and budget must satisfy policy and ProjectSpec constraints; and shell, path, command, and arbitrary Runner fields are not part of the plan schema. Approval does not bypass revalidation. Until a matching topic-specific Runner template exists, approved plans return a structured `topic_specific_runner_not_implemented` error. The API never converts an invalid or unsupported plan into a generic classification or point-cloud task.
+
 ## Adaptive clarification agent
 
 - 澄清 Agent 每轮只接收最新消息、当前草稿和最多 12 条最近对话，输出严格 `codex-clarification.schema.json`；它没有浏览、Shell、文件、SQL 或外部工具权限。

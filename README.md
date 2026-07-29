@@ -80,6 +80,7 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 | Project initialization | **Implemented** | UUID, Git workspace, directories, Idea v1, PostgreSQL records, checkpoints, n8n trigger. |
 | Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX; GitHub is a candidate source only. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
+| Idea-specific experiment planning | **Implemented (approval-gated)** | The API uses the current ProjectSpec, verified page-level evidence, and active policy snapshot to generate a strict topic-specific plan Proposal with datasets, baselines, metrics, ablations, statistical tests, seeds, budget, risks, and success criteria. |
 | Human supervision | **Implemented (MVP)** | Proposal/approval/audit for experiments, Idea revisions, policies, and LaTeX; pause/resume/cancel gates. |
 | Experiments | **Implemented (bounded)** | Three allowlisted Runner tasks, non-root execution, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. |
 | Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A live acceptance is now recorded; release-grade scope remains limited by the MVP boundaries described below. |
@@ -167,7 +168,7 @@ When a new-project clarification request uses `POST /api/chat/stream`, the UI sh
 4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
 6. Inspect the **Related Work** evidence coverage, gap candidates, and duplicate-research candidates. These remain candidates and do not establish novelty or scientific conclusions.
-7. Topic-specific experiment planning is not implemented. The API rejects the old generic baseline plan with a structured `409`; no unrelated experiment is created. Use explicit approved proposals only when the experiment is tied to the current Idea.
+7. In the **Experiments** page, generate an Idea-specific plan only after page-level full-text evidence exists. The API stores the strict plan as a pending Proposal bound to the current Idea version, evidence IDs, and policy snapshot. Approve it in **Approvals** before any execution; the current Runner still rejects topic-specific execution with a structured error and never substitutes a generic demo.
 8. Use the project chat for explanations, suggestions, or a proposed change. An execution request becomes a structured Proposal and waits for approval; it is never silently applied.
 9. Add durable rules such as “all experiments use at least five random seeds” through the **Policies** page. Approved rules are stored in PostgreSQL and enforced at plan generation, API submission, and Runner validation.
 10. Pause, resume, cancel, revise the Idea, or request a partial rerun from the appropriate checkpoint. A cancelled project is terminal.
@@ -204,7 +205,7 @@ Useful probes:
 | A PyTorch/CUDA CNN targeting 99% on MNIST | Infers deep learning/computer vision, identifies an engineering benchmark, uses the Terra tier by default, and asks about research scope, data authorization, compute, and evaluation constraints. |
 | The 3D active-learning idea above | Creates a project, searches papers, runs bounded experiments after approval, and emits inspectable artifacts. |
 
-The previous acceptance record is retained as historical evidence at [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json); it must not be interpreted as a current automatic experiment path. A new focused run writes its result under ignored `artifacts/acceptance/`, uses the configured Luna/Terra/Sol routes directly from the API container, verifies evidence coverage, and verifies that the unrelated experiment plan is rejected.
+The previous acceptance record is retained as historical evidence at [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json); it must not be interpreted as a current automatic experiment path. A focused plan check writes only local test output, uses the configured Luna/Terra/Sol routes directly from the API container, verifies evidence coverage, and verifies that unrelated demo execution is rejected.
 
 ## Configuration reference
 
@@ -337,7 +338,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 
 ## Roadmap and honest limitations
 
-The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): the approval-gated multi-case clarification regression, remaining chat timeout/keyboard tests, evidence-backed Related Work and novelty analysis, official repository/license verification and controlled download, Idea-specific experiment planning, general Python/C++/Conda/GPU jobs, semantic dependency invalidation, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
+The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): official repository/license verification and controlled download, topic-specific Runner templates and general Python/C++/Conda/GPU jobs, semantic dependency invalidation, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
 
 Do not use the current synthetic classification/point-cloud tasks as a scientific result. Do not cite `metadata-only` rows as if they were page-verified claims. Do not expose the local auto-login endpoint beyond the private machine.
 

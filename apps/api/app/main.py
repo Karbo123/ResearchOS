@@ -27,16 +27,21 @@ from .models import (
 )
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
 from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
-from .llm import LLMRequestError, clarify_idea_with_llm, model_catalog, router_thresholds, select_model_route
+from .llm import (
+    LLMRequestError, clarify_idea_with_llm, generate_experiment_plan_with_llm,
+    model_catalog, router_thresholds, select_model_route,
+)
 from .model_settings import load_settings, public_settings, save_settings
 from .related_work import build_related_work_analysis
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
+from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
     seeds_for_constraints,
 )
 from .schemas import (
-    ApprovalDecision, ChangeProposalRequest, ChatRequest, ChatResponse, EvidenceIngestRequest, ExperimentRequest,
+    ApprovalDecision, ChangeProposalRequest, ChatRequest, ChatResponse, EvidenceIngestRequest, ExperimentPlan,
+    ExperimentRequest,
     ModelSettingsRequest, PolicyUpdate, ProjectCreateRequest, ProjectSpec, ProjectStateRequest, ReportRequest,
     RunnerStatus, SearchRequest,
 )
@@ -560,7 +565,7 @@ def create_project(request: ProjectCreateRequest, background_tasks: BackgroundTa
         audit(session, "project.created", project.id, {"slug": slug}, "local-user")
         session.flush()
         background_tasks.add_task(trigger_research_workflow, project.id, task.id)
-        return {"project": serialize_project(project), "session_id": str(conversation.id), "next_action": "automatic literature search and evidence review queued; topic-specific experiment planning is not implemented"}
+        return {"project": serialize_project(project), "session_id": str(conversation.id), "next_action": "automatic literature search and evidence review queued; topic-specific experiment planning is available after verified evidence is stored"}
 
 
 @app.get("/api/projects")
@@ -839,12 +844,128 @@ def create_proposal(request: ChangeProposalRequest):
 @app.post("/api/projects/{project_id}/experiment-plan")
 def generate_experiment_plan(project_id: UUID):
     with session_scope() as session:
-        require_active_project(session, project_id, "experiment planning")
-        raise HTTPException(status_code=409, detail={
-            "code": "topic_specific_experiment_plan_not_implemented",
-            "message": "No topic-specific experiment planner is implemented; no unrelated baseline was created.",
-            "next_step": "Create and approve a topic-specific experiment proposal with an explicit diff and evidence-backed rationale.",
+        project = require_active_project(session, project_id, "experiment planning")
+        idea = session.scalar(
+            select(IdeaVersion)
+            .where(IdeaVersion.project_id == project_id, IdeaVersion.version == project.current_idea_version)
+        )
+        if not idea:
+            raise HTTPException(status_code=409, detail={
+                "code": "project_spec_missing",
+                "message": "当前项目没有可用于实验规划的版本化 ProjectSpec。",
+            })
+        try:
+            project_spec = ProjectSpec.model_validate(idea.spec)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail={
+                "code": "project_spec_invalid",
+                "message": "当前 ProjectSpec 无法通过严格校验，不能生成实验计划。",
+            }) from exc
+        policy_records = session.scalars(
+            select(Policy).where(Policy.project_id == project_id, Policy.active.is_(True))
+        ).all()
+        constraints = compile_policy_constraints(policy_records)
+        evidence_records = session.scalars(
+            select(Evidence).where(Evidence.project_id == project_id)
+        ).all()
+        evidence_context = [{
+            "id": str(item.id), "paper_id": str(item.paper_id) if item.paper_id else None,
+            "claim": item.claim, "quote": item.quote, "locator": item.locator,
+            "source_url": item.source_url, "metadata": item.metadata_json,
+        } for item in evidence_records if item.locator and not item.locator.lower().startswith("metadata/")]
+        active_policy_ids = {item.id for item in policy_records}
+        policy_snapshot = policy_enforcement_snapshot(session, project_id, constraints)
+        if not evidence_context:
+            raise HTTPException(status_code=409, detail={
+                "code": "verified_evidence_required",
+                "message": "当前项目没有页码级全文证据；请先完成全文证据提取，系统不会根据元数据候选猜测实验计划。",
+            })
+        planning_context = {
+            "project_spec": project_spec.model_dump(mode="json"),
+            "verified_page_evidence": evidence_context,
+            "active_policies": [{
+                "id": str(item.id), "rule": item.rule, "rationale": item.rationale,
+            } for item in policy_records],
+            "policy_enforcement": policy_snapshot,
+        }
+        current_idea_version = idea.version
+
+    try:
+        plan = generate_experiment_plan_with_llm(planning_context, project_id, current_idea_version)
+    except LLMRequestError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
+
+    try:
+        validation = validate_topic_specific_plan(
+            plan,
+            project_id=project_id,
+            idea_version=current_idea_version,
+            project_spec=project_spec,
+            evidence=evidence_context,
+            policy_constraints=constraints,
+            active_policy_ids=active_policy_ids,
+        )
+    except ExperimentPlanValidationError as exc:
+        raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+
+    plan_json = plan.model_dump(mode="json")
+    policy_records_json = [{
+        "id": str(item.id), "rule": item.rule, "rationale": item.rationale,
+    } for item in policy_records]
+    proposal_payload = {
+        "plan_type": "topic_specific",
+        "plan": plan_json,
+        "project_id": str(project_id),
+        "idea_version": current_idea_version,
+        "idea_fingerprint": validation["idea_fingerprint"],
+        "source_evidence_ids": validation["referenced_evidence_ids"],
+        "policy_fingerprint": fingerprint(policy_records_json),
+        "policy_snapshot": policy_snapshot,
+        "execution_status": "awaiting_topic_specific_runner",
+    }
+    impact = {
+        "idea_version": current_idea_version,
+        "idea_fingerprint": validation["idea_fingerprint"],
+        "evidence_ids": validation["referenced_evidence_ids"],
+        "policy_fingerprint": proposal_payload["policy_fingerprint"],
+        "policy_enforcement": policy_snapshot,
+        "execution_gate": "approval_required_and_runner_revalidation_required",
+        "unrelated_demo_fallback": "forbidden",
+    }
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "saving experiment planning proposal")
+        current_idea = session.scalar(
+            select(IdeaVersion).where(
+                IdeaVersion.project_id == project_id, IdeaVersion.version == project.current_idea_version
+            )
+        )
+        if not current_idea or current_idea.version != current_idea_version:
+            raise HTTPException(status_code=409, detail={
+                "code": "idea_changed_during_planning",
+                "message": "Idea 在计划生成期间发生变化，已丢弃旧计划，请重新生成。",
+            })
+        proposal = Proposal(
+            project_id=project_id,
+            kind="experiment_plan",
+            reason="Generate an evidence-backed experiment plan for the current Idea version",
+            summary=f"Topic-specific experiment plan for Idea v{current_idea_version}: {project_spec.idea.title}",
+            diff="Plan proposal only; no experiment has been executed.",
+            impact=impact,
+            estimated_cost_usd=plan.resource_budget.budget_usd,
+            payload=proposal_payload,
+        )
+        session.add(proposal)
+        session.flush()
+        project.current_stage = "awaiting_experiment_approval"
+        audit(session, "experiment_plan.generated", project_id, {
+            "proposal_id": str(proposal.id), "idea_version": current_idea_version,
+            "evidence_ids": validation["referenced_evidence_ids"],
+            "policy_fingerprint": proposal_payload["policy_fingerprint"],
         })
+        return {
+            "proposal_id": str(proposal.id), "status": proposal.status,
+            "plan": plan_json, "impact": impact,
+        }
 
 
 @app.post("/api/projects/{project_id}/compile-plan")
@@ -909,6 +1030,64 @@ async def submit_experiment(request: ExperimentRequest):
         if not proposal or proposal.project_id != request.project_id: raise HTTPException(404, "proposal not found")
         if proposal.status != "approved": raise HTTPException(409, "approved proposal required")
         if proposal.kind not in {"experiment_plan", "config_change"}: raise HTTPException(409, "proposal kind cannot launch an experiment")
+        approved_payload = proposal.payload or {}
+        if approved_payload.get("plan_type") == "topic_specific":
+            try:
+                approved_plan = ExperimentPlan.model_validate(approved_payload.get("plan"))
+            except ValueError as exc:
+                raise HTTPException(status_code=409, detail={
+                    "code": "approved_experiment_plan_invalid",
+                    "message": "已批准的主题专属计划不符合当前严格契约，不能执行。",
+                }) from exc
+            current_idea = session.scalar(
+                select(IdeaVersion).where(
+                    IdeaVersion.project_id == project.id, IdeaVersion.version == project.current_idea_version
+                )
+            )
+            active_policies = session.scalars(
+                select(Policy).where(Policy.project_id == project.id, Policy.active.is_(True))
+            ).all()
+            current_evidence = session.scalars(select(Evidence).where(Evidence.project_id == project.id)).all()
+            current_evidence_context = [{
+                "id": str(item.id), "paper_id": str(item.paper_id) if item.paper_id else None,
+                "claim": item.claim, "quote": item.quote, "locator": item.locator,
+                "source_url": item.source_url, "metadata": item.metadata_json,
+            } for item in current_evidence]
+            current_constraints = compile_policy_constraints(active_policies)
+            current_policy_records = [{
+                "id": str(item.id), "rule": item.rule, "rationale": item.rationale,
+            } for item in active_policies]
+            current_policy_fingerprint = fingerprint(current_policy_records)
+            try:
+                current_spec = ProjectSpec.model_validate(current_idea.spec) if current_idea else None
+                current_validation = validate_topic_specific_plan(
+                    approved_plan,
+                    project_id=project.id,
+                    idea_version=project.current_idea_version,
+                    project_spec=current_spec,
+                    evidence=current_evidence_context,
+                    policy_constraints=current_constraints,
+                    active_policy_ids={item.id for item in active_policies},
+                ) if current_spec else None
+            except (ValueError, ExperimentPlanValidationError) as exc:
+                details = exc.as_dict() if isinstance(exc, ExperimentPlanValidationError) else {
+                    "code": "current_project_spec_invalid", "message": "当前 ProjectSpec 无法重新校验主题专属计划。",
+                }
+                raise HTTPException(status_code=409, detail=details) from exc
+            if current_validation and (
+                current_validation["idea_fingerprint"] != approved_payload.get("idea_fingerprint")
+                or current_validation["referenced_evidence_ids"] != sorted(approved_payload.get("source_evidence_ids", []))
+                or current_policy_fingerprint != approved_payload.get("policy_fingerprint")
+            ):
+                raise HTTPException(status_code=409, detail={
+                    "code": "experiment_plan_stale",
+                    "message": "批准的实验计划与当前 Idea、证据或策略快照不一致，不能执行。",
+                })
+            raise HTTPException(status_code=409, detail={
+                "code": "topic_specific_runner_not_implemented",
+                "message": "当前 Runner 尚未提供该主题专属计划的执行模板；系统不会改用无关 demo 或其他 fallback。",
+                "plan_status": "approved_and_revalidated",
+            })
         constraints = load_policy_constraints(session, request.project_id)
         violations = experiment_policy_violations(
             constraints,
@@ -924,7 +1103,6 @@ async def submit_experiment(request: ExperimentRequest):
                 "violations": violations,
                 "policy_enforcement": constraints.public_dict(),
             })
-        approved_payload = proposal.payload or {}
         requested_payload = {
             "experiment_type": request.experiment_type,
             "config": request.config,

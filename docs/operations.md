@@ -142,7 +142,7 @@ python scripts/acceptance_test.py
 - 项目代码与 Idea：`projects/<slug>/.git`。
 - 业务/n8n/MLflow 元数据：PostgreSQL volume 或 `pg_dump`。
 - MLflow 大文件：MinIO volume；Runner 文件：`artifacts/`。
-- 恢复后启动服务，先执行容器静态检查和证据/项目状态核验；当前不会自动运行与用户 Idea 无关的合成实验。任何主题专属实验都必须在 `P0-PLAN-006` 完成后，经过独立 Proposal 和明确批准再执行。
+- 恢复后启动服务，先执行容器静态检查和证据/项目状态核验；当前不会自动运行与用户 Idea 无关的合成实验。主题专属计划会先根据当前 ProjectSpec、页码级证据和策略生成 pending Proposal，必须明确批准；批准后的执行还会再次校验 Idea/证据/策略，当前 Runner 尚无主题模板时直接返回结构化错误，不会使用 demo fallback。
 
 数据库备份可能包含密码哈希或凭据密文，模型请求日志和 `.env` 也属于敏感本地文件，不应提交或外发。
 
@@ -191,4 +191,4 @@ python scripts/check_docs_sync.py
 
 ## 验收证据
 
-`python scripts/acceptance_test.py` 使用配置的容器直连 Luna/Terra/Sol 路由（复杂路由为 `gpt-5.6-sol/high`），并验证文献证据覆盖、项目状态闸门和通用实验计划拒绝。它不会运行与当前 Idea 无关的基线实验；JSON 结果不记录认证 token。当前仍不能把本地 MVP 验收表述为生产级科研结论或完整自动化能力。
+`docker compose exec -T api pytest -q` 覆盖主题专属计划的严格结构、全文证据引用、Idea/策略/预算校验和无关 demo 拒绝；复杂路由使用配置的 `gpt-5.6-sol/high`。它不会运行真实模型、其他 Idea 或与当前 Idea 无关的基线实验；测试结果不记录认证 token。当前 Runner 尚无主题专属执行模板，不能把批准计划表述为已执行实验或科学结论。

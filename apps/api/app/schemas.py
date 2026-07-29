@@ -220,6 +220,109 @@ class ExperimentRequest(BaseModel):
         return self
 
 
+class ExperimentPlanDataSource(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=2, max_length=300)
+    purpose: str = Field(min_length=5, max_length=2000)
+    access_and_provenance: str = Field(min_length=5, max_length=2000)
+    split_and_preprocessing: str = Field(min_length=5, max_length=2000)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlanBaseline(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=2, max_length=300)
+    rationale: str = Field(min_length=5, max_length=2000)
+    implementation_scope: str = Field(min_length=5, max_length=2000)
+    comparison: str = Field(min_length=5, max_length=2000)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlanMetric(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=2, max_length=160)
+    definition: str = Field(min_length=5, max_length=2000)
+    primary: bool = False
+    aggregation: str = Field(min_length=3, max_length=500)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlanAblation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    component: str = Field(min_length=2, max_length=300)
+    removed_or_changed: str = Field(min_length=5, max_length=2000)
+    rationale: str = Field(min_length=5, max_length=2000)
+    expected_signal: str = Field(min_length=5, max_length=2000)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlanStatisticalTest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=2, max_length=200)
+    comparison: str = Field(min_length=5, max_length=1000)
+    null_hypothesis: str = Field(min_length=5, max_length=1000)
+    alpha: float = Field(default=0.05, gt=0, lt=1)
+    multiple_comparison_correction: str = Field(min_length=2, max_length=300)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlanResourceBudget(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    compute_environment: str = Field(min_length=3, max_length=1000)
+    max_runtime_hours: float = Field(gt=0, le=100_000)
+    max_gpu_hours: float = Field(default=0, ge=0, le=100_000)
+    memory_gb: float = Field(gt=0, le=1_000_000)
+    budget_usd: float = Field(default=0, ge=0, le=1_000_000)
+    assumptions: list[str] = Field(default_factory=list, max_length=20)
+
+
+class ExperimentPlanRisk(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    risk: str = Field(min_length=3, max_length=500)
+    mitigation: str = Field(min_length=5, max_length=2000)
+    detection: str = Field(min_length=5, max_length=1000)
+    stop_condition: str = Field(min_length=5, max_length=1000)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlanSuccessCriterion(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    criterion: str = Field(min_length=5, max_length=1000)
+    metric: str = Field(min_length=2, max_length=160)
+    target_or_decision_rule: str = Field(min_length=5, max_length=1000)
+    basis_evidence_ids: list[UUID] = Field(default_factory=list, max_length=30)
+
+
+class ExperimentPlan(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["1.0"] = "1.0"
+    plan_type: Literal["topic_specific"] = "topic_specific"
+    project_id: UUID
+    idea_version: int = Field(ge=1)
+    research_question: str = Field(min_length=10, max_length=4000)
+    objective: str = Field(min_length=10, max_length=4000)
+    source_evidence_ids: list[UUID] = Field(min_length=1, max_length=100)
+    policy_ids: list[UUID] = Field(default_factory=list, max_length=100)
+    data_sources: list[ExperimentPlanDataSource] = Field(min_length=1, max_length=30)
+    baselines: list[ExperimentPlanBaseline] = Field(min_length=1, max_length=30)
+    metrics: list[ExperimentPlanMetric] = Field(min_length=1, max_length=30)
+    ablations: list[ExperimentPlanAblation] = Field(min_length=1, max_length=30)
+    statistical_tests: list[ExperimentPlanStatisticalTest] = Field(min_length=1, max_length=20)
+    random_seeds: list[int] = Field(min_length=1, max_length=10)
+    resource_budget: ExperimentPlanResourceBudget
+    risks: list[ExperimentPlanRisk] = Field(min_length=1, max_length=30)
+    success_criteria: list[ExperimentPlanSuccessCriterion] = Field(min_length=1, max_length=30)
+
+
 class RunnerSubmitRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

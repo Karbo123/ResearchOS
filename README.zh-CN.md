@@ -80,6 +80,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | 项目初始化 | **已实现** | UUID、Git 工作区、目录、Idea v1、PostgreSQL 状态、检查点和 n8n 触发。 |
 | 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub 仅为候选来源。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
+| Idea 专属实验规划 | **已实现（需审批）** | API 使用当前 ProjectSpec、页码级全文证据和生效策略快照，生成包含数据源、基线、指标、消融、统计检验、种子、预算、风险和成功标准的严格主题专属计划 Proposal。 |
 | 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
 | 实验执行 | **已实现（有限范围）** | 三个 Runner 白名单任务，非 root、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
@@ -168,7 +169,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查 **Related Work** 的证据覆盖、研究空白候选和重复研究候选。它们都只是候选，不证明新颖性或科学结论。
-7. 当前未实现 Idea 专属实验规划。旧的通用基线计划会返回结构化 `409`，不会创建无关实验；只有与当前 Idea 绑定并经过批准的显式 Proposal 才能执行。
+7. 在**实验**页生成主题专属计划前，必须先有页码级全文证据。API 会把严格计划保存为待审批 Proposal，并绑定当前 Idea 版本、证据 ID 和策略快照。在**审批**页批准后才允许进入执行闸门；当前 Runner 仍会对主题专属执行返回结构化错误，绝不会替换成通用 demo。
 8. 在项目对话中要求解释、建议或提出变更。执行型请求会转换为结构化 Proposal 并等待批准，不会静默执行。
 9. 在**策略**页添加“所有实验至少使用五个随机种子”等长期规则。批准后的策略保存在 PostgreSQL，并在计划、API 提交和 Runner 三处强制执行。
 10. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。已取消项目是终止状态，不能恢复。
@@ -336,6 +337,8 @@ python scripts/acceptance_test.py
 | Windows 文件权限看起来异常 | API 拥有可写项目/产物挂载；Runner 以只读方式挂载项目，只能写受控产物。 |
 
 ## 路线图与真实边界
+
+主题专属实验规划已经实现为证据绑定、策略校验和审批门控的 Proposal；尚未实现的是批准计划对应的主题 Runner 执行模板。系统不会回退到无关的分类或点云 demo。
 
 最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、官方仓库和许可证验证及受控下载、Idea 专属实验规划、通用 Python/C++/Conda/GPU、语义级依赖失效、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 

@@ -41,7 +41,7 @@
 
 - 模型调用改为 API 容器直连三个独立配置的 OpenAI-compatible URL；Windows Codex Bridge 不再是运行依赖，也不读取 Codex 配置目录。
 - LLM 调用失败直接返回结构化 API 错误；禁止本地降级、provider 切换和规则回复。
-- 原有通用分类/点云演示实验计划不属于用户 Idea，已移除自动生成路径。主题专属实验规划仍未实现，接口返回 `topic_specific_experiment_plan_not_implemented`。
+- 原有通用分类/点云演示实验计划不属于用户 Idea，已移除自动生成路径。主题专属规划现已实现为严格的证据绑定 Proposal：生成前要求当前 ProjectSpec 和页码级全文证据，计划包含数据源、基线、指标、消融、统计检验、随机种子、资源预算、风险和成功标准；审批后执行会再次校验当前 Idea/证据/策略。当前 Runner 尚无主题专属执行模板，返回 `topic_specific_runner_not_implemented`，绝不回退到无关 demo。
 - Windows 安装器已同步为只启动 Docker Compose，不再打包或启动 Bridge；前端不再显示会请求通用实验计划的操作按钮。
 - Related Work 当前只生成证据覆盖、研究空白候选和重复研究候选；metadata-only 文献不能进入事实性证据，所有候选均要求人工复核。
 
@@ -59,7 +59,7 @@
 | 官方代码、数据集、模型与主页定位 | 部分实现 | GitHub 标题搜索只生成候选；没有作者/论文主页交叉验证，当前 `verified_official=true` 记录为 0。 |
 | 代码许可审查与受控下载 | 未实现 | 有严格工具契约和数据库字段，但没有可执行的验证、审批后 clone/download、审查和归档流程。 |
 | 文献综述、研究空白、新颖性判断 | 部分实现 | 端点会明确拒绝仅凭元数据作强结论；尚不能生成全文证据支撑的 Related Work 或可靠研究空白。 |
-| Idea 专属实验与统计计划 | 部分实现 | 生成固定合成分类演示计划；不是按 Idea 自动选择真实数据集、基线、消融、统计检验和评价指标。 |
+| Idea 专属实验与统计计划 | 部分实现 | API 已按当前 ProjectSpec、页码级全文证据和策略生成绑定 Idea 版本的结构化计划 Proposal，并经过审批/二次校验；主题专属 Runner 执行模板尚未完成，不会使用固定合成 demo。 |
 | Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、配额、超时、取消、日志和 LaTeX 已实现；没有通用 Python/C++/Conda/GPU 作业。 |
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 部分实现 | Python 计算均值、标准差、混淆矩阵并写 MLflow；没有面向任意日志/CSV/多模态结果的自动诊断闭环。 |
@@ -88,4 +88,4 @@
 
 ## 达到原始目标仍需完成
 
-优先级最高的是继续基于现有 PDF 页码证据生成可逐句追踪的 Related Work、官方代码验证与许可后下载、Idea 专属实验规划和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。完成这些之前，系统应继续标记为 MVP。
+优先级最高的是官方代码验证与许可后下载、主题专属 Runner 执行模板和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。主题专属计划本身已完成生成与审批门控，但在 Runner 模板完成前不得声称实验已执行。完成其余能力之前，系统应继续标记为 MVP。

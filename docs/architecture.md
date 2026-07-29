@@ -50,6 +50,10 @@ Idea 修订创建新版本并进入 `impact_review`。当前 MVP 保守地将项
 
 项目策略先生成 `config_change` Proposal，明确批准后才写入 `policies`。策略编译器识别中英文随机种子下限、引用 DOI/来源与原文证据要求，以及高成本/对外操作审批要求。实验计划按当前规则生成，`POST /api/experiments` 重新读取数据库策略，Runner 再校验受限策略快照；策略在批准后变化时，旧 Proposal 不能绕过新规则。无法识别的自由文本规则会保留并显示为人工规则，不会虚假标记为自动执行。
 
+## Idea-specific experiment planning
+
+`POST /api/projects/{project_id}/experiment-plan` reads the current `ProjectSpec`, verified page-level `Evidence`, and active policy snapshot, then calls only the configured complex model tier for a strict `ExperimentPlan`. The API validates every referenced evidence ID, the current Idea version and fingerprints, topic relevance, policy seed minimum, and confirmed resource budget before storing a pending `experiment_plan` Proposal. The payload contains no shell command, path, arbitrary runner argument, or generic demo task. Approval is mandatory; submission revalidates the stored plan against current state and returns a structured `topic_specific_runner_not_implemented` error until a matching Runner template exists. It never substitutes `demo_classification` or `point_cloud_demo` as a fallback.
+
 ## 实验可复现快照
 
 批准的实验进入 Runner 前，API 在固定项目 Git 工作区执行一次可复现快照门禁：工作树必须干净，Git 索引与状态中的文件必须通过扩展名、目录和 10 MB 单文件大小门禁，然后从当前 commit 创建不可变的 `run/<run_id>` annotated tag。`git archive` 生成的 `source.tar` 不写回项目仓库，而是保存到 `artifacts/reproducibility/<project_id>/<run_id>/`。
