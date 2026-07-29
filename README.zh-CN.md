@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-6 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-7 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -171,6 +171,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 
 1. 点击**新研究项目**并输入 Idea。**全自动模式**默认开启、尽量减少打断；希望规格生成前更全面地了解需求时，关闭开关进入**详细模式**。
 2. 检查 AI 的理解、推断领域、假设和成组追问；纠正错误推断，两种模式都不会逐字段执行固定问卷。
+   Enter 用于换行；Ctrl+Enter 或 Cmd+Enter 提交。请求等待期间，输入框和模式开关会锁定；超时或连接错误会显示在对话中，并释放控件以便重试。
 3. 审核生成的 `ProjectSpec`。字段缺失、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
 4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
@@ -317,6 +318,9 @@ python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_
 
 # 容器测试
 docker compose exec -T api pytest -q
+
+# 前端聊天状态回归（不调用模型/API）
+node --test scripts/test_chat_ux.mjs
 
 # 完整端到端验收（调用真实模型/API）
 python scripts/acceptance_test.py

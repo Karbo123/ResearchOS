@@ -133,6 +133,7 @@ docker compose config --quiet
 python scripts/check_idea_case_sources.py
 python scripts/check_docs_sync.py
 python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
+node --test scripts/test_chat_ux.mjs
 docker compose exec -T api pytest -q
 python scripts/acceptance_test.py
 ```

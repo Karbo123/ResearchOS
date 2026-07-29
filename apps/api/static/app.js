@@ -1,9 +1,17 @@
+const chatUX = window.ResearchChatUX;
+const CHAT_REQUEST_TIMEOUT_MS = 300000;
+const chatGate = chatUX.createBusyGate();
+const projectChatGate = chatUX.createBusyGate();
 const state = { sessionId: null, projectId: null, project: null, queuedFiles: [], activeTab: "overview", chatBusy: false, projectChatBusy: false, clarificationMode: "automatic" };
 const $ = (id) => document.getElementById(id);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
 async function api(path, options = {}) {
-  const response = await fetch(path, { headers: {"Content-Type": "application/json", ...(options.headers || {})}, ...options });
+  const {timeoutMs = CHAT_REQUEST_TIMEOUT_MS, headers: optionHeaders, ...fetchOptions} = options;
+  const response = await chatUX.fetchWithTimeout(window.fetch.bind(window), path, {
+    ...fetchOptions,
+    headers: {"Content-Type": "application/json", ...(optionHeaders || {})},
+  }, timeoutMs);
   if (!response.ok) { const body = await response.json().catch(() => ({})); const detail=body.detail; throw new Error(typeof detail === "string" ? detail : detail ? JSON.stringify(detail) : `${response.status} ${response.statusText}`); }
   return response.json();
 }
@@ -69,7 +77,7 @@ function renderSpec(spec) {
 }
 
 async function sendChat(event) {
-  event.preventDefault(); const input = $("chatInput"); const message = input.value.trim(); if (!message || state.chatBusy) return;
+  event.preventDefault(); const input = $("chatInput"); const message = input.value.trim(); if (!message || state.chatBusy || !chatGate.tryStart()) return;
   addMessage($("messages"), "user", message); input.value = "";
   state.chatBusy = true;
   const stopProgress = startAiProgress({progressId:"aiProgress", formId:"chatForm", elapsedId:"aiProgressElapsed", stageId:"aiProgressStage"});
@@ -79,8 +87,8 @@ async function sendChat(event) {
     const routeMeta = modelMeta(result);
     state.sessionId = result.session_id; addMessage($("messages"), "assistant", result.reply, `${clarificationMode === "automatic" ? "全自动模式" : "详细模式"}${routeMeta ? ` · ${routeMeta}` : ""}`); renderSpec(result.spec);
     if (state.queuedFiles.length) await uploadQueuedFiles();
-  } catch (error) { addMessage($("messages"), "assistant", `请求失败：${error.message}`); toast(error.message); }
-  finally { stopProgress(); state.chatBusy = false; }
+  } catch (error) { const message = chatUX.formatRequestError(error); addMessage($("messages"), "assistant", `请求失败：${message}`); toast(message); }
+  finally { stopProgress(); chatGate.finish(); state.chatBusy = false; }
 }
 async function uploadQueuedFiles() {
   for (const file of state.queuedFiles) {
@@ -157,9 +165,20 @@ async function changeProjectState(action) { if(action==="cancel"&&!window.confir
 async function addPolicy(event) { event.preventDefault(); const input=$("policyInput"); try{const r=await api("/api/policies",{method:"POST",body:JSON.stringify({project_id:state.projectId,rule:input.value})});await refreshProject();switchTab("approvals");toast(`策略提案 ${r.proposal_id.slice(0,8)} 待审批`);}catch(e){toast(e.message);} }
 async function generateReport(period) { try { const r=await api("/api/reports",{method:"POST",body:JSON.stringify({project_id:state.projectId,period})}); $("reportOutput").className="report"; $("reportOutput").textContent=r.content; }catch(e){toast(e.message);} }
 function switchTab(name) { state.activeTab=name; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab===name)); document.querySelectorAll(".tab-panel").forEach(x=>x.classList.add("hidden")); $(`tab-${name}`).classList.remove("hidden"); }
-async function sendProjectChat(event){event.preventDefault();const input=$("projectChatInput"),message=input.value.trim();if(!message||state.projectChatBusy)return;addMessage($("projectMessages"),"user",message);input.value="";state.projectChatBusy=true;const stopProgress=startAiProgress({progressId:"projectAiProgress",formId:"projectChatForm",elapsedId:"projectAiProgressElapsed",stageId:"projectAiProgressStage",project:true});try{const r=await api("/api/chat",{method:"POST",body:JSON.stringify({session_id:state.sessionId,project_id:state.projectId,message})});addMessage($("projectMessages"),"assistant",r.reply,modelMeta(r));if(r.action_required){await refreshProject();switchTab("approvals");}}catch(e){addMessage($("projectMessages"),"assistant",`请求失败：${e.message}`);}finally{stopProgress();state.projectChatBusy=false;}}
+async function sendProjectChat(event){event.preventDefault();const input=$("projectChatInput"),message=input.value.trim();if(!message||state.projectChatBusy||!projectChatGate.tryStart())return;addMessage($("projectMessages"),"user",message);input.value="";state.projectChatBusy=true;const stopProgress=startAiProgress({progressId:"projectAiProgress",formId:"projectChatForm",elapsedId:"projectAiProgressElapsed",stageId:"projectAiProgressStage",project:true});try{const r=await api("/api/chat",{method:"POST",body:JSON.stringify({session_id:state.sessionId,project_id:state.projectId,message})});addMessage($("projectMessages"),"assistant",r.reply,modelMeta(r));if(r.action_required){await refreshProject();switchTab("approvals");}}catch(e){const message=chatUX.formatRequestError(e);addMessage($("projectMessages"),"assistant",`请求失败：${message}`);toast(message);}finally{stopProgress();projectChatGate.finish();state.projectChatBusy=false;}}
+
+function bindComposerKeyboard(formId, inputId) {
+  const input = $(inputId);
+  const form = $(formId);
+  input.addEventListener("keydown", event => {
+    if (!chatUX.shouldSubmitOnKeyboard(event)) return;
+    event.preventDefault();
+    if (typeof form.requestSubmit === "function") form.requestSubmit();
+  });
+}
 
 $("chatForm").addEventListener("submit", sendChat); $("confirmProject").addEventListener("click", confirmProject); $("newProject").addEventListener("click",newProject); $("refresh").addEventListener("click",refreshProject); $("projectChatForm").addEventListener("submit",sendProjectChat);
+bindComposerKeyboard("chatForm", "chatInput"); bindComposerKeyboard("projectChatForm", "projectChatInput");
 $("fileInput").addEventListener("change", e => { state.queuedFiles=[...e.target.files]; $("fileQueue").textContent=state.queuedFiles.map(f=>f.name).join(" · "); });
 $("clarificationMode").addEventListener("change", () => syncClarificationMode());
 $("tabs").querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));

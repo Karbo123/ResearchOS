@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-6 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-7 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -173,6 +173,7 @@ The Research OS sidebar opens n8n through `/api/n8n/open`. The API logs into the
 
 1. Click **New research project** and enter your Idea. **Automatic mode** is on by default and minimizes interruptions; turn the toggle off for **Detailed mode** when you want broader questions before a specification is prepared.
 2. Review the AI's interpretation, inferred domain, assumptions, and grouped questions. Correct bad inferences; neither mode uses a field-by-field questionnaire.
+   Use Enter for line breaks; Ctrl+Enter or Cmd+Enter submits. While a request is pending, the composer and mode switch are locked; timeout or connection errors are shown in the conversation and release the controls for retry.
 3. Review the generated `ProjectSpec`. Missing fields, unclear ownership, or obvious resource risks keep the project in clarification and prevent creation.
 4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
@@ -320,6 +321,9 @@ python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_
 
 # Container tests
 docker compose exec -T api pytest -q
+
+# Frontend chat state regression (no model/API calls)
+node --test scripts/test_chat_ux.mjs
 
 # Full end-to-end acceptance (real model/API calls)
 python scripts/acceptance_test.py

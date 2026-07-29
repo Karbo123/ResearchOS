@@ -55,7 +55,7 @@
           </div>
           <form id="chatForm" class="composer">
             <label class="attach-btn" title="添加材料"><i data-lucide="paperclip"></i><input id="fileInput" type="file" multiple></label>
-            <textarea id="chatInput" rows="2" placeholder="输入研究 Idea 或回答澄清问题" required></textarea>
+            <textarea id="chatInput" rows="2" placeholder="输入研究 Idea 或回答澄清问题" aria-keyshortcuts="Control+Enter Meta+Enter" required></textarea>
             <button class="send-btn" title="发送"><i data-lucide="send"></i></button>
           </form>
           <div id="fileQueue" class="file-queue"></div>
@@ -97,7 +97,7 @@
               <div id="projectAiProgressStage" class="ai-progress-stage">正在识别解释、建议或变更意图…</div>
             </div>
             <form id="projectChatForm" class="composer compact">
-              <textarea id="projectChatInput" rows="2" placeholder="解释、建议或明确提出变更" required></textarea>
+              <textarea id="projectChatInput" rows="2" placeholder="解释、建议或明确提出变更" aria-keyshortcuts="Control+Enter Meta+Enter" required></textarea>
               <button class="send-btn" title="发送"><i data-lucide="send"></i></button>
             </form>
           </aside>
@@ -106,6 +106,7 @@
     </main>
   </div>
   <div id="toast" class="toast hidden"></div>
+  <script src="/chat-ux.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>
