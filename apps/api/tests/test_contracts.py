@@ -37,6 +37,24 @@ def test_clarification_produces_valid_project_spec():
     assert spec.idea.target_venues == facts["target_venues"].split("; ")
 
 
+def test_unconfirmed_data_or_compute_placeholders_block_ready_spec():
+    case = load_idea_case("active-learning-3d")
+    draft = initial_draft(case.initial_message)
+    facts = case.confirmed_facts
+    draft.update({
+        "research_question": facts["research_question"],
+        "domain": facts["domain"],
+        "hypotheses": facts["hypotheses"].split("; "),
+        "expected_contributions": facts["expected_contributions"].split("; "),
+        "available_data": "Dataset access is not confirmed.",
+        "success_criteria": [facts["success_criteria"]],
+        "ethics_and_compliance": facts["ethics_and_compliance"],
+        "constraints": {"compute": "GPU to be confirmed", "data_access": "not provided"},
+    })
+    gaps = required_spec_gaps(draft)
+    assert {"available_data", "constraints.compute", "constraints.data_access"}.issubset(gaps)
+
+
 def test_short_idea_requires_a_research_question():
     case = load_idea_case("insufficient-ai")
     draft = initial_draft(case.initial_message)
@@ -67,6 +85,24 @@ def test_model_failure_is_an_error_and_never_switches_provider(monkeypatch):
     assert error.value.status_code == 504
 
 
+def test_bridge_timeout_response_remains_a_structured_timeout(monkeypatch):
+    case = load_idea_case("mnist-cnn")
+    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "codex_bridge")
+    monkeypatch.setenv("CODEX_BRIDGE_URL", "http://bridge.invalid")
+
+    class BridgeTimeout:
+        status_code = 504
+
+        def raise_for_status(self):
+            pytest.fail("bridge 504 must be mapped before raise_for_status")
+
+    monkeypatch.setattr("app.llm.httpx.post", lambda *args, **kwargs: BridgeTimeout())
+    with pytest.raises(LLMRequestError) as error:
+        clarify_idea_with_llm(case.initial_message, clarification_mode=case.clarification_mode)
+    assert error.value.code == "llm_timeout"
+    assert error.value.status_code == 504
+
+
 def test_model_provider_must_be_explicit(monkeypatch):
     monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "")
     with pytest.raises(LLMRequestError) as error:
@@ -77,8 +113,10 @@ def test_model_provider_must_be_explicit(monkeypatch):
 
 def test_router_uses_simple_and_complex_cost_tiers():
     simple_case = load_idea_case("insufficient-ai")
+    active_learning_case = load_idea_case("active-learning-3d")
     complex_case = load_idea_case("complex-medical-detailed")
     assert select_model_route(simple_case.initial_message, initial_draft(simple_case.initial_message)).tier == simple_case.expect["model_tier"]
+    assert select_model_route(active_learning_case.initial_message, initial_draft(active_learning_case.initial_message)).tier == active_learning_case.expect["model_tier"]
     assert select_model_route(complex_case.initial_message, initial_draft(complex_case.initial_message)).tier == complex_case.expect["model_tier"]
 
 

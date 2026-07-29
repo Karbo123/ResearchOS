@@ -64,6 +64,12 @@ MODEL_CATALOG = {
 }
 
 
+def _codex_execution_timeout_seconds() -> int:
+    configured = max(1, int(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")))
+    # Leave the API client a small window to receive this Bridge's structured 504.
+    return max(1, configured - 5)
+
+
 def _json_response(handler: BaseHTTPRequestHandler, status: int, body: dict[str, Any]) -> None:
     payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
     handler.send_response(status)
@@ -137,7 +143,7 @@ def _run_codex(input_data: dict[str, Any], prompt: str, schema_path: Path, model
             encoding="utf-8",
             errors="replace",
             env=os.environ.copy(),
-            timeout=int(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
+            timeout=_codex_execution_timeout_seconds(),
             check=False,
         )
         if completed.returncode != 0:

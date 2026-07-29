@@ -83,7 +83,8 @@ def select_model_route(message: str, draft: dict[str, Any] | None, attachment_co
     complex_terms = (
         "多模态", "分布式", "联邦学习", "医疗", "患者", "个人数据", "人类受试者",
         "human subject", "personal data", "multi-agent",
-        "多智能体", "三维重建", "point cloud", "强化学习", "robotics",
+        "多智能体", "三维重建", "point cloud", "point-cloud", "active learning", "few-shot", "labeling budget",
+        "强化学习", "robotics",
     )
     score += min(sum(term in text for term in medium_terms), 4)
     score += 2 * min(sum(term in text for term in complex_terms), 4)
@@ -190,6 +191,8 @@ def _bridge_clarification(
             headers={"X-Codex-Bridge-Secret": os.getenv("CODEX_BRIDGE_SECRET", "")},
             timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
         )
+        if response.status_code == 504:
+            raise LLMRequestError("llm_timeout", "模型服务调用超时，请检查模型服务状态后重试。", 504)
         response.raise_for_status()
         result = AdaptiveClarificationResult.model_validate(response.json()["result"])
     except httpx.TimeoutException as exc:

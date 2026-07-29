@@ -4,6 +4,19 @@ from typing import Any
 
 from .schemas import ProjectSpec
 
+
+UNCONFIRMED_MARKERS = (
+    "尚未", "未确认", "未知", "待确认", "未提供",
+    "unknown", "not confirmed", "not provided", "to be confirmed",
+)
+
+
+def _is_unconfirmed(value: Any) -> bool:
+    if not value:
+        return True
+    text = str(value).lower()
+    return any(marker in text for marker in UNCONFIRMED_MARKERS)
+
 def initial_draft(message: str) -> dict[str, Any]:
     clean = message.strip()
     title = clean.splitlines()[0][:120]
@@ -32,11 +45,12 @@ def required_spec_gaps(draft: dict[str, Any]) -> list[str]:
     if len(str(draft.get("research_question") or "").strip()) < 10:
         gaps.append("research_question")
     for field in ("domain", "hypotheses", "expected_contributions", "available_data", "success_criteria", "ethics_and_compliance"):
-        if not draft.get(field):
+        if _is_unconfirmed(draft.get(field)):
             gaps.append(field)
     constraints = draft.get("constraints") or {}
-    if not constraints.get("compute"):
-        gaps.append("constraints.compute")
+    for field in ("compute", "data_access"):
+        if _is_unconfirmed(constraints.get(field)):
+            gaps.append(f"constraints.{field}")
     return gaps
 
 

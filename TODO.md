@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，P1-STREAM-038 已完成并通过本地验证）
+最后更新：2026-07-30（Asia/Shanghai，P0-CLARIFY-027 已完成并通过最终验证）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：无；下一项高优先级待处理为 `P0-CLARIFY-027` 的真实多用例回归。
+- 当前进行中：无；下一项高优先级待处理为 `P0-REGRESSION-032` 的完整端到端回归。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260729-012750.json`。
 - 最新测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`（验收结束后为 cancelled）。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -18,7 +18,6 @@
 
 下列事项均为**待处理**，本次只记录，不授权实现、运行完整验收或产生额外模型/API 成本：
 
-- `P0-CLARIFY-027`：自适应澄清核心路径与三级路由已写入代码，仍需完成全公开用例回归、异常/超时/并发一致性检查，并确认所有模式下 ProjectSpec 收敛没有回归。
 - `P0-REGRESSION-032`：针对最新自适应澄清、模式 Toggle、Bridge 严格输入和消息 metadata 的完整端到端验收；必须只读取 `tests/idea-cases/`。
 - `P2-INSTALLER-029`：已有 Windows 在线引导安装器源码；仍缺正式 EXE 生成、代码签名、Docker Desktop 许可复核、干净 Windows VM 安装/升级/卸载验收和发布校验和。
 - 其余原始需求缺口继续按下面 P0/P1/P2 条目管理；不得因为已有 Schema、演示任务或文档描述而视为完成。
@@ -43,14 +42,14 @@
   - 额度约束：真实模型当前只允许调用 `tests/idea-cases/mnist-cnn.json` 一次；其他公开用例暂不发送给模型，完整 `scripts/acceptance_test.py` 暂不运行。
   - 验证结果：`python scripts/check_idea_case_sources.py` 返回 `IDEA_CASES_OK=4`；所有 JSON 解析通过；容器测试 `17 passed`；唯一真实调用直接读取 `mnist-cnn.json`，未读取或发送其他 Idea 给模型。
 
-- [ ] `P0-CLARIFY-027` 完成自适应 AI 对话与三级模型路由的剩余回归和收敛验证。
+- [x] `P0-CLARIFY-027` 完成自适应 AI 对话与三级模型路由的剩余回归和收敛验证。
   - 背景：此前 `clarification.py` 使用固定 `QUESTIONS/ORDER`，即使 Idea 已包含 PyTorch、CUDA、CNN、MNIST 等明确语义，也可能机械追问领域；该编排缺陷的代码修复已完成，但尚未经过全部公开用例和异常路径回归。
   - 完成标准：每轮模型基于当前结构化草稿、对话上下文和用户新消息，推断有充分依据的领域/关键词，标记假设与不确定项，自适应生成少量高信息增益问题；不得再按固定问题清单逐项轮询；数据授权和资源信息不得因推断而绕过确认。
   - 模型路由：默认简单任务 `gpt-5.6-luna`、中等任务 `gpt-5.6-terra`、复杂任务 `gpt-5.6-sol`，模型名、复杂度阈值和各层推理强度均可由 `.env` 配置；每轮响应与审计元数据记录实际层级/模型，Codex Bridge 不暴露宿主认证文件。
   - 失败要求：模型不可用时必须返回明确的结构化错误；不得进入本地规则回复、固定问题队列或其他自动降级路径。
   - 验证：MNIST/CNN 输入应主动识别为机器学习/深度学习/计算机视觉/图像分类并询问真正缺失的实验约束；短输入仍需澄清；结构化输出、模型路由和模型失败报错均有测试。
   - 已完成部分：固定问题队列已移除；Luna/Terra/Sol 路由、严格输出、默认全自动/可选详细模式和 MNIST 单轮真实验证已实现。
-  - 剩余工作：运行所有公开用例的多轮收敛、超时、并发和 Bridge/API 失败回归；在此之前不得把本项标记完成。
+  - 验证结果：真实公开回归 `scripts/test_clarification_regression.py` 覆盖 4 个 case：`active-learning-3d` 使用 `complex / gpt-5.6-sol / high` 并在确认事实后收敛，复杂详细模式和短输入保持澄清，MNIST 使用 `medium / gpt-5.6-terra / medium`，两个并发 MNIST 会话均保持澄清。Bridge 不可用集成回归返回 `llm_request_failed`，不降级；Bridge HTTP 504 映射为 `llm_timeout`。服务端拒绝含“未确认/unknown”等数据或资源占位的规格进入确认。`docker compose exec -T api pytest -q`（27 passed）、`python scripts/check_idea_case_sources.py`、Compose 与 Python 检查通过；脱敏报告在被忽略的 `artifacts/idea-tests/clarification-regression-latest.json`。
 
 - [ ] `P0-REGRESSION-032` 对最新 Idea 澄清主链执行成本受控的完整端到端回归。
   - 范围：只允许从 `tests/idea-cases/*.json` 读取启用用例；禁止测试代码、命令行或运行时增加隐藏 Idea。
@@ -209,3 +208,7 @@
 - 2026-07-29：完成 `P0-REPRO-026` 真实实验验收；修复 Runner Dockerfile 中 Git "dubious ownership" 阻止非 root 用户读取项目仓库的问题（`git config --system --add safe.directory '*'`）；通过提案 `5e305b36` 在项目 `013493b8` 成功提交并执行 `demo_classification` 实验（run_id=`26103a27`），验证：`run/26103a27` tag 创建，source.tar + 8 个 manifest 快照写入 `artifacts/reproducibility/`，9 条 Artifact 记录（全部 valid=true）+ 9 条 ArtifactDependency 写入 PostgreSQL，Reproducibility 查询返回 `validation.status=verified`，实验成功执行（accuracy=0.8467, mlflow_run_id=`eb9000a1`），6 个输出产物同步入库。
 - 2026-07-30：开始 `P1-STREAM-038`；现有未提交流式面板改为只展示可观察的请求处理状态，不展示或伪造模型内部思维；恢复项目创建必须等待 `ready_for_confirmation` 的服务端闸门，待补齐 SSE 与浏览器验证。
 - 2026-07-30：完成 `P1-STREAM-038`；SSE 仅公开应用可观察的请求阶段与结构化结果，不输出模型内部推理。API/SSE、同步端点、项目创建闸门、公开 Idea case 来源、桌面/窄屏浏览器和控制台检查均通过；未调用真实模型或外部学术 API。
+- 2026-07-30：开始 `P0-CLARIFY-027`；将按 `tests/idea-cases/` 的公开用例验证多轮收敛、超时、并发和 Bridge/API 失败路径，测试输入不在代码或命令行中临时增加。
+- 2026-07-30：`P0-CLARIFY-027` 首次 `mnist-cnn` 真实回归出现 `phase` 断言不匹配，第二次同一公开用例通过并保存脱敏结果（`medium` / `gpt-5.6-terra` / `medium`）。已修正回归脚本先落盘响应再断言；该不稳定性须由多轮、并发和失败路径回归覆盖，任务继续保持 `[~]`。
+- 2026-07-30：完成 `P0-CLARIFY-027`；修复 3D 主动学习的复杂层路由、Bridge/API 超时边界、未确认数据/资源占位绕过确认闸门与回归产物丢失。4 个公开 case、多轮收敛、并发 MNIST、真实 Bridge 不可用及结构化 504 回归均通过；未创建项目、运行实验或调用学术 API。
+- 2026-07-30：完成 `P0-CLARIFY-027` 最终验证；`check_docs_sync.py`、API `27 passed`、聊天 UX `5 passed`、Idea case、Compose、JSON、Python、Node 和 `git diff --check` 均通过，Bridge 健康且未提交密钥或运行产物。

@@ -35,13 +35,6 @@ def main() -> None:
         "attachments": [],
         "clarification_mode": case.clarification_mode,
     })
-    expected = case.expect
-    assert result["phase"] == expected["phase"]
-    assert result["model_tier"] == expected["model_tier"]
-    assert result["model"] == expected["model"]
-    assert result["clarification_mode"] == case.clarification_mode
-    assert any(term in result["reply"] for term in expected["reply_contains_any"])
-    assert all(term not in result["reply"] for term in expected["reply_excludes"])
     safe_result = {
         "case_id": case.id,
         "case_source": str(case.source_path),
@@ -57,6 +50,13 @@ def main() -> None:
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
     target = OUTPUT_ROOT / "mnist-cnn-latest.json"
     target.write_text(json.dumps(safe_result, ensure_ascii=False, indent=2), encoding="utf-8")
+    expected = case.expect
+    assert result["phase"] == expected["phase"]
+    assert result["model_tier"] == expected["model_tier"]
+    assert result["model"] == expected["model"]
+    assert result["clarification_mode"] == case.clarification_mode
+    assert any(term in result["reply"] for term in expected["reply_contains_any"])
+    assert all(term not in result["reply"] for term in expected["reply_excludes"])
     print(json.dumps({"status": "passed", "result_file": str(target), **safe_result}, ensure_ascii=False, indent=2))
 
 
