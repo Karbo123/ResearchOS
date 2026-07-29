@@ -175,3 +175,4 @@
 - 2026-07-29：完成本轮本地验证与文档同步；API 容器全量测试重跑为 `21 passed`，`IDEA_CASES_OK=4`、`check_docs_sync.py`、JSON 解析、Compose 配置、服务状态和 `git diff --check` 通过。提交 `1888850`（`feat:add-reproducibility-snapshot-gate`）已创建；`P0-REPRO-026` 继续保持 `[~]`，因为本地 Runner digest 未核验，真实实验恢复和完整实时验收尚未执行。
 - 2026-07-29：开始 `DOCS-034`；确认之前重复使用 `docker compose up --build -d` 会触发不必要的 API/Runner/MLflow 重建，且仓库缺少 `.dockerignore`，根目录构建上下文会包含运行数据和潜在本地 Secret。
 - 2026-07-29：完成 `DOCS-034`；新增根目录 `.dockerignore`，同步双语 README、`docs/operations.md` 和 `docs/security.md`，明确 `up -d` 日常启动、按服务 `--build` 重建与 n8n 工作流重新导入规则；全部静态检查通过，未运行真实模型/API 验收。
+- 2026-07-29：`DOCS-034` 提交 `996e942` 已创建，待最终复核后推送；本次提交未包含 `.env`、凭据、运行产物或数据库/volume 内容。
