@@ -220,4 +220,4 @@
 - 2026-07-30：开始 `P0-REGRESSION-032`；执行现有 `scripts/acceptance_test.py`，输入仅来自 `tests/idea-cases/`，结果写入被忽略的 `artifacts/acceptance/`，不把 token 或凭据写入报告。
 - 2026-07-30：完成 `P0-REGRESSION-032`；完整真实验收通过，项目 `6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`，报告 `acceptance-20260730-015132.json`，脱敏证据副本已提交到 `docs/evidence/`。
 - 2026-07-30：开始 `DOCS-039`；复核发现 README 已指向新验收，但文档同步脚本、中文 README、需求审计、运维验收说明和部分 TODO 基线数字仍引用旧验收事实；`AGENTS.md` 的模型失败与项目 `.env` 规则无需修改。
-- 2026-07-30：完成 `DOCS-039`；同步双语 README、需求审计、运维说明、TODO 和同步脚本，归档脱敏验收证据；全部适用验证通过，未暂存 `.env`、认证文件、Docker 配置文件或运行时原件。提交：`27feabc`。
+- 2026-07-30：完成 `DOCS-039`；同步双语 README、需求审计、运维说明、TODO 和同步脚本，归档脱敏验收证据；全部适用验证通过，未暂存 `.env`、认证文件、Docker 配置文件或运行时原件。实现提交：`e08e798`。
