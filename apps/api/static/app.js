@@ -1,4 +1,4 @@
-const state = { sessionId: null, projectId: null, project: null, queuedFiles: [], activeTab: "overview" };
+const state = { sessionId: null, projectId: null, project: null, queuedFiles: [], activeTab: "overview", chatBusy: false, projectChatBusy: false, clarificationMode: "automatic" };
 const $ = (id) => document.getElementById(id);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
@@ -9,10 +9,42 @@ async function api(path, options = {}) {
 }
 function toast(message) { const el = $("toast"); el.textContent = message; el.classList.remove("hidden"); setTimeout(() => el.classList.add("hidden"), 3200); }
 function iconRefresh() { if (window.lucide) lucide.createIcons(); }
-function addMessage(container, role, text) {
+function addMessage(container, role, text, meta = "") {
   const el = document.createElement("div"); el.className = `message ${role}`;
-  el.innerHTML = `<div class="avatar">${role === "user" ? "YOU" : "AI"}</div><div class="bubble">${escapeHtml(text)}</div>`;
+  el.innerHTML = `<div class="avatar">${role === "user" ? "YOU" : "AI"}</div><div class="message-content"><div class="bubble">${escapeHtml(text)}</div>${meta ? `<div class="message-meta">${escapeHtml(meta)}</div>` : ""}</div>`;
   container.appendChild(el); container.scrollTop = container.scrollHeight;
+}
+
+function syncClarificationMode(reset = false) {
+  const toggle = $("clarificationMode");
+  if (reset) toggle.checked = true;
+  state.clarificationMode = toggle.checked ? "automatic" : "detailed";
+  $("clarificationModeLabel").textContent = toggle.checked ? "全自动模式" : "详细模式";
+  $("clarificationModeHint").textContent = toggle.checked ? "少量关键追问" : "全面了解需求";
+  toggle.setAttribute("aria-label", toggle.checked ? "全自动模式已开启" : "详细模式已开启");
+}
+
+function startAiProgress({progressId, formId, elapsedId, stageId, project = false}) {
+  const progress = $(progressId), form = $(formId), textarea = form.querySelector("textarea"), button = form.querySelector("button[type='submit'], button.send-btn");
+  const stages = project
+    ? ["正在识别解释、建议或变更意图…", "正在检查项目状态与审批边界…", "正在组织可审阅的回复…", "模型仍在处理，请稍候…"]
+    : ["正在理解研究目标与已有线索…", "正在选择成本合适的模型层级…", "正在更新 ResearchIdea 草稿…", "正在检查风险、假设与待确认事项…", "模型仍在处理，请稍候…"];
+  const started = Date.now(); let stageIndex = 0;
+  progress.classList.remove("hidden"); textarea.disabled = true; button.disabled = true; form.setAttribute("aria-busy", "true");
+  if (!project) $("clarificationMode").disabled = true;
+  $(stageId).textContent = stages[0]; $(elapsedId).textContent = "0 秒";
+  const timer = window.setInterval(() => {
+    const seconds = Math.floor((Date.now() - started) / 1000);
+    $(elapsedId).textContent = `${seconds} 秒`;
+    const next = Math.min(Math.floor(seconds / 4), stages.length - 1);
+    if (next !== stageIndex) { stageIndex = next; $(stageId).textContent = stages[stageIndex]; }
+  }, 500);
+  return () => { window.clearInterval(timer); progress.classList.add("hidden"); textarea.disabled = false; button.disabled = false; if (!project) $("clarificationMode").disabled = false; form.removeAttribute("aria-busy"); textarea.focus(); };
+}
+
+function modelMeta(result) {
+  if (!result.model) return result.fallback_used ? "本地安全降级模式" : "";
+  return `${result.model_tier || "adaptive"} · ${result.model} · reasoning ${result.reasoning_effort || "default"}${result.fallback_used ? " · 本地安全降级" : ""}`;
 }
 
 function renderSpec(spec) {
@@ -38,13 +70,18 @@ function renderSpec(spec) {
 }
 
 async function sendChat(event) {
-  event.preventDefault(); const input = $("chatInput"); const message = input.value.trim(); if (!message) return;
+  event.preventDefault(); const input = $("chatInput"); const message = input.value.trim(); if (!message || state.chatBusy) return;
   addMessage($("messages"), "user", message); input.value = "";
+  state.chatBusy = true;
+  const stopProgress = startAiProgress({progressId:"aiProgress", formId:"chatForm", elapsedId:"aiProgressElapsed", stageId:"aiProgressStage"});
   try {
-    const result = await api("/api/chat", {method:"POST", body: JSON.stringify({session_id: state.sessionId, message, attachments: []})});
-    state.sessionId = result.session_id; addMessage($("messages"), "assistant", result.reply); renderSpec(result.spec);
+    const clarificationMode = state.clarificationMode;
+    const result = await api("/api/chat", {method:"POST", body: JSON.stringify({session_id: state.sessionId, message, attachments: [], clarification_mode: clarificationMode})});
+    const routeMeta = modelMeta(result);
+    state.sessionId = result.session_id; addMessage($("messages"), "assistant", result.reply, `${clarificationMode === "automatic" ? "全自动模式" : "详细模式"}${routeMeta ? ` · ${routeMeta}` : ""}`); renderSpec(result.spec);
     if (state.queuedFiles.length) await uploadQueuedFiles();
-  } catch (error) { toast(error.message); }
+  } catch (error) { addMessage($("messages"), "assistant", `请求失败：${error.message}`); toast(error.message); }
+  finally { stopProgress(); state.chatBusy = false; }
 }
 async function uploadQueuedFiles() {
   for (const file of state.queuedFiles) {
@@ -77,7 +114,8 @@ async function openProject(id) {
 function newProject() {
   state.sessionId = null; state.projectId = null; state.project = null;
   $("projectView").classList.add("hidden"); $("newView").classList.remove("hidden"); $("pageTitle").textContent = "新研究项目"; $("projectMeta").textContent = "Idea clarification";
-  $("messages").innerHTML = `<div class="message assistant"><div class="avatar">AI</div><div class="bubble">请描述你的研究 Idea。先不要整理格式，我会逐项确认目标、假设、数据、资源、成功标准与合规边界。</div></div>`;
+  $("messages").innerHTML = `<div class="message assistant"><div class="avatar">AI</div><div class="bubble">请直接描述你的研究 Idea。我会自适应分析目标与已有线索，说明推断和风险，只追问真正影响方案的未知信息。</div></div>`;
+  syncClarificationMode(true);
   $("specContent").innerHTML = "规格将在澄清完成后生成。"; $("confirmProject").classList.add("hidden"); loadProjects();
 }
 function statusBadge(status) { const kind = status === "approved" || status === "succeeded" ? "live" : status === "failed" || status === "rejected" ? "failed" : "pending"; return `<span class="badge ${kind}">${escapeHtml(status)}</span>`; }
@@ -120,10 +158,11 @@ async function changeProjectState(action) { if(action==="cancel"&&!window.confir
 async function addPolicy(event) { event.preventDefault(); const input=$("policyInput"); try{const r=await api("/api/policies",{method:"POST",body:JSON.stringify({project_id:state.projectId,rule:input.value})});await refreshProject();switchTab("approvals");toast(`策略提案 ${r.proposal_id.slice(0,8)} 待审批`);}catch(e){toast(e.message);} }
 async function generateReport(period) { try { const r=await api("/api/reports",{method:"POST",body:JSON.stringify({project_id:state.projectId,period})}); $("reportOutput").className="report"; $("reportOutput").textContent=r.content; }catch(e){toast(e.message);} }
 function switchTab(name) { state.activeTab=name; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab===name)); document.querySelectorAll(".tab-panel").forEach(x=>x.classList.add("hidden")); $(`tab-${name}`).classList.remove("hidden"); }
-async function sendProjectChat(event){event.preventDefault();const input=$("projectChatInput"),message=input.value.trim();if(!message)return;addMessage($("projectMessages"),"user",message);input.value="";try{const r=await api("/api/chat",{method:"POST",body:JSON.stringify({session_id:state.sessionId,project_id:state.projectId,message})});addMessage($("projectMessages"),"assistant",r.reply);if(r.action_required){await refreshProject();switchTab("approvals");}}catch(e){addMessage($("projectMessages"),"assistant",e.message);}}
+async function sendProjectChat(event){event.preventDefault();const input=$("projectChatInput"),message=input.value.trim();if(!message||state.projectChatBusy)return;addMessage($("projectMessages"),"user",message);input.value="";state.projectChatBusy=true;const stopProgress=startAiProgress({progressId:"projectAiProgress",formId:"projectChatForm",elapsedId:"projectAiProgressElapsed",stageId:"projectAiProgressStage",project:true});try{const r=await api("/api/chat",{method:"POST",body:JSON.stringify({session_id:state.sessionId,project_id:state.projectId,message})});addMessage($("projectMessages"),"assistant",r.reply,modelMeta(r));if(r.action_required){await refreshProject();switchTab("approvals");}}catch(e){addMessage($("projectMessages"),"assistant",`请求失败：${e.message}`);}finally{stopProgress();state.projectChatBusy=false;}}
 
 $("chatForm").addEventListener("submit", sendChat); $("confirmProject").addEventListener("click", confirmProject); $("newProject").addEventListener("click",newProject); $("refresh").addEventListener("click",refreshProject); $("projectChatForm").addEventListener("submit",sendProjectChat);
 $("fileInput").addEventListener("change", e => { state.queuedFiles=[...e.target.files]; $("fileQueue").textContent=state.queuedFiles.map(f=>f.name).join(" · "); });
+$("clarificationMode").addEventListener("change", () => syncClarificationMode());
 $("tabs").querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 api("/api/health").then(()=>{$("health").classList.add("ok");$("health").lastChild.textContent="已连接";}).catch(()=>{$("health").lastChild.textContent="离线";});
-loadProjects(); iconRefresh();
+syncClarificationMode(); loadProjects(); iconRefresh();

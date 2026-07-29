@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, select, text
 
-from .clarification import QUESTIONS, apply_answer, build_spec, missing_fields
+from .clarification import build_spec, initial_draft, required_spec_gaps
 from .db import Base, engine, session_scope
 from .models import (
     Artifact, ArtifactDependency, AuditEvent, Checkpoint, ConversationSession, Evidence,
@@ -25,7 +25,7 @@ from .models import (
     Report, RepositoryRecord, Task, UploadedFile,
 )
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
-from .llm import initial_draft_with_llm
+from .llm import clarify_idea_with_llm, model_catalog, router_thresholds
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
@@ -175,8 +175,7 @@ def health():
         "service": "research-os-api",
         "llm": {
             "provider": "codex_bridge" if os.getenv("CODEX_BRIDGE_URL") else "openai_api" if os.getenv("OPENAI_API_KEY") else "deterministic_fallback",
-            "model": os.getenv("OPENAI_MODEL", "gpt-5.6-sol"),
-            "reasoning_effort": os.getenv("OPENAI_REASONING_EFFORT", "high"),
+            "routing": {"models": model_catalog(), "thresholds": router_thresholds()},
             "codex_bridge_configured": bool(os.getenv("CODEX_BRIDGE_URL")),
         },
     }
@@ -221,22 +220,25 @@ def open_n8n():
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
+    # Project supervision remains approval-first. Adaptive Idea clarification is used only before creation.
     with session_scope() as session:
         conversation = session.get(ConversationSession, request.session_id) if request.session_id else None
         if request.session_id and not conversation:
             raise HTTPException(404, "conversation not found")
         if not conversation:
-            draft = initial_draft_with_llm(request.message)
-            remaining = missing_fields(draft)
-            pending_field = remaining[0]
-            conversation = ConversationSession(draft=draft, pending_field=pending_field, phase="clarifying")
-            session.add(conversation); session.flush()
-            session.add(Message(session_id=conversation.id, role="user", content=request.message, metadata_json={"attachments": [a.model_dump(mode="json") for a in request.attachments]}))
-            reply = QUESTIONS[pending_field]
-            session.add(Message(session_id=conversation.id, role="assistant", content=reply))
-            return ChatResponse(session_id=conversation.id, phase=conversation.phase, reply=reply, missing_fields=remaining)
+            conversation = ConversationSession(draft=initial_draft(request.message), pending_field=None, phase="clarifying")
+            session.add(conversation)
+            session.flush()
 
-        session.add(Message(session_id=conversation.id, role="user", content=request.message, metadata_json={"attachments": [a.model_dump(mode="json") for a in request.attachments]}))
+        session.add(Message(
+            session_id=conversation.id,
+            role="user",
+            content=request.message,
+            metadata_json={
+                "attachments": [a.model_dump(mode="json") for a in request.attachments],
+                "clarification_mode": request.clarification_mode,
+            },
+        ))
         if conversation.project_id:
             project = session.get(Project, conversation.project_id)
             change_markers = ["修改", "改为", "调整", "重新", "change", "update", "rerun"]
@@ -265,34 +267,92 @@ def chat(request: ChatRequest):
                 reply = "我已把这条指令转换为变更提案，但尚未执行。请在审批面板检查影响范围并批准或驳回。"
                 session.add(Message(session_id=conversation.id, role="assistant", content=reply, metadata_json={"proposal_id": str(proposal.id)}))
                 audit(session, "change.proposed", project.id, {"proposal_id": str(proposal.id)}, "local-user")
-                return ChatResponse(session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply, action_required=str(proposal.id))
+                return ChatResponse(session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply, action_required=str(proposal.id), clarification_mode=request.clarification_mode)
             reply = f"项目当前阶段为 {project.current_stage}。这条消息被识别为解释或建议请求，没有触发执行。需要执行变更时请明确写出要修改的内容。"
             session.add(Message(session_id=conversation.id, role="assistant", content=reply))
-            return ChatResponse(session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply)
+            return ChatResponse(session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply, clarification_mode=request.clarification_mode)
 
         if conversation.phase == "ready_for_confirmation":
-            reply = "规格已经生成。请使用“确认并创建项目”按钮；继续输入则会作为补充说明记录，但不会静默启动工作流。"
-            session.add(Message(session_id=conversation.id, role="assistant", content=reply))
-            return ChatResponse(session_id=conversation.id, phase=conversation.phase, reply=reply, spec=build_spec(conversation.draft))
+            conversation.phase = "clarifying"
 
-        draft = json.loads(json.dumps(conversation.draft))
-        apply_answer(draft, conversation.pending_field, request.message)
+        transcript = [
+            {"role": item.role, "content": item.content}
+            for item in session.scalars(
+                select(Message).where(Message.session_id == conversation.id).order_by(desc(Message.created_at)).limit(12)
+            ).all()[::-1]
+        ]
+        draft_before = json.loads(json.dumps(conversation.draft))
+        conversation_id = conversation.id
+
+    outcome = clarify_idea_with_llm(
+        request.message,
+        current_draft=draft_before,
+        transcript=transcript,
+        attachment_count=len(request.attachments),
+        clarification_mode=request.clarification_mode,
+    )
+    with session_scope() as session:
+        conversation = session.get(ConversationSession, conversation_id)
+        if not conversation or conversation.project_id:
+            raise HTTPException(409, "conversation changed while clarification was running")
+        draft = outcome.result.draft.model_dump(mode="json")
+        assumptions = list(dict.fromkeys(outcome.result.assumptions))
+        draft["open_questions"] = list(dict.fromkeys([
+            *(draft.get("open_questions") or []),
+            *outcome.result.unresolved_items,
+            *[f"待确认假设：{item}" for item in assumptions],
+        ]))[:12]
+        draft["risks"] = list(dict.fromkeys([
+            *(draft.get("risks") or []),
+            *[item for item in outcome.result.risk_flags if item != "adaptive_model_unavailable"],
+        ]))[:20]
         conversation.draft = draft
-        remaining = missing_fields(draft)
-        if remaining:
-            conversation.pending_field = remaining[0]
-            reply = QUESTIONS[remaining[0]]
-            spec = None
-        else:
+        conversation.pending_field = None
+        schema_gaps = required_spec_gaps(draft)
+        ready = (
+            outcome.result.ready_for_confirmation
+            and not outcome.result.unresolved_items
+            and not schema_gaps
+            and not outcome.fallback_used
+        )
+        spec = build_spec(draft) if ready else None
+        if ready:
             conversation.phase = "ready_for_confirmation"
-            conversation.pending_field = None
-            spec = build_spec(draft)
             if spec.feasibility == "blocked":
-                reply = "当前规格包含安全、伦理或合法性阻断项，不能创建项目。请缩小为防御性/合规研究、移除危险执行目标，或补充正式伦理与数据授权证明后重新评估。"
+                reply = (
+                    f"{outcome.result.assistant_reply}\n\n"
+                    "安全、伦理或合法性检查发现阻断项，当前不能创建项目。请审阅候选修改方案并继续对话。"
+                )
             else:
-                reply = "研究规格已经结构化完成。请检查右侧规格、风险和审批要求；确认前不会创建项目或运行实验。"
-        session.add(Message(session_id=conversation.id, role="assistant", content=reply))
-        return ChatResponse(session_id=conversation.id, phase=conversation.phase, reply=reply, spec=spec, missing_fields=remaining)
+                reply = (
+                    f"{outcome.result.assistant_reply}\n\n"
+                    "结构化规格已准备好。请检查右侧内容；只有点击“确认并创建项目”后才会启动后续工作流。"
+                )
+        else:
+            conversation.phase = "clarifying"
+            reply = outcome.result.assistant_reply
+        metadata = {
+            "model_tier": outcome.route.tier,
+            "model": outcome.route.model,
+            "reasoning_effort": outcome.route.reasoning_effort,
+            "fallback_used": outcome.fallback_used,
+            "assumptions": assumptions,
+            "unresolved_items": outcome.result.unresolved_items,
+            "clarification_mode": request.clarification_mode,
+        }
+        session.add(Message(session_id=conversation.id, role="assistant", content=reply, metadata_json=metadata))
+        return ChatResponse(
+            session_id=conversation.id,
+            phase=conversation.phase,
+            reply=reply,
+            spec=spec,
+            missing_fields=list(dict.fromkeys([*outcome.result.unresolved_items, *schema_gaps])),
+            model_tier=outcome.route.tier,
+            model=outcome.route.model,
+            reasoning_effort=outcome.route.reasoning_effort,
+            fallback_used=outcome.fallback_used,
+            clarification_mode=request.clarification_mode,
+        )
 
 
 @app.post("/api/projects")

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "mnist-cnn",
+  "description": "An explicit PyTorch/CUDA/MNIST engineering benchmark should infer its domain without asking a fixed domain question.",
+  "enabled": true,
+  "clarification_mode": "automatic",
+  "initial_message": "实现一个 PyTorch（CUDA）简单 CNN 完成 MNIST 数据集分类，多次尝试使测试精度达到 99% 以上",
+  "confirmed_facts": {},
+  "project_messages": {},
+  "expect": {
+    "phase": "clarifying",
+    "model_tier": "medium",
+    "model": "gpt-5.6-terra",
+    "reply_contains_any": ["深度学习", "计算机视觉", "MNIST"],
+    "reply_excludes": ["这个 Idea 主要属于哪个研究领域", "哪个研究领域"],
+    "fallback_domain_contains": ["Deep Learning", "Image Classification"]
+  }
+}

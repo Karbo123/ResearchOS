@@ -10,3 +10,7 @@ postgres-data/
 minio-data/
 mlflow-data/
 n8n-data/
+installer/windows/build/
+installer/windows/dist/
+installer/windows/*.exe
+.venv-installer/

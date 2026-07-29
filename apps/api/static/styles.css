@@ -45,6 +45,30 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .message.user .avatar { background: var(--blue); }
 .bubble { background: white; border: 1px solid var(--line); border-radius: 6px; padding: 11px 13px; line-height: 1.55; font-size: 14px; white-space: pre-wrap; }
 .message.user .bubble { background: #eef4fa; border-color: #d4e1ee; }
+.message-content { min-width: 0; }
+.message-meta { margin: 5px 2px 0; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.ai-progress { margin: 0 max(24px, 7vw) 12px; padding: 11px 13px; background: white; border: 1px solid var(--line); border-radius: 6px; }
+.ai-progress.compact { margin: 0 16px 10px; }
+.ai-progress-head { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.ai-progress-head span:last-child { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.thinking-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: thinking-pulse 1.2s ease-in-out infinite; }
+.ai-progress-track { height: 3px; margin: 9px 0 7px; background: #e5eae7; border-radius: 2px; overflow: hidden; }
+.ai-progress-track span { display: block; width: 34%; height: 100%; background: var(--green); border-radius: 2px; animation: thinking-slide 1.6s ease-in-out infinite; }
+.ai-progress-stage { color: var(--muted); font-size: 11px; line-height: 1.4; }
+.clarification-mode-bar { min-height: 52px; padding: 9px 20px; background: var(--surface); border-top: 1px solid var(--line); display: flex; align-items: center; }
+.mode-switch { display: inline-flex; align-items: center; gap: 10px; min-width: 190px; cursor: pointer; user-select: none; }
+.mode-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.switch-track { width: 38px; height: 22px; padding: 3px; border-radius: 11px; background: #a7b0ac; transition: background .16s ease; flex: none; }
+.switch-track span { display: block; width: 16px; height: 16px; border-radius: 50%; background: white; box-shadow: 0 1px 3px #0003; transition: transform .16s ease; }
+.mode-switch input:checked + .switch-track { background: var(--green); }
+.mode-switch input:checked + .switch-track span { transform: translateX(16px); }
+.mode-switch input:focus-visible + .switch-track { outline: 2px solid var(--blue); outline-offset: 2px; }
+.mode-switch input:disabled + .switch-track { opacity: .5; cursor: wait; }
+.mode-copy { display: grid; gap: 1px; line-height: 1.2; }
+.mode-copy strong { font-size: 12px; }
+.mode-copy small { color: var(--muted); font-size: 10px; }
+@keyframes thinking-pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes thinking-slide { 0% { transform: translateX(-110%); } 50% { transform: translateX(95%); } 100% { transform: translateX(300%); } }
 .composer { background: var(--surface); border-top: 1px solid var(--line); padding: 14px 20px; display: grid; grid-template-columns: 36px minmax(0, 1fr) 38px; gap: 10px; align-items: end; }
 .composer textarea { resize: none; width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 10px 11px; outline: none; max-height: 130px; }
 .composer textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px var(--green-soft); }
@@ -52,6 +76,7 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .attach-btn { background: var(--surface-2); border: 1px solid var(--line); }
 .attach-btn input { display: none; }
 .send-btn { background: var(--green); color: white; }
+.send-btn:disabled, .attach-btn.busy { opacity: .45; cursor: wait; }
 .file-queue { background: white; padding: 0 20px 10px; color: var(--muted); font-size: 12px; }
 .spec-pane { background: var(--surface); border-left: 1px solid var(--line); padding: 20px; overflow-y: auto; }
 .pane-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 10px; }
@@ -103,4 +128,5 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .policy-form input { border: 1px solid var(--line); border-radius: 5px; padding: 9px; min-width: 0; }
 .toast { position: fixed; right: 20px; bottom: 20px; background: #17201d; color: white; border-radius: 5px; padding: 10px 14px; font-size: 13px; max-width: 360px; z-index: 10; }
 @media (max-width: 1050px) { .project-layout { grid-template-columns: minmax(0, 1fr); }.project-chat { position: fixed; right: 0; bottom: 0; top: 76px; width: min(380px, 90vw); box-shadow: -8px 0 30px #0002; z-index: 3; }.metric-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 760px) { .app-shell { grid-template-columns: 1fr; }.sidebar { min-height: auto; height: 58px; padding: 8px 12px; flex-direction: row; align-items: center; }.brand { margin: 0 auto 0 0; }.sidebar .primary { width: 42px; font-size: 0; padding: 10px; }.side-label, .project-list, .service-links { display: none; }.topbar { height: 68px; padding: 10px 14px; }.new-view { height: calc(100vh - 126px); grid-template-columns: 1fr; }.spec-pane { display: none; }.tabs { padding: 0 8px; }.project-view { height: calc(100vh - 126px); }.tab-content { padding: 14px; }.project-chat { top: 126px; display: none; }.metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.messages { padding: 18px 14px; } }
+@media (max-width: 760px) { .app-shell { grid-template-columns: 1fr; }.sidebar { min-height: auto; height: 58px; padding: 8px 12px; flex-direction: row; align-items: center; }.brand { margin: 0 auto 0 0; }.sidebar .primary { width: 42px; font-size: 0; padding: 10px; }.side-label, .project-list, .service-links { display: none; }.topbar { height: 68px; padding: 10px 14px; }.new-view { height: calc(100vh - 126px); grid-template-columns: 1fr; }.spec-pane { display: none; }.tabs { padding: 0 8px; }.project-view { height: calc(100vh - 126px); }.tab-content { padding: 14px; }.project-chat { top: 126px; display: none; }.metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.messages { padding: 18px 14px; }.ai-progress { margin: 0 14px 10px; }.clarification-mode-bar { padding: 8px 14px; }.mode-switch { min-width: 0; } }
+@media (prefers-reduced-motion: reduce) { .thinking-dot, .ai-progress-track span { animation-duration: 4s; } }

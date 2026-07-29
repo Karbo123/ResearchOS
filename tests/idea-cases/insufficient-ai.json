@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "id": "insufficient-ai",
+  "description": "A deliberately underspecified Idea must remain in clarification.",
+  "enabled": true,
+  "clarification_mode": "automatic",
+  "initial_message": "AI",
+  "confirmed_facts": {},
+  "project_messages": {},
+  "expect": {
+    "phase": "clarifying",
+    "missing_fields_contains": ["research_question"],
+    "model_tier": "simple",
+    "model": "gpt-5.6-luna"
+  }
+}

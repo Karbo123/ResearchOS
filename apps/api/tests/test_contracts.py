@@ -5,57 +5,100 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from app.clarification import ORDER, apply_answer, build_spec, initial_draft, missing_fields
+from scripts.idea_case_loader import IDEA_CASES_ROOT, load_enabled_idea_cases, load_idea_case
+
+from app.clarification import build_spec, initial_draft, required_spec_gaps
+from app.llm import _fallback_result, _system_prompt, clarification_mode_instruction, select_model_route
 from app.policy_engine import compile_policy_constraints, experiment_policy_violations, seeds_for_constraints
 from app.evidence_pipeline import validate_open_pdf_url
-from app.schemas import ChangeProposalRequest, ExperimentRequest
+from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest
 
 
 def test_clarification_produces_valid_project_spec():
-    draft = initial_draft("Can active learning reduce annotation cost for point cloud classification?")
-    answers = {
-        "research_question": "Can active learning reduce annotation cost for point cloud classification?",
-        "domain": "3D computer vision",
-        "hypotheses": "Uncertainty sampling beats random sampling at equal annotation cost",
-        "expected_contributions": "A calibrated acquisition function; reproducible benchmark",
-        "available_data": "ModelNet40 under its published license",
-        "constraints": "One 24GB GPU, $50, eight weeks",
-        "success_criteria": "At least two percentage points above random sampling across five seeds",
-        "target_venues": "CVPR workshop",
-        "ethics_and_compliance": "No personal data or human subjects",
-    }
-    for field in ORDER:
-        apply_answer(draft, field, answers[field])
-    assert missing_fields(draft) == []
+    case = load_idea_case("active-learning-3d")
+    draft = initial_draft(case.initial_message)
+    facts = case.confirmed_facts
+    draft.update({
+        "research_question": facts["research_question"],
+        "domain": facts["domain"],
+        "hypotheses": facts["hypotheses"].split("; "),
+        "expected_contributions": facts["expected_contributions"].split("; "),
+        "available_data": facts["available_data"],
+        "constraints": {"compute": facts["constraints"], "budget_usd": 50, "deadline": facts["constraints"], "data_access": "public"},
+        "success_criteria": [facts["success_criteria"]],
+        "target_venues": facts["target_venues"].split("; "),
+        "ethics_and_compliance": facts["ethics_and_compliance"],
+    })
+    assert required_spec_gaps(draft) == []
     spec = build_spec(draft)
-    assert spec.idea.domain == "3D computer vision"
-    assert spec.feasibility == "high"
-    assert spec.idea.target_venues == ["CVPR workshop"]
+    assert spec.idea.domain == facts["domain"]
+    assert spec.feasibility.value == case.expect["final_feasibility"]
+    assert spec.idea.target_venues == facts["target_venues"].split("; ")
 
 
 def test_short_idea_requires_a_research_question():
-    draft = initial_draft("AI")
-    assert "research_question" in missing_fields(draft)
+    case = load_idea_case("insufficient-ai")
+    draft = initial_draft(case.initial_message)
+    assert all(field in required_spec_gaps(draft) for field in case.expect["missing_fields_contains"])
 
 
 def test_blocked_idea_includes_candidate_modifications():
-    draft = initial_draft("Build malware that bypasses endpoint security controls")
-    answers = {
-        "research_question": "Can malware bypass endpoint security controls in production?",
-        "domain": "Offensive security",
-        "hypotheses": "A bypass can evade current controls",
-        "expected_contributions": "A working bypass",
-        "available_data": "Private endpoint telemetry",
-        "constraints": "One GPU, USD 100, four weeks",
-        "success_criteria": "Successful execution on production endpoints",
-        "target_venues": "Undetermined",
-        "ethics_and_compliance": "No authorization is available",
-    }
-    for field in ORDER:
-        apply_answer(draft, field, answers[field])
+    case = load_idea_case("unsafe-malware")
+    facts = case.confirmed_facts
+    draft = initial_draft(case.initial_message)
+    draft.update({
+        "research_question": facts["research_question"],
+        "domain": facts["domain"],
+        "hypotheses": [facts["hypotheses"]],
+        "expected_contributions": [facts["expected_contributions"]],
+        "available_data": facts["available_data"],
+        "constraints": {"compute": facts["constraints"], "budget_usd": 100, "deadline": facts["constraints"], "data_access": "private"},
+        "success_criteria": [facts["success_criteria"]],
+        "target_venues": [facts["target_venues"]],
+        "ethics_and_compliance": facts["ethics_and_compliance"],
+    })
     spec = build_spec(draft)
-    assert spec.feasibility == "blocked"
+    assert spec.feasibility.value == case.expect["final_feasibility"]
     assert spec.candidate_modifications
+
+
+def test_mnist_idea_uses_medium_tier_and_fallback_infers_domain():
+    case = load_idea_case("mnist-cnn")
+    draft = initial_draft(case.initial_message)
+    route = select_model_route(case.initial_message, draft)
+    result = _fallback_result(case.initial_message, draft, case.clarification_mode)
+    assert route.tier == case.expect["model_tier"]
+    assert all(term in (result.draft.domain or "") for term in case.expect["fallback_domain_contains"])
+    assert all(term not in result.assistant_reply for term in case.expect["reply_excludes"])
+    assert result.ready_for_confirmation is False
+
+
+def test_router_uses_simple_and_complex_cost_tiers():
+    simple_case = load_idea_case("insufficient-ai")
+    complex_case = load_idea_case("complex-medical-detailed")
+    assert select_model_route(simple_case.initial_message, initial_draft(simple_case.initial_message)).tier == simple_case.expect["model_tier"]
+    assert select_model_route(complex_case.initial_message, initial_draft(complex_case.initial_message)).tier == complex_case.expect["model_tier"]
+
+
+def test_all_idea_cases_load_from_the_public_fixed_directory():
+    cases = load_enabled_idea_cases()
+    assert cases and all(case.source_path.parent == IDEA_CASES_ROOT for case in cases)
+
+
+def test_chat_mode_defaults_to_automatic_and_rejects_unknown_values():
+    case = load_idea_case("mnist-cnn")
+    assert ChatRequest(message=case.initial_message).clarification_mode == "automatic"
+    with pytest.raises(ValidationError):
+        ChatRequest(message=case.initial_message, clarification_mode="scripted")
+
+
+def test_mode_prompts_minimize_or_expand_questions_without_fixed_queue():
+    automatic = clarification_mode_instruction("automatic")
+    detailed = clarification_mode_instruction("detailed")
+    assert "no more than two" in automatic and "minimize" in automatic
+    assert "four to eight" in detailed and "scripted checklist" in detailed
+    assert automatic in _system_prompt("automatic")
+    assert detailed in _system_prompt("detailed")
 
 
 def test_runner_contract_rejects_arbitrary_shell_and_path():

@@ -4,12 +4,34 @@
 
 1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。
 2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
-3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`，并确保 PowerShell 中的 `CODEX_BRIDGE_SECRET` 与 `.env` 完全相同。
+3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 会从仓库根目录未跟踪的 `.env` 读取允许的 Bridge/模型配置；无需把 Codex `auth.json` 挂载进 Docker。
 4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，再运行 `docker compose up --build -d`。
 5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
 
 `.env` 中的 PostgreSQL、MinIO、n8n 加密密钥和 Owner 凭据与现有 Docker volume 绑定。初始化 volume 后直接修改这些值通常不会自动迁移已有数据；应先备份并执行恢复/轮换方案。
+
+## 自适应模型路由
+
+默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。分别通过 `RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_COMPLEX` 和对应 `RESEARCH_REASONING_*` 配置。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界；中等上限必须大于简单上限。
+
+修改模型配置后必须同时重启宿主 Bridge 和 API：
+
+```powershell
+# 先在 Bridge 窗口停止旧进程，再重新运行
+python scripts/codex_llm_bridge.py
+docker compose up -d --build api
+Invoke-RestMethod http://127.0.0.1:8092/health
+Invoke-RestMethod http://127.0.0.1:8080/api/health
+```
+
+聊天响应中的 `model_tier`、`model`、`reasoning_effort` 与 `fallback_used` 是本轮实际路由证据。若 `fallback_used=true`，说明模型主链失败，系统只做安全候选推断，不允许进入项目确认。
+
+## Windows 单 EXE 安装器
+
+`installer/windows/ResearchOS.iss`、`bootstrap.ps1` 与 `build-installer.ps1` 构成在线引导安装器源。它内置应用、Compose/n8n 工作流和由 PyInstaller 打包的 Bridge；Docker 缺失时只在用户勾选后下载官方安装器并验证 Authenticode 签名。构建输出和 EXE 被 Git 忽略。
+
+当前仍需在发布机安装 Inno Setup 6，并完成代码签名、SHA-256 发布、Docker Desktop 许可复核和干净 Windows VM 验收。未完成这些条件前，手动 Compose 安装仍是受支持路径，`P2-INSTALLER-029` 不得标为完成。
 
 ## 日常命令
 
@@ -46,7 +68,7 @@ docker compose restart n8n api
 - 文献部分失败：`/api/search` 会返回 `provider_errors`，其他提供方继续落库；外部 API 限流不应伪造结果。
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
 - 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
-- Codex Bridge 不通：检查 `artifacts/codex-bridge.stderr.log`、8092 健康端点、Bridge secret 和 Windows Codex 配置。
+- Codex Bridge 不通：检查 8092 健康端点、Bridge secret、三级模型白名单、Codex CLI 与 Windows Codex 配置；API 回复会用 `fallback_used=true` 明确标出安全降级。
 
 ## 项目状态控制
 

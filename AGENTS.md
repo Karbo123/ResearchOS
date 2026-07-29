@@ -49,7 +49,10 @@ PostgreSQL 是业务状态源；聊天记录不是唯一记忆。代码、配置
 ## 模型与状态
 
 - Windows Codex Bridge 默认读取当前机器的 Codex 配置；不得把认证文件挂载进容器。
-- 当前验收模型为 `gpt-5.6-sol`、`reasoning_effort=high`。变更模型或强度时同时更新 `.env.example`、README、TODO 验收记录和测试期望。
+- 自适应澄清默认使用三级成本路由：简单 `gpt-5.6-luna/low`、中等 `gpt-5.6-terra/medium`、复杂 `gpt-5.6-sol/high`；当前完整系统验收仍使用复杂层 `gpt-5.6-sol`、`reasoning_effort=high`。变更模型、阈值或强度时同时更新 `.env.example`、Compose、README 双语版、TODO、需求审计和测试期望。
+- Idea 澄清不得恢复固定问题队列。模型每轮应整体分析草稿、公开可纠正假设并提出少量高信息问题；Schema 必填检查不是对话脚本。澄清 Agent 不得获得任意 Shell、文件、SQL 或网络工具。
+- 新项目聊天的 `clarification_mode` 只能是 `automatic|detailed`，默认 `automatic`。全自动模式尽量推断可逆信息并只询问阻碍规格、安全、合规或执行的少量关键问题；详细模式基于当前缺口扩大了解范围，但仍不得采用固定问题顺序、重复询问或臆造关键事实。实际模式必须写入用户和助手消息 metadata。
+- `tests/idea-cases/` 是所有自动化 Idea/研究对话测试输入的唯一来源。测试脚本只能通过 `scripts/idea_case_loader.py` 按公开 case ID 读取 UTF-8 JSON；禁止在测试代码、命令行参数、fixture 或运行时生成器中隐藏、硬编码或临时增添 Idea。新增/修改测试必须提交独立 case 文件并通过 `python scripts/check_idea_case_sources.py`。
 - LLM 失败时可以使用确定性澄清降级，但不能绕过 ProjectSpec、审批或 Runner 校验。
 - Idea 变更必须创建新版本并记录影响；不得静默覆盖旧 Idea 或继续使用已失效结果。
 
@@ -83,6 +86,7 @@ python scripts/acceptance_test.py
 ```
 
 完整验收会调用真实模型和外部学术 API，结果必须写入 `artifacts/acceptance/`，且不得包含 token。前端或可视化变化需要浏览器实际检查；PNG/PLY/3D 变化还需验证文件非空、画面非空、尺寸和下载入口。
+当用户明确限制模型额度或指定单一公开用例时，只运行相应的定向真实测试，不得顺带调用其他 Idea；静态检查和不调用模型的单元测试可以继续。完整验收保持待处理，直到用户明确批准扩大真实调用范围。
 
 ## 文档与完成定义
 

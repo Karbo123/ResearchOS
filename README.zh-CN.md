@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-4 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -24,7 +24,7 @@
 
 研究项目的上下文经常散落在聊天、论文表格、实验目录和稿件中。Research OS 围绕持久化 `project_id` 与版本化 `ResearchIdea/ProjectSpec` 把这些对象连接起来：
 
-- 从自然语言 Idea 和受监督的多轮澄清开始。
+- 从自然语言 Idea 和自适应 AI 多轮澄清开始：自动识别明显上下文、公开假设，不使用固定问卷。默认开启的**全自动模式**尽量少问；关闭开关后进入**详细模式**，更全面但仍自适应地了解需求。
 - 在创建项目之前拦截信息不足、不安全或明显不可行的 Idea。
 - 将 Idea、策略、审批、检查点、任务、实验、证据和产物持久化到 PostgreSQL；聊天记录不是唯一状态源。
 - 通过 Crossref、OpenAlex、Semantic Scholar、arXiv 和 DBLP 检索，保存 DOI/BibTeX 以及提供方错误。
@@ -37,6 +37,10 @@
 ## 效果截图
 
 以下截图来自最新真实验收项目（`8c40dc70-519a-4c87-99ac-d37003a56640`），不包含 token 或凭据。
+
+![自适应澄清识别 MNIST/CNN 领域并记录 Terra 模型层级](docs/assets/research-os-adaptive-chat.png)
+
+上面的新项目对话展示了默认开启的全自动模式开关，并从 PyTorch、CUDA、CNN 和 MNIST 推断出深度学习/计算机视觉领域，指出该目标首先是工程基准而不能自动宣称科研创新，并选择了可配置的中等成本 `gpt-5.6-terra` 路由。关闭开关会进入详细模式，针对相关缺口扩大了解范围，但不会退回固定问卷。等待回复期间，界面会显示不确定进度条、已等待时间和当前分析提示，不会伪造精确完成百分比。
 
 | 项目概览 | 文献与证据 |
 | --- | --- |
@@ -62,16 +66,16 @@ flowchart LR
     ML --> MI[("MinIO\n大文件产物")]
     API --> S["学术检索\nCrossref/OpenAlex/S2/arXiv/DBLP"]
     API --> B["Windows Codex Bridge\n127.0.0.1:8092"]
-    B --> C["当前 Codex 配置与 CLI\ngpt-5.6-sol / high"]
+    B --> C["当前 Codex 认证与提供方\nLuna low / Terra medium / Sol high"]
 ```
 
-API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。当前 MVP 没有暴露无限制、长期运行的 n8n AI Agent 循环；高层能力都封装为受限 API/工作流工具。Windows Bridge 读取宿主机 Codex 配置并启动临时、只读沙箱中的 Codex 进程；`auth.json` 永远不会挂载进 Docker。
+API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。现阶段引入无限制 ReAct 循环只会增加成本和执行面。Windows Bridge 复用宿主机 Codex 的提供方与认证，并启动临时、只读沙箱中的 Codex 进程；`auth.json` 永远不会挂载进 Docker。
 
 ## 能力矩阵
 
 | 范围 | MVP 状态 | 当前真实能力 |
 | --- | --- | --- |
-| Idea 对话与澄清 | **已实现** | Codex Bridge LLM 提取、确定性降级、严格 Schema、缺失字段追问和危险 Idea 阻断。 |
+| Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema、安全降级与危险 Idea 阻断。 |
 | 项目初始化 | **已实现** | UUID、Git 工作区、目录、Idea v1、PostgreSQL 状态、检查点和 n8n 触发。 |
 | 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub 仅为候选来源。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
@@ -91,6 +95,12 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 
 ## Windows 快速开始
 
+### 单 EXE 安装器状态
+
+[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：把 Research OS、Compose/n8n 工作流和独立 Codex Bridge 打进一个 EXE；若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。该路径目前**还不是正式发布的一键安装包**：代码签名、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
+
+下方手动方式仍是当前受支持的安装路径。
+
 在仓库根目录打开 PowerShell：
 
 ```powershell
@@ -108,20 +118,19 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 ### 启动宿主机 Codex Bridge
 
-Bridge 必须运行在 Windows 宿主机上，才能读取当前 Codex 配置。在另一个 PowerShell 窗口中，将 Secret 设置为与 `.env` 完全相同的值并启动：
+Bridge 必须运行在 Windows 宿主机上，才能复用当前 Codex 的认证与提供方配置。它只从未跟踪的本地 `.env` 读取允许的 Bridge/模型配置，健康端点不会输出 Secret。在另一个 PowerShell 窗口中启动：
 
 ```powershell
-$env:CODEX_BRIDGE_SECRET = "<与.env中完全相同的值>"
 python scripts/codex_llm_bridge.py
 ```
 
-检查响应是否显示 `model=gpt-5.6-sol`、`reasoning=high` 和 `auth_exposed=false`：
+检查响应是否显示三个配置路由和 `auth_exposed=false`：
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8092/health
 ```
 
-Bridge 默认读取 Codex 配置中的 `model`、`model_reasoning_effort` 和 `model_provider`。它调用 `codex exec --ephemeral --sandbox read-only`，不会把 Codex 认证文件挂载到任何容器。
+默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。Bridge 仍从 Codex 配置读取提供方和认证，并调用 `codex exec --ephemeral --sandbox read-only`；不会把 Codex 认证文件挂载到任何容器。
 
 ### 启动 Compose
 
@@ -147,8 +156,8 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 
 ## 第一个项目操作流程
 
-1. 点击**新研究项目**，输入例如：“在相同标注预算下，校准后的不确定性主动学习能否在小样本 3D 点云分类上优于随机采样？”
-2. 回答研究领域、问题、假设、创新点、数据、算力、时间/成本、目标会议/期刊、成功标准与合规要求。
+1. 点击**新研究项目**并输入 Idea。**全自动模式**默认开启、尽量减少打断；希望规格生成前更全面地了解需求时，关闭开关进入**详细模式**。
+2. 检查 AI 的理解、推断领域、假设和成组追问；纠正错误推断，两种模式都不会逐字段执行固定问卷。
 3. 审核生成的 `ProjectSpec`。字段缺失、目标危险、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
 4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
@@ -159,6 +168,22 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 10. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。已取消项目是终止状态，不能恢复。
 
 ## 运行自带验收示例
+
+所有研究 Idea 和项目对话测试输入都以公开 UTF-8 JSON 文本保存在 [`tests/idea-cases`](tests/idea-cases)，这里是唯一允许的来源；测试代码不得嵌入或注入额外 Idea。新增或检查用例后运行：
+
+```powershell
+python scripts/check_idea_case_sources.py
+```
+
+需要一次低成本真实检查时，`test_mnist_idea.py` 只读取 `mnist-cnn.json`、只执行一轮 API/模型调用，并把被 Git 忽略的结果写到 `artifacts/idea-tests/mnist-cnn-latest.json`：
+
+```powershell
+python scripts/test_mnist_idea.py
+```
+
+下面的完整验收会调用多个公开用例、真实模型、外部学术 API 和 Runner 作业，因此成本更高；只在确实需要该范围时运行。
+
+最新全自动/详细模式变更目前只完成了上面所述的 `mnist-cnn` 定向真实验证。新的多用例端到端回归已明确登记为 `P0-REGRESSION-032`；在用户批准公开 case ID 和成本上限之前不得运行。下面的完整验收记录仍是该定向变更之前最近一次全系统基线。
 
 验收脚本会实际检查 Bridge、学术 API、PostgreSQL、n8n、Runner、MLflow、产物谱系、策略执行、Idea v2、局部重跑和 LaTeX 编译：
 
@@ -171,6 +196,7 @@ python scripts/acceptance_test.py
 | 输入 | 预期行为 |
 | --- | --- |
 | `AI` | 保持澄清，不得臆造完整研究规格。 |
+| PyTorch/CUDA CNN 在 MNIST 上达到 99% | 推断深度学习/计算机视觉，识别为工程基准，默认使用 Terra 层级，并询问研究定位、数据授权、算力和评估约束。 |
 | 请求未授权恶意软件或有害访问的 Idea | 可行性被阻断，项目确认返回结构化冲突。 |
 | 上述 3D 主动学习 Idea | 创建项目、检索论文，批准后执行受限实验并生成可检查产物。 |
 
@@ -187,8 +213,11 @@ python scripts/acceptance_test.py
 | `N8N_ENCRYPTION_KEY` | 是 | 必须长期保持不变的 n8n 加密密钥；丢失后已存凭据可能无法解密。 |
 | `N8N_LOCAL_OWNER_EMAIL`、`N8N_LOCAL_OWNER_PASSWORD` | 自动登录必需 | 仅供 `/api/n8n/open` 使用的本地 Owner，密码只在服务端使用，不渲染到页面。 |
 | `OPENAI_API_KEY`、`OPENAI_BASE_URL` | 可选 | 直接 OpenAI 兼容 API 降级路径；使用 Codex Bridge 时留空。 |
-| `OPENAI_MODEL`、`OPENAI_REASONING_EFFORT` | 可选 | 直接 API 设置，默认 `gpt-5.6-sol` 与 `high`；Bridge 独立读取宿主机 Codex 配置。 |
 | `CODEX_BRIDGE_URL`、`CODEX_BRIDGE_SECRET`、`CODEX_BRIDGE_TIMEOUT_SECONDS` | 推荐 | Compose 到宿主机的 Bridge URL、本地共享 Secret 和超时。 |
+| `RESEARCH_MODEL_SIMPLE`、`RESEARCH_REASONING_SIMPLE` | 是 | 简单轮次路由，默认 `gpt-5.6-luna` 与 `low`。 |
+| `RESEARCH_MODEL_MEDIUM`、`RESEARCH_REASONING_MEDIUM` | 是 | 中等轮次路由，默认 `gpt-5.6-terra` 与 `medium`。 |
+| `RESEARCH_MODEL_COMPLEX`、`RESEARCH_REASONING_COMPLEX` | 是 | 复杂轮次路由，默认 `gpt-5.6-sol` 与 `high`。 |
+| `RESEARCH_ROUTER_SIMPLE_MAX`、`RESEARCH_ROUTER_MEDIUM_MAX` | 是 | 确定性复杂度分数边界，默认 `2` 与 `7`。 |
 | `GITHUB_TOKEN` | 可选 | 提高 GitHub API 配额；仓库结果在交叉验证前仍只是候选。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |
 | `RUNNER_SHARED_SECRET`、`RUNNER_MAX_SECONDS` | 是 | API 到 Runner 的凭据和受限任务最大执行时间。 |
@@ -277,7 +306,7 @@ python scripts/acceptance_test.py
 | 现象 | 检查项 |
 | --- | --- |
 | Docker 提示 Linux engine 不可用 | Docker Desktop → Settings/General → 启用 WSL2 backend，切换到 Linux containers，然后运行 `docker info`。 |
-| API 已启动，但 Idea 澄清使用确定性降级 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、Bridge Secret 是否一致，以及 `docker compose logs api`。 |
+| API 已启动，但 Idea 澄清显示本地安全降级 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、Bridge Secret/模型白名单是否一致、Codex CLI 是否可访问，以及 `docker compose logs api`；响应元数据会明确显示 `fallback_used=true`。 |
 | n8n 要求输入密码 | 从 Research OS 侧边栏或 `/api/n8n/open` 打开；确认 `.env` Owner 与 n8n 数据库一致。不要关闭用户管理。 |
 | n8n 自动登录返回 503/401 | 确认 n8n 正常、Owner 密码至少 12 位、`N8N_INTERNAL_URL` 为 `http://n8n:5678`，然后重启 `api n8n`。 |
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |
@@ -288,7 +317,7 @@ python scripts/acceptance_test.py
 
 ## 路线图与真实边界
 
-最重要的未完成项记录在 [`TODO.md`](TODO.md)：证据驱动 Related Work/新颖性分析、官方仓库和许可证验证及受控下载、Idea 专属实验规划、通用 Python/C++/Conda/GPU、语义级依赖失效、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器和完整证据驱动 LaTeX 写作。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
+最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、官方仓库和许可证验证及受控下载、Idea 专属实验规划、通用 Python/C++/Conda/GPU、语义级依赖失效、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 
 不要把当前合成分类/点云任务当作科学结果，不要把 `metadata-only` 当作页码已核验引用，也不要把本地自动登录入口暴露到个人电脑之外。
 

@@ -8,6 +8,14 @@
 4. 高成本实验、代码/配置变更、依赖安装、删除、外发和论文编译先进入 `proposals`，明确批准后才执行。
 5. Secret 只通过容器环境或 secret manager 注入，不写入项目 Git、聊天或实验配置。
 
+## Adaptive clarification agent
+
+- 澄清 Agent 每轮只接收最新消息、当前草稿和最多 12 条最近对话，输出严格 `codex-clarification.schema.json`；它没有浏览、Shell、文件、SQL 或外部工具权限。
+- 复杂度与成本层级由 API 的确定性评分选择；Bridge 按 `simple/medium/complex` allowlist 二次核对模型和推理强度，拒绝调用方指定任意模型。
+- 明显领域可以作为可纠正假设推断；数据权限、GPU/预算、截止时间、伦理授权、新颖性、引用和结果不得臆造。
+- Bridge 只从 `.env` 读取明确允许的本地键，不读取或返回其他 Secret；健康端点只显示模型目录、提供方、配置来源和 `auth_exposed=false`。
+- 模型失败进入显式 `fallback_used=true` 安全降级，降级结果不能直接进入 ProjectSpec 确认或执行。
+
 ## Container policy
 
 - Runner 使用非 root UID、`no-new-privileges`、drop all capabilities、只读 root filesystem、PID/CPU/内存限制和临时目录配额。

@@ -15,6 +15,8 @@ LOCAL_LINK_RE = re.compile(r"!?(?:\[[^\]]*\])\(([^)]+)\)")
 
 REQUIRED_FACTS = (
     "gpt-5.6-sol",
+    "gpt-5.6-terra",
+    "gpt-5.6-luna",
     "reasoning_effort=high",
     "n8n 1.121.0",
     "http://127.0.0.1:8080",
@@ -27,6 +29,7 @@ REQUIRED_FACTS = (
     "docs/assets/research-os-literature.jpg",
     "docs/assets/research-os-artifacts.jpg",
     "docs/assets/research-os-policies.jpg",
+    "docs/assets/research-os-adaptive-chat.png",
     "python scripts/check_docs_sync.py",
 )
 
@@ -42,12 +45,18 @@ REQUIRED_ENV = (
     "RUNNER_SHARED_SECRET",
     "RUNNER_MAX_SECONDS",
     "OPENAI_API_KEY",
-    "OPENAI_MODEL",
-    "OPENAI_REASONING_EFFORT",
     "OPENAI_BASE_URL",
     "CODEX_BRIDGE_URL",
     "CODEX_BRIDGE_SECRET",
     "CODEX_BRIDGE_TIMEOUT_SECONDS",
+    "RESEARCH_MODEL_SIMPLE",
+    "RESEARCH_REASONING_SIMPLE",
+    "RESEARCH_MODEL_MEDIUM",
+    "RESEARCH_REASONING_MEDIUM",
+    "RESEARCH_MODEL_COMPLEX",
+    "RESEARCH_REASONING_COMPLEX",
+    "RESEARCH_ROUTER_SIMPLE_MAX",
+    "RESEARCH_ROUTER_MEDIUM_MAX",
     "GITHUB_TOKEN",
     "SEMANTIC_SCHOLAR_API_KEY",
     "REPORT_TIMEZONE",
@@ -127,6 +136,14 @@ def main() -> int:
         data = image_path.read_bytes()
         if len(data) < 10_000 or not data.startswith(b"\xff\xd8\xff"):
             errors.append(f"invalid or unexpectedly small JPEG: {image_path.relative_to(ROOT)}")
+
+    adaptive_image = ROOT / "docs" / "assets" / "research-os-adaptive-chat.png"
+    if not adaptive_image.exists():
+        errors.append(f"missing screenshot: {adaptive_image.relative_to(ROOT)}")
+    else:
+        data = adaptive_image.read_bytes()
+        if len(data) < 10_000 or not data.startswith(b"\x89PNG\r\n\x1a\n"):
+            errors.append(f"invalid or unexpectedly small PNG: {adaptive_image.relative_to(ROOT)}")
 
     if errors:
         print("Documentation synchronization check failed:")

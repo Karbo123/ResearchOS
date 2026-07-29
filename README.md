@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-4 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -24,7 +24,7 @@
 
 Research projects usually lose context between a chat, a paper spreadsheet, an experiment folder, and a manuscript. Research OS keeps those pieces connected around a persistent `project_id` and versioned `ResearchIdea/ProjectSpec`:
 
-- Start with a natural-language idea and a supervised clarification loop.
+- Start with a natural-language idea and an adaptive AI clarification loop that infers obvious context, exposes assumptions, and avoids a fixed questionnaire. Default-on **Automatic mode** asks as little as possible; turning it off selects **Detailed mode** for broader, still-adaptive discovery.
 - Refuse incomplete, unsafe, or clearly infeasible ideas before project creation.
 - Persist ideas, policies, approvals, checkpoints, tasks, experiments, evidence, and artifacts in PostgreSQL; chat is not the source of truth.
 - Search Crossref, OpenAlex, Semantic Scholar, arXiv, and DBLP with DOI/BibTeX records and provider-error tracking.
@@ -37,6 +37,10 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 ## Screenshots
 
 These images are from the latest real acceptance project (`8c40dc70-519a-4c87-99ac-d37003a56640`). They contain no tokens or credentials.
+
+![Adaptive clarification recognizes the MNIST/CNN domain and records the selected Terra tier](docs/assets/research-os-adaptive-chat.png)
+
+The new-project chat above shows the default-on Automatic-mode toggle, infers deep learning/computer vision from PyTorch, CUDA, CNN, and MNIST, identifies the request as an engineering benchmark rather than automatically claiming novelty, and selects the configurable medium-cost `gpt-5.6-terra` route. Turning the toggle off selects Detailed mode, which investigates more relevant gaps without reverting to a fixed questionnaire. While a response is pending, the UI shows an indeterminate progress bar, elapsed time, and current analysis hint without fabricating a completion percentage.
 
 | Overview | Literature evidence |
 | --- | --- |
@@ -62,16 +66,16 @@ flowchart LR
     ML --> MI[("MinIO\nartifacts")]
     API --> S["Academic search\nCrossref/OpenAlex/S2/arXiv/DBLP"]
     API --> B["Windows Codex Bridge\n127.0.0.1:8092"]
-    B --> C["Current Codex config + CLI\ngpt-5.6-sol / high"]
+    B --> C["Current Codex auth/provider\nLuna low / Terra medium / Sol high"]
 ```
 
-The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. The current MVP does not expose an unrestricted long-running n8n AI Agent loop; high-level capabilities are bounded API/workflow tools. The Windows Bridge reads the host Codex configuration and invokes an ephemeral read-only Codex process; `auth.json` is never mounted into Docker.
+The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. An unrestricted ReAct loop would add cost and an unnecessary execution surface at this stage. The Windows Bridge reuses the host Codex provider/authentication and invokes an ephemeral read-only Codex process; `auth.json` is never mounted into Docker.
 
 ## Capability matrix
 
 | Area | MVP status | What is real today |
 | --- | --- | --- |
-| Idea chat and clarification | **Implemented** | LLM extraction through Codex Bridge, deterministic fallback, strict schemas, missing-field questions, unsafe-idea block. |
+| Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, safe fallback, unsafe-idea block. |
 | Project initialization | **Implemented** | UUID, Git workspace, directories, Idea v1, PostgreSQL records, checkpoints, n8n trigger. |
 | Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX; GitHub is a candidate source only. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
@@ -91,6 +95,12 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 
 ## Quick start on Windows
 
+### Single-EXE installer status
+
+An online-bootstrap installer definition now lives in [`installer/windows`](installer/windows/README.md). It packages Research OS, Compose/n8n definitions, and a standalone Codex Bridge; when Docker Desktop is absent, it can download the official installer only after opt-in and verifies the Authenticode signature before elevation. The generated EXE is intentionally ignored by Git. This path is **not a released one-click installer yet**: code signing, Docker Desktop redistribution/license review, and a clean Windows VM acceptance run remain required by `P2-INSTALLER-029`.
+
+The manual path below remains the supported installation method.
+
 Open PowerShell in the repository root:
 
 ```powershell
@@ -108,20 +118,19 @@ Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N
 
 ### Start the host Codex Bridge
 
-The Bridge must run on Windows because it reads the current Codex configuration. In a second PowerShell window, set the same secret as `.env` and start it:
+The Bridge must run on Windows because it reuses the current Codex authentication/provider configuration. It loads only its allowlisted Bridge/model settings from the untracked local `.env`; it does not expose them in health output. Start it in a second PowerShell window:
 
 ```powershell
-$env:CODEX_BRIDGE_SECRET = "<the-exact-value-from-.env>"
 python scripts/codex_llm_bridge.py
 ```
 
-Check that it reports `model=gpt-5.6-sol`, `reasoning=high`, and `auth_exposed=false`:
+Check that it reports the three configured routes and `auth_exposed=false`:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8092/health
 ```
 
-The Bridge reads `model`, `model_reasoning_effort`, and `model_provider` from the Codex config by default. It invokes `codex exec --ephemeral --sandbox read-only`; no Codex authentication file is mounted into any container.
+Default routes are `gpt-5.6-luna`/low for simple turns, `gpt-5.6-terra`/medium for medium turns, and `gpt-5.6-sol`/high for complex turns. The API selects the tier using deterministic configurable thresholds; the model cannot promote itself. The Bridge still reads the provider and authentication from Codex configuration and invokes `codex exec --ephemeral --sandbox read-only`; no Codex authentication file is mounted into any container.
 
 ### Start Compose
 
@@ -147,8 +156,8 @@ The Research OS sidebar opens n8n through `/api/n8n/open`. The API logs into the
 
 ## First project walkthrough
 
-1. Click **New research project** and write an idea such as: “Can calibrated uncertainty-based active learning beat random sampling for few-shot 3D point-cloud classification under the same labeling budget?”
-2. Answer the clarification questions about domain, research question, hypothesis, novelty, data, compute, time/cost, target venue, success criteria, and compliance.
+1. Click **New research project** and enter your Idea. **Automatic mode** is on by default and minimizes interruptions; turn the toggle off for **Detailed mode** when you want broader questions before a specification is prepared.
+2. Review the AI's interpretation, inferred domain, assumptions, and grouped questions. Correct bad inferences; neither mode uses a field-by-field questionnaire.
 3. Review the generated `ProjectSpec`. Missing fields, unsafe requests, unclear ownership, or obvious resource risks keep the project in clarification and prevent creation.
 4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
@@ -159,6 +168,22 @@ The Research OS sidebar opens n8n through `/api/n8n/open`. The API logs into the
 10. Pause, resume, cancel, revise the Idea, or request a partial rerun from the appropriate checkpoint. A cancelled project is terminal.
 
 ## Running the supplied acceptance examples
+
+All research-Idea and project-dialog test inputs live as visible UTF-8 JSON text files in [`tests/idea-cases`](tests/idea-cases). This is the only permitted source: test code cannot embed or inject extra Ideas. Add or review cases there, then run:
+
+```powershell
+python scripts/check_idea_case_sources.py
+```
+
+For a single low-cost live check, `test_mnist_idea.py` reads only `mnist-cnn.json`, performs one API/model turn, and writes the ignored result to `artifacts/idea-tests/mnist-cnn-latest.json`:
+
+```powershell
+python scripts/test_mnist_idea.py
+```
+
+The full acceptance below invokes several visible cases, real models, external academic APIs, and Runner jobs, and therefore costs more. Run it only when that scope is intended.
+
+The latest Automatic/Detailed-mode change has only the targeted `mnist-cnn` live verification described above. A fresh multi-case end-to-end regression is explicitly pending as `P0-REGRESSION-032`; it must not run until the user approves the visible case IDs and cost envelope. The complete acceptance record below remains the last full-system baseline from before that targeted change.
 
 The acceptance script exercises the real Bridge, academic APIs, PostgreSQL state, n8n, Runner, MLflow, artifact lineage, policy enforcement, Idea v2, partial rerun, and LaTeX compilation:
 
@@ -171,6 +196,7 @@ Useful probes:
 | Input | Expected behavior |
 | --- | --- |
 | `AI` | Remains in clarification; it must not invent a complete specification. |
+| A PyTorch/CUDA CNN targeting 99% on MNIST | Infers deep learning/computer vision, identifies an engineering benchmark, uses the Terra tier by default, and asks about research scope, data authorization, compute, and evaluation constraints. |
 | An idea asking for unauthorized malware or harmful access | Feasibility is blocked and project confirmation returns a structured conflict. |
 | The 3D active-learning idea above | Creates a project, searches papers, runs bounded experiments after approval, and emits inspectable artifacts. |
 
@@ -187,8 +213,11 @@ The latest complete acceptance record has a sanitized, versioned copy at [`accep
 | `N8N_ENCRYPTION_KEY` | Yes | Stable n8n encryption key. Keep it across restarts; losing it can make stored n8n credentials unreadable. |
 | `N8N_LOCAL_OWNER_EMAIL`, `N8N_LOCAL_OWNER_PASSWORD` | Yes for auto-login | Internal local Owner used only by `/api/n8n/open`. The password is server-side and never rendered into the UI. |
 | `OPENAI_API_KEY`, `OPENAI_BASE_URL` | Optional | Direct OpenAI-compatible fallback. Leave blank when using the Codex Bridge. |
-| `OPENAI_MODEL`, `OPENAI_REASONING_EFFORT` | Optional | Direct API settings; defaults are `gpt-5.6-sol` and `high`. The Bridge independently reads the host Codex config. |
 | `CODEX_BRIDGE_URL`, `CODEX_BRIDGE_SECRET`, `CODEX_BRIDGE_TIMEOUT_SECONDS` | Recommended | Compose-to-host Bridge URL, shared local secret, and request timeout. |
+| `RESEARCH_MODEL_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Simple-turn route; defaults to `gpt-5.6-luna` and `low`. |
+| `RESEARCH_MODEL_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Medium-turn route; defaults to `gpt-5.6-terra` and `medium`. |
+| `RESEARCH_MODEL_COMPLEX`, `RESEARCH_REASONING_COMPLEX` | Yes | Complex-turn route; defaults to `gpt-5.6-sol` and `high`. |
+| `RESEARCH_ROUTER_SIMPLE_MAX`, `RESEARCH_ROUTER_MEDIUM_MAX` | Yes | Deterministic complexity-score boundaries; defaults are `2` and `7`. |
 | `GITHUB_TOKEN` | Optional | Raises GitHub API limits; repository results remain unverified candidates until cross-checked. |
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional | Optional Semantic Scholar quota credential. |
 | `RUNNER_SHARED_SECRET`, `RUNNER_MAX_SECONDS` | Yes | API-to-Runner credential and maximum bounded task duration. |
@@ -278,7 +307,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 | Symptom | Check |
 | --- | --- |
 | Docker says the Linux engine is unavailable | Docker Desktop → Settings/General → enable the WSL2 backend, switch to Linux containers, then retry `docker info`. |
-| API is up but idea clarification is deterministic | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, the Bridge secret match, and `docker compose logs api`. |
+| API is up but idea clarification says local safe fallback | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, the Bridge secret/model allowlist match, Codex CLI access, and `docker compose logs api`. The response metadata explicitly reports `fallback_used=true`. |
 | n8n asks for a password | Open the Research OS sidebar link or `/api/n8n/open`; verify Owner values in `.env` match the n8n database. Do not disable user management. |
 | n8n auto-login returns 503/401 | Check n8n is running, Owner password length is at least 12, `N8N_INTERNAL_URL` resolves to `http://n8n:5678`, and restart `api n8n`. |
 | Webhook 404 | Confirm the three built-in workflows are Active and n8n was recreated after workflow JSON changes. |
@@ -289,7 +318,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 
 ## Roadmap and honest limitations
 
-The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): evidence-backed Related Work and novelty analysis, official repository/license verification and controlled download, Idea-specific experiment planning, general Python/C++/Conda/GPU jobs, semantic dependency invalidation, persistent queues, external notifications, richer material parsing, interactive 3D viewing, and complete evidence-grounded LaTeX writing. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
+The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): the approval-gated multi-case clarification regression, remaining chat timeout/keyboard tests, evidence-backed Related Work and novelty analysis, official repository/license verification and controlled download, Idea-specific experiment planning, general Python/C++/Conda/GPU jobs, semantic dependency invalidation, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
 
 Do not use the current synthetic classification/point-cloud tasks as a scientific result. Do not cite `metadata-only` rows as if they were page-verified claims. Do not expose the local auto-login endpoint beyond the private machine.
 

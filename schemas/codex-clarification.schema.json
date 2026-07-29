@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Adaptive research idea clarification turn",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["draft", "assistant_reply", "ready_for_confirmation", "unresolved_items", "assumptions", "risk_flags"],
+  "properties": {
+    "draft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "research_question", "domain", "hypotheses", "expected_contributions", "keywords", "target_venues", "available_data", "constraints", "success_criteria", "risks", "open_questions", "ethics_and_compliance"],
+      "properties": {
+        "title": {"type": ["string", "null"], "maxLength": 240},
+        "research_question": {"type": ["string", "null"]},
+        "domain": {"type": ["string", "null"]},
+        "hypotheses": {"type": "array", "maxItems": 10, "items": {"type": "string"}},
+        "expected_contributions": {"type": "array", "maxItems": 10, "items": {"type": "string"}},
+        "keywords": {"type": "array", "maxItems": 30, "items": {"type": "string"}},
+        "target_venues": {"type": "array", "maxItems": 10, "items": {"type": "string"}},
+        "available_data": {"type": ["string", "null"]},
+        "constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["compute", "budget_usd", "deadline", "data_access"],
+          "properties": {
+            "compute": {"type": ["string", "null"]},
+            "budget_usd": {"type": ["number", "null"], "minimum": 0},
+            "deadline": {"type": ["string", "null"]},
+            "data_access": {"type": ["string", "null"]}
+          }
+        },
+        "success_criteria": {"type": "array", "maxItems": 10, "items": {"type": "string"}},
+        "risks": {"type": "array", "maxItems": 20, "items": {"type": "string"}},
+        "open_questions": {"type": "array", "maxItems": 12, "items": {"type": "string"}},
+        "ethics_and_compliance": {"type": ["string", "null"]}
+      }
+    },
+    "assistant_reply": {"type": "string", "minLength": 1, "maxLength": 6000},
+    "ready_for_confirmation": {"type": "boolean"},
+    "unresolved_items": {"type": "array", "maxItems": 12, "items": {"type": "string"}},
+    "assumptions": {"type": "array", "maxItems": 12, "items": {"type": "string"}},
+    "risk_flags": {"type": "array", "maxItems": 12, "items": {"type": "string"}}
+  }
+}

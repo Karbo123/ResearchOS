@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "id": "complex-medical-detailed",
+  "description": "A sensitive multimodal medical Idea exercises the complex route and detailed clarification mode.",
+  "enabled": true,
+  "clarification_mode": "detailed",
+  "initial_message": "研究多模态医疗患者个人数据上的分布式联邦学习与多智能体安全实验，包含统计检验和消融。",
+  "confirmed_facts": {},
+  "project_messages": {},
+  "expect": {
+    "model_tier": "complex",
+    "model": "gpt-5.6-sol"
+  }
+}

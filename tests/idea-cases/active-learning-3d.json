@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "id": "active-learning-3d",
+  "description": "The end-to-end acceptance project for active learning on 3D point-cloud classification.",
+  "enabled": true,
+  "clarification_mode": "automatic",
+  "initial_message": "Can uncertainty-based active learning outperform random sampling for few-shot 3D point-cloud classification at the same labeling budget?",
+  "confirmed_facts": {
+    "research_question": "At the same labeling budget, does uncertainty-based active learning improve few-shot 3D point-cloud classification over random sampling?",
+    "domain": "3D computer vision and active learning",
+    "hypotheses": "Uncertainty sampling improves mean accuracy over random sampling; calibration reduces acquisition instability",
+    "expected_contributions": "A reproducible label-budget benchmark; an analysis of calibration and seed sensitivity",
+    "available_data": "ModelNet40 public data under its published license, plus a synthetic smoke-test dataset",
+    "constraints": "One 24GB GPU, USD 50, eight weeks, public data",
+    "success_criteria": "At least two percentage points above random sampling across five seeds with confidence intervals",
+    "target_venues": "CVPR workshop; 3DV",
+    "ethics_and_compliance": "No personal data, human subjects, or restricted data"
+  },
+  "project_messages": {
+    "policy_update": "修改长期策略为：所有实验至少使用五个随机种子",
+    "idea_revision": "修改研究问题改为：在相同标注预算下，校准后的不确定性主动学习能否在五个随机种子上稳定优于随机采样？"
+  },
+  "expect": {
+    "model_tier": "complex",
+    "final_feasibility": "medium"
+  }
+}

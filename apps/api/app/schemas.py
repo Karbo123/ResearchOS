@@ -40,6 +40,39 @@ class ResearchIdea(BaseModel):
     ethics_and_compliance: str | None = None
 
 
+class ResearchIdeaDraft(BaseModel):
+    """A partial Idea used during adaptive clarification, never as an execution contract."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str | None = Field(default=None, max_length=240)
+    research_question: str | None = None
+    domain: str | None = None
+    hypotheses: list[str] = Field(default_factory=list, max_length=10)
+    expected_contributions: list[str] = Field(default_factory=list, max_length=10)
+    keywords: list[str] = Field(default_factory=list, max_length=30)
+    target_venues: list[str] = Field(default_factory=list, max_length=10)
+    available_data: str | None = None
+    constraints: ResourceConstraints = Field(default_factory=ResourceConstraints)
+    success_criteria: list[str] = Field(default_factory=list, max_length=10)
+    risks: list[str] = Field(default_factory=list, max_length=20)
+    open_questions: list[str] = Field(default_factory=list, max_length=12)
+    ethics_and_compliance: str | None = None
+
+
+class AdaptiveClarificationResult(BaseModel):
+    """Strict model output for one bounded, non-executing clarification turn."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    draft: ResearchIdeaDraft
+    assistant_reply: str = Field(min_length=1, max_length=6000)
+    ready_for_confirmation: bool = False
+    unresolved_items: list[str] = Field(default_factory=list, max_length=12)
+    assumptions: list[str] = Field(default_factory=list, max_length=12)
+    risk_flags: list[str] = Field(default_factory=list, max_length=12)
+
+
 class ProjectSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -61,10 +94,13 @@ class Attachment(BaseModel):
 
 
 class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     session_id: UUID | None = None
     project_id: UUID | None = None
     message: str = Field(min_length=1, max_length=20_000)
     attachments: list[Attachment] = Field(default_factory=list)
+    clarification_mode: Literal["automatic", "detailed"] = "automatic"
 
 
 class ChatResponse(BaseModel):
@@ -75,6 +111,11 @@ class ChatResponse(BaseModel):
     spec: ProjectSpec | None = None
     missing_fields: list[str] = Field(default_factory=list)
     action_required: str | None = None
+    model_tier: Literal["simple", "medium", "complex"] | None = None
+    model: str | None = None
+    reasoning_effort: str | None = None
+    fallback_used: bool = False
+    clarification_mode: Literal["automatic", "detailed"] = "automatic"
 
 
 class ProjectCreateRequest(BaseModel):

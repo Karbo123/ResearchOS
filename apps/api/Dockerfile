@@ -10,13 +10,15 @@ RUN sed -i \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home --uid 10001 app
 WORKDIR /workspace/apps/api
-ENV PYTHONPATH=/workspace/apps/api
+ENV PYTHONPATH=/workspace:/workspace/apps/api
 COPY apps/api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY apps/api/app ./app
 COPY apps/api/static ./static
 COPY apps/api/tests ./tests
 COPY schemas /workspace/schemas
+COPY scripts/idea_case_loader.py /workspace/scripts/idea_case_loader.py
+COPY tests/idea-cases /workspace/tests/idea-cases
 RUN chown -R app:app /workspace
 USER app
 EXPOSE 8080
