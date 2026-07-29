@@ -230,4 +230,4 @@
 - 2026-07-30：开始 `P0-RELATED-002`；先复核现有文献、全文 evidence、claim gate、报告和 API 契约，禁止把元数据候选或合成指标直接写成事实性结论。
 - 2026-07-30：开始 `P0-LLM-040`；移除运行链路中的 Windows Bridge，API 改为容器内直连三档独立模型配置；移除 n8n 自动生成通用分类/点云实验计划，主题专属规划未实现时直接返回结构化错误；前端新增左下角模型设置入口，key 只写入忽略的 runtime 挂载文件。
 - 2026-07-30：继续 `P0-LLM-040` 与 `P0-RELATED-002`；Windows 安装器不再打包或启动 Bridge，前端移除无效的通用实验计划按钮，Related Work 新增证据边界单元测试。历史验收中的 Bridge/合成实验记录仅作历史证据，不代表当前运行路径。
-- 2026-07-30：完成 `P0-LLM-040` 与 `P0-RELATED-002`；验证 API `29 passed`、前端 UX `5 passed`、浏览器设置面板桌面/窄屏检查、Compose/JSON/Idea case/文档同步/AST/`git diff --check`，清理历史 dangling Docker 镜像并删除废弃 Bridge 脚本。未运行真实模型、其他 Idea 或无关实验；功能提交 `4ff3ef4`、清理提交 `4b2c381`。
+- 2026-07-30：完成 `P0-LLM-040` 与 `P0-RELATED-002`；验证 API `29 passed`、前端 UX `5 passed`、浏览器设置面板桌面/窄屏检查、Compose/JSON/Idea case/文档同步/AST/`git diff --check`，清理历史 dangling Docker 镜像，删除废弃 Bridge 脚本并清理验收脚本中的旧通用实验路径。未运行真实模型、其他 Idea 或无关实验；功能提交 `4ff3ef4`、清理提交 `4fb4905`、验收入口提交 `8798473`。
