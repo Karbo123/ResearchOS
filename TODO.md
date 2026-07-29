@@ -236,4 +236,4 @@
   - P0-RUNNER-007 当前实现：每个 Run 使用新的非 root spawn 子进程、白名单任务模板、CPU/内存/PID 限制和内部 runner-internal 网络；取消终止进程组，超时返回 job_timeout，监控器保护取消/失败终态。
   - P0-RUNNER-007 当前缺口：每 Run 独立容器、GPU、通用 Python/C++/Conda 和磁盘配额尚未实现；未运行无关分类/点云实验，任务继续保持 [~]。
 - P0-RUNNER-007 验证：Runner 标准库测试 4 passed，API 容器 32 passed，内部健康端点确认 one-spawned-process-per-run、docker_socket_mounted=false、arbitrary_commands=false。
-- P0-RUNNER-007 提交：`92fe1ef`，已推送到 `origin/main`。
+- P0-RUNNER-007 提交：`92fe1ef` 已推送到 `origin/main`；TODO 记录随合并提交更新。
