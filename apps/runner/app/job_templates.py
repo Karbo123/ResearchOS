@@ -1,0 +1,75 @@
+"""Static Runner task templates and their bounded resource policies."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any
+
+
+FORBIDDEN_CONFIG_FIELDS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image"}
+
+
+@dataclass(frozen=True)
+class JobTemplate:
+    task_id: str
+    allowed_config: frozenset[str]
+    max_runtime_seconds: int
+    memory_mb: int
+    pid_limit: int
+    network_policy: str
+
+
+TASK_TEMPLATES = {
+    "demo_classification": JobTemplate(
+        task_id="demo_classification.v1",
+        allowed_config=frozenset({"project_slug", "n_samples", "n_features", "delay_seconds"}),
+        max_runtime_seconds=600,
+        memory_mb=768,
+        pid_limit=64,
+        network_policy="internal-mlflow-only",
+    ),
+    "point_cloud_demo": JobTemplate(
+        task_id="point_cloud_demo.v1",
+        allowed_config=frozenset({"project_slug", "delay_seconds"}),
+        max_runtime_seconds=600,
+        memory_mb=768,
+        pid_limit=64,
+        network_policy="internal-mlflow-only",
+    ),
+    "compile_latex": JobTemplate(
+        task_id="compile_latex.v1",
+        allowed_config=frozenset({"project_slug", "delay_seconds"}),
+        max_runtime_seconds=600,
+        memory_mb=1024,
+        pid_limit=96,
+        network_policy="internal-mlflow-only",
+    ),
+}
+
+
+def template_for(task_id: str) -> JobTemplate:
+    try:
+        return TASK_TEMPLATES[task_id]
+    except KeyError as exc:
+        raise ValueError("task type is not allowlisted") from exc
+
+
+def validate_template_config(task_id: str, config: dict[str, Any]) -> JobTemplate:
+    template = template_for(task_id)
+    forbidden = FORBIDDEN_CONFIG_FIELDS.intersection(config)
+    if forbidden:
+        raise ValueError(f"forbidden task fields: {sorted(forbidden)}")
+    unknown = set(config) - template.allowed_config
+    if unknown:
+        raise ValueError(f"config contains unsupported fields: {sorted(unknown)}")
+    delay = config.get("delay_seconds", 0)
+    if not isinstance(delay, (int, float)) or isinstance(delay, bool) or not 0 <= delay <= 10:
+        raise ValueError("delay_seconds must be between 0 and 10")
+    if task_id == "demo_classification":
+        n_samples = config.get("n_samples", 600)
+        n_features = config.get("n_features", 12)
+        if not isinstance(n_samples, int) or isinstance(n_samples, bool) or not 100 <= n_samples <= 100_000:
+            raise ValueError("n_samples must be an integer between 100 and 100000")
+        if not isinstance(n_features, int) or isinstance(n_features, bool) or not 2 <= n_features <= 1_000:
+            raise ValueError("n_features must be an integer between 2 and 1000")
+    return template

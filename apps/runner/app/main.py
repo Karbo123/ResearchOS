@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import multiprocessing as mp
 import os
+import queue
+import signal
 import subprocess
 import threading
 import time
@@ -26,6 +29,8 @@ from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.model_selection import train_test_split
 
 from reproducibility import ReproducibilityError, ReproducibilityContract, runtime_identity, validate_snapshot_contract
+from .job_isolation import apply_job_limits, job_environment
+from .job_templates import TASK_TEMPLATES, validate_template_config
 
 
 class PolicyConstraints(BaseModel):
@@ -49,37 +54,20 @@ class SubmitRequest(BaseModel):
     @field_validator("experiment_type")
     @classmethod
     def allowed_type(cls, value: str) -> str:
-        if value not in {"demo_classification", "point_cloud_demo", "compile_latex"}:
+        if value not in TASK_TEMPLATES:
             raise ValueError("experiment type is not allowlisted")
         return value
 
     @field_validator("config")
     @classmethod
     def safe_config(cls, value: dict) -> dict:
-        if {"command", "cmd", "shell", "cwd", "path"}.intersection(value):
-            raise ValueError("command and path fields are forbidden")
+        if {"command", "cmd", "shell", "cwd", "path", "url", "network", "image"}.intersection(value):
+            raise ValueError("command, path, network, URL and image fields are forbidden")
         return value
 
     @model_validator(mode="after")
     def allowlisted_config(self):
-        allowed = {
-            "demo_classification": {"project_slug", "n_samples", "n_features", "delay_seconds"},
-            "point_cloud_demo": {"project_slug", "delay_seconds"},
-            "compile_latex": {"project_slug", "delay_seconds"},
-        }[self.experiment_type]
-        unknown = set(self.config) - allowed
-        if unknown:
-            raise ValueError(f"config contains unsupported fields: {sorted(unknown)}")
-        delay = self.config.get("delay_seconds", 0)
-        if not isinstance(delay, (int, float)) or isinstance(delay, bool) or not 0 <= delay <= 10:
-            raise ValueError("delay_seconds must be between 0 and 10")
-        if self.experiment_type == "demo_classification":
-            n_samples = self.config.get("n_samples", 600)
-            n_features = self.config.get("n_features", 12)
-            if not isinstance(n_samples, int) or isinstance(n_samples, bool) or not 100 <= n_samples <= 100_000:
-                raise ValueError("n_samples must be an integer between 100 and 100000")
-            if not isinstance(n_features, int) or isinstance(n_features, bool) or not 2 <= n_features <= 1_000:
-                raise ValueError("n_features must be an integer between 2 and 1000")
+        validate_template_config(self.experiment_type, self.config)
         if self.experiment_type in {"demo_classification", "point_cloud_demo"}:
             if len(set(self.random_seeds)) < self.policy_constraints.minimum_random_seed_count:
                 raise ValueError("random_seeds violate the submitted minimum seed-count policy")
@@ -95,7 +83,9 @@ SHARED_SECRET = os.getenv("RUNNER_SHARED_SECRET", "runner-dev-secret")
 MAX_SECONDS = int(os.getenv("RUNNER_MAX_SECONDS", "600"))
 RUNS: dict[str, dict] = {}
 CANCEL_EVENTS: dict[str, threading.Event] = {}
+PROCESSES: dict[str, mp.Process] = {}
 LOCK = threading.Lock()
+CHILD_STATE_QUEUE = None
 
 
 class RunCancelled(Exception):
@@ -117,7 +107,10 @@ def persist_state(key: str) -> None:
 def update_state(key: str, **values) -> None:
     with LOCK:
         RUNS[key].update(values)
-        persist_state(key)
+        if CHILD_STATE_QUEUE is not None:
+            CHILD_STATE_QUEUE.put(values)
+        else:
+            persist_state(key)
 
 
 @app.on_event("startup")
@@ -168,6 +161,91 @@ def read_git_commit(project_root: Path | None) -> str:
 def artifact(path: Path, kind: str, run_dir: Path, metadata: dict | None = None) -> dict:
     mime = {".png": "image/png", ".json": "application/json", ".ply": "application/octet-stream"}.get(path.suffix, "application/octet-stream")
     return {"name": path.name, "kind": kind, "relative_path": str(path.relative_to(ARTIFACTS_ROOT)).replace("\\", "/"), "mime_type": mime, "sha256": sha256(path), "metadata": metadata or {}}
+
+
+def _child_entry(request: SubmitRequest, state_queue, cancel_event) -> None:
+    """Run one allowlisted template in a fresh process with child-only limits."""
+    global CHILD_STATE_QUEUE
+    if hasattr(os, "setsid"):
+        os.setsid()
+    key = str(request.run_id)
+    CHILD_STATE_QUEUE = state_queue
+    RUNS[key] = {
+        "run_id": key, "status": "queued", "metrics": {}, "artifacts": [],
+        "mlflow_run_id": None, "error": None, "started_at": None, "finished_at": None,
+        "reproducibility": request.reproducibility.model_dump(mode="json"),
+    }
+    CANCEL_EVENTS[key] = cancel_event
+    try:
+        template = validate_template_config(request.experiment_type, request.config)
+        os.environ.update(job_environment(template))
+        limits = apply_job_limits(template, MAX_SECONDS)
+        update_state(key, task_template=template.task_id, resource_limits=limits)
+        execute(request)
+    except Exception as exc:
+        update_state(key, status="failed", finished_at=utcnow(), error=f"job bootstrap failed: {exc}")
+
+
+def _persist_child_state(key: str, values: dict) -> None:
+    """Merge child updates without reopening a supervisor-owned terminal state."""
+    with LOCK:
+        current = RUNS.get(key)
+        if current is None:
+            return
+        if current.get("status") in {"succeeded", "failed", "cancelled"}:
+            return
+        current.update(values)
+        persist_state(key)
+
+
+def _terminate_process(process: mp.Process) -> None:
+    """Stop the isolated process group, including a bounded task subprocess."""
+    if not process.is_alive():
+        return
+    try:
+        if hasattr(os, "killpg") and process.pid:
+            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        else:
+            process.terminate()
+    except (OSError, AttributeError):
+        process.terminate()
+
+
+def _monitor_job(request: SubmitRequest, process: mp.Process, state_queue) -> None:
+    key = str(request.run_id)
+    template = validate_template_config(request.experiment_type, request.config)
+    deadline = time.monotonic() + min(MAX_SECONDS, template.max_runtime_seconds)
+    while True:
+        if process.is_alive():
+            if time.monotonic() > deadline:
+                _terminate_process(process)
+                _persist_child_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
+                    "code": "job_timeout",
+                    "message": "The isolated Runner job exceeded its runtime limit.",
+                    "max_runtime_seconds": min(MAX_SECONDS, template.max_runtime_seconds),
+                }))
+                continue
+            try:
+                _persist_child_state(key, state_queue.get(timeout=0.2))
+            except queue.Empty:
+                continue
+        else:
+            try:
+                while True:
+                    _persist_child_state(key, state_queue.get_nowait())
+            except queue.Empty:
+                break
+    process.join(timeout=1)
+    with LOCK:
+        terminal = RUNS.get(key, {}).get("status") in {"succeeded", "failed", "cancelled"}
+    if not terminal:
+        update_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
+            "code": "job_process_exited",
+            "message": "The isolated Runner job process exited without a terminal result.",
+            "exit_code": process.exitcode,
+        }))
+    with LOCK:
+        PROCESSES.pop(key, None)
 
 
 def write_point_cloud(run_dir: Path, seed: int) -> tuple[Path, Path]:
@@ -363,7 +441,23 @@ def execute(request: SubmitRequest):
 def health():
     return {
         "status": "ok",
-        "allowed_experiments": ["demo_classification", "point_cloud_demo", "compile_latex"],
+        "allowed_experiments": sorted(TASK_TEMPLATES),
+        "task_templates": {
+            name: {
+                "task_id": template.task_id,
+                "allowed_config": sorted(template.allowed_config),
+                "max_runtime_seconds": template.max_runtime_seconds,
+                "memory_mb": template.memory_mb,
+                "pid_limit": template.pid_limit,
+                "network_policy": template.network_policy,
+            }
+            for name, template in TASK_TEMPLATES.items()
+        },
+        "job_isolation": {
+            "mode": "one-spawned-process-per-run",
+            "docker_socket_mounted": False,
+            "arbitrary_commands": False,
+        },
         "reproducibility": runtime_identity(),
     }
 
@@ -397,9 +491,28 @@ def submit(request: SubmitRequest, x_runner_secret: str | None = Header(default=
             "mlflow_run_id": None, "error": None, "started_at": None, "finished_at": None,
             "reproducibility": request.reproducibility.model_dump(mode="json"),
         }
-        CANCEL_EVENTS[key] = threading.Event()
+        CANCEL_EVENTS[key] = mp.get_context("spawn").Event()
         persist_state(key)
-    threading.Thread(target=execute, args=(request,), daemon=True).start()
+    context = mp.get_context("spawn")
+    state_queue = context.Queue()
+    process = context.Process(target=_child_entry, args=(request, state_queue, CANCEL_EVENTS[key]), daemon=True)
+    with LOCK:
+        PROCESSES[key] = process
+    try:
+        process.start()
+    except Exception as exc:
+        with LOCK:
+            PROCESSES.pop(key, None)
+            RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps({
+                "code": "job_process_start_failed",
+                "message": "The isolated Runner job process could not be started.",
+            }))
+            persist_state(key)
+        raise HTTPException(status_code=503, detail={
+            "code": "job_process_start_failed",
+            "message": "The isolated Runner job process could not be started.",
+        }) from exc
+    threading.Thread(target=_monitor_job, args=(request, process, state_queue), daemon=True).start()
     return RUNS[key]
 
 
@@ -423,4 +536,7 @@ def cancel(run_id: UUID, x_runner_secret: str | None = Header(default=None)):
         CANCEL_EVENTS[key].set()
         RUNS[key].update(status="cancelled", finished_at=utcnow())
         persist_state(key)
+        process = PROCESSES.get(key)
+    if process is not None:
+        _terminate_process(process)
         return RUNS[key]

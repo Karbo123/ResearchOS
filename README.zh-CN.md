@@ -72,6 +72,8 @@ flowchart LR
 
 API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。模型请求由 API 容器直接发送到三个独立配置的 OpenAI-compatible URL。API 不读取 Windows Codex 配置目录、`auth.json`，也不依赖 Windows 模型服务；调用失败直接返回结构化错误，不切换提供方、不生成本地回复。
 
+当前 Runner 隔离方式是在受限 Runner 容器内为每个 Run 新建一个非 root 子进程。每个进程只接收固定任务模板 ID、白名单配置字段、CPU/内存/PID 配额、超时和仅允许访问内部 MLflow 的网络策略。Runner 容器没有 Docker socket，并拒绝任意命令、路径、URL、network 和 image 字段；Compose 拓扑也让 Runner 不加入默认网络。每 Run 独立容器、GPU 调度以及通用 Python/C++/Conda 环境仍未完成；对于不支持的主题计划，API 不会替换成通用 demo 任务。
+
 ## 能力矩阵
 
 | 范围 | MVP 状态 | 当前真实能力 |

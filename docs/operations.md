@@ -76,6 +76,12 @@ Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
 
 返回中的 `recovery.source_snapshot_url` 是受控源码恢复包，不是项目 Git 中的文件。默认 `RUNNER_IMAGE_DIGEST=unavailable` 会被记录为未核验；发布部署必须设置真实 `sha256:<64 hex>` digest，并重新进行完整实时验收。
 
+## Runner 作业隔离
+
+当前每个 Run 在 Runner 容器内启动一个新的 `spawn` 子进程。任务模板固定 task ID、配置字段、CPU/内存/PID 配额和 `internal-mlflow-only` 网络策略标签；取消会终止该进程组，超出模板或全局运行时限会返回结构化 `job_timeout` 错误。Runner 不挂载 Docker socket，也不接收命令、路径、URL、网络或镜像字段。Runner 只连接无外部出口的 Compose 内部 `runner-internal` 网络，该网络同时承载 API 控制请求和 MLflow；Windows 不需要启动任何 API、Runner 或模型服务。
+
+这是隔离基础设施的部分实现，不是每 Run 独立容器。主题专属 Runner 模板、独立容器/GPU 调度、通用 Python/C++/Conda 环境和磁盘配额仍由 `P0-RUNNER-007` 跟踪。当前用户主题没有匹配模板时，API 返回 `topic_specific_runner_not_implemented`，不会运行无关的分类或点云实验。
+
 ## n8n 自动登录
 
 n8n 当前版本已不支持旧的 `N8N_BASIC_AUTH_*` 和 `N8N_USER_MANAGEMENT_DISABLED`。本项目保留一个内部本地 Owner：API 调用官方 Login/Owner Setup，转发 n8n 签发的 HttpOnly Cookie，不伪造 JWT，也不把密码写进浏览器页面或聊天。

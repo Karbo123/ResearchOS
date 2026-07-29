@@ -72,6 +72,8 @@ flowchart LR
 
 The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. The API container calls the independently configured OpenAI-compatible model URLs directly. It never reads the Windows Codex configuration directory, `auth.json`, or host model service. A failed call is returned as a structured error with no provider switch or local reply.
 
+Runner isolation currently uses one freshly spawned, non-root process per Run inside the restricted Runner container. Each process receives only a fixed task-template ID, allowlisted configuration fields, bounded CPU/memory/PID limits, a timeout, and an internal-MLflow-only network policy. The Runner container has no Docker socket and rejects arbitrary command, path, URL, network, and image fields. The Compose topology keeps Runner off the default network. Independent per-run containers, GPU scheduling, and general Python/C++/Conda environments remain unfinished; the API never substitutes a generic demo task for an unsupported topic-specific plan.
+
 ## Capability matrix
 
 | Area | MVP status | What is real today |
@@ -82,7 +84,7 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
 | Idea-specific experiment planning | **Implemented (approval-gated)** | The API uses the current ProjectSpec, verified page-level evidence, and active policy snapshot to generate a strict topic-specific plan Proposal with datasets, baselines, metrics, ablations, statistical tests, seeds, budget, risks, and success criteria. |
 | Human supervision | **Implemented (MVP)** | Proposal/approval/audit for experiments, Idea revisions, policies, and LaTeX; pause/resume/cancel gates. |
-| Experiments | **Implemented (bounded)** | Three allowlisted Runner tasks, non-root execution, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. |
+| Experiments | **Partial (bounded foundation)** | Three explicit allowlisted Runner tasks, non-root execution, one spawned process per Run, bounded resources, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. Topic-specific execution, independent per-run containers, GPU scheduling, and general language/tool environments remain open. |
 | Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A live acceptance is now recorded; release-grade scope remains limited by the MVP boundaries described below. |
 | General research autonomy | **Partial / roadmap** | Official repository verification, general Python/C++/Conda/GPU jobs, semantic invalidation, external notifications, evidence-grounded Related Work, and full paper writing remain open. |
 
