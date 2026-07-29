@@ -5,7 +5,7 @@
 1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。
 2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
 3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 会从仓库根目录未跟踪的 `.env` 读取允许的 Bridge/模型配置；无需把 Codex `auth.json` 挂载进 Docker。
-4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，再运行 `docker compose up --build -d`。
+4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，首次部署再运行 `docker compose up --build -d`。镜像已经存在时使用日常启动命令 `docker compose up -d`，不要为普通启动重复构建。
 5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
 
@@ -31,7 +31,7 @@ API 应返回 `status=ok`，n8n 和 MLflow 应返回 HTTP 200。Runner 不发布
 ```powershell
 # 先在 Bridge 窗口停止旧进程，再重新运行
 python scripts/codex_llm_bridge.py
-docker compose up -d --build api
+docker compose up -d api
 Invoke-RestMethod http://127.0.0.1:8092/health
 Invoke-RestMethod http://127.0.0.1:8080/api/health
 ```
@@ -51,6 +51,18 @@ docker compose up -d
 docker compose ps
 docker compose logs --tail=100 api runner n8n
 docker compose stop
+```
+
+`docker compose up -d` 是已有镜像的正常启动命令；它不会因为日常启动主动重建镜像。只有 Dockerfile、服务依赖、API/Runner/MLflow 源码等镜像输入发生变化时，才运行：
+
+```powershell
+docker compose up -d --build api runner mlflow
+```
+
+`projects/`、`artifacts/` 和 `n8n/workflows/` 是运行时挂载目录，不需要构建镜像。修改 n8n 工作流后，重新创建 n8n 容器即可触发启动导入：
+
+```powershell
+docker compose up -d --force-recreate n8n
 ```
 
 从 `http://127.0.0.1:8080` 使用研究面板。侧边栏 n8n 链接会访问 `/api/n8n/open` 并取得 Cookie；`http://127.0.0.1:5678` 主要用于排障。
@@ -111,7 +123,7 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 1. 修改 `.env` 或版本化 Schema/工作流。
 2. 执行 Compose、Python、JSON 和测试校验。
-3. `docker compose up -d --build`，再检查服务日志和健康端点。
+3. 仅修改 `.env`、挂载目录或工作流时运行 `docker compose up -d`；修改镜像输入时运行 `docker compose up -d --build api runner mlflow`，再检查服务日志和健康端点。
 4. 高成本实验、依赖安装、覆盖/删除、发布和代码变更必须通过 Proposal 审批。
 
 推荐校验：

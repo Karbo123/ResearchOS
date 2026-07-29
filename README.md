@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-5 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-6 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -133,13 +133,27 @@ Invoke-RestMethod http://127.0.0.1:8092/health
 
 Default routes are `gpt-5.6-luna`/low for simple turns, `gpt-5.6-terra`/medium for medium turns, and `gpt-5.6-sol`/high for complex turns. The API selects the tier using deterministic configurable thresholds; the model cannot promote itself. The Bridge still reads the provider and authentication from Codex configuration and invokes `codex exec --ephemeral --sandbox read-only`; no Codex authentication file is mounted into any container.
 
-### Start Compose
+### Build and start Compose
 
 In the repository PowerShell window:
 
 ```powershell
+# First checkout, or after changing an image input such as a Dockerfile,
+# service dependency, API/Runner source, or MLflow source.
 docker compose up --build -d
+
+# Normal startup after the images already exist.
+docker compose up -d
 docker compose ps
+```
+
+Use `--build` only when an image input changed or an image was removed. Changes
+under the runtime-mounted `projects/`, `artifacts/`, and `n8n/workflows/`
+directories do not require an image build. After changing a mounted n8n
+workflow, recreate only n8n so its startup import runs again:
+
+```powershell
+docker compose up -d --force-recreate n8n
 ```
 
 Wait until `postgres`, `api`, `runner`, `n8n`, `mlflow`, `minio`, and `minio-init` are healthy/completed. Open:
@@ -259,8 +273,14 @@ See [docs/security.md](docs/security.md) for the hardening checklist and the exa
 ## Operations
 
 ```powershell
-# Start/rebuild
-docker compose up --build -d
+# Start existing images and containers; this is the normal command.
+docker compose up -d
+
+# Rebuild only after image inputs changed.
+docker compose up -d --build api runner mlflow
+
+# Re-import changed mounted n8n workflow files without rebuilding an image.
+docker compose up -d --force-recreate n8n
 
 # Status and logs
 docker compose ps

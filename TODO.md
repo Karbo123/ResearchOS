@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-29（Asia/Shanghai，P0-REPRO-026 本地验证完成，正在进行提交审查）
+最后更新：2026-07-29（Asia/Shanghai，DOCS-034 Compose 构建/启动边界修复已完成并验证）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-REPRO-026` 实验可复现快照、Git 大文件门禁与产物谱系接入；本地代码/服务验证已完成，正式 Runner digest、真实实验恢复和发布级验收仍待完成。
+- 当前进行中：`P0-REPRO-026` 实验可复现快照、Git 大文件门禁与产物谱系接入仍待正式 Runner digest、真实实验恢复和发布级验收；`DOCS-034` 已完成。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260729-012750.json`。
 - 最新测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`（验收结束后为 cancelled）。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -127,6 +127,11 @@
 
 ## 文档与开发体验
 
+- [x] `DOCS-034` 明确 Compose 的首次构建、日常启动和按服务重建边界，并限制 Docker 构建上下文。
+  - 完成标准：首次部署使用 `docker compose up --build -d`，已有镜像的日常启动使用 `docker compose up -d`；API/Runner/MLflow 镜像输入变化时只重建受影响服务；挂载的 `projects/`、`artifacts/` 和 n8n 工作流变化不触发镜像构建；`.dockerignore` 排除 `.env`、运行数据、Git 元数据和宿主机文档；英文/中文 README、运维和安全文档保持一致。
+  - 当前范围：不删除已有 volume，不改变服务端口、挂载路径或镜像版本；仅修复操作说明和构建上下文边界。
+  - 验证结果：`python scripts/check_docs_sync.py`、`docker compose config --quiet`、`python scripts/check_idea_case_sources.py`、4 个 Schema 与 3 个 n8n 工作流 JSON 解析、`git diff --check` 均通过；未触发镜像重建或真实模型/API 验收。
+
 - [x] `DOCS-033` 归档此前未完成工作并把当前已完成代码安全纳入 Git。
   - 范围：只更新 TODO/必要说明、审查现有变更、排除 Secret/运行产物/大文件、运行零成本验证、提交并推送当前分支；不实现任何 P0/P1/P2 待处理功能，不运行完整验收。
   - 完成标准：TODO 状态不再把暂停任务标为进行中；双语 README 与需求审计说明完整回归仍待批准；`git diff --check`、文档同步、Idea case 门禁、Compose/JSON/Python/JS 检查和现有 17 项容器测试证据有效；提交推送到 `origin/main`。
@@ -168,3 +173,5 @@
 - 2026-07-29：`DOCS-033` 的最终记录提交 `dc3b519` 已推送到 `origin/main`；工作区不再有本次任务的未提交变更，待处理 TODO 仍保持未执行状态。
 - 2026-07-29：继续 `P0-REPRO-026`；修复 `docker-compose.yml` Runner 环境变量缩进，`docker compose config --quiet` 与 `docker compose up --build -d` 通过，PostgreSQL/API/Runner/n8n/MLflow/MinIO 已启动。容器全量测试首次为 `19 passed, 1 failed`，确认 `active-learning-3d.json` 的 `medium` 期望是既有可行性门控移除后的过期夹具，已同步为 `high`，待重跑全部验证。
 - 2026-07-29：完成本轮本地验证与文档同步；API 容器全量测试重跑为 `21 passed`，`IDEA_CASES_OK=4`、`check_docs_sync.py`、JSON 解析、Compose 配置、服务状态和 `git diff --check` 通过。提交 `1888850`（`feat:add-reproducibility-snapshot-gate`）已创建；`P0-REPRO-026` 继续保持 `[~]`，因为本地 Runner digest 未核验，真实实验恢复和完整实时验收尚未执行。
+- 2026-07-29：开始 `DOCS-034`；确认之前重复使用 `docker compose up --build -d` 会触发不必要的 API/Runner/MLflow 重建，且仓库缺少 `.dockerignore`，根目录构建上下文会包含运行数据和潜在本地 Secret。
+- 2026-07-29：完成 `DOCS-034`；新增根目录 `.dockerignore`，同步双语 README、`docs/operations.md` 和 `docs/security.md`，明确 `up -d` 日常启动、按服务 `--build` 重建与 n8n 工作流重新导入规则；全部静态检查通过，未运行真实模型/API 验收。

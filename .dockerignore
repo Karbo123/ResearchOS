@@ -1,0 +1,43 @@
+# Local credentials and environment files.
+.env
+.env.*
+!.env.example
+
+# Runtime data and project workspaces are bind-mounted at runtime.
+projects/
+artifacts/
+
+# Repository metadata and host-only documentation/configuration.
+.git/
+.github/
+docs/
+infra/
+installer/
+n8n/
+AGENTS.md
+README.md
+README.*.md
+TODO.md
+docker-compose.yml
+
+# Python caches and local test output.
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editor and operating-system files.
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini
+
+# Local logs and archives.
+*.log
+*.tgz
+*.tar
+*.tar.gz

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-5 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-29-6 -->
 <!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
 
 <div align="center">
@@ -133,13 +133,25 @@ Invoke-RestMethod http://127.0.0.1:8092/health
 
 默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。Bridge 仍从 Codex 配置读取提供方和认证，并调用 `codex exec --ephemeral --sandbox read-only`；不会把 Codex 认证文件挂载到任何容器。
 
-### 启动 Compose
+### 构建并启动 Compose
 
 回到仓库 PowerShell：
 
 ```powershell
+# 首次检出，或修改了 Dockerfile、服务依赖、API/Runner 源码、MLflow 源码等镜像输入后。
 docker compose up --build -d
+
+# 镜像已经存在时的日常启动命令。
+docker compose up -d
 docker compose ps
+```
+
+只有镜像输入发生变化或镜像被删除时才使用 `--build`。修改运行时挂载的
+`projects/`、`artifacts/` 和 `n8n/workflows/` 不需要构建镜像。修改 n8n
+工作流后，只重新创建 n8n 容器以再次执行启动导入：
+
+```powershell
+docker compose up -d --force-recreate n8n
 ```
 
 等待 `postgres`、`api`、`runner`、`n8n`、`mlflow`、`minio` 和 `minio-init` 进入健康/完成状态，然后打开：
@@ -258,8 +270,14 @@ Docker volumes                 postgres-data、minio-data、n8n-data
 ## 日常运维
 
 ```powershell
-# 启动或重建
-docker compose up --build -d
+# 启动已有镜像和容器；这是日常使用的命令。
+docker compose up -d
+
+# 只有镜像输入发生变化时才重建受影响服务。
+docker compose up -d --build api runner mlflow
+
+# 修改了挂载的 n8n 工作流时重新创建 n8n 容器，不重建镜像。
+docker compose up -d --force-recreate n8n
 
 # 状态与日志
 docker compose ps

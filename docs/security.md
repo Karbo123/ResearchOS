@@ -20,6 +20,7 @@
 ## Container policy
 
 - Runner 使用非 root UID、`no-new-privileges`、drop all capabilities、只读 root filesystem、PID/CPU/内存限制和临时目录配额。
+- API/Runner 的仓库根目录构建上下文由 `.dockerignore` 限制；`.env`、Git 元数据、`projects/`、`artifacts/`、n8n 数据和文档不会进入镜像构建上下文。运行时绑定目录不是镜像内容，不能用构建代替挂载。
 - 生产环境为 Runner 增加独立 Docker network，默认拒绝出站网络；按数据源或任务临时授权。
 - 每个真实 GPU 任务应在独立容器/作业中执行，并加磁盘配额、超时、取消、镜像 digest 和命令模板 ID。
 - 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。生产环境还需恶意文件扫描和解压炸弹防护。
