@@ -44,7 +44,7 @@ IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper 
                    +---- approval ----+
 ```
 
-Idea 修订创建新版本并进入 `impact_review`。当前 MVP 保守地将项目内已有产物全部标为无效；生产实现应增加实体依赖图，按检索查询、数据版本、配置字段和论文 claim 精确计算局部重跑集合。
+Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDependency` 计算 Idea、策略、代码、数据或产物删除变更的依赖后代，只使受影响的有效产物失效，并在 Proposal 与审计事件中记录影响图、重跑候选和关联检查点。当前仍不会自动执行主题专属重跑；Runner 模板和检查点恢复执行仍是后续范围。
 
 项目状态是执行闸门，不只是 UI 标签。`paused` 和 `cancelled` 会阻止检索、创新性评估、实验/编译计划及 Runner 提交；暂停/取消会取消活动任务和 Runner run，并写入状态检查点。恢复仅允许从 `paused` 回到检查点保存的稳定阶段；`cancelled` 是终止状态。定时 n8n 报告只枚举 active 项目。
 

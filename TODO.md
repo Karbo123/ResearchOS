@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，开始 P0-RUNNER-007）
+最后更新：2026-07-30（Asia/Shanghai，进行 P0-IMPACT-008）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`；增加每任务独立容器/作业隔离和参数化白名单任务模板。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`；分别推进每任务隔离和实体级影响传播。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -81,8 +81,11 @@
   - 验证结果：新增严格 `ExperimentPlan` Pydantic 契约和证据/Idea 版本/策略/预算/主题关联二次校验；`POST /api/projects/{project_id}/experiment-plan` 只在当前 ProjectSpec 有页码级全文证据时调用复杂层模型并创建 pending Proposal。批准主题计划提交时重新校验当前状态，Runner 未有匹配模板则返回 `topic_specific_runner_not_implemented`，不会回退到分类或点云 demo。API 容器 `pytest -q`（32 passed）、API 镜像重建、Compose 配置、JSON 契约、双语文档/需求审计同步和 `git diff --check` 通过；未调用真实模型、其他 Idea 或无关实验。
 - [~] `P0-RUNNER-007` 增加每任务独立容器/作业隔离和参数化白名单任务模板。
   - 完成标准：支持受控 Python、C++/CMake、Conda 环境和可选 GPU；非 root、镜像 digest、网络策略、磁盘/CPU/GPU/内存/PID 配额、超时、取消和完整日志均有集成测试。
-- [ ] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
+- [~] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
+  - 当前实现：Proposal 创建与审批重新计算 `ArtifactDependency` 影响图；Idea/策略/代码/数据/删除产物变更只使受影响的有效 Artifact 失效，记录受影响实验、检查点、重跑候选和审计事件；旧 Idea 版本 Proposal 会被拒绝。
+  - 当前缺口：尚未自动创建或提交主题专属重跑，也未在 Runner 中执行检查点恢复；因此任务继续保持 `[~]`。
+  - 验证：API 容器 `38 passed`；新增测试覆盖 Idea/策略/代码/数据依赖传播、无关变更隔离和检查点建议；`docker compose config --quiet`、JSON、Idea case、文档同步和 `git diff --check` 通过。
 - [x] `P0-REPRO-026` 为每次实验建立不可变、可复核但不追踪大文件的代码与环境快照。
   - 完成标准：实验开始前要求项目 Git 工作树干净；将已批准的代码/配置变更提交并创建 `run/<run_id>` tag；记录项目仓库 commit、Research OS 主仓库 commit、Runner 镜像 digest、ProjectSpec/策略/配置/随机种子、依赖锁文件和数据 manifest/hash；输出与源码快照建立 PostgreSQL 依赖关系。
   - 大文件策略：Git 只追踪源码、配置、BibTeX/LaTeX、manifest、哈希和小型元数据；Git 禁止追踪 PDF、PLY/PCD、PNG、模型权重、数据集、数据库备份、源码 bundle、Docker layer、Conda/package cache 和日志归档。源码 bundle、环境报告、数据/模型清单和大型产物保存到 MinIO 或受控 `artifacts/`，数据库只保存 URI、大小、SHA-256、版本和有效性元数据；主仓库 `.gitignore`、大小门禁和测试必须验证这一点。
@@ -237,3 +240,4 @@
   - P0-RUNNER-007 当前缺口：每 Run 独立容器、GPU、通用 Python/C++/Conda 和磁盘配额尚未实现；未运行无关分类/点云实验，任务继续保持 [~]。
 - P0-RUNNER-007 验证：Runner 标准库测试 4 passed，API 容器 32 passed，内部健康端点确认 one-spawned-process-per-run、docker_socket_mounted=false、arbitrary_commands=false。
 - P0-RUNNER-007 提交：`92fe1ef` 已推送到 `origin/main`；TODO 记录随合并提交更新。
+- 2026-07-30：完成本轮 `P0-IMPACT-008` 实体级影响分析部分；发现 Idea 审批仍会使项目全部有效 Artifact 失效，新增只读依赖图分析、审批时重新计算、局部 Artifact 失效和审计记录；补齐数据/代码根与检查点建议。验证通过：API `38 passed`、Compose/JSON/Idea case/文档同步/`git diff --check`；提交 `ceb670b` 已创建，P0-IMPACT-008 继续保持 `[~]`，因为自动主题重跑和 Runner 检查点恢复尚未实现。

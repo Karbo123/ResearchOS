@@ -49,7 +49,7 @@ PostgreSQL 是业务状态源；聊天记录不是唯一记忆。代码、配置
 ## 模型与状态
 
 - 模型请求只由 API 容器直接发送到三个独立配置的 OpenAI-compatible URL；Windows 不启动 Bridge 或其他 API 服务。运行时不得读取宿主机 Codex 配置目录或 `auth.json`，也不得把认证文件挂载进容器。每个层级独立配置 model、URL、key 和 reasoning effort，网页读取接口只能返回 `key_configured`。
-- LLM 请求失败必须直接返回结构化错误；禁止本地降级、规则回复、隐式 provider 切换或继续写入助手消息。通用实验演示计划不得作为 fallback；没有主题专属规划时必须直接返回未实现错误。
+- LLM 请求失败必须直接返回结构化错误；禁止本地降级、规则回复、隐式 provider 切换或继续写入助手消息。通用实验演示计划不得作为替代路径；没有主题专属规划时必须直接返回未实现错误。
 - 自适应澄清默认使用三级成本路由：简单 `gpt-5.6-luna/low`、中等 `gpt-5.6-terra/medium`、复杂 `gpt-5.6-sol/high`；当前完整系统验收仍使用复杂层 `gpt-5.6-sol`、`reasoning_effort=high`。变更模型、阈值或强度时同时更新 `.env.example`、Compose、README 双语版、TODO、需求审计和测试期望。
 - Idea 澄清不得恢复固定问题队列。模型每轮应整体分析草稿、公开可纠正假设并提出少量高信息问题；Schema 必填检查不是对话脚本。澄清 Agent 不得获得任意 Shell、文件、SQL 或网络工具。
 - 新项目聊天的 `clarification_mode` 只能是 `automatic|detailed`，默认 `automatic`。全自动模式尽量推断可逆信息并只询问阻碍规格或执行的少量关键问题；详细模式基于当前缺口扩大了解范围，但仍不得采用固定问题顺序、重复询问或臆造关键事实。实际模式必须写入用户和助手消息 metadata。

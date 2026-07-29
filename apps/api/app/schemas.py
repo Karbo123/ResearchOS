@@ -157,7 +157,7 @@ class PaperRecord(BaseModel):
 class ChangeProposalRequest(BaseModel):
     project_id: UUID
     kind: Literal[
-        "experiment_plan", "code_patch", "config_change", "idea_revision",
+        "experiment_plan", "code_patch", "config_change", "idea_revision", "data_change",
         "dependency_install", "delete_artifact", "external_publish"
     ]
     reason: str = Field(min_length=5)

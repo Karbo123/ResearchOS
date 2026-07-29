@@ -86,7 +86,7 @@ Runner isolation currently uses one freshly spawned, non-root process per Run in
 | Human supervision | **Implemented (MVP)** | Proposal/approval/audit for experiments, Idea revisions, policies, and LaTeX; pause/resume/cancel gates. |
 | Experiments | **Partial (bounded foundation)** | Three explicit allowlisted Runner tasks, non-root execution, one spawned process per Run, bounded resources, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. Topic-specific execution, independent per-run containers, GPU scheduling, and general language/tool environments remain open. |
 | Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A live acceptance is now recorded; release-grade scope remains limited by the MVP boundaries described below. |
-| General research autonomy | **Partial / roadmap** | Official repository verification, general Python/C++/Conda/GPU jobs, semantic invalidation, external notifications, evidence-grounded Related Work, and full paper writing remain open. |
+| General research autonomy | **Partial / roadmap** | Official repository verification, general Python/C++/Conda/GPU jobs, automatic checkpoint reruns, external notifications, evidence-grounded Related Work, and full paper writing remain open. Entity-level invalidation and rerun recommendations are implemented for approved project changes. |
 
 ## Prerequisites
 
@@ -328,7 +328,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 | Symptom | Check |
 | --- | --- |
 | Docker says the Linux engine is unavailable | Docker Desktop → Settings/General → enable the WSL2 backend, switch to Linux containers, then retry `docker info`. |
-| API is up but idea clarification fails | Check the three model URL/key pairs, `RESEARCH_LLM_PROVIDER=openai`, the settings panel response (keys are never returned), and `docker compose logs api`. The API returns a structured model error and does not generate a fallback reply. |
+| API is up but idea clarification fails | Check the three model URL/key pairs, `RESEARCH_LLM_PROVIDER=openai`, the settings panel response (keys are never returned), and `docker compose logs api`. The API returns a structured model error and does not generate a local reply. |
 | n8n asks for a password | Open the Research OS sidebar link or `/api/n8n/open`; verify Owner values in `.env` match the n8n database. Do not disable user management. |
 | n8n auto-login returns 503/401 | Check n8n is running, Owner password length is at least 12, `N8N_INTERNAL_URL` resolves to `http://n8n:5678`, and restart `api n8n`. |
 | Webhook 404 | Confirm the three built-in workflows are Active and n8n was recreated after workflow JSON changes. |
@@ -340,7 +340,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 
 ## Roadmap and honest limitations
 
-The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): official repository/license verification and controlled download, topic-specific Runner templates and general Python/C++/Conda/GPU jobs, semantic dependency invalidation, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
+The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): official repository/license verification and controlled download, topic-specific Runner templates and general Python/C++/Conda/GPU jobs, automatic checkpoint reruns, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. Entity-level invalidation and reviewable rerun recommendations are implemented for approved project changes. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
 
 Do not use the current synthetic classification/point-cloud tasks as a scientific result. Do not cite `metadata-only` rows as if they were page-verified claims. Do not expose the local auto-login endpoint beyond the private machine.
 

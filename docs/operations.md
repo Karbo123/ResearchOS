@@ -148,7 +148,7 @@ python scripts/acceptance_test.py
 - 项目代码与 Idea：`projects/<slug>/.git`。
 - 业务/n8n/MLflow 元数据：PostgreSQL volume 或 `pg_dump`。
 - MLflow 大文件：MinIO volume；Runner 文件：`artifacts/`。
-- 恢复后启动服务，先执行容器静态检查和证据/项目状态核验；当前不会自动运行与用户 Idea 无关的合成实验。主题专属计划会先根据当前 ProjectSpec、页码级证据和策略生成 pending Proposal，必须明确批准；批准后的执行还会再次校验 Idea/证据/策略，当前 Runner 尚无主题模板时直接返回结构化错误，不会使用 demo fallback。
+- 恢复后启动服务，先执行容器静态检查和证据/项目状态核验；当前不会自动运行与用户 Idea 无关的合成实验。主题专属计划会先根据当前 ProjectSpec、页码级证据和策略生成 pending Proposal，必须明确批准；批准后的执行还会再次校验 Idea/证据/策略，当前 Runner 尚无主题模板时直接返回结构化错误，不会替换为无关演示实验。
 
 数据库备份可能包含密码哈希或凭据密文，模型请求日志和 `.env` 也属于敏感本地文件，不应提交或外发。
 

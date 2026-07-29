@@ -35,6 +35,7 @@ from .model_settings import load_settings, public_settings, save_settings
 from .related_work import build_related_work_analysis
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
+from .impact_analysis import analyze_impact, apply_impact
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
     seeds_for_constraints,
@@ -128,6 +129,21 @@ def policy_enforcement_snapshot(session, project_id: UUID, constraints: PolicyCo
         "note": "metadata/title evidence is excluded from full-text quoted-evidence counts",
     }
     return result
+
+
+def project_change_impact(session, project: Project, change_kind: str, payload: dict[str, Any]) -> dict[str, Any]:
+    """Build a deterministic, read-only impact snapshot for a project change."""
+    return analyze_impact(
+        change_kind=change_kind,
+        payload=payload,
+        current_idea_version=project.current_idea_version,
+        artifacts=session.scalars(select(Artifact).where(Artifact.project_id == project.id)).all(),
+        dependencies=session.scalars(
+            select(ArtifactDependency).where(ArtifactDependency.project_id == project.id)
+        ).all(),
+        experiments=session.scalars(select(Experiment).where(Experiment.project_id == project.id)).all(),
+        checkpoints=session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id)).all(),
+    )
 
 
 def trigger_research_workflow(project_id: UUID, task_id: UUID) -> None:
@@ -295,14 +311,22 @@ def chat(request: ChatRequest):
                 is_policy = any(marker in request.message.lower() for marker in policy_markers)
                 target_field = "research_question"
                 revised_value = request.message.split("改为", 1)[-1].strip() if "改为" in request.message else request.message
+                proposal_payload = {
+                    "user_instruction": request.message,
+                    **({"policy_rule": request.message} if is_policy else {
+                        "target_field": target_field,
+                        "value": revised_value,
+                        "base_idea_version": project.current_idea_version,
+                    }),
+                }
+                impact = project_change_impact(session, project, "config_change" if is_policy else "idea_revision", proposal_payload)
                 proposal = Proposal(
                     project_id=project.id, kind="config_change" if is_policy else "idea_revision", reason="User requested a project change through chat",
                     summary=request.message,
                     diff=(f"+ project_policy: {request.message}" if is_policy else f"--- /idea/{target_field}\n+++ /idea/{target_field}\n+ {revised_value}"),
-                    impact={
+                    impact={**impact,
                         "will_revalidate": ["literature search", "experiments", "metrics", "artifacts", "paper claims"],
-                        "invalidated_immediately": [], "rerun_scope": "pending structured impact analysis",
-                    }, payload={"user_instruction": request.message, **({"policy_rule": request.message} if is_policy else {"target_field": target_field, "value": revised_value})},
+                    }, payload=proposal_payload,
                 )
                 session.add(proposal); session.flush()
                 reply = "我已把这条指令转换为变更提案，但尚未执行。请在审批面板检查影响范围并批准或驳回。"
@@ -834,11 +858,20 @@ def novelty(project_id: UUID):
 @app.post("/api/proposals")
 def create_proposal(request: ChangeProposalRequest):
     with session_scope() as session:
-        if not session.get(Project, request.project_id): raise HTTPException(404, "project not found")
-        proposal = Proposal(**request.model_dump())
+        project = session.get(Project, request.project_id)
+        if not project: raise HTTPException(404, "project not found")
+        proposal_data = request.model_dump()
+        payload = dict(proposal_data.get("payload") or {})
+        if request.kind == "idea_revision":
+            payload.setdefault("base_idea_version", project.current_idea_version)
+        proposal_data["payload"] = payload
+        if request.kind in {"config_change", "idea_revision", "code_patch", "dependency_install", "data_change", "delete_artifact"}:
+            computed_impact = project_change_impact(session, project, request.kind, payload)
+            proposal_data["impact"] = {**(proposal_data.get("impact") or {}), **computed_impact}
+        proposal = Proposal(**proposal_data)
         session.add(proposal); session.flush()
         audit(session, "proposal.created", request.project_id, {"proposal_id": str(proposal.id), "kind": proposal.kind}, "local-user")
-        return {"id": str(proposal.id), "status": proposal.status}
+        return {"id": str(proposal.id), "status": proposal.status, "impact": proposal.impact}
 
 
 @app.post("/api/projects/{project_id}/experiment-plan")
@@ -930,7 +963,6 @@ def generate_experiment_plan(project_id: UUID):
         "policy_fingerprint": proposal_payload["policy_fingerprint"],
         "policy_enforcement": policy_snapshot,
         "execution_gate": "approval_required_and_runner_revalidation_required",
-        "unrelated_demo_fallback": "forbidden",
     }
     with session_scope() as session:
         project = require_active_project(session, project_id, "saving experiment planning proposal")
@@ -989,6 +1021,26 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
         proposal = session.get(Proposal, proposal_id)
         if not proposal: raise HTTPException(404, "proposal not found")
         if proposal.status != "pending": raise HTTPException(409, "proposal already decided")
+        project = session.get(Project, proposal.project_id)
+        if not project: raise HTTPException(404, "project not found")
+        impact: dict[str, Any] | None = None
+        if request.decision == "approved" and proposal.kind in {"config_change", "idea_revision"}:
+            if proposal.kind == "idea_revision":
+                base_version = proposal.payload.get("base_idea_version")
+                try:
+                    parsed_base_version = int(base_version)
+                except (TypeError, ValueError):
+                    parsed_base_version = None
+                if parsed_base_version is None or parsed_base_version != project.current_idea_version:
+                    raise HTTPException(status_code=409, detail={
+                        "code": "proposal_stale",
+                        "message": "该 Idea 变更提案基于旧版本，不能审批；请重新提出变更。",
+                        "current_idea_version": project.current_idea_version,
+                        "proposal_idea_version": base_version,
+                    })
+            impact = project_change_impact(session, project, proposal.kind, proposal.payload)
+            apply_impact(session, impact)
+            proposal.impact = {**proposal.impact, **impact}
         proposal.status = request.decision
         proposal.decided_by = request.actor
         proposal.decision_comment = request.comment
@@ -996,7 +1048,6 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
         if request.decision == "approved" and proposal.kind == "config_change" and proposal.payload.get("policy_rule"):
             session.add(Policy(project_id=proposal.project_id, rule=proposal.payload["policy_rule"], rationale="Approved project-chat guidance"))
         if request.decision == "approved" and proposal.kind == "idea_revision":
-            project = session.get(Project, proposal.project_id)
             current = session.scalar(select(IdeaVersion).where(IdeaVersion.project_id == project.id).order_by(desc(IdeaVersion.version)))
             revised = json.loads(json.dumps(current.spec))
             field = proposal.payload.get("target_field", "research_question")
@@ -1008,8 +1059,6 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
             session.add(version)
             project.current_idea_version = next_version
             project.current_stage = "impact_review"
-            for item in session.scalars(select(Artifact).where(Artifact.project_id == project.id, Artifact.valid.is_(True))).all():
-                item.valid = False
             root = (PROJECTS_ROOT / project.slug).resolve()
             spec_path = root / "idea" / f"project-spec.v{next_version}.json"
             spec_path.write_text(json.dumps(revised, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -1018,8 +1067,14 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
                 subprocess.run(["git", "-C", str(root), "commit", "-m", f"Revise research idea to v{next_version}"], check=True, timeout=20)
             except (subprocess.SubprocessError, FileNotFoundError):
                 pass
-        audit(session, f"proposal.{request.decision}", proposal.project_id, {"proposal_id": str(proposal.id), "comment": request.comment}, request.actor)
-        return {"id": str(proposal.id), "status": proposal.status}
+        audit(session, f"proposal.{request.decision}", proposal.project_id, {
+            "proposal_id": str(proposal.id),
+            "comment": request.comment,
+            "impact": impact,
+            "invalidated_artifact_ids": (impact or {}).get("invalidated_artifact_ids", []),
+            "rerun_candidates": (impact or {}).get("rerun_candidates", []),
+        }, request.actor)
+        return {"id": str(proposal.id), "status": proposal.status, "impact": proposal.impact}
 
 
 @app.post("/api/experiments", status_code=202)
@@ -1085,7 +1140,7 @@ async def submit_experiment(request: ExperimentRequest):
                 })
             raise HTTPException(status_code=409, detail={
                 "code": "topic_specific_runner_not_implemented",
-                "message": "当前 Runner 尚未提供该主题专属计划的执行模板；系统不会改用无关 demo 或其他 fallback。",
+                "message": "当前 Runner 尚未提供该主题专属计划的执行模板；系统不会改用无关演示实验或其他路径。",
                 "plan_status": "approved_and_revalidated",
             })
         constraints = load_policy_constraints(session, request.project_id)
@@ -1486,17 +1541,19 @@ def add_policy(request: PolicyUpdate):
                 "message": "Policies cannot be changed on a cancelled project.",
             })
         preview = compile_policy_constraints([{"id": "pending", "rule": request.rule}]).public_dict()
+        proposal_payload = {"policy_rule": request.rule, "base_idea_version": project.current_idea_version}
+        impact = project_change_impact(session, project, "config_change", proposal_payload)
         proposal = Proposal(
             project_id=request.project_id,
             kind="config_change",
             reason=request.rationale or "User proposed a persistent project policy",
             summary=f"Add project policy: {request.rule}",
             diff=f"+ project_policy: {request.rule}",
-            impact={
+            impact={**impact,
                 "will_revalidate": ["experiment plans", "Runner submissions", "citation evidence", "approval gates"],
                 "policy_enforcement_preview": preview,
             },
-            payload={"policy_rule": request.rule},
+            payload=proposal_payload,
         )
         session.add(proposal); session.flush()
         audit(session, "policy.proposed", request.project_id, {"proposal_id": str(proposal.id), "rule": request.rule}, "local-user")
