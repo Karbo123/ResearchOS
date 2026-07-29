@@ -71,7 +71,7 @@ def select_model_route(message: str, draft: dict[str, Any] | None, attachment_co
     )
     complex_terms = (
         "多模态", "分布式", "联邦学习", "医疗", "患者", "个人数据", "人类受试者",
-        "安全", "攻击", "malware", "human subject", "personal data", "multi-agent",
+        "human subject", "personal data", "multi-agent",
         "多智能体", "三维重建", "point cloud", "强化学习", "robotics",
     )
     score += min(sum(term in text for term in medium_terms), 4)
@@ -104,14 +104,15 @@ def clarification_mode_instruction(clarification_mode: ClarificationMode) -> str
         return (
             "AUTOMATIC MODE: minimize user interruption. Infer ordinary, reversible details when strongly supported, "
             "record them as assumptions, and ask no more than two compact groups of questions in this turn. Ask only "
-            "about unknowns that materially block a coherent specification, safety/compliance, data authorization, or "
-            "a realistic execution budget. Do not demand publication details for a straightforward engineering task."
+            "about unknowns that materially block a coherent specification, data authorization, or a realistic "
+            "execution budget. Do not demand publication details for a straightforward engineering task."
         )
     return (
         "DETAILED MODE: maximize useful understanding without using a scripted checklist. Based on what is actually "
         "missing or ambiguous, proactively ask four to eight concise, grouped questions spanning relevant goals, "
-        "hypotheses, contribution, data rights, compute/cost/time, baselines, evaluation/statistics, target venue, and "
-        "ethics. Skip dimensions that are irrelevant or already answered, and explain important inferred assumptions."
+        "hypotheses, contribution, data rights, compute/cost/time, baselines, evaluation/statistics, target venue, "
+        "and resource constraints. Skip dimensions that are irrelevant or already answered, and explain important "
+        "inferred assumptions."
     )
 
 
@@ -126,12 +127,11 @@ def _system_prompt(clarification_mode: ClarificationMode = "automatic") -> str:
         f"{clarification_mode_instruction(clarification_mode)} "
         "Distinguish an engineering "
         "benchmark or reproduction goal from a novel research contribution. Never fabricate citations, data "
-        "rights, compute availability, budgets, deadlines, novelty, ethical clearance, or experimental results. "
-        "Safety, human-subject, sensitive-data, authorization and meaningful resource uncertainty require explicit "
-        "confirmation. Do not ask whether project creation or execution itself is approved; the UI owns those "
-        "separate approvals. Match the user's language. Mark ready_for_confirmation only when the draft is coherent "
-        "enough for ProjectSpec review; project creation and execution remain separate approval steps. Return only "
-        "the strict structured object requested by the output schema."
+        "rights, compute availability, budgets, deadlines, novelty, or experimental results. Do not ask "
+        "whether project creation or execution itself is approved; the UI owns those separate approvals. Match "
+        "the user's language. Mark ready_for_confirmation only when the draft is coherent enough for ProjectSpec "
+        "review; project creation and execution remain separate approval steps. Return only the strict "
+        "structured object requested by the output schema."
     )
 
 
@@ -186,12 +186,12 @@ def _fallback_result(
         reply = (
             f"我从现有技术线索推测该项目属于 {domain}，但详细模式会进一步核对方案。"
             "请成组补充：核心假设与预期贡献；数据来源、许可和划分；GPU/预算/期限；基线、指标、"
-            "统计检验与随机种子；目标会议或交付形式；以及伦理、隐私和失败判据。已明确的信息无需重复。"
+            "统计检验与随机种子；目标会议或交付形式；以及隐私和失败判据。已明确的信息无需重复。"
         )
     elif clarification_mode == "detailed":
         reply = (
             "AI 澄清服务暂时不可用，我已保留你的 Idea。详细模式下请成组补充研究对象、核心假设、"
-            "预期贡献、数据许可、算力与成本、基线和统计方法、期限/目标 venue 及伦理边界；恢复后会继续自适应分析。"
+            "预期贡献、数据许可、算力与成本、基线和统计方法、期限/目标 venue 及失败判据；恢复后会继续自适应分析。"
         )
     else:
         reply = (

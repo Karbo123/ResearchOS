@@ -25,7 +25,7 @@
 Research projects usually lose context between a chat, a paper spreadsheet, an experiment folder, and a manuscript. Research OS keeps those pieces connected around a persistent `project_id` and versioned `ResearchIdea/ProjectSpec`:
 
 - Start with a natural-language idea and an adaptive AI clarification loop that infers obvious context, exposes assumptions, and avoids a fixed questionnaire. Default-on **Automatic mode** asks as little as possible; turning it off selects **Detailed mode** for broader, still-adaptive discovery.
-- Refuse incomplete, unsafe, or clearly infeasible ideas before project creation.
+- Refuse incomplete or clearly infeasible ideas before project creation.
 - Persist ideas, policies, approvals, checkpoints, tasks, experiments, evidence, and artifacts in PostgreSQL; chat is not the source of truth.
 - Search Crossref, OpenAlex, Semantic Scholar, arXiv, and DBLP with DOI/BibTeX records and provider-error tracking.
 - Distinguish `metadata-only` candidates from `fulltext-evidence` records with PDF hash, page/section locator, quote, and source URL.
@@ -75,7 +75,7 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 
 | Area | MVP status | What is real today |
 | --- | --- | --- |
-| Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, safe fallback, unsafe-idea block. |
+| Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, safe fallback. |
 | Project initialization | **Implemented** | UUID, Git workspace, directories, Idea v1, PostgreSQL records, checkpoints, n8n trigger. |
 | Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX; GitHub is a candidate source only. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
@@ -158,7 +158,7 @@ The Research OS sidebar opens n8n through `/api/n8n/open`. The API logs into the
 
 1. Click **New research project** and enter your Idea. **Automatic mode** is on by default and minimizes interruptions; turn the toggle off for **Detailed mode** when you want broader questions before a specification is prepared.
 2. Review the AI's interpretation, inferred domain, assumptions, and grouped questions. Correct bad inferences; neither mode uses a field-by-field questionnaire.
-3. Review the generated `ProjectSpec`. Missing fields, unsafe requests, unclear ownership, or obvious resource risks keep the project in clarification and prevent creation.
+3. Review the generated `ProjectSpec`. Missing fields, unclear ownership, or obvious resource risks keep the project in clarification and prevent creation.
 4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
 6. Inspect the novelty/feasibility result and the experiment Proposal. Approve it only after checking seeds, budget, data version, expected artifacts, and risks.
@@ -197,7 +197,6 @@ Useful probes:
 | --- | --- |
 | `AI` | Remains in clarification; it must not invent a complete specification. |
 | A PyTorch/CUDA CNN targeting 99% on MNIST | Infers deep learning/computer vision, identifies an engineering benchmark, uses the Terra tier by default, and asks about research scope, data authorization, compute, and evaluation constraints. |
-| An idea asking for unauthorized malware or harmful access | Feasibility is blocked and project confirmation returns a structured conflict. |
 | The 3D active-learning idea above | Creates a project, searches papers, runs bounded experiments after approval, and emits inspectable artifacts. |
 
 The latest complete acceptance record has a sanitized, versioned copy at [`acceptance-20260729-012750.json`](docs/evidence/acceptance-20260729-012750.json); the runtime original remains under ignored `artifacts/acceptance/`. It used `gpt-5.6-sol` with `reasoning_effort=high` through the Codex Bridge and verified: 8 paper records, 3 stored open-PDF evidence records, 5 experiments, 7 checkpoints, 101 dependencies, policy enforcement for five seeds, pause/cancel/resume gates, MLflow, PNG/PLY/PDF artifacts, Idea v2, partial rerun, and LaTeX compilation. The demo experiment is a system-integration check, not evidence that the scientific hypothesis is true.

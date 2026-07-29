@@ -318,16 +318,10 @@ def chat(request: ChatRequest):
         spec = build_spec(draft) if ready else None
         if ready:
             conversation.phase = "ready_for_confirmation"
-            if spec.feasibility == "blocked":
-                reply = (
-                    f"{outcome.result.assistant_reply}\n\n"
-                    "安全、伦理或合法性检查发现阻断项，当前不能创建项目。请审阅候选修改方案并继续对话。"
-                )
-            else:
-                reply = (
-                    f"{outcome.result.assistant_reply}\n\n"
-                    "结构化规格已准备好。请检查右侧内容；只有点击“确认并创建项目”后才会启动后续工作流。"
-                )
+            reply = (
+                f"{outcome.result.assistant_reply}\n\n"
+                "结构化规格已准备好。请检查右侧内容；只有点击“确认并创建项目”后才会启动后续工作流。"
+            )
         else:
             conversation.phase = "clarifying"
             reply = outcome.result.assistant_reply
@@ -362,8 +356,6 @@ def create_project(request: ProjectCreateRequest, background_tasks: BackgroundTa
         if not conversation or conversation.phase != "ready_for_confirmation":
             raise HTTPException(409, "idea is not ready for confirmation")
         spec = build_spec(conversation.draft)
-        if spec.feasibility == "blocked":
-            raise HTTPException(409, "idea requires ethics or safety review before project creation")
         project_id = uuid.uuid4()
         slug = safe_slug(spec.idea.title, project_id)
         project = Project(id=project_id, slug=slug, title=spec.idea.title)

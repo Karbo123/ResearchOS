@@ -144,7 +144,6 @@ def mlflow_run_exists(run_id: str) -> bool:
 def main() -> None:
     insufficient_case = load_idea_case("insufficient-ai")
     mnist_case = load_idea_case("mnist-cnn")
-    unsafe_case = load_idea_case("unsafe-malware")
     project_case = load_idea_case("active-learning-3d")
     results: dict[str, Any] = {
         "started_at": datetime.now(timezone.utc).isoformat(),
@@ -183,13 +182,6 @@ def main() -> None:
         "model_tier": mnist["model_tier"], "model": mnist["model"], "fallback_used": mnist["fallback_used"],
     }
     print("PASS adaptive_mnist_domain", flush=True)
-
-    blocked = clarify(unsafe_case)
-    assert blocked["spec"]["feasibility"] == unsafe_case.expect["final_feasibility"]
-    assert blocked["spec"]["candidate_modifications"]
-    expected_http_error("POST", "/api/projects", {"session_id": blocked["session_id"], "confirmed": True}, 409)
-    results["checks"]["unsafe_idea_blocked"] = True
-    print("PASS unsafe_idea_blocked", flush=True)
 
     normal = clarify(project_case)
     created = request("POST", "/api/projects", {"session_id": normal["session_id"], "confirmed": True})

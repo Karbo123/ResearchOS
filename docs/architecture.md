@@ -27,11 +27,11 @@ PostgreSQL 是状态源，聊天历史不是。核心依赖链为：
   -> Luna(simple) / Terra(medium) / Sol(complex)
   -> 受限 Codex Bridge（无工具、只读临时沙箱、严格 JSON Schema）
   -> 整体更新 draft + 自然回复 + assumptions/risks/unresolved_items
-  -> Pydantic + 必要 ProjectSpec 缺口 + 安全/伦理闸门
+  -> Pydantic + 必要 ProjectSpec 缺口检查
   -> 继续澄清或显示待用户确认的 ProjectSpec
 ```
 
-模型可以依据 PyTorch/CNN/MNIST 等明确线索推断候选领域，但必须公开为可纠正假设；不得推断数据授权、GPU 可用性、预算、截止时间、伦理许可或科研新颖性。模型不可自行提高成本层级，也没有 Shell、文件、SQL 或网络工具。ReAct/外部编码 Agent 只有在出现真实的受控工具循环需求后才评估，并且仍必须经过高层工具 Schema 与审批闸门。
+模型可以依据 PyTorch/CNN/MNIST 等明确线索推断候选领域，但必须公开为可纠正假设；不得推断数据授权、GPU 可用性、预算、截止时间或科研新颖性。模型不可自行提高成本层级，也没有 Shell、文件、SQL 或网络工具。ReAct/外部编码 Agent 只有在出现真实的受控工具循环需求后才评估，并且仍必须经过高层工具 Schema 与审批闸门。
 
 ```text
 IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper claim

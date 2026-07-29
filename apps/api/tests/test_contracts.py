@@ -42,26 +42,6 @@ def test_short_idea_requires_a_research_question():
     assert all(field in required_spec_gaps(draft) for field in case.expect["missing_fields_contains"])
 
 
-def test_blocked_idea_includes_candidate_modifications():
-    case = load_idea_case("unsafe-malware")
-    facts = case.confirmed_facts
-    draft = initial_draft(case.initial_message)
-    draft.update({
-        "research_question": facts["research_question"],
-        "domain": facts["domain"],
-        "hypotheses": [facts["hypotheses"]],
-        "expected_contributions": [facts["expected_contributions"]],
-        "available_data": facts["available_data"],
-        "constraints": {"compute": facts["constraints"], "budget_usd": 100, "deadline": facts["constraints"], "data_access": "private"},
-        "success_criteria": [facts["success_criteria"]],
-        "target_venues": [facts["target_venues"]],
-        "ethics_and_compliance": facts["ethics_and_compliance"],
-    })
-    spec = build_spec(draft)
-    assert spec.feasibility.value == case.expect["final_feasibility"]
-    assert spec.candidate_modifications
-
-
 def test_mnist_idea_uses_medium_tier_and_fallback_infers_domain():
     case = load_idea_case("mnist-cnn")
     draft = initial_draft(case.initial_message)

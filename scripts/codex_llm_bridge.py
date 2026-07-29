@@ -183,13 +183,13 @@ def clarify_idea(payload: dict[str, Any]) -> tuple[dict[str, Any], str, str, str
         mode_instruction = (
             "AUTOMATIC MODE: minimize interruption. Infer ordinary reversible details from strong evidence and record "
             "assumptions. Ask no more than two compact groups of questions, limited to unknowns that materially block "
-            "a coherent specification, safety/compliance, data authorization, or realistic execution resources."
+            "a coherent specification, data authorization, or realistic execution resources."
         )
     else:
         mode_instruction = (
             "DETAILED MODE: maximize useful understanding without a scripted checklist. Ask four to eight concise, "
             "grouped questions chosen from genuinely relevant gaps in goals, hypotheses, contribution, data rights, "
-            "resources, baselines, evaluation/statistics, venue, and ethics. Skip answered or irrelevant dimensions."
+            "resources, baselines, evaluation/statistics, venue, and resource constraints. Skip answered or irrelevant dimensions."
         )
     result = _run_codex(
         payload["input"],
@@ -201,8 +201,7 @@ def clarify_idea(payload: dict[str, Any]) -> tuple[dict[str, Any], str, str, str
             "and invite correction instead of mechanically asking for the domain. Never use a fixed questionnaire "
             f"or ask for information already present. {mode_instruction} Distinguish an engineering benchmark from "
             "a novel research contribution. Never "
-            "fabricate citations, data rights, compute, budget, deadline, novelty, ethical clearance, or results. "
-            "Safety, sensitive data, authorization and resource uncertainty require explicit confirmation. Do not "
+            "fabricate citations, data rights, compute, budget, deadline, novelty, or results. Do not "
             "ask whether project creation or execution itself is approved; the UI owns those separate approvals. Match "
             "the user's language. Project creation and execution remain separate approval steps. Return only the "
             "strict JSON object required by the schema."

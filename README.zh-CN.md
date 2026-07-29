@@ -25,7 +25,7 @@
 研究项目的上下文经常散落在聊天、论文表格、实验目录和稿件中。Research OS 围绕持久化 `project_id` 与版本化 `ResearchIdea/ProjectSpec` 把这些对象连接起来：
 
 - 从自然语言 Idea 和自适应 AI 多轮澄清开始：自动识别明显上下文、公开假设，不使用固定问卷。默认开启的**全自动模式**尽量少问；关闭开关后进入**详细模式**，更全面但仍自适应地了解需求。
-- 在创建项目之前拦截信息不足、不安全或明显不可行的 Idea。
+- 在创建项目之前拦截信息不足或明显不可行的 Idea。
 - 将 Idea、策略、审批、检查点、任务、实验、证据和产物持久化到 PostgreSQL；聊天记录不是唯一状态源。
 - 通过 Crossref、OpenAlex、Semantic Scholar、arXiv 和 DBLP 检索，保存 DOI/BibTeX 以及提供方错误。
 - 明确区分 `metadata-only` 候选和带 PDF 哈希、页码/章节、原文 quote 与来源 URL 的 `fulltext-evidence`。
@@ -75,7 +75,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 
 | 范围 | MVP 状态 | 当前真实能力 |
 | --- | --- | --- |
-| Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema、安全降级与危险 Idea 阻断。 |
+| Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema、本地降级。 |
 | 项目初始化 | **已实现** | UUID、Git 工作区、目录、Idea v1、PostgreSQL 状态、检查点和 n8n 触发。 |
 | 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub 仅为候选来源。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
@@ -158,7 +158,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 
 1. 点击**新研究项目**并输入 Idea。**全自动模式**默认开启、尽量减少打断；希望规格生成前更全面地了解需求时，关闭开关进入**详细模式**。
 2. 检查 AI 的理解、推断领域、假设和成组追问；纠正错误推断，两种模式都不会逐字段执行固定问卷。
-3. 审核生成的 `ProjectSpec`。字段缺失、目标危险、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
+3. 审核生成的 `ProjectSpec`。字段缺失、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
 4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查新颖性/可行性结果和实验 Proposal；核对随机种子、预算、数据版本、预期产物及风险后再批准。
@@ -197,7 +197,6 @@ python scripts/acceptance_test.py
 | --- | --- |
 | `AI` | 保持澄清，不得臆造完整研究规格。 |
 | PyTorch/CUDA CNN 在 MNIST 上达到 99% | 推断深度学习/计算机视觉，识别为工程基准，默认使用 Terra 层级，并询问研究定位、数据授权、算力和评估约束。 |
-| 请求未授权恶意软件或有害访问的 Idea | 可行性被阻断，项目确认返回结构化冲突。 |
 | 上述 3D 主动学习 Idea | 创建项目、检索论文，批准后执行受限实验并生成可检查产物。 |
 
 最新完整验收记录的脱敏版本化副本为 [`acceptance-20260729-012750.json`](docs/evidence/acceptance-20260729-012750.json)，运行时原件仍保存在被忽略的 `artifacts/acceptance/`。该验收通过 Codex Bridge 使用 `gpt-5.6-sol` 和 `reasoning_effort=high`，验证了 8 条论文记录、3 条真实开放 PDF 原文证据、5 次实验、7 个检查点、101 条依赖、五随机种子策略、暂停/取消/恢复闸门、MLflow、PNG/PLY/PDF、Idea v2、局部重跑与 LaTeX 编译。合成 demo 只证明系统集成链可运行，不能证明研究假设成立。
@@ -306,7 +305,7 @@ python scripts/acceptance_test.py
 | 现象 | 检查项 |
 | --- | --- |
 | Docker 提示 Linux engine 不可用 | Docker Desktop → Settings/General → 启用 WSL2 backend，切换到 Linux containers，然后运行 `docker info`。 |
-| API 已启动，但 Idea 澄清显示本地安全降级 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、Bridge Secret/模型白名单是否一致、Codex CLI 是否可访问，以及 `docker compose logs api`；响应元数据会明确显示 `fallback_used=true`。 |
+| API 已启动，但 Idea 澄清显示本地降级 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、Bridge Secret/模型白名单是否一致、Codex CLI 是否可访问，以及 `docker compose logs api`；响应元数据会明确显示 `fallback_used=true`。 |
 | n8n 要求输入密码 | 从 Research OS 侧边栏或 `/api/n8n/open` 打开；确认 `.env` Owner 与 n8n 数据库一致。不要关闭用户管理。 |
 | n8n 自动登录返回 503/401 | 确认 n8n 正常、Owner 密码至少 12 位、`N8N_INTERNAL_URL` 为 `http://n8n:5678`，然后重启 `api n8n`。 |
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |

@@ -68,7 +68,7 @@ docker compose restart n8n api
 - 文献部分失败：`/api/search` 会返回 `provider_errors`，其他提供方继续落库；外部 API 限流不应伪造结果。
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
 - 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
-- Codex Bridge 不通：检查 8092 健康端点、Bridge secret、三级模型白名单、Codex CLI 与 Windows Codex 配置；API 回复会用 `fallback_used=true` 明确标出安全降级。
+- Codex Bridge 不通：检查 8092 健康端点、Bridge secret、三级模型白名单、Codex CLI 与 Windows Codex 配置；API 回复会用 `fallback_used=true` 明确标出本地降级。
 
 ## 项目状态控制
 

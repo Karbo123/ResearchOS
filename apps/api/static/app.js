@@ -43,8 +43,8 @@ function startAiProgress({progressId, formId, elapsedId, stageId, project = fals
 }
 
 function modelMeta(result) {
-  if (!result.model) return result.fallback_used ? "本地安全降级模式" : "";
-  return `${result.model_tier || "adaptive"} · ${result.model} · reasoning ${result.reasoning_effort || "default"}${result.fallback_used ? " · 本地安全降级" : ""}`;
+  if (!result.model) return result.fallback_used ? "本地降级模式" : "";
+  return `${result.model_tier || "adaptive"} · ${result.model} · reasoning ${result.reasoning_effort || "default"}${result.fallback_used ? " · 本地降级" : ""}`;
 }
 
 function renderSpec(spec) {
@@ -64,9 +64,8 @@ function renderSpec(spec) {
     <div class="spec-group"><label>Feasibility</label><div>${escapeHtml(spec.feasibility)}</div>${list(spec.feasibility_notes)}</div>
     <div class="spec-group"><label>Candidate modifications</label>${list(spec.candidate_modifications)}</div>
     <div class="spec-group"><label>Approvals</label>${list(spec.required_approvals)}</div>`;
-  $("specStatus").textContent = spec.feasibility === "blocked" ? "需审查" : "待确认";
-  $("specStatus").className = `badge ${spec.feasibility === "blocked" ? "failed" : "pending"}`;
-  $("confirmProject").classList.toggle("hidden", spec.feasibility === "blocked");
+  $("specStatus").textContent = "待确认";
+  $("specStatus").className = "badge pending";
 }
 
 async function sendChat(event) {

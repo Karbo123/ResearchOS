@@ -2,7 +2,6 @@
   "started_at": "2026-07-28T17:26:38.523772+00:00",
   "checks": {
     "insufficient_idea_clarifies": true,
-    "unsafe_idea_blocked": true,
     "n8n_automatic_bootstrap": {
       "papers": 8,
       "repositories": 0
