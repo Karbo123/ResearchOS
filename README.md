@@ -174,7 +174,7 @@ When a new-project clarification request uses `POST /api/chat/stream`, the UI sh
 7. In the **Experiments** page, generate an Idea-specific plan only after page-level full-text evidence exists. The API stores the strict plan as a pending Proposal bound to the current Idea version, evidence IDs, and policy snapshot. Approve it in **Approvals** before any execution; the current Runner still rejects topic-specific execution with a structured error and never substitutes a generic demo.
 8. Use the project chat for explanations, suggestions, or a proposed change. An execution request becomes a structured Proposal and waits for approval; it is never silently applied.
 9. Add durable rules such as “all experiments use at least five random seeds” through the **Policies** page. Approved rules are stored in PostgreSQL and enforced at plan generation, API submission, and Runner validation.
-10. Pause, resume, cancel, revise the Idea, or request a partial rerun from the appropriate checkpoint. A cancelled project is terminal.
+10. Pause, resume, cancel, revise the Idea, or request a partial rerun from the appropriate checkpoint. For a succeeded or failed experiment, the UI can create an approval-gated checkpoint rerun Proposal that reuses only the original allowlisted template, configuration, and persisted seeds; approval does not execute it automatically. A cancelled project is terminal.
 
 ## Running the supplied acceptance examples
 

@@ -54,6 +54,10 @@ Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDepend
 
 `POST /api/projects/{project_id}/experiment-plan` reads the current `ProjectSpec`, verified page-level `Evidence`, and active policy snapshot, then calls only the configured complex model tier for a strict `ExperimentPlan`. The API validates every referenced evidence ID, the current Idea version and fingerprints, topic relevance, policy seed minimum, and confirmed resource budget before storing a pending `experiment_plan` Proposal. The payload contains no shell command, path, arbitrary runner argument, or generic demo task. Approval is mandatory; submission revalidates the stored plan against current state and returns a structured `topic_specific_runner_not_implemented` error until a matching Runner template exists. It never substitutes `demo_classification` or `point_cloud_demo` for an unsupported topic.
 
+## Checkpoint-scoped rerun boundary
+
+`POST /api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun` creates a pending `experiment_rerun` Proposal only for an `experiment_succeeded` or `experiment_failed` checkpoint whose source experiment is terminal. The payload is rebuilt from the source experiment and contains only the existing allowlisted template fields and persisted random seeds. The generic Proposal endpoint cannot create this kind; approval and submission rebuild and compare the payload again. The Web UI exposes the action beside the matching terminal experiment, and execution still goes through the normal approved experiment submission path. There is no automatic rerun and no unrelated demo substitution.
+
 The Runner is a non-root, read-only container on the internal `runner-internal` Compose network. Each accepted Run is executed in a freshly spawned child process with a fixed task-template ID, allowlisted fields, bounded CPU/memory/PID/per-run disk limits, timeout and process-group cancellation. The container has no Docker socket, and the API/Runner contract rejects arbitrary command, path, URL, network and image fields. Independent per-run containers, GPU scheduling and general Python/C++/Conda environments remain roadmap work.
 
 ## 实验可复现快照

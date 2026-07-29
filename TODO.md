@@ -85,8 +85,9 @@
 - [~] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
   - 当前实现：Proposal 创建与审批重新计算 `ArtifactDependency` 影响图；Idea/策略/代码/数据/删除产物变更只使受影响的有效 Artifact 失效，记录受影响实验、检查点、重跑候选和审计事件；旧 Idea 版本 Proposal 会被拒绝。
-  - 当前缺口：尚未自动创建或提交主题专属重跑，也未在 Runner 中执行检查点恢复；因此任务继续保持 `[~]`。
-  - 验证：API 容器 `38 passed`；新增测试覆盖 Idea/策略/代码/数据依赖传播、无关变更隔离和检查点建议；`docker compose config --quiet`、JSON、Idea case、文档同步和 `git diff --check` 通过。
+  - 当前实现：新增 `POST /api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun`；仅允许 `experiment_succeeded`/`experiment_failed` 的终态检查点，重建原白名单模板配置与持久化随机种子。通用 Proposal API 不能创建 `experiment_rerun`；审批与提交阶段再次核对源实验、检查点和完整 payload。前端在匹配实验行显示“提出局部重跑”，批准后复用现有 `/api/experiments` 提交链。
+  - 当前缺口：尚未自动创建或提交主题专属重跑，也未在 Runner 中执行检查点恢复；因此任务继续保持 `[~]`。任何模型或主题 Runner 失败都直接返回结构化错误，不使用 fallback 或无关演示实验。
+  - 验证：API 容器 `54 passed`；新增测试覆盖合法重建、终态/类型/种子/篡改 payload 拒绝；前端 `node --check`、聊天 UX `5 passed`、`docker compose config --quiet`、JSON、Idea case、文档同步和 `git diff --check` 通过。
 - [x] `P0-REPRO-026` 为每次实验建立不可变、可复核但不追踪大文件的代码与环境快照。
   - 完成标准：实验开始前要求项目 Git 工作树干净；将已批准的代码/配置变更提交并创建 `run/<run_id>` tag；记录项目仓库 commit、Research OS 主仓库 commit、Runner 镜像 digest、ProjectSpec/策略/配置/随机种子、依赖锁文件和数据 manifest/hash；输出与源码快照建立 PostgreSQL 依赖关系。
   - 大文件策略：Git 只追踪源码、配置、BibTeX/LaTeX、manifest、哈希和小型元数据；Git 禁止追踪 PDF、PLY/PCD、PNG、模型权重、数据集、数据库备份、源码 bundle、Docker layer、Conda/package cache 和日志归档。源码 bundle、环境报告、数据/模型清单和大型产物保存到 MinIO 或受控 `artifacts/`，数据库只保存 URI、大小、SHA-256、版本和有效性元数据；主仓库 `.gitignore`、大小门禁和测试必须验证这一点。
@@ -245,3 +246,4 @@
 - P0-RUNNER-007 提交：`92fe1ef` 已推送到 `origin/main`；TODO 记录随合并提交更新。
 - 2026-07-30：完成本轮 `P0-IMPACT-008` 实体级影响分析部分；发现 Idea 审批仍会使项目全部有效 Artifact 失效，新增只读依赖图分析、审批时重新计算、局部 Artifact 失效和审计记录；补齐数据/代码根与检查点建议。验证通过：API `38 passed`、Compose/JSON/Idea case/文档同步/`git diff --check`；提交 `c559704` 已创建，P0-IMPACT-008 继续保持 `[~]`，因为自动主题重跑和 Runner 检查点恢复尚未实现。
 - 2026-07-30：开始 `P1-UPLOAD-009`；新增受限材料解析和摘要上下文，前端改为先上传/解析再请求模型，失败直接阻止本轮调用；图片保持 metadata-only，ZIP 只读清单，不解压或执行。同步双语 README、架构、运维、安全和需求审计。验证：API 容器 `42 passed`、`py_compile`、Compose、文档同步、Idea case、前端 UX `5 passed`、`git diff --check` 和浏览器设置面板桌面/窄屏检查通过；图片 OCR、独立恶意样本扫描和大规模材料库仍未实现，任务保持 `[~]`。实现提交：`00441b5` 已推送到 `origin/main`。
+- 2026-07-30：继续 `P0-IMPACT-008`；完成检查点局部重跑 Proposal、前端入口、审批/提交二次一致性校验和篡改 payload 测试。当前只支持人工审批后的原白名单重跑，不自动执行，不切换模型，不用无关演示实验替代。API `54 passed`、前端语法/UX、Compose、Idea case、文档同步和 `git diff --check` 通过；任务继续保持 `[~]`，等待主题 Runner 与自动检查点恢复。

@@ -13,6 +13,10 @@
 
 The experiment-plan endpoint accepts only the current ProjectSpec, stored page-level evidence, and the active policy snapshot. The structured model response is validated again before it becomes a pending Proposal: evidence IDs must belong to the current project and include a verified quote, locator, PDF hash, source URL, and BibTeX; seeds and budget must satisfy policy and ProjectSpec constraints; and shell, path, command, and arbitrary Runner fields are not part of the plan schema. Approval does not bypass revalidation. Until a matching topic-specific Runner template exists, approved plans return a structured `topic_specific_runner_not_implemented` error. The API never converts an invalid or unsupported plan into a generic classification or point-cloud task.
 
+## Checkpoint rerun boundary
+
+Checkpoint reruns are proposal-only recovery actions. The dedicated endpoint accepts only terminal success/failure checkpoints, resolves the source experiment inside the same project, and reconstructs an allowlisted payload from persisted configuration and seeds. The generic Proposal endpoint cannot mint rerun proposals; approval and execution repeat the source and payload checks. A failed request is returned as a structured error, with no automatic rerun, provider fallback, or unrelated experiment substitution.
+
 ## Adaptive clarification agent
 
 - 澄清 Agent 每轮只接收最新消息、当前草稿和最多 12 条最近对话，输出严格 `codex-clarification.schema.json`；它没有浏览、Shell、文件、SQL 或外部工具权限。

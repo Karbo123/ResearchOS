@@ -19,6 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, select, text
 
 from .clarification import build_spec, initial_draft, required_spec_gaps
+from .checkpoint_recovery import CheckpointRecoveryError, build_rerun_payload, validate_rerun_payload
 from .db import Base, engine, session_scope
 from .models import (
     Artifact, ArtifactDependency, AuditEvent, Checkpoint, ConversationSession, Evidence,
@@ -46,7 +47,7 @@ from .policy_engine import (
     seeds_for_constraints,
 )
 from .schemas import (
-    ApprovalDecision, ChangeProposalRequest, ChatRequest, ChatResponse, EvidenceIngestRequest, ExperimentPlan,
+    ApprovalDecision, ChangeProposalRequest, CheckpointRerunRequest, ChatRequest, ChatResponse, EvidenceIngestRequest, ExperimentPlan,
     ExperimentRequest,
     ModelSettingsRequest, PolicyUpdate, ProjectCreateRequest, ProjectSpec, ProjectStateRequest, ReportRequest,
     RunnerStatus, SearchRequest,
@@ -1091,6 +1092,8 @@ def create_proposal(request: ChangeProposalRequest):
     with session_scope() as session:
         project = session.get(Project, request.project_id)
         if not project: raise HTTPException(404, "project not found")
+        # Checkpoint reruns must be created by the endpoint that resolves their source.
+        # Keeping this out of the generic Proposal API prevents payload fabrication.
         proposal_data = request.model_dump()
         payload = dict(proposal_data.get("payload") or {})
         if request.kind == "idea_revision":
@@ -1247,6 +1250,70 @@ def generate_compile_plan(project_id: UUID):
         return {"proposal_id": str(proposal.id), "status": "pending", "plan": proposal.payload, "impact": proposal.impact}
 
 
+@app.post("/api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun")
+def propose_checkpoint_rerun(project_id: UUID, checkpoint_id: UUID, request: CheckpointRerunRequest):
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "checkpoint rerun proposal")
+        checkpoint = session.get(Checkpoint, checkpoint_id)
+        if not checkpoint or checkpoint.project_id != project_id:
+            raise HTTPException(404, "checkpoint not found")
+        run_id = (checkpoint.state or {}).get("run_id")
+        try:
+            source_experiment = session.get(Experiment, UUID(str(run_id))) if run_id else None
+        except ValueError:
+            source_experiment = None
+        if not source_experiment or source_experiment.project_id != project_id:
+            raise HTTPException(status_code=409, detail={
+                "code": "checkpoint_source_experiment_missing",
+                "message": "检查点关联的源实验不存在，不能重跑。",
+            })
+        try:
+            payload = build_rerun_payload(
+                checkpoint_id=str(checkpoint.id), checkpoint_stage=checkpoint.stage,
+                checkpoint_state=checkpoint.state, experiment_id=str(source_experiment.id),
+                experiment_status=source_experiment.status, experiment_type=source_experiment.experiment_type,
+                experiment_config=source_experiment.config,
+            )
+        except CheckpointRecoveryError as exc:
+            raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+        existing = session.scalar(select(Proposal).where(
+            Proposal.project_id == project_id,
+            Proposal.kind == "experiment_rerun",
+            Proposal.status == "pending",
+        ).order_by(desc(Proposal.created_at)))
+        if existing and (existing.payload or {}).get("source_experiment_id") == str(source_experiment.id):
+            raise HTTPException(status_code=409, detail={
+                "code": "checkpoint_rerun_already_proposed",
+                "message": "该源实验已有待审批的局部重跑 Proposal。",
+                "proposal_id": str(existing.id),
+            })
+        impact = {
+            "schema_version": "1.0",
+            "rerun_scope": "checkpoint_only",
+            "source_experiment_id": str(source_experiment.id),
+            "checkpoint_id": str(checkpoint.id),
+            "requires_manual_review": True,
+            "approval_required": True,
+            "no_fallback": True,
+        }
+        proposal = Proposal(
+            project_id=project_id,
+            kind="experiment_rerun",
+            reason=request.reason,
+            summary=f"局部重跑实验 {str(source_experiment.id)[:8]}（检查点 {str(checkpoint.id)[:8]}）",
+            diff="仅复用源实验的白名单类型、配置和随机种子；执行时生成新的可复现快照。",
+            impact=impact,
+            estimated_cost_usd=0,
+            payload=payload,
+        )
+        session.add(proposal)
+        session.flush()
+        audit(session, "experiment_rerun.proposed", project_id, {
+            "proposal_id": str(proposal.id), **payload,
+        }, "local-user")
+        return {"proposal_id": str(proposal.id), "status": proposal.status, "payload": payload, "impact": impact}
+
+
 @app.post("/api/proposals/{proposal_id}/decision")
 def decide(proposal_id: UUID, request: ApprovalDecision):
     with session_scope() as session:
@@ -1257,6 +1324,37 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
         if not project: raise HTTPException(404, "project not found")
         impact: dict[str, Any] | None = None
         download_result: dict[str, Any] | None = None
+        if request.decision == "approved" and proposal.kind == "experiment_rerun":
+            payload = proposal.payload or {}
+            checkpoint_id = payload.get("checkpoint_id")
+            source_experiment_id = payload.get("source_experiment_id")
+            try:
+                checkpoint = session.get(Checkpoint, UUID(str(checkpoint_id))) if checkpoint_id else None
+                source_experiment = session.get(Experiment, UUID(str(source_experiment_id))) if source_experiment_id else None
+            except ValueError:
+                checkpoint = None
+                source_experiment = None
+            if (
+                not checkpoint
+                or checkpoint.project_id != project.id
+                or not source_experiment
+                or source_experiment.project_id != project.id
+                or (checkpoint.state or {}).get("run_id") != str(source_experiment.id)
+            ):
+                raise HTTPException(status_code=409, detail={
+                    "code": "checkpoint_rerun_source_invalid",
+                    "message": "检查点重跑的源实验或检查点已失效，不能审批。",
+                })
+            try:
+                validate_rerun_payload(
+                    proposal_payload=payload,
+                    checkpoint_id=str(checkpoint.id), checkpoint_stage=checkpoint.stage,
+                    checkpoint_state=checkpoint.state, experiment_id=str(source_experiment.id),
+                    experiment_status=source_experiment.status, experiment_type=source_experiment.experiment_type,
+                    experiment_config=source_experiment.config,
+                )
+            except CheckpointRecoveryError as exc:
+                raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
         if request.decision == "approved" and proposal.kind in {"config_change", "idea_revision"}:
             if proposal.kind == "idea_revision":
                 base_version = proposal.payload.get("base_idea_version")
@@ -1319,8 +1417,38 @@ async def submit_experiment(request: ExperimentRequest):
         proposal = session.get(Proposal, request.proposal_id)
         if not proposal or proposal.project_id != request.project_id: raise HTTPException(404, "proposal not found")
         if proposal.status != "approved": raise HTTPException(409, "approved proposal required")
-        if proposal.kind not in {"experiment_plan", "config_change"}: raise HTTPException(409, "proposal kind cannot launch an experiment")
+        if proposal.kind not in {"experiment_plan", "config_change", "experiment_rerun"}: raise HTTPException(409, "proposal kind cannot launch an experiment")
         approved_payload = proposal.payload or {}
+        if proposal.kind == "experiment_rerun":
+            checkpoint_id = approved_payload.get("checkpoint_id")
+            source_experiment_id = approved_payload.get("source_experiment_id")
+            try:
+                checkpoint = session.get(Checkpoint, UUID(str(checkpoint_id))) if checkpoint_id else None
+                source_experiment = session.get(Experiment, UUID(str(source_experiment_id))) if source_experiment_id else None
+            except ValueError:
+                checkpoint = None
+                source_experiment = None
+            if (
+                not checkpoint
+                or checkpoint.project_id != project.id
+                or not source_experiment
+                or source_experiment.project_id != project.id
+                or (checkpoint.state or {}).get("run_id") != str(source_experiment.id)
+            ):
+                raise HTTPException(status_code=409, detail={
+                    "code": "checkpoint_rerun_source_invalid",
+                    "message": "检查点重跑的源实验或检查点已失效，不能执行。",
+                })
+            try:
+                validate_rerun_payload(
+                    proposal_payload=approved_payload,
+                    checkpoint_id=str(checkpoint.id), checkpoint_stage=checkpoint.stage,
+                    checkpoint_state=checkpoint.state, experiment_id=str(source_experiment.id),
+                    experiment_status=source_experiment.status, experiment_type=source_experiment.experiment_type,
+                    experiment_config=source_experiment.config,
+                )
+            except CheckpointRecoveryError as exc:
+                raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
         if approved_payload.get("plan_type") == "topic_specific":
             try:
                 approved_plan = ExperimentPlan.model_validate(approved_payload.get("plan"))
@@ -1478,7 +1606,7 @@ async def submit_experiment(request: ExperimentRequest):
             project_id=request.project_id,
             proposal_id=request.proposal_id,
             experiment_type=request.experiment_type,
-            config={**effective_config, "_reproducibility": contract},
+            config={**effective_config, "_random_seeds": request.random_seeds, "_reproducibility": contract},
         )
         session.add(experiment)
         session.flush()
@@ -1663,6 +1791,16 @@ async def sync_experiment(run_id: UUID):
                 ))
         elif status.status == "failed" and project.status == "active":
             project.current_stage = "experiment_failed"
+            prior = session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id, Checkpoint.stage == "experiment_failed")).all()
+            if not any(item.state.get("run_id") == str(run_id) for item in prior):
+                session.add(Checkpoint(
+                    project_id=project.id,
+                    stage="experiment_failed",
+                    idea_version=project.current_idea_version,
+                    git_commit=(experiment.config or {}).get("_reproducibility", {}).get("project_git_commit"),
+                    data_version=(experiment.config or {}).get("_reproducibility", {}).get("data_version"),
+                    state={"run_id": str(run_id), "error": status.error, "metrics": status.metrics},
+                ))
         audit(session, "experiment.synced", experiment.project_id, {"run_id": str(run_id), "status": status.status})
         return status
 

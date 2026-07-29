@@ -261,7 +261,7 @@ def test_tool_catalog_contains_valid_schemas():
         "clarify_research_idea", "create_research_project", "evaluate_novelty_and_feasibility",
         "search_papers_and_bibtex", "find_official_code_repository", "download_open_source_code",
         "retrieve_citation_evidence", "generate_experiment_plan", "configure_model_settings", "submit_experiment",
-        "query_experiment_status", "read_metrics", "collect_visual_artifacts",
+        "query_experiment_status", "read_metrics", "collect_visual_artifacts", "rerun_experiment_from_checkpoint",
         "render_point_cloud_preview", "propose_code_patch", "update_project_policy", "compile_latex",
     }
     assert {tool["name"] for tool in catalog["tools"]} == expected

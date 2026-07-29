@@ -180,6 +180,12 @@ class ApprovalDecision(BaseModel):
     actor: str = Field(default="local-user", max_length=200)
 
 
+class CheckpointRerunRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reason: str = Field(min_length=5, max_length=2000)
+
+
 class ExperimentRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

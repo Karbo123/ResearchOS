@@ -346,6 +346,44 @@ function newProject() {
   $("specContent").innerHTML = "规格将在澄清完成后生成。"; $("confirmProject").classList.add("hidden"); loadProjects();
 }
 function statusBadge(status) { const kind = status === "approved" || status === "succeeded" ? "live" : status === "failed" || status === "rejected" ? "failed" : "pending"; return `<span class="badge ${kind}">${escapeHtml(status)}</span>`; }
+function checkpointForExperiment(experiment, checkpoints) {
+  const stage = experiment.status === "succeeded" ? "experiment_succeeded" : experiment.status === "failed" ? "experiment_failed" : null;
+  if (!stage) return null;
+  return (checkpoints || []).find(item => item.stage === stage && item.state?.run_id === experiment.id) || null;
+}
+function renderCheckpointActions(projectData, executionDisabled) {
+  const rows = $("tab-experiments").querySelectorAll(".data-row");
+  projectData.experiments.forEach((experiment, index) => {
+    const checkpoint = checkpointForExperiment(experiment, projectData.checkpoints);
+    const row = rows[index];
+    const actions = row?.querySelector(".button-row");
+    if (!checkpoint || !actions || actions.querySelector(`[data-rerun-checkpoint="${checkpoint.id}"]`)) return;
+    const button = document.createElement("button");
+    button.className = "secondary";
+    button.dataset.rerunCheckpoint = checkpoint.id;
+    button.disabled = Boolean(executionDisabled);
+    button.title = "提出检查点局部重跑 Proposal";
+    button.innerHTML = '<i data-lucide="rotate-ccw"></i>提出局部重跑';
+    button.addEventListener("click", () => proposeCheckpointRerun(checkpoint.id));
+    actions.appendChild(button);
+  });
+}
+function renderRerunProposalActions(projectData, executionDisabled) {
+  const rows = $("tab-approvals").querySelectorAll(".data-row");
+  projectData.proposals.forEach((proposal, index) => {
+    if (proposal.kind !== "experiment_rerun" || proposal.status !== "approved") return;
+    const actions = rows[index]?.querySelector(".button-row");
+    if (!actions || actions.querySelector(`[data-rerun-proposal="${proposal.id}"]`)) return;
+    const button = document.createElement("button");
+    button.className = "secondary";
+    button.dataset.rerunProposal = proposal.id;
+    button.disabled = Boolean(executionDisabled);
+    button.title = "执行已批准的检查点局部重跑";
+    button.innerHTML = '<i data-lucide="play"></i>执行';
+    button.addEventListener("click", () => launch(JSON.stringify(proposal)));
+    actions.appendChild(button);
+  });
+}
 function renderRepositoryCandidates(repositories, disabled = false) {
   const old = $("repositoryCandidates"); if (old) old.remove();
   if (!repositories?.length) return;
@@ -365,6 +403,16 @@ function renderRepositoryCandidates(repositories, disabled = false) {
 }
 async function verifyRepository(id) { try { await api(`/api/projects/${state.projectId}/repositories/${id}/verify`, {method:"POST"}); await refreshProject(); toast("仓库双源验证完成"); } catch (error) { toast(error.message); } }
 async function proposeRepositoryDownload(id) { try { const result = await api(`/api/projects/${state.projectId}/repositories/${id}/download`, {method:"POST"}); await refreshProject(); switchTab("approvals"); toast(`下载 Proposal ${result.proposal_id.slice(0, 8)} 已创建`); } catch (error) { toast(error.message); } }
+async function proposeCheckpointRerun(checkpointId) {
+  const reason = window.prompt("请说明局部重跑原因", "复核该实验在当前项目快照下的结果");
+  if (!reason || reason.trim().length < 5) return;
+  try {
+    const result = await api(`/api/projects/${state.projectId}/checkpoints/${checkpointId}/rerun`, {method:"POST", body:JSON.stringify({reason: reason.trim()})});
+    await refreshProject();
+    switchTab("approvals");
+    toast(`局部重跑 Proposal ${result.proposal_id.slice(0, 8)} 已创建，等待审批`);
+  } catch (error) { toast(error.message); }
+}
 function renderProject() {
   const d = state.project, c = d.counts;
   const pe = d.policy_enforcement || {}, cr = pe.citation_readiness || {};
@@ -390,6 +438,8 @@ function renderProject() {
     </div></div><div class="section"><div class="section-head"><h2>生效策略</h2></div><div class="data-list">${d.policies.map(p=>`<div class="data-row"><div><h3>${escapeHtml(p.rule)}</h3><p>${escapeHtml((p.enforced_requirements||[]).join(' · ')||'未识别为可执行约束；保留为人工规则')} · ${escapeHtml(p.rationale||'项目级持久策略')}</p></div>${statusBadge(p.recognized?'enforced':'manual')}</div>`).join('')}</div></div>`;
   $("tab-reports").innerHTML = `<div class="section-head"><h2>科研报告</h2><div class="button-row"><button class="secondary" onclick="generateReport('daily')">日报</button><button class="secondary" onclick="generateReport('weekly')">周报</button></div></div><div id="reportOutput" class="${d.reports.length?'report':'empty'}">${d.reports.length?escapeHtml(d.reports[0].content):'选择报告周期。'}</div>${d.reports.length>1?`<div class="section"><h3>历史报告</h3><div class="data-list">${d.reports.slice(1).map(r=>`<div class="data-row"><div><h3>${escapeHtml(r.period)}</h3><p>${escapeHtml(r.created_at)}</p></div></div>`).join('')}</div></div>`:''}`;
   iconRefresh();
+  renderCheckpointActions(d, executionDisabled);
+  renderRerunProposalActions(d, executionDisabled);
   renderRepositoryCandidates(d.repositories, !isActive);
   loadNovelty();
 }
