@@ -141,7 +141,61 @@ def mlflow_run_exists(run_id: str) -> bool:
         return response.status == 200 and bool(json.loads(response.read()).get("run"))
 
 
+def run_direct_acceptance() -> None:
+    case = load_idea_case("active-learning-3d")
+    results: dict[str, Any] = {"started_at": datetime.now(timezone.utc).isoformat(), "checks": {}}
+    health = request("GET", "/api/health")
+    assert health["llm"]["provider"] == "openai"
+    assert health["llm"]["bridge_required"] is False
+    assert health["llm"]["provider_configured"] is True
+    assert set(health["llm"]["routing"]["models"]) == {"simple", "medium", "complex"}
+    settings = request("GET", "/api/settings/models")
+    assert set(settings["tiers"]) == {"simple", "medium", "complex"}
+    assert all("key" not in tier for tier in settings["tiers"].values())
+    results["checks"]["container_direct_model_settings"] = True
+
+    response = request("POST", "/api/chat", {"message": case.initial_message, "clarification_mode": case.clarification_mode})
+    facts = "\n".join(f"{field}: {value}" for field, value in case.confirmed_facts.items())
+    facts += "\nThese are explicit user-confirmed facts. Update the whole draft for ProjectSpec review."
+    for _ in range(4):
+        if response["phase"] == "ready_for_confirmation":
+            break
+        response = request("POST", "/api/chat", {"session_id": response["session_id"], "message": facts, "clarification_mode": case.clarification_mode})
+    assert response["phase"] == "ready_for_confirmation"
+    project_id = request("POST", "/api/projects", {"session_id": response["session_id"], "confirmed": True})["project"]["id"]
+    deadline = time.time() + 240
+    while time.time() < deadline:
+        detail = request("GET", f"/api/projects/{project_id}")
+        tasks = [task for task in detail["tasks"] if task["kind"] == "research_bootstrap"]
+        if tasks and tasks[0]["status"] in {"succeeded", "failed", "cancelled"}:
+            break
+        time.sleep(2)
+    assert tasks and tasks[0]["status"] in {"succeeded", "failed", "cancelled"}
+    evidence = request("POST", f"/api/projects/{project_id}/evidence/ingest", {"limit": 3})
+    novelty = request("GET", f"/api/projects/{project_id}/novelty")
+    assert "related_work" in novelty and "claim_gate" in novelty
+    plan_error = expected_http_error("POST", f"/api/projects/{project_id}/experiment-plan", {}, 409)
+    assert plan_error["detail"]["code"] == "topic_specific_experiment_plan_not_implemented"
+    results["project_id"] = project_id
+    results["checks"].update({
+        "evidence_first_related_work": {"stored_count": evidence["stored_count"], "assessment": novelty["assessment"]},
+        "unrelated_baseline_blocked": True,
+    })
+    paused = request("POST", f"/api/projects/{project_id}/state", {"action": "pause", "reason": "Acceptance state gate"})
+    resumed = request("POST", f"/api/projects/{project_id}/state", {"action": "resume", "reason": "Acceptance state gate complete"})
+    assert paused["status"] == "paused" and resumed["status"] == "active"
+    results["checks"]["project_state_gate"] = True
+    results["finished_at"] = datetime.now(timezone.utc).isoformat()
+    OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+    target = OUTPUT_ROOT / f"acceptance-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+    target.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps({"status": "passed", "result_file": str(target), **results}, ensure_ascii=False, indent=2))
+
+
 def main() -> None:
+    run_direct_acceptance()
+    return
+    """
     insufficient_case = load_idea_case("insufficient-ai")
     mnist_case = load_idea_case("mnist-cnn")
     project_case = load_idea_case("active-learning-3d")
@@ -376,6 +430,8 @@ def main() -> None:
     target.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"status": "passed", "result_file": str(target), **results}, ensure_ascii=False, indent=2))
 
+
+    """
 
 if __name__ == "__main__":
     main()

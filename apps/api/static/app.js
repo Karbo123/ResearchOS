@@ -16,6 +16,41 @@ async function api(path, options = {}) {
   return response.json();
 }
 function toast(message) { const el = $("toast"); el.textContent = message; el.classList.remove("hidden"); setTimeout(() => el.classList.add("hidden"), 3200); }
+const MODEL_TIERS = [
+  ["simple", "Luna", "low"],
+  ["medium", "Terra", "medium"],
+  ["complex", "Sol", "high"],
+];
+function renderModelSettings(tiers) {
+  $("modelSettingsTiers").innerHTML = MODEL_TIERS.map(([tier, label, defaultEffort]) => {
+    const item = tiers[tier] || {};
+    return `<section class="model-tier"><h3>${label}<span class="badge neutral">${tier}</span></h3><div class="model-tier-grid">
+      <label>模型名称<input name="${tier}.model" value="${escapeHtml(item.model || "")}" required maxlength="200"></label>
+      <label>推理强度<select name="${tier}.reasoning_effort"><option value="low" ${item.reasoning_effort === "low" ? "selected" : ""}>low</option><option value="medium" ${item.reasoning_effort === "medium" ? "selected" : ""}>medium</option><option value="high" ${item.reasoning_effort === "high" ? "selected" : ""}>high</option></select></label>
+      <label>模型 URL<input name="${tier}.url" type="url" value="${escapeHtml(item.url || "")}" placeholder="https://.../v1" required maxlength="500"></label>
+      <label>API key<input name="${tier}.key" type="password" value="" placeholder="${item.key_configured ? "已配置，留空保持不变" : "输入 API key"}" autocomplete="new-password" maxlength="1000"></label>
+    </div></section>`;
+  }).join("");
+  iconRefresh();
+}
+async function openModelSettings() {
+  try {
+    const result = await api("/api/settings/models");
+    renderModelSettings(result.tiers);
+    $("modelSettingsModal").classList.remove("hidden");
+  } catch (error) { toast(error.message); }
+}
+function closeModelSettings() { $("modelSettingsModal").classList.add("hidden"); }
+async function saveModelSettings(event) {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget), payload = {};
+  for (const [tier] of MODEL_TIERS) payload[tier] = {
+    model: String(form.get(`${tier}.model`) || "").trim(), url: String(form.get(`${tier}.url`) || "").trim(),
+    key: String(form.get(`${tier}.key`) || ""), reasoning_effort: String(form.get(`${tier}.reasoning_effort`) || "medium"),
+  };
+  try { const result = await api("/api/settings/models", {method:"PUT", body:JSON.stringify(payload)}); renderModelSettings(result.tiers); toast("模型配置已保存"); closeModelSettings(); }
+  catch (error) { toast(error.message); }
+}
 function iconRefresh() { if (window.lucide) lucide.createIcons(); }
 function addMessage(container, role, text, meta = "") {
   const el = document.createElement("div"); el.className = `message ${role}`;
@@ -308,10 +343,10 @@ function renderProject() {
       ? `<button class="approve" onclick="changeProjectState('resume')"><i data-lucide="play"></i>恢复</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>取消项目</button>`
       : "";
   $("tab-overview").innerHTML = `<div class="metric-grid"><div class="metric"><span>论文</span><strong>${c.papers}</strong></div><div class="metric"><span>实验</span><strong>${c.experiments}</strong></div><div class="metric"><span>产物</span><strong>${c.artifacts}</strong></div><div class="metric"><span>待审批</span><strong>${d.proposals.filter(p=>p.status==='pending').length}</strong></div></div>
-    <div class="section"><div class="section-head"><h2>研究规格</h2><div class="button-row"><button class="secondary" onclick="runSearch()" ${executionDisabled}><i data-lucide="search"></i>检索文献</button><button class="secondary" onclick="createPlan()" ${executionDisabled}><i data-lucide="flask-conical"></i>实验计划</button><button class="secondary" onclick="createCompilePlan()" ${executionDisabled}><i data-lucide="file-check"></i>编译论文</button></div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.spec.idea.research_question)}</h3><p>${escapeHtml(d.spec.idea.domain)} · ${escapeHtml((d.spec.idea.keywords||[]).join(', '))}</p></div>${statusBadge(d.spec.feasibility)}</div></div></div>
+    <div class="section"><div class="section-head"><h2>研究规格</h2><div class="button-row"><button class="secondary" onclick="runSearch()" ${executionDisabled}><i data-lucide="search"></i>检索文献</button><button class="secondary" onclick="createCompilePlan()" ${executionDisabled}><i data-lucide="file-check"></i>编译论文</button></div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.spec.idea.research_question)}</h3><p>${escapeHtml(d.spec.idea.domain)} · ${escapeHtml((d.spec.idea.keywords||[]).join(', '))}</p></div>${statusBadge(d.spec.feasibility)}</div></div></div>
     <div class="section"><div class="section-head"><h2>项目状态</h2><div class="button-row">${stateControls}</div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.project.stage)}</h3><p>Idea version ${d.project.idea_version} · ${escapeHtml(d.project.status)}</p></div>${statusBadge(d.project.status)}</div></div></div>`;
   $("tab-literature").innerHTML = `<div class="section-head"><h2>可验证文献记录</h2><div class="button-row"><button class="secondary" onclick="runSearch()"><i data-lucide="search"></i>更新检索</button><button class="secondary" onclick="ingestEvidence()" ${executionDisabled}><i data-lucide="scan-text"></i>提取全文证据</button></div></div>${d.papers.length ? `<div class="data-list">${d.papers.map(p=>`<div class="data-row"><div><h3><a href="${escapeHtml(p.source_url)}" target="_blank">${escapeHtml(p.title)}</a></h3><p>${p.year||''} ${escapeHtml(p.venue||'')} · ${escapeHtml(p.source_provider||'unknown')} · DOI ${escapeHtml(p.doi||'未提供')} · ${p.verified?'元数据已验证':'待验证'} · 页码原文证据 ${Number(p.fulltext_evidence_count||0)} · 代码候选 ${(p.code_repositories||[]).length}</p>${p.pdf_url?`<p><a href="${escapeHtml(p.pdf_url)}" target="_blank">打开来源 PDF</a></p>`:''}${p.bibtex?`<details><summary>BibTeX</summary><pre class="code-block">${escapeHtml(p.bibtex)}</pre></details>`:''}</div>${statusBadge((p.fulltext_evidence_count||0)>0?'fulltext-evidence':'metadata-only')}</div>`).join('')}</div>` : `<div class="empty">尚无文献记录。</div>`}`;
-  $("tab-experiments").innerHTML = `<div class="section-head"><h2>实验运行</h2><button class="secondary" onclick="createPlan()" ${executionDisabled}><i data-lucide="plus"></i>实验计划</button></div>${d.experiments.length ? `<div class="data-list">${d.experiments.map(e=>`<div class="data-row"><div><h3>${escapeHtml(e.experiment_type)}</h3><p>${escapeHtml(JSON.stringify(e.metrics))}${e.mlflow_run_id?` · MLflow ${escapeHtml(e.mlflow_run_id)}`:''}</p></div><div class="button-row">${statusBadge(e.status)}<button class="secondary" onclick="syncRun('${e.id}')"><i data-lucide="refresh-cw"></i>同步</button>${['queued','running'].includes(e.status)?`<button class="reject" onclick="cancelRun('${e.id}')"><i data-lucide="square"></i>取消</button>`:''}</div></div>`).join('')}</div>` : `<div class="empty">尚无实验运行。</div>`}`;
+  $("tab-experiments").innerHTML = `<div class="section-head"><h2>实验运行</h2></div>${d.experiments.length ? `<div class="data-list">${d.experiments.map(e=>`<div class="data-row"><div><h3>${escapeHtml(e.experiment_type)}</h3><p>${escapeHtml(JSON.stringify(e.metrics))}${e.mlflow_run_id?` · MLflow ${escapeHtml(e.mlflow_run_id)}`:''}</p></div><div class="button-row">${statusBadge(e.status)}<button class="secondary" onclick="syncRun('${e.id}')"><i data-lucide="refresh-cw"></i>同步</button>${['queued','running'].includes(e.status)?`<button class="reject" onclick="cancelRun('${e.id}')"><i data-lucide="square"></i>取消</button>`:''}</div></div>`).join('')}</div>` : `<div class="empty">主题专属实验规划尚未实现；系统不会自动创建无关实验。</div>`}`;
   $("tab-artifacts").innerHTML = `<div class="section-head"><h2>可视化与大文件产物</h2></div>${d.artifacts.length ? `<div class="artifact-grid">${d.artifacts.map(a=>`<article class="artifact-card">${a.mime_type.startsWith('image/')?`<img src="${a.url}" alt="${escapeHtml(a.name)}">`:`<div class="empty">${escapeHtml(a.kind)}</div>`}<div class="artifact-body"><h3>${escapeHtml(a.name)}</h3><p class="muted">${escapeHtml(a.kind)} · ${a.valid?'有效':'已失效'}</p><a href="${a.url}" download>下载产物</a></div></article>`).join('')}</div>` : `<div class="empty">实验完成并同步后显示 PNG、PLY、JSON 和 PDF。</div>`}`;
   $("tab-approvals").innerHTML = `<div class="section-head"><h2>变更与执行审批</h2></div>${d.proposals.length ? `<div class="data-list">${d.proposals.map(p=>`<div class="data-row"><div><h3>${escapeHtml(p.summary)}</h3><p>${escapeHtml(p.reason)} · 预计 $${Number(p.estimated_cost_usd).toFixed(2)}</p>${p.diff?`<pre class="code-block">${escapeHtml(p.diff)}</pre>`:''}<p>影响: ${escapeHtml(JSON.stringify(p.impact))}</p></div><div class="button-row">${statusBadge(p.status)}${p.status==='pending'?`<button class="approve" onclick="decide('${p.id}','approved')"><i data-lucide="check"></i>批准</button><button class="reject" onclick="decide('${p.id}','rejected')"><i data-lucide="x"></i>驳回</button>`:''}${p.status==='approved'&&p.kind==='experiment_plan'?`<button class="secondary" onclick='launch(${JSON.stringify(JSON.stringify(p))})' ${executionDisabled}><i data-lucide="play"></i>执行</button>`:''}</div></div>`).join('')}</div>` : `<div class="empty">没有待处理提案。</div>`}`;
   $("tab-policies").innerHTML = `<form class="policy-form" onsubmit="addPolicy(event)"><input id="policyInput" placeholder="新增长期项目策略" required><button class="primary">提出策略</button></form>
@@ -322,11 +357,22 @@ function renderProject() {
     </div></div><div class="section"><div class="section-head"><h2>生效策略</h2></div><div class="data-list">${d.policies.map(p=>`<div class="data-row"><div><h3>${escapeHtml(p.rule)}</h3><p>${escapeHtml((p.enforced_requirements||[]).join(' · ')||'未识别为可执行约束；保留为人工规则')} · ${escapeHtml(p.rationale||'项目级持久策略')}</p></div>${statusBadge(p.recognized?'enforced':'manual')}</div>`).join('')}</div></div>`;
   $("tab-reports").innerHTML = `<div class="section-head"><h2>科研报告</h2><div class="button-row"><button class="secondary" onclick="generateReport('daily')">日报</button><button class="secondary" onclick="generateReport('weekly')">周报</button></div></div><div id="reportOutput" class="${d.reports.length?'report':'empty'}">${d.reports.length?escapeHtml(d.reports[0].content):'选择报告周期。'}</div>${d.reports.length>1?`<div class="section"><h3>历史报告</h3><div class="data-list">${d.reports.slice(1).map(r=>`<div class="data-row"><div><h3>${escapeHtml(r.period)}</h3><p>${escapeHtml(r.created_at)}</p></div></div>`).join('')}</div></div>`:''}`;
   iconRefresh();
+  loadNovelty();
+}
+async function loadNovelty() {
+  if (!state.projectId || !$("tab-literature")) return;
+  try {
+    const analysis = await api(`/api/projects/${state.projectId}/novelty`);
+    const old = $("relatedWorkPanel"); if (old) old.remove();
+    const list = (items, empty) => items && items.length ? `<div class="data-list">${items.map(item => `<div class="data-row"><div><h3>${escapeHtml(item.title || item.target || item.statement || "候选")}</h3><p>${escapeHtml(item.note || item.basis || item.statement || "")}</p></div>${statusBadge(item.status || "candidate_only")}</div>`).join("")}</div>` : `<div class="empty">${empty}</div>`;
+    const panel = document.createElement("section"); panel.id = "relatedWorkPanel"; panel.className = "section related-work-panel";
+    panel.innerHTML = `<div class="section-head"><h2>Related Work 与证据覆盖</h2>${statusBadge(analysis.assessment || "review-required")}</div><p class="muted">${escapeHtml(analysis.summary || "")}</p><h3>证据覆盖缺口</h3>${list(analysis.research_gap_candidates, "当前没有已标记的覆盖候选。")}${analysis.duplicate_candidates?.length ? `<h3>重复研究候选</h3>${list(analysis.duplicate_candidates, "")}` : ""}<p class="muted">${escapeHtml(analysis.claim_gate || "")}</p>`;
+    $("tab-literature").prepend(panel);
+  } catch (error) { toast(error.message); }
 }
 async function refreshProject() { if (state.projectId) await openProject(state.projectId); else await loadProjects(); }
 async function runSearch() { try { toast("正在并行检索多个学术来源与代码候选…"); const result=await api("/api/search",{method:"POST",body:JSON.stringify({project_id:state.projectId,limit:8})}); await refreshProject(); toast("检索完成；"+result.provider_errors.length+" 个来源暂时失败"); } catch(e){ toast(e.message); } }
 async function ingestEvidence() { try { toast("正在下载开放 PDF 并提取页码原文证据…"); const r=await api(`/api/projects/${state.projectId}/evidence/ingest`,{method:"POST",body:JSON.stringify({limit:3})}); await refreshProject(); toast(`已保存 ${r.stored_count} 条全文证据；${r.errors.length} 条失败`); } catch(e){toast(e.message);} }
-async function createPlan() { try { const r=await api(`/api/projects/${state.projectId}/experiment-plan`,{method:"POST"}); await refreshProject(); switchTab("approvals"); toast(`计划 ${r.proposal_id.slice(0,8)} 待审批`); } catch(e){toast(e.message);} }
 async function createCompilePlan() { try { const r=await api(`/api/projects/${state.projectId}/compile-plan`,{method:"POST"}); await refreshProject(); switchTab("approvals"); toast(`编译计划 ${r.proposal_id.slice(0,8)} 待审批`); } catch(e){toast(e.message);} }
 async function decide(id, decision) { try { await api(`/api/proposals/${id}/decision`,{method:"POST",body:JSON.stringify({decision,actor:"local-user"})}); await refreshProject(); } catch(e){toast(e.message);} }
 async function launch(serialized) { try { const p=JSON.parse(serialized), payload=p.payload; const r=await api("/api/experiments",{method:"POST",body:JSON.stringify({project_id:state.projectId,proposal_id:p.id,experiment_type:payload.experiment_type,config:payload.config,random_seeds:payload.random_seeds})}); await refreshProject(); switchTab("experiments"); toast(`运行 ${r.run_id.slice(0,8)} 已提交`); } catch(e){toast(e.message);} }
@@ -349,6 +395,8 @@ function bindComposerKeyboard(formId, inputId) {
 }
 
 $("chatForm").addEventListener("submit", sendChat); $("confirmProject").addEventListener("click", confirmProject); $("newProject").addEventListener("click",newProject); $("refresh").addEventListener("click",refreshProject); $("projectChatForm").addEventListener("submit",sendProjectChat);
+$("openModelSettings").addEventListener("click", openModelSettings); $("closeModelSettings").addEventListener("click", closeModelSettings); $("cancelModelSettings").addEventListener("click", closeModelSettings); $("modelSettingsForm").addEventListener("submit", saveModelSettings);
+$("modelSettingsModal").addEventListener("click", event => { if (event.target === $("modelSettingsModal")) closeModelSettings(); });
 bindComposerKeyboard("chatForm", "chatInput"); bindComposerKeyboard("projectChatForm", "projectChatInput");
 $("fileInput").addEventListener("change", e => { state.queuedFiles=[...e.target.files]; $("fileQueue").textContent=state.queuedFiles.map(f=>f.name).join(" · "); });
 $("clarificationMode").addEventListener("change", () => syncClarificationMode());

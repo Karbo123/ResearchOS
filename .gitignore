@@ -35,6 +35,8 @@ postgres-data/
 minio-data/
 mlflow-data/
 n8n-data/
+runtime/*
+!runtime/.gitkeep
 installer/windows/build/
 installer/windows/dist/
 installer/windows/*.exe

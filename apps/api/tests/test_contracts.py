@@ -2,7 +2,6 @@ from uuid import uuid4
 import json
 from pathlib import Path
 
-import httpx
 import pytest
 from pydantic import ValidationError
 
@@ -12,6 +11,7 @@ from app.clarification import build_spec, initial_draft, required_spec_gaps
 from app.llm import LLMRequestError, _system_prompt, clarification_mode_instruction, clarify_idea_with_llm, select_model_route
 from app.policy_engine import compile_policy_constraints, experiment_policy_violations, seeds_for_constraints
 from app.evidence_pipeline import validate_open_pdf_url
+from app.related_work import build_related_work_analysis
 from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest
 
 
@@ -68,39 +68,37 @@ def test_mnist_idea_uses_medium_tier():
     assert route.tier == case.expect["model_tier"]
 
 
-def test_model_failure_is_an_error_and_never_switches_provider(monkeypatch):
+def test_direct_model_failure_is_an_error_and_never_switches_provider(monkeypatch):
     case = load_idea_case("mnist-cnn")
-    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "codex_bridge")
-    monkeypatch.setenv("CODEX_BRIDGE_URL", "http://bridge.invalid")
-    monkeypatch.setenv("OPENAI_API_KEY", "must-not-be-used")
+    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("RESEARCH_MODEL_URL_MEDIUM", "https://model.invalid/v1")
+    monkeypatch.setenv("RESEARCH_MODEL_KEY_MEDIUM", "test-key")
 
-    def bridge_failure(*args, **kwargs):
-        raise httpx.TimeoutException("bridge timed out")
+    def direct_failure(*args, **kwargs):
+        raise RuntimeError("model timed out")
 
-    monkeypatch.setattr("app.llm.httpx.post", bridge_failure)
-    monkeypatch.setattr("app.llm.OpenAI", lambda *args, **kwargs: pytest.fail("provider switch attempted"))
+    monkeypatch.setattr("app.llm.OpenAI", direct_failure)
     with pytest.raises(LLMRequestError) as error:
         clarify_idea_with_llm(case.initial_message, clarification_mode=case.clarification_mode)
-    assert error.value.code == "llm_timeout"
-    assert error.value.status_code == 504
+    assert error.value.code == "llm_request_failed"
+    assert error.value.status_code == 502
 
 
-def test_bridge_timeout_response_remains_a_structured_timeout(monkeypatch):
-    case = load_idea_case("mnist-cnn")
-    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "codex_bridge")
-    monkeypatch.setenv("CODEX_BRIDGE_URL", "http://bridge.invalid")
+def test_model_tiers_are_independent(monkeypatch, tmp_path):
+    monkeypatch.setenv("MODEL_SETTINGS_PATH", str(tmp_path / "model-settings.json"))
+    monkeypatch.setenv("RESEARCH_MODEL_URL_SIMPLE", "https://simple.invalid/v1")
+    monkeypatch.setenv("RESEARCH_MODEL_KEY_SIMPLE", "simple-key")
+    monkeypatch.setenv("RESEARCH_MODEL_URL_MEDIUM", "https://medium.invalid/v1")
+    monkeypatch.setenv("RESEARCH_MODEL_KEY_MEDIUM", "medium-key")
+    monkeypatch.setenv("RESEARCH_MODEL_URL_COMPLEX", "https://complex.invalid/v1")
+    monkeypatch.setenv("RESEARCH_MODEL_KEY_COMPLEX", "complex-key")
+    from app.model_settings import public_settings
 
-    class BridgeTimeout:
-        status_code = 504
-
-        def raise_for_status(self):
-            pytest.fail("bridge 504 must be mapped before raise_for_status")
-
-    monkeypatch.setattr("app.llm.httpx.post", lambda *args, **kwargs: BridgeTimeout())
-    with pytest.raises(LLMRequestError) as error:
-        clarify_idea_with_llm(case.initial_message, clarification_mode=case.clarification_mode)
-    assert error.value.code == "llm_timeout"
-    assert error.value.status_code == 504
+    catalog = public_settings()
+    assert catalog["simple"]["url"] == "https://simple.invalid/v1"
+    assert catalog["medium"]["url"] == "https://medium.invalid/v1"
+    assert catalog["complex"]["url"] == "https://complex.invalid/v1"
+    assert all("key" not in item for item in catalog.values())
 
 
 def test_model_provider_must_be_explicit(monkeypatch):
@@ -109,6 +107,32 @@ def test_model_provider_must_be_explicit(monkeypatch):
         clarify_idea_with_llm("简短研究想法")
     assert error.value.code == "llm_provider_not_configured"
     assert error.value.status_code == 503
+
+
+def test_related_work_keeps_metadata_candidates_out_of_factual_evidence():
+    analysis = build_related_work_analysis(
+        {"research_question": "Does active learning improve point cloud labeling?", "hypotheses": ["active learning improves labeling"], "expected_contributions": ["a labeling budget comparison"]},
+        [{"id": "paper-1", "title": "Active learning for point cloud labeling", "doi": "10.1000/example", "source_url": "https://example.invalid/paper"}],
+        [{"id": "evidence-1", "paper_id": "paper-1", "claim": "Metadata record", "quote": "Title-only metadata", "locator": "metadata/title", "source_url": "https://example.invalid/paper", "metadata": {"verified": False}}],
+    )
+    assert analysis["fulltext_evidence_count"] == 0
+    assert analysis["metadata_candidate_count"] == 1
+    assert analysis["related_work"][0]["status"] == "metadata_candidate"
+    assert analysis["evidence"] == []
+    assert analysis["assessment"] == "metadata_only_insufficient_evidence"
+
+
+def test_related_work_links_only_verified_page_evidence_and_marks_candidates_for_review():
+    analysis = build_related_work_analysis(
+        {"research_question": "Does active learning improve point cloud labeling?", "hypotheses": ["active learning improves labeling"], "expected_contributions": ["a labeling budget comparison"]},
+        [{"id": "paper-1", "title": "Active learning for point cloud labeling", "doi": "10.1000/example", "source_url": "https://example.invalid/paper", "verified": True}],
+        [{"id": "evidence-1", "paper_id": "paper-1", "claim": "Active learning improves labeling", "quote": "Active learning improves labeling under a fixed budget.", "locator": "page 4", "source_url": "https://example.invalid/paper", "metadata": {"verified": True, "pdf_sha256": "a" * 64, "bibtex": "@article{example}"}}],
+    )
+    assert analysis["fulltext_evidence_count"] == 1
+    assert analysis["related_work"][0]["status"] == "fulltext_evidence"
+    assert analysis["coverage"][0]["status"] == "covered_candidate"
+    assert analysis["duplicate_candidates"][0]["requires_human_review"] is True
+    assert analysis["claim_gate"].startswith("Only verified page-level evidence")
 
 
 def test_router_uses_simple_and_complex_cost_tiers():
@@ -236,7 +260,7 @@ def test_tool_catalog_contains_valid_schemas():
     expected = {
         "clarify_research_idea", "create_research_project", "evaluate_novelty_and_feasibility",
         "search_papers_and_bibtex", "find_official_code_repository", "download_open_source_code",
-        "retrieve_citation_evidence", "generate_experiment_plan", "submit_experiment",
+        "retrieve_citation_evidence", "generate_experiment_plan", "configure_model_settings", "submit_experiment",
         "query_experiment_status", "read_metrics", "collect_visual_artifacts",
         "render_point_cloud_preview", "propose_code_patch", "update_project_policy", "compile_latex",
     }

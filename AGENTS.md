@@ -48,12 +48,13 @@ PostgreSQL 是业务状态源；聊天记录不是唯一记忆。代码、配置
 
 ## 模型与状态
 
-- Windows Codex Bridge 只读取项目未跟踪 `.env` 中的 provider、模型、推理配置和用户明确迁移的 `OPENAI_API_KEY`；运行时不得读取宿主机 Codex 配置目录或 `auth.json`。一次性迁移只允许复制 `auth.json` 中这个字段的值，不复制整个认证对象、refresh token 或 Cookie，也不把认证文件挂载进容器；Bridge 通过子进程环境把该 key 提供给 Codex CLI。
+- 模型请求只由 API 容器直接发送到三个独立配置的 OpenAI-compatible URL；Windows 不启动 Bridge 或其他 API 服务。运行时不得读取宿主机 Codex 配置目录或 `auth.json`，也不得把认证文件挂载进容器。每个层级独立配置 model、URL、key 和 reasoning effort，网页读取接口只能返回 `key_configured`。
+- LLM 请求失败必须直接返回结构化错误；禁止本地降级、规则回复、隐式 provider 切换或继续写入助手消息。通用实验演示计划不得作为 fallback；没有主题专属规划时必须直接返回未实现错误。
 - 自适应澄清默认使用三级成本路由：简单 `gpt-5.6-luna/low`、中等 `gpt-5.6-terra/medium`、复杂 `gpt-5.6-sol/high`；当前完整系统验收仍使用复杂层 `gpt-5.6-sol`、`reasoning_effort=high`。变更模型、阈值或强度时同时更新 `.env.example`、Compose、README 双语版、TODO、需求审计和测试期望。
 - Idea 澄清不得恢复固定问题队列。模型每轮应整体分析草稿、公开可纠正假设并提出少量高信息问题；Schema 必填检查不是对话脚本。澄清 Agent 不得获得任意 Shell、文件、SQL 或网络工具。
 - 新项目聊天的 `clarification_mode` 只能是 `automatic|detailed`，默认 `automatic`。全自动模式尽量推断可逆信息并只询问阻碍规格或执行的少量关键问题；详细模式基于当前缺口扩大了解范围，但仍不得采用固定问题顺序、重复询问或臆造关键事实。实际模式必须写入用户和助手消息 metadata。
 - `tests/idea-cases/` 是所有自动化 Idea/研究对话测试输入的唯一来源。测试脚本只能通过 `scripts/idea_case_loader.py` 按公开 case ID 读取 UTF-8 JSON；禁止在测试代码、命令行参数、fixture 或运行时生成器中隐藏、硬编码或临时增添 Idea。新增/修改测试必须提交独立 case 文件并通过 `python scripts/check_idea_case_sources.py`。
-- LLM 调用失败必须返回结构化 API 错误；不得切换到未显式选择的 provider，不得生成规则/关键词回复、静默继续或写入伪造助手消息。任何 provider 切换都必须通过项目环境变量显式配置并重启服务。
+- LLM 调用失败必须返回结构化 API 错误；不得切换 provider，不得生成规则/关键词回复、静默继续或写入伪造助手消息。当前只支持 `RESEARCH_LLM_PROVIDER=openai`，变更提供方必须作为代码/配置变更审查，不能在请求失败时动态切换。
 - Idea 变更必须创建新版本并记录影响；不得静默覆盖旧 Idea 或继续使用已失效结果。
 
 ## 实现规则
@@ -74,7 +75,7 @@ PostgreSQL 是业务状态源；聊天记录不是唯一记忆。代码、配置
 
 ```powershell
 docker compose config --quiet
-python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
+python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/acceptance_test.py
 docker compose exec -T api pytest -q
 Get-ChildItem schemas\*.json,n8n\workflows\*.json | ForEach-Object { Get-Content -Raw -Encoding UTF8 $_.FullName | ConvertFrom-Json | Out-Null }
 ```
@@ -115,5 +116,5 @@ python scripts/acceptance_test.py
 3. 只暂存本次任务明确范围内的文件。必须排除 `.env`、Codex `auth.json`、Cookie、数据库备份、日志中的 Secret、模型权重、临时目录和任何未审查的大型产物；提交前用 `git diff --cached --stat` 和敏感文件名检查复核。
 4. commit message 使用可读的 Conventional Commit 风格，例如 `docs: synchronize bilingual project documentation` 或 `feat: enforce project policy gate`，并在 `TODO.md` 更新记录中写入 commit 和验证证据。
 5. 若 `origin` 已存在且用户已明确授权远程同步，完成 commit 后推送当前分支；若远程未配置，先使用用户指定的仓库 URL 设置 `origin`。不得擅自 force push、改写历史、删除远程分支或推送到其他仓库。
-6. 推送失败时保留本地提交，将任务标为 `[!]` 并记录可复现的阻塞原因；不得为了“自动完成”向聊天、日志或远程输出、索要认证密钥。只有用户明确要求的本机迁移可将 `auth.json` 中单独的 `OPENAI_API_KEY` 写入未跟踪 `.env`，不得复制整个认证文件。Windows 已配置的 Git Credential Manager、SSH agent 或其他免密方式由用户机器负责，Agent 只调用标准 Git 命令。
+6. 推送失败时保留本地提交，将任务标为 `[!]` 并记录可复现的阻塞原因；不得为了“自动完成”向聊天、日志或远程输出、索要认证密钥。不得读取或迁移 Codex `auth.json`，也不得把任何模型 key 写入 Git。Windows 已配置的 Git Credential Manager、SSH agent 或其他免密方式由用户机器负责，Agent 只调用标准 Git 命令。
 7. 自动提交不是绕过审查：每次重大更新仍需遵守双语 README、配置示例、相关 docs、需求审计和 TODO 同步契约；小型纯本地实验输出不应自动提交。

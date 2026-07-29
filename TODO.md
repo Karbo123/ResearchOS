@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，DOCS-039 已完成并通过验证）
+最后更新：2026-07-30（Asia/Shanghai，P0-LLM-040 与 P0-RELATED-002 已完成并验证）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：无；下一项高优先级待处理为 `P0-RELATED-002`。
+- 当前进行中：无；下一项高优先级待处理为 `P0-PLAN-006`。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -33,6 +33,11 @@
   - 范围：一次性从本机 `auth.json` 读取已授权的 `OPENAI_API_KEY`，写入项目 `.env`；Bridge 启动时只读取 `.env` 中的 key，并通过子进程环境提供给 Codex CLI。不得复制整个 `auth.json`，不得在日志、健康端点、Git 或聊天中暴露 key；后续运行代码不再读取 `.codex` 目录。
   - 完成标准：宿主 Bridge 使用项目 `.env` 中的 key，健康端点不返回 key；源 `auth.json` 仍由 Codex 保管但不再由运行时代码读取，项目只使用未跟踪 `.env` 作为 Bridge 的 Secret 输入；`.env.example`、Compose、安全/运维文档、`AGENTS.md` 和 TODO 一致，自动化验证 key 未进入输出和暂存区。
   - 验证结果：`OPENAI_API_KEY` 在项目 `.env` 中恰好 1 个且非空，`.env` 仍由 Git 忽略；Bridge `http://127.0.0.1:8092/health` 返回 `config_source=environment` 和 `auth_exposed=false`；离线子进程环境测试 `1 passed`；API 容器 `23 passed`；Compose、双语文档同步、Bridge/API/Runner Python 检查和服务健康检查通过；未调用真实模型或外部学术 API。
+
+- [x] `P0-LLM-040` 将模型调用完全收敛到容器内，并提供三档独立网页配置。
+  - 范围：API 直接调用 OpenAI-compatible URL；simple/medium/complex 分别配置 model、URL、key 和 reasoning effort；设置页不回显 key；Windows 不启动 Bridge 或 API 服务。
+  - 完成标准：无 provider 切换、无本地降级、无无关实验 fallback；模型失败返回结构化错误；Compose、API、Schema、n8n、前端、双语 README、运维、安全、需求审计、AGENTS、TODO 和测试一致。
+  - 验证结果：API 容器 `pytest -q`（29 passed）；`node --test scripts/test_chat_ux.mjs`（5 passed）；浏览器桌面/390x844 窄屏设置面板可打开、三个层级独立显示、滚动正常，console error 为 0；`docker compose config --quiet`、JSON/Idea case/文档同步、AST 和 `git diff --check` 通过。安装器只启动 Compose，前端移除无效的通用实验计划入口；未读取或提交 `.env`、Codex 配置或 key，未运行真实模型或无关 Idea。
 
 - [x] `P0-IDEA-CASES-030` 建立公开、唯一、可审计的 Idea 测试用例目录。
   - 完成标准：所有用于 Idea 澄清、模型路由的输入与后续回答均保存为独立 UTF-8 JSON 文本文件；测试加载器只读取仓库内固定目录，拒绝重复 ID、未知字段、非法模式和命令行临时 Idea；测试脚本、单元测试和验收脚本不得隐藏、硬编码或运行时增添测试 Idea。
@@ -59,9 +64,10 @@
 - [x] `P0-EVIDENCE-001` 实现合法 PDF 下载、哈希、全文解析、页码/章节定位和 quote 证据入库。
   - 完成标准：至少用 3 篇开放论文验证；每个 claim 保存原文、页码、PDF 哈希、稳定来源和 BibTeX；无法验证时禁止进入论文结论。
   - 验证：`acceptance-20260729-012750.json` 从全新 Idea 下载并解析 3 篇 allowlist 开放 PDF，保存 3 个 SHA-256、页码 quote、BibTeX、Artifact/Dependency 与 Git 证据 JSON；claim gate 明确排除 metadata/title。
-- [ ] `P0-RELATED-002` 实现基于证据库的 Related Work、研究空白和重复研究分析。
+- [x] `P0-RELATED-002` 实现基于证据库的 Related Work、研究空白和重复研究分析。
   - 依赖：`P0-EVIDENCE-001`。
   - 完成标准：每个事实性句子可追踪到 evidence ID；不得仅凭标题、摘要或 DOI 标记为“已证实创新”。
+  - 验证结果：新增确定性 Related Work 单元测试，覆盖 metadata-only 不进入事实证据、page-level evidence 链接、覆盖候选和人工复核标记；API 容器 `pytest -q`（29 passed），文档同步、Compose、JSON、AST 和 `git diff --check` 通过。系统仍明确将研究空白/重复研究标为候选，不宣称科学结论。
 - [ ] `P0-CODE-003` 实现官方代码仓库交叉验证、许可证审查、commit/tag 固定和审批后受控下载。
   - 完成标准：作者/论文主页/仓库至少双源匹配；保存 URL、SPDX、commit、论文关系、下载时间和审计事件；未知许可证不得执行。
 - [x] `P0-POLICY-004` 实现项目策略执行引擎，并在计划生成和 Runner 提交时二次强制校验。
@@ -221,3 +227,7 @@
 - 2026-07-30：完成 `P0-REGRESSION-032`；完整真实验收通过，项目 `6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`，报告 `acceptance-20260730-015132.json`，脱敏证据副本已提交到 `docs/evidence/`。
 - 2026-07-30：开始 `DOCS-039`；复核发现 README 已指向新验收，但文档同步脚本、中文 README、需求审计、运维验收说明和部分 TODO 基线数字仍引用旧验收事实；`AGENTS.md` 的模型失败与项目 `.env` 规则无需修改。
 - 2026-07-30：完成 `DOCS-039`；同步双语 README、需求审计、运维说明、TODO 和同步脚本，归档脱敏验收证据；全部适用验证通过，未暂存 `.env`、认证文件、Docker 配置文件或运行时原件。实现提交：`e08e798`。
+- 2026-07-30：开始 `P0-RELATED-002`；先复核现有文献、全文 evidence、claim gate、报告和 API 契约，禁止把元数据候选或合成指标直接写成事实性结论。
+- 2026-07-30：开始 `P0-LLM-040`；移除运行链路中的 Windows Bridge，API 改为容器内直连三档独立模型配置；移除 n8n 自动生成通用分类/点云实验计划，主题专属规划未实现时直接返回结构化错误；前端新增左下角模型设置入口，key 只写入忽略的 runtime 挂载文件。
+- 2026-07-30：继续 `P0-LLM-040` 与 `P0-RELATED-002`；Windows 安装器不再打包或启动 Bridge，前端移除无效的通用实验计划按钮，Related Work 新增证据边界单元测试。历史验收中的 Bridge/合成实验记录仅作历史证据，不代表当前运行路径。
+- 2026-07-30：完成 `P0-LLM-040` 与 `P0-RELATED-002`；验证 API `29 passed`、前端 UX `5 passed`、浏览器设置面板桌面/窄屏检查、Compose/JSON/Idea case/文档同步/AST/`git diff --check`，并清理历史 dangling Docker 镜像。未运行真实模型、其他 Idea 或无关实验；提交 `ce3a775`，待推送到 `origin/main`。

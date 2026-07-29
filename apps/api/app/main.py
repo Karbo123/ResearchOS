@@ -28,6 +28,8 @@ from .models import (
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
 from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
 from .llm import LLMRequestError, clarify_idea_with_llm, model_catalog, router_thresholds, select_model_route
+from .model_settings import load_settings, public_settings, save_settings
+from .related_work import build_related_work_analysis
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
@@ -35,7 +37,8 @@ from .policy_engine import (
 )
 from .schemas import (
     ApprovalDecision, ChangeProposalRequest, ChatRequest, ChatResponse, EvidenceIngestRequest, ExperimentRequest,
-    PolicyUpdate, ProjectCreateRequest, ProjectSpec, ProjectStateRequest, ReportRequest, RunnerStatus, SearchRequest,
+    ModelSettingsRequest, PolicyUpdate, ProjectCreateRequest, ProjectSpec, ProjectStateRequest, ReportRequest,
+    RunnerStatus, SearchRequest,
 )
 from .search import search_literature
 
@@ -172,17 +175,46 @@ def trigger_research_workflow(project_id: UUID, task_id: UUID) -> None:
 
 @app.get("/api/health")
 def health():
-    provider = os.getenv("RESEARCH_LLM_PROVIDER", "").strip() or None
+    provider = os.getenv("RESEARCH_LLM_PROVIDER", "openai").strip() or "openai"
     return {
         "status": "ok",
         "service": "research-os-api",
         "llm": {
             "provider": provider,
             "routing": {"models": model_catalog(), "thresholds": router_thresholds()},
-            "provider_configured": bool(provider),
-            "codex_bridge_configured": provider == "codex_bridge" and bool(os.getenv("CODEX_BRIDGE_URL")),
+            "provider_configured": provider == "openai",
+            "bridge_required": False,
         },
     }
+
+
+@app.get("/api/settings/models")
+def get_model_settings():
+    try:
+        settings = public_settings()
+    except (OSError, RuntimeError, ValueError) as exc:
+        raise HTTPException(503, detail={"code": "model_settings_invalid", "message": "模型设置文件无效。"}) from exc
+    return {"provider": "openai", "tiers": settings, "restart_required": False}
+
+
+@app.put("/api/settings/models")
+def update_model_settings(request: ModelSettingsRequest):
+    try:
+        current = load_settings()
+        incoming = request.model_dump()
+        for tier, value in incoming.items():
+            if not value["key"]:
+                value["key"] = current[tier]["key"]
+        save_settings(incoming)
+    except (OSError, ValueError) as exc:
+        raise HTTPException(422, detail={"code": "model_settings_invalid", "message": str(exc)}) from exc
+    with session_scope() as session:
+        audit(session, "model_settings.updated", None, {
+            "tiers": list(request.model_dump()),
+            "keys_written": True,
+            "secrets_returned": False,
+        }, "local-user")
+    return {"provider": "openai", "tiers": public_settings(), "restart_required": False}
 
 
 @app.get("/api/n8n/open")
@@ -528,7 +560,7 @@ def create_project(request: ProjectCreateRequest, background_tasks: BackgroundTa
         audit(session, "project.created", project.id, {"slug": slug}, "local-user")
         session.flush()
         background_tasks.add_task(trigger_research_workflow, project.id, task.id)
-        return {"project": serialize_project(project), "session_id": str(conversation.id), "next_action": "automatic novelty, literature search and experiment planning queued"}
+        return {"project": serialize_project(project), "session_id": str(conversation.id), "next_action": "automatic literature search and evidence review queued; topic-specific experiment planning is not implemented"}
 
 
 @app.get("/api/projects")
@@ -773,15 +805,25 @@ async def ingest_fulltext_evidence(project_id: UUID, request: EvidenceIngestRequ
 def novelty(project_id: UUID):
     with session_scope() as session:
         project = require_active_project(session, project_id, "novelty evaluation")
+        idea = session.scalar(
+            select(IdeaVersion).where(IdeaVersion.project_id == project_id).order_by(desc(IdeaVersion.version))
+        )
         papers = session.scalars(select(Paper).where(Paper.project_id == project_id)).all()
-        verified = [p for p in papers if p.verified and p.doi]
-        return {
-            "assessment": "insufficient_evidence" if len(verified) < 3 else "candidate_gap_requires_full_text_review",
-            "verified_paper_count": len(verified),
-            "summary": "元数据检索不能单独证明创新性。下一步需要保存全文原文证据、页码并逐项对照核心假设。",
-            "evidence": [{"title": p.title, "doi": p.doi, "url": p.source_url} for p in verified[:10]],
-            "blocking_questions": [] if verified else ["没有足够的可验证 DOI 记录，不能形成创新性结论。"],
-        }
+        evidence = session.scalars(select(Evidence).where(Evidence.project_id == project_id)).all()
+        analysis = build_related_work_analysis(
+            (idea.spec if idea else {}),
+            [{"id": p.id, "title": p.title, "doi": p.doi, "source_url": p.source_url, "verified": p.verified} for p in papers],
+            [{
+                "id": item.id, "paper_id": item.paper_id, "claim": item.claim, "quote": item.quote,
+                "locator": item.locator, "source_url": item.source_url, "metadata": item.metadata_json,
+            } for item in evidence],
+        )
+        audit(session, "novelty.analysis_generated", project_id, {
+            "assessment": analysis["assessment"],
+            "verified_paper_count": analysis["verified_paper_count"],
+            "fulltext_evidence_count": analysis["fulltext_evidence_count"],
+        })
+        return analysis
 
 
 @app.post("/api/proposals")
@@ -797,37 +839,12 @@ def create_proposal(request: ChangeProposalRequest):
 @app.post("/api/projects/{project_id}/experiment-plan")
 def generate_experiment_plan(project_id: UUID):
     with session_scope() as session:
-        project = require_active_project(session, project_id, "experiment planning")
-        constraints = load_policy_constraints(session, project_id)
-        if not constraints.runner_compatible:
-            raise HTTPException(409, detail={
-                "code": "policy_constraints_unsatisfiable",
-                "message": "Active project policies exceed the restricted Runner's supported limits.",
-                "violations": constraints.unsupported_constraints,
-                "policy_enforcement": constraints.public_dict(),
-            })
-        random_seeds = seeds_for_constraints(constraints)
-        enforcement = policy_enforcement_snapshot(session, project_id, constraints)
-        proposal = Proposal(
-            project_id=project_id, kind="experiment_plan", reason="Establish a reproducible baseline before testing the research hypothesis",
-            summary=f"Run an allowlisted baseline over {len(random_seeds)} deterministic seeds, calculate mean/std accuracy, generate a confusion matrix and a PLY reconstruction preview.",
-            impact={
-                "rerun_experiments": ["baseline-demo"], "invalidates": [],
-                "artifacts": ["accuracy curve", "confusion matrix", "metrics JSON", "PLY", "point-cloud preview"],
-                "policy_enforcement": enforcement,
-            },
-            estimated_cost_usd=0,
-            payload={
-                "experiment_type": "demo_classification",
-                "config": {"n_samples": 600, "n_features": 12},
-                "random_seeds": random_seeds,
-                "policy_snapshot": constraints.public_dict(),
-            },
-        )
-        session.add(proposal); session.flush()
-        project.current_stage = "awaiting_experiment_approval"
-        audit(session, "experiment_plan.proposed", project_id, {"proposal_id": str(proposal.id)})
-        return {"proposal_id": str(proposal.id), "status": "pending", "plan": proposal.payload, "impact": proposal.impact, "policy_enforcement": enforcement}
+        require_active_project(session, project_id, "experiment planning")
+        raise HTTPException(status_code=409, detail={
+            "code": "topic_specific_experiment_plan_not_implemented",
+            "message": "No topic-specific experiment planner is implemented; no unrelated baseline was created.",
+            "next_step": "Create and approve a topic-specific experiment proposal with an explicit diff and evidence-backed rationale.",
+        })
 
 
 @app.post("/api/projects/{project_id}/compile-plan")

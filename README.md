@@ -66,11 +66,11 @@ flowchart LR
     R --> ML["MLflow"]
     ML --> MI[("MinIO\nartifacts")]
     API --> S["Academic search\nCrossref/OpenAlex/S2/arXiv/DBLP"]
-    API --> B["Windows Codex Bridge\n127.0.0.1:8092"]
+    API --> B["Configured model APIs\nfrom API container"]
     B --> C[".env provider/model overrides\nLuna low / Terra medium / Sol high"]
 ```
 
-The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. An unrestricted ReAct loop would add cost and an unnecessary execution surface at this stage. The Windows Bridge receives allowlisted provider/model/reasoning settings and the explicitly migrated `OPENAI_API_KEY` from the project `.env`, then invokes an ephemeral read-only Codex process. The Bridge does not read the host Codex configuration directory or `auth.json` at runtime; a one-time migration may copy only that key's value, never the full auth object, tokens, or cookies, and credentials are never mounted into Docker.
+The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. The API container calls the independently configured OpenAI-compatible model URLs directly. It never reads the Windows Codex configuration directory, `auth.json`, or host model service. A failed call is returned as a structured error with no provider switch or local reply.
 
 ## Capability matrix
 
@@ -91,14 +91,13 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 - Docker Desktop switched to **Linux containers** and the `desktop-linux` engine. This means Docker Desktop runs Linux images in its managed VM/WSL2 backend; you do not need to install a separate Linux distribution.
 - Docker Compose v2 (`docker compose version`).
 - At least 8 GB free memory; 12–16 GB is more comfortable when MLflow, n8n, PostgreSQL, MinIO, API, and Runner are all running.
-- Python 3.12+ on the host if you want the Codex Bridge or local validation scripts.
-- A local Codex CLI installation. Copy provider/model settings and, when environment authentication is required, only `OPENAI_API_KEY` from the local Codex auth into the untracked project `.env`; never copy the full `auth.json` object, tokens, or cookies.
+- Python 3.12+ on the host if you want to run local validation scripts. Model requests are made by the API container; no Windows model service or Codex configuration directory is required.
 
 ## Quick start on Windows
 
 ### Single-EXE installer status
 
-An online-bootstrap installer definition now lives in [`installer/windows`](installer/windows/README.md). It packages Research OS, Compose/n8n definitions, and a standalone Codex Bridge; when Docker Desktop is absent, it can download the official installer only after opt-in and verifies the Authenticode signature before elevation. The generated EXE is intentionally ignored by Git. This path is **not a released one-click installer yet**: code signing, Docker Desktop redistribution/license review, and a clean Windows VM acceptance run remain required by `P2-INSTALLER-029`.
+An online-bootstrap installer definition now lives in [`installer/windows`](installer/windows/README.md). It packages Research OS and Compose/n8n definitions; the current runtime keeps model requests inside the API container and does not start a Windows Bridge. When Docker Desktop is absent, it can download the official installer only after opt-in and verifies the Authenticode signature before elevation. The generated EXE is intentionally ignored by Git. This path is **not a released one-click installer yet**: code signing, Docker Desktop redistribution/license review, and a clean Windows VM acceptance run remain required by `P2-INSTALLER-029`.
 
 The manual path below remains the supported installation method.
 
@@ -115,23 +114,9 @@ Edit `.env` before the first start. Replace every `change-me`, `replace-with`, a
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N8N_ENCRYPTION_KEY`, `N8N_LOCAL_OWNER_PASSWORD`, `RUNNER_SHARED_SECRET`, and `CODEX_BRIDGE_SECRET`. If the host Codex CLI needs environment authentication, migrate only its `OPENAI_API_KEY` into `.env`. Do not commit `.env` or the source `auth.json`.
+Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N8N_ENCRYPTION_KEY`, `N8N_LOCAL_OWNER_PASSWORD`, and `RUNNER_SHARED_SECRET`. Configure the three model URLs and keys in `.env` or through the Web UI model settings panel. Do not commit `.env`.
 
-### Start the host Codex Bridge
-
-The Bridge runs on Windows and loads only its allowlisted Bridge/provider/model settings and `OPENAI_API_KEY` from the untracked local `.env`; it does not read the host Codex configuration directory or expose credentials in health output. Start it in a second PowerShell window:
-
-```powershell
-python scripts/codex_llm_bridge.py
-```
-
-Check that it reports the three configured routes and `auth_exposed=false`:
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8092/health
-```
-
-Default routes are `gpt-5.6-luna`/low for simple turns, `gpt-5.6-terra`/medium for medium turns, and `gpt-5.6-sol`/high for complex turns. The API selects the tier using deterministic configurable thresholds; the model cannot promote itself. The Bridge passes the `.env` provider/model/reasoning values to `codex exec --ephemeral --sandbox read-only`. If the selected model service fails, the API returns a structured error; it does not switch providers or create a local reply.
+The API container calls each configured OpenAI-compatible URL directly. The default routes are `gpt-5.6-luna`/low, `gpt-5.6-terra`/medium, and `gpt-5.6-sol`/high (`reasoning_effort=high`). A failed model request is returned as a structured API error; there is no provider switch, local reply, or unrelated experiment generation.
 
 ### Build and start Compose
 
@@ -181,8 +166,8 @@ When a new-project clarification request uses `POST /api/chat/stream`, the UI sh
 3. Review the generated `ProjectSpec`. Missing fields, unclear ownership, or obvious resource risks keep the project in clarification and prevent creation.
 4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
-6. Inspect the novelty/feasibility result and the experiment Proposal. Approve it only after checking seeds, budget, data version, expected artifacts, and risks.
-7. Open the **Experiments** and **Artifacts** pages. Download metrics JSON, execution logs, PNG plots, point-cloud previews, PLY, and the compiled PDF; compare each artifact's lineage fields. For a run, inspect `/api/experiments/{run_id}/reproducibility` and download the controlled source snapshot.
+6. Inspect the **Related Work** evidence coverage, gap candidates, and duplicate-research candidates. These remain candidates and do not establish novelty or scientific conclusions.
+7. Topic-specific experiment planning is not implemented. The API rejects the old generic baseline plan with a structured `409`; no unrelated experiment is created. Use explicit approved proposals only when the experiment is tied to the current Idea.
 8. Use the project chat for explanations, suggestions, or a proposed change. An execution request becomes a structured Proposal and waits for approval; it is never silently applied.
 9. Add durable rules such as “all experiments use at least five random seeds” through the **Policies** page. Approved rules are stored in PostgreSQL and enforced at plan generation, API submission, and Runner validation.
 10. Pause, resume, cancel, revise the Idea, or request a partial rerun from the appropriate checkpoint. A cancelled project is terminal.
@@ -205,7 +190,7 @@ The full acceptance below invokes several visible cases, real models, external a
 
 The latest Automatic/Detailed-mode change has targeted `mnist-cnn` verification plus the complete multi-case end-to-end regression recorded below as `P0-REGRESSION-032`.
 
-The acceptance script exercises the real Bridge, academic APIs, PostgreSQL state, n8n, Runner, MLflow, artifact lineage, policy enforcement, Idea v2, partial rerun, and LaTeX compilation:
+The acceptance script exercises the configured container-direct model route, academic APIs, PostgreSQL state, n8n, and evidence-first Related Work:
 
 ```powershell
 python scripts/acceptance_test.py
@@ -219,11 +204,11 @@ Useful probes:
 | A PyTorch/CUDA CNN targeting 99% on MNIST | Infers deep learning/computer vision, identifies an engineering benchmark, uses the Terra tier by default, and asks about research scope, data authorization, compute, and evaluation constraints. |
 | The 3D active-learning idea above | Creates a project, searches papers, runs bounded experiments after approval, and emits inspectable artifacts. |
 
-The latest complete acceptance record has a sanitized, versioned copy at [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json); the runtime original remains under ignored `artifacts/acceptance/`. It used the configured Luna/Terra/Sol routes through the Codex Bridge (`gpt-5.6-luna/low`, `gpt-5.6-terra/medium`, and `gpt-5.6-sol` with `reasoning_effort=high`) and verified: 8 paper records, 3 stored open-PDF evidence records, policy enforcement for five seeds, pause/cancel/resume gates, MLflow, PNG/PLY artifacts, Idea v2, partial rerun, 12 checkpoints, 416 dependencies, and LaTeX compilation. The demo experiment is a system-integration check, not evidence that the scientific hypothesis is true.
+The previous acceptance record is retained as historical evidence at [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json); it must not be interpreted as a current automatic experiment path. A new focused run writes its result under ignored `artifacts/acceptance/`, uses the configured Luna/Terra/Sol routes directly from the API container, verifies evidence coverage, and verifies that the unrelated experiment plan is rejected.
 
 ## Configuration reference
 
-`.env.example` is the safe, versioned template. The table below documents every value used by Compose or the host Bridge.
+`.env.example` is the safe, versioned template. The table below documents every value used by Compose and the API container.
 
 | Variable | Required | Description |
 | --- | --- | --- |
@@ -231,14 +216,11 @@ The latest complete acceptance record has a sanitized, versioned copy at [`accep
 | `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` | Yes | MinIO administration credentials. MLflow uses them to store artifacts in `research-artifacts`. |
 | `N8N_ENCRYPTION_KEY` | Yes | Stable n8n encryption key. Keep it across restarts; losing it can make stored n8n credentials unreadable. |
 | `N8N_LOCAL_OWNER_EMAIL`, `N8N_LOCAL_OWNER_PASSWORD` | Yes for auto-login | Internal local Owner used only by `/api/n8n/open`. The password is server-side and never rendered into the UI. |
-| `RESEARCH_LLM_PROVIDER` | Yes | Explicitly selects exactly one model service: `codex_bridge` or `openai`. A failed call is an API error; there is no automatic provider switch. |
-| `OPENAI_API_KEY`, `OPENAI_BASE_URL` | `OPENAI_API_KEY` is required for direct `openai` or host CLI environment auth; `OPENAI_BASE_URL` is required only for direct `openai` | The API uses these for the explicit `openai` provider. The host Bridge may pass only `OPENAI_API_KEY` to the Codex CLI; it is never read from `auth.json` at runtime. |
-| `CODEX_BRIDGE_URL`, `CODEX_BRIDGE_SECRET`, `CODEX_BRIDGE_TIMEOUT_SECONDS` | Recommended | Compose-to-host Bridge URL, shared local secret, and request timeout. |
-| `CODEX_MODEL_PROVIDER`, `CODEX_MODEL_DEFAULT`, `CODEX_REASONING_DEFAULT` | Required for the host Bridge | Provider key and defaults passed explicitly to the Codex CLI. |
-| `CODEX_CUSTOM_PROVIDER_NAME`, `CODEX_CUSTOM_BASE_URL`, `CODEX_CUSTOM_WIRE_API` | Required for `CODEX_MODEL_PROVIDER=custom` | Non-sensitive custom provider display name, base URL, and `responses`/`chat` wire API passed to the CLI. |
-| `RESEARCH_MODEL_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Simple-turn route; defaults to `gpt-5.6-luna` and `low`. |
-| `RESEARCH_MODEL_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Medium-turn route; defaults to `gpt-5.6-terra` and `medium`. |
-| `RESEARCH_MODEL_COMPLEX`, `RESEARCH_REASONING_COMPLEX` | Yes | Complex-turn route; defaults to `gpt-5.6-sol` and `high`. |
+| `RESEARCH_LLM_PROVIDER`, `MODEL_REQUEST_TIMEOUT_SECONDS` | Yes | Must be `openai`; the API container calls the configured provider and returns failures directly. |
+| `RESEARCH_MODEL_SIMPLE`, `RESEARCH_MODEL_URL_SIMPLE`, `RESEARCH_MODEL_KEY_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Independent simple/Luna route; defaults to `gpt-5.6-luna` and `low`. |
+| `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Independent medium/Terra route; defaults to `gpt-5.6-terra` and `medium`. |
+| `RESEARCH_MODEL_COMPLEX`, `RESEARCH_MODEL_URL_COMPLEX`, `RESEARCH_MODEL_KEY_COMPLEX`, `RESEARCH_REASONING_COMPLEX` | Yes | Independent complex/Sol route; defaults to `gpt-5.6-sol` and `high`. |
+| `MODEL_SETTINGS_PATH` | Compose internal | Writable mounted `runtime/model-settings.json`; the UI stores keys there and GET responses expose only `key_configured`. |
 | `RESEARCH_ROUTER_SIMPLE_MAX`, `RESEARCH_ROUTER_MEDIUM_MAX` | Yes | Deterministic complexity-score boundaries; defaults are `2` and `7`. |
 | `GITHUB_TOKEN` | Optional | Raises GitHub API limits; repository results remain unverified candidates until cross-checked. |
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional | Optional Semantic Scholar quota credential. |
@@ -274,7 +256,7 @@ Each submitted run also has a controlled reproducibility bundle: an annotated `r
 - n8n has `N8N_BLOCK_ENV_ACCESS_IN_NODE=true`; built-in workflows call fixed private Compose addresses and cannot read secrets from Code nodes.
 - Expensive work, code/config/LaTeX changes, dependency installation, overwrite/delete, merge, and external publication require Proposal → diff/impact → explicit approval → isolated execution → verification → Git/audit recording.
 - Academic sources obey HTTPS/domain allowlists, legal API usage, timeouts, provider errors, and rate limits. A title match is not an official repository; a DOI record is not full-text evidence.
-- Do not commit `.env`, Codex `auth.json`, cookies, database dumps, Runner secrets, MinIO secrets, or Bridge logs containing sensitive input.
+- Do not commit `.env`, Codex `auth.json`, cookies, database dumps, Runner secrets, MinIO secrets, or model request logs containing sensitive input. The API never reads the Codex configuration directory.
 
 See [docs/security.md](docs/security.md) for the hardening checklist and the exact local auto-login trust boundary.
 
@@ -324,7 +306,7 @@ The dump may contain hashes, metadata, or credential material. Keep it local and
 # Fast checks
 docker compose config --quiet
 python scripts/check_docs_sync.py
-python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
+python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/acceptance_test.py
 
 # Container tests
 docker compose exec -T api pytest -q
@@ -343,7 +325,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 | Symptom | Check |
 | --- | --- |
 | Docker says the Linux engine is unavailable | Docker Desktop → Settings/General → enable the WSL2 backend, switch to Linux containers, then retry `docker info`. |
-| API is up but idea clarification fails | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, `RESEARCH_LLM_PROVIDER`, the Bridge secret/model allowlist, `.env` `OPENAI_API_KEY`, `CODEX_MODEL_*`/`CODEX_CUSTOM_*` values, Codex CLI access, and `docker compose logs api`. The API returns a structured model error and does not generate a fallback reply. |
+| API is up but idea clarification fails | Check the three model URL/key pairs, `RESEARCH_LLM_PROVIDER=openai`, the settings panel response (keys are never returned), and `docker compose logs api`. The API returns a structured model error and does not generate a fallback reply. |
 | n8n asks for a password | Open the Research OS sidebar link or `/api/n8n/open`; verify Owner values in `.env` match the n8n database. Do not disable user management. |
 | n8n auto-login returns 503/401 | Check n8n is running, Owner password length is at least 12, `N8N_INTERNAL_URL` resolves to `http://n8n:5678`, and restart `api n8n`. |
 | Webhook 404 | Confirm the three built-in workflows are Active and n8n was recreated after workflow JSON changes. |

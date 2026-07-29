@@ -48,10 +48,6 @@ def initialize_project(project_id: UUID, slug: str, spec: ProjectSpec) -> Path:
         "experiments/runs/\nartifacts/\nsource-bundles/\nlogs/\n*.pdf\n*.png\n*.jpg\n*.jpeg\n*.gif\n*.webp\n*.ply\n*.pcd\n*.pth\n*.pt\n*.ckpt\n*.onnx\n*.safetensors\n*.npy\n*.npz\n*.parquet\n*.db\n*.sqlite\n*.bak\n*.log\n.env\n.venv/\n.conda/\n__pycache__/\n",
         encoding="utf-8",
     )
-    (root / "configs" / "demo-experiment.json").write_text(
-        json.dumps({"experiment_type": "demo_classification", "n_samples": 600, "n_features": 12}, indent=2),
-        encoding="utf-8",
-    )
     (root / "paper" / "main.tex").write_text(
         "\\documentclass{article}\n"
         "\\usepackage{booktabs,graphicx}\n"

@@ -19,6 +19,7 @@
         <a href="http://127.0.0.1:5000" target="_blank"><i data-lucide="chart-no-axes-combined"></i>MLflow</a>
         <a href="http://127.0.0.1:9001" target="_blank"><i data-lucide="database"></i>MinIO</a>
       </div>
+      <button class="side-settings" id="openModelSettings" title="模型配置"><i data-lucide="settings"></i><span>模型配置</span></button>
     </aside>
 
     <main class="workspace">
@@ -108,6 +109,16 @@
         </div>
       </section>
     </main>
+  </div>
+  <div id="modelSettingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modelSettingsTitle">
+    <div class="modal-panel">
+      <div class="modal-heading"><div><h2 id="modelSettingsTitle">模型配置</h2><p class="muted">三个层级分别独立生效</p></div><button class="icon-btn" id="closeModelSettings" type="button" title="关闭"><i data-lucide="x"></i></button></div>
+      <form id="modelSettingsForm" class="model-settings-form">
+        <div id="modelSettingsTiers"></div>
+        <p class="settings-note">密钥只写入容器挂载的本地 runtime 文件，读取接口不会返回密钥。</p>
+        <div class="modal-actions"><button class="secondary" id="cancelModelSettings" type="button">取消</button><button class="primary" type="submit"><i data-lucide="save"></i>保存</button></div>
+      </form>
+    </div>
   </div>
   <div id="toast" class="toast hidden"></div>
   <script src="/chat-ux.js"></script>

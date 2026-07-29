@@ -5,10 +5,10 @@ import os
 from dataclasses import dataclass
 from typing import Any, Literal
 
-import httpx
 from openai import OpenAI
 
 from .clarification import initial_draft
+from .model_settings import public_settings, route_settings
 from .schemas import AdaptiveClarificationResult
 
 
@@ -42,21 +42,8 @@ class LLMRequestError(RuntimeError):
         return {"code": self.code, "message": self.message}
 
 
-MODEL_ENV = {
-    "simple": ("RESEARCH_MODEL_SIMPLE", "gpt-5.6-luna", "RESEARCH_REASONING_SIMPLE", "low"),
-    "medium": ("RESEARCH_MODEL_MEDIUM", "gpt-5.6-terra", "RESEARCH_REASONING_MEDIUM", "medium"),
-    "complex": ("RESEARCH_MODEL_COMPLEX", "gpt-5.6-sol", "RESEARCH_REASONING_COMPLEX", "high"),
-}
-
-
 def model_catalog() -> dict[str, dict[str, str]]:
-    return {
-        tier: {
-            "model": os.getenv(model_env, default_model),
-            "reasoning_effort": os.getenv(reasoning_env, default_effort),
-        }
-        for tier, (model_env, default_model, reasoning_env, default_effort) in MODEL_ENV.items()
-    }
+    return public_settings()
 
 
 def _int_env(name: str, default: int) -> int:
@@ -171,54 +158,24 @@ def _merge_model_result(current_draft: dict[str, Any], result: AdaptiveClarifica
     return result
 
 
-def _bridge_clarification(
-    bridge_url: str,
-    payload: dict[str, Any],
-    route: ModelRoute,
-    current_draft: dict[str, Any],
-    clarification_mode: ClarificationMode,
-) -> ClarificationOutcome:
-    try:
-        response = httpx.post(
-            f"{bridge_url}/v1/clarify-idea",
-            json={
-                "input": payload,
-                "model_tier": route.tier,
-                "model": route.model,
-                "reasoning_effort": route.reasoning_effort,
-                "clarification_mode": clarification_mode,
-            },
-            headers={"X-Codex-Bridge-Secret": os.getenv("CODEX_BRIDGE_SECRET", "")},
-            timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
-        )
-        if response.status_code == 504:
-            raise LLMRequestError("llm_timeout", "模型服务调用超时，请检查模型服务状态后重试。", 504)
-        response.raise_for_status()
-        result = AdaptiveClarificationResult.model_validate(response.json()["result"])
-    except httpx.TimeoutException as exc:
-        raise LLMRequestError("llm_timeout", "模型服务调用超时，请检查模型服务状态后重试。", 504) from exc
-    except httpx.HTTPError as exc:
-        raise LLMRequestError("llm_request_failed", "模型服务调用失败，请检查模型服务状态后重试。") from exc
-    except (KeyError, TypeError, ValueError) as exc:
-        raise LLMRequestError("llm_invalid_response", "模型服务返回了无效的结构化结果。") from exc
-    return ClarificationOutcome(result=_merge_model_result(current_draft, result), route=route)
-
-
 def _openai_clarification(
     payload: dict[str, Any],
     route: ModelRoute,
     current_draft: dict[str, Any],
     clarification_mode: ClarificationMode,
 ) -> ClarificationOutcome:
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if not api_key:
-        raise LLMRequestError("llm_provider_not_configured", "已选择 openai，但 OPENAI_API_KEY 未配置。", 503)
+    try:
+        settings = route_settings(route.tier)
+    except (OSError, RuntimeError, ValueError) as exc:
+        raise LLMRequestError("llm_provider_not_configured", "当前模型层级配置无效，请检查模型设置。", 503) from exc
+    if not settings["key"] or not settings["url"]:
+        raise LLMRequestError("llm_provider_not_configured", f"{route.tier} 模型层级的 URL 或 key 未配置。", 503)
     try:
         client = OpenAI(
-            api_key=api_key,
-            base_url=os.getenv("OPENAI_BASE_URL") or None,
-            timeout=float(os.getenv("CODEX_BRIDGE_TIMEOUT_SECONDS", "240")),
-            max_retries=1,
+            api_key=settings["key"],
+            base_url=settings["url"],
+            timeout=float(os.getenv("MODEL_REQUEST_TIMEOUT_SECONDS", "240")),
+            max_retries=0,
         )
         response = client.responses.parse(
             model=route.model,
@@ -250,16 +207,11 @@ def clarify_idea_with_llm(
     transcript = transcript or []
     route = select_model_route(message, current_draft, attachment_count)
     payload = _prompt_payload(message, current_draft, transcript, clarification_mode)
-    provider = os.getenv("RESEARCH_LLM_PROVIDER", "").strip().lower()
-    if provider == "codex_bridge":
-        bridge_url = os.getenv("CODEX_BRIDGE_URL", "").rstrip("/")
-        if not bridge_url:
-            raise LLMRequestError("llm_provider_not_configured", "已选择 codex_bridge，但 CODEX_BRIDGE_URL 未配置。", 503)
-        return _bridge_clarification(bridge_url, payload, route, current_draft, clarification_mode)
-    if provider == "openai":
-        return _openai_clarification(payload, route, current_draft, clarification_mode)
-    raise LLMRequestError(
-        "llm_provider_not_configured",
-        "未配置有效的模型服务提供商，请设置 RESEARCH_LLM_PROVIDER=codex_bridge 或 openai。",
-        503,
-    )
+    provider = os.getenv("RESEARCH_LLM_PROVIDER", "openai").strip().lower()
+    if provider != "openai":
+        raise LLMRequestError(
+            "llm_provider_not_configured",
+            "仅支持容器内直连的 OpenAI-compatible 模型服务；请设置 RESEARCH_LLM_PROVIDER=openai。",
+            503,
+        )
+    return _openai_clarification(payload, route, current_draft, clarification_mode)

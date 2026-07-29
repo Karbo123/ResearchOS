@@ -57,21 +57,10 @@ function Initialize-Configuration([string]$Root) {
         "replace-with-a-long-stable-random-value" = New-LocalSecret
         "replace-with-a-long-local-random-value" = New-LocalSecret
         "replace-with-a-runner-only-random-value" = New-LocalSecret
-        "replace-with-the-same-secret-used-by-the-host-bridge" = New-LocalSecret
     }
     foreach ($entry in $replacements.GetEnumerator()) { $content = $content.Replace($entry.Key, $entry.Value) }
     [IO.File]::WriteAllText($envPath, $content, (New-Object Text.UTF8Encoding($false)))
     Write-Step "Generated local-only secrets in .env. The installer does not display or upload them."
-}
-
-function Start-CodexBridge([string]$Root) {
-    $bridgeExe = Join-Path $Root "bin\ResearchOSCodexBridge.exe"
-    if (-not (Test-Path -LiteralPath $bridgeExe)) { return }
-    $existing = Get-CimInstance Win32_Process -Filter "Name = 'ResearchOSCodexBridge.exe'" -ErrorAction SilentlyContinue
-    if (-not $existing) {
-        Start-Process -FilePath $bridgeExe -WorkingDirectory $Root -WindowStyle Hidden
-        Write-Step "Started the local Codex Bridge without exposing the Codex auth file to Docker."
-    }
 }
 
 function Wait-Docker([string]$DockerCli) {
@@ -100,9 +89,7 @@ if (-not $dockerCli) {
     if (-not $dockerCli) { throw "Docker CLI was not found after Docker Desktop installation. A Windows sign-out may be required." }
 }
 Wait-Docker $dockerCli
-Start-CodexBridge $resolvedRoot
-
-Write-Step "Starting PostgreSQL, MinIO, MLflow, Runner, API and n8n..."
+Write-Step "Starting PostgreSQL, MinIO, MLflow, Runner, API and n8n inside Docker..."
 Push-Location $resolvedRoot
 try {
     & $dockerCli compose up -d --build

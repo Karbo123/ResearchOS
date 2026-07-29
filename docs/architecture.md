@@ -8,6 +8,7 @@ flowchart LR
   API --> GIT["Per-project Git repository"]
   API --> SNAP["Reproducibility snapshot\ncontrolled artifacts"]
   API --> EXT["Crossref / OpenAlex / S2 / arXiv / DBLP / DOI / GitHub APIs"]
+  API --> MODEL["Configured OpenAI-compatible model APIs"]
   API -->|"approved allowlisted request"| RUN["Restricted Runner"]
   RUN --> MLF["MLflow tracking"]
   MLF --> MINIO["MinIO artifacts"]
@@ -24,16 +25,18 @@ PostgreSQL 是状态源，聊天历史不是。核心依赖链为：
 `POST /api/chat` 是 Research OS 网页的直接入口；n8n `chat-gateway` 只是把 `/webhook/research-os/chat` 代理到同一接口。确认项目之前不会触发 `research-main`。旧版 `QUESTIONS/ORDER` 固定问题队列已经移出运行路径，当前每轮流程为：
 
 ```text
-用户消息 + 当前结构化草稿 + 最近对话
+  用户消息 + 当前结构化草稿 + 最近对话
   -> 本地确定性复杂度评分
   -> Luna(simple) / Terra(medium) / Sol(complex)
-  -> 受限 Codex Bridge（无工具、只读临时沙箱、严格 JSON Schema）
+  -> API 容器直连对应 OpenAI-compatible URL（严格 JSON Schema）
   -> 整体更新 draft + 自然回复 + assumptions/risks/unresolved_items
   -> Pydantic + 必要 ProjectSpec 缺口检查
   -> 继续澄清或显示待用户确认的 ProjectSpec
 ```
 
 模型可以依据 PyTorch/CNN/MNIST 等明确线索推断候选领域，但必须公开为可纠正假设；不得推断数据授权、GPU 可用性、预算、截止时间或科研新颖性。模型不可自行提高成本层级，也没有 Shell、文件、SQL 或网络工具。ReAct/外部编码 Agent 只有在出现真实的受控工具循环需求后才评估，并且仍必须经过高层工具 Schema 与审批闸门。
+
+模型 URL、key、model 和 reasoning effort 由 `.env` 或网页模型设置面板分别配置；key 只保存于忽略的 runtime 挂载文件。模型请求失败直接返回结构化错误，不做 provider 切换、本地降级或规则回复。Windows 不启动 API 或模型服务。
 
 ```text
 IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper claim

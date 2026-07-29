@@ -68,13 +68,13 @@ def extract_page_evidence(path: Path) -> dict[str, object]:
     reader = PdfReader(str(path))
     if reader.is_encrypted:
         raise ValueError("encrypted PDFs are not supported")
-    fallback: tuple[int, str] | None = None
+    first_text_page: tuple[int, str] | None = None
     for page_number, page in enumerate(reader.pages, start=1):
         text = re.sub(r"\s+", " ", page.extract_text() or "").strip()
         if len(text) < 160:
             continue
-        if fallback is None:
-            fallback = (page_number, text)
+        if first_text_page is None:
+            first_text_page = (page_number, text)
         abstract_match = re.search(r"\babstract[.:]?\s+", text, re.IGNORECASE)
         if not abstract_match or len(text[abstract_match.end():].strip()) < 160:
             continue
@@ -89,8 +89,8 @@ def extract_page_evidence(path: Path) -> dict[str, object]:
             "claim": sentence,
             "parser": f"pypdf/{__import__('pypdf').__version__}",
         }
-    if fallback:
-        page_number, text = fallback
+    if first_text_page:
+        page_number, text = first_text_page
         quote = text[:1200].strip()
         sentence = re.split(r"(?<=[.!?])\s+", quote, maxsplit=1)[0][:500].strip()
         return {

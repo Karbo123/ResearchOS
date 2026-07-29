@@ -66,11 +66,11 @@ flowchart LR
     R --> ML["MLflow"]
     ML --> MI[("MinIO\n大文件产物")]
     API --> S["学术检索\nCrossref/OpenAlex/S2/arXiv/DBLP"]
-    API --> B["Windows Codex Bridge\n127.0.0.1:8092"]
+    API --> B["配置的模型 API\nAPI 容器直连"]
     B --> C[".env 提供方/模型覆盖\nLuna low / Terra medium / Sol high"]
 ```
 
-API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。现阶段引入无限制 ReAct 循环只会增加成本和执行面。Windows Bridge 只接收项目 `.env` 中的允许提供方/模型/推理配置和用户明确迁移的 `OPENAI_API_KEY`，并启动临时、只读沙箱中的 Codex 进程。Bridge 运行时不读取宿主机 Codex 配置目录或 `auth.json`；一次性迁移只能复制这个 key 的值，不能复制整个认证对象、token 或 Cookie，认证文件不会挂载进 Docker。
+API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。模型请求由 API 容器直接发送到三个独立配置的 OpenAI-compatible URL。API 不读取 Windows Codex 配置目录、`auth.json`，也不依赖 Windows 模型服务；调用失败直接返回结构化错误，不切换提供方、不生成本地回复。
 
 ## 能力矩阵
 
@@ -91,14 +91,14 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 - Docker Desktop 切换到 **Linux containers** 和 `desktop-linux` engine。它表示 Docker Desktop 在自身管理的 VM/WSL2 后端中运行 Linux 镜像，不需要另外安装一个 Linux 系统。
 - Docker Compose v2（运行 `docker compose version` 检查）。
 - 至少 8 GB 可用内存；同时运行 MLflow、n8n、PostgreSQL、MinIO、API 和 Runner 时建议准备 12–16 GB。
-- 使用 Codex Bridge 或本地校验脚本时，宿主机需要 Python 3.12+。
-- 需要已安装可用的 Codex CLI；将提供方/模型设置和需要的 `OPENAI_API_KEY` 放入项目未跟踪 `.env`，不要复制整个 `auth.json`、token 或 Cookie。
+- 运行本地校验脚本时，宿主机需要 Python 3.12+；模型调用不需要 Windows Bridge。
+- 只需要 Python 3.12+ 执行本地校验脚本；模型 URL、模型名、key 和推理强度由 `.env` 或网页左下角的模型配置面板设置。
 
 ## Windows 快速开始
 
 ### 单 EXE 安装器状态
 
-[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：把 Research OS、Compose/n8n 工作流和独立 Codex Bridge 打进一个 EXE；若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。该路径目前**还不是正式发布的一键安装包**：代码签名、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
+[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：打包 Research OS 与 Compose/n8n 工作流；当前运行时把模型请求留在 API 容器内，不启动 Windows Bridge。若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。该路径目前**还不是正式发布的一键安装包**：代码签名、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
 
 下方手动方式仍是当前受支持的安装路径。
 
@@ -115,23 +115,11 @@ Copy-Item .env.example .env
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-请分别为 `POSTGRES_PASSWORD`、`MINIO_ROOT_PASSWORD`、`N8N_ENCRYPTION_KEY`、`N8N_LOCAL_OWNER_PASSWORD`、`RUNNER_SHARED_SECRET` 和 `CODEX_BRIDGE_SECRET` 生成不同值。如果宿主 Codex CLI 需要环境认证，只迁移 `OPENAI_API_KEY` 到 `.env`。不要提交 `.env` 或源 `auth.json`。
+请分别为 `POSTGRES_PASSWORD`、`MINIO_ROOT_PASSWORD`、`N8N_ENCRYPTION_KEY`、`N8N_LOCAL_OWNER_PASSWORD` 和 `RUNNER_SHARED_SECRET` 生成不同值。三个模型层级可在 `.env` 或网页设置面板中独立配置。不要提交 `.env`。
 
-### 启动宿主机 Codex Bridge
+API 容器在 Docker Compose 私有网络内直接调用三个模型 URL。Windows 不需要启动 Bridge 或其他 API 服务；网页设置接口只返回 `key_configured`，不会返回 key。
 
-Bridge 运行在 Windows 宿主机上，只从未跟踪的本地 `.env` 读取允许的 Bridge/提供方/模型配置和 `OPENAI_API_KEY`；它不读取宿主机 Codex 配置目录，健康端点不会输出凭据。在另一个 PowerShell 窗口中启动：
-
-```powershell
-python scripts/codex_llm_bridge.py
-```
-
-检查响应是否显示三个配置路由和 `auth_exposed=false`：
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8092/health
-```
-
-默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。Bridge 将 `.env` 中的提供方/模型/推理值显式传给 `codex exec --ephemeral --sandbox read-only`。模型服务失败时 API 返回结构化错误，不切换提供方，也不生成本地回复。
+默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high（`reasoning_effort=high`）。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。模型服务失败时 API 返回结构化错误，不切换提供方，也不生成本地回复。
 
 ### 构建并启动 Compose
 
@@ -179,8 +167,8 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 3. 审核生成的 `ProjectSpec`。字段缺失、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
 4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
-6. 检查新颖性/可行性结果和实验 Proposal；核对随机种子、预算、数据版本、预期产物及风险后再批准。
-7. 打开**实验**和**产物**页，下载指标 JSON、日志、PNG、点云预览、PLY 与编译 PDF，并核对每个产物的谱系。对具体 Run 查看 `/api/experiments/{run_id}/reproducibility` 并下载受控源码快照。
+6. 检查 **Related Work** 的证据覆盖、研究空白候选和重复研究候选。它们都只是候选，不证明新颖性或科学结论。
+7. 当前未实现 Idea 专属实验规划。旧的通用基线计划会返回结构化 `409`，不会创建无关实验；只有与当前 Idea 绑定并经过批准的显式 Proposal 才能执行。
 8. 在项目对话中要求解释、建议或提出变更。执行型请求会转换为结构化 Proposal 并等待批准，不会静默执行。
 9. 在**策略**页添加“所有实验至少使用五个随机种子”等长期规则。批准后的策略保存在 PostgreSQL，并在计划、API 提交和 Runner 三处强制执行。
 10. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。已取消项目是终止状态，不能恢复。
@@ -203,7 +191,7 @@ python scripts/test_mnist_idea.py
 
 最新全自动/详细模式变更已完成上面所述的 `mnist-cnn` 定向真实验证，以及下方 `P0-REGRESSION-032` 记录的多用例端到端回归。
 
-验收脚本会实际检查 Bridge、学术 API、PostgreSQL、n8n、Runner、MLflow、产物谱系、策略执行、Idea v2、局部重跑和 LaTeX 编译：
+验收脚本会检查容器直连模型配置、学术 API、PostgreSQL、n8n 和证据优先的 Related Work；不会运行无关的通用实验：
 
 ```powershell
 python scripts/acceptance_test.py
@@ -217,11 +205,11 @@ python scripts/acceptance_test.py
 | PyTorch/CUDA CNN 在 MNIST 上达到 99% | 推断深度学习/计算机视觉，识别为工程基准，默认使用 Terra 层级，并询问研究定位、数据授权、算力和评估约束。 |
 | 上述 3D 主动学习 Idea | 创建项目、检索论文，批准后执行受限实验并生成可检查产物。 |
 
-最新完整验收记录的脱敏版本化副本为 [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json)，运行时原件仍保存在被忽略的 `artifacts/acceptance/`。该验收通过配置的 Luna/Terra/Sol 路由和 Codex Bridge（`gpt-5.6-luna/low`、`gpt-5.6-terra/medium`，以及 `reasoning_effort=high` 的 `gpt-5.6-sol`），验证了 8 条论文记录、3 条真实开放 PDF 原文证据、五随机种子策略、暂停/取消/恢复闸门、MLflow、PNG/PLY、Idea v2、局部重跑、12 个检查点、416 条依赖与 LaTeX 编译。合成 demo 只证明系统集成链可运行，不能证明研究假设成立。
+旧版完整验收记录的脱敏副本仍保留在 [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json) 作为历史证据，不能视为当前自动实验路径。新的定向验收写入被忽略的 `artifacts/acceptance/`，从 API 容器直接使用配置的 Luna/Terra/Sol 路由，验证证据覆盖并验证无关实验计划被拒绝。
 
 ## 配置参考
 
-`.env.example` 是可版本化的安全模板。下表覆盖 Compose 或宿主机 Bridge 使用的全部用户配置：
+`.env.example` 是可版本化的安全模板。下表覆盖 Compose 和 API 容器使用的用户配置：
 
 | 变量 | 是否必需 | 说明 |
 | --- | --- | --- |
@@ -229,14 +217,11 @@ python scripts/acceptance_test.py
 | `MINIO_ROOT_USER`、`MINIO_ROOT_PASSWORD` | 是 | MinIO 管理凭据，MLflow 使用它把产物保存到 `research-artifacts`。 |
 | `N8N_ENCRYPTION_KEY` | 是 | 必须长期保持不变的 n8n 加密密钥；丢失后已存凭据可能无法解密。 |
 | `N8N_LOCAL_OWNER_EMAIL`、`N8N_LOCAL_OWNER_PASSWORD` | 自动登录必需 | 仅供 `/api/n8n/open` 使用的本地 Owner，密码只在服务端使用，不渲染到页面。 |
-| `RESEARCH_LLM_PROVIDER` | 是 | 显式选择唯一模型服务：`codex_bridge` 或 `openai`。调用失败就是 API 错误，不自动切换提供方。 |
-| `OPENAI_API_KEY`、`OPENAI_BASE_URL` | `OPENAI_API_KEY` 用于直接 `openai` 或宿主 CLI 环境认证；`OPENAI_BASE_URL` 仅直接 `openai` 时必需 | API 只在显式选择 `openai` 时使用这些配置。宿主 Bridge 只可将 `OPENAI_API_KEY` 传给 Codex CLI，运行时不会从 `auth.json` 读取。 |
-| `CODEX_BRIDGE_URL`、`CODEX_BRIDGE_SECRET`、`CODEX_BRIDGE_TIMEOUT_SECONDS` | 推荐 | Compose 到宿主机的 Bridge URL、本地共享 Secret 和超时。 |
-| `CODEX_MODEL_PROVIDER`、`CODEX_MODEL_DEFAULT`、`CODEX_REASONING_DEFAULT` | 宿主 Bridge 必需 | 显式传给 Codex CLI 的提供方 key 和默认值。 |
-| `CODEX_CUSTOM_PROVIDER_NAME`、`CODEX_CUSTOM_BASE_URL`、`CODEX_CUSTOM_WIRE_API` | `CODEX_MODEL_PROVIDER=custom` 时必需 | 显式传给 CLI 的非敏感自定义提供方名称、地址和 `responses`/`chat` 协议。 |
-| `RESEARCH_MODEL_SIMPLE`、`RESEARCH_REASONING_SIMPLE` | 是 | 简单轮次路由，默认 `gpt-5.6-luna` 与 `low`。 |
-| `RESEARCH_MODEL_MEDIUM`、`RESEARCH_REASONING_MEDIUM` | 是 | 中等轮次路由，默认 `gpt-5.6-terra` 与 `medium`。 |
-| `RESEARCH_MODEL_COMPLEX`、`RESEARCH_REASONING_COMPLEX` | 是 | 复杂轮次路由，默认 `gpt-5.6-sol` 与 `high`。 |
+| `RESEARCH_LLM_PROVIDER`、`MODEL_REQUEST_TIMEOUT_SECONDS` | 是 | 必须为 `openai`；API 容器直连配置的提供方，调用失败直接返回错误。 |
+| `RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_URL_SIMPLE`、`RESEARCH_MODEL_KEY_SIMPLE`、`RESEARCH_REASONING_SIMPLE` | 是 | 独立的 Luna 简单层，默认 `gpt-5.6-luna`/`low`。 |
+| `RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM` | 是 | 独立的 Terra 中等层，默认 `gpt-5.6-terra`/`medium`。 |
+| `RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX` | 是 | 独立的 Sol 复杂层，默认 `gpt-5.6-sol`/`high`。 |
+| `MODEL_SETTINGS_PATH` | Compose 内部 | 可写的 `runtime/model-settings.json` 挂载路径；网页保存 key，读取接口只返回 `key_configured`。 |
 | `RESEARCH_ROUTER_SIMPLE_MAX`、`RESEARCH_ROUTER_MEDIUM_MAX` | 是 | 确定性复杂度分数边界，默认 `2` 与 `7`。 |
 | `GITHUB_TOKEN` | 可选 | 提高 GitHub API 配额；仓库结果在交叉验证前仍只是候选。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |
@@ -321,7 +306,7 @@ docker compose exec -T postgres pg_dump -U research -d research_os > artifacts\b
 # 快速校验
 docker compose config --quiet
 python scripts/check_docs_sync.py
-python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
+python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/acceptance_test.py
 
 # 容器测试
 docker compose exec -T api pytest -q
@@ -340,7 +325,7 @@ python scripts/acceptance_test.py
 | 现象 | 检查项 |
 | --- | --- |
 | Docker 提示 Linux engine 不可用 | Docker Desktop → Settings/General → 启用 WSL2 backend，切换到 Linux containers，然后运行 `docker info`。 |
-| API 已启动，但 Idea 澄清失败 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、`RESEARCH_LLM_PROVIDER`、Bridge Secret/模型白名单、`.env` 中的 `OPENAI_API_KEY`、`CODEX_MODEL_*`/`CODEX_CUSTOM_*`、Codex CLI 以及 `docker compose logs api`。API 会返回结构化模型错误，不生成降级回复。 |
+| API 已启动，但 Idea 澄清失败 | 检查三个模型 URL/key、`RESEARCH_LLM_PROVIDER=openai`、设置接口的 `key_configured` 状态和 `docker compose logs api`。API 会返回结构化模型错误，不生成降级回复。 |
 | n8n 要求输入密码 | 从 Research OS 侧边栏或 `/api/n8n/open` 打开；确认 `.env` Owner 与 n8n 数据库一致。不要关闭用户管理。 |
 | n8n 自动登录返回 503/401 | 确认 n8n 正常、Owner 密码至少 12 位、`N8N_INTERNAL_URL` 为 `http://n8n:5678`，然后重启 `api n8n`。 |
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |

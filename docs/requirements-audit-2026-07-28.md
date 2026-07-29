@@ -6,9 +6,9 @@
 
 ## 本轮真实验收
 
-- 配置来源：项目未跟踪 `.env` 中的 provider、模型、推理配置和单独迁移的 `OPENAI_API_KEY`；Bridge 运行时代码不读取宿主机 Codex 配置目录或 `auth.json`
+- 配置来源：API 容器从 `.env` 或挂载的 `runtime/model-settings.json` 读取三个独立层级的模型 URL、model、key 和 reasoning effort；运行时代码不读取宿主机 Codex 配置目录或 `auth.json`
 - 模型路由：`gpt-5.6-luna/low`、`gpt-5.6-terra/medium`、`gpt-5.6-sol`/`high`
-- Bridge：宿主机调用；一次性迁移只复制 `auth.json` 中的 `OPENAI_API_KEY` 值，运行时不读取、复制或挂载整个 `auth.json`，Bridge 通过子进程环境向 Codex CLI 提供该 key
+- Windows Bridge：不再是运行依赖；Windows 不启动模型服务，API 容器直接调用配置的模型 URL
 - 结果文件：`artifacts/acceptance/acceptance-20260730-015132.json`
 - 脱敏证据：`docs/evidence/acceptance-20260730-015132.json`
 - 测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`
@@ -29,13 +29,21 @@
 
 2026-07-29 澄清交互增量：新项目聊天增加严格的 `automatic|detailed` 模式，默认全自动并尽量减少追问，详细模式根据真实缺口扩大了解范围；两者均禁止固定问卷。测试 Idea、后续确认事实和项目对话输入统一迁移到 `tests/idea-cases/*.json`，严格加载器拒绝未知字段、路径覆盖和运行时注入。完整多用例回归已登记为 `P0-REGRESSION-032`。
 
-2026-07-30 完整端到端回归增量：`P0-REGRESSION-032` 已使用真实 Bridge、外部学术 API、PostgreSQL、n8n、Runner 和 MLflow 完成验收；新报告验证了 8 条论文记录、3 条全文证据、12 个检查点和 416 条依赖，结果已保存到被忽略的运行时报告并归档脱敏副本。模型失败仍返回结构化错误，不做本地降级或 provider 自动切换。
+2026-07-30 完整端到端回归增量（历史运行）：`P0-REGRESSION-032` 当时使用宿主 Bridge、外部学术 API、PostgreSQL、n8n、Runner 和 MLflow 完成验收；新报告验证了 8 条论文记录、3 条全文证据、12 个检查点和 416 条依赖，结果已保存到被忽略的运行时报告并归档脱敏副本。该报告只代表当时的历史运行，当前运行路径已改为 API 容器直连模型。
 
 2026-07-29 可复现快照增量：`P0-REPRO-026` 已接入本地实验提交和 Runner 执行门禁。批准实验要求项目 Git 工作树干净、Git 文件扩展名/目录/10 MB 大小门禁通过，并创建不可变 `run/<run_id>` tag；受控 `artifacts/reproducibility/<project_id>/<run_id>/` 保存 `source.tar`、ProjectSpec、策略、有效配置/随机种子、环境、数据/模型清单、依赖锁文件哈希和 `snapshot.json`。API 与 Runner 各校验一次，PostgreSQL 写入 `Artifact`/`ArtifactDependency`/`Checkpoint` 谱系，并提供 `/api/experiments/{run_id}/reproducibility` 查询和源码下载入口。本批次已完成真实实验验收：`RUNNER_IMAGE_DIGEST` 和 `RESEARCH_OS_COMMIT` 已配置真实值、Runner 非 root Git 门禁修复、`demo_classification` 实验真实提交并成功执行（accuracy=0.8467），快照谱系完整持久化。任务标记完成。
 
 2026-07-30 流式澄清状态增量：`P1-STREAM-038` 已实现 `POST /api/chat/stream`。该接口和前端只报告可审计的应用阶段（读取对话、路由选择、准备请求、调用模型、保存结果）、结构化错误和最终结果；不得输出、声称、推断或伪造模型内部思维链。项目创建仍由服务端以 `ready_for_confirmation` 严格闸门保护，未完成规格返回冲突。API/SSE、同步端点、项目创建闸门、公开 Idea case 来源、桌面/窄屏浏览器与控制台检查均通过；本轮未调用真实模型或外部学术 API。
 
-2026-07-30 自适应澄清回归增量：`P0-CLARIFY-027` 已完成。公开四用例真实回归覆盖简单/中等/复杂路由、自动/详细模式、确认事实收敛与两个并发 MNIST 会话。3D active-learning 现在稳定进入 `complex / gpt-5.6-sol / high`；模型填写“未确认/unknown”等数据或资源占位时，服务端仍保持 `clarifying`。Bridge 不可用返回结构化错误，Bridge 504 保持为 `llm_timeout`，没有本地降级或 provider 切换。
+2026-07-30 自适应澄清回归增量：`P0-CLARIFY-027` 已完成。公开四用例真实回归覆盖简单/中等/复杂路由、自动/详细模式、确认事实收敛与两个并发 MNIST 会话。3D active-learning 现在稳定进入 `complex / gpt-5.6-sol / high`；模型填写“未确认/unknown”等数据或资源占位时，服务端仍保持 `clarifying`。模型服务不可用时返回结构化错误，没有本地降级或 provider 切换。
+
+## 当前模型与实验范围更新
+
+- 模型调用改为 API 容器直连三个独立配置的 OpenAI-compatible URL；Windows Codex Bridge 不再是运行依赖，也不读取 Codex 配置目录。
+- LLM 调用失败直接返回结构化 API 错误；禁止本地降级、provider 切换和规则回复。
+- 原有通用分类/点云演示实验计划不属于用户 Idea，已移除自动生成路径。主题专属实验规划仍未实现，接口返回 `topic_specific_experiment_plan_not_implemented`。
+- Windows 安装器已同步为只启动 Docker Compose，不再打包或启动 Bridge；前端不再显示会请求通用实验计划的操作按钮。
+- Related Work 当前只生成证据覆盖、研究空白候选和重复研究候选；metadata-only 文献不能进入事实性证据，所有候选均要求人工复核。
 
 ## 逐项覆盖
 
@@ -68,7 +76,7 @@
 | Related Work 与完整论文自动写作 | 未实现 | 只生成最小 LaTeX 模板并受控编译 PDF；Related Work 明确是占位文字，没有证据驱动的完整论文撰写。 |
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
 | 长期运行与生产可靠性 | 部分实现 | Compose restart、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；没有持久队列、HA、每任务独立容器、磁盘配额和默认拒绝出网。 |
-| Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验、Compose/n8n 自动启动和独立 Bridge 打包脚本；尚未生成签名发布 EXE，也未完成干净 VM、升级/卸载和 Docker 许可验收。 |
+| Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。尚未生成签名发布 EXE，也未完成干净 VM、升级/卸载和 Docker 许可验收。 |
 
 ## 关键风险
 

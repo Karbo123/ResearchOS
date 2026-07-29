@@ -263,6 +263,23 @@ class ReportRequest(BaseModel):
     period: Literal["daily", "weekly", "manual"] = "manual"
 
 
+class ModelTierSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    model: str = Field(min_length=1, max_length=200)
+    url: str = Field(min_length=1, max_length=500)
+    key: str = Field(min_length=0, max_length=1000)
+    reasoning_effort: Literal["low", "medium", "high"]
+
+
+class ModelSettingsRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    simple: ModelTierSettings
+    medium: ModelTierSettings
+    complex: ModelTierSettings
+
+
 class ProjectStateRequest(BaseModel):
     action: Literal["pause", "resume", "cancel"]
     reason: str = Field(min_length=3, max_length=2000)

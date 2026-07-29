@@ -2,9 +2,9 @@
 
 ## 首次部署检查
 
-1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n、Runner 和 Codex Bridge 分别生成不同的随机 Secret；不得保留示例占位值。若宿主 Codex CLI 需要环境认证，只将 `auth.json` 中的 `OPENAI_API_KEY` 值迁移到 `.env`，不要复制整个认证文件。
+1. 从 `.env.example` 复制 `.env`，为 PostgreSQL、MinIO、n8n 和 Runner 分别生成不同的随机 Secret；不得保留示例占位值。三个模型 URL、模型名、key 和推理强度可在 `.env` 或网页模型设置面板中独立配置。
 2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
-3. 在 Windows 宿主机启动 `scripts/codex_llm_bridge.py`。Bridge 只从仓库根目录未跟踪的 `.env` 读取允许的 Bridge/provider/模型配置和 `OPENAI_API_KEY`；运行时代码不读取宿主机 Codex 配置目录或 `auth.json`，也不把整个认证文件、token 或 Cookie 复制到 `.env` 或挂载进 Docker。
+3. 不要在 Windows 宿主机启动模型 Bridge 或 API 服务。API 容器在 Compose 私有网络内直接调用三个配置的 OpenAI-compatible URL。
 4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，首次部署再运行 `docker compose up --build -d`。镜像已经存在时使用日常启动命令 `docker compose up -d`，不要为普通启动重复构建。
 5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
@@ -24,23 +24,20 @@ API 应返回 `status=ok`，n8n 和 MLflow 应返回 HTTP 200。Runner 不发布
 
 ## 自适应模型路由
 
-默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。分别通过 `RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_COMPLEX` 和对应 `RESEARCH_REASONING_*` 配置。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界；中等上限必须大于简单上限。
+默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。每档分别通过 `RESEARCH_MODEL_*`、`RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 和 `RESEARCH_REASONING_*` 配置；网页左下角的模型设置也会写入挂载的 `runtime/model-settings.json`。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界。
 
-修改模型配置后必须同时重启宿主 Bridge 和 API：
+修改 `.env` 中的模型配置后重启 API；通过网页设置面板保存的配置无需重启：
 
 ```powershell
-# 先在 Bridge 窗口停止旧进程，再重新运行
-python scripts/codex_llm_bridge.py
 docker compose up -d api
-Invoke-RestMethod http://127.0.0.1:8092/health
 Invoke-RestMethod http://127.0.0.1:8080/api/health
 ```
 
-成功聊天响应中的 `model_tier`、`model`、`reasoning_effort` 是本轮实际路由证据。模型调用失败时 `/api/chat` 返回结构化 `502/503/504` 错误，不生成规则回复，也不写入助手消息；检查错误中的 `code` 和 Bridge/API 日志后再重试。
+成功聊天响应中的 `model_tier`、`model`、`reasoning_effort` 是本轮实际路由证据。模型调用失败时 `/api/chat` 返回结构化 `502/503/504` 错误，不生成规则回复，也不写入助手消息；检查错误中的 `code` 和 API 日志后再重试。
 
 ## Windows 单 EXE 安装器
 
-`installer/windows/ResearchOS.iss`、`bootstrap.ps1` 与 `build-installer.ps1` 构成在线引导安装器源。它内置应用、Compose/n8n 工作流和由 PyInstaller 打包的 Bridge；Docker 缺失时只在用户勾选后下载官方安装器并验证 Authenticode 签名。构建输出和 EXE 被 Git 忽略。
+`installer/windows/ResearchOS.iss`、`bootstrap.ps1` 与 `build-installer.ps1` 构成在线引导安装器源。它内置应用和 Compose/n8n 工作流；API 与模型请求始终在容器内运行，安装器不会打包或启动 Windows Bridge。Docker 缺失时只在用户勾选后下载官方安装器并验证 Authenticode 签名。构建输出和 EXE 被 Git 忽略。
 
 当前仍需在发布机安装 Inno Setup 6，并完成代码签名、SHA-256 发布、Docker Desktop 许可复核和干净 Windows VM 验收。未完成这些条件前，手动 Compose 安装仍是受支持路径，`P2-INSTALLER-029` 不得标为完成。
 
@@ -104,7 +101,7 @@ docker compose restart n8n api
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
 - Runner 在快照门禁被拒：检查结构化错误 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing`、`snapshot_manifest_missing` 或 `runner_image_changed`；提交项目源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。
 - 产物下载 404：检查 `valid` 和文件是否仍在 `artifacts/`。Idea 变更会使受影响结果失效。
-- Codex Bridge 不通：检查 8092 健康端点、`RESEARCH_LLM_PROVIDER`、Bridge Secret、三级模型白名单、`.env` 中的 `CODEX_MODEL_*`/`CODEX_CUSTOM_*` 配置、`OPENAI_API_KEY` 是否已按需迁移和 Codex CLI；API 会返回结构化模型错误，不会切换 provider 或生成本地回复。
+- 模型调用失败：检查三个模型 URL/key、`RESEARCH_LLM_PROVIDER=openai`、`runtime/model-settings.json` 的挂载权限和 `docker compose logs api`。API 会返回结构化模型错误，不会切换 provider 或生成本地回复。
 
 ## 项目状态控制
 
@@ -132,7 +129,7 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 docker compose config --quiet
 python scripts/check_idea_case_sources.py
 python scripts/check_docs_sync.py
-python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/codex_llm_bridge.py
+python -m py_compile apps/api/app/main.py apps/runner/app/main.py scripts/acceptance_test.py
 node --test scripts/test_chat_ux.mjs
 docker compose exec -T api pytest -q
 python scripts/acceptance_test.py
@@ -145,9 +142,9 @@ python scripts/acceptance_test.py
 - 项目代码与 Idea：`projects/<slug>/.git`。
 - 业务/n8n/MLflow 元数据：PostgreSQL volume 或 `pg_dump`。
 - MLflow 大文件：MinIO volume；Runner 文件：`artifacts/`。
-- 恢复后启动服务，并执行低成本 `demo_classification` 与一次 LaTeX 编译验证。
+- 恢复后启动服务，先执行容器静态检查和证据/项目状态核验；当前不会自动运行与用户 Idea 无关的合成实验。任何主题专属实验都必须在 `P0-PLAN-006` 完成后，经过独立 Proposal 和明确批准再执行。
 
-数据库备份可能包含密码哈希或凭据密文，Bridge 日志和 `.env` 也属于敏感本地文件，不应提交或外发。
+数据库备份可能包含密码哈希或凭据密文，模型请求日志和 `.env` 也属于敏感本地文件，不应提交或外发。
 
 ## 备份与恢复演练
 
@@ -194,4 +191,4 @@ python scripts/check_docs_sync.py
 
 ## 验收证据
 
-`python scripts/acceptance_test.py` 使用真实 Codex Bridge 和配置的 Luna/Terra/Sol 路由（复杂路由为 `gpt-5.6-sol/high`），运行时间受模型和外部 API 延迟影响。JSON 结果只记录项目 ID、指标、产物类型、PDF 哈希、MLflow Run ID 和依赖计数，不记录认证 token。最近一次完整结果位于 `artifacts/acceptance/acceptance-20260730-015132.json`，脱敏副本位于 `docs/evidence/acceptance-20260730-015132.json`，包含 3 篇开放 PDF 页码证据、5 种子策略计划、结构化违规拒绝、Runner 二次校验、12 个检查点和 416 条依赖；该结果已包含可复现快照门禁的实时验收。当前仍不能把本地 MVP 验收表述为生产级科研结论或完整自动化能力。
+`python scripts/acceptance_test.py` 使用配置的容器直连 Luna/Terra/Sol 路由（复杂路由为 `gpt-5.6-sol/high`），并验证文献证据覆盖、项目状态闸门和通用实验计划拒绝。它不会运行与当前 Idea 无关的基线实验；JSON 结果不记录认证 token。当前仍不能把本地 MVP 验收表述为生产级科研结论或完整自动化能力。
