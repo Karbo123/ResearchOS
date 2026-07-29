@@ -45,6 +45,12 @@
 - Windows 安装器已同步为只启动 Docker Compose，不再打包或启动 Bridge；前端不再显示会请求通用实验计划的操作按钮。
 - Related Work 当前只生成证据覆盖、研究空白候选和重复研究候选；metadata-only 文献不能进入事实性证据，所有候选均要求人工复核。
 
+## Runner 隔离增量（2026-07-30）
+
+- Runner 现在为每个 Run 启动一个新的非 root `spawn` 子进程，并在子进程内应用 CPU、内存和 PID 限制；监控器负责超时和进程组取消，并保护父进程已经写入的取消/失败终态。
+- Runner 仅加入 Compose 的 `runner-internal` 内部网络，未挂载 Docker socket；任务契约拒绝任意 command、path、URL、network 和 image 字段。健康端点返回 `one-spawned-process-per-run`、`docker_socket_mounted=false` 和 `arbitrary_commands=false`。
+- 这不是每 Run 独立容器，也没有完成 GPU、通用 Python/C++/Conda 环境和磁盘配额；`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
+
 ## 逐项覆盖
 
 | 原始能力 | 判定 | 实际状态 |

@@ -98,6 +98,9 @@ services:
         condition: service_completed_successfully
     ports:
       - "127.0.0.1:5000:5000"
+    networks:
+      - default
+      - runner-internal
     restart: unless-stopped
 
   runner:
@@ -127,6 +130,8 @@ services:
     depends_on:
       mlflow:
         condition: service_started
+    networks:
+      - runner-internal
     restart: unless-stopped
 
   api:
@@ -148,6 +153,9 @@ services:
         condition: service_healthy
       runner:
         condition: service_started
+    networks:
+      - default
+      - runner-internal
     restart: unless-stopped
 
   n8n:
@@ -197,3 +205,7 @@ volumes:
   postgres-data:
   minio-data:
   n8n-data:
+
+networks:
+  runner-internal:
+    internal: true

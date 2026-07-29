@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，P0-PLAN-006 已完成并验证）
+最后更新：2026-07-30（Asia/Shanghai，开始 P0-RUNNER-007）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：无；下一项高优先级待处理为 `P0-RUNNER-007`。
+- 当前进行中：`P0-RUNNER-007`；增加每任务独立容器/作业隔离和参数化白名单任务模板。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -79,7 +79,7 @@
 - [x] `P0-PLAN-006` 用 ProjectSpec、文献证据和项目策略生成 Idea 专属实验计划。
   - 完成标准：真实列出数据集、基线、指标、消融、统计检验、随机种子、资源预算、风险和成功标准；不再固定返回合成 demo。
   - 验证结果：新增严格 `ExperimentPlan` Pydantic 契约和证据/Idea 版本/策略/预算/主题关联二次校验；`POST /api/projects/{project_id}/experiment-plan` 只在当前 ProjectSpec 有页码级全文证据时调用复杂层模型并创建 pending Proposal。批准主题计划提交时重新校验当前状态，Runner 未有匹配模板则返回 `topic_specific_runner_not_implemented`，不会回退到分类或点云 demo。API 容器 `pytest -q`（32 passed）、API 镜像重建、Compose 配置、JSON 契约、双语文档/需求审计同步和 `git diff --check` 通过；未调用真实模型、其他 Idea 或无关实验。
-- [ ] `P0-RUNNER-007` 增加每任务独立容器/作业隔离和参数化白名单任务模板。
+- [~] `P0-RUNNER-007` 增加每任务独立容器/作业隔离和参数化白名单任务模板。
   - 完成标准：支持受控 Python、C++/CMake、Conda 环境和可选 GPU；非 root、镜像 digest、网络策略、磁盘/CPU/GPU/内存/PID 配额、超时、取消和完整日志均有集成测试。
 - [ ] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
@@ -233,3 +233,7 @@
 - 2026-07-30：继续 `P0-LLM-040` 与 `P0-RELATED-002`；Windows 安装器不再打包或启动 Bridge，前端移除无效的通用实验计划按钮，Related Work 新增证据边界单元测试。历史验收中的 Bridge/合成实验记录仅作历史证据，不代表当前运行路径。
 - 2026-07-30：完成 `P0-LLM-040` 与 `P0-RELATED-002`；验证 API `29 passed`、前端 UX `5 passed`、浏览器设置面板桌面/窄屏检查、Compose/JSON/Idea case/文档同步/AST/`git diff --check`，清理历史 dangling Docker 镜像，删除废弃 Bridge 脚本并清理验收脚本中的旧通用实验路径。未运行真实模型、其他 Idea 或无关实验；功能提交 `4ff3ef4`、清理提交 `4fb4905`、验收入口提交 `8798473`。
 - 2026-07-30：开始并完成 `P0-PLAN-006`；新增严格主题专属实验计划契约、复杂层模型直连、全文证据/Idea 版本/策略/预算/主题关联校验、审批 Proposal 持久化、批准后二次校验和前端生成入口。主题 Runner 尚未实现时直接结构化报错，禁止 fallback；同步双语 README、架构/运维/安全边界、需求审计和工具契约。API 容器 `32 passed`，Compose/API 镜像重建、JSON、文档同步和 `git diff --check` 已通过；未调用真实模型、其他 Idea 或无关实验。
+  - P0-RUNNER-007 当前实现：每个 Run 使用新的非 root spawn 子进程、白名单任务模板、CPU/内存/PID 限制和内部 runner-internal 网络；取消终止进程组，超时返回 job_timeout，监控器保护取消/失败终态。
+  - P0-RUNNER-007 当前缺口：每 Run 独立容器、GPU、通用 Python/C++/Conda 和磁盘配额尚未实现；未运行无关分类/点云实验，任务继续保持 [~]。
+- P0-RUNNER-007 验证：Runner 标准库测试 4 passed，API 容器 32 passed，内部健康端点确认 one-spawned-process-per-run、docker_socket_mounted=false、arbitrary_commands=false。
+- P0-RUNNER-007 提交：`92fe1ef`，已推送到 `origin/main`。
