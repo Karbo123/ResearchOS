@@ -138,7 +138,7 @@ docker compose exec -T api pytest -q
 python scripts/acceptance_test.py
 ```
 
-完整验收会调用真实模型、外部学术 API 和 Runner；用户未明确批准范围时只运行前四项零成本检查。`py_compile` 在部分 Windows 工作区可能因历史容器生成的 root-owned `__pycache__` 失败，此时应在 API/Runner 容器内执行语法检查，并把权限原因记录到 TODO。
+完整验收会调用真实模型、外部学术 API 和 Runner；按本次任务明确的 case、轮数和成本范围运行，未纳入范围的公开用例不得发送给模型。`py_compile` 在部分 Windows 工作区可能因历史容器生成的 root-owned `__pycache__` 失败，此时应在 API/Runner 容器内执行语法检查，并把权限原因记录到 TODO。
 
 ## 数据恢复
 
