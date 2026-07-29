@@ -64,8 +64,8 @@
 | 可行性、重复、资源风险 | 部分实现 | 不可行/资源不足目标会保持在澄清或标为中等可行性；资源字段会澄清；重复研究与创新性只能做 DOI 元数据级初筛。（2026-07-29：危险/未授权目标阻断已按用户要求移除。） |
 | 多源论文与 BibTeX 检索 | 部分实现 | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP 和 DOI BibTeX 已接入；没有 GitLab 和通用网页检索。 |
 | PDF、引用关系、页码原文证据 | 部分实现 | 开放 PDF allowlist 下载、哈希、pypdf 页码 quote、BibTeX、Artifact/Dependency、Git JSON 已用 3 篇论文验证；尚未构建引用关系图，也未完成 claim 到多证据的语义核验。 |
-| 官方代码、数据集、模型与主页定位 | 部分实现 | GitHub 标题搜索只生成候选；没有作者/论文主页交叉验证，当前 `verified_official=true` 记录为 0。 |
-| 代码许可审查与受控下载 | 未实现 | 有严格工具契约和数据库字段，但没有可执行的验证、审批后 clone/download、审查和归档流程。 |
+| 官方代码、数据集、模型与主页定位 | 部分实现 | GitHub/GitLab 先生成候选；API 已能读取提供方元数据、项目论文记录和仓库 `CITATION.cff`/README，要求 DOI 或完整标题形成显式双源匹配。作者主页、数据集和模型定位仍不是通用能力。 |
+| 代码许可审查与受控下载 | 已实现（需审批） | 已知 SPDX、40 位 commit 和 `verified_official=true` 才能创建 `dependency_install` Proposal；批准后下载受限归档，拒绝路径穿越/链接/特殊文件，记录下载时间、URL、SHA-256、论文关系并提交项目 Git。未知许可证、未验证候选和未批准 Proposal 均不能触发网络下载。 |
 | 文献综述、研究空白、新颖性判断 | 部分实现 | 端点会明确拒绝仅凭元数据作强结论；尚不能生成全文证据支撑的 Related Work 或可靠研究空白。 |
 | Idea 专属实验与统计计划 | 部分实现 | API 已按当前 ProjectSpec、页码级全文证据和策略生成绑定 Idea 版本的结构化计划 Proposal，并经过审批/二次校验；主题专属 Runner 执行模板尚未完成，不会使用固定合成 demo。 |
 | Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、配额、超时、取消、日志和 LaTeX 已实现；没有通用 Python/C++/Conda/GPU 作业。 |
@@ -85,6 +85,8 @@
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
 | 长期运行与生产可靠性 | 部分实现 | Compose restart、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；没有持久队列、HA、每任务独立容器、磁盘配额和默认拒绝出网。 |
 | Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。尚未生成签名发布 EXE，也未完成干净 VM、升级/卸载和 Docker 许可验收。 |
+
+2026-07-30 代码来源可信链增量：`P0-CODE-003` 已实现候选仓库的 GitHub/GitLab 元数据、论文记录与 `CITATION.cff`/README 双源匹配，保存已知 SPDX、40 位 commit 和验证来源；未知许可证、未固定 commit、未验证候选或未批准 Proposal 均不能触发下载。批准后仅下载受限归档，拒绝路径穿越、符号链接和特殊文件，写入 SHA-256、下载时间、论文关系和项目 Git 提交。作者主页/数据集/模型的通用定位仍未实现；本增量已完成测试和文档同步，`P0-CODE-003` 标记为 `[x]`。
 
 ## 关键风险
 

@@ -37,6 +37,10 @@ from .evidence_pipeline import download_open_pdf, extract_page_evidence, validat
 from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
 from .impact_analysis import analyze_impact, apply_impact
 from .material_parser import MaterialParseError, context_for_materials, parse_material
+from .repository_service import (
+    RepositoryVerificationError, archive_sha256, download_archive, repository_directory_name,
+    safe_extract_archive, validate_download_gate, verify_repository_candidate,
+)
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
     seeds_for_constraints,
@@ -160,6 +164,35 @@ def uploaded_material_context(session, session_id: UUID | None = None, project_i
         "id": item.id, "name": item.name, "mime_type": item.mime_type,
         "sha256": item.sha256, "metadata": item.metadata_json,
     } for item in records])
+
+
+def repository_token(source_url: str) -> str | None:
+    host = source_url.lower()
+    if "github.com" in host:
+        return os.getenv("GITHUB_TOKEN") or None
+    if "gitlab.com" in host:
+        return os.getenv("GITLAB_TOKEN") or None
+    return None
+
+
+def repository_error(exc: Exception) -> HTTPException:
+    if isinstance(exc, RepositoryVerificationError):
+        return HTTPException(status_code=422, detail=exc.as_dict())
+    if isinstance(exc, httpx.HTTPStatusError):
+        return HTTPException(status_code=502, detail={
+            "code": "repository_provider_request_failed",
+            "message": "代码仓库提供方请求失败，请检查仓库地址、权限和服务状态。",
+            "provider_status": exc.response.status_code,
+        })
+    if isinstance(exc, httpx.HTTPError):
+        return HTTPException(status_code=502, detail={
+            "code": "repository_provider_unreachable",
+            "message": "代码仓库提供方暂时无法访问。",
+        })
+    return HTTPException(status_code=502, detail={
+        "code": "repository_operation_failed",
+        "message": "代码仓库操作失败。",
+    })
 
 
 def trigger_research_workflow(project_id: UUID, task_id: UUID) -> None:
@@ -743,6 +776,183 @@ async def run_search(request: SearchRequest):
         }
 
 
+def _download_verified_repository(session, project: Project, proposal: Proposal) -> dict[str, Any]:
+    payload = proposal.payload or {}
+    repository_id = payload.get("repository_id")
+    repository = session.get(RepositoryRecord, UUID(str(repository_id))) if repository_id else None
+    if not repository or repository.project_id != project.id:
+        raise HTTPException(status_code=409, detail={
+            "code": "repository_record_missing",
+            "message": "批准的代码仓库记录已不存在，不能下载。",
+        })
+    try:
+        commit = validate_download_gate(
+            verified_official=repository.verified_official,
+            license_spdx=repository.license_spdx,
+            commit_or_tag=repository.commit_or_tag,
+            metadata=repository.metadata_json,
+            requested_commit=payload.get("commit"),
+        )
+    except RepositoryVerificationError as exc:
+        raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+    project_root = (PROJECTS_ROOT / project.slug).resolve()
+    repositories_root = (project_root / "code" / "repositories").resolve()
+    if PROJECTS_ROOT not in repositories_root.parents or not project_root.is_dir():
+        raise HTTPException(status_code=409, detail={
+            "code": "project_repository_root_invalid",
+            "message": "项目代码目录不在受控工作区内。",
+        })
+    directory = repository_directory_name(repository.source_url, commit)
+    destination = (repositories_root / directory).resolve()
+    if PROJECTS_ROOT not in destination.parents:
+        raise HTTPException(status_code=409, detail={
+            "code": "repository_destination_invalid",
+            "message": "代码仓库目标目录不在受控工作区内。",
+        })
+    if destination.exists():
+        raise HTTPException(status_code=409, detail={
+            "code": "repository_commit_already_downloaded",
+            "message": "该固定 commit 已经下载到项目工作区。",
+        })
+    try:
+        archive, resolved_url = download_archive(repository.source_url, commit, token=repository_token(repository.source_url))
+        extracted = safe_extract_archive(archive, destination)
+        relative_path = str(destination.relative_to(project_root)).replace("\\", "/")
+        subprocess.run(["git", "-C", str(project_root), "add", "--", relative_path], check=True, timeout=30, capture_output=True)
+        subprocess.run(
+            ["git", "-C", str(project_root), "commit", "-m", f"Import verified repository {repository.source_url}@{commit[:12]}"],
+            check=True, timeout=30, capture_output=True,
+        )
+    except (RepositoryVerificationError, httpx.HTTPError) as exc:
+        if destination.exists():
+            shutil.rmtree(destination, ignore_errors=True)
+        raise repository_error(exc) from exc
+    except (OSError, subprocess.SubprocessError) as exc:
+        if destination.exists():
+            shutil.rmtree(destination, ignore_errors=True)
+        try:
+            subprocess.run(["git", "-C", str(project_root), "reset", "--", relative_path], check=False, timeout=15, capture_output=True)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        raise HTTPException(status_code=500, detail={
+            "code": "repository_archive_commit_failed",
+            "message": "代码仓库已验证，但写入项目 Git 工作区失败；未完成下载。",
+        }) from exc
+    metadata = dict(repository.metadata_json or {})
+    metadata["download"] = {
+        "downloaded_at": datetime.now(timezone.utc).isoformat(),
+        "resolved_archive_url": resolved_url,
+        "archive_sha256": archive_sha256(archive),
+        "archive_size_bytes": len(archive),
+        "relative_path": relative_path,
+        **extracted,
+    }
+    repository.metadata_json = metadata
+    audit(session, "repository.downloaded", project.id, {
+        "repository_id": str(repository.id), "paper_id": str(repository.paper_id) if repository.paper_id else None,
+        "source_url": repository.source_url, "commit": commit, "license_spdx": repository.license_spdx,
+        "relative_path": relative_path, "archive_sha256": metadata["download"]["archive_sha256"],
+    }, "local-user")
+    return {
+        "repository_id": str(repository.id), "source_url": repository.source_url, "commit": commit,
+        "license_spdx": repository.license_spdx, "relative_path": relative_path, **extracted,
+    }
+
+
+@app.post("/api/projects/{project_id}/repositories/{repository_id}/verify")
+def verify_repository(project_id: UUID, repository_id: UUID):
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "repository verification")
+        repository = session.get(RepositoryRecord, repository_id)
+        if not repository or repository.project_id != project_id:
+            raise HTTPException(404, "repository candidate not found")
+        if not repository.paper_id:
+            raise HTTPException(status_code=409, detail={
+                "code": "repository_paper_relation_missing",
+                "message": "代码仓库候选没有关联论文，不能进行官方交叉验证。",
+            })
+        paper = session.get(Paper, repository.paper_id)
+        if not paper:
+            raise HTTPException(status_code=409, detail={
+                "code": "repository_paper_missing",
+                "message": "代码仓库关联的论文记录不存在。",
+            })
+        source_url = repository.source_url
+        paper_title, paper_doi = paper.title, paper.doi
+    try:
+        verification = verify_repository_candidate(
+            source_url, paper_title, paper_doi, token=repository_token(source_url),
+        )
+    except (RepositoryVerificationError, httpx.HTTPError) as exc:
+        raise repository_error(exc) from exc
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "saving repository verification")
+        repository = session.get(RepositoryRecord, repository_id)
+        if not repository or repository.project_id != project_id:
+            raise HTTPException(409, "repository candidate changed during verification")
+        repository.source_url = verification["canonical_url"]
+        repository.license_spdx = verification["license_spdx"]
+        repository.commit_or_tag = verification["commit"]
+        repository.verified_official = bool(verification["official_match"])
+        metadata = dict(repository.metadata_json or {})
+        metadata["verification"] = verification
+        repository.metadata_json = metadata
+        audit(session, "repository.verified", project_id, {
+            "repository_id": str(repository.id), "paper_id": str(repository.paper_id) if repository.paper_id else None,
+            "source_url": repository.source_url, "commit": repository.commit_or_tag,
+            "license_spdx": repository.license_spdx, "license_status": verification["license_status"],
+            "official_match": repository.verified_official, "match_method": verification["match"]["method"],
+        })
+        return {
+            "id": str(repository.id), "source_url": repository.source_url,
+            "paper_id": str(repository.paper_id) if repository.paper_id else None,
+            "license_spdx": repository.license_spdx, "commit_or_tag": repository.commit_or_tag,
+            "verified_official": repository.verified_official, "metadata": repository.metadata_json,
+        }
+
+
+@app.post("/api/projects/{project_id}/repositories/{repository_id}/download")
+def propose_repository_download(project_id: UUID, repository_id: UUID):
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "repository download proposal")
+        repository = session.get(RepositoryRecord, repository_id)
+        if not repository or repository.project_id != project_id:
+            raise HTTPException(404, "repository candidate not found")
+        verification = (repository.metadata_json or {}).get("verification") or {}
+        try:
+            commit = validate_download_gate(
+                verified_official=repository.verified_official,
+                license_spdx=repository.license_spdx,
+                commit_or_tag=repository.commit_or_tag,
+                metadata=repository.metadata_json,
+            )
+        except RepositoryVerificationError as exc:
+            raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+        payload = {
+            "repository_id": str(repository.id), "repository_url": repository.source_url,
+            "paper_id": str(repository.paper_id) if repository.paper_id else None,
+            "commit": commit, "license_spdx": repository.license_spdx,
+            "verification_retrieved_at": verification.get("retrieved_at"),
+        }
+        impact = project_change_impact(session, project, "dependency_install", payload)
+        proposal = Proposal(
+            project_id=project_id, kind="dependency_install",
+            reason="Download a verified, license-reviewed research code repository",
+            summary=f"Download verified repository {repository.source_url}@{commit[:12]}",
+            diff=f"+ repository: {repository.source_url}\n+ commit: {commit}\n+ license: {repository.license_spdx}",
+            impact={**impact, "approval_required": True, "execution": "download_only_then_git_commit"},
+            estimated_cost_usd=0,
+            payload=payload,
+        )
+        session.add(proposal)
+        session.flush()
+        audit(session, "repository.download_proposed", project_id, {
+            "proposal_id": str(proposal.id), "repository_id": str(repository.id), "commit": commit,
+            "license_spdx": repository.license_spdx,
+        }, "local-user")
+        return {"proposal_id": str(proposal.id), "status": proposal.status, "repository": payload, "impact": proposal.impact}
+
+
 @app.post("/api/projects/{project_id}/evidence/ingest")
 async def ingest_fulltext_evidence(project_id: UUID, request: EvidenceIngestRequest):
     with session_scope() as session:
@@ -1046,6 +1256,7 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
         project = session.get(Project, proposal.project_id)
         if not project: raise HTTPException(404, "project not found")
         impact: dict[str, Any] | None = None
+        download_result: dict[str, Any] | None = None
         if request.decision == "approved" and proposal.kind in {"config_change", "idea_revision"}:
             if proposal.kind == "idea_revision":
                 base_version = proposal.payload.get("base_idea_version")
@@ -1063,6 +1274,8 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
             impact = project_change_impact(session, project, proposal.kind, proposal.payload)
             apply_impact(session, impact)
             proposal.impact = {**proposal.impact, **impact}
+        if request.decision == "approved" and proposal.kind == "dependency_install":
+            download_result = _download_verified_repository(session, project, proposal)
         proposal.status = request.decision
         proposal.decided_by = request.actor
         proposal.decision_comment = request.comment
@@ -1096,7 +1309,7 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
             "invalidated_artifact_ids": (impact or {}).get("invalidated_artifact_ids", []),
             "rerun_candidates": (impact or {}).get("rerun_candidates", []),
         }, request.actor)
-        return {"id": str(proposal.id), "status": proposal.status, "impact": proposal.impact}
+        return {"id": str(proposal.id), "status": proposal.status, "impact": proposal.impact, "download": download_result}
 
 
 @app.post("/api/experiments", status_code=202)

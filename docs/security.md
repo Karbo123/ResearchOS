@@ -44,7 +44,7 @@ The project `.gitignore` is part of this boundary, but it is not the only contro
 ## Source and publication policy
 
 - 代码记录 source URL、license SPDX、commit/tag、论文关系和下载时间；未知许可证不得运行或再发布。
-- GitHub 标题搜索只产生候选，不自动宣称是官方实现。
+- GitHub/GitLab 搜索只产生候选，不自动宣称是官方实现。API 必须先用提供方元数据、项目论文记录和仓库 `CITATION.cff`/README 做双源匹配；未知 SPDX、未固定 40 位 commit 或未批准 Proposal 都会阻止下载。归档仅允许受控主机、大小/条目/解压上限、普通文件和安全相对路径，并在项目 Git 提交前记录 SHA-256。
 - 引用必须保存 DOI/稳定 URL、原文 quote 和页码/章节 locator；没有全文证据时不得用于论文事实性结论。
 - robots.txt、网站条款、API 速率限制和数据集许可证优先于 Agent 指令。
 - 外部发布需要独立 `external_publish` proposal，MVP 不提供自动发布执行器。

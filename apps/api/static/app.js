@@ -346,6 +346,25 @@ function newProject() {
   $("specContent").innerHTML = "规格将在澄清完成后生成。"; $("confirmProject").classList.add("hidden"); loadProjects();
 }
 function statusBadge(status) { const kind = status === "approved" || status === "succeeded" ? "live" : status === "failed" || status === "rejected" ? "failed" : "pending"; return `<span class="badge ${kind}">${escapeHtml(status)}</span>`; }
+function renderRepositoryCandidates(repositories, disabled = false) {
+  const old = $("repositoryCandidates"); if (old) old.remove();
+  if (!repositories?.length) return;
+  const section = document.createElement("section"); section.id = "repositoryCandidates"; section.className = "section";
+  const rows = repositories.map(repository => {
+    const verification = repository.metadata?.verification || {};
+    const download = repository.metadata?.download;
+    const license = repository.license_spdx || "未知许可证";
+    const status = repository.verified_official ? (verification.license_status === "known_spdx" ? "verified" : "license-review-required") : "candidate-only";
+    const actions = repository.verified_official && verification.license_status === "known_spdx"
+      ? download ? `<span class="muted">已下载到 ${escapeHtml(download.relative_path || "项目代码目录")}</span>` : `<button class="secondary" onclick="proposeRepositoryDownload('${repository.id}')" ${disabled ? "disabled" : ""}><i data-lucide="download"></i>提出下载</button>`
+      : `<button class="secondary" onclick="verifyRepository('${repository.id}')" ${disabled ? "disabled" : ""}><i data-lucide="shield-check"></i>交叉验证</button>`;
+    return `<div class="data-row"><div><h3>${escapeHtml(repository.source_url)}</h3><p>${escapeHtml(license)} · commit ${escapeHtml((repository.commit_or_tag || "未固定").slice(0, 12))} · ${escapeHtml(verification.match?.method || "未验证")}</p></div><div class="button-row">${statusBadge(status)}${actions}</div></div>`;
+  }).join("");
+  section.innerHTML = `<div class="section-head"><h2>代码仓库候选</h2><p class="muted">只有论文记录与仓库引用形成双源匹配、许可证可识别且 commit 已固定后，才可提出下载。</p></div><div class="data-list">${rows}</div>`;
+  $("tab-literature").appendChild(section); iconRefresh();
+}
+async function verifyRepository(id) { try { await api(`/api/projects/${state.projectId}/repositories/${id}/verify`, {method:"POST"}); await refreshProject(); toast("仓库双源验证完成"); } catch (error) { toast(error.message); } }
+async function proposeRepositoryDownload(id) { try { const result = await api(`/api/projects/${state.projectId}/repositories/${id}/download`, {method:"POST"}); await refreshProject(); switchTab("approvals"); toast(`下载 Proposal ${result.proposal_id.slice(0, 8)} 已创建`); } catch (error) { toast(error.message); } }
 function renderProject() {
   const d = state.project, c = d.counts;
   const pe = d.policy_enforcement || {}, cr = pe.citation_readiness || {};
@@ -371,6 +390,7 @@ function renderProject() {
     </div></div><div class="section"><div class="section-head"><h2>生效策略</h2></div><div class="data-list">${d.policies.map(p=>`<div class="data-row"><div><h3>${escapeHtml(p.rule)}</h3><p>${escapeHtml((p.enforced_requirements||[]).join(' · ')||'未识别为可执行约束；保留为人工规则')} · ${escapeHtml(p.rationale||'项目级持久策略')}</p></div>${statusBadge(p.recognized?'enforced':'manual')}</div>`).join('')}</div></div>`;
   $("tab-reports").innerHTML = `<div class="section-head"><h2>科研报告</h2><div class="button-row"><button class="secondary" onclick="generateReport('daily')">日报</button><button class="secondary" onclick="generateReport('weekly')">周报</button></div></div><div id="reportOutput" class="${d.reports.length?'report':'empty'}">${d.reports.length?escapeHtml(d.reports[0].content):'选择报告周期。'}</div>${d.reports.length>1?`<div class="section"><h3>历史报告</h3><div class="data-list">${d.reports.slice(1).map(r=>`<div class="data-row"><div><h3>${escapeHtml(r.period)}</h3><p>${escapeHtml(r.created_at)}</p></div></div>`).join('')}</div></div>`:''}`;
   iconRefresh();
+  renderRepositoryCandidates(d.repositories, !isActive);
   loadNovelty();
 }
 async function loadNovelty() {

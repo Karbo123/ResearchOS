@@ -64,6 +64,10 @@ The Runner is a non-root, read-only container on the internal `runner-internal` 
 
 API 提交和 Runner 执行各自校验：项目 commit、tag 指向、快照 manifest、全部文件哈希、固定项目根和 Runner 镜像身份必须一致。项目 Git 只保留源码、配置、BibTeX/LaTeX、证据 JSON、manifest 和哈希；PDF、PLY/PCD、图片、数据集、模型权重、数据库备份、日志归档、源码 bundle 与缓存通过项目 `.gitignore` 和快照门禁排除。`RUNNER_IMAGE_DIGEST=unavailable` 只适用于本地开发，不能作为发布级身份。
 
+## Repository verification and controlled import
+
+Repository search results are stored as unverified `RepositoryRecord` candidates. The verification endpoint reads GitHub/GitLab metadata, the project paper record, and `CITATION.cff` or README content; a DOI or exact paper-title match is required before `verified_official` can be set. A known SPDX identifier and a full 40-character commit are also required. Only an approved `dependency_install` Proposal may download a bounded archive, reject traversal/symlink/special-file entries, record its SHA-256, and commit it under `code/repositories/`.
+
 ## PostgreSQL entities
 
 ## Uploaded material boundary

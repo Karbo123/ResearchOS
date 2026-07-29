@@ -83,13 +83,13 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | --- | --- | --- |
 | Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema 和结构化模型错误。模型调用失败不会切换提供方，也不会生成规则回复。 |
 | 项目初始化 | **已实现** | UUID、Git 工作区、目录、Idea v1、PostgreSQL 状态、检查点和 n8n 触发。 |
-| 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub 仅为候选来源。 |
+| 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub/GitLab 先作为候选，经过论文记录、仓库引用、许可证和固定 commit 交叉核验后才能申请下载。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
 | Idea 专属实验规划 | **已实现（需审批）** | API 使用当前 ProjectSpec、页码级全文证据和生效策略快照，生成包含数据源、基线、指标、消融、统计检验、种子、预算、风险和成功标准的严格主题专属计划 Proposal。 |
 | 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
 | 实验执行 | **已实现（有限范围）** | 三个 Runner 白名单任务，非 root、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
-| 通用科研自治 | **部分实现/路线图** | 官方仓库核验、通用 Python/C++/Conda/GPU、语义失效传播、外部通知、证据驱动 Related Work 与完整论文仍待实现。 |
+| 通用科研自治 | **部分实现/路线图** | 通用 Python/C++/Conda/GPU、语义失效传播、外部通知、证据驱动 Related Work 与完整论文仍待实现；官方 GitHub/GitLab 仓库核验和审批后固定 commit 导入已实现。 |
 
 ## 前置条件
 
@@ -229,7 +229,7 @@ python scripts/acceptance_test.py
 | `RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX` | 是 | 独立的 Sol 复杂层，默认 `gpt-5.6-sol`/`high`。 |
 | `MODEL_SETTINGS_PATH` | Compose 内部 | 可写的 `runtime/model-settings.json` 挂载路径；网页保存 key，读取接口只返回 `key_configured`。 |
 | `RESEARCH_ROUTER_SIMPLE_MAX`、`RESEARCH_ROUTER_MEDIUM_MAX` | 是 | 确定性复杂度分数边界，默认 `2` 与 `7`。 |
-| `GITHUB_TOKEN` | 可选 | 提高 GitHub API 配额；仓库结果在交叉验证前仍只是候选。 |
+| `GITHUB_TOKEN`、`GITLAB_TOKEN` | 可选 | 提高提供方 API 配额；仓库结果在交叉验证前仍只是候选。凭据只由 API 容器读取，不挂载给 n8n 或 Runner。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |
 | `RUNNER_SHARED_SECRET`、`RUNNER_MAX_SECONDS` | 是 | API 到 Runner 的凭据和受限任务最大执行时间。 |
 | `RUNNER_IMAGE_DIGEST` | 发布必需；本地可用占位值 | 期望的不可变 Runner 镜像 digest，例如 `sha256:<64 位十六进制字符>`。本地开发的 `unavailable` 会被记录为未核验，不能作为发布身份。 |
@@ -347,7 +347,7 @@ python scripts/acceptance_test.py
 
 主题专属实验规划已经实现为证据绑定、策略校验和审批门控的 Proposal；尚未实现的是批准计划对应的主题 Runner 执行模板。系统不会回退到无关的分类或点云 demo。
 
-最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、官方仓库和许可证验证及受控下载、Idea 专属实验规划、通用 Python/C++/Conda/GPU、自动检查点重跑、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。已批准变更的实体级依赖失效和局部重跑建议已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
+最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、Idea 专属实验规划、通用 Python/C++/Conda/GPU、自动检查点重跑、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 
 不要把当前合成分类/点云任务当作科学结果，不要把 `metadata-only` 当作页码已核验引用，也不要把本地自动登录入口暴露到个人电脑之外。
 

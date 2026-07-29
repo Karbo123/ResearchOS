@@ -2,7 +2,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，进行 P1-UPLOAD-009）
+最后更新：2026-07-30（Asia/Shanghai，进行 P0-RUNNER-007、P0-IMPACT-008）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
@@ -68,8 +68,9 @@
   - 依赖：`P0-EVIDENCE-001`。
   - 完成标准：每个事实性句子可追踪到 evidence ID；不得仅凭标题、摘要或 DOI 标记为“已证实创新”。
   - 验证结果：新增确定性 Related Work 单元测试，覆盖 metadata-only 不进入事实证据、page-level evidence 链接、覆盖候选和人工复核标记；API 容器 `pytest -q`（29 passed），文档同步、Compose、JSON、AST 和 `git diff --check` 通过。系统仍明确将研究空白/重复研究标为候选，不宣称科学结论。
-- [ ] `P0-CODE-003` 实现官方代码仓库交叉验证、许可证审查、commit/tag 固定和审批后受控下载。
+- [x] `P0-CODE-003` 实现官方代码仓库交叉验证、许可证审查、commit/tag 固定和审批后受控下载。
   - 完成标准：作者/论文主页/仓库至少双源匹配；保存 URL、SPDX、commit、论文关系、下载时间和审计事件；未知许可证不得执行。
+  - 验证结果：GitHub/GitLab HTTPS 提供方元数据、项目论文 DOI/完整标题与 `CITATION.cff`/README 形成显式匹配；已知 SPDX 和 40 位 commit 才能创建 `dependency_install` Proposal。批准后才下载受大小、条目、解压、路径和文件类型限制的归档，记录 URL、许可证、commit、论文关系、下载时间、归档 SHA-256、相对路径和审计事件，并提交项目 Git。API 容器 `47 passed`；仓库服务覆盖 URL allowlist、引用匹配、完整 commit、未知 SPDX、未验证候选、Proposal commit 不一致、路径穿越和符号链接；Compose、无落盘 Python 语法、JSON、文档同步、Idea case、前端 UX 和 `git diff --check` 通过。未调用真实模型、外部学术 API 或无关实验。
 - [x] `P0-POLICY-004` 实现项目策略执行引擎，并在计划生成和 Runner 提交时二次强制校验。
   - 完成标准：策略违反请求返回结构化错误；验收覆盖种子数、引用证据和高成本审批规则。
   - 验证：`acceptance-20260729-005847.json` 覆盖中英文策略解析、5 种子计划、3 种子结构化拒绝、Runner 二次校验、引用证据就绪度和审批约束；浏览器验证策略页且无控制台错误。

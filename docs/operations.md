@@ -22,6 +22,10 @@ API 应返回 `status=ok`，n8n 和 MLflow 应返回 HTTP 200。Runner 不发布
 
 `.env` 中的 PostgreSQL、MinIO、n8n 加密密钥和 Owner 凭据与现有 Docker volume 绑定。初始化 volume 后直接修改这些值通常不会自动迁移已有数据；应先备份并执行恢复/轮换方案。
 
+## 代码仓库核验与下载
+
+文献检索写入的仓库只是候选。文献页的交叉验证动作调用 `POST /api/projects/{project_id}/repositories/{repository_id}/verify`，核对 GitHub/GitLab 元数据、论文 DOI/完整标题、仓库引用文件、许可证和默认分支 commit。只有已知 SPDX 和完整 40 位 commit 的成功核验结果才能创建下载 Proposal；必须通过正常 Proposal 审批端点才会下载受大小、条目、解压大小、路径和文件类型限制的归档，并提交到项目 Git。失败、过期或未知许可证直接返回结构化错误，不会触发归档请求。
+
 ## 自适应模型路由
 
 默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。每档分别通过 `RESEARCH_MODEL_*`、`RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 和 `RESEARCH_REASONING_*` 配置；网页左下角的模型设置也会写入挂载的 `runtime/model-settings.json`。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界。
