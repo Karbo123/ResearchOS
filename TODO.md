@@ -199,3 +199,4 @@
 - 2026-07-29：完成 `DOCS-035` 与 `P1-CHAT-UX-028`；删除 `AGENTS.md` 原第 89 行的完整验收等待门槛，保留高成本实验审批；以宿主权限启动 Codex Bridge，`mnist-cnn` 浏览器真实调用成功（`gpt-5.6-terra`/medium），等待/恢复、无溢出和脱敏验证记录通过；未调用其他 Idea 或外部学术 API。
 - 2026-07-29：完成 `P0-LLM-036`；模型调用失败现在返回结构化 API 错误，禁止自动切换 provider、规则/关键词回复和伪造助手消息；Bridge 改为只使用项目 `.env` 的非敏感配置，健康端点不再返回宿主 Codex 路径；同步 API/Bridge、Schema、测试、双语 README、运维/安全、需求审计和 `AGENTS.md`，未运行真实模型或外部学术 API。提交：`ab21258`；验证：API `23 passed`、Compose/文档/Idea case/JSON/Python/Node 检查通过。
 - 2026-07-29：完成 `P0-LLM-037`；按用户要求仅将本机 `auth.json` 的 `OPENAI_API_KEY` 值迁移到未跟踪 `.env`，Bridge 运行时不读取 `.codex`，只通过子进程环境传递该 key；同步 `.env.example`、`AGENTS.md`、双语 README、运维/安全和需求审计。健康端点、离线 Bridge 环境测试、API `23 passed`、Compose、文档同步和服务检查通过；未调用真实模型或外部学术 API。提交：`9404bb1`。
+- 2026-07-29：复核 `P0-LLM-037` 文档一致性；补充双语 README 的 Bridge 故障排查，明确检查 `.env` 中的 `OPENAI_API_KEY`；`check_docs_sync.py` 通过，任务继续保持 `[x]`。

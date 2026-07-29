@@ -339,7 +339,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 | Symptom | Check |
 | --- | --- |
 | Docker says the Linux engine is unavailable | Docker Desktop → Settings/General → enable the WSL2 backend, switch to Linux containers, then retry `docker info`. |
-| API is up but idea clarification fails | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, `RESEARCH_LLM_PROVIDER`, the Bridge secret/model allowlist, `.env` `CODEX_MODEL_*`/`CODEX_CUSTOM_*` values, Codex CLI access, and `docker compose logs api`. The API returns a structured model error and does not generate a fallback reply. |
+| API is up but idea clarification fails | Check `Invoke-RestMethod http://127.0.0.1:8092/health`, `RESEARCH_LLM_PROVIDER`, the Bridge secret/model allowlist, `.env` `OPENAI_API_KEY`, `CODEX_MODEL_*`/`CODEX_CUSTOM_*` values, Codex CLI access, and `docker compose logs api`. The API returns a structured model error and does not generate a fallback reply. |
 | n8n asks for a password | Open the Research OS sidebar link or `/api/n8n/open`; verify Owner values in `.env` match the n8n database. Do not disable user management. |
 | n8n auto-login returns 503/401 | Check n8n is running, Owner password length is at least 12, `N8N_INTERNAL_URL` resolves to `http://n8n:5678`, and restart `api n8n`. |
 | Webhook 404 | Confirm the three built-in workflows are Active and n8n was recreated after workflow JSON changes. |

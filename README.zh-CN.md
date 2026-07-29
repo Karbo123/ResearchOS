@@ -336,7 +336,7 @@ python scripts/acceptance_test.py
 | 现象 | 检查项 |
 | --- | --- |
 | Docker 提示 Linux engine 不可用 | Docker Desktop → Settings/General → 启用 WSL2 backend，切换到 Linux containers，然后运行 `docker info`。 |
-| API 已启动，但 Idea 澄清失败 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、`RESEARCH_LLM_PROVIDER`、Bridge Secret/模型白名单、`.env` 中的 `CODEX_MODEL_*`/`CODEX_CUSTOM_*`、Codex CLI 以及 `docker compose logs api`。API 会返回结构化模型错误，不生成降级回复。 |
+| API 已启动，但 Idea 澄清失败 | 检查 `Invoke-RestMethod http://127.0.0.1:8092/health`、`RESEARCH_LLM_PROVIDER`、Bridge Secret/模型白名单、`.env` 中的 `OPENAI_API_KEY`、`CODEX_MODEL_*`/`CODEX_CUSTOM_*`、Codex CLI 以及 `docker compose logs api`。API 会返回结构化模型错误，不生成降级回复。 |
 | n8n 要求输入密码 | 从 Research OS 侧边栏或 `/api/n8n/open` 打开；确认 `.env` Owner 与 n8n 数据库一致。不要关闭用户管理。 |
 | n8n 自动登录返回 503/401 | 确认 n8n 正常、Owner 密码至少 12 位、`N8N_INTERNAL_URL` 为 `http://n8n:5678`，然后重启 `api n8n`。 |
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |
