@@ -1314,8 +1314,47 @@ def propose_checkpoint_rerun(project_id: UUID, checkpoint_id: UUID, request: Che
         return {"proposal_id": str(proposal.id), "status": proposal.status, "payload": payload, "impact": impact}
 
 
+async def _auto_submit_checkpoint_rerun(proposal_id: UUID) -> dict[str, Any]:
+    """Submit an approved checkpoint rerun through the normal guarded path."""
+    with session_scope() as session:
+        proposal = session.get(Proposal, proposal_id)
+        if not proposal or proposal.kind != "experiment_rerun" or proposal.status != "approved":
+            raise HTTPException(status_code=409, detail={
+                "code": "checkpoint_rerun_not_approved",
+                "message": "已批准的检查点重跑提案不存在或状态不允许自动执行。",
+            })
+        payload = proposal.payload or {}
+        try:
+            rerun_request = ExperimentRequest(
+                project_id=proposal.project_id,
+                proposal_id=proposal.id,
+                experiment_type=payload["experiment_type"],
+                config=payload.get("config", {}),
+                random_seeds=payload["random_seeds"],
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail={
+                "code": "checkpoint_rerun_payload_invalid",
+                "message": "已批准的检查点重跑 payload 无法转换为受控执行请求。",
+            }) from exc
+    result = await submit_experiment(rerun_request)
+    execution = {
+        "status": result.get("status", "queued"),
+        "run_id": result.get("run_id"),
+        "mode": "automatic_checkpoint_rerun",
+    }
+    with session_scope() as session:
+        proposal = session.get(Proposal, proposal_id)
+        if proposal:
+            proposal.impact = {**(proposal.impact or {}), "automatic_execution": execution}
+            audit(session, "experiment_rerun.auto_submitted", proposal.project_id, {
+                "proposal_id": str(proposal.id), **execution,
+            }, "system")
+    return execution
+
+
 @app.post("/api/proposals/{proposal_id}/decision")
-def decide(proposal_id: UUID, request: ApprovalDecision):
+async def decide(proposal_id: UUID, request: ApprovalDecision):
     with session_scope() as session:
         proposal = session.get(Proposal, proposal_id)
         if not proposal: raise HTTPException(404, "proposal not found")
@@ -1400,6 +1439,8 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
                 subprocess.run(["git", "-C", str(root), "commit", "-m", f"Revise research idea to v{next_version}"], check=True, timeout=20)
             except (subprocess.SubprocessError, FileNotFoundError):
                 pass
+        auto_rerun = request.decision == "approved" and proposal.kind == "experiment_rerun"
+        project_id = proposal.project_id
         audit(session, f"proposal.{request.decision}", proposal.project_id, {
             "proposal_id": str(proposal.id),
             "comment": request.comment,
@@ -1407,7 +1448,23 @@ def decide(proposal_id: UUID, request: ApprovalDecision):
             "invalidated_artifact_ids": (impact or {}).get("invalidated_artifact_ids", []),
             "rerun_candidates": (impact or {}).get("rerun_candidates", []),
         }, request.actor)
-        return {"id": str(proposal.id), "status": proposal.status, "impact": proposal.impact, "download": download_result}
+        result = {"id": str(proposal.id), "status": proposal.status, "impact": proposal.impact, "download": download_result}
+    if not auto_rerun:
+        return result
+    try:
+        execution = await _auto_submit_checkpoint_rerun(proposal_id)
+    except HTTPException as exc:
+        execution = {"status": "failed", "mode": "automatic_checkpoint_rerun", "error": exc.detail}
+        with session_scope() as session:
+            proposal = session.get(Proposal, proposal_id)
+            if proposal:
+                proposal.impact = {**(proposal.impact or {}), "automatic_execution": execution}
+                audit(session, "experiment_rerun.auto_submission_failed", project_id, {
+                    "proposal_id": str(proposal_id), **execution,
+                }, "system")
+    result["execution"] = execution
+    result["impact"] = {**(result.get("impact") or {}), "automatic_execution": execution}
+    return result
 
 
 @app.post("/api/experiments", status_code=202)

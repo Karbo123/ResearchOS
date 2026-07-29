@@ -15,7 +15,7 @@ The experiment-plan endpoint accepts only the current ProjectSpec, stored page-l
 
 ## Checkpoint rerun boundary
 
-Checkpoint reruns are proposal-only recovery actions. The dedicated endpoint accepts only terminal success/failure checkpoints, resolves the source experiment inside the same project, and reconstructs an allowlisted payload from persisted configuration and seeds. The generic Proposal endpoint cannot mint rerun proposals; approval and execution repeat the source and payload checks. A failed request is returned as a structured error, with no automatic rerun, provider fallback, or unrelated experiment substitution.
+Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint accepts only terminal success/failure checkpoints, resolves the source experiment inside the same project, and reconstructs an allowlisted payload from persisted configuration and seeds. The generic Proposal endpoint cannot mint rerun proposals; approval and the automatic submission repeat the source and payload checks through the normal guarded experiment endpoint. Submission failure is recorded as a structured error, with no provider fallback or unrelated experiment substitution.
 
 ## Adaptive clarification agent
 

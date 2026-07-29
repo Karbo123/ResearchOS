@@ -374,14 +374,16 @@ function renderRerunProposalActions(projectData, executionDisabled) {
     if (proposal.kind !== "experiment_rerun" || proposal.status !== "approved") return;
     const actions = rows[index]?.querySelector(".button-row");
     if (!actions || actions.querySelector(`[data-rerun-proposal="${proposal.id}"]`)) return;
-    const button = document.createElement("button");
-    button.className = "secondary";
-    button.dataset.rerunProposal = proposal.id;
-    button.disabled = Boolean(executionDisabled);
-    button.title = "执行已批准的检查点局部重跑";
-    button.innerHTML = '<i data-lucide="play"></i>执行';
-    button.addEventListener("click", () => launch(JSON.stringify(proposal)));
-    actions.appendChild(button);
+    const execution = proposal.impact?.automatic_execution || {};
+    const label = document.createElement("span");
+    label.className = "muted";
+    label.dataset.rerunProposal = proposal.id;
+    label.textContent = execution.status === "failed"
+      ? "自动局部重跑失败，请查看审计记录"
+      : execution.run_id
+        ? `已自动提交局部重跑 ${execution.run_id.slice(0, 8)}`
+        : "已批准，正在自动提交局部重跑";
+    actions.appendChild(label);
   });
 }
 function renderRepositoryCandidates(repositories, disabled = false) {
