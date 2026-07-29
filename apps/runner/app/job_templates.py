@@ -16,6 +16,7 @@ class JobTemplate:
     max_runtime_seconds: int
     memory_mb: int
     pid_limit: int
+    disk_mb: int
     network_policy: str
 
 
@@ -26,6 +27,7 @@ TASK_TEMPLATES = {
         max_runtime_seconds=600,
         memory_mb=768,
         pid_limit=64,
+        disk_mb=512,
         network_policy="internal-mlflow-only",
     ),
     "point_cloud_demo": JobTemplate(
@@ -34,6 +36,7 @@ TASK_TEMPLATES = {
         max_runtime_seconds=600,
         memory_mb=768,
         pid_limit=64,
+        disk_mb=512,
         network_policy="internal-mlflow-only",
     ),
     "compile_latex": JobTemplate(
@@ -42,6 +45,7 @@ TASK_TEMPLATES = {
         max_runtime_seconds=600,
         memory_mb=1024,
         pid_limit=96,
+        disk_mb=1024,
         network_policy="internal-mlflow-only",
     ),
 }

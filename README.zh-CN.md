@@ -89,7 +89,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
 | 实验执行 | **已实现（有限范围）** | 三个 Runner 白名单任务，非 root、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
-| 通用科研自治 | **部分实现/路线图** | 通用 Python/C++/Conda/GPU、语义失效传播、外部通知、证据驱动 Related Work 与完整论文仍待实现；官方 GitHub/GitLab 仓库核验和审批后固定 commit 导入已实现。 |
+| 通用科研自治 | **部分实现/路线图** | 通用 Python/C++/Conda/GPU、每 Run 独立容器、语义失效传播、外部通知、证据驱动 Related Work 与完整论文仍待实现。当前 Runner 已有白名单非 root 子进程隔离、CPU/内存/PID/超时和每 Run 磁盘配额；官方 GitHub/GitLab 仓库核验和审批后固定 commit 导入已实现。 |
 
 ## 前置条件
 

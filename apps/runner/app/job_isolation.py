@@ -21,6 +21,7 @@ def apply_job_limits(template: JobTemplate, global_max_seconds: int) -> dict[str
         "cpu_seconds": cpu_seconds,
         "memory_bytes": template.memory_mb * 1024 * 1024,
         "pid_limit": template.pid_limit,
+        "disk_bytes": template.disk_mb * 1024 * 1024,
         "platform": platform.system().lower(),
         "network_policy": template.network_policy,
     }
@@ -29,6 +30,8 @@ def apply_job_limits(template: JobTemplate, global_max_seconds: int) -> dict[str
         resource.setrlimit(resource.RLIMIT_AS, (limits["memory_bytes"], limits["memory_bytes"]))
         if hasattr(resource, "RLIMIT_NPROC"):
             resource.setrlimit(resource.RLIMIT_NPROC, (template.pid_limit, template.pid_limit))
+        if hasattr(resource, "RLIMIT_FSIZE"):
+            resource.setrlimit(resource.RLIMIT_FSIZE, (limits["disk_bytes"], limits["disk_bytes"]))
     return limits
 
 

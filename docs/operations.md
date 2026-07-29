@@ -86,7 +86,7 @@ Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
 
 ## Runner 作业隔离
 
-当前每个 Run 在 Runner 容器内启动一个新的 `spawn` 子进程。任务模板固定 task ID、配置字段、CPU/内存/PID 配额和 `internal-mlflow-only` 网络策略标签；取消会终止该进程组，超出模板或全局运行时限会返回结构化 `job_timeout` 错误。Runner 不挂载 Docker socket，也不接收命令、路径、URL、网络或镜像字段。Runner 只连接无外部出口的 Compose 内部 `runner-internal` 网络，该网络同时承载 API 控制请求和 MLflow；Windows 不需要启动任何 API、Runner 或模型服务。
+当前每个 Run 在 Runner 容器内启动一个新的 `spawn` 子进程。任务模板固定 task ID、配置字段、CPU/内存/PID/每 Run 磁盘配额和 `internal-mlflow-only` 网络策略标签；取消会终止该进程组，超出模板或全局运行时限会返回结构化 `job_timeout` 错误，超出累计或单文件磁盘限制会返回结构化配额错误。Runner 不挂载 Docker socket，也不接收命令、路径、URL、网络或镜像字段。Runner 只连接无外部出口的 Compose 内部 `runner-internal` 网络，该网络同时承载 API 控制请求和 MLflow；Windows 不需要启动任何 API、Runner 或模型服务。
 
 这是隔离基础设施的部分实现，不是每 Run 独立容器。主题专属 Runner 模板、独立容器/GPU 调度、通用 Python/C++/Conda 环境和磁盘配额仍由 `P0-RUNNER-007` 跟踪。当前用户主题没有匹配模板时，API 返回 `topic_specific_runner_not_implemented`，不会运行无关的分类或点云实验。
 

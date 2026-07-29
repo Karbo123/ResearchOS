@@ -23,7 +23,7 @@ The experiment-plan endpoint accepts only the current ProjectSpec, stored page-l
 
 ## Container policy
 
-- Runner 使用非 root UID、`no-new-privileges`、drop all capabilities、只读 root filesystem、PID/CPU/内存限制和临时目录配额。
+- Runner 使用非 root UID、`no-new-privileges`、drop all capabilities、只读 root filesystem、PID/CPU/内存限制、每 Run 文件大小/累计磁盘配额和临时目录配额。超限返回结构化错误，不继续写入或提交产物。
 - 每个 Run 当前在 Runner 容器内使用一个新建的 `spawn` 子进程；监控器保护取消/失败终态，超时或取消会终止该 Run 的进程组。Runner 不挂载 Docker socket，不接受任意命令、路径、URL、网络或镜像字段。
 - Runner 只加入 Compose 的 `internal` `runner-internal` 网络；它不能通过默认网络访问其他服务，也没有外部网络出口。`internal-mlflow-only` 是当前任务模板的受限策略标签，API/MLflow 仍共享该内部控制网络；独立 per-run 容器、GPU 运行时、通用 Python/C++/Conda 环境和更细的磁盘配额仍是未完成能力。
 - API/Runner 的仓库根目录构建上下文由 `.dockerignore` 限制；`.env`、Git 元数据、`projects/`、`artifacts/`、n8n 数据和文档不会进入镜像构建上下文。运行时绑定目录不是镜像内容，不能用构建代替挂载。

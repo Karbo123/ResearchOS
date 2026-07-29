@@ -11,7 +11,7 @@ class JobTemplateTests(unittest.TestCase):
     def test_all_templates_have_bounded_task_metadata(self):
         self.assertEqual(set(TASK_TEMPLATES), {"demo_classification", "point_cloud_demo", "compile_latex"})
         self.assertTrue(all(template.task_id.endswith(".v1") for template in TASK_TEMPLATES.values()))
-        self.assertTrue(all(template.memory_mb > 0 and template.pid_limit > 0 for template in TASK_TEMPLATES.values()))
+        self.assertTrue(all(template.memory_mb > 0 and template.pid_limit > 0 and template.disk_mb > 0 for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.network_policy == "internal-mlflow-only" for template in TASK_TEMPLATES.values()))
 
     def test_template_validation_rejects_commands_paths_network_and_unknown_fields(self):
@@ -35,3 +35,15 @@ class JobTemplateTests(unittest.TestCase):
         environment = job_environment(TASK_TEMPLATES["compile_latex"])
         self.assertEqual(environment["RESEARCH_OS_NETWORK_POLICY"], "internal-mlflow-only")
         self.assertEqual(environment["RESEARCH_OS_NO_ARBITRARY_COMMANDS"], "true")
+
+    def test_run_disk_quota_is_enforced_as_an_aggregate_limit(self):
+        from app.main import DiskQuotaExceeded, enforce_disk_quota
+
+        with TemporaryDirectory() as directory:
+            run_dir = Path(directory)
+            (run_dir / "output.bin").write_bytes(b"x" * 32)
+            template = TASK_TEMPLATES["demo_classification"]
+            self.assertEqual(enforce_disk_quota(run_dir, template), 32)
+            small = template.__class__(**{**template.__dict__, "disk_mb": 0})
+            with self.assertRaises(DiskQuotaExceeded):
+                enforce_disk_quota(run_dir, small)

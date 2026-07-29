@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import errno
 import json
 import multiprocessing as mp
 import os
@@ -92,6 +93,21 @@ class RunCancelled(Exception):
     pass
 
 
+class DiskQuotaExceeded(Exception):
+    def __init__(self, limit_bytes: int, actual_bytes: int):
+        self.limit_bytes = limit_bytes
+        self.actual_bytes = actual_bytes
+        super().__init__(f"run disk quota exceeded: {actual_bytes} > {limit_bytes} bytes")
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "code": "run_disk_quota_exceeded",
+            "message": "The isolated Runner job exceeded its per-run disk quota.",
+            "limit_bytes": self.limit_bytes,
+            "actual_bytes": self.actual_bytes,
+        }
+
+
 def utcnow():
     return datetime.now(timezone.utc).isoformat()
 
@@ -161,6 +177,14 @@ def read_git_commit(project_root: Path | None) -> str:
 def artifact(path: Path, kind: str, run_dir: Path, metadata: dict | None = None) -> dict:
     mime = {".png": "image/png", ".json": "application/json", ".ply": "application/octet-stream"}.get(path.suffix, "application/octet-stream")
     return {"name": path.name, "kind": kind, "relative_path": str(path.relative_to(ARTIFACTS_ROOT)).replace("\\", "/"), "mime_type": mime, "sha256": sha256(path), "metadata": metadata or {}}
+
+
+def enforce_disk_quota(run_dir: Path, template) -> int:
+    actual_bytes = sum(path.stat().st_size for path in run_dir.rglob("*") if path.is_file())
+    limit_bytes = template.disk_mb * 1024 * 1024
+    if actual_bytes > limit_bytes:
+        raise DiskQuotaExceeded(limit_bytes, actual_bytes)
+    return actual_bytes
 
 
 def _child_entry(request: SubmitRequest, state_queue, cancel_event) -> None:
@@ -311,6 +335,7 @@ def execute(request: SubmitRequest):
     if ARTIFACTS_ROOT not in run_dir.parents:
         return
     try:
+        template = validate_template_config(request.experiment_type, request.config)
         run_dir.mkdir(parents=True, exist_ok=False)
         update_state(key, status="running", started_at=utcnow())
         execution_log = run_dir / "execution.log"
@@ -427,12 +452,23 @@ def execute(request: SubmitRequest):
                     "source_snapshot_sha256": request.reproducibility.source_snapshot_sha256,
                     "reproducibility": request.reproducibility.model_dump(mode="json"),
                 })
+            enforce_disk_quota(run_dir, template)
         with LOCK:
             cancelled = RUNS[key]["status"] == "cancelled"
         if not cancelled:
             update_state(key, status="succeeded", finished_at=utcnow(), metrics=metrics, artifacts=produced, mlflow_run_id=mlflow_id)
     except RunCancelled:
         update_state(key, status="cancelled", finished_at=utcnow(), error=None)
+    except DiskQuotaExceeded as exc:
+        update_state(key, status="failed", finished_at=utcnow(), error=json.dumps(exc.as_dict(), ensure_ascii=False))
+    except OSError as exc:
+        if exc.errno == errno.EFBIG:
+            update_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
+                "code": "run_file_size_limit_exceeded",
+                "message": "The isolated Runner job exceeded its per-file size limit.",
+            }, ensure_ascii=False))
+        else:
+            update_state(key, status="failed", finished_at=utcnow(), error=f"{exc}\n{traceback.format_exc(limit=3)}")
     except Exception as exc:
         update_state(key, status="failed", finished_at=utcnow(), error=f"{exc}\n{traceback.format_exc(limit=3)}")
 
@@ -449,6 +485,7 @@ def health():
                 "max_runtime_seconds": template.max_runtime_seconds,
                 "memory_mb": template.memory_mb,
                 "pid_limit": template.pid_limit,
+                "disk_mb": template.disk_mb,
                 "network_policy": template.network_policy,
             }
             for name, template in TASK_TEMPLATES.items()
