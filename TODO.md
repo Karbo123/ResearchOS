@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，进行 P0-IMPACT-008）
+最后更新：2026-07-30（Asia/Shanghai，进行 P1-UPLOAD-009）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`；分别推进每任务隔离和实体级影响传播。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；分别推进每任务隔离、实体级影响传播和材料解析。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -114,8 +114,10 @@
   - 验证：SSE 路由/进度/错误/结果、项目创建闸门和同步端点均有自动化测试；浏览器检查流式状态和控制台无错误；不为本项调用真实模型或外部学术 API。
   - 验证结果：`docker compose exec -T api pytest -q`（25 passed）、`node --test scripts/test_chat_ux.mjs`（5 passed）、`python scripts/check_idea_case_sources.py`（`IDEA_CASES_OK=4`）、`docker compose config --quiet`、`python scripts/check_docs_sync.py` 和 `git diff --check` 通过。浏览器桌面与窄屏检查无元素越界、无“思维”字样且控制台 error 为 0；未提交 Idea，未调用真实模型或外部学术 API。
 
-- [ ] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将提取结果纳入澄清与规划。
-  - 完成标准：保留原文件、MIME、SHA-256、解析器版本和派生文本；恶意文件扫描、压缩炸弹和大小限制有测试。
+- [~] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将受限摘要纳入澄清与规划。
+  - 已完成部分：API 在模型请求前上传并解析材料；保留原文件、MIME、SHA-256、解析器版本和派生元数据/文本；PDF 页码文本、JSON/CSV 预览、UTF-8 文本/代码、图片格式尺寸和 ZIP 安全清单均有边界；路径穿越、二进制文本、压缩比、解压大小、条目数和 50 MB 限制会直接返回结构化错误。
+  - 完成标准：上传或解析失败必须阻止本轮模型调用；摘要只作为不可信上下文，不得执行附件命令或把图片/元数据表述为全文证据；测试覆盖格式、边界、上下文截断和前端上传顺序。
+  - 剩余范围：图片 OCR/视觉理解、独立恶意样本扫描、持久化配额和大规模材料库尚未实现，不得标记为完整多模态材料能力。
 - [ ] `P1-DIAG-010` 实现通用数值分析、失败诊断和后续实验建议闭环。
   - 完成标准：统计由 Python 计算；LLM 只解释和质疑；错误日志、异常指标和缺失数据会形成待审批建议。
 - [ ] `P1-VIEWER-011` 增加 PLY/PCD/网格交互式 3D 查看器及 HTML/PDF/表格预览。
@@ -241,3 +243,4 @@
 - P0-RUNNER-007 验证：Runner 标准库测试 4 passed，API 容器 32 passed，内部健康端点确认 one-spawned-process-per-run、docker_socket_mounted=false、arbitrary_commands=false。
 - P0-RUNNER-007 提交：`92fe1ef` 已推送到 `origin/main`；TODO 记录随合并提交更新。
 - 2026-07-30：完成本轮 `P0-IMPACT-008` 实体级影响分析部分；发现 Idea 审批仍会使项目全部有效 Artifact 失效，新增只读依赖图分析、审批时重新计算、局部 Artifact 失效和审计记录；补齐数据/代码根与检查点建议。验证通过：API `38 passed`、Compose/JSON/Idea case/文档同步/`git diff --check`；提交 `c559704` 已创建，P0-IMPACT-008 继续保持 `[~]`，因为自动主题重跑和 Runner 检查点恢复尚未实现。
+- 2026-07-30：开始 `P1-UPLOAD-009`；新增受限材料解析和摘要上下文，前端改为先上传/解析再请求模型，失败直接阻止本轮调用；图片保持 metadata-only，ZIP 只读清单，不解压或执行。同步双语 README、架构、运维、安全和需求审计。验证：API 容器 `42 passed`、`py_compile`、Compose、文档同步、Idea case、前端 UX `5 passed`、`git diff --check` 和浏览器设置面板桌面/窄屏检查通过；图片 OCR、独立恶意样本扫描和大规模材料库仍未实现，任务保持 `[~]`。

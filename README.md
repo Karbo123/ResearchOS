@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-10 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-11 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -33,6 +33,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 - Run a small allowlisted experiment set as a non-root, resource-limited Runner and record metrics in self-hosted MLflow with MinIO artifacts.
 - Before an approved run enters the Runner, require a clean project worktree, create an immutable `run/<run_id>` tag, and retain a hashed source/environment/data/model/config snapshot under controlled artifacts.
 - Produce inspectable PNG/PDF/JSON/PLY outputs with download links and project lineage instead of returning only an LLM paragraph.
+- Accept bounded PDF, JSON, CSV/TSV, text, code, image metadata, and ZIP-manifest uploads. Parsed summaries can inform clarification and planning, but attachments remain untrusted context; images are metadata-only and ZIP contents are never extracted or executed.
 - Pause, resume from a checkpoint, cancel, revise an Idea, and generate daily/weekly reports from the same project conversation.
 
 ## Screenshots

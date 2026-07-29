@@ -66,6 +66,10 @@ API 提交和 Runner 执行各自校验：项目 commit、tag 指向、快照 ma
 
 ## PostgreSQL entities
 
+## Uploaded material boundary
+
+`POST /api/uploads` stores the original file under the controlled artifact root with its MIME type, size, SHA-256, and parser metadata. The parser is bounded: PDF text is page-labelled and truncated, JSON/CSV previews are capped, UTF-8 text and code are read without execution, images expose format and dimensions only, and ZIP files expose a manifest without extraction. Path traversal, invalid encodings, binary text, unsafe ZIP entries, compression-ratio limits, and the 50 MB upload limit fail with structured errors. Parsed summaries are included in clarification and topic-specific planning requests without exposing host paths. They remain untrusted context and cannot be used as commands or as verified scientific evidence.
+
 | Table | Purpose |
 |---|---|
 | `projects` | 项目 ID、阶段、状态、当前 Idea 版本 |

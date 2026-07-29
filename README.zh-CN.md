@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-10 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-11 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -33,6 +33,7 @@
 - 以非 root、资源受限 Runner 执行少量白名单实验，通过自托管 MLflow 与 MinIO 记录指标和产物。
 - 批准的实验进入 Runner 前必须保持项目工作树干净，创建不可变的 `run/<run_id>` tag，并在受控产物目录保存带哈希的源码、环境、数据、模型和配置快照。
 - 生成可检查、可下载并带谱系的 PNG/PDF/JSON/PLY，而不是只返回一段 LLM 结论。
+- 支持受限的 PDF、JSON、CSV/TSV、文本、代码、图片元数据和 ZIP 清单上传；解析摘要可以用于澄清和规划，但附件始终是不可信上下文，图片不做 OCR，ZIP 内容不会解压或执行。
 - 在同一项目对话中暂停、从检查点恢复、取消、修改 Idea，并生成日报/周报。
 
 ## 效果截图

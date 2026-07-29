@@ -29,7 +29,7 @@ The experiment-plan endpoint accepts only the current ProjectSpec, stored page-l
 - API/Runner 的仓库根目录构建上下文由 `.dockerignore` 限制；`.env`、Git 元数据、`projects/`、`artifacts/`、n8n 数据和文档不会进入镜像构建上下文。运行时绑定目录不是镜像内容，不能用构建代替挂载。
 - 生产环境为 Runner 增加独立 Docker network，默认拒绝出站网络；按数据源或任务临时授权。
 - 每个真实 GPU 任务应在独立容器/作业中执行，并加磁盘配额、超时、取消、镜像 digest 和命令模板 ID。
-- 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。生产环境还需恶意文件扫描和解压炸弹防护。
+- 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。PDF/JSON/CSV/文本/代码解析有长度和行数上限；图片只读取格式和尺寸；ZIP 只读取清单并拒绝路径穿越、过高压缩比和过大声明解压量，不解压或执行。解析摘要进入模型请求时标记为不可信上下文，上传/解析失败会阻止模型调用。生产环境仍需接入独立恶意文件扫描、内容隔离和持久化配额。
 
 ## Experiment snapshot boundary
 

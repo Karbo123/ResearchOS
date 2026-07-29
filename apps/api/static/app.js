@@ -190,6 +190,11 @@ async function sendChat(event) {
 
   try {
     const clarificationMode = state.clarificationMode;
+    if (state.queuedFiles.length) {
+      if (!state.sessionId) state.sessionId = crypto.randomUUID();
+      setThinkingStageIn(sessionId, "analyzing_input", "active", "上传材料", `${state.queuedFiles.length} 个文件`);
+      await uploadQueuedFiles();
+    }
     const response = await fetch("/api/chat/stream", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
@@ -230,7 +235,6 @@ async function sendChat(event) {
       if (result.spec) {
         renderSpec(result.spec);
       }
-      if (state.queuedFiles.length) await uploadQueuedFiles();
     }
   } catch (error) {
     const message = chatUX.formatRequestError(error);
@@ -297,11 +301,21 @@ function renderSpec(spec) {
 }
 
 async function uploadQueuedFiles() {
-  for (const file of state.queuedFiles) {
+  const files = [...state.queuedFiles];
+  for (const file of files) {
     const form = new FormData(); form.append("session_id", state.sessionId); form.append("file", file);
-    const response = await fetch("/api/uploads", {method:"POST", body:form}); if (!response.ok) toast(`上传失败: ${file.name}`);
+    const response = await chatUX.fetchWithTimeout(window.fetch.bind(window), "/api/uploads", {method:"POST", body:form}, CHAT_REQUEST_TIMEOUT_MS);
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      const detail = body.detail;
+      const reason = detail && typeof detail === "object" ? detail.message : detail;
+      throw new Error(`${file.name}: ${reason || `HTTP ${response.status}`}`);
+    }
+    const completedIndex = state.queuedFiles.indexOf(file);
+    if (completedIndex >= 0) state.queuedFiles.splice(completedIndex, 1);
+    $("fileQueue").textContent = state.queuedFiles.map(item => item.name).join(" · ");
   }
-  toast(`已保存 ${state.queuedFiles.length} 个附件`); state.queuedFiles = []; $("fileQueue").textContent = "";
+  toast(`已保存 ${files.length} 个附件`);
 }
 
 async function confirmProject() {

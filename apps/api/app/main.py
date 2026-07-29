@@ -36,6 +36,7 @@ from .related_work import build_related_work_analysis
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
 from .impact_analysis import analyze_impact, apply_impact
+from .material_parser import MaterialParseError, context_for_materials, parse_material
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
     seeds_for_constraints,
@@ -68,6 +69,7 @@ def startup() -> None:
     Base.metadata.create_all(engine)
     with engine.begin() as connection:
         connection.execute(text("ALTER TABLE evidence ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb"))
+        connection.execute(text("ALTER TABLE uploaded_files ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb"))
 
 
 def audit(session, action: str, project_id: UUID | None, details: dict[str, Any], actor: str = "system"):
@@ -144,6 +146,20 @@ def project_change_impact(session, project: Project, change_kind: str, payload: 
         experiments=session.scalars(select(Experiment).where(Experiment.project_id == project.id)).all(),
         checkpoints=session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id)).all(),
     )
+
+
+def uploaded_material_context(session, session_id: UUID | None = None, project_id: UUID | None = None) -> list[dict[str, Any]]:
+    if session_id is not None:
+        query = select(UploadedFile).where(UploadedFile.session_id == session_id)
+    elif project_id is not None:
+        query = select(UploadedFile).where(UploadedFile.project_id == project_id)
+    else:
+        return []
+    records = session.scalars(query.order_by(UploadedFile.created_at)).all()
+    return context_for_materials([{
+        "id": item.id, "name": item.name, "mime_type": item.mime_type,
+        "sha256": item.sha256, "metadata": item.metadata_json,
+    } for item in records])
 
 
 def trigger_research_workflow(project_id: UUID, task_id: UUID) -> None:
@@ -347,6 +363,7 @@ def chat(request: ChatRequest):
             ).all()[::-1]
         ]
         draft_before = json.loads(json.dumps(conversation.draft))
+        attachment_context = uploaded_material_context(session, session_id=conversation.id)
         conversation_id = conversation.id
 
     try:
@@ -354,8 +371,9 @@ def chat(request: ChatRequest):
             request.message,
             current_draft=draft_before,
             transcript=transcript,
-            attachment_count=len(request.attachments),
+            attachment_count=max(len(request.attachments), len(attachment_context)),
             clarification_mode=request.clarification_mode,
+            attachment_context=attachment_context,
         )
     except LLMRequestError as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
@@ -425,10 +443,11 @@ async def chat_stream(request: ChatRequest):
         conversation: ConversationSession | None = None
         transcript: list[dict[str, str]] = []
         draft_before: dict[str, Any] = {}
+        attachment_context: list[dict[str, Any]] = []
         conversation_id: UUID | None = None
 
         def load_conversation():
-            nonlocal conversation, transcript, draft_before, conversation_id
+            nonlocal conversation, transcript, draft_before, attachment_context, conversation_id
             from .clarification import initial_draft
             with session_scope() as session:
                 conv = session.get(ConversationSession, request.session_id) if request.session_id else None
@@ -453,6 +472,7 @@ async def chat_stream(request: ChatRequest):
                     ).all()[::-1]
                 ]
                 draft_before = json.loads(json.dumps(conv.draft))
+                attachment_context = uploaded_material_context(session, session_id=conv.id)
                 conversation_id = conv.id
                 conversation = conv
 
@@ -463,7 +483,7 @@ async def chat_stream(request: ChatRequest):
             return
 
         # Phase 2: compute model route (fast, deterministic)
-        route = select_model_route(request.message, draft_before, len(request.attachments))
+        route = select_model_route(request.message, draft_before, max(len(request.attachments), len(attachment_context)))
         yield emit("model_route", {
             "tier": route.tier, "model": route.model, "reasoning_effort": route.reasoning_effort,
         })
@@ -482,8 +502,9 @@ async def chat_stream(request: ChatRequest):
                 request.message,
                 current_draft=draft_before,
                 transcript=transcript,
-                attachment_count=len(request.attachments),
+                attachment_count=max(len(request.attachments), len(attachment_context)),
                 clarification_mode=request.clarification_mode,
+                attachment_context=attachment_context,
             )
 
         yield emit("progress", {
@@ -657,7 +678,7 @@ def project_detail(project_id: UUID):
                 "recognized": str(p.id) in constraints.recognized_policy_ids,
             } for p in policies],
             "policy_enforcement": enforcement,
-            "uploads": [{"id": str(u.id), "name": u.name, "mime_type": u.mime_type, "size_bytes": u.size_bytes, "sha256": u.sha256} for u in uploads],
+            "uploads": [{"id": str(u.id), "name": u.name, "mime_type": u.mime_type, "size_bytes": u.size_bytes, "sha256": u.sha256, "metadata": u.metadata_json} for u in uploads],
             "reports": [{"id": str(r.id), "period": r.period, "content": r.content, "created_at": r.created_at.isoformat()} for r in reports],
             "tasks": [{"id": str(t.id), "kind": t.kind, "status": t.status, "attempts": t.attempts, "error": t.error, "payload": t.payload} for t in tasks],
             "checkpoints": [{"id": str(c.id), "stage": c.stage, "idea_version": c.idea_version, "git_commit": c.git_commit, "data_version": c.data_version, "state": c.state, "created_at": c.created_at.isoformat()} for c in checkpoints],
@@ -916,6 +937,7 @@ def generate_experiment_plan(project_id: UUID):
         planning_context = {
             "project_spec": project_spec.model_dump(mode="json"),
             "verified_page_evidence": evidence_context,
+            "uploaded_materials": uploaded_material_context(session, project_id=project.id),
             "active_policies": [{
                 "id": str(item.id), "rule": item.rule, "rationale": item.rationale,
             } for item in policy_records],
@@ -1503,7 +1525,7 @@ def get_artifact(artifact_id: UUID):
 
 @app.post("/api/uploads")
 async def upload(session_id: UUID = Form(...), file: UploadFile = File(...)):
-    allowed = {"application/pdf", "image/png", "image/jpeg", "text/plain", "text/csv", "application/json", "application/zip", "application/octet-stream"}
+    allowed = {"application/pdf", "image/png", "image/jpeg", "image/gif", "text/plain", "text/csv", "text/tab-separated-values", "application/json", "application/zip", "application/octet-stream"}
     if file.content_type not in allowed: raise HTTPException(415, "file type not allowed")
     safe_name = Path(file.filename or "upload.bin").name
     root = (ARTIFACTS_ROOT / "inbox" / str(session_id)).resolve()
@@ -1519,15 +1541,20 @@ async def upload(session_id: UUID = Form(...), file: UploadFile = File(...)):
                 target.unlink(missing_ok=True); raise HTTPException(413, "file exceeds 50 MB")
             handle.write(chunk)
             digest.update(chunk)
+    try:
+        parsed_metadata = parse_material(target, safe_name, file.content_type or "application/octet-stream")
+    except MaterialParseError as exc:
+        target.unlink(missing_ok=True)
+        raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
     relative_path = str(target.relative_to(ARTIFACTS_ROOT)).replace("\\", "/")
     with session_scope() as session:
         conversation = session.get(ConversationSession, session_id)
         if not conversation:
             target.unlink(missing_ok=True); raise HTTPException(404, "conversation not found")
-        uploaded = UploadedFile(session_id=session_id, project_id=conversation.project_id, name=safe_name, relative_path=relative_path, mime_type=file.content_type or "application/octet-stream", size_bytes=size, sha256=digest.hexdigest())
+        uploaded = UploadedFile(session_id=session_id, project_id=conversation.project_id, name=safe_name, relative_path=relative_path, mime_type=file.content_type or "application/octet-stream", size_bytes=size, sha256=digest.hexdigest(), metadata_json=parsed_metadata)
         session.add(uploaded); session.flush()
-        audit(session, "attachment.uploaded", conversation.project_id, {"upload_id": str(uploaded.id), "name": safe_name, "size": size}, "local-user")
-        return {"id": str(uploaded.id), "name": safe_name, "relative_path": relative_path, "size": size, "sha256": digest.hexdigest()}
+        audit(session, "attachment.uploaded", conversation.project_id, {"upload_id": str(uploaded.id), "name": safe_name, "size": size, "parse_status": parsed_metadata.get("parse_status"), "kind": parsed_metadata.get("kind")}, "local-user")
+        return {"id": str(uploaded.id), "name": safe_name, "relative_path": relative_path, "size": size, "sha256": digest.hexdigest(), "parse_status": parsed_metadata.get("parse_status"), "kind": parsed_metadata.get("kind")}
 
 
 @app.post("/api/policies")

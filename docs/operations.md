@@ -35,6 +35,10 @@ Invoke-RestMethod http://127.0.0.1:8080/api/health
 
 成功聊天响应中的 `model_tier`、`model`、`reasoning_effort` 是本轮实际路由证据。模型调用失败时 `/api/chat` 返回结构化 `502/503/504` 错误，不生成规则回复，也不写入助手消息；检查错误中的 `code` 和 API 日志后再重试。
 
+## 上传材料
+
+新项目聊天中的文件会在模型请求前上传到 API 容器。若任一文件上传或解析失败，前端会直接显示结构化错误并阻止本轮模型调用；成功解析的摘要才会进入后续澄清和主题规划。PDF、JSON、CSV/TSV、UTF-8 文本和代码只读取受限内容；图片仅保存格式和尺寸元数据，不做 OCR；ZIP 只读取安全清单，不解压或执行。原文件、SHA-256 和解析元数据保存在受控 `artifacts/inbox/<session_id>/` 路径，不能把附件当作已验证全文证据或执行指令。
+
 ## Windows 单 EXE 安装器
 
 `installer/windows/ResearchOS.iss`、`bootstrap.ps1` 与 `build-installer.ps1` 构成在线引导安装器源。它内置应用和 Compose/n8n 工作流；API 与模型请求始终在容器内运行，安装器不会打包或启动 Windows Bridge。Docker 缺失时只在用户勾选后下载官方安装器并验证 Authenticode 签名。构建输出和 EXE 被 Git 忽略。
