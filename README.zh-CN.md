@@ -1,5 +1,5 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-9 -->
-<!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-10 -->
+<!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
 
@@ -37,7 +37,7 @@
 
 ## 效果截图
 
-以下截图来自最新真实验收项目（`8c40dc70-519a-4c87-99ac-d37003a56640`），不包含 token 或凭据。
+以下截图来自真实验收项目，不包含 token 或凭据。最新完整验收项目为 `6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 
 ![自适应澄清识别 MNIST/CNN 领域并记录 Terra 模型层级](docs/assets/research-os-adaptive-chat.png)
 
@@ -201,7 +201,7 @@ python scripts/test_mnist_idea.py
 
 下面的完整验收会调用多个公开用例、真实模型、外部学术 API 和 Runner 作业，因此成本更高；只在确实需要该范围时运行。
 
-最新全自动/详细模式变更目前只完成了上面所述的 `mnist-cnn` 定向真实验证。新的多用例端到端回归已明确登记为 `P0-REGRESSION-032`。下面的完整验收记录仍是该定向变更之前最近一次全系统基线。
+最新全自动/详细模式变更已完成上面所述的 `mnist-cnn` 定向真实验证，以及下方 `P0-REGRESSION-032` 记录的多用例端到端回归。
 
 验收脚本会实际检查 Bridge、学术 API、PostgreSQL、n8n、Runner、MLflow、产物谱系、策略执行、Idea v2、局部重跑和 LaTeX 编译：
 
@@ -217,7 +217,7 @@ python scripts/acceptance_test.py
 | PyTorch/CUDA CNN 在 MNIST 上达到 99% | 推断深度学习/计算机视觉，识别为工程基准，默认使用 Terra 层级，并询问研究定位、数据授权、算力和评估约束。 |
 | 上述 3D 主动学习 Idea | 创建项目、检索论文，批准后执行受限实验并生成可检查产物。 |
 
-最新完整验收记录的脱敏版本化副本为 [`acceptance-20260729-012750.json`](docs/evidence/acceptance-20260729-012750.json)，运行时原件仍保存在被忽略的 `artifacts/acceptance/`。该验收通过 Codex Bridge 使用 `gpt-5.6-sol` 和 `reasoning_effort=high`，验证了 8 条论文记录、3 条真实开放 PDF 原文证据、5 次实验、7 个检查点、101 条依赖、五随机种子策略、暂停/取消/恢复闸门、MLflow、PNG/PLY/PDF、Idea v2、局部重跑与 LaTeX 编译。合成 demo 只证明系统集成链可运行，不能证明研究假设成立。
+最新完整验收记录的脱敏版本化副本为 [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json)，运行时原件仍保存在被忽略的 `artifacts/acceptance/`。该验收通过配置的 Luna/Terra/Sol 路由和 Codex Bridge（`gpt-5.6-luna/low`、`gpt-5.6-terra/medium`，以及 `reasoning_effort=high` 的 `gpt-5.6-sol`），验证了 8 条论文记录、3 条真实开放 PDF 原文证据、五随机种子策略、暂停/取消/恢复闸门、MLflow、PNG/PLY、Idea v2、局部重跑、12 个检查点、416 条依赖与 LaTeX 编译。合成 demo 只证明系统集成链可运行，不能证明研究假设成立。
 
 ## 配置参考
 

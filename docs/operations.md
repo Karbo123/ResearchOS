@@ -194,4 +194,4 @@ python scripts/check_docs_sync.py
 
 ## 验收证据
 
-`python scripts/acceptance_test.py` 使用真实 `gpt-5.6-sol/high` Bridge，运行时间受模型和外部 API 延迟影响。JSON 结果只记录项目 ID、指标、产物类型、PDF 哈希、MLflow Run ID 和依赖计数，不记录认证 token。最近一次完整结果位于 `artifacts/acceptance/acceptance-20260729-012750.json`，包含 3 篇开放 PDF 页码证据、5 种子策略计划、结构化违规拒绝和 Runner 二次校验；该历史基线不包含本轮可复现快照门禁的完整实时验收。当前本地 Compose/容器回归只证明服务与门禁代码可启动，不能替代配置发布镜像 digest 后的全链路验收。
+`python scripts/acceptance_test.py` 使用真实 Codex Bridge 和配置的 Luna/Terra/Sol 路由（复杂路由为 `gpt-5.6-sol/high`），运行时间受模型和外部 API 延迟影响。JSON 结果只记录项目 ID、指标、产物类型、PDF 哈希、MLflow Run ID 和依赖计数，不记录认证 token。最近一次完整结果位于 `artifacts/acceptance/acceptance-20260730-015132.json`，脱敏副本位于 `docs/evidence/acceptance-20260730-015132.json`，包含 3 篇开放 PDF 页码证据、5 种子策略计划、结构化违规拒绝、Runner 二次校验、12 个检查点和 416 条依赖；该结果已包含可复现快照门禁的实时验收。当前仍不能把本地 MVP 验收表述为生产级科研结论或完整自动化能力。

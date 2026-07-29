@@ -1,0 +1,44 @@
+{
+  "started_at": "2026-07-29T17:48:44.530673+00:00",
+  "checks": {
+    "insufficient_idea_clarifies": true,
+    "adaptive_mnist_domain": {"model_tier": "medium", "model": "gpt-5.6-terra"},
+    "n8n_automatic_bootstrap": {"papers": 8, "repositories": 0},
+    "fulltext_evidence": {"stored_count": 3},
+    "project_state_gate": {"blocked_while_paused": true, "resumed_stage": "awaiting_experiment_approval"},
+    "isolated_experiment": {
+      "metrics": {"accuracy_mean": 0.8466666666666667, "accuracy_std": 0.07076303701373626, "seed_count": 3.0},
+      "artifact_kinds": ["confusion_matrix", "execution_log", "metric_plot", "metrics", "point_cloud", "point_cloud_preview"],
+      "mlflow_run_id": "ad39110bec0f4be494cd15e0a01e21bf"
+    },
+    "policy_execution_engine": {
+      "minimum_random_seed_count": 5,
+      "structured_submission_violation": true,
+      "citation_fulltext_evidence_ready": true,
+      "high_cost_and_external_approval_required": true,
+      "runner_revalidated": true
+    },
+    "active_run_cancelled_on_pause": {"run_id": "719a3aaf-0e5f-4505-abef-58d73b3a6557"},
+    "daily_report": true,
+    "approved_idea_revision": true,
+    "approved_partial_rerun": {"run_id": "7e32fa0d-d856-4a53-a02e-5f4434f527c6"},
+    "latex_compiled": {"run_id": "08cdd862-5920-42de-9987-ae3389ebe99b", "mlflow_run_id": "6ab6854246544c31b76cadbff4e5499c"},
+    "persistent_lineage": {"checkpoints": 12, "dependencies": 416},
+    "cancel_is_terminal": true
+  },
+  "llm": {
+    "provider": "codex_bridge",
+    "routing": {
+      "models": {
+        "simple": {"model": "gpt-5.6-luna", "reasoning_effort": "low"},
+        "medium": {"model": "gpt-5.6-terra", "reasoning_effort": "medium"},
+        "complex": {"model": "gpt-5.6-sol", "reasoning_effort": "high"}
+      },
+      "thresholds": {"simple_max": 2, "medium_max": 7}
+    },
+    "provider_configured": true,
+    "codex_bridge_configured": true
+  },
+  "project_id": "6d91ff49-12a5-406c-b7aa-cb96aa3f22e4",
+  "finished_at": "2026-07-29T17:51:32.715589+00:00"
+}

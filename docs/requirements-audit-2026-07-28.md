@@ -7,14 +7,14 @@
 ## 本轮真实验收
 
 - 配置来源：项目未跟踪 `.env` 中的 provider、模型、推理配置和单独迁移的 `OPENAI_API_KEY`；Bridge 运行时代码不读取宿主机 Codex 配置目录或 `auth.json`
-- 模型：`gpt-5.6-sol`
-- 推理强度：`high`
+- 模型路由：`gpt-5.6-luna/low`、`gpt-5.6-terra/medium`、`gpt-5.6-sol`/`high`
 - Bridge：宿主机调用；一次性迁移只复制 `auth.json` 中的 `OPENAI_API_KEY` 值，运行时不读取、复制或挂载整个 `auth.json`，Bridge 通过子进程环境向 Codex CLI 提供该 key
-- 结果文件：`artifacts/acceptance/acceptance-20260729-012750.json`
-- 测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`
+- 结果文件：`artifacts/acceptance/acceptance-20260730-015132.json`
+- 脱敏证据：`docs/evidence/acceptance-20260730-015132.json`
+- 测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`
 - 结果：全部自动验收断言通过
 
-实际生成了 8 篇带 DOI/BibTeX 的文献记录，其中 3 篇开放 PDF 完成哈希、页码原文和证据入库；本次检索未命中代码仓库候选。项目最终保存 5 次实验记录、MLflow Run、准确率曲线、混淆矩阵、PLY/PNG 点云、指标 JSON、执行日志和 LaTeX PDF。Idea 被批准修改到 v2，并记录 7 个检查点和 101 条实体依赖。
+实际生成了 8 篇带 DOI/BibTeX 的文献记录，其中 3 篇开放 PDF 完成哈希、页码原文和证据入库；本次检索未命中代码仓库候选。验收验证了策略执行、暂停/恢复与取消终态、Idea v2、局部重跑、MLflow、PNG/PLY 产物和 LaTeX 编译，并记录 12 个检查点和 416 条实体依赖。合成实验指标只证明系统集成链可运行，不能证明研究假设成立。
 
 额外定向测试结果：
 
@@ -28,6 +28,8 @@
 - PNG 抽查：准确率曲线、混淆矩阵和点云预览均为有效非空图像。
 
 2026-07-29 澄清交互增量：新项目聊天增加严格的 `automatic|detailed` 模式，默认全自动并尽量减少追问，详细模式根据真实缺口扩大了解范围；两者均禁止固定问卷。测试 Idea、后续确认事实和项目对话输入统一迁移到 `tests/idea-cases/*.json`，严格加载器拒绝未知字段、路径覆盖和运行时注入。完整多用例回归已登记为 `P0-REGRESSION-032`。
+
+2026-07-30 完整端到端回归增量：`P0-REGRESSION-032` 已使用真实 Bridge、外部学术 API、PostgreSQL、n8n、Runner 和 MLflow 完成验收；新报告验证了 8 条论文记录、3 条全文证据、12 个检查点和 416 条依赖，结果已保存到被忽略的运行时报告并归档脱敏副本。模型失败仍返回结构化错误，不做本地降级或 provider 自动切换。
 
 2026-07-29 可复现快照增量：`P0-REPRO-026` 已接入本地实验提交和 Runner 执行门禁。批准实验要求项目 Git 工作树干净、Git 文件扩展名/目录/10 MB 大小门禁通过，并创建不可变 `run/<run_id>` tag；受控 `artifacts/reproducibility/<project_id>/<run_id>/` 保存 `source.tar`、ProjectSpec、策略、有效配置/随机种子、环境、数据/模型清单、依赖锁文件哈希和 `snapshot.json`。API 与 Runner 各校验一次，PostgreSQL 写入 `Artifact`/`ArtifactDependency`/`Checkpoint` 谱系，并提供 `/api/experiments/{run_id}/reproducibility` 查询和源码下载入口。本批次已完成真实实验验收：`RUNNER_IMAGE_DIGEST` 和 `RESEARCH_OS_COMMIT` 已配置真实值、Runner 非 root Git 门禁修复、`demo_classification` 实验真实提交并成功执行（accuracy=0.8467），快照谱系完整持久化。任务标记完成。
 
@@ -54,7 +56,7 @@
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 部分实现 | Python 计算均值、标准差、混淆矩阵并写 MLflow；没有面向任意日志/CSV/多模态结果的自动诊断闭环。 |
 | PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
-| 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；快照会记录配置的 Runner digest，但本地默认值可能未核验；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |
+| 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；真实验收已验证配置的 Runner digest 与 Research OS commit 进入快照谱系；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |
 | PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
 | 日报/周报与推送 | 部分实现 | n8n 每日/每周定时生成报告并存入 Web UI；未接入飞书、Slack、Telegram、邮件，也不完整统计资源/API 成本和关键 Agent 决策。 |
 | 同一项目对话监督 | 部分实现 | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；分类主要靠关键词，不是健壮的结构化意图模型。 |
@@ -74,8 +76,8 @@
 2. 合成实验只能验证系统编排和产物链，不能证明用户研究 Idea 的科学结论。
 3. 未识别的自由文本策略会明确标为人工规则；只有结构化显示为 enforced 的约束才会自动执行。
 4. n8n 自动登录仅适用于本机个人部署；任何能访问本机端口的进程都可能进入控制面，不能暴露到局域网或公网。
-5. 本地 Runner 镜像默认使用 `unavailable` 占位身份；在配置正式镜像 digest 并完成真实 Runner/外部 API 验收前，只能称为本地可复核 MVP，不能作发布级复现声明。
+5. Runner 镜像 digest 与 Research OS commit 已在本地真实验收中验证并进入快照谱系，但这不等于完成发布级镜像签名、外部环境复现或生产可靠性验收。
 
 ## 达到原始目标仍需完成
 
-优先级最高的是为快照门禁配置并锁定正式 Runner 镜像 digest、完成一次真实实验的源码/环境/数据清单恢复验收，随后继续基于现有 PDF 页码证据生成可逐句追踪的 Related Work、官方代码验证与许可后下载、Idea 专属实验规划和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。完成这些之前，系统应继续标记为 MVP。
+优先级最高的是继续基于现有 PDF 页码证据生成可逐句追踪的 Related Work、官方代码验证与许可后下载、Idea 专属实验规划和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。完成这些之前，系统应继续标记为 MVP。

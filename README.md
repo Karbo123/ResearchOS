@@ -1,5 +1,5 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-29-9 -->
-<!-- ACCEPTANCE_PROJECT: 8c40dc70-519a-4c87-99ac-d37003a56640 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-10 -->
+<!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
 
@@ -37,7 +37,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 
 ## Screenshots
 
-These images are from the latest real acceptance project (`8c40dc70-519a-4c87-99ac-d37003a56640`). They contain no tokens or credentials.
+These images are from a real acceptance project and contain no tokens or credentials. The latest full acceptance project is `6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`.
 
 ![Adaptive clarification recognizes the MNIST/CNN domain and records the selected Terra tier](docs/assets/research-os-adaptive-chat.png)
 
@@ -82,7 +82,7 @@ The API and Runner are the enforcement boundary. n8n coordinates bounded workflo
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
 | Human supervision | **Implemented (MVP)** | Proposal/approval/audit for experiments, Idea revisions, policies, and LaTeX; pause/resume/cancel gates. |
 | Experiments | **Implemented (bounded)** | Three allowlisted Runner tasks, non-root execution, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. |
-| Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A release image digest still must be configured and live acceptance remains pending. |
+| Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A live acceptance is now recorded; release-grade scope remains limited by the MVP boundaries described below. |
 | General research autonomy | **Partial / roadmap** | Official repository verification, general Python/C++/Conda/GPU jobs, semantic invalidation, external notifications, evidence-grounded Related Work, and full paper writing remain open. |
 
 ## Prerequisites
@@ -203,7 +203,7 @@ python scripts/test_mnist_idea.py
 
 The full acceptance below invokes several visible cases, real models, external academic APIs, and Runner jobs, and therefore costs more. Run it only when that scope is intended.
 
-The latest Automatic/Detailed-mode change has only the targeted `mnist-cnn` live verification described above. A fresh multi-case end-to-end regression is explicitly pending as `P0-REGRESSION-032`. The complete acceptance record below remains the last full-system baseline from before that targeted change.
+The latest Automatic/Detailed-mode change has targeted `mnist-cnn` verification plus the complete multi-case end-to-end regression recorded below as `P0-REGRESSION-032`.
 
 The acceptance script exercises the real Bridge, academic APIs, PostgreSQL state, n8n, Runner, MLflow, artifact lineage, policy enforcement, Idea v2, partial rerun, and LaTeX compilation:
 
@@ -219,7 +219,7 @@ Useful probes:
 | A PyTorch/CUDA CNN targeting 99% on MNIST | Infers deep learning/computer vision, identifies an engineering benchmark, uses the Terra tier by default, and asks about research scope, data authorization, compute, and evaluation constraints. |
 | The 3D active-learning idea above | Creates a project, searches papers, runs bounded experiments after approval, and emits inspectable artifacts. |
 
-The latest complete acceptance record has a sanitized, versioned copy at [`acceptance-20260729-012750.json`](docs/evidence/acceptance-20260729-012750.json); the runtime original remains under ignored `artifacts/acceptance/`. It used `gpt-5.6-sol` with `reasoning_effort=high` through the Codex Bridge and verified: 8 paper records, 3 stored open-PDF evidence records, 5 experiments, 7 checkpoints, 101 dependencies, policy enforcement for five seeds, pause/cancel/resume gates, MLflow, PNG/PLY/PDF artifacts, Idea v2, partial rerun, and LaTeX compilation. The demo experiment is a system-integration check, not evidence that the scientific hypothesis is true.
+The latest complete acceptance record has a sanitized, versioned copy at [`acceptance-20260730-015132.json`](docs/evidence/acceptance-20260730-015132.json); the runtime original remains under ignored `artifacts/acceptance/`. It used the configured Luna/Terra/Sol routes through the Codex Bridge (`gpt-5.6-luna/low`, `gpt-5.6-terra/medium`, and `gpt-5.6-sol` with `reasoning_effort=high`) and verified: 8 paper records, 3 stored open-PDF evidence records, policy enforcement for five seeds, pause/cancel/resume gates, MLflow, PNG/PLY artifacts, Idea v2, partial rerun, 12 checkpoints, 416 dependencies, and LaTeX compilation. The demo experiment is a system-integration check, not evidence that the scientific hypothesis is true.
 
 ## Configuration reference
 

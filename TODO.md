@@ -2,23 +2,22 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，P0-CLARIFY-027 已完成并通过最终验证）
+最后更新：2026-07-30（Asia/Shanghai，DOCS-039 已完成并通过验证）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：无；下一项高优先级待处理为 `P0-REGRESSION-032` 的完整端到端回归。
-- 最新完整验收：`artifacts/acceptance/acceptance-20260729-012750.json`。
-- 最新测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`（验收结束后为 cancelled）。
+- 当前进行中：无；下一项高优先级待处理为 `P0-RELATED-002`。
+- 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
+- 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
 
 ## 已暂停的前序工作
 
-下列事项均为**待处理**，本次只记录，不授权实现、运行完整验收或产生额外模型/API 成本：
+下列事项均为**待处理**，除当前进行中的任务外按各自范围推进：
 
-- `P0-REGRESSION-032`：针对最新自适应澄清、模式 Toggle、Bridge 严格输入和消息 metadata 的完整端到端验收；必须只读取 `tests/idea-cases/`。
 - `P2-INSTALLER-029`：已有 Windows 在线引导安装器源码；仍缺正式 EXE 生成、代码签名、Docker Desktop 许可复核、干净 Windows VM 安装/升级/卸载验收和发布校验和。
 - 其余原始需求缺口继续按下面 P0/P1/P2 条目管理；不得因为已有 Schema、演示任务或文档描述而视为完成。
 
@@ -51,10 +50,11 @@
   - 已完成部分：固定问题队列已移除；Luna/Terra/Sol 路由、严格输出、默认全自动/可选详细模式和 MNIST 单轮真实验证已实现。
   - 验证结果：真实公开回归 `scripts/test_clarification_regression.py` 覆盖 4 个 case：`active-learning-3d` 使用 `complex / gpt-5.6-sol / high` 并在确认事实后收敛，复杂详细模式和短输入保持澄清，MNIST 使用 `medium / gpt-5.6-terra / medium`，两个并发 MNIST 会话均保持澄清。Bridge 不可用集成回归返回 `llm_request_failed`，不降级；Bridge HTTP 504 映射为 `llm_timeout`。服务端拒绝含“未确认/unknown”等数据或资源占位的规格进入确认。`docker compose exec -T api pytest -q`（27 passed）、`python scripts/check_idea_case_sources.py`、Compose 与 Python 检查通过；脱敏报告在被忽略的 `artifacts/idea-tests/clarification-regression-latest.json`。
 
-- [ ] `P0-REGRESSION-032` 对最新 Idea 澄清主链执行成本受控的完整端到端回归。
+- [x] `P0-REGRESSION-032` 对最新 Idea 澄清主链执行成本受控的完整端到端回归。
   - 范围：只允许从 `tests/idea-cases/*.json` 读取启用用例；禁止测试代码、命令行或运行时增加隐藏 Idea。
   - 审批：运行前列出将调用的 case ID、模型层级、最大轮数和预计模型/API 成本；默认只运行不调用模型的静态与单元检查。
   - 完成标准：公开用例覆盖不足信息、MNIST 工程基准、复杂/详细模式和项目创建主链；结果写入被 Git 忽略的 `artifacts/acceptance/`，脱敏摘要按需进入 `docs/evidence/`；不得生成虚假论文、结果或费用。
+  - 验证结果：`scripts/acceptance_test.py` 真实验收通过，报告为 `acceptance-20260730-015132.json`，脱敏副本已归档到 `docs/evidence/`；验证 8 条论文记录、3 条全文证据、n8n/Runner/MLflow、暂停恢复与取消终态、Idea v2、局部重跑、LaTeX、12 个检查点和 416 条依赖。未输出 token 或凭据。
 
 - [x] `P0-EVIDENCE-001` 实现合法 PDF 下载、哈希、全文解析、页码/章节定位和 quote 证据入库。
   - 完成标准：至少用 3 篇开放论文验证；每个 claim 保存原文、页码、PDF 哈希、稳定来源和 BibTeX；无法验证时禁止进入论文结论。
@@ -142,6 +142,11 @@
 
 ## 文档与开发体验
 
+- [x] `DOCS-039` 同步最新真实验收结果与项目文档事实。
+  - 范围：同步双语 README、需求审计、运维验收说明、TODO 和文档同步检查脚本；复核 `AGENTS.md` 是否仍符合“模型失败返回结构化错误、运行时只读项目 `.env`”规则；归档脱敏验收证据。
+  - 完成标准：所有文档使用最新验收报告 `acceptance-20260730-015132.json` 和项目 `6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`；最新路由、检查点和依赖数字一致；`check_docs_sync.py`、Compose、JSON、Python、适用测试和 `git diff --check` 通过；不提交 `.env`、认证文件或运行时原件。
+  - 验证结果：`python scripts/check_docs_sync.py`、`docker compose config --quiet`、Schema/Workflow JSON 解析、`python scripts/check_idea_case_sources.py`、`git diff --check` 和 `docker compose exec -T api pytest -q`（27 passed）通过；API 容器 Python 编译通过，Runner 容器为只读文件系统，宿主历史 root-owned `__pycache__` 未被修改；证据 JSON 敏感字段扫描为空。AGENTS.md 无需修改。
+
 - [x] `DOCS-035` 删除完整真实验收必须等待用户扩大授权的项目规则。
   - 范围：删除 `AGENTS.md` 第 89 行的完整验收等待门槛；保留第 42 行高成本实验、代码/配置/依赖和对外发布的 Proposal/明确批准/隔离执行要求；Bridge 恢复后最多进行一次 `mnist-cnn` 模型提交且不调用外部学术 API，Bridge 未监听期间的失败请求不计入模型调用。后续将 TODO.md 和 README 中所有"用户批准"约束一并移除。
   - 完成标准：`AGENTS.md`、TODO、运维说明和实际验证范围一致；定向浏览器验证完成后记录脱敏产物，不把其他 Idea 或 token 写入仓库。
@@ -173,7 +178,7 @@
 - [x] `BASE-003` 项目 UUID、Git、目录、Idea 版本、任务和检查点初始化。验证：验收项目 v1/v2 与 Git commit。
 - [x] `BASE-004` Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX 和 GitHub 候选检索。验证：最新验收 8 篇可追溯记录；早期完整验收曾得到 3 个候选，候选数随检索结果变化且不得伪造。
 - [x] `BASE-005` 两阶段实验/Idea/LaTeX 审批、审计和受限 Runner 主链。验证：未批准请求被拒，批准后异步运行成功。
-- [x] `BASE-006` 自托管 MLflow、MinIO/受控文件系统、PNG/PLY/JSON/PDF 产物和依赖记录。验证：最新验收 7 个检查点、101 条依赖。
+- [x] `BASE-006` 自托管 MLflow、MinIO/受控文件系统、PNG/PLY/JSON/PDF 产物和依赖记录。验证：最新验收 12 个检查点、416 条依赖。
 - [x] `BASE-007` n8n 主流程、聊天网关、日报/周报工作流和本地 Cookie 自动登录。验证：3 个 Active 工作流，自动入口进入 `/home/workflows`。
 - [x] `BASE-008` PostgreSQL 持久化 18 张业务表，聊天不是唯一状态源。验证：项目重载后 Idea、审批、策略、实验、产物和反馈仍存在。
 
@@ -212,3 +217,7 @@
 - 2026-07-30：`P0-CLARIFY-027` 首次 `mnist-cnn` 真实回归出现 `phase` 断言不匹配，第二次同一公开用例通过并保存脱敏结果（`medium` / `gpt-5.6-terra` / `medium`）。已修正回归脚本先落盘响应再断言；该不稳定性须由多轮、并发和失败路径回归覆盖，任务继续保持 `[~]`。
 - 2026-07-30：完成 `P0-CLARIFY-027`；修复 3D 主动学习的复杂层路由、Bridge/API 超时边界、未确认数据/资源占位绕过确认闸门与回归产物丢失。4 个公开 case、多轮收敛、并发 MNIST、真实 Bridge 不可用及结构化 504 回归均通过；未创建项目、运行实验或调用学术 API。
 - 2026-07-30：完成 `P0-CLARIFY-027` 最终验证；`check_docs_sync.py`、API `27 passed`、聊天 UX `5 passed`、Idea case、Compose、JSON、Python、Node 和 `git diff --check` 均通过，Bridge 健康且未提交密钥或运行产物。
+- 2026-07-30：开始 `P0-REGRESSION-032`；执行现有 `scripts/acceptance_test.py`，输入仅来自 `tests/idea-cases/`，结果写入被忽略的 `artifacts/acceptance/`，不把 token 或凭据写入报告。
+- 2026-07-30：完成 `P0-REGRESSION-032`；完整真实验收通过，项目 `6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`，报告 `acceptance-20260730-015132.json`，脱敏证据副本已提交到 `docs/evidence/`。
+- 2026-07-30：开始 `DOCS-039`；复核发现 README 已指向新验收，但文档同步脚本、中文 README、需求审计、运维验收说明和部分 TODO 基线数字仍引用旧验收事实；`AGENTS.md` 的模型失败与项目 `.env` 规则无需修改。
+- 2026-07-30：完成 `DOCS-039`；同步双语 README、需求审计、运维说明、TODO 和同步脚本，归档脱敏验收证据；全部适用验证通过，未暂存 `.env`、认证文件、Docker 配置文件或运行时原件。提交：`27feabc`。
