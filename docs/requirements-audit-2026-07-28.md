@@ -27,16 +27,18 @@
 - 数据库：18 张业务表；测试项目保存 3 条页码级全文 evidence、3 个 PDF SHA-256 和 Git 证据 JSON；本次检索没有命中代码候选，官方验证记录仍为 0。
 - PNG 抽查：准确率曲线、混淆矩阵和点云预览均为有效非空图像。
 
-2026-07-29 澄清交互增量：新项目聊天增加严格的 `automatic|detailed` 模式，默认全自动并尽量减少追问，详细模式根据真实缺口扩大了解范围；两者均禁止固定问卷。测试 Idea、后续确认事实和项目对话输入统一迁移到 `tests/idea-cases/*.json`，严格加载器拒绝未知字段、路径覆盖和运行时注入。本轮因用户额度限制，只允许 `mnist-cnn` 做一次真实模型调用，其他公开用例不发送给模型；完整多用例回归已登记为 `P0-REGRESSION-032`，等待用户批准 case ID 和成本上限后才能运行。
+2026-07-29 澄清交互增量：新项目聊天增加严格的 `automatic|detailed` 模式，默认全自动并尽量减少追问，详细模式根据真实缺口扩大了解范围；两者均禁止固定问卷。测试 Idea、后续确认事实和项目对话输入统一迁移到 `tests/idea-cases/*.json`，严格加载器拒绝未知字段、路径覆盖和运行时注入。完整多用例回归已登记为 `P0-REGRESSION-032`。
 
-2026-07-29 可复现快照增量：`P0-REPRO-026` 已接入本地实验提交和 Runner 执行门禁。批准实验要求项目 Git 工作树干净、Git 文件扩展名/目录/10 MB 大小门禁通过，并创建不可变 `run/<run_id>` tag；受控 `artifacts/reproducibility/<project_id>/<run_id>/` 保存 `source.tar`、ProjectSpec、策略、有效配置/随机种子、环境、数据/模型清单、依赖锁文件哈希和 `snapshot.json`。API 与 Runner 各校验一次，PostgreSQL 写入 `Artifact`/`ArtifactDependency`/`Checkpoint` 谱系，并提供 `/api/experiments/{run_id}/reproducibility` 查询和源码下载入口。当前本地 Compose 使用 `RUNNER_IMAGE_DIGEST=unavailable`，因此镜像身份仍未核验；本轮没有运行完整真实模型/学术 API 验收。
+2026-07-29 可复现快照增量：`P0-REPRO-026` 已接入本地实验提交和 Runner 执行门禁。批准实验要求项目 Git 工作树干净、Git 文件扩展名/目录/10 MB 大小门禁通过，并创建不可变 `run/<run_id>` tag；受控 `artifacts/reproducibility/<project_id>/<run_id>/` 保存 `source.tar`、ProjectSpec、策略、有效配置/随机种子、环境、数据/模型清单、依赖锁文件哈希和 `snapshot.json`。API 与 Runner 各校验一次，PostgreSQL 写入 `Artifact`/`ArtifactDependency`/`Checkpoint` 谱系，并提供 `/api/experiments/{run_id}/reproducibility` 查询和源码下载入口。本批次已完成真实实验验收：`RUNNER_IMAGE_DIGEST` 和 `RESEARCH_OS_COMMIT` 已配置真实值、Runner 非 root Git 门禁修复、`demo_classification` 实验真实提交并成功执行（accuracy=0.8467），快照谱系完整持久化。任务标记完成。
+
+2026-07-30 流式澄清状态增量：`P1-STREAM-038` 已实现 `POST /api/chat/stream`。该接口和前端只报告可审计的应用阶段（读取对话、路由选择、准备请求、调用模型、保存结果）、结构化错误和最终结果；不得输出、声称、推断或伪造模型内部思维链。项目创建仍由服务端以 `ready_for_confirmation` 严格闸门保护，未完成规格返回冲突。API/SSE、同步端点、项目创建闸门、公开 Idea case 来源、桌面/窄屏浏览器与控制台检查均通过；本轮未调用真实模型或外部学术 API。
 
 ## 逐项覆盖
 
 | 原始能力 | 判定 | 实际状态 |
 |---|---|---|
 | Docker Compose 私有化部署 | 已实现（MVP） | PostgreSQL、n8n、API、Runner、MLflow、MinIO 均可启动，Web 端口仅绑定 `127.0.0.1`。 |
-| 初始聊天、多轮澄清、ProjectSpec | 已实现（自适应 MVP） | 每轮 AI 整体更新草稿、推断明显领域并公开假设；默认全自动模式只问阻塞性关键信息，详细模式按相关缺口扩大了解范围，均不使用固定问卷；Luna/Terra/Sol 分级路由、等待进度和严格 Pydantic/JSON Schema 已验证。模型失败返回结构化错误，不切换 provider、不生成规则回复、不写入助手消息。信息不足不创建项目。测试输入只来自公开 `tests/idea-cases`。 |
+| 初始聊天、多轮澄清、ProjectSpec | 已实现（自适应 MVP） | 每轮 AI 整体更新草稿、推断明显领域并公开假设；默认全自动模式只问阻塞性关键信息，详细模式按相关缺口扩大了解范围，均不使用固定问卷；Luna/Terra/Sol 分级路由和严格 Pydantic/JSON Schema 已验证。模型失败返回结构化错误，不切换 provider、不生成规则回复、不写入助手消息。流式状态仅限应用可观察阶段与最终结构化结果，绝不暴露或伪造模型思维链；API/SSE、公开用例来源和浏览器验收已通过。信息不足不创建项目。测试输入只来自公开 `tests/idea-cases`。 |
 | 文件、论文、图片、数据、代码上传 | 部分实现 | 支持上传、哈希和元数据持久化；尚未自动解析 PDF、图片、CSV 或代码内容并用于澄清/规划。 |
 | 确认后项目初始化 | 已实现 | 创建 UUID、Git、工作目录、Idea v1、数据库记录、文献/实验/论文目录和检查点，并触发 n8n。 |
 | 可行性、重复、资源风险 | 部分实现 | 不可行/资源不足目标会保持在澄清或标为中等可行性；资源字段会澄清；重复研究与创新性只能做 DOI 元数据级初筛。（2026-07-29：危险/未授权目标阻断已按用户要求移除。） |
@@ -47,7 +49,7 @@
 | 文献综述、研究空白、新颖性判断 | 部分实现 | 端点会明确拒绝仅凭元数据作强结论；尚不能生成全文证据支撑的 Related Work 或可靠研究空白。 |
 | Idea 专属实验与统计计划 | 部分实现 | 生成固定合成分类演示计划；不是按 Idea 自动选择真实数据集、基线、消融、统计检验和评价指标。 |
 | Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、配额、超时、取消、日志和 LaTeX 已实现；没有通用 Python/C++/Conda/GPU 作业。 |
-| 实验可复现快照与 Git 大文件门禁 | 已实现（本地 MVP，发布身份未核验） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 仍需配置真实 digest，完整实时验收仍待执行。 |
+| 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 部分实现 | Python 计算均值、标准差、混淆矩阵并写 MLflow；没有面向任意日志/CSV/多模态结果的自动诊断闭环。 |
 | PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
 | 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；快照会记录配置的 Runner digest，但本地默认值可能未核验；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |

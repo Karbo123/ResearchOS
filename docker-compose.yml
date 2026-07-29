@@ -133,6 +133,7 @@ services:
     environment:
       <<: *app-env
       RUNNER_SHARED_SECRET: ${RUNNER_SHARED_SECRET:-runner-dev-secret}
+      RESEARCH_OS_COMMIT: ${RESEARCH_OS_COMMIT:-unavailable}
     volumes:
       - ./projects:/workspace/projects
       - ./artifacts:/workspace/artifacts

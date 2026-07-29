@@ -141,7 +141,11 @@ def _system_prompt(clarification_mode: ClarificationMode = "automatic") -> str:
         "rights, compute availability, budgets, deadlines, novelty, or experimental results. Do not ask "
         "whether project creation or execution itself is approved; the UI owns those separate approvals. Match "
         "the user's language. Mark ready_for_confirmation only when the draft is coherent enough for ProjectSpec "
-        "review; project creation and execution remain separate approval steps. Return only the strict "
+        "review; project creation and execution remain separate approval steps. Specifically, set "
+        "ready_for_confirmation to true only when: research_question has at least 10 characters, "
+        "domain is set, at least one hypothesis exists, at least one expected_contribution exists, "
+        "and available_data is non-empty. If any are missing, set ready_for_confirmation to false "
+        "and list what's missing in unresolved_items. Return only the strict "
         "structured object requested by the output schema."
     )
 

@@ -224,7 +224,11 @@ def clarify_idea(payload: dict[str, Any]) -> tuple[dict[str, Any], str, str, str
             "a novel research contribution. Never "
             "fabricate citations, data rights, compute, budget, deadline, novelty, or results. Do not "
             "ask whether project creation or execution itself is approved; the UI owns those separate approvals. Match "
-            "the user's language. Project creation and execution remain separate approval steps. Return only the "
+            "the user's language. Project creation and execution remain separate approval steps. "
+            "Set ready_for_confirmation to true ONLY when the following are all present in the draft: "
+            "a research_question (at least 10 characters), a domain, at least one hypothesis, at least one expected_contribution, "
+            "and an available_data statement. If any of these are missing or ambiguous, set ready_for_confirmation to false "
+            "and list what is missing in unresolved_items. Return only the "
             "strict JSON object required by the schema."
         ),
         CLARIFICATION_SCHEMA_PATH,

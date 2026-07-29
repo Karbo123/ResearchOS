@@ -171,6 +171,10 @@ The Research OS sidebar opens n8n through `/api/n8n/open`. The API logs into the
 
 ## First project walkthrough
 
+### Clarification request status
+
+When a new-project clarification request uses `POST /api/chat/stream`, the UI shows only auditable application events: route selection, request preparation, model invocation, result persistence, failure, and the final structured result. It never displays, claims, or reconstructs model chain-of-thought. A project can be created only after the returned structured specification is `ready_for_confirmation`; an incomplete conversation returns a conflict instead of creating a project.
+
 1. Click **New research project** and enter your Idea. **Automatic mode** is on by default and minimizes interruptions; turn the toggle off for **Detailed mode** when you want broader questions before a specification is prepared.
 2. Review the AI's interpretation, inferred domain, assumptions, and grouped questions. Correct bad inferences; neither mode uses a field-by-field questionnaire.
    Use Enter for line breaks; Ctrl+Enter or Cmd+Enter submits. While a request is pending, the composer and mode switch are locked; timeout or connection errors are shown in the conversation and release the controls for retry.
@@ -199,7 +203,7 @@ python scripts/test_mnist_idea.py
 
 The full acceptance below invokes several visible cases, real models, external academic APIs, and Runner jobs, and therefore costs more. Run it only when that scope is intended.
 
-The latest Automatic/Detailed-mode change has only the targeted `mnist-cnn` live verification described above. A fresh multi-case end-to-end regression is explicitly pending as `P0-REGRESSION-032`; it must not run until the user approves the visible case IDs and cost envelope. The complete acceptance record below remains the last full-system baseline from before that targeted change.
+The latest Automatic/Detailed-mode change has only the targeted `mnist-cnn` live verification described above. A fresh multi-case end-to-end regression is explicitly pending as `P0-REGRESSION-032`. The complete acceptance record below remains the last full-system baseline from before that targeted change.
 
 The acceptance script exercises the real Bridge, academic APIs, PostgreSQL state, n8n, Runner, MLflow, artifact lineage, policy enforcement, Idea v2, partial rerun, and LaTeX compilation:
 

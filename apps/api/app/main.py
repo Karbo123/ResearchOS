@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import hashlib
 import os
@@ -8,12 +9,12 @@ import subprocess
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, AsyncGenerator, Literal
 from uuid import UUID
 
 import httpx
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, select, text
 
@@ -26,7 +27,7 @@ from .models import (
 )
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
 from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
-from .llm import LLMRequestError, clarify_idea_with_llm, model_catalog, router_thresholds
+from .llm import LLMRequestError, clarify_idea_with_llm, model_catalog, router_thresholds, select_model_route
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .policy_engine import (
     PolicyConstraints, compile_policy_constraints, experiment_policy_violations,
@@ -350,6 +351,150 @@ def chat(request: ChatRequest):
             reasoning_effort=outcome.route.reasoning_effort,
             clarification_mode=request.clarification_mode,
         )
+
+
+@app.post("/api/chat/stream")
+async def chat_stream(request: ChatRequest):
+    async def event_stream() -> AsyncGenerator[str, None]:
+        def emit(event: str, data: Any) -> str:
+            return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+        # Phase 1: load conversation & transcript (sync DB)
+        loop = asyncio.get_running_loop()
+        conversation: ConversationSession | None = None
+        transcript: list[dict[str, str]] = []
+        draft_before: dict[str, Any] = {}
+        conversation_id: UUID | None = None
+
+        def load_conversation():
+            nonlocal conversation, transcript, draft_before, conversation_id
+            from .clarification import initial_draft
+            with session_scope() as session:
+                conv = session.get(ConversationSession, request.session_id) if request.session_id else None
+                if request.session_id and not conv:
+                    raise HTTPException(404, "conversation not found")
+                if not conv:
+                    conv = ConversationSession(draft=initial_draft(request.message), pending_field=None, phase="clarifying")
+                    session.add(conv)
+                    session.flush()
+                session.add(Message(
+                    session_id=conv.id, role="user", content=request.message,
+                    metadata_json={"attachments": [], "clarification_mode": request.clarification_mode},
+                ))
+                if conv.project_id:
+                    raise HTTPException(409, "streaming is for idea clarification only")
+                if conv.phase == "ready_for_confirmation":
+                    conv.phase = "clarifying"
+                transcript = [
+                    {"role": item.role, "content": item.content}
+                    for item in session.scalars(
+                        select(Message).where(Message.session_id == conv.id).order_by(desc(Message.created_at)).limit(12)
+                    ).all()[::-1]
+                ]
+                draft_before = json.loads(json.dumps(conv.draft))
+                conversation_id = conv.id
+                conversation = conv
+
+        try:
+            await loop.run_in_executor(None, load_conversation)
+        except HTTPException as exc:
+            yield emit("error", {"code": "invalid_request", "message": exc.detail})
+            return
+
+        # Phase 2: compute model route (fast, deterministic)
+        route = select_model_route(request.message, draft_before, len(request.attachments))
+        yield emit("model_route", {
+            "tier": route.tier, "model": route.model, "reasoning_effort": route.reasoning_effort,
+        })
+        await asyncio.sleep(0.01)
+
+        # Report observable application work, not model-internal reasoning.
+        yield emit("progress", {
+            "stage": "preparing_request",
+            "label": "准备请求",
+            "detail": f"已读取对话和附件信息，当前模式：{'全自动' if request.clarification_mode == 'automatic' else '详细'}",
+        })
+
+        # Phase 4: call LLM (sync, run in thread)
+        def call_llm():
+            return clarify_idea_with_llm(
+                request.message,
+                current_draft=draft_before,
+                transcript=transcript,
+                attachment_count=len(request.attachments),
+                clarification_mode=request.clarification_mode,
+            )
+
+        yield emit("progress", {
+            "stage": "calling_model",
+            "label": "调用模型",
+            "detail": "正在等待受限模型服务返回结构化结果。",
+        })
+        try:
+            outcome = await loop.run_in_executor(None, call_llm)
+        except LLMRequestError as exc:
+            yield emit("error", {"code": exc.code, "message": exc.message})
+            return
+
+        # Phase 5: save result to DB
+        def save_result():
+            with session_scope() as s:
+                conv = s.get(ConversationSession, conversation_id)
+                if not conv or conv.project_id:
+                    raise RuntimeError("conversation changed while clarification was running")
+                from .clarification import build_spec, required_spec_gaps
+                draft = outcome.result.draft.model_dump(mode="json")
+                assumptions = list(dict.fromkeys(outcome.result.assumptions))
+                draft["open_questions"] = list(dict.fromkeys([
+                    *(draft.get("open_questions") or []),
+                    *outcome.result.unresolved_items,
+                    *[f"待确认假设：{item}" for item in assumptions],
+                ]))[:12]
+                draft["risks"] = list(dict.fromkeys([
+                    *(draft.get("risks") or []),
+                    *outcome.result.risk_flags,
+                ]))[:20]
+                conv.draft = draft
+                conv.pending_field = None
+                schema_gaps = required_spec_gaps(draft)
+                ready = outcome.result.ready_for_confirmation and not outcome.result.unresolved_items and not schema_gaps
+                spec_model = build_spec(draft) if ready else None
+                conv.phase = "ready_for_confirmation" if ready else "clarifying"
+                reply = (
+                    f"{outcome.result.assistant_reply}\n\n结构化规格已准备好。请检查右侧内容；只有点击“确认并创建项目”后才会启动后续工作流。"
+                    if ready else outcome.result.assistant_reply
+                )
+                metadata = {
+                    "model_tier": outcome.route.tier, "model": outcome.route.model,
+                    "reasoning_effort": outcome.route.reasoning_effort,
+                    "assumptions": assumptions, "unresolved_items": outcome.result.unresolved_items,
+                    "clarification_mode": request.clarification_mode,
+                }
+                s.add(Message(session_id=conv.id, role="assistant", content=reply, metadata_json=metadata))
+                return {
+                    "session_id": str(conv.id), "phase": conv.phase, "reply": reply,
+                    "spec": spec_model.model_dump(mode="json") if spec_model else None,
+                    "missing_fields": list(dict.fromkeys([*outcome.result.unresolved_items, *schema_gaps])),
+                    "model_tier": outcome.route.tier, "model": outcome.route.model,
+                    "reasoning_effort": outcome.route.reasoning_effort,
+                    "assumptions": assumptions,
+                }
+
+        yield emit("progress", {
+            "stage": "saving_result",
+            "label": "保存结果",
+            "detail": "正在校验结构化输出并写入对话记录。",
+        })
+        try:
+            result = await loop.run_in_executor(None, save_result)
+        except RuntimeError as exc:
+            yield emit("error", {"code": "conversation_changed", "message": str(exc)})
+            return
+
+        result["clarification_mode"] = request.clarification_mode
+        yield emit("result", result)
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 @app.post("/api/projects")

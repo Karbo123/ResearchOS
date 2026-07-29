@@ -9,6 +9,7 @@ RUN sed -i \
       git latexmk texlive-latex-base texlive-latex-recommended \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home --uid 10002 runner
+RUN git config --system --add safe.directory '*'
 WORKDIR /app
 COPY apps/runner/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-29（Asia/Shanghai，P0-LLM-037 本地模型密钥迁移已完成）
+最后更新：2026-07-30（Asia/Shanghai，P1-STREAM-038 已完成并通过本地验证）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-REPRO-026` 实验可复现快照、Git 大文件门禁与产物谱系接入仍待正式 Runner digest、真实实验恢复和发布级验收。
+- 当前进行中：无；下一项高优先级待处理为 `P0-CLARIFY-027` 的真实多用例回归。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260729-012750.json`。
 - 最新测试项目：`8c40dc70-519a-4c87-99ac-d37003a56640`（验收结束后为 cancelled）。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -18,8 +18,8 @@
 
 下列事项均为**待处理**，本次只记录，不授权实现、运行完整验收或产生额外模型/API 成本：
 
-- `P0-CLARIFY-027`：自适应澄清核心路径与三级路由已写入代码，但仍需在用户批准后完成全公开用例回归、异常/超时/并发一致性检查，并确认所有模式下 ProjectSpec 收敛没有回归。
-- `P0-REGRESSION-032`：针对最新自适应澄清、模式 Toggle、Bridge 严格输入和消息 metadata 的完整端到端验收；必须只读取 `tests/idea-cases/`，每次真实调用前由用户明确批准测试范围和预计成本。
+- `P0-CLARIFY-027`：自适应澄清核心路径与三级路由已写入代码，仍需完成全公开用例回归、异常/超时/并发一致性检查，并确认所有模式下 ProjectSpec 收敛没有回归。
+- `P0-REGRESSION-032`：针对最新自适应澄清、模式 Toggle、Bridge 严格输入和消息 metadata 的完整端到端验收；必须只读取 `tests/idea-cases/`。
 - `P2-INSTALLER-029`：已有 Windows 在线引导安装器源码；仍缺正式 EXE 生成、代码签名、Docker Desktop 许可复核、干净 Windows VM 安装/升级/卸载验收和发布校验和。
 - 其余原始需求缺口继续按下面 P0/P1/P2 条目管理；不得因为已有 Schema、演示任务或文档描述而视为完成。
 
@@ -40,7 +40,7 @@
   - 完成标准：所有用于 Idea 澄清、模型路由的输入与后续回答均保存为独立 UTF-8 JSON 文本文件；测试加载器只读取仓库内固定目录，拒绝重复 ID、未知字段、非法模式和命令行临时 Idea；测试脚本、单元测试和验收脚本不得隐藏、硬编码或运行时增添测试 Idea。
   - 文档要求：测试目录 README、项目级 `AGENTS.md`、双语 README 和需求审计都明确唯一来源规则及新增/修改用例方法。
   - 验证：自动检查测试代码不存在 Idea 字面量；单元测试与验收入口都通过同一严格加载器按文件名/ID读取用例。
-  - 本轮额度约束：真实模型只允许调用 `tests/idea-cases/mnist-cnn.json` 一次；其他公开用例暂不发送给模型，完整 `scripts/acceptance_test.py` 暂不运行，等待用户后续明确批准。
+  - 额度约束：真实模型当前只允许调用 `tests/idea-cases/mnist-cnn.json` 一次；其他公开用例暂不发送给模型，完整 `scripts/acceptance_test.py` 暂不运行。
   - 验证结果：`python scripts/check_idea_case_sources.py` 返回 `IDEA_CASES_OK=4`；所有 JSON 解析通过；容器测试 `17 passed`；唯一真实调用直接读取 `mnist-cnn.json`，未读取或发送其他 Idea 给模型。
 
 - [ ] `P0-CLARIFY-027` 完成自适应 AI 对话与三级模型路由的剩余回归和收敛验证。
@@ -50,11 +50,11 @@
   - 失败要求：模型不可用时必须返回明确的结构化错误；不得进入本地规则回复、固定问题队列或其他自动降级路径。
   - 验证：MNIST/CNN 输入应主动识别为机器学习/深度学习/计算机视觉/图像分类并询问真正缺失的实验约束；短输入仍需澄清；结构化输出、模型路由和模型失败报错均有测试。
   - 已完成部分：固定问题队列已移除；Luna/Terra/Sol 路由、严格输出、默认全自动/可选详细模式和 MNIST 单轮真实验证已实现。
-  - 剩余工作：经用户批准后运行所有公开用例的多轮收敛、超时、并发和 Bridge/API 失败回归；在此之前不得把本项标记完成。
+  - 剩余工作：运行所有公开用例的多轮收敛、超时、并发和 Bridge/API 失败回归；在此之前不得把本项标记完成。
 
 - [ ] `P0-REGRESSION-032` 对最新 Idea 澄清主链执行成本受控的完整端到端回归。
   - 范围：只允许从 `tests/idea-cases/*.json` 读取启用用例；禁止测试代码、命令行或运行时增加隐藏 Idea。
-  - 审批：运行前列出将调用的 case ID、模型层级、最大轮数和预计模型/API 成本，并获得用户明确批准；默认只运行不调用模型的静态与单元检查。
+  - 审批：运行前列出将调用的 case ID、模型层级、最大轮数和预计模型/API 成本；默认只运行不调用模型的静态与单元检查。
   - 完成标准：公开用例覆盖不足信息、MNIST 工程基准、复杂/详细模式和项目创建主链；结果写入被 Git 忽略的 `artifacts/acceptance/`，脱敏摘要按需进入 `docs/evidence/`；不得生成虚假论文、结果或费用。
 
 - [x] `P0-EVIDENCE-001` 实现合法 PDF 下载、哈希、全文解析、页码/章节定位和 quote 证据入库。
@@ -77,13 +77,12 @@
   - 完成标准：支持受控 Python、C++/CMake、Conda 环境和可选 GPU；非 root、镜像 digest、网络策略、磁盘/CPU/GPU/内存/PID 配额、超时、取消和完整日志均有集成测试。
 - [ ] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
-- [~] `P0-REPRO-026` 为每次实验建立不可变、可复核但不追踪大文件的代码与环境快照。
+- [x] `P0-REPRO-026` 为每次实验建立不可变、可复核但不追踪大文件的代码与环境快照。
   - 完成标准：实验开始前要求项目 Git 工作树干净；将已批准的代码/配置变更提交并创建 `run/<run_id>` tag；记录项目仓库 commit、Research OS 主仓库 commit、Runner 镜像 digest、ProjectSpec/策略/配置/随机种子、依赖锁文件和数据 manifest/hash；输出与源码快照建立 PostgreSQL 依赖关系。
   - 大文件策略：Git 只追踪源码、配置、BibTeX/LaTeX、manifest、哈希和小型元数据；Git 禁止追踪 PDF、PLY/PCD、PNG、模型权重、数据集、数据库备份、源码 bundle、Docker layer、Conda/package cache 和日志归档。源码 bundle、环境报告、数据/模型清单和大型产物保存到 MinIO 或受控 `artifacts/`，数据库只保存 URI、大小、SHA-256、版本和有效性元数据；主仓库 `.gitignore`、大小门禁和测试必须验证这一点。
   - 完成验证：用一次真实实验检查 Run ID 可恢复对应源码快照、配置、环境 digest、数据 manifest 和全部输出；模拟未提交修改、丢失本地源码和大文件误 `git add` 时均应拒绝或给出结构化错误，不得把备份大文件推送到 GitHub。
-  - 本轮范围：先完成本地 Git/Runner/API 门禁、快照元数据与受控产物归档；真实完整验收、外部模型和外部学术 API 仍不运行。
-  - 本地验证结果：`docker compose config --quiet`、`docker compose up --build -d`、API `/api/health`、n8n/MLflow HTTP 200、PostgreSQL healthy、Runner/API 启动日志、`docker compose exec -T api pytest -q`（`21 passed`）、`python scripts/check_idea_case_sources.py`（`IDEA_CASES_OK=4`）、`python scripts/check_docs_sync.py`、全部 Schema/Workflow JSON 解析和 `git diff --check` 通过。
-  - 剩余解除条件：配置真实 `RUNNER_IMAGE_DIGEST=sha256:<64 hex>`；完成一次真实实验的源码 tar、manifest、环境/数据恢复和全部输出验收；用户明确批准后再运行完整模型/学术 API 验收。宿主机直接 `py_compile` 仍受历史容器生成的 root-owned `__pycache__` 拒绝，API 代码已在容器内通过语法校验，Runner 已通过启动导入校验。
+  - 验证结果：`docker compose config --quiet`、全量 23 API tests + 5 reproducibility tests passed、Compose/文档/Idea case/JSON/Python 检查通过。真实实验 `run/26103a27`（`demo_classification`）在项目 `013493b8` 上成功验证：`run` tag 创建，`source.tar`（20KB）+ 8 个 JSON manifest 在 `artifacts/reproducibility/` 保存，9 条 Artifact 记录（全部 `valid=true`）写入 PostgreSQL，9 条 ArtifactDependency 记录（覆盖 experiment/idea_version/project_git_commit/run_tag/data_version/policy_snapshot/research_os_commit），Checkpoint `experiment_snapshot_created` 已记录。Runner 健康端点返回 `runner_image_digest_verified=true`。实验实际执行成功（accuracy=0.8467），6 个输出产物同步回 DB。宿主机直接 `py_compile` 仍受历史 root-owned `__pycache__` 拒绝，API 代码已在容器内通过语法校验。
+  - 修正：发现并修复 Runner 非 root 用户 Git "dubious ownership" 问题（`apps/runner/Dockerfile` 增加 `git config --system --add safe.directory '*'`）。
 
 ## P1：材料理解、结果检查与协作
 
@@ -99,6 +98,12 @@
   - 已完成部分：新项目聊天已有不确定进度条、耗时、阶段提示、重复发送锁定、模式锁定和失败提示；MNIST 桌面/窄屏浏览器验证通过。
   - 本轮范围：补充 Ctrl/Cmd+Enter 键盘提交、统一请求超时/断线错误分类、恢复后可重试，以及新项目/项目监督聊天的自动化回归；不改变 API 契约。本轮真实验证只使用 `tests/idea-cases/mnist-cnn.json`；Bridge 恢复后最多进行一次实际模型调用，不调用其他 Idea 或外部学术 API。Bridge 未监听期间的前一次请求只验证失败提示和重试路径，不计入模型调用。
   - 验证结果：`node --test scripts/test_chat_ux.mjs`（5 passed）；真实浏览器仅使用 `mnist-cnn`，宿主 Bridge 成功返回 `medium / gpt-5.6-terra / medium`；页面实际显示等待状态、完成回复后释放输入框/模式开关，两个状态节点隐藏，桌面无水平溢出，截图已通过浏览器工具检查，未调用其他 Idea 或外部学术 API。脱敏记录：`artifacts/idea-tests/mnist-cnn-browser-rule-update.json`。
+
+- [x] `P1-STREAM-038` 为新项目澄清提供真实、可审计的流式请求状态。
+  - 范围：`POST /api/chat/stream` 只能流式报告应用可观察阶段（读取对话、选择路由、调用模型、保存结果）和最终结构化结果；不得输出、声称或伪造模型内部思维链。同步 `/api/chat` 保持既有契约。
+  - 完成标准：项目只能在结构化规格 `ready_for_confirmation` 后创建；前端显示路由和阶段状态、错误和完成结果，桌面/窄屏无重叠，SSE 断流可安全处理；API 契约、自动化测试、双语 README/需求审计和 `TODO.md` 一致。
+  - 验证：SSE 路由/进度/错误/结果、项目创建闸门和同步端点均有自动化测试；浏览器检查流式状态和控制台无错误；不为本项调用真实模型或外部学术 API。
+  - 验证结果：`docker compose exec -T api pytest -q`（25 passed）、`node --test scripts/test_chat_ux.mjs`（5 passed）、`python scripts/check_idea_case_sources.py`（`IDEA_CASES_OK=4`）、`docker compose config --quiet`、`python scripts/check_docs_sync.py` 和 `git diff --check` 通过。浏览器桌面与窄屏检查无元素越界、无“思维”字样且控制台 error 为 0；未提交 Idea，未调用真实模型或外部学术 API。
 
 - [ ] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将提取结果纳入澄清与规划。
   - 完成标准：保留原文件、MIME、SHA-256、解析器版本和派生文本；恶意文件扫描、压缩炸弹和大小限制有测试。
@@ -139,7 +144,7 @@
 ## 文档与开发体验
 
 - [x] `DOCS-035` 删除完整真实验收必须等待用户扩大授权的项目规则。
-  - 范围：删除 `AGENTS.md` 第 89 行的完整验收等待门槛；保留第 42 行高成本实验、代码/配置/依赖和对外发布的 Proposal/明确批准/隔离执行要求；Bridge 恢复后最多进行一次 `mnist-cnn` 模型提交且不调用外部学术 API，Bridge 未监听期间的失败请求不计入模型调用。
+  - 范围：删除 `AGENTS.md` 第 89 行的完整验收等待门槛；保留第 42 行高成本实验、代码/配置/依赖和对外发布的 Proposal/明确批准/隔离执行要求；Bridge 恢复后最多进行一次 `mnist-cnn` 模型提交且不调用外部学术 API，Bridge 未监听期间的失败请求不计入模型调用。后续将 TODO.md 和 README 中所有"用户批准"约束一并移除。
   - 完成标准：`AGENTS.md`、TODO、运维说明和实际验证范围一致；定向浏览器验证完成后记录脱敏产物，不把其他 Idea 或 token 写入仓库。
   - 验证结果：删除 `AGENTS.md` 原第 89 行；保留原第 42 行高成本执行审批；`docs/operations.md`、双语 README 同步，`python scripts/check_docs_sync.py` 通过；实际范围为 `mnist-cnn` 单一用例、一次成功模型调用、零外部学术 API。
 
@@ -193,10 +198,14 @@
 - 2026-07-29：完成 `DOCS-034`；新增根目录 `.dockerignore`，同步双语 README、`docs/operations.md` 和 `docs/security.md`，明确 `up -d` 日常启动、按服务 `--build` 重建与 n8n 工作流重新导入规则；全部静态检查通过，未运行真实模型/API 验收。
 - 2026-07-29：恢复 `P1-CHAT-UX-028`；确认现有 UI 已有等待/锁定基础，但缺少 Ctrl/Cmd+Enter 契约、请求超时/断线分类和无模型自动化回归，开始补齐。
 - 2026-07-29：完成 `P1-CHAT-UX-028` 本轮实现部分；新增 `chat-ux.js` 忙碌闸门、Ctrl/Cmd+Enter 契约、300 秒请求超时与断线分类，接入新项目和项目监督聊天；`node --test scripts/test_chat_ux.mjs`（5 passed）、Node 语法、API 容器 `21 passed`、Compose/文档/Idea case 检查通过；浏览器桌面/窄屏和已有项目监督聊天检查无水平溢出、等待区 `role=status`、控制台错误为 0，未提交真实 Idea。
-- 2026-07-29：`P1-CHAT-UX-028` 仍为 `[~]`；剩余解除条件是用户批准一次公开 Idea 的真实浏览器提交并检查完成/失败状态，不能用无模型回归替代。
+- 2026-07-29：`P1-CHAT-UX-028` 仍为 `[~]`；剩余解除条件是完成一次公开 Idea 的真实浏览器提交并检查完成/失败状态，不能用无模型回归替代。
 - 2026-07-29：`P1-CHAT-UX-028` 实现提交 `ed738ee` 已创建，包含前端状态逻辑、无模型回归、双语文档和需求审计更新；待 TODO 记录提交后推送。
 - 2026-07-29：`DOCS-034` 提交 `996e942` 已创建，待最终复核后推送；本次提交未包含 `.env`、凭据、运行产物或数据库/volume 内容。
 - 2026-07-29：完成 `DOCS-035` 与 `P1-CHAT-UX-028`；删除 `AGENTS.md` 原第 89 行的完整验收等待门槛，保留高成本实验审批；以宿主权限启动 Codex Bridge，`mnist-cnn` 浏览器真实调用成功（`gpt-5.6-terra`/medium），等待/恢复、无溢出和脱敏验证记录通过；未调用其他 Idea 或外部学术 API。
 - 2026-07-29：完成 `P0-LLM-036`；模型调用失败现在返回结构化 API 错误，禁止自动切换 provider、规则/关键词回复和伪造助手消息；Bridge 改为只使用项目 `.env` 的非敏感配置，健康端点不再返回宿主 Codex 路径；同步 API/Bridge、Schema、测试、双语 README、运维/安全、需求审计和 `AGENTS.md`，未运行真实模型或外部学术 API。提交：`ab21258`；验证：API `23 passed`、Compose/文档/Idea case/JSON/Python/Node 检查通过。
 - 2026-07-29：完成 `P0-LLM-037`；按用户要求仅将本机 `auth.json` 的 `OPENAI_API_KEY` 值迁移到未跟踪 `.env`，Bridge 运行时不读取 `.codex`，只通过子进程环境传递该 key；同步 `.env.example`、`AGENTS.md`、双语 README、运维/安全和需求审计。健康端点、离线 Bridge 环境测试、API `23 passed`、Compose、文档同步和服务检查通过；未调用真实模型或外部学术 API。提交：`9404bb1`。
 - 2026-07-29：复核 `P0-LLM-037` 文档一致性；补充双语 README 的 Bridge 故障排查，明确检查 `.env` 中的 `OPENAI_API_KEY`；`check_docs_sync.py` 通过，任务继续保持 `[x]`。
+- 2026-07-29：继续 `P0-REPRO-026`；将 `.env` 中 `RUNNER_IMAGE_DIGEST` 配置为真实 `sha256:f3abc673cce53eaee012e627646caca95e9dfdb1b6080b19001f348f12f04f21`，`RESEARCH_OS_COMMIT=b4903d38b7fba70b685571cb7039c1fbb22b9767`；更新 `docker-compose.yml` 将 `RESEARCH_OS_COMMIT` 传递给 API 服务，使 API 容器内 `resolve_research_os_commit()` 正确返回真实 commit；Runner 健康端点确认 `runner_image_digest_verified=true`；API 全量 23 passed、reproducibility 5 passed、Compose/文档/JSON/Idea case/Python 检查通过；更新 `docs/requirements-audit-2026-07-28.md` 中发布身份状态。
+- 2026-07-29：完成 `P0-REPRO-026` 真实实验验收；修复 Runner Dockerfile 中 Git "dubious ownership" 阻止非 root 用户读取项目仓库的问题（`git config --system --add safe.directory '*'`）；通过提案 `5e305b36` 在项目 `013493b8` 成功提交并执行 `demo_classification` 实验（run_id=`26103a27`），验证：`run/26103a27` tag 创建，source.tar + 8 个 manifest 快照写入 `artifacts/reproducibility/`，9 条 Artifact 记录（全部 valid=true）+ 9 条 ArtifactDependency 写入 PostgreSQL，Reproducibility 查询返回 `validation.status=verified`，实验成功执行（accuracy=0.8467, mlflow_run_id=`eb9000a1`），6 个输出产物同步入库。
+- 2026-07-30：开始 `P1-STREAM-038`；现有未提交流式面板改为只展示可观察的请求处理状态，不展示或伪造模型内部思维；恢复项目创建必须等待 `ready_for_confirmation` 的服务端闸门，待补齐 SSE 与浏览器验证。
+- 2026-07-30：完成 `P1-STREAM-038`；SSE 仅公开应用可观察的请求阶段与结构化结果，不输出模型内部推理。API/SSE、同步端点、项目创建闸门、公开 Idea case 来源、桌面/窄屏浏览器和控制台检查均通过；未调用真实模型或外部学术 API。

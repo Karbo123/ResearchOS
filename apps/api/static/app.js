@@ -55,6 +55,185 @@ function modelMeta(result) {
   return `${result.model_tier || "adaptive"} · ${result.model} · reasoning ${result.reasoning_effort || "default"}`;
 }
 
+function startAiThinking() {
+  const pane = $("aiThinkingPane"); pane.classList.remove("hidden");
+  const container = $("aiThinkingSessions");
+
+  // collapse all previous sessions
+  container.querySelectorAll(".thinking-session").forEach(s => s.classList.add("collapsed"));
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString("zh-CN", {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  const sessionId = "ts-" + Date.now();
+
+  const session = document.createElement("div");
+  session.className = "thinking-session";
+  session.id = sessionId;
+  session.innerHTML = `
+    <div class="thinking-session-header" onclick="toggleThinkingSession('${sessionId}')">
+      <span class="toggle-icon" data-lucide="chevron-down" style="width:16px;height:16px"></span>
+      <span class="session-model">模型路由</span>
+      <span class="session-status running">处理中</span>
+      <span class="session-time">${timeStr}</span>
+    </div>
+    <div class="thinking-session-body">
+      <div class="thinking-stages">
+        <div class="thinking-stage" data-stage="analyzing_input">
+          <span class="stage-icon"></span>
+          <div><span class="stage-label">读取对话</span><span class="stage-detail">等待中…</span></div>
+        </div>
+        <div class="thinking-stage" data-stage="selecting_route">
+          <span class="stage-icon"></span>
+          <div><span class="stage-label">选择模型</span><span class="stage-detail">等待中…</span></div>
+        </div>
+        <div class="thinking-stage" data-stage="calling_llm">
+          <span class="stage-icon"></span>
+          <div><span class="stage-label">调用模型</span><span class="stage-detail">等待中…</span></div>
+        </div>
+        <div class="thinking-stage" data-stage="parsing">
+          <span class="stage-icon"></span>
+          <div><span class="stage-label">保存结果</span><span class="stage-detail">等待中…</span></div>
+        </div>
+      </div>
+    </div>`;
+  container.appendChild(session);
+  container.scrollTop = container.scrollHeight;
+
+  // set active stages
+  setThinkingStageIn(sessionId, "analyzing_input", "active", "读取对话", "等待中…");
+
+  // store current session id
+  state.currentThinkingSession = sessionId;
+
+  // try icon refresh
+  if (window.lucide) setTimeout(() => lucide.createIcons(), 10);
+
+  return sessionId;
+}
+
+function toggleThinkingSession(sessionId) {
+  const el = document.getElementById(sessionId);
+  if (el) el.classList.toggle("collapsed");
+}
+
+function getThinkingSession(sessionId) {
+  return document.getElementById(sessionId);
+}
+
+function setThinkingStageIn(sessionId, stage, state, label, detail) {
+  const session = document.getElementById(sessionId);
+  if (!session) return;
+  const el = session.querySelector(`.thinking-stage[data-stage="${stage}"]`);
+  if (!el) return;
+  // never downgrade from done to active
+  if (state === "active" && el.classList.contains("done")) return;
+  el.className = `thinking-stage ${state}`;
+  if (label) el.querySelector(".stage-label").textContent = label;
+  const detailEl = el.querySelector(".stage-detail");
+  if (detail !== undefined) detailEl.textContent = detail;
+}
+
+function updateThinkingSessionHeader(sessionId, modelLabel, statusText, statusClass) {
+  const session = document.getElementById(sessionId);
+  if (!session) return;
+  const header = session.querySelector(".thinking-session-header");
+  const modelEl = header.querySelector(".session-model");
+  const statusEl = header.querySelector(".session-status");
+  if (modelLabel) modelEl.textContent = modelLabel;
+  if (statusText) statusEl.textContent = statusText;
+  if (statusClass) { statusEl.className = "session-status " + statusClass; }
+}
+
+async function sendChat(event) {
+  event.preventDefault(); const input = $("chatInput"); const message = input.value.trim(); if (!message || state.chatBusy || !chatGate.tryStart()) return;
+  addMessage($("messages"), "user", message); input.value = "";
+  state.chatBusy = true;
+
+  const stopProgress = startAiProgress({progressId:"aiProgress", formId:"chatForm", elapsedId:"aiProgressElapsed", stageId:"aiProgressStage"});
+  const sessionId = startAiThinking();
+  setThinkingStageIn(sessionId, "analyzing_input", "active", "读取对话", `消息长度 ${message.length} 字符`);
+
+  try {
+    const clarificationMode = state.clarificationMode;
+    const response = await fetch("/api/chat/stream", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({session_id: state.sessionId, message, attachments: [], clarification_mode: clarificationMode}),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.body) throw new Error("No response body");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let result = null;
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, {stream: true});
+
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      let currentEvent = "";
+      let currentData = "";
+      for (const line of lines) {
+        if (line.startsWith("event: ")) { currentEvent = line.slice(7); currentData = ""; }
+        else if (line.startsWith("data: ")) { currentData = line.slice(6); }
+        else if (line === "" && currentEvent) {
+          try { const parsed = JSON.parse(currentData); handleSSEEventIn(sessionId, currentEvent, parsed, clarificationMode); if (currentEvent === "result") result = parsed; } catch(e) {}
+          currentEvent = ""; currentData = "";
+        }
+      }
+    }
+
+    if (result) {
+      state.sessionId = result.session_id || state.sessionId;
+      const routeMeta = modelMeta(result);
+      addMessage($("messages"), "assistant", result.reply, `${clarificationMode === "automatic" ? "全自动模式" : "详细模式"}${routeMeta ? ` · ${routeMeta}` : ""}`);
+      if (result.spec) {
+        renderSpec(result.spec);
+      }
+      if (state.queuedFiles.length) await uploadQueuedFiles();
+    }
+  } catch (error) {
+    const message = chatUX.formatRequestError(error);
+    addMessage($("messages"), "assistant", `请求失败：${message}`); toast(message);
+  }
+  finally { stopProgress(); chatGate.finish(); state.chatBusy = false; }
+}
+
+function handleSSEEventIn(sessionId, event, data, clarificationMode) {
+  switch (event) {
+    case "model_route":
+      const modelLabel = `${data.tier} · ${data.model} · reasoning ${data.reasoning_effort}`;
+      updateThinkingSessionHeader(sessionId, modelLabel, "处理中", "running");
+      setThinkingStageIn(sessionId, "selecting_route", "done", "选择模型", `${data.tier} → ${data.model}`);
+      setThinkingStageIn(sessionId, "analyzing_input", "done");
+      setThinkingStageIn(sessionId, "calling_llm", "active", "调用模型", "等待模型响应…");
+      break;
+    case "progress":
+      const stageMap = {
+        "preparing_request": {id: "analyzing_input", label: "准备请求"},
+        "calling_model": {id: "calling_llm", label: "调用模型"},
+        "saving_result": {id: "parsing", label: "保存结果"},
+      };
+      const s = stageMap[data.stage] || {id: "parsing", label: data.stage};
+      setThinkingStageIn(sessionId, s.id, "active", s.label, data.detail || "");
+      break;
+    case "result":
+      setThinkingStageIn(sessionId, "calling_llm", "done");
+      setThinkingStageIn(sessionId, "parsing", "done", "保存完成", `${(data.assumptions || []).length} 个已记录假设`);
+      updateThinkingSessionHeader(sessionId, null, "已完成", "done");
+      break;
+    case "error":
+      setThinkingStageIn(sessionId, "calling_llm", "done", "请求失败", data.message);
+      updateThinkingSessionHeader(sessionId, null, "失败", "done");
+      break;
+  }
+}
+
 function renderSpec(spec) {
   if (!spec) return;
   const idea = spec.idea;
@@ -74,22 +253,14 @@ function renderSpec(spec) {
     <div class="spec-group"><label>Approvals</label>${list(spec.required_approvals)}</div>`;
   $("specStatus").textContent = "待确认";
   $("specStatus").className = "badge pending";
+  $("confirmProject").classList.remove("hidden");
+  // collapse current thinking session but keep history visible
+  if (state.currentThinkingSession) toggleThinkingSession(state.currentThinkingSession);
+  // scroll right spec pane to top to show the spec
+  const pane = $("specContent").closest(".spec-pane") || document.querySelector(".spec-pane");
+  if (pane) pane.scrollTop = 0;
 }
 
-async function sendChat(event) {
-  event.preventDefault(); const input = $("chatInput"); const message = input.value.trim(); if (!message || state.chatBusy || !chatGate.tryStart()) return;
-  addMessage($("messages"), "user", message); input.value = "";
-  state.chatBusy = true;
-  const stopProgress = startAiProgress({progressId:"aiProgress", formId:"chatForm", elapsedId:"aiProgressElapsed", stageId:"aiProgressStage"});
-  try {
-    const clarificationMode = state.clarificationMode;
-    const result = await api("/api/chat", {method:"POST", body: JSON.stringify({session_id: state.sessionId, message, attachments: [], clarification_mode: clarificationMode})});
-    const routeMeta = modelMeta(result);
-    state.sessionId = result.session_id; addMessage($("messages"), "assistant", result.reply, `${clarificationMode === "automatic" ? "全自动模式" : "详细模式"}${routeMeta ? ` · ${routeMeta}` : ""}`); renderSpec(result.spec);
-    if (state.queuedFiles.length) await uploadQueuedFiles();
-  } catch (error) { const message = chatUX.formatRequestError(error); addMessage($("messages"), "assistant", `请求失败：${message}`); toast(message); }
-  finally { stopProgress(); chatGate.finish(); state.chatBusy = false; }
-}
 async function uploadQueuedFiles() {
   for (const file of state.queuedFiles) {
     const form = new FormData(); form.append("session_id", state.sessionId); form.append("file", file);
