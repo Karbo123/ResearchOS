@@ -1,9 +1,7 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-19 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-20 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
-
-模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或运行时文件中的非空字段覆盖默认值，旧空字段会继承 `.env`，API 不会返回 key。
 
 模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或运行时文件中的非空字段覆盖默认值，旧空字段会继承 `.env`，API 不会返回 key。
 
@@ -66,6 +64,8 @@
 截图有意展示证据边界：部分 DOI 记录只是 `metadata-only`，只有保存了页码原文的记录才标记为 `fulltext-evidence`。损坏或因 Idea 变化而失效的产物不会静默消失，而会继续显示并明确标为无效。
 
 ## 系统架构
+
+实验跟踪选择：MLflow + MinIO 继续作为唯一离线跟踪路径。已评估 W&B 和 TensorBoard，但当前不启用，避免第二状态源以及额外账号/出站依赖；未来若确有部署需求，必须先经过独立架构评审，并保留 MLflow/PostgreSQL 作为谱系事实源。
 
 ```mermaid
 flowchart LR

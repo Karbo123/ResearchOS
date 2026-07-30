@@ -119,6 +119,10 @@ Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
 
 返回中的 `recovery.source_snapshot_url` 是受控源码恢复包，不是项目 Git 中的文件。默认 `RUNNER_IMAGE_DIGEST=unavailable` 会被记录为未核验；发布部署必须设置真实 `sha256:<64 hex>` digest，并重新进行完整实时验收。
 
+## 实验跟踪选择
+
+当前部署保留 MLflow + MinIO 作为唯一实验跟踪和产物入口：离线可用、已有 Run/指标/资源采样/产物谱系契约，并与 PostgreSQL 状态关联。W&B 会增加账号、密钥和出站网络控制；TensorBoard 只能补充可视化，不能替代 Run、Artifact 和审批审计。当前不部署二者，也不把它们作为 MLflow 不可用时的备用路径；未来若部署需求证明必要，必须先做独立架构 Proposal 并保留 MLflow/数据库为事实源。
+
 ## Runner 作业隔离
 
 当前每个 Run 由 `runner-launcher` 启动一个新的非 root `research-os-runner` 作业容器。只有 launcher 挂载 Docker socket；API、Runner supervisor 和 Windows 都不挂载，也不启动本地 API/模型服务。作业使用固定镜像、固定 `python -m app.worker` 入口、固定内部 `research-os-runner-internal` 网络和 Runner 的受控项目/产物挂载。任务模板固定 task ID、配置字段、CPU/内存/PID/每 Run 磁盘配额和 `internal-mlflow-only` 网络策略标签；取消会停止容器，超出模板或全局运行时限会返回结构化 `job_timeout` 错误，超出累计或单文件磁盘限制会返回结构化配额错误。Launcher/Runner 都不接受命令、路径、URL、网络、镜像或环境注入字段。失败只返回结构化错误，不使用备用执行器、provider fallback 或无关实验替代。

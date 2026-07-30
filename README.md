@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-19 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-20 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -56,6 +56,8 @@ The new-project chat above shows the default-on Automatic-mode toggle, infers de
 The screenshots intentionally show the evidence boundary: several DOI records are `metadata-only`, while only records with stored page quotes are marked `fulltext-evidence`. A broken or invalidated artifact remains visible as invalid rather than silently disappearing. Artifact previews are bounded renderings only: HTML is shown as escaped source text, binary PLY/PCD is rejected, and preview data never executes or changes the stored artifact.
 
 ## Architecture
+
+Experiment tracking decision: MLflow plus MinIO remains the single offline tracking path. W&B and TensorBoard were evaluated but are not enabled because they would add a second state source or outbound/account dependencies; any future adoption requires an explicit architecture review while preserving MLflow/PostgreSQL provenance.
 
 ```mermaid
 flowchart LR
@@ -229,7 +231,6 @@ The previous acceptance record is retained as historical evidence at [`acceptanc
 | `N8N_ENCRYPTION_KEY` | Yes | Stable n8n encryption key. Keep it across restarts; losing it can make stored n8n credentials unreadable. |
 | `N8N_LOCAL_OWNER_EMAIL`, `N8N_LOCAL_OWNER_PASSWORD` | Yes for auto-login | Internal local Owner used only by `/api/n8n/open`. The password is server-side and never rendered into the UI. |
 | `RESEARCH_LLM_PROVIDER`, `MODEL_REQUEST_TIMEOUT_SECONDS` | Yes | Must be `openai`; the API container calls the configured provider and returns failures directly. |
-| `OPENAI_BASE_URL`, `OPENAI_API_KEY` | Default source | Shared `.env` defaults for all three tiers; non-empty tier-specific URL/key variables or runtime fields override them, while empty legacy runtime fields inherit them. The key is never returned by the API. |
 | `OPENAI_BASE_URL`, `OPENAI_API_KEY` | Default source | Shared `.env` defaults for all three tiers; tier-specific URL/key variables or saved runtime settings take precedence. The key is never returned by the API. |
 | `RESEARCH_MODEL_SIMPLE`, `RESEARCH_MODEL_URL_SIMPLE`, `RESEARCH_MODEL_KEY_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Independent simple/Luna route; defaults to `gpt-5.6-luna` and `low`. |
 | `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Independent medium/Terra route; defaults to `gpt-5.6-terra` and `medium`. |
