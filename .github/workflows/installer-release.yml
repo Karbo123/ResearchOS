@@ -5,6 +5,12 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a signed installer Release after clean-VM acceptance
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -34,22 +40,43 @@ jobs:
           $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $installer.FullName).Hash.ToLowerInvariant()
           "$hash  $($installer.Name)" | Set-Content -Encoding ASCII .\installer\windows\dist\SHA256SUMS.txt
 
+      - name: Sign installer for an explicit publish
+        if: startsWith(github.ref, 'refs/tags/') && github.event_name == 'workflow_dispatch' && inputs.publish == true
+        shell: pwsh
+        env:
+          INSTALLER_SIGNING_CERT_PFX_B64: ${{ secrets.INSTALLER_SIGNING_CERT_PFX_B64 }}
+          INSTALLER_SIGNING_CERT_PASSWORD: ${{ secrets.INSTALLER_SIGNING_CERT_PASSWORD }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:INSTALLER_SIGNING_CERT_PFX_B64) -or [string]::IsNullOrWhiteSpace($env:INSTALLER_SIGNING_CERT_PASSWORD)) {
+            throw 'Publishing requires INSTALLER_SIGNING_CERT_PFX_B64 and INSTALLER_SIGNING_CERT_PASSWORD repository secrets.'
+          }
+          $installer = Get-ChildItem .\installer\windows\dist\ResearchOS-Setup-*.exe | Select-Object -First 1
+          $pfx = Join-Path $env:RUNNER_TEMP 'research-os-installer-signing.pfx'
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:INSTALLER_SIGNING_CERT_PFX_B64))
+          $signTool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter signtool.exe -Recurse -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $signTool) { throw 'Windows SDK signtool.exe is required for a signed publish.' }
+          & $signTool.FullName sign /fd SHA256 /f $pfx /p $env:INSTALLER_SIGNING_CERT_PASSWORD /tr http://timestamp.digicert.com /td SHA256 $installer.FullName
+          if ($LASTEXITCODE -ne 0) { throw 'Authenticode signing failed.' }
+          $signature = Get-AuthenticodeSignature -LiteralPath $installer.FullName
+          if ($signature.Status -ne 'Valid') { throw "Signed installer verification failed: $($signature.Status)" }
+          Remove-Item -LiteralPath $pfx -Force
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $installer.FullName).Hash.ToLowerInvariant()
+          "$hash  $($installer.Name)" | Set-Content -Encoding ASCII .\installer\windows\dist\SHA256SUMS.txt
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: research-os-windows-installer
           path: installer/windows/dist/*
 
-      - name: Create draft GitHub Release
+      - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: ${{ github.event_name != 'workflow_dispatch' || inputs.publish != true }}
           generate_release_notes: true
           files: |
             installer/windows/dist/*.exe
             installer/windows/dist/SHA256SUMS.txt
           body: |
-            This is a draft build. Before publishing, verify the SHA-256 checksum,
-            apply the project signing certificate, and complete the clean Windows VM
-            install/upgrade/uninstall acceptance described in P2-INSTALLER-029.
+            This Release was created by the gated Windows installer workflow. A published Release requires the explicit signed-release path and clean Windows VM acceptance documented in P2-INSTALLER-029.

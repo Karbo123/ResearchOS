@@ -68,7 +68,7 @@ Invoke-RestMethod http://127.0.0.1:8080/api/health
 
 `installer/windows/ResearchOS.iss`、`bootstrap.ps1` 与 `build-installer.ps1` 构成在线引导安装器源。它内置应用和 Compose/n8n 工作流；API 与模型请求始终在容器内运行，安装器不会打包或启动 Windows Bridge。Docker 缺失时只在用户勾选后下载官方安装器并验证 Authenticode 签名。构建输出和 EXE 被 Git 忽略。
 
-当前仍需在发布机安装 Inno Setup 6，并完成代码签名、SHA-256 发布、Docker Desktop 许可复核和干净 Windows VM 验收。未完成这些条件前，手动 Compose 安装仍是受支持路径，`P2-INSTALLER-029` 不得标为完成。
+当前仍需在发布机安装 Inno Setup 6，并完成代码签名、SHA-256 发布、Docker Desktop 许可复核和干净 Windows VM 验收。普通 `v*` tag 只创建草稿 Release；从同一 tag 手动运行并选择 `publish=true` 时，GitHub Actions 强制要求 `INSTALLER_SIGNING_CERT_PFX_B64`/`INSTALLER_SIGNING_CERT_PASSWORD` Secret，签名并验证 EXE 后才允许发布。未完成这些条件前，手动 Compose 安装仍是受支持路径，`P2-INSTALLER-029` 不得标为完成。
 
 ## 日常命令
 

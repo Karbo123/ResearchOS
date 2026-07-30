@@ -118,7 +118,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 
 ### 单 EXE 安装器状态
 
-[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：打包 Research OS 与 Compose/n8n 工作流；当前运行时把模型请求留在 API 容器内，不启动 Windows Bridge。若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。GitHub Actions 已支持按 `v*` tag 在 Windows runner 构建 EXE、SHA-256 和草稿 Release；该路径目前**还不是正式发布的一键安装包**：代码签名、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
+[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：打包 Research OS 与 Compose/n8n 工作流；当前运行时把模型请求留在 API 容器内，不启动 Windows Bridge。若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。GitHub Actions 按 `v*` tag 在 Windows runner 构建 EXE、SHA-256 和草稿 Release；从同一 tag 手动运行并明确选择 `publish=true` 后，只有配置签名证书 Secret、签名验证通过且重新计算校验和才会正式发布。该路径目前**还不是正式发布的一键安装包**：签名凭据、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
 
 下方手动方式仍是当前受支持的安装路径。
 
