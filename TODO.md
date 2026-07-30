@@ -32,6 +32,8 @@
 
 ## 当前状态
 
+- Installer status: GitHub Actions run `30545994558` built `ResearchOS-Setup-0.2.0-x64.exe` and `SHA256SUMS.txt` for tag `v0.2.0`; the Release is intentionally Draft until signing and clean-VM acceptance are complete.
+
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
 - 当前进行中：`P2-SEARCH-018`、`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进合规检索、持久队列、论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
