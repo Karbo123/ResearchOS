@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from uuid import uuid4
+from unittest.mock import MagicMock
 
 import pytest
+from sqlalchemy.exc import IntegrityError
 
 from app.queue_worker import TaskLease, dispatch, retry_delay_seconds, retry_state
+from app.task_queue import enqueue_task
 
 
 def test_retry_backoff_is_bounded_and_deterministic():
@@ -41,3 +44,37 @@ def test_dispatch_sends_only_fixed_n8n_task_payload(monkeypatch):
         "task_id": str(lease.task_id),
         "idempotency_key": "bootstrap:one",
     }
+
+
+def test_enqueue_rejects_unallowlisted_kind_before_touching_database():
+    with pytest.raises(ValueError, match="queue_task_kind_unsupported"):
+        enqueue_task(MagicMock(), project_id=uuid4(), kind="shell", payload={}, idempotency_key="x")
+
+
+def test_enqueue_returns_existing_task_without_duplicate_insert():
+    existing = MagicMock()
+    session = MagicMock()
+    session.scalar.return_value = existing
+
+    task, created = enqueue_task(
+        session, project_id=uuid4(), kind="research_bootstrap", payload={"x": 1}, idempotency_key="same"
+    )
+
+    assert task is existing
+    assert created is False
+    session.add.assert_not_called()
+
+
+def test_enqueue_recovers_concurrent_unique_key_conflict():
+    existing = MagicMock()
+    session = MagicMock()
+    session.scalar.side_effect = [None, existing]
+    session.flush.side_effect = IntegrityError("insert", {}, RuntimeError("duplicate"))
+
+    task, created = enqueue_task(
+        session, project_id=uuid4(), kind="research_bootstrap", payload={"x": 1}, idempotency_key="same"
+    )
+
+    assert task is existing
+    assert created is False
+    session.add.assert_called_once()

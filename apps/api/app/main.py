@@ -69,6 +69,7 @@ from .schemas import (
     RunnerStatus, SearchRequest,
 )
 from .search import search_literature
+from .task_queue import enqueue_task
 
 
 app = FastAPI(title="Research OS MVP", version="0.1.0")
@@ -811,13 +812,13 @@ def create_project(request: ProjectCreateRequest):
         session.add(project); session.flush()
         session.add(IdeaVersion(project_id=project.id, version=1, spec=spec.model_dump(mode="json")))
         idempotency_key = f"research_bootstrap:{project.id}:idea-1"
-        task = Task(
+        task, _ = enqueue_task(
+            session,
             project_id=project.id,
             kind="research_bootstrap",
             payload={"idea_version": 1, "idempotency_key": idempotency_key},
             idempotency_key=idempotency_key,
         )
-        session.add(task)
         session.add(Checkpoint(
             project_id=project.id,
             stage="project_initialized",
@@ -833,7 +834,7 @@ def create_project(request: ProjectCreateRequest):
         conversation.phase = "supervising"
         audit(session, "project.created", project.id, {"slug": slug}, "local-user")
         session.flush()
-        return {"project": serialize_project(project), "session_id": str(conversation.id), "next_action": "automatic literature search and evidence review queued; topic-specific experiment planning is available after verified evidence is stored"}
+        return {"project": serialize_project(project), "session_id": str(conversation.id), "queued_task_id": str(task.id), "next_action": "automatic literature search and evidence review queued; topic-specific experiment planning is available after verified evidence is stored"}
 
 
 @app.get("/api/projects")
@@ -903,7 +904,14 @@ def project_detail(project_id: UUID):
             "policy_enforcement": enforcement,
             "uploads": [{"id": str(u.id), "name": u.name, "mime_type": u.mime_type, "size_bytes": u.size_bytes, "sha256": u.sha256, "metadata": u.metadata_json} for u in uploads],
             "reports": [{"id": str(r.id), "period": r.period, "content": r.content, "created_at": r.created_at.isoformat()} for r in reports],
-            "tasks": [{"id": str(t.id), "kind": t.kind, "status": t.status, "attempts": t.attempts, "error": t.error, "payload": t.payload} for t in tasks],
+            "tasks": [{
+                "id": str(t.id), "kind": t.kind, "status": t.status, "attempts": t.attempts,
+                "max_attempts": t.max_attempts, "idempotency_key": t.idempotency_key,
+                "next_attempt_at": t.next_attempt_at.isoformat() if t.next_attempt_at else None,
+                "leased_until": t.leased_until.isoformat() if t.leased_until else None,
+                "updated_at": t.updated_at.isoformat() if t.updated_at else None,
+                "error": t.error, "payload": t.payload,
+            } for t in tasks],
             "checkpoints": [{"id": str(c.id), "stage": c.stage, "idea_version": c.idea_version, "git_commit": c.git_commit, "data_version": c.data_version, "state": c.state, "created_at": c.created_at.isoformat()} for c in checkpoints],
             "repositories": [{"id": str(r.id), "paper_id": str(r.paper_id) if r.paper_id else None, "source_url": r.source_url, "license_spdx": r.license_spdx, "commit_or_tag": r.commit_or_tag, "verified_official": r.verified_official, "metadata": r.metadata_json, "retrieved_at": r.retrieved_at.isoformat()} for r in repositories],
             "feedback": [{"id": str(f.id), "category": f.category, "instruction": f.instruction, "created_at": f.created_at.isoformat()} for f in feedback],
@@ -2679,13 +2687,17 @@ async def change_project_state(project_id: UUID, request: ProjectStateRequest):
             )
             if cancelled_bootstrap and not successful_bootstrap:
                 idempotency_key = f"research_bootstrap:{project_id}:resume-{cancelled_bootstrap.id}"
-                task = Task(project_id=project_id, kind="research_bootstrap", idempotency_key=idempotency_key, payload={
-                    "idea_version": project.current_idea_version,
-                    "resumed_from_task_id": str(cancelled_bootstrap.id),
-                    "idempotency_key": idempotency_key,
-                })
-                session.add(task)
-                session.flush()
+                task, _ = enqueue_task(
+                    session,
+                    project_id=project_id,
+                    kind="research_bootstrap",
+                    idempotency_key=idempotency_key,
+                    payload={
+                        "idea_version": project.current_idea_version,
+                        "resumed_from_task_id": str(cancelled_bootstrap.id),
+                        "idempotency_key": idempotency_key,
+                    },
+                )
                 resume_task_id = task.id
                 project.current_stage = "workflow_queued"
             audit(session, "project.resumed", project_id, {

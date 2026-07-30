@@ -86,14 +86,14 @@
 | PostgreSQL/Git/大文件持久化 | 已实现（受控 MVP） | 18 张业务表由版本化 Alembic migration 管理；`db-migrate` 在 API/n8n/MLflow 启动前幂等创建独立运行角色。API 只使用业务表 CRUD 权限，n8n 只使用 `n8n` schema，MLflow 使用独立数据库；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。正式备份轮换、恢复演练和更细的生产网络隔离仍属于 P2 运维范围。 |
 | 日报/周报与推送 | 已实现（受限范围） | n8n 每日/每周定时生成确定性运营报告并存入 Web UI，覆盖文献/证据/代码候选、实验状态、已报告资源与成本、产物、审计决策和待审批项；可通过默认关闭的 HTTPS webhook 在显式 `notify=true` 请求中推送。未实现特定飞书、Slack、Telegram 或邮件 SDK，缺失的 provider 成本不会被猜测。 |
 | 同一项目对话监督 | 已实现（受限范围） | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；已有项目消息由容器内模型返回严格 `SupervisionIntent`，Idea/策略变更仍需 Proposal 审批，状态/审批意图不从聊天直接执行。模型失败直接返回结构化错误。 |
-| Proposal、diff、审批、审计 | 已实现（受控范围） | 实验、Idea 修订、策略、代码/配置/LaTeX patch 和依赖安装具有 Proposal/diff/审批/审计路径；patch 执行器只接受结构化文件操作，在临时隔离目录验证后提交 Git，覆盖冲突、失败恢复、覆盖/删除和审批回滚；外部发布明确禁用。更复杂的多文件语义合并和生产级队列仍不属于 MVP。 |
+| Proposal、diff、审批、审计 | 已实现（受控范围） | 实验、Idea 修订、策略、代码/配置/LaTeX patch 和依赖安装具有 Proposal/diff/审批/审计路径；patch 执行器只接受结构化文件操作，在临时隔离目录验证后提交 Git，覆盖冲突、失败恢复、覆盖/删除和审批回滚；外部发布明确禁用。独立 Runner 执行链仍不承诺生产级持久队列。 |
 | 长期项目策略 | 已实现（MVP） | 可通过审批写入 `policies`，不依赖聊天历史；中英文种子、引用证据和高成本/对外审批规则会结构化显示，种子规则在计划、API 提交和 Runner 三处执行。其他自由文本规则仍需扩展解析器。 |
 | Idea 版本、影响分析与局部重跑 | 部分实现 | Idea v2、审计、实体级依赖失效、显式变更类型/根校验、可审阅节点/边影响图和需审批的检查点局部重跑 Proposal 已实现；批准变更会为安全终态检查点自动创建待审批重跑 Proposal，批准后提交匹配的原白名单或主题固定入口并记录失败；复杂语义规则和完整生产级恢复编排仍未完成。 |
 | n8n AI Agent 和高层子工作流工具 | 部分实现 | 3 个激活工作流负责聊天网关、主流程和报告；多数工具是受限 FastAPI 端点，不是独立 n8n 子工作流，也未使用 n8n AI Agent 长循环。 |
 | 严格 JSON、双重校验、Shell/路径隔离 | 已实现（MVP） | API 与 Runner 使用 Pydantic `extra=forbid` 和白名单；LLM 不接触任意 Shell/SQL/路径，n8n 节点不能读取容器环境变量。 |
 | Related Work 与完整论文自动写作 | 部分实现 | 已可从当前 Idea、页码级核验证据和真实成功实验生成完整章节结构的 `paper/main.tex` patch Proposal；metadata-only 会被拒绝，没有结果会明确保留未执行状态，且批准前不写文件。仍未完成语义 claim 到多证据的精确映射、完整 Related Work 内容质量和生产级论文编译验收。 |
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
-| 长期运行与生产可靠性 | 部分实现 | Compose restart、PostgreSQL 持久任务队列、租约/幂等键/指数退避、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；HA、完整告警轮换、每任务独立容器的生产级验证和默认拒绝出网仍未完成。 |
+| 长期运行与生产可靠性 | 部分实现 | Compose restart、项目启动/恢复的 PostgreSQL 持久任务队列、租约/幂等键/指数退避、过期 lease 防陈旧 worker 覆盖、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；Runner 执行链持久排队、HA、完整告警轮换、每任务独立容器的生产级验证和默认拒绝出网仍未完成。 |
 | Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。`v*` tag 可生成 EXE、SHA-256 和草稿 Release；正式发布要求手动发布门禁、Authenticode 签名 Secret、Docker 许可复核及干净 VM、升级/卸载验收，尚未完成。 |
 
 2026-07-30 代码来源可信链增量：`P0-CODE-003` 已实现候选仓库的 GitHub/GitLab 元数据、论文记录与 `CITATION.cff`/README 双源匹配，保存已知 SPDX、40 位 commit 和验证来源；未知许可证、未固定 commit、未验证候选或未批准 Proposal 均不能触发下载。批准后仅下载受限归档，拒绝路径穿越、符号链接和特殊文件，写入 SHA-256、下载时间、论文关系和项目 Git 提交。作者主页/数据集/模型的通用定位仍未实现；本增量已完成测试和文档同步，`P0-CODE-003` 标记为 `[x]`。
@@ -104,7 +104,7 @@
 
 2026-07-30 数据库迁移增量：`P1-DB-017` 新增一次性 `db-migrate` Compose 服务、版本化 Alembic 初始 revision 和幂等角色 provisioning。API 使用只授予业务表 CRUD 的独立角色，n8n 只访问 `n8n` schema，MLflow 使用独立 `research_os_mlflow` 数据库和角色；API 启动缺少 `alembic_version` 时直接失败，不再隐式 `create_all`/`ALTER TABLE`。备份轮换、恢复演练和生产级网络隔离仍属于 P2 运维范围。
 
-2026-07-30 持久队列增量：`P2-QUEUE-020` 将研究启动/恢复任务从 API 进程内 `BackgroundTasks` 移到独立 `queue-worker` 容器；`tasks` 表新增幂等键、尝试上限、下一次执行时间、租约截止时间和 lease token。worker 用 PostgreSQL 行锁和 `SKIP LOCKED` 领取固定白名单任务，过期 lease 可回收，失败按有上限的指数退避，最终状态与错误写入审计；worker 不接收模型 key、Runner socket 或任意命令。真实现有数据库已升级到 `0002_task_queue`，临时过期任务回收/结构化失败集成验证通过。实验提交的持久队列和完整生产级崩溃恢复仍未完成。
+2026-07-30 持久队列增量：`P2-QUEUE-020` 将研究启动/恢复任务从 API 进程内 `BackgroundTasks` 移到独立 `queue-worker` 容器；`tasks` 表新增幂等键、尝试上限、下一次执行时间、租约截止时间和 lease token。API 使用白名单入队函数和唯一索引处理并发幂等冲突，worker 用 PostgreSQL 行锁和 `SKIP LOCKED` 领取任务，过期 lease 可回收且旧 token 不能覆盖新租约，失败按有上限的指数退避，最终状态与错误写入审计；worker 不接收模型 key、Runner socket 或任意命令。真实现有数据库已升级到 `0002_task_queue`，幂等入队/过期 lease/陈旧 token 集成验证通过。实验提交的持久队列仍属于独立 Runner 任务范围。
 
 ## 关键风险
 

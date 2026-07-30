@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-23 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-24 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -185,7 +185,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 2. 检查 AI 的理解、推断领域、假设和成组追问；纠正错误推断，两种模式都不会逐字段执行固定问卷。
    Enter 用于换行；Ctrl+Enter 或 Cmd+Enter 提交。请求等待期间，输入框和模式开关会锁定；超时或连接错误会显示在对话中，并释放控件以便重试。
 3. 审核生成的 `ProjectSpec`。字段缺失、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
-4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 PostgreSQL 持久 n8n 主流程任务；`queue-worker` 负责领取和触发它。
+4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和一个带幂等键的 PostgreSQL 持久 n8n 主流程任务；`queue-worker` 负责领取和触发它。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查 **Related Work** 的证据覆盖、研究空白候选和重复研究候选。它们都只是候选，不证明新颖性或科学结论。
 7. 在**实验**页生成主题专属计划前，必须先有页码级全文证据。API 会把严格计划保存为待审批 Proposal，并绑定当前 Idea 版本、证据 ID 和策略快照。在**审批**页批准后才允许进入执行闸门；当前 Runner 仍会对主题专属执行返回结构化错误，绝不会替换成通用 demo。
@@ -250,7 +250,7 @@ python scripts/acceptance_test.py
 | `GITHUB_TOKEN`、`GITLAB_TOKEN` | 可选 | 提高提供方 API 配额；仓库结果在交叉验证前仍只是候选。凭据只由 API 容器读取，不挂载给 n8n 或 Runner。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |
 | `RUNNER_SHARED_SECRET`、`RUNNER_MAX_SECONDS` | 是 | API 到 Runner 的凭据和受限任务最大执行时间。 |
-| `QUEUE_POLL_SECONDS`、`QUEUE_LEASE_SECONDS`、`QUEUE_WORKFLOW_TIMEOUT_SECONDS`、`QUEUE_RETRY_BASE_SECONDS`、`QUEUE_RETRY_MAX_SECONDS` | Compose 默认值 | 持久队列轮询、租约时长、固定 n8n 请求超时和有上限的指数退避参数。 |
+| `QUEUE_POLL_SECONDS`、`QUEUE_LEASE_SECONDS`、`QUEUE_WORKFLOW_TIMEOUT_SECONDS`、`QUEUE_RETRY_BASE_SECONDS`、`QUEUE_RETRY_MAX_SECONDS` | Compose 默认值 | 持久队列轮询、租约时长、固定 n8n 请求超时和有上限的指数退避参数。任务类型和 payload 由 API 白名单限制，重复幂等键会复用已有任务。 |
 | `RUNNER_IMAGE_DIGEST` | 发布必需；本地可用占位值 | 期望的不可变 Runner 镜像 digest，例如 `sha256:<64 位十六进制字符>`。本地开发的 `unavailable` 会被记录为未核验，不能作为发布身份。 |
 | `RESEARCH_OS_COMMIT` | 发布必需；本地可自动探测 | 每次运行记录的 Research OS 完整 40 位 Git commit。容器部署应显式设置；宿主机 API 可自动探测仓库 commit。 |
 | `REPORT_TIMEZONE` | 是 | n8n 定时与报告时区，默认 `Asia/Shanghai`。 |
@@ -370,7 +370,7 @@ python scripts/acceptance_test.py
 
 主题专属实验规划已经实现为证据绑定、策略校验和审批门控的 Proposal；批准计划会通过固定 `experiment/main.py` 入口执行，并要求结构化指标与检查点产物。系统不会回退到无关的分类或点云 demo。
 
-最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、真实 GPU 主机验证、持久队列、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求已通过每 Run 独立容器与硬上限输出 volume 执行。批准后的检查点重跑只通过匹配的白名单提交链自动进入队列；失败仍直接保留结构化错误，不会改用无关演示实验。确定性日报/周报已经包含运营指标，并可在启用后显式推送一次 HTTPS webhook。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
+最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、真实 GPU 主机验证、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。项目启动/恢复的 PostgreSQL 持久队列已实现幂等键、租约、有上限重试、过期租约保护和审计；独立 Runner 执行链的持久化排队仍属于其他任务。固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求已通过每 Run 独立容器与硬上限输出 volume 执行。批准后的检查点重跑只通过匹配的白名单提交链自动进入队列；失败仍直接保留结构化错误，不会改用无关演示实验。确定性日报/周报已经包含运营指标，并可在启用后显式推送一次 HTTPS webhook。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 
 不要把当前合成分类/点云任务当作科学结果，不要把 `metadata-only` 当作页码已核验引用，也不要把本地自动登录入口暴露到个人电脑之外。
 

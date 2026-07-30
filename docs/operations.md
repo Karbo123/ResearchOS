@@ -89,7 +89,7 @@ docker compose up -d --build api runner runner-launcher mlflow
 
 ## 持久任务队列
 
-项目初始化和恢复任务先写入 PostgreSQL `tasks` 表，再由独立 `queue-worker` 容器领取；API 进程不再用内存 `BackgroundTasks` 持有必须完成的 n8n 工作。worker 使用 `FOR UPDATE SKIP LOCKED`、幂等键和 lease token，租约过期后可被另一 worker 领取；暂时失败按 `QUEUE_RETRY_BASE_SECONDS`/`QUEUE_RETRY_MAX_SECONDS` 指数退避，达到 `max_attempts` 后标记 `failed` 并写入审计。项目暂停或取消会阻止任务成功提交。检查队列状态：
+项目初始化和恢复任务先写入 PostgreSQL `tasks` 表，再由独立 `queue-worker` 容器领取；API 进程不再用内存 `BackgroundTasks` 持有必须完成的 n8n 工作。任务类型和 payload 由 API 白名单限制，同一幂等键通过数据库唯一索引复用已有任务。worker 使用 `FOR UPDATE SKIP LOCKED` 和 lease token，租约过期后可被另一 worker 领取，旧 worker 不能覆盖新租约；暂时失败按 `QUEUE_RETRY_BASE_SECONDS`/`QUEUE_RETRY_MAX_SECONDS` 指数退避，达到 `max_attempts` 后标记 `failed` 并写入审计。项目暂停或取消会阻止任务成功提交。检查队列状态：
 
 ```powershell
 docker compose ps queue-worker

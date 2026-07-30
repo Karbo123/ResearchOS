@@ -24,7 +24,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P2-SEARCH-018；继续 P2-QUEUE-020、P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，完成 P2-QUEUE-020；继续 P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
 本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、提供方、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，空异常也保留异常类型或 HTTP 状态，前端文献页显示候选合规摘要。
 
@@ -33,10 +33,10 @@
 ## 当前状态
 
 - Installer status: GitHub Actions run `30545994558` built `ResearchOS-Setup-0.2.0-x64.exe` and `SHA256SUMS.txt` for tag `v0.2.0`; the Release is intentionally Draft until signing and clean-VM acceptance are complete.
-- Current work item: `P2-QUEUE-020` is in progress; this batch will validate durable task recovery, idempotency, lease reclaim, retry backoff, and final failure auditing without handing arbitrary commands or model secrets to the worker.
+- Current work item: `P1-PAPER-016` is in progress; the project bootstrap/resume queue is complete, while persistent queueing for the separate Runner execution chain remains tracked with Runner work.
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-SEARCH-018`、`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进持久队列、论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-SEARCH-018`、`P2-QUEUE-020`、`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -200,10 +200,10 @@
   - 当前评估：Research OS 的当前单机 Compose MVP 已由 MLflow + MinIO 记录参数、指标、资源采样、Run、产物和谱系；W&B 需要额外账号/服务与出站控制，TensorBoard 不能覆盖当前 PostgreSQL/Artifact/MLflow 统一谱系。因此本轮不增加第二状态源或外部 SaaS 依赖。
   - 完成标准：双语 README、架构/运维说明明确比较、保留 MLflow 离线路径；若部署需求以后证明需要 TensorBoard/W&B，必须作为独立 Proposal/架构变更评审。
   - 验证结果：已同步双语 README、架构、运维和需求审计；明确 MLflow/PostgreSQL 为事实源，不增加第二状态源或出站依赖。`python scripts/check_docs_sync.py` 通过（`2026-07-30-20`），`git diff --check` 通过。
-- [~] `P2-QUEUE-020` 为长任务增加持久队列、租约、重试退避、幂等键和崩溃恢复。
+- [x] `P2-QUEUE-020` 为项目启动/恢复长任务增加持久队列、租约、重试退避、幂等键和崩溃恢复。
   - 本轮范围：将研究启动任务从 FastAPI `BackgroundTasks` 移到独立 `queue-worker` 容器；Task 持久化幂等键、最大尝试次数、下一次执行时间、租约截止时间和 lease token。worker 使用 PostgreSQL `FOR UPDATE SKIP LOCKED` 领取任务，租约过期可恢复，失败按固定指数退避并在上限后结构化终止；项目暂停/取消仍是后端闸门。
   - 完成标准：API 重启不丢任务；同一幂等键不重复入队；worker 崩溃后过期 lease 可重新领取；重试次数、退避和最终失败可审计；容器/迁移/单元与集成验证通过。
-  - 本轮验证：新增 Alembic `0002_task_queue`、独立 `queue-worker` Compose 服务和 API/worker 共用镜像；现有数据库真实迁移到 `0002_task_queue`，`tasks` 五个队列字段及幂等索引存在。临时过期 lease 任务被重新领取并以 `attempts=1`、`queue_task_kind_unsupported` 结构化失败；API `112 passed, 2 skipped`、Compose/Python/文档/Idea case/`git diff --check` 通过。实验提交仍直接进入受控 Runner 链，持久化 Runner 任务队列和完整生产级恢复仍未完成，任务保持 `[~]`。
+  - 本轮验证：新增 Alembic `0002_task_queue`、独立 `queue-worker` Compose 服务和 API/worker 共用镜像；新增白名单幂等入队函数，数据库唯一索引冲突会返回已有任务，不会重复插入；项目详情只暴露队列时间/尝试状态，不暴露 lease token。现有数据库真实迁移到 `0002_task_queue`，幂等入队、过期 lease 回收和陈旧 token 防护集成通过；API `122 passed, 2 skipped`，Python/Compose/Schema/n8n JSON/文档同步/`git diff --check` 通过。实验提交仍直接进入受控 Runner 链，Runner 执行链持久化排队属于 `P0-RUNNER-007` 范围。
 - [ ] `P2-HA-021` 增加长期运行监控、健康告警、备份轮换、容量限制和升级/回滚演练。
 - [ ] `P2-RAG-022` 仅在论文规模证明需要时引入 RAGFlow/LlamaIndex；保留 evidence ID 和页码追踪。
 - [ ] `P2-GRAPH-023` 仅在 n8n 循环、分支和检查点恢复难以维护时评估 LangGraph，不提前增加双状态源。
@@ -321,6 +321,7 @@
 - 2026-07-30：继续 `P1-PAPER-016`；扩展 evidence-grounded `paper/main.tex` 生成器为完整确定性章节结构，增加 Method/Experiment 状态表、成功 Run 指标表、未执行结果、逐条 evidence ID/定位、claim-to-evidence map、Conclusion 和 References，并安全处理可选约束/预算字段。新增无结果和 provenance 回归；API `107 passed, 2 skipped`，文档与结构检查待本轮最终复核。语义 claim 映射质量和生产级 LaTeX 编译验收仍未完成。
 - 2026-07-30：继续 `P2-QUEUE-020`；研究启动/恢复任务改由 PostgreSQL 持久队列和独立 `queue-worker` 领取，增加 lease、幂等键、指数退避和过期 lease 回收；API 不再把必需的 n8n 编排交给进程内 `BackgroundTasks`。真实数据库迁移为 `0002_task_queue`，临时过期任务集成验证成功，API `112 passed, 2 skipped`，Compose/语法/文档/Idea case/`git diff --check` 通过。实验 Runner 队列、完整崩溃恢复和生产级队列观测仍未完成。
 - 2026-07-30：Docker Desktop Linux engine 恢复后复核模型配置和前端：`docker compose config --quiet` 通过；API 容器 `112 passed, 2 skipped`；`GET /api/settings/models` 脱敏结果显示 Luna/Terra/Sol 三档 URL/key 均来自 `env_default` 且 `key_configured=true`，medium 不再误报未配置；浏览器设置面板桌面 1440px 和窄屏 390px 均无横向溢出，三档卡片可操作，控制台错误为 0。GitHub CLI 当前已登录，但正式安装器 Release 仍受签名证书、Authenticode 验证和干净 Windows VM 门禁约束；不绕过门禁发布未签名 EXE。
+- 2026-07-30：完成 `P2-QUEUE-020`；API 创建/恢复项目任务统一走白名单幂等入队函数，唯一键冲突返回已有 Task；项目详情返回 `max_attempts`、下一次执行时间、租约截止时间和更新时间，但不返回 lease token。API `122 passed, 2 skipped`；真实 PostgreSQL 集成验证幂等入队、过期 lease 重新领取和陈旧 lease 忽略；queue-worker 已恢复运行。实现仍不把实验 Runner 执行链误称为持久队列。
 - 2026-07-30：继续 `P1-PAPER-016`；claim map 增加多语言归一化 lexical candidate 与人工复核字段，新增 Runner 容器内固定 `latexmk` 最小文档回归。候选仍不升级为语义证据或科学结论；`semantic_status=not_proven_lexical_candidates_only`、完整语义核验和生产级论文编译验收继续保持未完成。
 - 2026-07-30：本轮验证通过文档同步、Compose、JSON、JS、聊天 UX、API `117 passed, 2 skipped`、Runner `10 passed` 和 launcher `6 passed, 2 skipped`；新增 `test_fixed_latexmk_command_produces_a_nonempty_pdf` 通过。`scripts/acceptance_test.py` 在首次真实模型请求处收到 HTTP 502 `llm_request_failed`，未使用 fallback、未写伪造助手消息且未生成验收通过产物；P1-PAPER-016 继续保持 `[~]`。实现提交：`8ee8e57`。
 - 2026-07-30：完成 `P2-SEARCH-018`；修正 GitHub 资源候选缺少 `provider/resource_type` 导致前端显示 `unknown` 的问题，并让空的 provider 异常保留异常类型/HTTP 状态。活动项目真实检索、浏览器 Literature 页面、provider errors 和合规候选显示均已验证，任务标记 `[x]`。
