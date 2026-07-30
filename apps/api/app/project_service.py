@@ -25,8 +25,41 @@ def latex_escape(value: str) -> str:
 def _latex_lines(values: Iterable[Any], empty: str = "Not specified.") -> str:
     items = [str(value).strip() for value in values if str(value).strip()]
     if not items:
-        return latex_escape(empty)
+        return "\\item " + latex_escape(empty)
     return "\n".join(f"\\item {latex_escape(item)}" for item in items[:20])
+
+
+def _latex_scalar(value: Any, empty: str = "Not specified.") -> str:
+    if value is None or value == "":
+        return latex_escape(empty)
+    if isinstance(value, (dict, list)):
+        value = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return latex_escape(str(value))
+
+
+def _metric_rows(metrics: Any) -> list[tuple[str, str]]:
+    if not isinstance(metrics, dict):
+        return []
+    rows: list[tuple[str, str]] = []
+    for key in sorted(metrics, key=lambda item: str(item))[:40]:
+        value = metrics[key]
+        if isinstance(value, (dict, list)):
+            value = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        rows.append((str(key), str(value)))
+    return rows
+
+
+def _paper_table(rows: Iterable[tuple[str, str]], empty: str) -> str:
+    materialized = list(rows)
+    if not materialized:
+        return latex_escape(empty)
+    def breakable(value: Any) -> str:
+        return _latex_scalar(value).replace(r"\_", r"\_\allowbreak{}")
+
+    body = ["\\begin{tabular}{p{0.25\\linewidth}p{0.55\\linewidth}}", "\\toprule", "Field & Recorded value \\\\", "\\midrule"]
+    body.extend(f"{breakable(key)} & {breakable(value)} \\\\" for key, value in materialized)
+    body.extend(["\\bottomrule", "\\end{tabular}"])
+    return "\n".join(body)
 
 
 def _verified_evidence(rows: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -91,6 +124,14 @@ def build_paper_claim_map(
         "schema_version": "1.0",
         "verified_evidence_ids": [str(row.get("id")) for row in verified],
         "factual_claims": factual_claims,
+        "claim_to_evidence": {
+            str(row.get("id")): {
+                "claim": str(row.get("claim") or "").strip(),
+                "locator": str(row.get("locator") or "").strip(),
+                "source_url": str(row.get("source_url") or "").strip(),
+            }
+            for row in verified
+        },
         "idea_target_support": target_map,
         "claim_gate": "Factual Related Work sentences must cite an evidence ID; Idea hypotheses and contributions remain proposed unless independently supported.",
     }
@@ -118,56 +159,84 @@ def build_evidence_grounded_paper(
         locator = str(row.get("locator"))
         quote = str(row.get("quote"))[:1200]
         evidence_blocks.append(
-            "\\item \\textbf{Evidence ID " + latex_escape(evidence_id) + "}: "
-            + "Claim: " + latex_escape(str(row.get("claim") or "Unspecified claim")) + ". "
-            + latex_escape(title) + " (" + latex_escape(locator) + "). "
-            + "Quoted support: \\emph{" + latex_escape(quote) + "}"
+            "\\item \\textbf{Evidence ID \\texttt{" + latex_escape(evidence_id) + "}} "
+            + "(" + latex_escape(locator) + "): "
+            + "The retained source claim is: \\emph{" + latex_escape(str(row.get("claim") or "Unspecified claim")) + "}. "
+            + "The page-level supporting quote is: \\emph{" + latex_escape(quote) + "}."
         )
-        if paper_id and paper_id not in referenced_papers:
-            referenced_papers.add(paper_id)
+        reference_key = paper_id or f"evidence-{evidence_id}"
+        if reference_key not in referenced_papers:
+            referenced_papers.add(reference_key)
             source_url = str(paper.get("source_url") or "")
+            source_url = source_url or str(row.get("source_url") or "")
             doi = str(paper.get("doi") or "")
             reference_blocks.append(
-                "\\bibitem{" + latex_escape(paper_id) + "} "
+                "\\bibitem{" + latex_escape(reference_key) + "} "
                 + latex_escape(title) + ". "
                 + ("DOI: " + latex_escape(doi) + ". " if doi else "")
-                + ("Stable source: \\url{" + latex_escape(source_url) + "}." if source_url else "")
+                + ("Stable source: \\url{" + latex_escape(source_url) + "}. " if source_url else "")
+                + "Evidence ID: \\texttt{" + latex_escape(evidence_id) + "}."
             )
 
+    experiment_rows = [item for item in experiments if isinstance(item, dict)]
     recorded_results = []
-    for experiment in experiments:
-        if not isinstance(experiment, dict) or experiment.get("status") != "succeeded":
+    result_table_rows: list[tuple[str, str]] = []
+    for experiment in experiment_rows:
+        if experiment.get("status") != "succeeded":
             continue
-        metrics = experiment.get("metrics")
-        if isinstance(metrics, dict) and metrics:
-            metric_text = "; ".join(f"{key}={value}" for key, value in list(metrics.items())[:30])
-            recorded_results.append(f"Run {experiment.get('id')}: {metric_text}")
+        run_id = str(experiment.get("id") or "unknown-run")
+        metric_rows = _metric_rows(experiment.get("metrics"))
+        if metric_rows:
+            recorded_results.append(f"Run {run_id} ({len(metric_rows)} recorded metrics)")
+            for key, value in metric_rows:
+                result_table_rows.append((f"{run_id} / {key}", value))
     idea = spec.idea
+    constraints = [
+        ("Compute", idea.constraints.compute),
+        ("Budget (USD)", idea.constraints.budget_usd),
+        ("Deadline", idea.constraints.deadline),
+        ("Data access", idea.constraints.data_access),
+        ("Ethics and compliance", idea.ethics_and_compliance),
+    ]
+    successful_count = sum(1 for item in experiment_rows if item.get("status") == "succeeded")
     results_section = (
-        "Recorded successful runs only; each result is computational evidence identified by its run ID:\\begin{itemize}\\n"
-        + _latex_lines(recorded_results) + "\\n\\end{itemize}"
-        if recorded_results else
-        "No successful experiment output is recorded for this draft; no scientific result is claimed."
+        "Recorded successful runs only. Each numeric entry below is bound to the stored run ID; this table is not a causal or scientific conclusion.\\par\\smallskip\n"
+        + _paper_table(result_table_rows, "Successful runs have no recorded numeric metrics; no scientific result is claimed.")
+        if result_table_rows else
+        "No successful experiment output with recorded metrics is available for this draft; the result status is explicitly unexecuted."
     )
+    experiment_status_rows = [
+        (str(item.get("id") or "unknown-run"), str(item.get("status") or "unknown"))
+        for item in experiment_rows[:40]
+    ]
+    claim_map_rows = [
+        (item["kind"] + ": " + str(item["target"]), ", ".join(item["evidence_ids"]) or "none; human review required")
+        for item in claim_map["idea_target_support"]
+    ]
     return "\n".join([
-        "\\documentclass{article}", "\\usepackage{booktabs,graphicx,hyperref}",
+        "\\documentclass{article}", "\\usepackage{booktabs,graphicx,hyperref}", "\\setlength{\\emergencystretch}{3em}",
         "\\title{" + latex_escape(idea.title) + "}", "\\author{Research OS Project}",
         "\\begin{document}", "\\maketitle",
         "\\begin{abstract}This is an evidence-linked draft. It reports only verified page-level evidence and recorded experiment outputs; unexecuted work remains explicitly unexecuted.\\end{abstract}",
-        "\\section{Introduction}", "Proposed research question (not a reported factual claim): " + latex_escape(idea.research_question),
+        "\\section{Introduction}", "This manuscript frames a proposed study in " + latex_escape(idea.domain) + ". The research question is stated by the current Idea and is not presented as an established fact: \\emph{" + latex_escape(idea.research_question) + "}.",
+        "\\subsection{Scope and keywords}", _paper_table([("Keywords", ", ".join(idea.keywords)), ("Target venues", ", ".join(idea.target_venues))], "No keywords or target venue were confirmed."),
         "\\subsection{Hypotheses}", "The following are proposed hypotheses, not established results.", "\\begin{itemize}", _latex_lines(idea.hypotheses), "\\end{itemize}",
         "\\subsection{Contributions}", "The following are proposed contributions pending validation.", "\\begin{itemize}", _latex_lines(idea.expected_contributions), "\\end{itemize}",
-        "\\section{Related Work}", "Each factual statement below is tied to a retained page-level evidence ID; metadata-only records are excluded.",
+        "\\section{Related Work}", "Each factual statement below is tied to a retained page-level evidence ID and locator. The entries summarize the retained claim and quote; they do not establish novelty or correctness beyond the cited source.",
         "\\begin{itemize}", "\n".join(evidence_blocks), "\\end{itemize}",
-        "\\section{Method}", "Project specification supplied by the user (not independently verified).\\par\\smallskip",
-        "\\textbf{Domain:} " + latex_escape(idea.domain) + "\\par\\smallskip",
-        "\\textbf{Available data:} " + latex_escape(idea.available_data or "Not confirmed."),
+        "\\section{Method}", "The method below is the current approved-project specification, not an independently verified scientific method. It must be reviewed before execution.",
+        _paper_table([("Domain", idea.domain), ("Available data", idea.available_data), *constraints], "No method constraints were confirmed."),
         "\\subsection{Success criteria}", "\\begin{itemize}", _latex_lines(idea.success_criteria), "\\end{itemize}",
-        "\\section{Experiments}", "The experiment plan remains subject to the project's approval gates and must be specific to the confirmed research question.",
+        "\\subsection{Data and compliance}", _latex_scalar(idea.ethics_and_compliance, "No separate ethics/compliance statement was confirmed; review is required."),
+        "\\section{Experiments}", "The experiment plan remains subject to approval and must be specific to the confirmed research question. The following is an inventory of persisted execution records, not a replacement for an approved plan.",
+        _paper_table(experiment_status_rows, "No experiment execution records are persisted."),
+        "\\subsection{Recorded successful runs}", "\\begin{itemize}", _latex_lines(recorded_results, "No successful run with numeric metrics is recorded."), "\\end{itemize}",
         "\\section{Results}", results_section,
-        "\\section{Limitations}", "\\begin{itemize}", _latex_lines(idea.risks, "Risks and unresolved limitations require review."), "\\end{itemize}",
-        "\\subsection{Provenance audit}", "\\textbf{Verified evidence IDs:} " + latex_escape(", ".join(claim_map["verified_evidence_ids"])) + ".\\par "
-        + "Idea target support is a candidate lexical map only and requires human review.",
+        "\\section{Limitations}", "\\begin{itemize}", _latex_lines(idea.risks, "Risks and unresolved limitations require review."), "\\item The evidence set contains " + str(len(verified)) + " verified page-level record(s); metadata-only records are excluded.", "\\item " + str(successful_count) + " successful run(s) are recorded, and missing execution results remain unexecuted.", "\\end{itemize}",
+        "\\section{Conclusion}", "This draft records a proposed research direction and its current evidence boundary. It does not claim that the hypotheses, contributions, or reported metrics establish a scientific conclusion.",
+        "\\section*{Claim-to-evidence map}", "The deterministic map below is a review aid. Lexical overlap is only a candidate support signal and does not upgrade a proposed Idea statement to a factual claim.", _paper_table(claim_map_rows, "No Idea hypothesis or contribution was supplied."),
+        "\\subsection*{Provenance audit}", "\\textbf{Verified evidence IDs:} " + latex_escape(", ".join(claim_map["verified_evidence_ids"])) + ".\\par "
+        + "Factual Related Work claims are individually linked to evidence IDs; run results are individually linked to run IDs.",
         "\\section{References}", "\\begin{thebibliography}{99}", "\n".join(reference_blocks), "\\end{thebibliography}",
         "\\end{document}",
     ]) + "\n"

@@ -24,14 +24,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，继续 P1-PAPER-016；完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009、P2-INSTALLER-029）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进真实 GPU 主机验证、材料解析、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P1-PAPER-016`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进论文语义/编译验收、真实 GPU 主机验证、材料解析、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -173,6 +173,7 @@
   - 依赖：`P0-EVIDENCE-001`、`P0-RELATED-002`、`P0-PLAN-006`。
   - 完成标准：Introduction、Related Work、Method、Experiments、Results、Limitations 和 References 可追踪；编译前必须审批 diff。
   - 本轮范围：生成器只接受具备 PDF SHA-256、BibTeX、稳定来源、页码/章节定位和非空 quote 的当前 Idea 证据；建立确定性的 claim-to-evidence map，Related Work 每条事实句必须带 evidence ID，实验结果必须带 run ID provenance；未支持的假设、贡献和结果明确标为 proposed/unexecuted，不补造论文事实。
+  - 本轮进展：生成器现已输出完整章节、Scope/Method/Experiment 状态表、成功 Run 指标表、未执行结果说明、逐条 evidence ID/定位、claim-to-evidence map、Conclusion 和 References；可选预算/约束字段安全处理。API `107 passed, 2 skipped`，新增生成内容/无结果回归通过；语义 claim 映射质量和生产级 LaTeX 编译验收仍保持 `[~]`。
 - [x] `P1-DB-017` 引入正式数据库迁移和最小权限角色。
   - 完成标准：使用迁移工具管理 18 张业务表；API、n8n、MLflow 使用独立角色/schema；备份恢复测试通过。
   - 验证结果：新增一次性 `db-migrate` 服务、Alembic `0001_initial` revision 和幂等角色 provisioning；API 使用业务表 CRUD 角色，n8n 使用 `n8n` schema 角色并保留启动所需数据库 `CREATE` 权限，MLflow 使用独立 `research_os_mlflow` 数据库。现有 PostgreSQL volume 上迁移成功，恢复到临时数据库后验证 19 张 public 表和 `0001_initial`，随后清理临时数据库与备份。API `99 passed, 2 skipped`、n8n 工作流启动并激活、Compose/JSON/文档同步/容器 Python 语法/`git diff --check` 通过。
@@ -302,3 +303,4 @@
 - 2026-07-30：完成 `P1-MODEL-044`；修复空的旧 `runtime/model-settings.json` 字段遮蔽容器 `.env` 默认值的问题，统一设置页的轻量卡片视觉和默认值说明；新增 Windows GitHub Actions EXE/SHA-256 草稿 Release 工作流。n8n 继续负责固定工作流编排，模型调用、严格 Schema、审批和 fail-fast 校验仍由 API 容器负责，避免把动态 key 写入 workflow。API 容器 `102 passed, 2 skipped`，浏览器桌面/窄屏检查通过；P2-INSTALLER-029 因缺 Inno Setup、签名证书、干净 VM 和失效 GitHub token 继续进行中。
 - 2026-07-30：继续 `P1-PAPER-016`；新增 evidence-grounded `paper/main.tex` 生成器和 `POST /api/projects/{project_id}/paper-draft`，只接受当前 Idea、已核验页码/章节 quote，并仅写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会升级为论文事实。前端概览新增“生成证据论文草稿”按钮，接口只创建需审批的 LaTeX replace Proposal，批准前不写文件。同步工具契约、双语 README、运维说明和需求审计；新增缺失 Idea、metadata-only 和严格证据 Proposal 路由回归；API 容器 `106 passed, 2 skipped`，Node UX `5 passed`，文档/Idea case/Compose/容器 Python/JSON/`git diff --check` 和浏览器模型设置桌面/窄屏检查通过，控制台错误为 0。完整语义 claim 映射、生产级论文编译和完整论文能力仍未完成，任务保持 `[~]`。提交：`72b4c68`。
 - 2026-07-30：完成 `P1-UX-045`；修复浏览器缓存旧静态资源导致的模型来源不显示问题，新增 `app.js`/`styles.css` 版本查询参数；确认三档共享容器 `.env` 默认 URL/key、设置弹窗、未保存保护和模型失败直报错误；n8n/API 边界与 Windows Release 签名门禁保持一致。API `107 passed, 2 skipped`，Node UX `5 passed`，Compose/JSON/文档同步/Idea case/JS 检查通过；浏览器桌面/窄屏无横向溢出。GitHub token 失效，正式 Release 仍待有效权限和签名/干净 VM 验收。
+- 2026-07-30：继续 `P1-PAPER-016`；扩展 evidence-grounded `paper/main.tex` 生成器为完整确定性章节结构，增加 Method/Experiment 状态表、成功 Run 指标表、未执行结果、逐条 evidence ID/定位、claim-to-evidence map、Conclusion 和 References，并安全处理可选约束/预算字段。新增无结果和 provenance 回归；API `107 passed, 2 skipped`，文档与结构检查待本轮最终复核。语义 claim 映射质量和生产级 LaTeX 编译验收仍未完成。

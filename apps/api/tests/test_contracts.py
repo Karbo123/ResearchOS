@@ -223,10 +223,15 @@ def test_paper_draft_requires_verified_page_evidence_and_records_only_real_metri
     paper = [{"id": "paper-1", "title": "Verified study", "doi": "10.1000/example", "source_url": "https://example.invalid/paper"}]
     source = build_evidence_grounded_paper(spec, evidence, paper, [{"id": "run-1", "status": "succeeded", "metrics": {"accuracy": 0.91}}])
     assert all(f"\\section{{{section}}}" in source for section in ("Introduction", "Related Work", "Method", "Experiments", "Results", "Limitations", "References"))
-    assert "Evidence ID evidence-1" in source and "accuracy=0.91" in source and "Run run-1" in source
+    assert "Evidence ID \\texttt{evidence-1}" in source
+    assert "run-1 / accuracy" in source and "0.91" in source and "Run run-1" in source
+    assert "Claim-to-evidence map" in source and "Conclusion" in source
     claim_map = build_paper_claim_map(spec, evidence)
     assert claim_map["verified_evidence_ids"] == ["evidence-1"]
     assert claim_map["factual_claims"][0]["evidence_id"] == "evidence-1"
+    assert claim_map["claim_to_evidence"]["evidence-1"]["locator"] == "page 4"
+    no_result_source = build_evidence_grounded_paper(spec, evidence, paper, [])
+    assert "result status is explicitly unexecuted" in no_result_source
     with pytest.raises(ValueError, match="paper_evidence_required"):
         build_evidence_grounded_paper(spec, [{"id": "metadata", "locator": "metadata/title", "quote": "title", "metadata": {"verified": False}}], paper, [])
     with pytest.raises(ValueError, match="paper_evidence_required"):
