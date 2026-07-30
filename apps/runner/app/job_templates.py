@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from typing import Any
 
 
-FORBIDDEN_CONFIG_FIELDS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image"}
+FORBIDDEN_CONFIG_FIELDS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image", "environment"}
 
 
 @dataclass(frozen=True)
@@ -18,6 +19,8 @@ class JobTemplate:
     pid_limit: int
     disk_mb: int
     network_policy: str
+    runtime: str = "builtin"
+    requires_gpu: bool = False
 
 
 TASK_TEMPLATES = {
@@ -48,7 +51,41 @@ TASK_TEMPLATES = {
         disk_mb=1024,
         network_policy="internal-mlflow-only",
     ),
+    "python_analysis": JobTemplate(
+        task_id="python_analysis.v1",
+        allowed_config=frozenset({"project_slug", "entrypoint", "delay_seconds"}),
+        max_runtime_seconds=600,
+        memory_mb=1024,
+        pid_limit=96,
+        disk_mb=1024,
+        network_policy="internal-mlflow-only",
+        runtime="python",
+    ),
+    "cpp_cmake": JobTemplate(
+        task_id="cpp_cmake.v1",
+        allowed_config=frozenset({"project_slug", "delay_seconds"}),
+        max_runtime_seconds=600,
+        memory_mb=1024,
+        pid_limit=128,
+        disk_mb=1024,
+        network_policy="internal-mlflow-only",
+        runtime="cpp",
+    ),
+    "gpu_python": JobTemplate(
+        task_id="gpu_python.v1",
+        allowed_config=frozenset({"project_slug", "entrypoint", "delay_seconds"}),
+        max_runtime_seconds=600,
+        memory_mb=4096,
+        pid_limit=128,
+        disk_mb=2048,
+        network_policy="internal-mlflow-only",
+        runtime="python",
+        requires_gpu=True,
+    ),
 }
+
+
+SAFE_PYTHON_ENTRYPOINT = re.compile(r"^experiment/[A-Za-z0-9_.-]+\.py$")
 
 
 def template_for(task_id: str) -> JobTemplate:
@@ -76,4 +113,8 @@ def validate_template_config(task_id: str, config: dict[str, Any]) -> JobTemplat
             raise ValueError("n_samples must be an integer between 100 and 100000")
         if not isinstance(n_features, int) or isinstance(n_features, bool) or not 2 <= n_features <= 1_000:
             raise ValueError("n_features must be an integer between 2 and 1000")
+    if task_id in {"python_analysis", "gpu_python"}:
+        entrypoint = config.get("entrypoint", "experiment/main.py")
+        if not isinstance(entrypoint, str) or not SAFE_PYTHON_ENTRYPOINT.fullmatch(entrypoint):
+            raise ValueError("entrypoint must be a single Python file under experiment/")
     return template

@@ -24,6 +24,8 @@ def apply_job_limits(template: JobTemplate, global_max_seconds: int) -> dict[str
         "disk_bytes": template.disk_mb * 1024 * 1024,
         "platform": platform.system().lower(),
         "network_policy": template.network_policy,
+        "runtime": template.runtime,
+        "gpu_required": template.requires_gpu,
     }
     if resource is not None and platform.system() != "Windows":
         resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds))
@@ -41,4 +43,5 @@ def job_environment(template: JobTemplate) -> dict[str, str]:
         "RESEARCH_OS_TASK_ID": template.task_id,
         "RESEARCH_OS_NETWORK_POLICY": template.network_policy,
         "RESEARCH_OS_NO_ARBITRARY_COMMANDS": "true",
+        "RESEARCH_OS_GPU_REQUIRED": "true" if template.requires_gpu else "false",
     }

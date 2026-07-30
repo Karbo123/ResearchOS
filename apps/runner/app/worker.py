@@ -27,6 +27,12 @@ def main() -> None:
     persist_state(key)
     try:
         template = validate_template_config(request.experiment_type, request.config)
+        for secret_name in (
+            "POSTGRES_PASSWORD", "MINIO_SECRET_KEY", "N8N_ENCRYPTION_KEY",
+            "N8N_LOCAL_OWNER_PASSWORD", "RUNNER_SHARED_SECRET",
+            "RESEARCH_MODEL_KEY_SIMPLE", "RESEARCH_MODEL_KEY_MEDIUM", "RESEARCH_MODEL_KEY_COMPLEX",
+        ):
+            os.environ.pop(secret_name, None)
         os.environ.update(job_environment(template))
         update_state(key, task_template=template.task_id, resource_limits=apply_job_limits(template, MAX_SECONDS))
         execute(request)

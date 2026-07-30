@@ -6,7 +6,7 @@ RUN sed -i \
       /etc/apt/sources.list.d/debian.sources \
     && apt-get -o Acquire::Retries=5 -o Acquire::https::Timeout=30 update \
     && apt-get -o Acquire::Retries=5 -o Acquire::https::Timeout=30 install -y --no-install-recommends \
-      git latexmk texlive-latex-base texlive-latex-recommended \
+      git cmake latexmk texlive-latex-base texlive-latex-recommended \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home --uid 10002 runner
 RUN git config --system --add safe.directory '*'

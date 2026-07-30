@@ -48,8 +48,9 @@ class LauncherContractTests(unittest.TestCase):
         self.assertEqual(context.exception.status_code, 401)
 
     def test_template_limits_are_fixed_and_positive(self):
-        self.assertEqual(set(TEMPLATE_LIMITS), {"demo_classification", "point_cloud_demo", "compile_latex"})
+        self.assertTrue({"demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python"}.issubset(TEMPLATE_LIMITS))
         self.assertTrue(all(item["cpu"] > 0 and item["memory"] > 0 and item["pids"] > 0 for item in TEMPLATE_LIMITS.values()))
+        self.assertTrue(TEMPLATE_LIMITS["gpu_python"]["gpu"])
 
     def test_running_launcher_can_reach_the_docker_socket(self):
         self.assertTrue(client.ping())
@@ -97,8 +98,43 @@ class LauncherContractTests(unittest.TestCase):
                 time.sleep(0.1)
             self.assertIn(current["status"], {"exited", "dead"})
         finally:
-            container = client.containers.get(container_name)
-            container.remove(force=True)
+            try:
+                container = client.containers.get(container_name)
+                container.remove(force=True)
+            except Exception:
+                # The launcher removes terminal containers after volume synchronization.
+                pass
+
+    @unittest.skipUnless(os.getenv("RUNNER_INTEGRATION_TESTS") == "1", "explicit container integration test")
+    def test_per_run_volume_enforces_a_hard_size_limit(self):
+        volume_name = f"research-os-volume-test-{uuid4()}"
+        volume = client.volumes.create(
+            name=volume_name,
+            driver="local",
+            driver_opts={"type": "tmpfs", "device": "tmpfs", "o": "size=8m,mode=1770"},
+            labels={"research_os.test": "volume-quota"},
+        )
+        container = None
+        try:
+            container = client.containers.run(
+                image=os.getenv("RUNNER_JOB_IMAGE", "research-os-runner"),
+                command=["python", "-c", "from pathlib import Path; Path('/run-output/too-large').write_bytes(b'x' * (16 * 1024 * 1024))"],
+                volumes={volume_name: {"bind": "/run-output", "mode": "rw"}},
+                user="10002",
+                read_only=True,
+                tmpfs={"/tmp": "rw,size=32m,mode=1777"},
+                detach=True,
+            )
+            result = container.wait(timeout=30)
+            exit_code = result.get("StatusCode", 1) if isinstance(result, dict) else int(result)
+            self.assertNotEqual(exit_code, 0)
+            inspected = client.volumes.get(volume_name).attrs
+            self.assertEqual(inspected["Options"]["type"], "tmpfs")
+            self.assertIn("size=8m", inspected["Options"]["o"])
+        finally:
+            if container is not None:
+                container.remove(force=True)
+            volume.remove(force=True)
 
 
 if __name__ == "__main__":

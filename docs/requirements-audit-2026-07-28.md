@@ -50,8 +50,8 @@
 ## Runner 隔离增量（2026-07-30）
 
 - Runner supervisor 现在通过唯一的 `runner-launcher` 服务为每个 Run 创建新的非 root 作业容器；launcher 使用固定镜像、固定 `python -m app.worker` 入口、固定内部网络、受控继承挂载和模板级 CPU/内存/PID 限制，Runner supervisor/API 不挂载 Docker socket。
-- Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 累计目录配额与 Linux 单文件 `RLIMIT_FSIZE` 仍是当前磁盘边界，尚未实现真正的 Docker volume 存储配额。
-- 当前已是每 Run 独立容器，但没有完成 GPU、通用 Python/C++/Conda 环境和真正 volume 级磁盘配额；`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
+- Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 使用带硬大小上限的 Docker tmpfs 输出 volume，终态同步产物后删除 job container 与 volume；Linux 单文件 `RLIMIT_FSIZE` 与运行目录累计检查仍作为第二道边界。
+- 当前已是每 Run 独立容器，已完成受控 Python、C++/CMake 和 GPU 请求模板；Conda、主题专属 Runner 和真实 GPU 主机验证仍未完成，`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
 
 ## 逐项覆盖
 
@@ -68,7 +68,7 @@
 | 代码许可审查与受控下载 | 已实现（需审批） | 已知 SPDX、40 位 commit 和 `verified_official=true` 才能创建 `dependency_install` Proposal；批准后下载受限归档，拒绝路径穿越/链接/特殊文件，记录下载时间、URL、SHA-256、论文关系并提交项目 Git。未知许可证、未验证候选和未批准 Proposal 均不能触发网络下载。 |
 | 文献综述、研究空白、新颖性判断 | 部分实现 | 端点会明确拒绝仅凭元数据作强结论；尚不能生成全文证据支撑的 Related Work 或可靠研究空白。 |
 | Idea 专属实验与统计计划 | 部分实现 | API 已按当前 ProjectSpec、页码级全文证据和策略生成绑定 Idea 版本的结构化计划 Proposal，并经过审批/二次校验；主题专属 Runner 执行模板尚未完成，不会使用固定合成 demo。 |
-| Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、配额、超时、取消、日志和 LaTeX 已实现；没有通用 Python/C++/Conda/GPU 作业。 |
+| Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、六个固定模板、硬上限输出 volume、超时、取消、日志、受控 Python/CMake 和 GPU 请求、LaTeX 已实现；Conda、主题专属模板和真实 GPU 主机验证未完成。 |
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 部分实现 | Python 计算均值、标准差、混淆矩阵并写 MLflow；没有面向任意日志/CSV/多模态结果的自动诊断闭环。 |
 | PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
@@ -89,6 +89,7 @@
 2026-07-30 代码来源可信链增量：`P0-CODE-003` 已实现候选仓库的 GitHub/GitLab 元数据、论文记录与 `CITATION.cff`/README 双源匹配，保存已知 SPDX、40 位 commit 和验证来源；未知许可证、未固定 commit、未验证候选或未批准 Proposal 均不能触发下载。批准后仅下载受限归档，拒绝路径穿越、符号链接和特殊文件，写入 SHA-256、下载时间、论文关系和项目 Git 提交。作者主页/数据集/模型的通用定位仍未实现；本增量已完成测试和文档同步，`P0-CODE-003` 标记为 `[x]`。
 
 2026-07-30 Runner 隔离增量：`P0-RUNNER-007` 新增唯一 Docker launcher 和每 Run 独立非 root 作业容器；固定镜像、入口、内部网络、受控挂载、CPU/内存/PID/超时/取消和白名单契约均由容器内代码执行。累计目录配额、Linux `RLIMIT_FSIZE` 单文件上限和结构化超限错误继续保留；真正 volume 级磁盘配额、GPU、通用 Python/C++/Conda 仍未实现，任务保持 `[~]`。
+2026-07-30 Runner 模板/配额增量：`P0-RUNNER-007` 增加固定入口的 Python、固定 CMake target 的 C++ 和 Docker GPU 请求模板；每 Run 改用带硬大小上限的 tmpfs 输出 volume，终态同步产物后清理 job container 与 volume。Runner `6 passed`、launcher 普通/真实 Docker 集成各 `8 passed`、API `57 passed`，集成后无 managed volume 残留。Conda、主题专属 Runner 和真实 GPU 主机验证仍未完成；未调用模型、外部学术 API 或无关实验。
 
 ## 关键风险
 

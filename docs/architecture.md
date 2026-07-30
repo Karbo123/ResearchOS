@@ -44,7 +44,7 @@ IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper 
                    +---- approval ----+
 ```
 
-Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDependency` 计算 Idea、策略、代码、数据或产物删除变更的依赖后代，只使受影响的有效产物失效，并在 Proposal 与审计事件中记录影响图、重跑候选和关联检查点。当前仍不会自动执行主题专属重跑；Runner 模板和检查点恢复执行仍是后续范围。
+Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDependency` 计算 Idea、策略、代码、数据或产物删除变更的依赖后代，只使受影响的有效产物失效，并在 Proposal 与审计事件中记录影响图、重跑候选和关联检查点。已批准的白名单检查点重跑会自动复用受控实验提交链；主题专属重跑和检查点恢复执行仍是后续范围。
 
 项目状态是执行闸门，不只是 UI 标签。`paused` 和 `cancelled` 会阻止检索、创新性评估、实验/编译计划及 Runner 提交；暂停/取消会取消活动任务和 Runner run，并写入状态检查点。恢复仅允许从 `paused` 回到检查点保存的稳定阶段；`cancelled` 是终止状态。定时 n8n 报告只枚举 active 项目。
 
@@ -56,9 +56,9 @@ Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDepend
 
 ## Checkpoint-scoped rerun boundary
 
-`POST /api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun` creates a pending `experiment_rerun` Proposal only for an `experiment_succeeded` or `experiment_failed` checkpoint whose source experiment is terminal. The payload is rebuilt from the source experiment and contains only the existing allowlisted template fields and persisted random seeds. The generic Proposal endpoint cannot create this kind; approval and submission rebuild and compare the payload again. The Web UI exposes the action beside the matching terminal experiment, and execution still goes through the normal approved experiment submission path. There is no automatic rerun and no unrelated demo substitution.
+`POST /api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun` creates a pending `experiment_rerun` Proposal only for an `experiment_succeeded` or `experiment_failed` checkpoint whose source experiment is terminal. The payload is rebuilt from the source experiment and contains only the existing allowlisted template fields and persisted random seeds. The generic Proposal endpoint cannot create this kind; approval and submission rebuild and compare the payload again. The Web UI exposes the action beside the matching terminal experiment, and approval automatically submits it through the normal approved experiment path without a second UI execution action. Topic-specific execution still fails structurally when unsupported, with no unrelated demo substitution.
 
-The Runner service is a non-root, read-only supervisor on the internal `runner-internal` Compose network. Each accepted Run is launched by the separate `runner-launcher` service into a fresh non-root `research-os-runner` job container. Only the launcher has Docker socket access; API, supervisor Runner, and Windows have none. The launcher uses the fixed deployment image, fixed internal network, controlled inherited mounts, fixed `python -m app.worker` entrypoint, and template-specific CPU/memory/PID/per-run disk limits. Its contract rejects arbitrary command, path, URL, network, image, and environment fields. GPU scheduling and general Python/C++/Conda environments remain roadmap work.
+The Runner service is a non-root, read-only supervisor on the internal `runner-internal` Compose network. Each accepted Run is launched by the separate `runner-launcher` service into a fresh non-root `research-os-runner` job container. Only the launcher has Docker socket access; API, supervisor Runner, and Windows have none. The launcher uses the fixed deployment image, fixed internal network, controlled inherited mounts, fixed `python -m app.worker` entrypoint, and six allowlisted templates with template-specific CPU/memory/PID/timeout and hard per-run tmpfs output-volume limits. The Python template accepts only a single `experiment/*.py` entrypoint; the CMake template builds only `experiment/cpp` target `research_os_job`; the GPU template requests one Docker GPU device. Terminal output is synchronized before the job container and volume are removed. Its contract rejects arbitrary command, path, URL, network, image, and environment fields. Conda environments, topic-specific templates, and real GPU-host validation remain roadmap work.
 
 ## 实验可复现快照
 

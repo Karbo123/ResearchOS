@@ -11,6 +11,9 @@ RERUN_CONFIG_FIELDS = {
     "demo_classification": {"n_samples", "n_features", "delay_seconds"},
     "point_cloud_demo": {"delay_seconds"},
     "compile_latex": {"delay_seconds"},
+    "python_analysis": {"entrypoint", "delay_seconds"},
+    "cpp_cmake": {"delay_seconds"},
+    "gpu_python": {"entrypoint", "delay_seconds"},
 }
 
 

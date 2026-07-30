@@ -204,6 +204,24 @@ def test_runner_contract_rejects_unknown_config_and_long_delay():
         )
 
 
+def test_runner_contract_accepts_only_fixed_project_entrypoints_and_gpu_template():
+    request = ExperimentRequest(
+        project_id=uuid4(), proposal_id=uuid4(), experiment_type="python_analysis",
+        config={"entrypoint": "experiment/main.py"}, random_seeds=[1],
+    )
+    assert request.experiment_type == "python_analysis"
+    gpu_request = ExperimentRequest(
+        project_id=uuid4(), proposal_id=uuid4(), experiment_type="gpu_python",
+        config={}, random_seeds=[1],
+    )
+    assert gpu_request.experiment_type == "gpu_python"
+    with pytest.raises(ValidationError):
+        ExperimentRequest(
+            project_id=uuid4(), proposal_id=uuid4(), experiment_type="python_analysis",
+            config={"entrypoint": "experiment/subdir/main.py"}, random_seeds=[1],
+        )
+
+
 def test_policy_engine_parses_chinese_and_english_requirements():
     constraints = compile_policy_constraints([
         {"id": "seed-zh", "rule": "所有实验至少使用五个随机种子"},

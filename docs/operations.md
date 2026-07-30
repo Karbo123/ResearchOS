@@ -61,7 +61,7 @@ docker compose stop
 `docker compose up -d` 是已有镜像的正常启动命令；它不会因为日常启动主动重建镜像。只有 Dockerfile、服务依赖、API/Runner/MLflow 源码等镜像输入发生变化时，才运行：
 
 ```powershell
-docker compose up -d --build api runner mlflow
+docker compose up -d --build api runner runner-launcher mlflow
 ```
 
 `projects/`、`artifacts/` 和 `n8n/workflows/` 是运行时挂载目录，不需要构建镜像。修改 n8n 工作流后，重新创建 n8n 容器即可触发启动导入：
@@ -88,7 +88,7 @@ Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
 
 当前每个 Run 由 `runner-launcher` 启动一个新的非 root `research-os-runner` 作业容器。只有 launcher 挂载 Docker socket；API、Runner supervisor 和 Windows 都不挂载，也不启动本地 API/模型服务。作业使用固定镜像、固定 `python -m app.worker` 入口、固定内部 `research-os-runner-internal` 网络和 Runner 的受控项目/产物挂载。任务模板固定 task ID、配置字段、CPU/内存/PID/每 Run 磁盘配额和 `internal-mlflow-only` 网络策略标签；取消会停止容器，超出模板或全局运行时限会返回结构化 `job_timeout` 错误，超出累计或单文件磁盘限制会返回结构化配额错误。Launcher/Runner 都不接受命令、路径、URL、网络、镜像或环境注入字段。失败只返回结构化错误，不使用备用执行器、provider fallback 或无关实验替代。
 
-这是隔离基础设施的部分实现：每 Run 独立容器已经由 launcher 提供，但主题专属 Runner 模板、GPU 调度、通用 Python/C++/Conda 环境和真正 volume 级磁盘配额仍由 `P0-RUNNER-007` 跟踪。当前用户主题没有匹配模板时，API 返回 `topic_specific_runner_not_implemented`，不会运行无关的分类或点云实验。
+这是隔离基础设施的部分实现：每 Run 独立容器、六个白名单模板、硬上限 tmpfs 输出 volume，以及受控 GPU 请求已经由 launcher 提供；Conda 环境、主题专属 Runner 模板和真实 GPU 主机验证仍由 `P0-RUNNER-007` 跟踪。当前用户主题没有匹配模板时，API 返回 `topic_specific_runner_not_implemented`，不会运行无关的分类或点云实验。
 
 ## n8n 自动登录
 
@@ -138,7 +138,7 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 1. 修改 `.env` 或版本化 Schema/工作流。
 2. 执行 Compose、Python、JSON 和测试校验。
-3. 仅修改 `.env`、挂载目录或工作流时运行 `docker compose up -d`；修改镜像输入时运行 `docker compose up -d --build api runner mlflow`，再检查服务日志和健康端点。
+3. 仅修改 `.env`、挂载目录或工作流时运行 `docker compose up -d`；修改镜像输入时运行 `docker compose up -d --build api runner runner-launcher mlflow`，再检查服务日志和健康端点。
 4. 高成本实验、依赖安装、覆盖/删除、发布和代码变更必须通过 Proposal 审批。
 
 推荐校验：

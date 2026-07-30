@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-11 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-12 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -85,9 +85,9 @@ Runner isolation uses a fresh non-root job container for each Run. The `runner-l
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
 | Idea-specific experiment planning | **Implemented (approval-gated)** | The API uses the current ProjectSpec, verified page-level evidence, and active policy snapshot to generate a strict topic-specific plan Proposal with datasets, baselines, metrics, ablations, statistical tests, seeds, budget, risks, and success criteria. |
 | Human supervision | **Implemented (MVP)** | Proposal/approval/audit for experiments, Idea revisions, policies, and LaTeX; pause/resume/cancel gates. |
-| Experiments | **Partial (bounded foundation)** | Three explicit allowlisted Runner tasks, non-root per-run containers, bounded CPU/memory/PID/per-run disk resources, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. Topic-specific execution, GPU scheduling, and general language/tool environments remain open. |
+| Experiments | **Partial (bounded foundation)** | Six explicit allowlisted Runner tasks, non-root per-run containers, bounded CPU/memory/PID/hard per-run tmpfs output volume resources, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. Topic-specific execution, Conda environments, and production GPU validation remain open. |
 | Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A live acceptance is now recorded; release-grade scope remains limited by the MVP boundaries described below. |
-| General research autonomy | **Partial / roadmap** | General Python/C++/Conda/GPU jobs, topic-specific Runner templates, external notifications, evidence-grounded Related Work, and full paper writing remain open. Approved checkpoint rerun Proposals now auto-submit through the existing allowlisted Runner chain; the current Runner has fixed per-run container isolation for three templates with CPU, memory, PID, timeout, and per-run disk limits. Official GitHub/GitLab repository verification and approval-gated fixed-commit import are implemented. |
+| General research autonomy | **Partial / roadmap** | Conda environments, topic-specific Runner templates, arbitrary GPU scheduling/production GPU validation, external notifications, evidence-grounded Related Work, and full paper writing remain open. Controlled Python, C++/CMake, and an allowlisted GPU request template now run through fixed per-run containers; approved checkpoint rerun Proposals auto-submit through the existing allowlisted Runner chain. Official GitHub/GitLab repository verification and approval-gated fixed-commit import are implemented. |
 
 ## Prerequisites
 
@@ -271,7 +271,7 @@ See [docs/security.md](docs/security.md) for the hardening checklist and the exa
 docker compose up -d
 
 # Rebuild only after image inputs changed.
-docker compose up -d --build api runner mlflow
+docker compose up -d --build api runner runner-launcher mlflow
 
 # Re-import changed mounted n8n workflow files without rebuilding an image.
 docker compose up -d --force-recreate n8n
@@ -341,7 +341,7 @@ The repository intentionally treats acceptance JSON and screenshots as evidence.
 
 ## Roadmap and honest limitations
 
-The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): topic-specific Runner templates and general Python/C++/Conda/GPU jobs, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. Approved checkpoint rerun Proposals now auto-submit only through the original allowlisted template and remain structured failures when submission fails. Official repository/license verification and controlled fixed-commit download are implemented with approval gating. Entity-level invalidation and reviewable rerun recommendations are implemented for approved project changes. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
+The highest-value unfinished work is tracked in [`TODO.md`](TODO.md): Conda and topic-specific Runner templates, real GPU-host validation, persistent queues, external notifications, richer material parsing, interactive 3D viewing, complete evidence-grounded LaTeX writing, and signed clean-VM validation of the single-EXE installer. Controlled Python/C++/CMake and an allowlisted GPU request now use per-run containers with hard output-volume limits. Approved checkpoint rerun Proposals auto-submit only through the original allowlisted template and remain structured failures when submission fails. Official repository/license verification and controlled fixed-commit download are implemented with approval gating. Entity-level invalidation and reviewable rerun recommendations are implemented for approved project changes. RAGFlow/LlamaIndex and LangGraph are deliberately deferred until scale or workflow complexity justifies them.
 
 Do not use the current synthetic classification/point-cloud tasks as a scientific result. Do not cite `metadata-only` rows as if they were page-verified claims. Do not expose the local auto-login endpoint beyond the private machine.
 

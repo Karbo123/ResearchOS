@@ -66,7 +66,7 @@ class SubmitRequest(BaseModel):
     @model_validator(mode="after")
     def allowlisted_config(self):
         validate_template_config(self.experiment_type, self.config)
-        if self.experiment_type in {"demo_classification", "point_cloud_demo"}:
+        if self.experiment_type in {"demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python"}:
             if len(set(self.random_seeds)) < self.policy_constraints.minimum_random_seed_count:
                 raise ValueError("random_seeds violate the submitted minimum seed-count policy")
         if self.policy_constraints.explicit_approval_required and not self.policy_constraints.approval_granted:
@@ -76,7 +76,7 @@ class SubmitRequest(BaseModel):
 
 app = FastAPI(title="Research OS Restricted Runner", version="0.1.0")
 ARTIFACTS_ROOT = Path(os.getenv("ARTIFACTS_ROOT", "/workspace/artifacts")).resolve()
-STATE_ROOT = ARTIFACTS_ROOT / ".runner-state"
+STATE_ROOT = Path(os.getenv("RUNNER_STATE_ROOT", str(ARTIFACTS_ROOT / ".runner-state"))).resolve()
 SHARED_SECRET = os.getenv("RUNNER_SHARED_SECRET", "runner-dev-secret")
 MAX_SECONDS = int(os.getenv("RUNNER_MAX_SECONDS", "600"))
 EXECUTOR_URL = os.getenv("RUNNER_EXECUTOR_URL", "http://runner-launcher:8020")
@@ -181,6 +181,94 @@ def enforce_disk_quota(run_dir: Path, template) -> int:
     return actual_bytes
 
 
+def _project_entrypoint(project_root: Path, relative_entrypoint: str) -> Path:
+    candidate = (project_root / relative_entrypoint).resolve()
+    if project_root not in candidate.parents or candidate.suffix != ".py" or not candidate.is_file():
+        raise ValueError("the allowlisted Python entrypoint was not found inside the project workspace")
+    return candidate
+
+
+def _run_fixed_process(
+    command: list[str],
+    *,
+    cwd: Path,
+    environment: dict[str, str],
+    log_path: Path,
+    ensure_running,
+) -> None:
+    with log_path.open("a", encoding="utf-8") as log_handle:
+        log_handle.write(f"$ {json.dumps(command, ensure_ascii=True)}\n")
+        process = subprocess.Popen(
+            command,
+            cwd=cwd,
+            env=environment,
+            stdout=log_handle,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        while process.poll() is None:
+            try:
+                ensure_running()
+            except (RunCancelled, TimeoutError):
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                raise
+            time.sleep(0.2)
+        if process.returncode:
+            raise subprocess.CalledProcessError(process.returncode, command)
+
+
+def execute_project_template(request: SubmitRequest, project_root: Path, run_dir: Path, log_path: Path, ensure_running) -> list[dict]:
+    """Run only fixed project entrypoints; user payload never becomes a command."""
+    template = validate_template_config(request.experiment_type, request.config)
+    environment = os.environ.copy()
+    for secret_name in (
+        "POSTGRES_PASSWORD", "MINIO_SECRET_KEY", "N8N_ENCRYPTION_KEY",
+        "N8N_LOCAL_OWNER_PASSWORD", "RUNNER_SHARED_SECRET",
+        "RESEARCH_MODEL_KEY_SIMPLE", "RESEARCH_MODEL_KEY_MEDIUM", "RESEARCH_MODEL_KEY_COMPLEX",
+    ):
+        environment.pop(secret_name, None)
+    environment.update({
+        "RESEARCH_OS_RUN_ID": str(request.run_id),
+        "RESEARCH_OS_PROJECT_ID": str(request.project_id),
+        "RESEARCH_OS_SEEDS": ",".join(str(seed) for seed in request.random_seeds),
+        "RESEARCH_OS_OUTPUT_DIR": str(run_dir),
+        "RESEARCH_OS_NETWORK_POLICY": template.network_policy,
+    })
+    if request.experiment_type in {"python_analysis", "gpu_python"}:
+        entrypoint = _project_entrypoint(project_root, request.config.get("entrypoint", "experiment/main.py"))
+        _run_fixed_process(["python", str(entrypoint)], cwd=project_root, environment=environment, log_path=log_path, ensure_running=ensure_running)
+    elif request.experiment_type == "cpp_cmake":
+        source_dir = (project_root / "experiment" / "cpp").resolve()
+        if project_root not in source_dir.parents or not (source_dir / "CMakeLists.txt").is_file():
+            raise ValueError("the fixed experiment/cpp CMake project was not found")
+        build_dir = (Path("/tmp/research-os-build") / str(request.run_id)).resolve()
+        _run_fixed_process(
+            ["cmake", "-S", str(source_dir), "-B", str(build_dir), "-DCMAKE_BUILD_TYPE=Release"],
+            cwd=project_root, environment=environment, log_path=log_path, ensure_running=ensure_running,
+        )
+        _run_fixed_process(
+            ["cmake", "--build", str(build_dir), "--target", "research_os_job", "--parallel", "1"],
+            cwd=project_root, environment=environment, log_path=log_path, ensure_running=ensure_running,
+        )
+        executable = build_dir / "research_os_job"
+        if not executable.is_file():
+            raise ValueError("the fixed CMake target research_os_job did not produce an executable")
+        _run_fixed_process([str(executable)], cwd=project_root, environment=environment, log_path=log_path, ensure_running=ensure_running)
+    else:
+        raise ValueError(f"no fixed project executor exists for {request.experiment_type}")
+    outputs = []
+    for path in sorted(run_dir.rglob("*")):
+        if not path.is_file() or path == log_path or path.name == "metrics.json":
+            continue
+        kind = "project_output"
+        outputs.append(artifact(path, kind, run_dir, {"task_template": template.task_id}))
+    return outputs
+
+
 def write_point_cloud(run_dir: Path, seed: int) -> tuple[Path, Path]:
     rng = np.random.default_rng(seed)
     phi = rng.uniform(0, 2 * np.pi, 1500)
@@ -277,6 +365,17 @@ def execute(request: SubmitRequest):
                 "policy_explicit_approval_required": request.policy_constraints.explicit_approval_required,
             })
             mlflow.log_metrics({"system_cpu_count": float(psutil.cpu_count() or 0), "system_memory_available_mb": psutil.virtual_memory().available / 1024 / 1024})
+            if request.experiment_type in {"python_analysis", "cpp_cmake", "gpu_python"}:
+                produced.extend(execute_project_template(request, project_root, run_dir, execution_log, ensure_running))
+                metrics_file = run_dir / "metrics.json"
+                if metrics_file.is_file():
+                    raw_metrics = json.loads(metrics_file.read_text(encoding="utf-8"))
+                    if not isinstance(raw_metrics, dict) or not all(
+                        isinstance(value, (int, float)) and not isinstance(value, bool)
+                        for value in raw_metrics.values()
+                    ):
+                        raise ValueError("metrics.json must contain only numeric values")
+                    metrics = {str(name): float(value) for name, value in raw_metrics.items()}
             if request.experiment_type == "demo_classification":
                 accuracies = []
                 fig, ax = plt.subplots(figsize=(7, 4.5))
@@ -396,6 +495,8 @@ def health():
                 "pid_limit": template.pid_limit,
                 "disk_mb": template.disk_mb,
                 "network_policy": template.network_policy,
+                "runtime": template.runtime,
+                "gpu_required": template.requires_gpu,
             }
             for name, template in TASK_TEMPLATES.items()
         },
@@ -428,11 +529,6 @@ def _monitor_container_job(request: SubmitRequest) -> None:
     key = str(request.run_id)
     deadline = time.monotonic() + min(MAX_SECONDS, validate_template_config(request.experiment_type, request.config).max_runtime_seconds)
     while True:
-        state = _merge_worker_state(key)
-        if state and state.get("status") in {"succeeded", "failed", "cancelled"}:
-            with LOCK:
-                persist_state(key)
-            return
         if time.monotonic() > deadline:
             try:
                 with httpx.Client(timeout=EXECUTOR_TIMEOUT_SECONDS) as client:
@@ -456,6 +552,15 @@ def _monitor_container_job(request: SubmitRequest) -> None:
                 RUNS[key]["container_status"] = container_state.get("status")
                 persist_state(key)
             if container_state.get("status") in {"exited", "dead"}:
+                if not container_state.get("artifacts_synced"):
+                    with LOCK:
+                        RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps({
+                            "code": "artifact_volume_sync_failed",
+                            "message": "The per-run Docker output volume could not be synchronized; no alternate output path was used.",
+                            "detail": container_state.get("artifact_sync_error"),
+                        }, ensure_ascii=False))
+                        persist_state(key)
+                    return
                 state = _merge_worker_state(key)
                 if not state or state.get("status") not in {"succeeded", "failed", "cancelled"}:
                     with LOCK:
@@ -466,6 +571,10 @@ def _monitor_container_job(request: SubmitRequest) -> None:
                         }))
                         persist_state(key)
                 return
+            state = _merge_worker_state(key)
+            if state and state.get("status") in {"succeeded", "failed", "cancelled"}:
+                # Wait for the fixed launcher to report terminal and synchronize the output volume.
+                pass
         except (httpx.HTTPError, ValueError):
             # A transient executor observation error keeps the bounded observation
             # loop alive; timeout produces a structured failure.

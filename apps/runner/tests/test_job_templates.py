@@ -9,10 +9,11 @@ from app import main as runner_main
 
 class JobTemplateTests(unittest.TestCase):
     def test_all_templates_have_bounded_task_metadata(self):
-        self.assertEqual(set(TASK_TEMPLATES), {"demo_classification", "point_cloud_demo", "compile_latex"})
+        self.assertTrue({"demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python"}.issubset(TASK_TEMPLATES))
         self.assertTrue(all(template.task_id.endswith(".v1") for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.memory_mb > 0 and template.pid_limit > 0 and template.disk_mb > 0 for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.network_policy == "internal-mlflow-only" for template in TASK_TEMPLATES.values()))
+        self.assertTrue(TASK_TEMPLATES["gpu_python"].requires_gpu)
 
     def test_runner_uses_the_fixed_per_run_container_executor(self):
         self.assertEqual(runner_main.EXECUTOR_URL, "http://runner-launcher:8020")
@@ -24,6 +25,10 @@ class JobTemplateTests(unittest.TestCase):
                 validate_template_config("demo_classification", {field: "untrusted", "project_slug": "project"})
         with self.assertRaises(ValueError):
             validate_template_config("point_cloud_demo", {"project_slug": "project", "learning_rate": 0.1})
+        validate_template_config("python_analysis", {"entrypoint": "experiment/main.py", "project_slug": "project"})
+        for entrypoint in ("/tmp/job.py", "../job.py", "experiment/../job.py", "experiment/job.sh"):
+            with self.assertRaises(ValueError):
+                validate_template_config("python_analysis", {"entrypoint": entrypoint, "project_slug": "project"})
 
     def test_worker_state_updates_persist_directly(self):
         with TemporaryDirectory() as directory:

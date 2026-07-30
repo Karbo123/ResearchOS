@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+import re
 from typing import Any, Literal
 from uuid import UUID
 
@@ -191,7 +192,7 @@ class ExperimentRequest(BaseModel):
 
     project_id: UUID
     proposal_id: UUID
-    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex"]
+    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[int] = Field(default_factory=lambda: [13, 37, 73], min_length=1, max_length=10)
 
@@ -209,6 +210,9 @@ class ExperimentRequest(BaseModel):
             "demo_classification": {"n_samples", "n_features", "delay_seconds"},
             "point_cloud_demo": {"delay_seconds"},
             "compile_latex": {"delay_seconds"},
+            "python_analysis": {"entrypoint", "delay_seconds"},
+            "cpp_cmake": {"delay_seconds"},
+            "gpu_python": {"entrypoint", "delay_seconds"},
         }[self.experiment_type]
         unknown = set(self.config) - allowed
         if unknown:
@@ -223,6 +227,10 @@ class ExperimentRequest(BaseModel):
                 raise ValueError("n_samples must be an integer between 100 and 100000")
             if not isinstance(n_features, int) or isinstance(n_features, bool) or not 2 <= n_features <= 1_000:
                 raise ValueError("n_features must be an integer between 2 and 1000")
+        if self.experiment_type in {"python_analysis", "gpu_python"}:
+            entrypoint = self.config.get("entrypoint", "experiment/main.py")
+            if not isinstance(entrypoint, str) or not re.fullmatch(r"experiment/[A-Za-z0-9_.-]+\.py", entrypoint):
+                raise ValueError("entrypoint must be a single Python file under experiment/")
         return self
 
 
@@ -334,7 +342,7 @@ class RunnerSubmitRequest(BaseModel):
 
     run_id: UUID
     project_id: UUID
-    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex"]
+    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[int]
     reproducibility: ReproducibilityContract
