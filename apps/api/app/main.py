@@ -14,7 +14,7 @@ from typing import Any, AsyncGenerator, Literal
 from uuid import UUID
 
 import httpx
-from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, func, select, text
@@ -79,7 +79,6 @@ MAX_VISION_IMAGE_BYTES = 4 * 1024 * 1024
 MAX_VISION_TOTAL_BYTES = 12 * 1024 * 1024
 RUNNER_URL = os.getenv("RUNNER_URL", "http://localhost:8010")
 RUNNER_SECRET = os.getenv("RUNNER_SHARED_SECRET", "runner-dev-secret")
-N8N_RESEARCH_WEBHOOK_URL = os.getenv("N8N_RESEARCH_WEBHOOK_URL", "").strip()
 N8N_INTERNAL_URL = os.getenv("N8N_INTERNAL_URL", "http://n8n:5678").rstrip("/")
 N8N_PUBLIC_URL = os.getenv("N8N_PUBLIC_URL", "http://127.0.0.1:5678").rstrip("/")
 N8N_LOCAL_OWNER_EMAIL = os.getenv("N8N_LOCAL_OWNER_EMAIL", "").strip()
@@ -358,54 +357,6 @@ def repository_error(exc: Exception) -> HTTPException:
         "code": "repository_operation_failed",
         "message": "代码仓库操作失败。",
     })
-
-
-def trigger_research_workflow(project_id: UUID, task_id: UUID) -> None:
-    with session_scope() as session:
-        project = session.get(Project, project_id)
-        task = session.get(Task, task_id)
-        if not project or project.status != "active":
-            if task:
-                task.status = "cancelled"
-                task.error = f"Project is {project.status if project else 'missing'}; workflow was not started."
-            audit(session, "workflow.blocked_by_project_state", project_id, {"status": project.status if project else "missing"})
-            return
-        if not task or task.status == "cancelled":
-            return
-        task.status = "running"
-        task.attempts += 1
-    if not N8N_RESEARCH_WEBHOOK_URL:
-        with session_scope() as session:
-            task = session.get(Task, task_id)
-            if task:
-                task.status = "failed"
-                task.error = "N8N_RESEARCH_WEBHOOK_URL is not configured"
-            audit(session, "workflow.trigger_skipped", project_id, {"reason": "N8N_RESEARCH_WEBHOOK_URL is not configured"})
-        return
-    try:
-        response = httpx.post(N8N_RESEARCH_WEBHOOK_URL, json={"project_id": str(project_id)}, timeout=90)
-        response.raise_for_status()
-        with session_scope() as session:
-            project = session.get(Project, project_id)
-            task = session.get(Task, task_id)
-            if task and project and project.status == "active" and task.status != "cancelled":
-                task.status = "succeeded"
-                audit(session, "workflow.triggered", project_id, {"status_code": response.status_code})
-            else:
-                audit(session, "workflow.completed_after_state_change", project_id, {"status": project.status if project else "missing"})
-    except httpx.HTTPError as exc:
-        with session_scope() as session:
-            project = session.get(Project, project_id)
-            task = session.get(Task, task_id)
-            if task and project and project.status != "active":
-                task.status = "cancelled"
-                task.error = f"Project became {project.status} while the workflow was running."
-            elif task:
-                task.status = "failed"
-                task.error = str(exc)[:2000]
-            if project and project.status == "active" and project.current_stage == "workflow_queued":
-                project.current_stage = "workflow_trigger_failed"
-            audit(session, "workflow.trigger_failed", project_id, {"error": str(exc)[:2000]})
 
 
 @app.get("/api/health")
@@ -847,7 +798,7 @@ async def chat_stream(request: ChatRequest):
 
 
 @app.post("/api/projects")
-def create_project(request: ProjectCreateRequest, background_tasks: BackgroundTasks):
+def create_project(request: ProjectCreateRequest):
     with session_scope() as session:
         conversation = session.get(ConversationSession, request.session_id)
         if not conversation or conversation.phase != "ready_for_confirmation":
@@ -859,7 +810,13 @@ def create_project(request: ProjectCreateRequest, background_tasks: BackgroundTa
         project.current_stage = "workflow_queued"
         session.add(project); session.flush()
         session.add(IdeaVersion(project_id=project.id, version=1, spec=spec.model_dump(mode="json")))
-        task = Task(project_id=project.id, kind="research_bootstrap", payload={"idea_version": 1})
+        idempotency_key = f"research_bootstrap:{project.id}:idea-1"
+        task = Task(
+            project_id=project.id,
+            kind="research_bootstrap",
+            payload={"idea_version": 1, "idempotency_key": idempotency_key},
+            idempotency_key=idempotency_key,
+        )
         session.add(task)
         session.add(Checkpoint(
             project_id=project.id,
@@ -876,7 +833,6 @@ def create_project(request: ProjectCreateRequest, background_tasks: BackgroundTa
         conversation.phase = "supervising"
         audit(session, "project.created", project.id, {"slug": slug}, "local-user")
         session.flush()
-        background_tasks.add_task(trigger_research_workflow, project.id, task.id)
         return {"project": serialize_project(project), "session_id": str(conversation.id), "next_action": "automatic literature search and evidence review queued; topic-specific experiment planning is available after verified evidence is stored"}
 
 
@@ -2680,7 +2636,7 @@ def audit_log(project_id: UUID):
 
 
 @app.post("/api/projects/{project_id}/state")
-async def change_project_state(project_id: UUID, request: ProjectStateRequest, background_tasks: BackgroundTasks):
+async def change_project_state(project_id: UUID, request: ProjectStateRequest):
     resume_task_id: UUID | None = None
     run_ids: list[UUID] = []
     with session_scope() as session:
@@ -2717,9 +2673,11 @@ async def change_project_state(project_id: UUID, request: ProjectStateRequest, b
                 .order_by(desc(Task.updated_at))
             )
             if cancelled_bootstrap and not successful_bootstrap:
-                task = Task(project_id=project_id, kind="research_bootstrap", payload={
+                idempotency_key = f"research_bootstrap:{project_id}:resume-{cancelled_bootstrap.id}"
+                task = Task(project_id=project_id, kind="research_bootstrap", idempotency_key=idempotency_key, payload={
                     "idea_version": project.current_idea_version,
                     "resumed_from_task_id": str(cancelled_bootstrap.id),
+                    "idempotency_key": idempotency_key,
                 })
                 session.add(task)
                 session.flush()
@@ -2785,7 +2743,8 @@ async def change_project_state(project_id: UUID, request: ProjectStateRequest, b
             result = {**serialize_project(project), "affected_runs": [str(run_id) for run_id in run_ids], "affected_tasks": len(active_tasks)}
 
     if resume_task_id:
-        background_tasks.add_task(trigger_research_workflow, project_id, resume_task_id)
+        # The durable queue worker claims this task from PostgreSQL; no in-process
+        # BackgroundTask is allowed to own work that must survive API restarts.
         return result
     if request.action == "resume":
         return result

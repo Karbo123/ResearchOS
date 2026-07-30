@@ -24,14 +24,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，继续 P1-PAPER-016、P1-UPLOAD-009；完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，继续 P2-QUEUE-020、P1-PAPER-016、P1-UPLOAD-009；完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进论文语义/编译验收、受限图片视觉输入与大规模材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进持久队列、论文语义/编译验收、受限图片视觉输入与大规模材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -189,7 +189,10 @@
 
 - [ ] `P2-SEARCH-018` 增加 GitLab、数据集/模型注册表和合规网页检索，并统一限流、robots.txt 与条款记录。
 - [ ] `P2-TRACKING-019` 按部署需求评估自托管 W&B/TensorBoard；不能削弱现有离线 MLflow 路径。
-- [ ] `P2-QUEUE-020` 为长任务增加持久队列、租约、重试退避、幂等键和崩溃恢复。
+- [~] `P2-QUEUE-020` 为长任务增加持久队列、租约、重试退避、幂等键和崩溃恢复。
+  - 本轮范围：将研究启动任务从 FastAPI `BackgroundTasks` 移到独立 `queue-worker` 容器；Task 持久化幂等键、最大尝试次数、下一次执行时间、租约截止时间和 lease token。worker 使用 PostgreSQL `FOR UPDATE SKIP LOCKED` 领取任务，租约过期可恢复，失败按固定指数退避并在上限后结构化终止；项目暂停/取消仍是后端闸门。
+  - 完成标准：API 重启不丢任务；同一幂等键不重复入队；worker 崩溃后过期 lease 可重新领取；重试次数、退避和最终失败可审计；容器/迁移/单元与集成验证通过。
+  - 本轮验证：新增 Alembic `0002_task_queue`、独立 `queue-worker` Compose 服务和 API/worker 共用镜像；现有数据库真实迁移到 `0002_task_queue`，`tasks` 五个队列字段及幂等索引存在。临时过期 lease 任务被重新领取并以 `attempts=1`、`queue_task_kind_unsupported` 结构化失败；API `112 passed, 2 skipped`、Compose/Python/文档/Idea case/`git diff --check` 通过。实验提交仍直接进入受控 Runner 链，持久化 Runner 任务队列和完整生产级恢复仍未完成，任务保持 `[~]`。
 - [ ] `P2-HA-021` 增加长期运行监控、健康告警、备份轮换、容量限制和升级/回滚演练。
 - [ ] `P2-RAG-022` 仅在论文规模证明需要时引入 RAGFlow/LlamaIndex；保留 evidence ID 和页码追踪。
 - [ ] `P2-GRAPH-023` 仅在 n8n 循环、分支和检查点恢复难以维护时评估 LangGraph，不提前增加双状态源。
@@ -305,3 +308,4 @@
 - 2026-07-30：继续 `P1-PAPER-016`；新增 evidence-grounded `paper/main.tex` 生成器和 `POST /api/projects/{project_id}/paper-draft`，只接受当前 Idea、已核验页码/章节 quote，并仅写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会升级为论文事实。前端概览新增“生成证据论文草稿”按钮，接口只创建需审批的 LaTeX replace Proposal，批准前不写文件。同步工具契约、双语 README、运维说明和需求审计；新增缺失 Idea、metadata-only 和严格证据 Proposal 路由回归；API 容器 `106 passed, 2 skipped`，Node UX `5 passed`，文档/Idea case/Compose/容器 Python/JSON/`git diff --check` 和浏览器模型设置桌面/窄屏检查通过，控制台错误为 0。完整语义 claim 映射、生产级论文编译和完整论文能力仍未完成，任务保持 `[~]`。提交：`72b4c68`。
 - 2026-07-30：完成 `P1-UX-045`；修复浏览器缓存旧静态资源导致的模型来源不显示问题，新增 `app.js`/`styles.css` 版本查询参数；确认三档共享容器 `.env` 默认 URL/key、设置弹窗、未保存保护和模型失败直报错误；n8n/API 边界与 Windows Release 签名门禁保持一致。API `107 passed, 2 skipped`，Node UX `5 passed`，Compose/JSON/文档同步/Idea case/JS 检查通过；浏览器桌面/窄屏无横向溢出。GitHub token 失效，正式 Release 仍待有效权限和签名/干净 VM 验收。
 - 2026-07-30：继续 `P1-PAPER-016`；扩展 evidence-grounded `paper/main.tex` 生成器为完整确定性章节结构，增加 Method/Experiment 状态表、成功 Run 指标表、未执行结果、逐条 evidence ID/定位、claim-to-evidence map、Conclusion 和 References，并安全处理可选约束/预算字段。新增无结果和 provenance 回归；API `107 passed, 2 skipped`，文档与结构检查待本轮最终复核。语义 claim 映射质量和生产级 LaTeX 编译验收仍未完成。
+- 2026-07-30：继续 `P2-QUEUE-020`；研究启动/恢复任务改由 PostgreSQL 持久队列和独立 `queue-worker` 领取，增加 lease、幂等键、指数退避和过期 lease 回收；API 不再把必需的 n8n 编排交给进程内 `BackgroundTasks`。真实数据库迁移为 `0002_task_queue`，临时过期任务集成验证成功，API `112 passed, 2 skipped`，Compose/语法/文档/Idea case/`git diff --check` 通过。实验 Runner 队列、完整崩溃恢复和生产级队列观测仍未完成。

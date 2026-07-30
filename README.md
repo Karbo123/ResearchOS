@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-17 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-18 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -149,7 +149,7 @@ workflow, recreate only n8n so its startup import runs again:
 docker compose up -d --force-recreate n8n
 ```
 
-Wait until `postgres`, `api`, `runner`, `n8n`, `mlflow`, `minio`, and `minio-init` are healthy/completed. Open:
+Wait until `postgres`, `api`, `queue-worker`, `runner`, `n8n`, `mlflow`, `minio`, and `minio-init` are healthy/completed. Open:
 
 | Service | Local URL | Purpose |
 | --- | --- | --- |
@@ -172,7 +172,7 @@ When a new-project clarification request uses `POST /api/chat/stream`, the UI sh
 2. Review the AI's interpretation, inferred domain, assumptions, and grouped questions. Correct bad inferences; neither mode uses a field-by-field questionnaire.
    Use Enter for line breaks; Ctrl+Enter or Cmd+Enter submits. While a request is pending, the composer and mode switch are locked; timeout or connection errors are shown in the conversation and release the controls for retry.
 3. Review the generated `ProjectSpec`. Missing fields, unclear ownership, or obvious resource risks keep the project in clarification and prevent creation.
-4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and an n8n main-workflow task.
+4. Confirm the specification. Research OS creates a UUID, Git workspace, project directories, Idea v1, database state, checkpoints, and a durable PostgreSQL task for the n8n main workflow; `queue-worker` leases and dispatches it.
 5. Inspect the **Literature** page. Treat `metadata-only` rows as discovery candidates. Only `fulltext-evidence` rows with a stable source, PDF hash, locator, and quote can support a factual claim.
 6. Inspect the **Related Work** evidence coverage, gap candidates, and duplicate-research candidates. These remain candidates and do not establish novelty or scientific conclusions.
 7. In the **Experiments** page, generate an Idea-specific plan only after page-level full-text evidence exists. The API stores the strict plan as a pending Proposal bound to the current Idea version, evidence IDs, and policy snapshot. Approve it in **Approvals**, then execute it through the fixed project `experiment/main.py` contract; the entrypoint must write `metrics.json` and `checkpoint.json`, and failures remain structured without substituting a generic demo.
@@ -239,6 +239,7 @@ The previous acceptance record is retained as historical evidence at [`acceptanc
 | `GITHUB_TOKEN`, `GITLAB_TOKEN` | Optional | Raise provider API limits; repository results remain unverified candidates until cross-checked. Tokens are read only by the API container and never mounted into n8n or Runner. |
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional | Optional Semantic Scholar quota credential. |
 | `RUNNER_SHARED_SECRET`, `RUNNER_MAX_SECONDS`, `RUNNER_EXECUTOR_TIMEOUT_SECONDS` | Yes | API-to-Runner credential, maximum bounded task duration, and Runner-to-fixed-launcher request timeout. |
+| `QUEUE_POLL_SECONDS`, `QUEUE_LEASE_SECONDS`, `QUEUE_WORKFLOW_TIMEOUT_SECONDS`, `QUEUE_RETRY_BASE_SECONDS`, `QUEUE_RETRY_MAX_SECONDS` | Compose defaults | Durable queue polling, lease duration, fixed n8n request timeout, and bounded exponential retry delays. |
 | `RUNNER_IMAGE_DIGEST` | Release required; local placeholder allowed | Expected immutable Runner image digest, for example `sha256:<64 hex characters>`. `unavailable` is recorded as unverified in local development and is not a release identity. |
 | `RESEARCH_OS_COMMIT` | Release required; local auto-detection allowed | Full 40-character Research OS Git commit recorded with each run. Set it explicitly in containers; the host API can auto-detect the repository commit. |
 | `REPORT_TIMEZONE` | Yes | n8n schedule and report timezone; default `Asia/Shanghai`. |

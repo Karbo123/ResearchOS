@@ -4,6 +4,7 @@
 flowchart LR
   U["Project chat / Web UI"] --> API["Research API\nPydantic validation"]
   N["n8n workflows"] --> API
+  Q["queue-worker\nPostgreSQL leases"] --> N
   API --> PG["PostgreSQL\nsource of truth"]
   API --> GIT["Per-project Git repository"]
   API --> SNAP["Reproducibility snapshot\ncontrolled artifacts"]
@@ -47,6 +48,10 @@ IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper 
 Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDependency` 计算 Idea、策略、代码、数据或产物删除变更的依赖后代，只使受影响的有效产物失效，并在 Proposal 与审计事件中记录可审阅的节点/边影响图、重跑候选和关联检查点。批准变更后，API 会为每个可安全恢复的终态实验自动创建待审批的局部重跑 Proposal；每个 Proposal 重新绑定源实验、检查点、白名单配置和随机种子，绝不会自动执行或替换为无关实验。批准的检查点重跑仍通过受控实验提交链执行，主题专属重跑和检查点恢复也使用固定主题入口。
 
 项目状态是执行闸门，不只是 UI 标签。`paused` 和 `cancelled` 会阻止检索、创新性评估、实验/编译计划及 Runner 提交；暂停/取消会取消活动任务和 Runner run，并写入状态检查点。恢复仅允许从 `paused` 回到检查点保存的稳定阶段；`cancelled` 是终止状态。定时 n8n 报告只枚举 active 项目。
+
+## Durable task queue
+
+Project initialization and resume tasks are inserted into PostgreSQL before the API responds. The independent `queue-worker` claims them with row locks and lease tokens, dispatches only the fixed n8n research-start webhook, and persists retry/backoff state. An expired lease is reclaimable after a worker crash; an idempotency key prevents duplicate initialization requests. The API does not keep required orchestration in an in-process background task.
 
 项目策略先生成 `config_change` Proposal，明确批准后才写入 `policies`。策略编译器识别中英文随机种子下限、引用 DOI/来源与原文证据要求，以及高成本/对外操作审批要求。实验计划按当前规则生成，`POST /api/experiments` 重新读取数据库策略，Runner 再校验受限策略快照；策略在批准后变化时，旧 Proposal 不能绕过新规则。无法识别的自由文本规则会保留并显示为人工规则，不会虚假标记为自动执行。
 

@@ -6,7 +6,7 @@
 2. Docker Desktop 必须运行 Linux containers（`desktop-linux` engine）。这只是 Docker Desktop 的 Linux 容器后端，不要求另装 Linux 操作系统。
 3. 不要在 Windows 宿主机启动模型 Bridge 或 API 服务。API 容器在 Compose 私有网络内直接调用三个配置的 OpenAI-compatible URL。
 4. 先运行 `docker compose config --quiet` 和 `python scripts/check_docs_sync.py`，首次部署再运行 `docker compose up --build -d`。镜像已经存在时使用日常启动命令 `docker compose up -d`，不要为普通启动重复构建。
-5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务应为 running。
+5. `docker compose ps` 中 PostgreSQL 应为 healthy，`minio-init` 应为 completed，其余长期服务（包括 `queue-worker`）应为 running。
 6. 依次检查 Research OS、n8n 自动登录、MLflow、MinIO 和 OpenAPI；所有公开地址必须仍是 `127.0.0.1`。
 
 首次启动后可做零成本健康检查：
@@ -31,7 +31,7 @@ Compose 的 `db-migrate` 是唯一的 Schema 变更入口。它使用 bootstrap 
 ```powershell
 docker compose up -d db-migrate
 docker compose logs --tail=100 db-migrate
-docker compose up -d api n8n mlflow runner runner-launcher
+docker compose up -d api queue-worker n8n mlflow runner runner-launcher
 docker compose exec -T postgres psql -U research -d research_os -c "SELECT version_num FROM alembic_version"
 ```
 
@@ -84,6 +84,18 @@ docker compose stop
 ```powershell
 docker compose up -d --build api runner runner-launcher mlflow
 ```
+
+## 持久任务队列
+
+项目初始化和恢复任务先写入 PostgreSQL `tasks` 表，再由独立 `queue-worker` 容器领取；API 进程不再用内存 `BackgroundTasks` 持有必须完成的 n8n 工作。worker 使用 `FOR UPDATE SKIP LOCKED`、幂等键和 lease token，租约过期后可被另一 worker 领取；暂时失败按 `QUEUE_RETRY_BASE_SECONDS`/`QUEUE_RETRY_MAX_SECONDS` 指数退避，达到 `max_attempts` 后标记 `failed` 并写入审计。项目暂停或取消会阻止任务成功提交。检查队列状态：
+
+```powershell
+docker compose ps queue-worker
+docker compose logs --tail=100 queue-worker
+docker compose exec -T postgres psql -U research -d research_os -c "SELECT kind,status,attempts,max_attempts,idempotency_key,leased_until,next_attempt_at FROM tasks ORDER BY created_at DESC LIMIT 20"
+```
+
+队列迁移由 `db-migrate` 的 Alembic `0002_task_queue` 执行。不要手工删除 `tasks` 行来“重试”；应恢复项目状态或让租约自然过期，保留审计和幂等记录。
 
 `projects/`、`artifacts/` 和 `n8n/workflows/` 是运行时挂载目录，不需要构建镜像。修改 n8n 工作流后，重新创建 n8n 容器即可触发启动导入：
 

@@ -37,7 +37,6 @@ x-app-env: &app-env
   REPORT_WEBHOOK_URL: ${REPORT_WEBHOOK_URL:-}
   REPORT_WEBHOOK_SECRET: ${REPORT_WEBHOOK_SECRET:-}
   REPORT_WEBHOOK_TIMEOUT_SECONDS: ${REPORT_WEBHOOK_TIMEOUT_SECONDS:-15}
-  N8N_RESEARCH_WEBHOOK_URL: http://n8n:5678/webhook/research-os/start
   N8N_INTERNAL_URL: http://n8n:5678
   CLAMAV_HOST: clamav
   CLAMAV_PORT: 3310
@@ -241,6 +240,27 @@ services:
     networks:
       - default
       - runner-internal
+    restart: unless-stopped
+
+  queue-worker:
+    image: research-os-api
+    working_dir: /workspace/apps/api
+    command: ["python", "-m", "app.queue_worker"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://${API_DB_USER:-research_api}:${API_DB_PASSWORD:-api-development-password}@postgres:5432/${POSTGRES_DB:-research_os}
+      N8N_RESEARCH_WEBHOOK_URL: http://n8n:5678/webhook/research-os/start
+      QUEUE_POLL_SECONDS: ${QUEUE_POLL_SECONDS:-2}
+      QUEUE_LEASE_SECONDS: ${QUEUE_LEASE_SECONDS:-180}
+      QUEUE_WORKFLOW_TIMEOUT_SECONDS: ${QUEUE_WORKFLOW_TIMEOUT_SECONDS:-90}
+      QUEUE_RETRY_BASE_SECONDS: ${QUEUE_RETRY_BASE_SECONDS:-5}
+      QUEUE_RETRY_MAX_SECONDS: ${QUEUE_RETRY_MAX_SECONDS:-300}
+    depends_on:
+      api:
+        condition: service_started
+      n8n:
+        condition: service_started
+    networks:
+      - default
     restart: unless-stopped
 
   n8n:

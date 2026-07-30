@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
-from fastapi import BackgroundTasks, HTTPException
+from fastapi import HTTPException
 
 import app.main as main
 from app.clarification import initial_draft
@@ -111,7 +111,6 @@ def test_project_creation_requires_ready_for_confirmation(monkeypatch):
     with pytest.raises(HTTPException) as error:
         main.create_project(
             ProjectCreateRequest(session_id=store.conversation.id, confirmed=True),
-            BackgroundTasks(),
         )
 
     assert error.value.status_code == 409

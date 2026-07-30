@@ -27,6 +27,16 @@ def test_api_image_carries_the_versioned_migration_entrypoint():
     assert "alembic" in (ROOT / "apps" / "api" / "requirements.txt").read_text(encoding="utf-8")
 
 
+def test_task_queue_revision_declares_leases_retries_and_idempotency_index():
+    revision = (ROOT / "migrations" / "versions" / "0002_task_queue.py").read_text(encoding="utf-8")
+    models = (ROOT / "apps" / "api" / "app" / "models.py").read_text(encoding="utf-8")
+
+    assert 'revision = "0002_task_queue"' in revision
+    assert "uq_tasks_idempotency_key" in revision
+    for field in ("max_attempts", "idempotency_key", "next_attempt_at", "leased_until", "lease_token"):
+        assert f"{field}: Mapped" in models
+
+
 def test_n8n_provisioning_allows_schema_bootstrap_without_granting_table_access():
     source = (ROOT / "scripts" / "provision_db_roles.py").read_text(encoding="utf-8")
 

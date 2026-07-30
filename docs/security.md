@@ -85,3 +85,4 @@ n8n 专用运行角色除 `n8n` schema 权限外，还需要数据库 `CREATE` �
 - 若需要局域网、服务器或多人访问，必须移除/禁用自动登录入口，改用 TLS、独立账户、SSO/RBAC 或受认证反向代理。
 - Cookie 仍会保存在浏览器会话中；清除 Cookie 后重新访问自动登录入口即可，不需要用户记忆密码。
 - n8n 工作流节点不能读取容器环境变量；内置工作流只调用 Compose 私有网络内固定的 `http://api:8080`，不向 LLM 或 n8n 表达式暴露 Owner、数据库或对象存储 Secret。
+- `queue-worker` 只接收 API DB 运行角色和固定 n8n webhook 配置，不挂载模型 URL/key、Runner socket 或宿主文件系统；它只能领取白名单 `research_bootstrap` Task，任务 payload 不能提供命令、路径、网络或镜像。

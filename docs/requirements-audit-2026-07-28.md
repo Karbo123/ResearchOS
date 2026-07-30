@@ -91,7 +91,7 @@
 | 严格 JSON、双重校验、Shell/路径隔离 | 已实现（MVP） | API 与 Runner 使用 Pydantic `extra=forbid` 和白名单；LLM 不接触任意 Shell/SQL/路径，n8n 节点不能读取容器环境变量。 |
 | Related Work 与完整论文自动写作 | 部分实现 | 已可从当前 Idea、页码级核验证据和真实成功实验生成完整章节结构的 `paper/main.tex` patch Proposal；metadata-only 会被拒绝，没有结果会明确保留未执行状态，且批准前不写文件。仍未完成语义 claim 到多证据的精确映射、完整 Related Work 内容质量和生产级论文编译验收。 |
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
-| 长期运行与生产可靠性 | 部分实现 | Compose restart、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；没有持久队列、HA、每任务独立容器、磁盘配额和默认拒绝出网。 |
+| 长期运行与生产可靠性 | 部分实现 | Compose restart、PostgreSQL 持久任务队列、租约/幂等键/指数退避、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；HA、完整告警轮换、每任务独立容器的生产级验证和默认拒绝出网仍未完成。 |
 | Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。`v*` tag 可生成 EXE、SHA-256 和草稿 Release；正式发布要求手动发布门禁、Authenticode 签名 Secret、Docker 许可复核及干净 VM、升级/卸载验收，尚未完成。 |
 
 2026-07-30 代码来源可信链增量：`P0-CODE-003` 已实现候选仓库的 GitHub/GitLab 元数据、论文记录与 `CITATION.cff`/README 双源匹配，保存已知 SPDX、40 位 commit 和验证来源；未知许可证、未固定 commit、未验证候选或未批准 Proposal 均不能触发下载。批准后仅下载受限归档，拒绝路径穿越、符号链接和特殊文件，写入 SHA-256、下载时间、论文关系和项目 Git 提交。作者主页/数据集/模型的通用定位仍未实现；本增量已完成测试和文档同步，`P0-CODE-003` 标记为 `[x]`。
@@ -101,6 +101,8 @@
 2026-07-30 Runner Conda 增量：`P0-RUNNER-007` 在 `research-os-runner` 镜像内预构建固定 `/opt/conda/envs/research-os` micromamba Python 3.12 环境，新增 `conda_python` 白名单模板；请求仍只能选择 `experiment/*.py` 入口，不能提交环境文件、依赖、命令或网络配置。`micromamba 2.3.2`、固定环境 Python `3.12.13`、API `57 passed`、Runner `6 passed`、launcher `8 passed`（含两个真实 Docker 集成测试）通过；主题专属 Runner 和真实 GPU 主机验证仍未完成，未调用模型、外部学术 API 或无关实验。
 
 2026-07-30 数据库迁移增量：`P1-DB-017` 新增一次性 `db-migrate` Compose 服务、版本化 Alembic 初始 revision 和幂等角色 provisioning。API 使用只授予业务表 CRUD 的独立角色，n8n 只访问 `n8n` schema，MLflow 使用独立 `research_os_mlflow` 数据库和角色；API 启动缺少 `alembic_version` 时直接失败，不再隐式 `create_all`/`ALTER TABLE`。备份轮换、恢复演练和生产级网络隔离仍属于 P2 运维范围。
+
+2026-07-30 持久队列增量：`P2-QUEUE-020` 将研究启动/恢复任务从 API 进程内 `BackgroundTasks` 移到独立 `queue-worker` 容器；`tasks` 表新增幂等键、尝试上限、下一次执行时间、租约截止时间和 lease token。worker 用 PostgreSQL 行锁和 `SKIP LOCKED` 领取固定白名单任务，过期 lease 可回收，失败按有上限的指数退避，最终状态与错误写入审计；worker 不接收模型 key、Runner socket 或任意命令。真实现有数据库已升级到 `0002_task_queue`，临时过期任务回收/结构化失败集成验证通过。实验提交的持久队列和完整生产级崩溃恢复仍未完成。
 
 ## 关键风险
 

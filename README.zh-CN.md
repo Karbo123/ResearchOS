@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-17 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-18 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -162,7 +162,7 @@ docker compose ps
 docker compose up -d --force-recreate n8n
 ```
 
-等待 `postgres`、`api`、`runner`、`n8n`、`mlflow`、`minio` 和 `minio-init` 进入健康/完成状态，然后打开：
+等待 `postgres`、`api`、`queue-worker`、`runner`、`n8n`、`mlflow`、`minio` 和 `minio-init` 进入健康/完成状态，然后打开：
 
 | 服务 | 本地地址 | 用途 |
 | --- | --- | --- |
@@ -185,7 +185,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 2. 检查 AI 的理解、推断领域、假设和成组追问；纠正错误推断，两种模式都不会逐字段执行固定问卷。
    Enter 用于换行；Ctrl+Enter 或 Cmd+Enter 提交。请求等待期间，输入框和模式开关会锁定；超时或连接错误会显示在对话中，并释放控件以便重试。
 3. 审核生成的 `ProjectSpec`。字段缺失、数据所有权不明或资源风险明显时，系统会保持澄清状态并禁止创建项目。
-4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 n8n 主流程任务。
+4. 确认规格后，系统创建 UUID、Git 工作区、项目目录、Idea v1、数据库状态、检查点和 PostgreSQL 持久 n8n 主流程任务；`queue-worker` 负责领取和触发它。
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查 **Related Work** 的证据覆盖、研究空白候选和重复研究候选。它们都只是候选，不证明新颖性或科学结论。
 7. 在**实验**页生成主题专属计划前，必须先有页码级全文证据。API 会把严格计划保存为待审批 Proposal，并绑定当前 Idea 版本、证据 ID 和策略快照。在**审批**页批准后才允许进入执行闸门；当前 Runner 仍会对主题专属执行返回结构化错误，绝不会替换成通用 demo。
@@ -250,6 +250,7 @@ python scripts/acceptance_test.py
 | `GITHUB_TOKEN`、`GITLAB_TOKEN` | 可选 | 提高提供方 API 配额；仓库结果在交叉验证前仍只是候选。凭据只由 API 容器读取，不挂载给 n8n 或 Runner。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |
 | `RUNNER_SHARED_SECRET`、`RUNNER_MAX_SECONDS` | 是 | API 到 Runner 的凭据和受限任务最大执行时间。 |
+| `QUEUE_POLL_SECONDS`、`QUEUE_LEASE_SECONDS`、`QUEUE_WORKFLOW_TIMEOUT_SECONDS`、`QUEUE_RETRY_BASE_SECONDS`、`QUEUE_RETRY_MAX_SECONDS` | Compose 默认值 | 持久队列轮询、租约时长、固定 n8n 请求超时和有上限的指数退避参数。 |
 | `RUNNER_IMAGE_DIGEST` | 发布必需；本地可用占位值 | 期望的不可变 Runner 镜像 digest，例如 `sha256:<64 位十六进制字符>`。本地开发的 `unavailable` 会被记录为未核验，不能作为发布身份。 |
 | `RESEARCH_OS_COMMIT` | 发布必需；本地可自动探测 | 每次运行记录的 Research OS 完整 40 位 Git commit。容器部署应显式设置；宿主机 API 可自动探测仓库 commit。 |
 | `REPORT_TIMEZONE` | 是 | n8n 定时与报告时区，默认 `Asia/Shanghai`。 |
