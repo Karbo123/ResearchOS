@@ -1,6 +1,7 @@
 from uuid import uuid4
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
@@ -13,7 +14,7 @@ from app.policy_engine import compile_policy_constraints, experiment_policy_viol
 from app.project_service import build_evidence_grounded_paper, build_paper_claim_map
 from app.evidence_pipeline import validate_open_pdf_url
 from app.related_work import build_related_work_analysis
-from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest, SupervisionIntent
+from app.schemas import AdaptiveClarificationResult, ChangeProposalRequest, ChatRequest, ExperimentRequest, SupervisionIntent
 
 
 def test_clarification_produces_valid_project_spec():
@@ -83,6 +84,47 @@ def test_direct_model_failure_is_an_error_and_never_switches_provider(monkeypatc
         clarify_idea_with_llm(case.initial_message, clarification_mode=case.clarification_mode)
     assert error.value.code == "llm_request_failed"
     assert error.value.status_code == 502
+
+
+def test_clarification_sends_bounded_vision_input_without_persisting_image_data(monkeypatch):
+    case = load_idea_case("mnist-cnn")
+    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("RESEARCH_MODEL_URL_MEDIUM", "https://medium.invalid/v1")
+    monkeypatch.setenv("RESEARCH_MODEL_KEY_MEDIUM", "test-key")
+    captured = {}
+
+    class FakeResponses:
+        def parse(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(output_parsed=AdaptiveClarificationResult(
+                draft=initial_draft(case.initial_message),
+                assistant_reply="已读取图片作为未验证参考。",
+                ready_for_confirmation=False,
+                unresolved_items=[], assumptions=[], risk_flags=[],
+            ))
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            self.responses = FakeResponses()
+
+    monkeypatch.setattr("app.llm.OpenAI", FakeClient)
+    clarify_idea_with_llm(
+        case.initial_message,
+        attachment_images=[{
+            "id": "image-1",
+            "sha256": "a" * 64,
+            "mime_type": "image/png",
+            "data_url": "data:image/png;base64,ZmFrZQ==",
+        }],
+    )
+    content = captured["input"][1]["content"]
+    assert content[0]["type"] == "input_text"
+    assert content[1] == {
+        "type": "input_image",
+        "image_url": "data:image/png;base64,ZmFrZQ==",
+        "detail": "high",
+    }
+    assert "data_url" not in json.dumps(captured["input"][0], ensure_ascii=False)
 
 
 def test_model_tiers_are_independent(monkeypatch, tmp_path):

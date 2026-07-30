@@ -24,14 +24,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，继续 P1-PAPER-016；完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，继续 P1-PAPER-016、P1-UPLOAD-009；完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P1-PAPER-016`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进论文语义/编译验收、真实 GPU 主机验证、材料解析、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进论文语义/编译验收、受限图片视觉输入与大规模材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -145,8 +145,8 @@
 - [~] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将受限摘要纳入澄清与规划。
   - 已完成部分：API 在模型请求前上传、通过私有 ClamAV 扫描并解析材料；保留原文件、MIME、SHA-256、解析器版本和派生元数据/文本；PDF 页码文本、JSON/CSV 预览、UTF-8 文本/代码、图片 OCR 和 ZIP 安全清单均有边界；路径穿越、二进制文本、恶意样本、扫描服务不可用、压缩比、解压大小、条目数、单文件 50 MB 以及会话/项目累计配额会直接返回结构化错误。
   - 完成标准：上传或解析失败必须阻止本轮模型调用；摘要只作为不可信上下文，不得执行附件命令或把图片/元数据表述为全文证据；测试覆盖格式、边界、上下文截断和前端上传顺序。
-  - 剩余范围：完整图片视觉理解和大规模材料库尚未实现，不得标记为完整多模态材料能力。
-  - 本轮验证进展：`docker compose build api` 成功；ClamAV 服务显示 `healthy`；真实 ClamAV 清洁文件/EICAR 集成测试 `5 passed`；API 容器 `66 passed, 2 skipped`；容器内 `py_compile`、Compose 配置、文档同步和 `git diff --check` 已通过。
+  - 剩余范围：大规模材料库、跨材料检索和更广泛的视觉模型能力尚未实现，不得标记为完整多模态材料能力。
+  - 本轮验证进展：`docker compose build api` 成功；ClamAV 服务显示 `healthy`；真实 ClamAV 清洁文件/EICAR 集成测试 `5 passed`；API 容器 `108 passed, 2 skipped`；容器内 `py_compile`、Compose 配置、文档同步和 `git diff --check` 已通过。已扫描且仍存在的图片会以受限临时 data URL 发送给当前模型；单张 4 MB、最多 4 张、总量 12 MB，大小/数量/读取失败直接返回结构化错误，不静默退回 OCR。
 - [x] `P1-DIAG-010` 实现通用数值分析、失败诊断和后续实验建议闭环。
   - 完成标准：统计由 Python 计算；LLM 只解释和质疑；错误日志、异常指标和缺失数据会形成待审批建议。
 -  - 验证结果：新增 `apps/api/app/diagnostics.py` 和 `POST /api/projects/{project_id}/diagnostics`；计算有限指标的 count/mean/population std/min/max，解析结构化失败码与成功但缺失指标的运行，并生成去重、不可执行的 `diagnostic_suggestion` Proposal。API 测试 `60 passed`，前端 `node --check`、聊天 UX `5 passed`、Compose、文档同步、Idea case 和 `git diff --check` 通过；未调用真实模型、外部学术 API 或任何后续实验。
@@ -301,6 +301,7 @@
 - 2026-07-30：继续 `P0-IMPACT-008`；修正影响图检查点选择，只推荐与受影响实验绑定的最新 `experiment_succeeded`/`experiment_failed` 检查点，忽略项目暂停等不可重跑检查点；补充回归夹具。API 容器全量 `76 passed, 2 skipped`，未调用模型、外部学术 API 或无关实验；任务继续保持 `[~]`，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。
 - 2026-07-30：完成 `P1-INTENT-014`；已有项目聊天改用容器内模型的严格 `SupervisionIntent` 分类，移除变更/策略关键词识别；只有白名单 Idea/策略字段完整时创建审批 Proposal，状态和审批意图不直接执行，模型失败直接返回结构化错误。API `78 passed, 2 skipped`、Compose/文档同步/Idea case/JSON/`git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。
 - 2026-07-30：完成 `P1-MODEL-044`；修复空的旧 `runtime/model-settings.json` 字段遮蔽容器 `.env` 默认值的问题，统一设置页的轻量卡片视觉和默认值说明；新增 Windows GitHub Actions EXE/SHA-256 草稿 Release 工作流。n8n 继续负责固定工作流编排，模型调用、严格 Schema、审批和 fail-fast 校验仍由 API 容器负责，避免把动态 key 写入 workflow。API 容器 `102 passed, 2 skipped`，浏览器桌面/窄屏检查通过；P2-INSTALLER-029 因缺 Inno Setup、签名证书、干净 VM 和失效 GitHub token 继续进行中。
+- 2026-07-30：继续 `P1-UPLOAD-009`；增加已扫描图片的受限视觉输入，最多 4 张、单张 4 MB、总量 12 MB，使用临时 data URL 传给当前配置模型，不写入消息或运行日志；文件缺失、读取失败或超限直接返回结构化错误，不使用 OCR/模型 fallback。README 双语同步版本 `2026-07-30-17`；API 容器 `108 passed, 2 skipped`，Compose/Python/文档/Idea case/`git diff --check` 通过。大规模材料库和更广泛视觉能力仍未完成。
 - 2026-07-30：继续 `P1-PAPER-016`；新增 evidence-grounded `paper/main.tex` 生成器和 `POST /api/projects/{project_id}/paper-draft`，只接受当前 Idea、已核验页码/章节 quote，并仅写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会升级为论文事实。前端概览新增“生成证据论文草稿”按钮，接口只创建需审批的 LaTeX replace Proposal，批准前不写文件。同步工具契约、双语 README、运维说明和需求审计；新增缺失 Idea、metadata-only 和严格证据 Proposal 路由回归；API 容器 `106 passed, 2 skipped`，Node UX `5 passed`，文档/Idea case/Compose/容器 Python/JSON/`git diff --check` 和浏览器模型设置桌面/窄屏检查通过，控制台错误为 0。完整语义 claim 映射、生产级论文编译和完整论文能力仍未完成，任务保持 `[~]`。提交：`72b4c68`。
 - 2026-07-30：完成 `P1-UX-045`；修复浏览器缓存旧静态资源导致的模型来源不显示问题，新增 `app.js`/`styles.css` 版本查询参数；确认三档共享容器 `.env` 默认 URL/key、设置弹窗、未保存保护和模型失败直报错误；n8n/API 边界与 Windows Release 签名门禁保持一致。API `107 passed, 2 skipped`，Node UX `5 passed`，Compose/JSON/文档同步/Idea case/JS 检查通过；浏览器桌面/窄屏无横向溢出。GitHub token 失效，正式 Release 仍待有效权限和签名/干净 VM 验收。
 - 2026-07-30：继续 `P1-PAPER-016`；扩展 evidence-grounded `paper/main.tex` 生成器为完整确定性章节结构，增加 Method/Experiment 状态表、成功 Run 指标表、未执行结果、逐条 evidence ID/定位、claim-to-evidence map、Conclusion 和 References，并安全处理可选约束/预算字段。新增无结果和 provenance 回归；API `107 passed, 2 skipped`，文档与结构检查待本轮最终复核。语义 claim 映射质量和生产级 LaTeX 编译验收仍未完成。

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-16 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-17 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -34,7 +34,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 - Before an approved run enters the Runner, require a clean project worktree, create an immutable `run/<run_id>` tag, and retain a hashed source/environment/data/model/config snapshot under controlled artifacts.
 - Produce inspectable PNG/PDF/JSON/PLY outputs with download links and project lineage instead of returning only an LLM paragraph.
 - Preview valid artifacts in the Web UI: bounded JSON/text/CSV/TSV/PDF views, non-executing HTML text, and an interactive ASCII PLY/PCD point-cloud canvas with drag rotation, wheel zoom, reset, optional mesh wireframe, fixed sampling limits, and a download link. Invalidated artifacts remain visible but are not previewable.
-- Accept bounded PDF, JSON, CSV/TSV, text, code, image, and ZIP-manifest uploads. Every upload must pass the private ClamAV scan and bounded parser before it is persisted or sent as untrusted context; scanner/parser failure blocks the model request, images use bounded OCR, and ZIP contents are never extracted or executed. Session and project quotas are enforced transactionally.
+- Accept bounded PDF, JSON, CSV/TSV, text, code, image, and ZIP-manifest uploads. Every upload must pass the private ClamAV scan and bounded parser before it is persisted or sent as untrusted context; scanner/parser failure blocks the model request. Images use bounded OCR plus temporary vision input for at most four scanned images (4 MB each, 12 MB total); vision read/size failures are reported directly, and ZIP contents are never extracted or executed. Session and project quotas are enforced transactionally.
 - Pause, resume from a checkpoint, cancel, revise an Idea, and generate daily/weekly reports from the same project conversation.
 
 ## Screenshots

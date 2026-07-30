@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 import json
 import hashlib
 import os
@@ -73,6 +74,9 @@ from .search import search_literature
 app = FastAPI(title="Research OS MVP", version="0.1.0")
 STATIC_ROOT = Path(__file__).parent.parent / "static"
 ARTIFACTS_ROOT = Path(os.getenv("ARTIFACTS_ROOT", "artifacts")).resolve()
+MAX_VISION_IMAGES = 4
+MAX_VISION_IMAGE_BYTES = 4 * 1024 * 1024
+MAX_VISION_TOTAL_BYTES = 12 * 1024 * 1024
 RUNNER_URL = os.getenv("RUNNER_URL", "http://localhost:8010")
 RUNNER_SECRET = os.getenv("RUNNER_SHARED_SECRET", "runner-dev-secret")
 N8N_RESEARCH_WEBHOOK_URL = os.getenv("N8N_RESEARCH_WEBHOOK_URL", "").strip()
@@ -288,6 +292,43 @@ def uploaded_material_context(session, session_id: UUID | None = None, project_i
         "id": item.id, "name": item.name, "mime_type": item.mime_type,
         "sha256": item.sha256, "metadata": item.metadata_json,
     } for item in records])
+
+
+def uploaded_material_images(session, session_id: UUID | None = None, project_id: UUID | None = None) -> list[dict[str, str]]:
+    """Build bounded, ephemeral vision inputs from already scanned image uploads."""
+    if session_id is not None:
+        query = select(UploadedFile).where(UploadedFile.session_id == session_id)
+    elif project_id is not None:
+        query = select(UploadedFile).where(UploadedFile.project_id == project_id)
+    else:
+        return []
+    records = session.scalars(query.order_by(UploadedFile.created_at)).all()
+    images: list[dict[str, str]] = []
+    total_bytes = 0
+    for item in records:
+        if not item.mime_type.startswith("image/"):
+            continue
+        if len(images) >= MAX_VISION_IMAGES:
+            raise LLMRequestError("material_image_limit", "本轮图片数量超过视觉输入上限。", 413)
+        path = (ARTIFACTS_ROOT / item.relative_path).resolve()
+        if ARTIFACTS_ROOT not in path.parents or not path.is_file():
+            raise LLMRequestError("material_image_unavailable", "已上传图片无法读取，已阻止模型请求。", 422)
+        try:
+            content = path.read_bytes()
+        except OSError as exc:
+            raise LLMRequestError("material_image_unavailable", "已上传图片无法读取，已阻止模型请求。", 422) from exc
+        if len(content) > MAX_VISION_IMAGE_BYTES:
+            raise LLMRequestError("material_image_size_limit", "单张图片超过视觉输入大小上限。", 413)
+        total_bytes += len(content)
+        if total_bytes > MAX_VISION_TOTAL_BYTES:
+            raise LLMRequestError("material_image_size_limit", "本轮图片总大小超过视觉输入上限。", 413)
+        images.append({
+            "id": str(item.id),
+            "sha256": item.sha256,
+            "mime_type": item.mime_type,
+            "data_url": f"data:{item.mime_type};base64,{base64.b64encode(content).decode('ascii')}",
+        })
+    return images
 
 
 def repository_token(source_url: str) -> str | None:
@@ -579,6 +620,10 @@ def chat(request: ChatRequest):
         ]
         draft_before = json.loads(json.dumps(conversation.draft))
         attachment_context = uploaded_material_context(session, session_id=conversation.id)
+        try:
+            attachment_images = uploaded_material_images(session, session_id=conversation.id)
+        except LLMRequestError as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
         conversation_id = conversation.id
 
     try:
@@ -589,6 +634,7 @@ def chat(request: ChatRequest):
             attachment_count=max(len(request.attachments), len(attachment_context)),
             clarification_mode=request.clarification_mode,
             attachment_context=attachment_context,
+            attachment_images=attachment_images,
         )
     except LLMRequestError as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
@@ -659,10 +705,11 @@ async def chat_stream(request: ChatRequest):
         transcript: list[dict[str, str]] = []
         draft_before: dict[str, Any] = {}
         attachment_context: list[dict[str, Any]] = []
+        attachment_images: list[dict[str, str]] = []
         conversation_id: UUID | None = None
 
         def load_conversation():
-            nonlocal conversation, transcript, draft_before, attachment_context, conversation_id
+            nonlocal conversation, transcript, draft_before, attachment_context, attachment_images, conversation_id
             from .clarification import initial_draft
             with session_scope() as session:
                 conv = session.get(ConversationSession, request.session_id) if request.session_id else None
@@ -688,6 +735,7 @@ async def chat_stream(request: ChatRequest):
                 ]
                 draft_before = json.loads(json.dumps(conv.draft))
                 attachment_context = uploaded_material_context(session, session_id=conv.id)
+                attachment_images = uploaded_material_images(session, session_id=conv.id)
                 conversation_id = conv.id
                 conversation = conv
 
@@ -695,6 +743,9 @@ async def chat_stream(request: ChatRequest):
             await loop.run_in_executor(None, load_conversation)
         except HTTPException as exc:
             yield emit("error", {"code": "invalid_request", "message": exc.detail})
+            return
+        except LLMRequestError as exc:
+            yield emit("error", {"code": exc.code, "message": exc.message})
             return
 
         # Phase 2: compute model route (fast, deterministic)
@@ -720,6 +771,7 @@ async def chat_stream(request: ChatRequest):
                 attachment_count=max(len(request.attachments), len(attachment_context)),
                 clarification_mode=request.clarification_mode,
                 attachment_context=attachment_context,
+                attachment_images=attachment_images,
             )
 
         yield emit("progress", {
