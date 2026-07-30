@@ -283,6 +283,33 @@ def test_paper_draft_requires_verified_page_evidence_and_records_only_real_metri
         }], paper, [])
 
 
+def test_paper_claim_map_supports_multilingual_and_multi_evidence_review_candidates():
+    case = load_idea_case("active-learning-3d")
+    draft = initial_draft(case.initial_message)
+    facts = case.confirmed_facts
+    draft.update({
+        "research_question": facts["research_question"], "domain": facts["domain"],
+        "hypotheses": ["不确定性采样减少标注预算"],
+        "expected_contributions": ["uncertainty sampling improves label efficiency"],
+        "available_data": facts["available_data"],
+        "success_criteria": [facts["success_criteria"]],
+        "constraints": {"compute": facts["constraints"], "data_access": "public"},
+        "ethics_and_compliance": facts["ethics_and_compliance"],
+    })
+    spec = build_spec(draft)
+    evidence = [
+        {"id": "zh-evidence", "claim": "不确定性采样减少标注预算", "quote": "不确定性采样在固定预算下减少标注预算。", "locator": "page 3", "source_url": "https://example.invalid/zh.pdf", "metadata": {"verified": True, "pdf_sha256": "a" * 64, "bibtex": "@article{zh}"}},
+        {"id": "en-evidence", "claim": "Uncertainty sampling improves label efficiency", "quote": "Uncertainty sampling improves label efficiency under a fixed budget.", "locator": "page 4", "source_url": "https://example.invalid/en.pdf", "metadata": {"verified": True, "pdf_sha256": "b" * 64, "bibtex": "@article{en}"}},
+    ]
+    claim_map = build_paper_claim_map(spec, evidence)
+    hypothesis = next(item for item in claim_map["idea_target_support"] if item["kind"] == "hypothesis")
+    assert hypothesis["status"] == "supported_candidate"
+    assert hypothesis["evidence_ids"] == ["zh-evidence"]
+    assert hypothesis["matches"][0]["match_basis"] == "normalized_lexical_overlap"
+    assert hypothesis["requires_human_review"] is True
+    assert claim_map["semantic_status"] == "not_proven_lexical_candidates_only"
+
+
 def test_related_work_links_only_verified_page_evidence_and_marks_candidates_for_review():
     analysis = build_related_work_analysis(
         {"research_question": "Does active learning improve point cloud labeling?", "hypotheses": ["active learning improves labeling"], "expected_contributions": ["a labeling budget comparison"]},

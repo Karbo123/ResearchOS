@@ -184,6 +184,8 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 项目概览中的“生成证据论文草稿”调用 `POST /api/projects/<project_id>/paper-draft`。它只读取当前 Idea、`verified=true` 且同时具有 PDF SHA-256、BibTeX、稳定 URL、页码/章节定位、claim 和非空原文 quote 的证据，以及已成功记录的实验指标；`metadata-only` 记录、缺失证据或未执行实验不会被写成论文事实。接口只创建 `patch_kind=latex` 的 `paper/main.tex` 替换 Proposal，并把 `idea_version`、`evidence_ids`、确定性的 `claim_map` 和 `evidence_grounded=true` 写入影响记录。生成器现在确定性地产出 Introduction、Related Work、Method、Experiments、Results、Limitations、Conclusion、Claim-to-evidence map 和 References；Related Work 条目带 evidence ID/定位，结果带 run ID/指标，缺失结果明确标为 unexecuted。必须先在网页审批 Proposal，再通过现有隔离 patch 执行器写入或调用 LaTeX 编译；模型失败或证据不足直接返回结构化错误，不使用替代内容。
 
+Claim map 会对 claim 与证据的归一化词汇重叠、目标/证据覆盖率、短语命中和有上限的多证据候选进行排序；英文 token 与中文二元片段只改善候选召回，字段 `semantic_status=not_proven_lexical_candidates_only` 明确表示它们不是语义核验或科学结论。容器回归测试会用固定 `latexmk -pdf -interaction=nonstopmode -halt-on-error` 编译最小文档并检查非空 PDF；这不等于完整生产级论文编译验收。
+
 调用 `POST /api/projects/<project_id>/patch-proposals` 创建 patch Proposal。请求必须绑定当前项目的完整 Git commit，并逐个声明固定目录内的 `create`、`replace` 或 `delete` 文件操作；替换和删除必须提供文件 SHA-256。代码只能写入 `experiment/`/`src/`，配置只能写入 `configs/`，LaTeX 只能写入 `paper/`。API 先生成可审阅 diff，批准时在临时隔离目录运行固定 Python、JSON、TOML 和 LaTeX 结构校验，再二次核对 HEAD/hash 并提交 Git。冲突、脏工作树、验证失败或 commit 失败都会返回结构化错误并恢复原文件。已提交 patch 的回滚必须调用 `POST /api/proposals/<proposal_id>/rollback` 创建新的待审批 Proposal；对外发布 Proposal 审批会明确返回 `external_publish_disabled`。
 
 ## 修改配置

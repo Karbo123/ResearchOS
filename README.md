@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-20 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-22 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -278,6 +278,8 @@ Each submitted run also has a controlled reproducibility bundle: an annotated `r
 See [docs/security.md](docs/security.md) for the hardening checklist and the exact local auto-login trust boundary.
 
 ## Operations
+
+Paper claim maps now record normalized lexical overlap, target/evidence coverage, phrase-match status, and a bounded multi-evidence candidate list. These are review signals only (`semantic_status=not_proven_lexical_candidates_only`); they never establish semantic support or scientific conclusions.
 
 ```powershell
 # Start existing images and containers; this is the normal command.

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-20 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-22 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -287,6 +287,8 @@ Docker volumes                 postgres-data、minio-data、n8n-data
 完整加固清单和本地自动登录信任边界见 [docs/security.md](docs/security.md)。
 
 ## 日常运维
+
+论文 claim map 现在记录归一化词汇重叠、目标/证据覆盖率、短语命中状态和有上限的多证据候选列表。这些字段只能作为人工复核信号（`semantic_status=not_proven_lexical_candidates_only`），不能证明语义支持，也不能形成科学结论。
 
 ```powershell
 # 启动已有镜像和容器；这是日常使用的命令。

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import unicodedata
 from pathlib import Path
 from typing import Any, Iterable
 from uuid import UUID
@@ -78,9 +79,49 @@ def _verified_evidence(rows: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
+def _normalized_claim_text(value: str) -> str:
+    return " ".join(unicodedata.normalize("NFKC", str(value or "")).lower().split())
+
+
 def _claim_tokens(value: str) -> set[str]:
-    words = re.findall(r"[a-z0-9][a-z0-9_+-]{2,}", (value or "").lower())
-    return {word for word in words if word not in {"the", "and", "for", "with", "from", "that", "this"}}
+    """Create bounded, language-aware lexical tokens for review candidates.
+
+    This intentionally remains lexical. CJK bigrams make Chinese claims
+    inspectable without pretending that token overlap proves semantic support.
+    """
+    text = _normalized_claim_text(value)
+    words = re.findall(r"[a-z0-9][a-z0-9_+-]{1,}", text)
+    tokens = {word for word in words if word not in {"the", "and", "for", "with", "from", "that", "this"}}
+    for run in re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff]+", text):
+        tokens.update(f"cjk:{run[index:index + 2]}" for index in range(max(0, len(run) - 1)))
+        if len(run) == 1:
+            tokens.add(f"cjk:{run}")
+    return tokens
+
+
+def _claim_match(target: str, row: dict[str, Any]) -> dict[str, Any] | None:
+    target_text = _normalized_claim_text(target)
+    evidence_text = _normalized_claim_text(f"{row.get('claim', '')} {row.get('quote', '')}")
+    target_terms = _claim_tokens(target_text)
+    evidence_terms = _claim_tokens(evidence_text)
+    overlap = sorted(target_terms & evidence_terms)
+    if not target_terms or not evidence_terms or not overlap:
+        return None
+    target_coverage = len(overlap) / len(target_terms)
+    evidence_coverage = len(overlap) / len(evidence_terms)
+    phrase_match = target_text in evidence_text or evidence_text in target_text
+    minimum = 1 if len(target_terms) <= 2 else 2
+    if not phrase_match and (len(overlap) < minimum or target_coverage < 0.4):
+        return None
+    return {
+        "evidence_id": str(row.get("id")),
+        "overlap_terms": overlap[:12],
+        "target_coverage": round(target_coverage, 3),
+        "evidence_coverage": round(evidence_coverage, 3),
+        "phrase_match": phrase_match,
+        "match_basis": "normalized_lexical_overlap",
+        "requires_human_review": True,
+    }
 
 
 def build_paper_claim_map(
@@ -105,19 +146,17 @@ def build_paper_claim_map(
     ]
     target_map = []
     for kind, target in targets:
-        target_terms = _claim_tokens(target)
-        matches = []
-        for row in verified:
-            evidence_terms = _claim_tokens(f"{row.get('claim', '')} {row.get('quote', '')}")
-            overlap = sorted(target_terms & evidence_terms)
-            minimum = 1 if len(target_terms) <= 2 else 2
-            if len(overlap) >= minimum:
-                matches.append({"evidence_id": str(row.get("id")), "overlap_terms": overlap[:8]})
+        matches = [match for row in verified if (match := _claim_match(target, row))]
+        matches.sort(key=lambda item: (
+            not item["phrase_match"], -item["target_coverage"], -item["evidence_coverage"], item["evidence_id"]
+        ))
         target_map.append({
             "kind": kind,
             "target": target,
             "status": "supported_candidate" if matches else "no_matching_evidence",
-            "evidence_ids": [item["evidence_id"] for item in matches],
+            "evidence_ids": [item["evidence_id"] for item in matches[:12]],
+            "matches": matches[:12],
+            "match_basis": "normalized_lexical_overlap",
             "requires_human_review": True,
         })
     return {
@@ -134,6 +173,7 @@ def build_paper_claim_map(
         },
         "idea_target_support": target_map,
         "claim_gate": "Factual Related Work sentences must cite an evidence ID; Idea hypotheses and contributions remain proposed unless independently supported.",
+        "semantic_status": "not_proven_lexical_candidates_only",
     }
 
 
