@@ -232,7 +232,7 @@
 
 ## 更新记录
 
-- 2026-07-30：继续 `P2-INSTALLER-029`；GitHub Actions 现将普通 `v*` tag 限定为草稿 Release；同一 tag 手动选择 `publish=true` 时强制要求签名证书 Secret、Authenticode 验证和重新计算 SHA-256，缺少签名条件直接失败，不发布未签名 EXE。正式 EXE、Docker Desktop 许可复核、干净 Windows VM 安装/升级/卸载验收仍未完成，任务保持 `[~]`。
+- 2026-07-30：继续 `P2-INSTALLER-029`；GitHub Actions 现将普通 `v*` tag 限定为草稿 Release；同一 tag 手动选择 `publish=true` 时强制要求签名证书 Secret、Authenticode 验证和重新计算 SHA-256，缺少签名条件直接失败，不发布未签名 EXE。正式 EXE、Docker Desktop 许可复核、干净 Windows VM 安装/升级/卸载验收仍未完成，任务保持 `[~]`。实现提交：`38919c0`。
 - 2026-07-29：根据 `docs/requirements-audit-2026-07-28.md` 建立实时 TODO；记录完整验收结果和策略未执行、页码证据为 0、官方仓库为 0 等已知缺口。
 - 2026-07-29：完成 `P0-STATE-005`；新增统一 active 状态守卫、任务/Runner 取消、暂停检查点恢复、终止状态保护、n8n active 过滤、前端状态控制和严格 Proposal 内容匹配。完整验收与浏览器验证通过。开始 `P0-POLICY-004`。
 - 2026-07-29：完成 `P0-POLICY-004`；长期规则先提案审批，再解析为种子、引用和高成本/对外审批约束；计划、API 提交和 Runner 双重强制，UI 显示执行与证据就绪状态。开始 `P0-EVIDENCE-001`。
