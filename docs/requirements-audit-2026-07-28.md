@@ -65,8 +65,13 @@
 - `/api/chat` 和 `/api/chat/stream` 在材料摘要或视觉文件读取失败时均直接返回结构化错误；失败路径不调用 `clarify_idea_with_llm`，不写入助手消息。前端通过可测试的顺序上传 helper 保证首个失败停止队列，因此不会继续发送聊天请求。
 - 本轮新增 `test_upload_routes.py`、同步/流式材料阻断回归和前端上传顺序测试；API 定向结果为 `16 passed, 2 skipped`，Node UX 为 `6 passed`。大规模材料库、跨材料检索和更广泛视觉能力仍未实现。
 
-## Runner 隔离增量（2026-07-30）
+## 项目材料检索增量（2026-07-31）
 
+- `GET /api/projects/{project_id}/materials/search` 已实现项目范围的确定性词法检索和 `limit`/`offset` 分页。索引只来自已扫描 `UploadedFile` 的名称、持久化解析元数据和受限摘要；不读取存储路径、不解压/执行附件、不调用模型，也不把结果提升为全文证据。
+- 每次响应明确返回 `match_mode=deterministic_lexical_metadata_only` 和 `evidence_status=unverified_material_context`，结果带有界摘要、匹配词和确定性分数；查询为空、过长、过于复杂或分页参数非法时返回结构化 `422` 错误。项目不存在返回结构化 `404` 错误。
+- `test_material_search.py` 覆盖排序、分页边界、项目隔离、未核验状态、路径不泄露和结构化错误。该增量只完成项目配额范围内的有界检索；大规模异步索引、跨材料语义检索和更广泛视觉能力仍未实现。
+
+## Runner 隔离增量（2026-07-30）
 - Runner supervisor 现在通过唯一的 `runner-launcher` 服务为每个 Run 创建新的非 root 作业容器；launcher 使用固定镜像、固定 `python -m app.worker` 入口、固定内部网络、受控继承挂载和模板级 CPU/内存/PID 限制，Runner supervisor/API 不挂载 Docker socket。
 - Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 使用带硬大小上限的 Docker tmpfs 输出 volume，终态同步产物后删除 job container 与 volume；同步过程串行且幂等，容器或 volume 清理失败时不会报告成功，Runner 超时/取消也会校验 `artifacts_synced`；Linux 单文件 `RLIMIT_FSIZE` 与运行目录累计检查仍作为第二道边界。
 - 当前已是每 Run 独立容器，已完成固定主题入口、受控 Python、固定 micromamba/Conda Python、C++/CMake 和 GPU 请求模板；真实 GPU 主机验证仍未完成，`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
@@ -77,7 +82,7 @@
 |---|---|---|
 | Docker Compose 私有化部署 | 已实现（MVP） | PostgreSQL、n8n、API、Runner、MLflow、MinIO 均可启动，Web 端口仅绑定 `127.0.0.1`。 |
 | 初始聊天、多轮澄清、ProjectSpec | 已实现（自适应 MVP） | 每轮 AI 整体更新草稿、推断明显领域并公开假设；默认全自动模式只问阻塞性关键信息，详细模式按相关缺口扩大了解范围，均不使用固定问卷；Luna/Terra/Sol 分级路由和严格 Pydantic/JSON Schema 已通过四公开用例真实回归、收敛和并发验证。模型失败返回结构化错误，不切换 provider、不生成规则回复、不写入助手消息。未确认数据/资源占位不能绕过确认闸门。流式状态仅限应用可观察阶段与最终结构化结果，绝不暴露或伪造模型思维链；API/SSE、公开用例来源和浏览器验收已通过。信息不足不创建项目。测试输入只来自公开 `tests/idea-cases`。 |
-| 文件、论文、图片、数据、代码上传 | 部分实现 | 已接入私有 ClamAV 扫描、受限 PDF、JSON、CSV/TSV、文本/代码、图片 OCR 和最多 4 张/单张 4 MB/总量 12 MB 的临时图片视觉输入，并执行单文件、会话和项目配额；附件仍是不可信上下文，ZIP 仅安全清单，大规模材料库仍未实现。 |
+| 文件、论文、图片、数据、代码上传 | 部分实现 | 已接入私有 ClamAV 扫描、受限 PDF、JSON、CSV/TSV、文本/代码、图片 OCR 和最多 4 张/单张 4 MB/总量 12 MB 的临时图片视觉输入，并执行单文件、会话和项目配额；项目 Literature 页面还提供基于已扫描元数据/摘要的确定性分页词法检索，结果仍是 `unverified_material_context`；附件仍是不可信上下文，ZIP 仅安全清单，大规模异步索引、跨材料语义检索和更广泛视觉能力仍未实现。 |
 | 确认后项目初始化 | 已实现 | 创建 UUID、Git、工作目录、Idea v1、数据库记录、文献/实验/论文目录和检查点，并触发 n8n。 |
 | 可行性、重复、资源风险 | 部分实现 | 不可行/资源不足目标会保持在澄清或标为中等可行性；资源字段会澄清；重复研究与创新性只能做 DOI 元数据级初筛。（2026-07-29：危险/未授权目标阻断已按用户要求移除。） |
 | 多源论文与 BibTeX 检索 | 已实现（有限范围） | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX、GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选均已接入；每条资源带 provider/resource_type、限流快照、条款与 robots 状态，部分失败进入 provider_errors。结果仍是未核验候选，不代表官方实现或许可确认。 |

@@ -62,8 +62,9 @@ Invoke-RestMethod http://127.0.0.1:8080/api/health
 
 新项目聊天中的文件会在模型请求前上传到 API 容器。文件先通过 Compose 私有网络中的 `clamav` 服务扫描，再通过受限解析和事务配额检查；扫描服务不可用、发现威胁、超时、解析失败或超出会话/项目配额时，前端会显示结构化错误并阻止本轮模型调用。成功解析的摘要才会进入后续澄清和主题规划。PDF、JSON、CSV/TSV、UTF-8 文本和代码只读取受限内容；图片执行有超时和长度上限的 OCR，并且对已扫描、仍存在且不超过 4 MB 的最多 4 张图片向当前配置模型发送临时视觉输入（总量不超过 12 MB）；视觉文件读取失败或超限直接阻止模型请求，不静默退回 OCR。ZIP 只读取安全清单，不解压或执行。原文件、SHA-256 和解析元数据保存在受控 `artifacts/inbox/<session_id>/` 路径，不能把附件当作已验证全文证据或执行指令。ClamAV 不映射 Windows 端口，容器不可用时没有本地扫描替代路径。
 
-## 材料失败契约
+项目 Literature 页面可调用 `GET /api/projects/{project_id}/materials/search?q=<term>&limit=20&offset=0`，对当前项目已经扫描并持久化的材料名称、元数据和受限解析摘要执行确定性词法检索。返回结果带 `match_mode=deterministic_lexical_metadata_only` 和 `evidence_status=unverified_material_context`，支持分页，但不返回存储路径、不读取或执行原始附件，也不能替代页码级全文证据。当前实现适用于项目配额范围内的有界记录；大规模异步索引仍属于 `P1-UPLOAD-009` 未完成范围。
 
+## 材料失败契约
 上传阶段严格按“写入受控目录 -> ClamAV 扫描 -> 受限解析 -> 事务配额检查 -> 持久化”顺序执行。扫描器或解析器发生预期或未预期异常时都会删除临时文件并返回结构化错误；同步和流式聊天在材料上下文或视觉文件读取失败时都不会调用模型，也不会写入助手消息。前端逐个上传材料，任一上传失败即停止队列并跳过本轮 `/api/chat/stream` 请求。该链路没有本地扫描、OCR、provider 或无关实验 fallback。
 
 ## Artifact previews

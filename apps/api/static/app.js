@@ -527,8 +527,50 @@ function renderProject() {
   renderCheckpointActions(d, executionDisabled);
   renderRerunProposalActions(d, executionDisabled);
   renderRepositoryCandidates(d.repositories, !isActive);
+  renderMaterialSearchPanel();
   renderSearchCandidates();
   loadNovelty();
+}
+function renderMaterialSearchPanel() {
+  const old = $("materialSearchPanel");
+  if (old) old.remove();
+  if (!state.projectId || !$("tab-literature")) return;
+  const panel = document.createElement("section");
+  panel.id = "materialSearchPanel";
+  panel.className = "section material-search-panel";
+  panel.innerHTML = `<div class="section-head"><div><h2>项目材料库</h2><p class="muted">只检索已扫描的材料元数据和摘要；结果是未核验上下文候选，不是论文证据。</p></div></div><form class="material-search-form"><label class="sr-only" for="materialSearchQuery">检索材料</label><input id="materialSearchQuery" maxlength="200" placeholder="检索文件名、文本或 OCR 内容" required><button class="secondary" type="submit"><i data-lucide="search"></i>检索材料</button></form><div class="material-search-results"><div class="empty">输入关键词检索当前项目的材料。</div></div>`;
+  const form = panel.querySelector("form");
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const input = panel.querySelector("#materialSearchQuery");
+    try {
+      await queryProjectMaterials(panel, input.value.trim(), 0, false);
+    } catch (error) {
+      toast(error.message);
+    }
+  });
+  $("tab-literature").prepend(panel);
+  iconRefresh();
+}
+async function queryProjectMaterials(panel, query, offset, append) {
+  if (!query) return;
+  const results = panel.querySelector(".material-search-results");
+  const previousRows = append ? (results.querySelector(".data-list")?.innerHTML || "") : "";
+  results.innerHTML = '<div class="empty">正在检索材料…</div>';
+  const encoded = encodeURIComponent(query);
+  const response = await api(`/api/projects/${state.projectId}/materials/search?q=${encoded}&limit=20&offset=${Number(offset) || 0}`);
+  const rows = (response.results || []).map(item => `<div class="data-row"><div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.kind || "material")} · ${escapeHtml(item.parse_status || "unknown")} · SHA-256 ${escapeHtml(String(item.sha256 || "").slice(0, 12))}…</p><p class="muted">${escapeHtml(item.snippet || "无可展示摘要")}</p></div><span class="badge pending">词法候选 · 未核验</span></div>`).join("");
+  const combinedRows = previousRows + rows;
+  results.innerHTML = `<p class="muted">${Number(response.total_matches || 0)} 个匹配 · 确定性词法检索 · 不升级为全文证据</p>${combinedRows ? `<div class="data-list">${combinedRows}</div>` : '<div class="empty">没有匹配的材料。</div>'}`;
+  if (response.next_offset !== null && response.next_offset !== undefined) {
+    const more = document.createElement("button");
+    more.className = "secondary material-search-more";
+    more.type = "button";
+    more.innerHTML = '<i data-lucide="chevrons-down"></i>加载更多';
+    more.addEventListener("click", () => queryProjectMaterials(panel, query, response.next_offset, true));
+    results.appendChild(more);
+  }
+  iconRefresh();
 }
 function renderSearchCandidates() {
   const old = $("searchCandidatesPanel");

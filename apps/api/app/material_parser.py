@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import json
 import mimetypes
+import re
 import struct
 import zipfile
 from pathlib import Path
@@ -26,9 +27,28 @@ MAX_ZIP_ENTRIES = 500
 MAX_ZIP_UNCOMPRESSED_BYTES = 200 * 1024 * 1024
 MAX_ZIP_COMPRESSION_RATIO = 100
 PARSER_VERSION = "material-parser-2"
+MAX_MATERIAL_SEARCH_QUERY_CHARS = 200
+MAX_MATERIAL_SEARCH_TERMS = 12
+MAX_MATERIAL_SEARCH_SNIPPET_CHARS = 480
+MATERIAL_SEARCH_METADATA_KEYS = (
+    "kind", "parse_status", "parser_version", "image_format", "page_count", "line_count",
+    "entry_count", "uncompressed_bytes", "extraction_performed", "note", "text", "pages",
+    "ocr_text", "columns", "preview", "preview_rows", "preview_row_count", "preview_truncated",
+    "value_type", "keys", "entries", "truncated",
+)
 
 
 class MaterialParseError(ValueError):
+    def __init__(self, code: str, message: str):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+
+    def as_dict(self) -> dict[str, str]:
+        return {"code": self.code, "message": self.message}
+
+
+class MaterialSearchError(ValueError):
     def __init__(self, code: str, message: str):
         super().__init__(message)
         self.code = code
@@ -265,3 +285,85 @@ def context_for_materials(
         remaining -= len(serialized)
         context.append(item)
     return context
+
+
+def _material_search_text(record: dict[str, Any]) -> tuple[str, str]:
+    metadata = record.get("metadata") if isinstance(record.get("metadata"), dict) else {}
+    name = str(record.get("name", ""))[:255]
+    # Keep the search index limited to parser fields; internal paths and future metadata never enter it.
+    searchable_metadata = {key: metadata[key] for key in MATERIAL_SEARCH_METADATA_KEYS if key in metadata}
+    serialized = json.dumps(searchable_metadata, ensure_ascii=False, separators=(",", ":"), default=str)
+    return name, serialized
+
+
+def _material_search_snippet(name: str, serialized: str, terms: list[str]) -> str:
+    source = f"{name} {serialized}"
+    folded = source.casefold()
+    positions = [folded.find(term) for term in terms if term and folded.find(term) >= 0]
+    start = max(0, min(positions) - 120) if positions else 0
+    snippet = source[start:start + MAX_MATERIAL_SEARCH_SNIPPET_CHARS]
+    return snippet.strip()
+
+
+def search_material_records(
+    records: list[dict[str, Any]],
+    query: str,
+    *,
+    limit: int = 20,
+    offset: int = 0,
+) -> dict[str, Any]:
+    """Rank bounded, project-scoped material metadata with deterministic lexical matching."""
+    if not isinstance(query, str):
+        raise MaterialSearchError("material_search_query_invalid", "材料检索词必须是字符串。")
+    query = query.strip()
+    if not query:
+        raise MaterialSearchError("material_search_query_required", "材料检索词不能为空。")
+    if len(query) > MAX_MATERIAL_SEARCH_QUERY_CHARS:
+        raise MaterialSearchError("material_search_query_too_long", "材料检索词超过固定长度上限。")
+    if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 50:
+        raise MaterialSearchError("material_search_limit_invalid", "材料检索 limit 必须介于 1 和 50 之间。")
+    if not isinstance(offset, int) or isinstance(offset, bool) or not 0 <= offset <= 100_000:
+        raise MaterialSearchError("material_search_offset_invalid", "材料检索 offset 超出固定范围。")
+    terms = [term.casefold() for term in re.findall(r"[\w]+", query, flags=re.UNICODE) if term.strip()]
+    if not terms:
+        raise MaterialSearchError("material_search_query_invalid", "材料检索词不包含可检索字符。")
+    if len(terms) > MAX_MATERIAL_SEARCH_TERMS:
+        raise MaterialSearchError("material_search_query_too_complex", "材料检索词数量超过固定上限。")
+
+    matches: list[dict[str, Any]] = []
+    for record in records:
+        name, serialized = _material_search_text(record)
+        name_folded = name.casefold()
+        text_folded = serialized.casefold()
+        matched_terms = [term for term in terms if term in name_folded or term in text_folded]
+        if not matched_terms:
+            continue
+        score = sum(text_folded.count(term) for term in matched_terms)
+        score += sum(3 for term in matched_terms if term in name_folded)
+        metadata = record.get("metadata") if isinstance(record.get("metadata"), dict) else {}
+        matches.append({
+            "id": str(record.get("id")),
+            "name": name,
+            "mime_type": str(record.get("mime_type", ""))[:120],
+            "size_bytes": int(record.get("size_bytes", 0) or 0),
+            "sha256": str(record.get("sha256", "")),
+            "kind": metadata.get("kind"),
+            "parse_status": metadata.get("parse_status"),
+            "match_score": score,
+            "matched_terms": matched_terms,
+            "snippet": _material_search_snippet(name, serialized, matched_terms),
+            "evidence_status": "unverified_material_context",
+        })
+    matches.sort(key=lambda item: (-item["match_score"], item["name"].casefold(), item["id"]))
+    page = matches[offset:offset + limit]
+    next_offset = offset + limit if offset + limit < len(matches) else None
+    return {
+        "query": query,
+        "match_mode": "deterministic_lexical_metadata_only",
+        "evidence_status": "unverified_material_context",
+        "total_matches": len(matches),
+        "offset": offset,
+        "limit": limit,
+        "next_offset": next_offset,
+        "results": page,
+    }

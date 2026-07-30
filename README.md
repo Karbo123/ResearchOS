@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-27 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-28 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -36,6 +36,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 - Preview valid artifacts in the Web UI: bounded JSON/text/CSV/TSV/PDF views, non-executing HTML text, and an interactive ASCII PLY/PCD point-cloud canvas with drag rotation, wheel zoom, reset, optional mesh wireframe, fixed sampling limits, and a download link. Invalidated artifacts remain visible but are not previewable.
 - Accept bounded PDF, JSON, CSV/TSV, text, code, image, and ZIP-manifest uploads. Every upload must pass the private ClamAV scan and bounded parser before it is persisted or sent as untrusted context; scanner/parser failure blocks the model request. Images use bounded OCR plus temporary vision input for at most four scanned images (4 MB each, 12 MB total); vision read/size failures are reported directly, and ZIP contents are never extracted or executed. Session and project quotas are enforced transactionally.
 - Uploads are processed sequentially in the Web UI; the first upload or material-context failure stops the queue and skips the chat request. Both synchronous and streaming chat paths return a structured error without calling the model or writing an assistant message when material context cannot be read. There is no local scanner, OCR, provider, or unrelated-experiment fallback.
+- The project Literature page provides bounded, paginated deterministic lexical search over scanned material metadata and parser summaries. Results are labeled `unverified_material_context`, never expose storage paths, never execute attachments, and are not full-text evidence. Large-scale asynchronous material indexing and broader visual retrieval remain incomplete.
 - Pause, resume from a checkpoint, cancel, revise an Idea, and generate daily/weekly reports from the same project conversation.
 
 ## Screenshots
@@ -53,6 +54,7 @@ The new-project chat above shows the default-on Automatic-mode toggle, infers de
 | Artifact gallery | Persistent policies and approval gates |
 | --- | --- |
 | ![Artifacts](docs/assets/research-os-artifacts.jpg) | ![Policies](docs/assets/research-os-policies.jpg) |
+| ![Material search](docs/assets/research-os-material-search.png) | Deterministic material search panel |
 
 The screenshots intentionally show the evidence boundary: several DOI records are `metadata-only`, while only records with stored page quotes are marked `fulltext-evidence`. A broken or invalidated artifact remains visible as invalid rather than silently disappearing. Artifact previews are bounded renderings only: HTML is shown as escaped source text, binary PLY/PCD is rejected, and preview data never executes or changes the stored artifact.
 

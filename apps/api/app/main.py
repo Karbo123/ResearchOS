@@ -14,7 +14,7 @@ from typing import Any, AsyncGenerator, Literal
 from uuid import UUID
 
 import httpx
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, func, select, text
@@ -46,7 +46,7 @@ from .evidence_pipeline import download_open_pdf, extract_page_evidence, validat
 from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
 from .diagnostics import build_diagnostic_report
 from .impact_analysis import ImpactAnalysisError, analyze_impact, apply_impact
-from .material_parser import MaterialParseError, context_for_materials, parse_material
+from .material_parser import MaterialParseError, MaterialSearchError, context_for_materials, parse_material, search_material_records
 from .patch_executor import (
     PatchExecutionError, build_patch_diff, execute_patch, parse_patch_payload,
     validate_patch_against_workspace,
@@ -2644,6 +2644,41 @@ async def upload(session_id: UUID = Form(...), file: UploadFile = File(...)):
     except Exception:
         target.unlink(missing_ok=True)
         raise
+
+
+@app.get("/api/projects/{project_id}/materials/search")
+def search_project_materials(
+    project_id: UUID,
+    q: str = Query(..., min_length=1, max_length=200),
+    limit: int = Query(default=20, ge=1, le=50),
+    offset: int = Query(default=0, ge=0, le=100_000),
+):
+    """Search only parsed, project-scoped material metadata; never execute attachments."""
+    with session_scope() as session:
+        project = session.get(Project, project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail={"code": "project_not_found", "message": "项目不存在。"})
+        records = session.scalars(
+            select(UploadedFile)
+            .where(UploadedFile.project_id == project_id)
+            .order_by(UploadedFile.created_at, UploadedFile.id)
+        ).all()
+        try:
+            result = search_material_records([
+                {
+                    "id": item.id,
+                    "name": item.name,
+                    "mime_type": item.mime_type,
+                    "size_bytes": item.size_bytes,
+                    "sha256": item.sha256,
+                    "metadata": item.metadata_json,
+                }
+                for item in records
+            ], q, limit=limit, offset=offset)
+        except MaterialSearchError as exc:
+            raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+        result["project_id"] = str(project_id)
+        return result
 
 
 @app.post("/api/policies")

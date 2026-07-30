@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-27 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-28 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -44,6 +44,7 @@
 - 网页可预览有效产物：JSON/文本/CSV/TSV/PDF 受限展示，HTML 只显示转义后的原文；ASCII PLY/PCD 提供可拖拽旋转、滚轮缩放、重置、可选网格线框和固定降采样上限的点云画布，并保留下载入口。失效产物继续显示记录但不可预览。
 - 支持受限的 PDF、JSON、CSV/TSV、文本、代码、图片和 ZIP 清单上传；每个附件都必须通过私有 ClamAV 扫描和受限解析后才能持久化或作为不可信上下文发送，扫描/解析失败会阻止模型调用。图片除有上限的 OCR 外，还会对最多 4 张已扫描图片提供临时视觉输入（单张 4 MB、总量 12 MB）；视觉读取/大小失败会直接报错，ZIP 内容不会解压或执行；会话和项目累计配额在事务锁下执行。
 - 网页会按顺序上传附件；任一上传或材料上下文读取失败都会停止队列并跳过本轮聊天请求。同步和流式聊天在材料无法读取时都直接返回结构化错误，不调用模型，也不写入助手消息；没有本地扫描、OCR、provider 或无关实验 fallback。
+- 项目 Literature 页面提供有界、分页的确定性词法检索，只搜索已扫描材料的元数据和受限解析摘要。结果标记为 `unverified_material_context`，不暴露存储路径、不执行附件，也不是全文证据；大规模异步材料索引和更广泛的视觉检索仍未完成。
 - 在同一项目对话中暂停、从检查点恢复、取消、修改 Idea，并生成日报/周报。
 
 ## 效果截图
@@ -61,6 +62,7 @@
 | 产物画廊 | 持久化策略与审批闸门 |
 | --- | --- |
 | ![产物](docs/assets/research-os-artifacts.jpg) | ![策略](docs/assets/research-os-policies.jpg) |
+| ![材料检索](docs/assets/research-os-material-search.png) | 项目材料库确定性检索面板 |
 
 截图有意展示证据边界：部分 DOI 记录只是 `metadata-only`，只有保存了页码原文的记录才标记为 `fulltext-evidence`。损坏或因 Idea 变化而失效的产物不会静默消失，而会继续显示并明确标为无效。
 
