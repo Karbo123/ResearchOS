@@ -346,6 +346,62 @@ function newProject() {
   $("specContent").innerHTML = "规格将在澄清完成后生成。"; $("confirmProject").classList.add("hidden"); loadProjects();
 }
 function statusBadge(status) { const kind = status === "approved" || status === "succeeded" ? "live" : status === "failed" || status === "rejected" ? "failed" : "pending"; return `<span class="badge ${kind}">${escapeHtml(status)}</span>`; }
+function artifactPreviewMarkup(artifact) {
+  const previewUrl = escapeHtml(artifact.preview_url || "");
+  const downloadUrl = escapeHtml(artifact.url || "");
+  if (artifact.mime_type.startsWith("image/")) return `<img class="artifact-image" src="${downloadUrl}" alt="${escapeHtml(artifact.name)}">`;
+  return `<div class="artifact-preview" data-preview-url="${previewUrl}"><div class="preview-loading">加载预览…</div></div>`;
+}
+function formatPreviewValue(value) {
+  return typeof value === "string" ? value : JSON.stringify(value, null, 2);
+}
+function renderPointCloudPreview(container, preview) {
+  const points = Array.isArray(preview.points) ? preview.points : [];
+  container.innerHTML = `<div class="point-cloud-tools"><span class="muted">${escapeHtml(preview.format.toUpperCase())} · ${points.length}/${Number(preview.source_point_count || points.length)} 点${preview.sampled ? " · 已降采样" : ""}</span><button class="icon-btn point-reset" type="button" title="重置视图"><i data-lucide="rotate-ccw"></i></button></div><canvas class="point-cloud-canvas" width="640" height="420" aria-label="点云预览"></canvas>${preview.faces?.length ? `<div class="preview-footnote">已加载 ${preview.faces.length} 个面片，使用线框显示。</div>` : ""}`;
+  const canvas = container.querySelector("canvas"), context = canvas.getContext("2d");
+  const state3d = {yaw: 0.55, pitch: 0.25, zoom: 1, dragging: false, x: 0, y: 0};
+  const draw = () => {
+    const width = canvas.width, height = canvas.height;
+    context.clearRect(0, 0, width, height); context.fillStyle = "#17201d"; context.fillRect(0, 0, width, height);
+    if (!points.length) { context.fillStyle = "#aab6b1"; context.font = "14px sans-serif"; context.textAlign = "center"; context.fillText("没有可显示的有效点", width / 2, height / 2); return; }
+    const mins = [Infinity, Infinity, Infinity], maxs = [-Infinity, -Infinity, -Infinity];
+    points.forEach(point => point.forEach((value, index) => { mins[index] = Math.min(mins[index], value); maxs[index] = Math.max(maxs[index], value); }));
+    const center = mins.map((min, index) => (min + maxs[index]) / 2), scale = Math.max(...maxs.map((max, index) => max - mins[index]), 1);
+    const projected = points.map((point, index) => {
+      const p = point.map((value, axis) => (value - center[axis]) / scale);
+      const cy = Math.cos(state3d.yaw), sy = Math.sin(state3d.yaw), cp = Math.cos(state3d.pitch), sp = Math.sin(state3d.pitch);
+      const x = p[0] * cy - p[2] * sy, depth = p[0] * sy + p[2] * cy, y = p[1] * cp - depth * sp, z = p[1] * sp + depth * cp;
+      return {x: width / 2 + x * width * .82 * state3d.zoom, y: height / 2 - y * height * .82 * state3d.zoom, z, index};
+    }).sort((a, b) => a.z - b.z);
+    if (preview.faces?.length && points.length < 2000) {
+      context.strokeStyle = "#56b89555"; context.lineWidth = 1;
+      preview.faces.forEach(face => { const vertices = face.map(index => projected.find(point => point.index === index)).filter(Boolean); if (vertices.length >= 3) { context.beginPath(); context.moveTo(vertices[0].x, vertices[0].y); vertices.slice(1).forEach(point => context.lineTo(point.x, point.y)); context.closePath(); context.stroke(); } });
+    }
+    projected.forEach(point => { const alpha = Math.max(.25, Math.min(1, .58 + point.z)); context.fillStyle = `rgba(86,184,149,${alpha})`; context.fillRect(point.x - 1.5, point.y - 1.5, 3, 3); });
+  };
+  canvas.addEventListener("pointerdown", event => { state3d.dragging = true; state3d.x = event.clientX; state3d.y = event.clientY; canvas.setPointerCapture(event.pointerId); });
+  canvas.addEventListener("pointermove", event => { if (!state3d.dragging) return; state3d.yaw += (event.clientX - state3d.x) * .01; state3d.pitch = Math.max(-1.4, Math.min(1.4, state3d.pitch + (event.clientY - state3d.y) * .01)); state3d.x = event.clientX; state3d.y = event.clientY; draw(); });
+  canvas.addEventListener("pointerup", () => { state3d.dragging = false; });
+  canvas.addEventListener("wheel", event => { event.preventDefault(); state3d.zoom = Math.max(.35, Math.min(4, state3d.zoom * (event.deltaY > 0 ? .9 : 1.1))); draw(); }, {passive: false});
+  container.querySelector(".point-reset").addEventListener("click", () => { state3d.yaw = .55; state3d.pitch = .25; state3d.zoom = 1; draw(); });
+  draw(); iconRefresh();
+}
+function renderArtifactPreview(container, preview) {
+  if (preview.type === "point_cloud") return renderPointCloudPreview(container, preview);
+  if (preview.type === "image") { container.innerHTML = `<div class="preview-footnote">图片直接使用下载接口展示。</div>`; return; }
+  const value = preview.type === "json" ? formatPreviewValue(preview.value) : preview.text || "";
+  const label = preview.type === "pdf" ? `PDF · ${Number(preview.page_count || 0)} 页，仅展示前 3 页可提取文本` : preview.type === "table" ? `${String(preview.format || "table").toUpperCase()} · 最多展示 200 行` : preview.type === "html_text" ? "HTML 原文（未执行脚本）" : "文本预览";
+  if (preview.type === "table") {
+    const rows = preview.rows || [];
+    container.innerHTML = `<div class="preview-label">${escapeHtml(label)}</div><div class="table-preview"><table><tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  } else container.innerHTML = `<div class="preview-label">${escapeHtml(label)}${preview.truncated ? " · 已截断" : ""}</div><pre class="preview-text">${escapeHtml(value)}</pre>`;
+}
+async function hydrateArtifactPreviews() {
+  document.querySelectorAll(".artifact-preview[data-preview-url]").forEach(async container => {
+    try { const response = await api(container.dataset.previewUrl); renderArtifactPreview(container, await response); }
+    catch (error) { container.innerHTML = `<div class="preview-error">预览失败：${escapeHtml(error.message)}</div>`; }
+  });
+}
 function checkpointForExperiment(experiment, checkpoints) {
   const stage = experiment.status === "succeeded" ? "experiment_succeeded" : experiment.status === "failed" ? "experiment_failed" : null;
   if (!stage) return null;
@@ -440,7 +496,9 @@ function renderProject() {
     <div class="section"><div class="section-head"><h2>项目状态</h2><div class="button-row">${stateControls}</div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.project.stage)}</h3><p>Idea version ${d.project.idea_version} · ${escapeHtml(d.project.status)}</p></div>${statusBadge(d.project.status)}</div></div></div>`;
   $("tab-literature").innerHTML = `<div class="section-head"><h2>可验证文献记录</h2><div class="button-row"><button class="secondary" onclick="runSearch()"><i data-lucide="search"></i>更新检索</button><button class="secondary" onclick="ingestEvidence()" ${executionDisabled}><i data-lucide="scan-text"></i>提取全文证据</button></div></div>${d.papers.length ? `<div class="data-list">${d.papers.map(p=>`<div class="data-row"><div><h3><a href="${escapeHtml(p.source_url)}" target="_blank">${escapeHtml(p.title)}</a></h3><p>${p.year||''} ${escapeHtml(p.venue||'')} · ${escapeHtml(p.source_provider||'unknown')} · DOI ${escapeHtml(p.doi||'未提供')} · ${p.verified?'元数据已验证':'待验证'} · 页码原文证据 ${Number(p.fulltext_evidence_count||0)} · 代码候选 ${(p.code_repositories||[]).length}</p>${p.pdf_url?`<p><a href="${escapeHtml(p.pdf_url)}" target="_blank">打开来源 PDF</a></p>`:''}${p.bibtex?`<details><summary>BibTeX</summary><pre class="code-block">${escapeHtml(p.bibtex)}</pre></details>`:''}</div>${statusBadge((p.fulltext_evidence_count||0)>0?'fulltext-evidence':'metadata-only')}</div>`).join('')}</div>` : `<div class="empty">尚无文献记录。</div>`}`;
   $("tab-experiments").innerHTML = `<div class="section-head"><h2>实验规划与运行</h2><div class="button-row"><button class="secondary" onclick="createExperimentPlan()" ${executionDisabled}><i data-lucide="list-checks"></i>生成主题专属计划</button><button class="secondary" onclick="runDiagnostics()"><i data-lucide="activity"></i>数值诊断</button></div></div>${d.experiments.length ? `<div class="data-list">${d.experiments.map(e=>`<div class="data-row"><div><h3>${escapeHtml(e.experiment_type)}</h3><p>${escapeHtml(JSON.stringify(e.metrics))}${e.mlflow_run_id?` · MLflow ${escapeHtml(e.mlflow_run_id)}`:''}</p></div><div class="button-row">${statusBadge(e.status)}<button class="secondary" onclick="syncRun('${e.id}')"><i data-lucide="refresh-cw"></i>同步</button>${['queued','running'].includes(e.status)?`<button class="reject" onclick="cancelRun('${e.id}')"><i data-lucide="square"></i>取消</button>`:''}</div></div>`).join('')}</div>` : `<div class="empty">生成计划后会先进入审批；系统不会自动创建无关实验。</div>`}<div id="diagnosticsOutput" class="section"><div class="empty">运行数值诊断以计算指标并检查失败日志。</div></div>`;
-  $("tab-artifacts").innerHTML = `<div class="section-head"><h2>可视化与大文件产物</h2></div>${d.artifacts.length ? `<div class="artifact-grid">${d.artifacts.map(a=>`<article class="artifact-card">${a.mime_type.startsWith('image/')?`<img src="${a.url}" alt="${escapeHtml(a.name)}">`:`<div class="empty">${escapeHtml(a.kind)}</div>`}<div class="artifact-body"><h3>${escapeHtml(a.name)}</h3><p class="muted">${escapeHtml(a.kind)} · ${a.valid?'有效':'已失效'}</p><a href="${a.url}" download>下载产物</a></div></article>`).join('')}</div>` : `<div class="empty">实验完成并同步后显示 PNG、PLY、JSON 和 PDF。</div>`}`;
+  const artifactCards = d.artifacts.map(a => `<article class="artifact-card">${artifactPreviewMarkup(a)}<div class="artifact-body"><h3>${escapeHtml(a.name)}</h3><p class="muted">${escapeHtml(a.kind)} · ${a.valid ? "有效" : "已失效"}</p><a href="${escapeHtml(a.url)}" download>下载产物</a></div></article>`).join("");
+  $("tab-artifacts").innerHTML = `<div class="section-head"><h2>可视化与大文件产物</h2></div>${d.artifacts.length ? `<div class="artifact-grid">${artifactCards}</div>` : `<div class="empty">实验完成并同步后显示 PNG、PLY、JSON 和 PDF。</div>`}`;
+  hydrateArtifactPreviews();
   $("tab-approvals").innerHTML = `<div class="section-head"><h2>变更与执行审批</h2></div>${d.proposals.length ? `<div class="data-list">${d.proposals.map(p=>`<div class="data-row"><div><h3>${escapeHtml(p.summary)}</h3><p>${escapeHtml(p.reason)} · 预计 $${Number(p.estimated_cost_usd).toFixed(2)}</p>${p.diff?`<pre class="code-block">${escapeHtml(p.diff)}</pre>`:''}<p>影响: ${escapeHtml(JSON.stringify(p.impact))}</p></div><div class="button-row">${statusBadge(p.status)}${p.status==='pending'?`<button class="approve" onclick="decide('${p.id}','approved')"><i data-lucide="check"></i>批准</button><button class="reject" onclick="decide('${p.id}','rejected')"><i data-lucide="x"></i>驳回</button>`:''}${p.status==='approved'&&p.kind==='experiment_plan'?`<button class="secondary" onclick='launch(${JSON.stringify(JSON.stringify(p))})' ${executionDisabled}><i data-lucide="play"></i>${p.payload?.plan_type==='topic_specific'?'执行主题计划':'执行'}</button>`:''}</div></div>`).join('')}</div>` : `<div class="empty">没有待处理提案。</div>`}`;
   $("tab-policies").innerHTML = `<form class="policy-form" onsubmit="addPolicy(event)"><input id="policyInput" placeholder="新增长期项目策略" required><button class="primary">提出策略</button></form>
     <div class="section"><div class="section-head"><h2>执行状态</h2>${statusBadge(pe.status||'unknown')}</div><div class="data-list">

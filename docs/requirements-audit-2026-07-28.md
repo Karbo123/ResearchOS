@@ -4,6 +4,8 @@
 
 2026-07-30 影响传播增量：Proposal 创建和审批现在按 `ArtifactDependency` 计算 Idea、策略、代码、数据和产物删除变更的依赖后代，只使受影响的有效产物失效，并记录节点/边影响图、关联实验、检查点和局部重跑候选。批准变更后，API 会为可安全恢复的终态检查点自动创建待审批 `experiment_rerun` Proposal；Proposal 仅允许成功/失败终态检查点，重建原白名单配置和持久化随机种子，仍需人工批准后才通过匹配的受控实验提交链，失败保留结构化错误。主题专属重跑同样只复用固定入口、原结构化计划和检查点状态，不会改用无关演示实验。
 
+2026-07-30 Artifact 预览增量：新增受限 `/api/artifacts/{artifact_id}/preview`，网页产物页现在可以显示 JSON/文本/CSV/TSV/PDF，以及不执行 HTML 的转义文本；ASCII PLY/PCD 通过固定点数/面片上限、降采样和 Canvas 拖拽旋转/缩放/重置进行预览，并保留下载入口。二进制点云、失效/缺失文件和解析限制直接返回结构化错误。API 容器 `70 passed, 2 skipped`，Node 语法检查、Compose、文档/Idea case 检查、桌面浏览器产物页和模型设置页检查通过；未调用模型、外部学术 API 或无关实验。
+
 当前仓库是可运行、可审计的 Research OS MVP，不是原始需求的完整实现，更不能称为生产级或“完美实现”。核心闭环已经真实跑通，但完整论文证据链、官方代码复现、真实 GPU 主机验证、规则自动执行和外部通知仍未完成。
 
 ## 本轮真实验收
@@ -71,7 +73,7 @@
 | Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、八个固定模板、硬上限输出 volume、超时、取消、日志、固定主题入口、受控 Python、镜像内固定 micromamba/Conda、CMake 和 GPU 请求、LaTeX 已实现；真实 GPU 主机验证仍未完成。 |
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 已实现（受限闭环） | `POST /api/projects/{project_id}/diagnostics` 由 Python 计算有限数值指标的 count/mean/population std/min/max，解析结构化失败码和成功但缺失指标的运行；异常会生成去重、只记录证据且不执行的 `diagnostic_suggestion` Proposal，模型只能解释/质疑，不能计算或启动建议。任意日志/CSV/多模态自动推断仍不属于当前能力。 |
-| PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
+| PNG/PLY/PDF 产物及谱系 | 已实现（受限预览） | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；网页支持 JSON/文本/CSV/TSV/PDF 和转义 HTML 文本，以及固定上限的 ASCII PLY/PCD 点云 Canvas、旋转、缩放、重置和可选网格线框。二进制点云、失效文件和解析限制返回结构化错误；这仍不是完整任意格式 3D 引擎。 |
 | 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；真实验收已验证配置的 Runner digest 与 Research OS commit 进入快照谱系；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |
 | PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
 | 日报/周报与推送 | 部分实现 | n8n 每日/每周定时生成报告并存入 Web UI；未接入飞书、Slack、Telegram、邮件，也不完整统计资源/API 成本和关键 Agent 决策。 |

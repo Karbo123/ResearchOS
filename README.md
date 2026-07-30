@@ -33,6 +33,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 - Run a small allowlisted experiment set as a non-root, resource-limited Runner and record metrics in self-hosted MLflow with MinIO artifacts.
 - Before an approved run enters the Runner, require a clean project worktree, create an immutable `run/<run_id>` tag, and retain a hashed source/environment/data/model/config snapshot under controlled artifacts.
 - Produce inspectable PNG/PDF/JSON/PLY outputs with download links and project lineage instead of returning only an LLM paragraph.
+- Preview valid artifacts in the Web UI: bounded JSON/text/CSV/TSV/PDF views, non-executing HTML text, and an interactive ASCII PLY/PCD point-cloud canvas with drag rotation, wheel zoom, reset, optional mesh wireframe, fixed sampling limits, and a download link. Invalidated artifacts remain visible but are not previewable.
 - Accept bounded PDF, JSON, CSV/TSV, text, code, image, and ZIP-manifest uploads. Every upload must pass the private ClamAV scan and bounded parser before it is persisted or sent as untrusted context; scanner/parser failure blocks the model request, images use bounded OCR, and ZIP contents are never extracted or executed. Session and project quotas are enforced transactionally.
 - Pause, resume from a checkpoint, cancel, revise an Idea, and generate daily/weekly reports from the same project conversation.
 
@@ -52,7 +53,7 @@ The new-project chat above shows the default-on Automatic-mode toggle, infers de
 | --- | --- |
 | ![Artifacts](docs/assets/research-os-artifacts.jpg) | ![Policies](docs/assets/research-os-policies.jpg) |
 
-The screenshots intentionally show the evidence boundary: several DOI records are `metadata-only`, while only records with stored page quotes are marked `fulltext-evidence`. A broken or invalidated artifact remains visible as invalid rather than silently disappearing.
+The screenshots intentionally show the evidence boundary: several DOI records are `metadata-only`, while only records with stored page quotes are marked `fulltext-evidence`. A broken or invalidated artifact remains visible as invalid rather than silently disappearing. Artifact previews are bounded renderings only: HTML is shown as escaped source text, binary PLY/PCD is rejected, and preview data never executes or changes the stored artifact.
 
 ## Architecture
 
@@ -88,6 +89,7 @@ Runner isolation uses a fresh non-root job container for each Run. The `runner-l
 | Experiments | **Partial (bounded foundation)** | Eight explicit allowlisted Runner tasks, including the fixed topic entrypoint contract, a fixed image-pinned micromamba/Conda Python environment, non-root per-run containers, bounded CPU/memory/PID/hard per-run tmpfs output volume resources, timeout/cancel, metrics, MLflow, PNG/PLY/PDF/log artifacts, and a pre-run reproducibility gate. Production GPU-host validation remains open. |
 | Diagnostics | **Implemented (bounded)** | The Experiments page calculates persisted numeric metrics and structured failure codes with deterministic Python, then creates approval-gated non-executing suggestions. LLMs may explain or challenge results but do not calculate or launch follow-up work. |
 | Lineage | **Implemented (MVP)** | Idea version, experiment, immutable run tag, source tar, ProjectSpec/policy/config/environment/data/model/dependency manifests, Git/data/config hashes, MLflow run, artifact and dependency metadata. A live acceptance is now recorded; release-grade scope remains limited by the MVP boundaries described below. |
+| Artifact previews | **Implemented (bounded)** | The Web UI previews JSON/text/CSV/TSV/PDF and HTML as escaped text, and renders ASCII PLY/PCD point clouds with bounded sampling, drag rotation, wheel zoom, reset, optional mesh wireframe, lineage metadata, and download links. Binary point-cloud formats, missing files, invalidated artifacts, and parser-limit failures return structured errors. |
 | General research autonomy | **Partial / roadmap** | Production GPU-host validation, external notifications, evidence-grounded Related Work, and full paper writing remain open. Topic-specific Runner, controlled Python, fixed micromamba/Conda Python, C++/CMake, and allowlisted GPU request templates run through fixed per-run containers; approved changes expose a dependency graph and create approval-gated rerun Proposals for safe terminal checkpoints. Official GitHub/GitLab repository verification and approval-gated fixed-commit import are implemented. |
 
 ## Prerequisites
@@ -249,7 +251,7 @@ MinIO volume                   MLflow artifact store and large experiment files
 Docker volumes                 postgres-data, minio-data, n8n-data
 ```
 
-Every generated artifact should carry or be queryable by `project_id`, `idea_version`, experiment/run ID, Git commit, data version, config, MLflow run ID, SHA-256, and validity/dependency status. If a result is invalidated, the UI keeps the record visible and marks it invalid instead of silently reusing it.
+Every generated artifact should carry or be queryable by `project_id`, `idea_version`, experiment/run ID, Git commit, data version, config, MLflow run ID, SHA-256, and validity/dependency status. If a result is invalidated, the UI keeps the record visible and marks it invalid instead of silently reusing it. The preview endpoint exposes only bounded JSON-safe data; it does not execute HTML, scripts, archives, or arbitrary artifact content.
 
 Each submitted run also has a controlled reproducibility bundle: an annotated `run/<run_id>` tag, `source.tar`, ProjectSpec, policy, effective config, environment report, data/model manifests, dependency lock-file hashes, and a top-level `snapshot.json`. The database stores their URI, size, SHA-256, validity and `artifact_dependencies`; large files and backups remain outside Git. The Runner rechecks the tag, clean worktree, snapshot hashes and image identity before execution. A configured `RUNNER_IMAGE_DIGEST` and full live acceptance are still required for release-grade claims.
 

@@ -43,6 +43,10 @@ Invoke-RestMethod http://127.0.0.1:8080/api/health
 
 新项目聊天中的文件会在模型请求前上传到 API 容器。文件先通过 Compose 私有网络中的 `clamav` 服务扫描，再通过受限解析和事务配额检查；扫描服务不可用、发现威胁、超时、解析失败或超出会话/项目配额时，前端会显示结构化错误并阻止本轮模型调用。成功解析的摘要才会进入后续澄清和主题规划。PDF、JSON、CSV/TSV、UTF-8 文本和代码只读取受限内容；图片执行有超时和长度上限的 OCR；ZIP 只读取安全清单，不解压或执行。原文件、SHA-256 和解析元数据保存在受控 `artifacts/inbox/<session_id>/` 路径，不能把附件当作已验证全文证据或执行指令。ClamAV 不映射 Windows 端口，容器不可用时没有本地扫描替代路径。
 
+## Artifact previews
+
+项目的“产物”页通过 `/api/artifacts/{artifact_id}/preview` 请求受限 JSON 预览，并始终保留原产物下载链接。JSON、文本、CSV/TSV 和 PDF 只读取固定上限内容；HTML 以转义文本显示，不加载或执行脚本。ASCII PLY/PCD 点云使用固定点数/面片上限，前端 Canvas 支持拖拽旋转、滚轮缩放、重置和可选网格线框；大型点云会固定降采样。二进制 PLY/PCD、失效或缺失产物、非法编码和解析上限错误直接返回结构化错误，不产生本地替代预览。
+
 ## Windows 单 EXE 安装器
 
 `installer/windows/ResearchOS.iss`、`bootstrap.ps1` 与 `build-installer.ps1` 构成在线引导安装器源。它内置应用和 Compose/n8n 工作流；API 与模型请求始终在容器内运行，安装器不会打包或启动 Windows Bridge。Docker 缺失时只在用户勾选后下载官方安装器并验证 Authenticode 签名。构建输出和 EXE 被 Git 忽略。

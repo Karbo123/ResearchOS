@@ -38,6 +38,10 @@ Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint ac
 
 ## Experiment snapshot boundary
 
+## Artifact preview boundary
+
+Artifact previews are non-executing and bounded. The API parses only approved formats and returns JSON-safe preview data with fixed text, table, PDF-page, point, face, header, and scan limits. HTML is returned as text and is never inserted as markup; archives, scripts, and binary PLY/PCD payloads are not executed or decoded as code. The UI keeps a download link and lineage metadata, but invalidated or missing artifacts cannot be previewed or reused. Point-cloud Canvas interaction is presentation-only and cannot modify the stored artifact.
+
 Before a run is submitted, the project Git worktree must be clean. The API rejects tracked or untracked PDF, image, PLY/PCD, dataset, model-weight, database-backup, runtime-log, source-bundle, cache, forbidden-directory, or oversized file paths. It then creates an annotated immutable `run/<run_id>` tag and writes a controlled recovery bundle under `artifacts/reproducibility/<project_id>/<run_id>/`.
 
 The bundle contains `source.tar`, ProjectSpec, policy, effective configuration and seeds, environment identity, data/model manifests, dependency lock-file hashes, and `snapshot.json`. It contains hashes and metadata rather than silently copying external datasets or model weights. PostgreSQL stores artifact rows and `artifact_dependencies`; the source tar is downloadable only through the API artifact route.

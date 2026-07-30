@@ -19,6 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, func, select, text
 
 from .clarification import build_spec, initial_draft, required_spec_gaps
+from .artifact_preview import ArtifactPreviewError, preview_artifact as build_artifact_preview
 from .checkpoint_recovery import CheckpointRecoveryError, build_rerun_payload, validate_rerun_payload
 from .db import Base, engine, session_scope
 from .models import (
@@ -812,7 +813,7 @@ def project_detail(project_id: UUID):
                     for key in ("run_tag", "project_git_commit", "research_os_git_commit", "data_version", "snapshot_manifest_sha256", "source_snapshot_sha256")
                 } if (e.config or {}).get("_reproducibility") else None,
             } for e in experiments],
-            "artifacts": [{"id": str(a.id), "name": a.name, "kind": a.kind, "mime_type": a.mime_type, "url": f"/api/artifacts/{a.id}", "metadata": a.metadata_json, "valid": a.valid} for a in artifacts],
+            "artifacts": [{"id": str(a.id), "name": a.name, "kind": a.kind, "mime_type": a.mime_type, "url": f"/api/artifacts/{a.id}", "preview_url": f"/api/artifacts/{a.id}/preview", "metadata": a.metadata_json, "valid": a.valid} for a in artifacts],
             "policies": [{
                 "id": str(p.id), "rule": p.rule, "rationale": p.rationale,
                 "enforced_requirements": policy_matches.get(str(p.id), []),
@@ -2149,6 +2150,27 @@ def get_artifact(artifact_id: UUID):
         path = (ARTIFACTS_ROOT / item.relative_path).resolve()
         if ARTIFACTS_ROOT not in path.parents or not path.is_file(): raise HTTPException(404, "artifact file missing")
         return FileResponse(path, media_type=item.mime_type, filename=item.name)
+
+
+@app.get("/api/artifacts/{artifact_id}/preview")
+def artifact_preview(artifact_id: UUID):
+    with session_scope() as session:
+        item = session.get(Artifact, artifact_id)
+        if not item or not item.valid:
+            raise HTTPException(status_code=404, detail={"code": "artifact_not_found", "message": "Artifact not found."})
+        path = (ARTIFACTS_ROOT / item.relative_path).resolve()
+        if ARTIFACTS_ROOT not in path.parents or not path.is_file():
+            raise HTTPException(status_code=404, detail={"code": "artifact_file_missing", "message": "Artifact file is missing."})
+        try:
+            result = build_artifact_preview(path, item.name, item.mime_type, item.metadata_json)
+        except ArtifactPreviewError as exc:
+            raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+        result.update({
+            "artifact_id": str(item.id),
+            "name": item.name,
+            "download_url": f"/api/artifacts/{item.id}",
+        })
+        return result
 
 
 @app.post("/api/uploads")
