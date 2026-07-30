@@ -9,6 +9,30 @@ from typing import Any, Iterable
 
 TERMINAL_EXPERIMENT_STATUSES = {"succeeded", "failed", "cancelled"}
 RERUN_CHECKPOINT_STAGES = {"experiment_succeeded", "experiment_failed"}
+SUPPORTED_CHANGE_KINDS = {
+    "experiment_plan",
+    "code_patch",
+    "config_change",
+    "idea_revision",
+    "data_change",
+    "dependency_install",
+    "delete_artifact",
+    "external_publish",
+    "diagnostic_suggestion",
+}
+
+
+class ImpactAnalysisError(ValueError):
+    """A change cannot be safely analyzed without a complete dependency root."""
+
+    def __init__(self, code: str, message: str, **details: Any):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+        self.details = details
+
+    def as_dict(self) -> dict[str, Any]:
+        return {"code": self.code, "message": self.message, **self.details}
 
 
 def _value(item: Any, name: str, default: Any = None) -> Any:
@@ -81,10 +105,45 @@ def analyze_impact(
     checkpoints: Iterable[Any],
 ) -> dict[str, Any]:
     """Return a reviewable impact graph without mutating database state."""
-    payload = payload or {}
+    if change_kind not in SUPPORTED_CHANGE_KINDS:
+        raise ImpactAnalysisError(
+            "impact_change_kind_unsupported",
+            "影响分析拒绝未知的变更类型；请使用已登记的 Proposal 类型。",
+            change_kind=change_kind,
+        )
+    if not isinstance(payload, dict):
+        raise ImpactAnalysisError("impact_payload_invalid", "影响分析的变更载荷必须是 JSON 对象。")
+    payload = payload.copy()
     artifact_rows = list(artifacts)
     dependency_rows = list(dependencies)
     checkpoint_rows = list(checkpoints)
+    artifact_ids = {str(_value(artifact, "id")) for artifact in artifact_rows}
+
+    if change_kind in {"code_patch", "dependency_install"}:
+        base_git_commit = str(payload.get("base_git_commit", "")).strip()
+        if not base_git_commit:
+            raise ImpactAnalysisError(
+                "impact_base_git_commit_required",
+                "代码或依赖变更必须绑定基准 Git commit，不能把未知版本当作当前版本。",
+            )
+    if change_kind == "data_change":
+        base_data_version = str(payload.get("base_data_version", "")).strip()
+        if not base_data_version:
+            raise ImpactAnalysisError(
+                "impact_base_data_version_required",
+                "数据变更必须绑定基准数据版本，不能把未知版本当作当前版本。",
+            )
+    if change_kind == "delete_artifact":
+        artifact_id = str(payload.get("artifact_id", "")).strip()
+        if not artifact_id:
+            raise ImpactAnalysisError("impact_artifact_id_required", "删除产物必须提供 artifact_id。")
+        if artifact_id not in artifact_ids:
+            raise ImpactAnalysisError(
+                "impact_artifact_not_found",
+                "删除产物的目标不属于当前项目或不存在。",
+                artifact_id=artifact_id,
+            )
+
     dependencies_by_artifact: dict[str, list[Any]] = defaultdict(list)
     children_by_upstream: dict[tuple[str, str], set[str]] = defaultdict(set)
     for dependency in dependency_rows:
@@ -176,7 +235,6 @@ def analyze_impact(
         if str(_value(experiment, "id")) in affected_experiments
         and _value(experiment, "status") in TERMINAL_EXPERIMENT_STATUSES
     ]
-    artifact_ids = {str(_value(artifact, "id")) for artifact in artifact_rows}
     unaffected = sorted(artifact_ids - affected)
     dependency_graph = {
         "nodes": [

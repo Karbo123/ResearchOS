@@ -2,7 +2,9 @@ from datetime import datetime, timezone
 from types import SimpleNamespace
 from uuid import uuid4
 
-from app.impact_analysis import analyze_impact
+import pytest
+
+from app.impact_analysis import ImpactAnalysisError, analyze_impact
 
 
 def test_idea_revision_invalidates_only_old_idea_descendants():
@@ -164,3 +166,35 @@ def test_impact_contains_reviewable_dependency_graph_and_experiment_edges():
     assert impact["affected_experiment_ids"] == [str(experiment_id)]
     assert impact["dependency_graph"]["nodes"][0]["affected"] is True
     assert {edge["upstream_type"] for edge in impact["dependency_graph"]["edges"]} == {"experiment", "data_version"}
+
+
+@pytest.mark.parametrize(
+    "change_kind,payload,code",
+    [
+        ("unknown_change", {}, "impact_change_kind_unsupported"),
+        ("code_patch", {}, "impact_base_git_commit_required"),
+        ("dependency_install", {}, "impact_base_git_commit_required"),
+        ("data_change", {}, "impact_base_data_version_required"),
+        ("delete_artifact", {}, "impact_artifact_id_required"),
+    ],
+)
+def test_impact_rejects_incomplete_or_unknown_change_roots(change_kind, payload, code):
+    with pytest.raises(ImpactAnalysisError) as error:
+        analyze_impact(
+            change_kind=change_kind,
+            payload=payload,
+            current_idea_version=1,
+            artifacts=[], dependencies=[], experiments=[], checkpoints=[],
+        )
+    assert error.value.code == code
+
+
+def test_impact_rejects_deleting_an_artifact_outside_the_project():
+    with pytest.raises(ImpactAnalysisError) as error:
+        analyze_impact(
+            change_kind="delete_artifact",
+            payload={"artifact_id": str(uuid4())},
+            current_idea_version=1,
+            artifacts=[], dependencies=[], experiments=[], checkpoints=[],
+        )
+    assert error.value.code == "impact_artifact_not_found"

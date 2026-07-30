@@ -38,7 +38,7 @@ from .related_work import build_related_work_analysis
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
 from .diagnostics import build_diagnostic_report
-from .impact_analysis import analyze_impact, apply_impact
+from .impact_analysis import ImpactAnalysisError, analyze_impact, apply_impact
 from .material_parser import MaterialParseError, context_for_materials, parse_material
 from .malware_scanner import MalwareScanError, scan_file
 from .reporting import ReportNotificationError, build_report_content, send_report_webhook
@@ -149,17 +149,20 @@ def policy_enforcement_snapshot(session, project_id: UUID, constraints: PolicyCo
 
 def project_change_impact(session, project: Project, change_kind: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Build a deterministic, read-only impact snapshot for a project change."""
-    return analyze_impact(
-        change_kind=change_kind,
-        payload=payload,
-        current_idea_version=project.current_idea_version,
-        artifacts=session.scalars(select(Artifact).where(Artifact.project_id == project.id)).all(),
-        dependencies=session.scalars(
-            select(ArtifactDependency).where(ArtifactDependency.project_id == project.id)
-        ).all(),
-        experiments=session.scalars(select(Experiment).where(Experiment.project_id == project.id)).all(),
-        checkpoints=session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id)).all(),
-    )
+    try:
+        return analyze_impact(
+            change_kind=change_kind,
+            payload=payload,
+            current_idea_version=project.current_idea_version,
+            artifacts=session.scalars(select(Artifact).where(Artifact.project_id == project.id)).all(),
+            dependencies=session.scalars(
+                select(ArtifactDependency).where(ArtifactDependency.project_id == project.id)
+            ).all(),
+            experiments=session.scalars(select(Experiment).where(Experiment.project_id == project.id)).all(),
+            checkpoints=session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id)).all(),
+        )
+    except ImpactAnalysisError as exc:
+        raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
 
 
 def _create_impact_rerun_proposals(session, project: Project, source_proposal: Proposal, impact: dict[str, Any]) -> None:
@@ -1100,6 +1103,7 @@ def propose_repository_download(project_id: UUID, repository_id: UUID):
             "repository_id": str(repository.id), "repository_url": repository.source_url,
             "paper_id": str(repository.paper_id) if repository.paper_id else None,
             "commit": commit, "license_spdx": repository.license_spdx,
+            "base_git_commit": "current",
             "verification_retrieved_at": verification.get("retrieved_at"),
         }
         impact = project_change_impact(session, project, "dependency_install", payload)

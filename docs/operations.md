@@ -143,7 +143,7 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 ## 检查点局部重跑
 
-实验同步为 `succeeded` 或 `failed` 后，网页实验行会在存在对应检查点时显示“提出局部重跑”。已批准的 Idea、策略、代码、数据或依赖变更也会依据 `ArtifactDependency` 影响图自动创建对应的待审批 Proposal。该按钮和自动生成的 Proposal 都只接受成功/失败检查点、已终止源实验、原白名单配置和已持久化随机种子。通用 Proposal 接口不能伪造 `experiment_rerun`，审批和提交阶段还会再次比较检查点快照。批准后 API 自动使用现有 `/api/experiments` 提交链；提交失败会把结构化错误写入 Proposal 影响和审计记录，前端不提供第二个执行入口，也不会替换成与当前 Idea 无关的分类或点云实验。
+实验同步为 `succeeded` 或 `failed` 后，网页实验行会在存在对应检查点时显示“提出局部重跑”。已批准的 Idea、策略、代码、数据或依赖变更也会依据 `ArtifactDependency` 影响图自动创建对应的待审批 Proposal。该按钮和自动生成的 Proposal 都只接受成功/失败检查点、已终止源实验、原白名单配置和已持久化随机种子。通用 Proposal 接口不能伪造 `experiment_rerun`，审批和提交阶段还会再次比较检查点快照。未知变更类型、缺少基准 Git/数据版本或删除当前项目之外的产物会在影响分析阶段直接返回结构化 `impact_*` 错误。批准后 API 自动使用现有 `/api/experiments` 提交链；提交失败会把结构化错误写入 Proposal 影响和审计记录，前端不提供第二个执行入口，也不会替换成与当前 Idea 无关的分类或点云实验。
 
 ## 修改配置
 
