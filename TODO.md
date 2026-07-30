@@ -24,7 +24,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-31（Asia/Shanghai，继续 P1-UPLOAD-009；并行保留 P1-PAPER-016、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-31（Asia/Shanghai，继续 P2-HA-021；并行保留 P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
 本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、提供方、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，空异常也保留异常类型或 HTTP 状态，前端文献页显示候选合规摘要。
 
@@ -33,10 +33,10 @@
 ## 当前状态
 
 - Installer status: GitHub Actions run `30545994558` built `ResearchOS-Setup-0.2.0-x64.exe` and `SHA256SUMS.txt` for tag `v0.2.0`; the Release is intentionally Draft until signing and clean-VM acceptance are complete.
-- Current work item: `P0-RUNNER-007` is in progress; terminal cleanup is now fail-closed, while real GPU-host validation and production-grade Runner recovery remain open.
+- Current work item: `P2-HA-021` is in progress; fixed local health/capacity/backup/recovery guardrails are now implemented, while HA clustering, automatic external alerting and unattended production rehearsal remain open.
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-SEARCH-018`、`P2-QUEUE-020`、`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进项目材料分页检索后的大规模索引、论文语义/编译验收、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P2-HA-021`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-SEARCH-018`、`P2-QUEUE-020`、`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进长期运行监控/备份恢复、材料大规模索引、论文语义/编译验收、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -208,7 +208,11 @@
   - 本轮范围：将研究启动任务从 FastAPI `BackgroundTasks` 移到独立 `queue-worker` 容器；Task 持久化幂等键、最大尝试次数、下一次执行时间、租约截止时间和 lease token。worker 使用 PostgreSQL `FOR UPDATE SKIP LOCKED` 领取任务，租约过期可恢复，失败按固定指数退避并在上限后结构化终止；项目暂停/取消仍是后端闸门。
   - 完成标准：API 重启不丢任务；同一幂等键不重复入队；worker 崩溃后过期 lease 可重新领取；重试次数、退避和最终失败可审计；容器/迁移/单元与集成验证通过。
   - 本轮验证：新增 Alembic `0002_task_queue`、独立 `queue-worker` Compose 服务和 API/worker 共用镜像；新增白名单幂等入队函数，数据库唯一索引冲突会返回已有任务，不会重复插入；项目详情只暴露队列时间/尝试状态，不暴露 lease token。现有数据库真实迁移到 `0002_task_queue`，幂等入队、过期 lease 回收和陈旧 token 防护集成通过；API `122 passed, 2 skipped`，Python/Compose/Schema/n8n JSON/文档同步/`git diff --check` 通过。实验提交仍直接进入受控 Runner 链，Runner 执行链持久化排队属于 `P0-RUNNER-007` 范围。
-- [ ] `P2-HA-021` 增加长期运行监控、健康告警、备份轮换、容量限制和升级/回滚演练。
+- [~] `P2-HA-021` 增加长期运行监控、健康告警、备份轮换、容量限制和升级/回滚演练。
+  - 本轮开始：现有运维说明只有手工 pg_dump/volume 备份命令，缺少固定的健康快照、容量门禁、轮换和隔离恢复验收；新增工作将保持本地、结构化、无外发通知和无数据覆盖。
+  - 本轮实现：新增 `scripts/ops_guard.py`，固定探测 API/n8n/MLflow 和九个 Compose 服务，固定检查 projects/artifacts/backups 容量；备份生成 PostgreSQL dump、projects、artifacts、三个命名 volume 的压缩归档和 SHA-256 manifest，轮换只删除合法且带 manifest 的旧备份；恢复演练拒绝符号链接/路径穿越，只写隔离目录并复核 Compose 配置。
+  - 本轮验证：`scripts/test_ops_guard.py` 为 `7 passed`；真实健康快照 `status=ok`（九个 Compose 服务、API/n8n/MLflow HTTP 200）；容量快照 `status=ok`（artifacts 约 42.7 MB、projects 约 0.47 MB）；真实备份 `20260730T163859Z`、SHA-256 manifest、保留轮换和隔离恢复演练均成功，恢复结果 `live_data_untouched=true`、`compose_config_validated=true`；非法 snapshot 路径和负容量门限均直接返回结构化错误。未创建额外 helper 镜像，volume 归档复用已有 `postgres:16-alpine`。
+  - 当前缺口：本地结构化告警尚未接入外部通知，未实现 HA 集群/自动故障转移，也未完成长期无人值守 Windows VM 升级/回滚演练；任务保持 `[~]`。
 - [ ] `P2-RAG-022` 仅在论文规模证明需要时引入 RAGFlow/LlamaIndex；保留 evidence ID 和页码追踪。
 - [ ] `P2-GRAPH-023` 仅在 n8n 循环、分支和检查点恢复难以维护时评估 LangGraph，不提前增加双状态源。
 
@@ -333,3 +337,4 @@
 - 2026-07-30：本轮验证通过文档同步、Compose、JSON、JS、聊天 UX、API `117 passed, 2 skipped`、Runner `10 passed` 和 launcher `6 passed, 2 skipped`；新增 `test_fixed_latexmk_command_produces_a_nonempty_pdf` 通过。`scripts/acceptance_test.py` 在首次真实模型请求处收到 HTTP 502 `llm_request_failed`，未使用 fallback、未写伪造助手消息且未生成验收通过产物；P1-PAPER-016 继续保持 `[~]`。实现提交：`8ee8e57`。
 - 2026-07-30：继续 `P0-RUNNER-007`；修复 Launcher 终态同步并发竞态，清理 helper/job container/output volume 任一失败都 fail-closed；Runner 超时/取消必须确认 `artifacts_synced=true`。容器内 Runner `10 passed`、Launcher `10 passed`，启用显式 Docker 集成测试后两个真实隔离测试均通过，Runner/Launcher `py_compile` 通过，Compose 服务重建成功。真实 GPU 主机验证仍未完成，任务保持 `[~]`；未调用模型、外部学术 API 或无关实验。实现提交：`662d608`。
 - 2026-07-30：完成 `P2-SEARCH-018`；修正 GitHub 资源候选缺少 `provider/resource_type` 导致前端显示 `unknown` 的问题，并让空的 provider 异常保留异常类型/HTTP 状态。活动项目真实检索、浏览器 Literature 页面、provider errors 和合规候选显示均已验证，任务标记 `[x]`。
+- 2026-07-31：继续 `P2-HA-021`；新增固定范围健康/容量/备份/恢复工具和 7 项单测。真实 Compose 健康快照、容量检查、备份 `20260730T163859Z`、SHA-256 manifest、轮换及隔离恢复演练通过；恢复不覆盖 live volume，固定 volume 归档复用已有 `postgres:16-alpine` 镜像。HA 集群、自动外部告警和长期无人值守生产演练仍未完成，任务保持 `[~]`。

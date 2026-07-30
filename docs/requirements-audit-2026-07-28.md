@@ -96,7 +96,7 @@
 | 数值分析与失败诊断 | 已实现（受限闭环） | `POST /api/projects/{project_id}/diagnostics` 由 Python 计算有限数值指标的 count/mean/population std/min/max，解析结构化失败码和成功但缺失指标的运行；异常会生成去重、只记录证据且不执行的 `diagnostic_suggestion` Proposal，模型只能解释/质疑，不能计算或启动建议。任意日志/CSV/多模态自动推断仍不属于当前能力。 |
 | PNG/PLY/PDF 产物及谱系 | 已实现（受限预览） | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；网页支持 JSON/文本/CSV/TSV/PDF 和转义 HTML 文本，以及固定上限的 ASCII PLY/PCD 点云 Canvas、旋转、缩放、重置和可选网格线框。二进制点云、失效文件和解析限制返回结构化错误；这仍不是完整任意格式 3D 引擎。 |
 | 实验跟踪 | 已实现（受限范围） | 自托管 MLflow + MinIO 记录参数、学习率/模型版本、种子、Git、数据版本、镜像 digest、指标和产物；Runner 按固定频率记录进程/系统 CPU、内存和 GPU 数值，并保存 `resource-usage.jsonl`。没有 W&B/TensorBoard；真实 GPU 主机验证仍属于 Runner 任务缺口。 |
-| PostgreSQL/Git/大文件持久化 | 已实现（受控 MVP） | 18 张业务表由版本化 Alembic migration 管理；`db-migrate` 在 API/n8n/MLflow 启动前幂等创建独立运行角色。API 只使用业务表 CRUD 权限，n8n 只使用 `n8n` schema，MLflow 使用独立数据库；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。正式备份轮换、恢复演练和更细的生产网络隔离仍属于 P2 运维范围。 |
+| PostgreSQL/Git/大文件持久化 | 已实现（受控 MVP） | 18 张业务表由版本化 Alembic migration 管理；`db-migrate` 在 API/n8n/MLflow 启动前幂等创建独立运行角色。API 只使用业务表 CRUD 权限，n8n 只使用 `n8n` schema，MLflow 使用独立数据库；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。`scripts/ops_guard.py` 已提供固定健康/容量报告、完整本地备份、SHA-256 manifest、轮换和隔离恢复演练；仍不是 HA 集群、自动告警或自动故障转移。 |
 | 日报/周报与推送 | 已实现（受限范围） | n8n 每日/每周定时生成确定性运营报告并存入 Web UI，覆盖文献/证据/代码候选、实验状态、已报告资源与成本、产物、审计决策和待审批项；可通过默认关闭的 HTTPS webhook 在显式 `notify=true` 请求中推送。未实现特定飞书、Slack、Telegram 或邮件 SDK，缺失的 provider 成本不会被猜测。 |
 | 同一项目对话监督 | 已实现（受限范围） | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；已有项目消息由容器内模型返回严格 `SupervisionIntent`，Idea/策略变更仍需 Proposal 审批，状态/审批意图不从聊天直接执行。模型失败直接返回结构化错误。 |
 | Proposal、diff、审批、审计 | 已实现（受控范围） | 实验、Idea 修订、策略、代码/配置/LaTeX patch 和依赖安装具有 Proposal/diff/审批/审计路径；patch 执行器只接受结构化文件操作，在临时隔离目录验证后提交 Git，覆盖冲突、失败恢复、覆盖/删除和审批回滚；外部发布明确禁用。独立 Runner 执行链仍不承诺生产级持久队列。 |
@@ -106,7 +106,7 @@
 | 严格 JSON、双重校验、Shell/路径隔离 | 已实现（MVP） | API 与 Runner 使用 Pydantic `extra=forbid` 和白名单；LLM 不接触任意 Shell/SQL/路径，n8n 节点不能读取容器环境变量。 |
 | Related Work 与完整论文自动写作 | 部分实现 | 已可从当前 Idea、页码级核验证据和真实成功实验生成完整章节结构的 `paper/main.tex` patch Proposal；metadata-only 会被拒绝，没有结果会明确保留未执行状态，且批准前不写文件。编译 Proposal 绑定并在审批/Runner 提交前复核源文件 commit/SHA-256。仍未完成语义 claim 到多证据的精确映射、完整 Related Work 内容质量和生产级论文内容验收。 |
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
-| 长期运行与生产可靠性 | 部分实现 | Compose restart、项目启动/恢复的 PostgreSQL 持久任务队列、租约/幂等键/指数退避、过期 lease 防陈旧 worker 覆盖、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；Runner 执行链持久排队、HA、完整告警轮换、每任务独立容器的生产级验证和默认拒绝出网仍未完成。 |
+| 长期运行与生产可靠性 | 部分实现 | Compose restart、项目启动/恢复的 PostgreSQL 持久任务队列、租约/幂等键/指数退避、过期 lease 防陈旧 worker 覆盖、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；`scripts/ops_guard.py` 已提供固定服务健康快照、容量门禁、PostgreSQL/projects/artifacts/命名 volume 备份、轮换、SHA-256 校验和隔离恢复/Compose 演练。Runner 执行链持久排队、HA 集群、自动外部告警和每任务独立容器的生产级验证仍未完成。 |
 | Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。`v*` tag 可生成 EXE、SHA-256 和草稿 Release；正式发布要求手动发布门禁、Authenticode 签名 Secret、Docker 许可复核及干净 VM、升级/卸载验收，尚未完成。 |
 
 2026-07-30 代码来源可信链增量：`P0-CODE-003` 已实现候选仓库的 GitHub/GitLab 元数据、论文记录与 `CITATION.cff`/README 双源匹配，保存已知 SPDX、40 位 commit 和验证来源；未知许可证、未固定 commit、未验证候选或未批准 Proposal 均不能触发下载。批准后仅下载受限归档，拒绝路径穿越、符号链接和特殊文件，写入 SHA-256、下载时间、论文关系和项目 Git 提交。作者主页/数据集/模型的通用定位仍未实现；本增量已完成测试和文档同步，`P0-CODE-003` 标记为 `[x]`。
@@ -124,6 +124,8 @@
 ## 关键风险
 
 2026-07-30 模型配置与编排增量：三档模型在容器启动时读取共享 `OPENAI_BASE_URL`/`OPENAI_API_KEY` 默认值，显式 tier 配置和运行时文件中的非空字段覆盖共享值，空的旧 runtime 字段不再遮蔽 `.env`；设置接口只返回 `key_configured` 和脱敏字段来源，空 key 保存保持已有值。配置缺失或请求失败直接返回结构化错误。n8n 保留固定聊天、检索、报告和项目编排，模型请求与严格 Schema/审批/状态校验仍在 API 容器，避免复制 Secret 或绕过安全边界；Windows 不启动 Bridge 或其他 API/模型服务。
+
+2026-07-31 P2-HA-021 运维门禁增量：新增 `scripts/ops_guard.py` 和 `scripts/test_ops_guard.py`。固定健康检查探测本地 API/n8n/MLflow 和九个 Compose 服务，容量检查固定项目/产物/备份目录和剩余磁盘门限；备份命令生成 PostgreSQL dump、`projects/`、`artifacts/`、三个命名 volume 的压缩归档和 SHA-256 manifest，只轮换合法备份目录。恢复演练在隔离目录校验哈希、拒绝符号链接/路径穿越并复核 `docker compose config --quiet`，不覆盖 live volume、不输出 Secret、不发送外部告警。单测 `6 passed`，真实备份 `20260730T163859Z` 与隔离恢复演练成功；P2-HA-021 仍保持部分实现，因为 HA 集群、自动告警和长期无人值守生产演练尚未完成。
 
 1. UI 已区分元数据记录与页码原文证据；但自动提取 quote 仍需在 Related Work 阶段把具体事实性 claim 精确映射到 evidence ID，不能仅因论文已有全文证据就宣称任意结论成立。
 2. 合成实验只能验证系统编排和产物链，不能证明用户研究 Idea 的科学结论。

@@ -248,7 +248,22 @@ docker compose start
 
 同时使用受控备份工具复制 `projects/` 和 `artifacts/`；不要把备份加入 Git。恢复应先在新建的空白测试实例中演练：核对 `.env`、恢复 PostgreSQL/volume/文件、启动服务，再验证一个项目的 Idea 版本、审批、MLflow Run、PNG/PLY 下载和 Git commit。未经目标路径和 volume 名称复核，不要向现有 volume 原位解压覆盖。
 
-建议周期：活跃开发期间每日数据库和 `projects/` 增量备份，每周完整 volume 备份；重大升级、Owner 重置和数据库结构变化前额外做一次完整快照。MVP 尚未自动实现备份轮换和恢复演练，这是 `P2-HA-021` 的范围。
+建议周期：活跃开发期间每日数据库和 `projects/` 增量备份，每周完整 volume 备份；重大升级、Owner 重置和数据库结构变化前额外做一次完整快照。
+
+### 固定运维门禁
+
+`scripts/ops_guard.py` 提供固定范围的本地运维检查。它只使用固定 Compose 服务、固定项目目录和固定命名 volume，不读取 Codex 配置、不打印数据库 dump、不发送外部告警：
+
+```powershell
+python scripts/ops_guard.py health
+python scripts/ops_guard.py capacity
+python scripts/ops_guard.py backup --retention 7
+python scripts/ops_guard.py rehearse <backup_id>
+```
+
+`health` 探测 API、n8n、MLflow 的本地 HTTP 地址，并检查九个长期 Compose 服务的运行/健康状态；失败输出结构化 `alerts` 并返回非零状态。`capacity` 检查固定 `projects/`、`artifacts/`、`artifacts/backups/` 的大小和磁盘剩余空间，超过门限时直接失败。`backup` 生成 PostgreSQL dump、`projects/`、`artifacts/` 和 `research-os_*` 三个命名 volume 的压缩归档及 SHA-256 manifest，只轮换格式合法且带 manifest 的备份目录；volume 归档使用仓库已有 `postgres:16-alpine` 镜像，不拉取额外 helper 镜像。`rehearse` 校验全部哈希并解压到 `artifacts/ops/rehearsals/`，再运行 `docker compose config --quiet`，不会停止服务、覆盖 live volume 或写回项目。
+
+当前门限和告警是本地结构化报告，不是自动通知或 HA 故障转移；仍需部署级的多节点、外部告警接入和长期无人值守演练，不能因此宣称生产级 HA。
 
 ## 升级与回滚
 
@@ -256,7 +271,8 @@ docker compose start
 2. 完成上述全量备份并记录当前 `docker compose images`、`.env` 配置版本和最新验收 JSON。
 3. 修改固定镜像版本、依赖或工作流后，运行 Compose/Python/JSON/文档同步检查。
 4. 使用 `docker compose up --build -d` 重建；检查日志后运行容器测试与低成本验收。
-5. 回滚时恢复旧代码/镜像和匹配的数据库/volume 快照。不要只回滚容器镜像而继续使用已迁移的数据。
+5. 使用 `python scripts/ops_guard.py rehearse <backup_id>` 在隔离目录验证备份和 Compose 配置，再决定是否切换版本。
+6. 回滚时恢复旧代码/镜像和匹配的数据库/volume 快照。不要只回滚容器镜像而继续使用已迁移的数据；演练工具不会自动覆盖 live volume。
 
 ## 文档同步交接
 

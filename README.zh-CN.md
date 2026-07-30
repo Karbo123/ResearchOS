@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-28 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-29 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -330,6 +330,17 @@ docker compose exec -T postgres pg_dump -U research -d research_os > artifacts\b
 ```
 
 数据库备份可能包含哈希、元数据或凭据材料，必须保留在本地并妥善保护。只在已停止/隔离的实例中核对目标 volume 与凭据后恢复。MinIO 与 n8n 的命名 volume 也必须备份，详见 [docs/operations.md](docs/operations.md)。
+
+固定范围的本地健康、容量、备份和恢复演练可执行：
+
+```powershell
+python scripts/ops_guard.py health
+python scripts/ops_guard.py capacity
+python scripts/ops_guard.py backup --retention 7
+python scripts/ops_guard.py rehearse <backup_id>
+```
+
+工具只在被 Git 忽略的 `artifacts/ops/` 写入结构化报告，只轮换白名单备份目录并校验 SHA-256 manifest；恢复只写入隔离演练目录，不覆盖 live volume、不发送告警、不暴露 Secret。这是运维门禁能力，不是 HA 集群或自动故障转移。
 
 ## 验证与开发
 

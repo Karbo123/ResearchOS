@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-28 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-29 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -321,6 +321,17 @@ docker compose exec -T postgres pg_dump -U research -d research_os > artifacts\b
 ```
 
 The dump may contain hashes, metadata, or credential material. Keep it local and protected. Restore only into a stopped/isolated instance after verifying the target volume and credentials. MinIO and n8n data also require their named-volume backup; see [docs/operations.md](docs/operations.md).
+
+For a fixed-scope local health, capacity, and backup rehearsal, run:
+
+```powershell
+python scripts/ops_guard.py health
+python scripts/ops_guard.py capacity
+python scripts/ops_guard.py backup --retention 7
+python scripts/ops_guard.py rehearse <backup_id>
+```
+
+The tool writes structured, local-only reports under ignored `artifacts/ops/`, rotates only allowlisted backup directories, validates SHA-256 manifests, and restores only into an isolated rehearsal directory. It does not send alerts, expose secrets, or overwrite live volumes. This is operational guardrail coverage, not HA clustering or automatic failover.
 
 ## Validation and development
 
