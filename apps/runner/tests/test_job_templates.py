@@ -1,3 +1,4 @@
+import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -9,7 +10,7 @@ from app import main as runner_main
 
 class JobTemplateTests(unittest.TestCase):
     def test_all_templates_have_bounded_task_metadata(self):
-        self.assertTrue({"demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}.issubset(TASK_TEMPLATES))
+        self.assertTrue({"topic_specific", "demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}.issubset(TASK_TEMPLATES))
         self.assertTrue(all(template.task_id.endswith(".v1") for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.memory_mb > 0 and template.pid_limit > 0 and template.disk_mb > 0 for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.network_policy == "internal-mlflow-only" for template in TASK_TEMPLATES.values()))
@@ -44,6 +45,23 @@ class JobTemplateTests(unittest.TestCase):
         environment = job_environment(TASK_TEMPLATES["compile_latex"])
         self.assertEqual(environment["RESEARCH_OS_NETWORK_POLICY"], "internal-mlflow-only")
         self.assertEqual(environment["RESEARCH_OS_NO_ARBITRARY_COMMANDS"], "true")
+
+    def test_topic_plan_and_checkpoint_are_fixed_structured_inputs(self):
+        from app.main import read_topic_checkpoint, validate_topic_plan
+
+        plan = {
+            "schema_version": "1.0", "plan_type": "topic_specific", "project_id": "project",
+            "idea_version": 1, "research_question": "A sufficiently long research question.",
+            "objective": "A sufficiently long objective for the fixed entrypoint.",
+            "source_evidence_ids": [], "policy_ids": [], "data_sources": [], "baselines": [],
+            "metrics": [], "ablations": [], "statistical_tests": [], "random_seeds": [13],
+            "resource_budget": {}, "risks": [], "success_criteria": [],
+        }
+        self.assertEqual(validate_topic_plan(plan), plan)
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "checkpoint.json"
+            path.write_text(json.dumps({"schema_version": "1.0", "name": "epoch-1", "state": {"step": 1}}), encoding="utf-8")
+            self.assertEqual(read_topic_checkpoint(Path(directory))["name"], "epoch-1")
 
     def test_run_disk_quota_is_enforced_as_an_aggregate_limit(self):
         from app.main import DiskQuotaExceeded, enforce_disk_quota

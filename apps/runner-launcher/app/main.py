@@ -20,9 +20,10 @@ RUNNER_NETWORK = os.getenv("RUNNER_NETWORK", "research-os-runner-internal")
 JOB_ARTIFACTS_ROOT = "/workspace/artifacts"
 JOB_PROJECTS_ROOT = "/workspace/projects"
 FORBIDDEN_FIELDS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image", "environment"}
-ALLOWED_TYPES = {"demo_classification", "point_cloud_demo", "compile_latex"}
+ALLOWED_TYPES = {"topic_specific", "demo_classification", "point_cloud_demo", "compile_latex"}
 ALLOWED_TYPES.update({"python_analysis", "cpp_cmake", "gpu_python", "conda_python"})
 TEMPLATE_LIMITS = {
+    "topic_specific": {"cpu": 2.0, "memory": 4096 * 1024 * 1024, "pids": 128, "disk_mb": 2048, "seconds": 1800, "gpu": False},
     "demo_classification": {"cpu": 1.0, "memory": 768 * 1024 * 1024, "pids": 64, "disk_mb": 512, "seconds": 600},
     "point_cloud_demo": {"cpu": 1.0, "memory": 768 * 1024 * 1024, "pids": 64, "disk_mb": 512, "seconds": 600},
     "compile_latex": {"cpu": 1.5, "memory": 1024 * 1024 * 1024, "pids": 96, "disk_mb": 1024, "seconds": 600},
@@ -48,11 +49,13 @@ class LaunchRequest(BaseModel):
 
     run_id: UUID
     project_id: UUID
-    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
+    experiment_type: Literal["topic_specific", "demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[StrictInt] = Field(min_length=1, max_length=10)
     policy_constraints: dict[str, Any] = Field(default_factory=dict)
     reproducibility: dict[str, Any]
+    topic_plan: dict[str, Any] | None = None
+    topic_resume: dict[str, Any] | None = None
 
     @field_validator("config")
     @classmethod
@@ -68,6 +71,10 @@ class LaunchRequest(BaseModel):
             raise ValueError("experiment type is not allowlisted")
         if not all(isinstance(seed, int) and not isinstance(seed, bool) for seed in self.random_seeds):
             raise ValueError("random seeds must be integers")
+        if self.experiment_type == "topic_specific" and not isinstance(self.topic_plan, dict):
+            raise ValueError("topic_specific jobs require a structured topic plan")
+        if self.experiment_type != "topic_specific" and (self.topic_plan is not None or self.topic_resume is not None):
+            raise ValueError("topic plan fields are only valid for topic_specific jobs")
         return self
 
 

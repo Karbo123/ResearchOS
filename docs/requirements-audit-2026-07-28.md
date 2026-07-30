@@ -2,9 +2,9 @@
 
 ## 结论
 
-2026-07-30 影响传播增量：Proposal 创建和审批现在按 `ArtifactDependency` 计算 Idea、策略、代码、数据和产物删除变更的依赖后代，只使受影响的有效产物失效，并记录关联实验、检查点和局部重跑候选。检查点局部重跑 Proposal 仅允许成功/失败终态检查点，重建原白名单配置和持久化随机种子；批准后自动通过现有受控实验提交链，失败保留结构化错误。主题专属 Runner 尚未实现时仍直接返回未实现错误，无关演示实验不会作为替代路径。
+2026-07-30 影响传播增量：Proposal 创建和审批现在按 `ArtifactDependency` 计算 Idea、策略、代码、数据和产物删除变更的依赖后代，只使受影响的有效产物失效，并记录关联实验、检查点和局部重跑候选。检查点局部重跑 Proposal 仅允许成功/失败终态检查点，重建原白名单配置和持久化随机种子；批准后自动通过匹配的受控实验提交链，失败保留结构化错误。主题专属重跑同样只复用固定入口、原结构化计划和检查点状态，不会改用无关演示实验。
 
-当前仓库是可运行、可审计的 Research OS MVP，不是原始需求的完整实现，更不能称为生产级或“完美实现”。核心闭环已经真实跑通，但完整论文证据链、官方代码复现、通用计算执行、主题专属 Runner、规则自动执行和外部通知仍未完成。
+当前仓库是可运行、可审计的 Research OS MVP，不是原始需求的完整实现，更不能称为生产级或“完美实现”。核心闭环已经真实跑通，但完整论文证据链、官方代码复现、真实 GPU 主机验证、规则自动执行和外部通知仍未完成。
 
 ## 本轮真实验收
 
@@ -43,7 +43,7 @@
 
 - 模型调用改为 API 容器直连三个独立配置的 OpenAI-compatible URL；Windows Codex Bridge 不再是运行依赖，也不读取 Codex 配置目录。
 - LLM 调用失败直接返回结构化 API 错误；禁止本地降级、provider 切换和规则回复。
-- 原有通用分类/点云演示实验计划不属于用户 Idea，已移除自动生成路径。主题专属规划现已实现为严格的证据绑定 Proposal：生成前要求当前 ProjectSpec 和页码级全文证据，计划包含数据源、基线、指标、消融、统计检验、随机种子、资源预算、风险和成功标准；审批后执行会再次校验当前 Idea/证据/策略。当前 Runner 尚无主题专属执行模板，返回 `topic_specific_runner_not_implemented`，绝不回退到无关 demo。
+- 原有通用分类/点云演示实验计划不属于用户 Idea，已移除自动生成路径。主题专属规划现已实现为严格的证据绑定 Proposal：生成前要求当前 ProjectSpec 和页码级全文证据，计划包含数据源、基线、指标、消融、统计检验、随机种子、资源预算、风险和成功标准；审批后执行会再次校验当前 Idea/证据/策略。主题 Runner 只调用项目固定 `experiment/main.py`，通过固定 JSON 路径传入计划和恢复状态，并要求 `metrics.json` 与 `checkpoint.json`；缺少入口、进程失败或产物不合法直接返回结构化错误，绝不回退到无关 demo。
 - Windows 安装器已同步为只启动 Docker Compose，不再打包或启动 Bridge；前端不再显示会请求通用实验计划的操作按钮。
 - Related Work 当前只生成证据覆盖、研究空白候选和重复研究候选；metadata-only 文献不能进入事实性证据，所有候选均要求人工复核。
 
@@ -51,7 +51,7 @@
 
 - Runner supervisor 现在通过唯一的 `runner-launcher` 服务为每个 Run 创建新的非 root 作业容器；launcher 使用固定镜像、固定 `python -m app.worker` 入口、固定内部网络、受控继承挂载和模板级 CPU/内存/PID 限制，Runner supervisor/API 不挂载 Docker socket。
 - Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 使用带硬大小上限的 Docker tmpfs 输出 volume，终态同步产物后删除 job container 与 volume；Linux 单文件 `RLIMIT_FSIZE` 与运行目录累计检查仍作为第二道边界。
-- 当前已是每 Run 独立容器，已完成受控 Python、固定 micromamba/Conda Python、C++/CMake 和 GPU 请求模板；主题专属 Runner 和真实 GPU 主机验证仍未完成，`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
+- 当前已是每 Run 独立容器，已完成固定主题入口、受控 Python、固定 micromamba/Conda Python、C++/CMake 和 GPU 请求模板；真实 GPU 主机验证仍未完成，`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
 
 ## 逐项覆盖
 
@@ -67,8 +67,8 @@
 | 官方代码、数据集、模型与主页定位 | 部分实现 | GitHub/GitLab 先生成候选；API 已能读取提供方元数据、项目论文记录和仓库 `CITATION.cff`/README，要求 DOI 或完整标题形成显式双源匹配。作者主页、数据集和模型定位仍不是通用能力。 |
 | 代码许可审查与受控下载 | 已实现（需审批） | 已知 SPDX、40 位 commit 和 `verified_official=true` 才能创建 `dependency_install` Proposal；批准后下载受限归档，拒绝路径穿越/链接/特殊文件，记录下载时间、URL、SHA-256、论文关系并提交项目 Git。未知许可证、未验证候选和未批准 Proposal 均不能触发网络下载。 |
 | 文献综述、研究空白、新颖性判断 | 部分实现 | 端点会明确拒绝仅凭元数据作强结论；尚不能生成全文证据支撑的 Related Work 或可靠研究空白。 |
-| Idea 专属实验与统计计划 | 部分实现 | API 已按当前 ProjectSpec、页码级全文证据和策略生成绑定 Idea 版本的结构化计划 Proposal，并经过审批/二次校验；主题专属 Runner 执行模板尚未完成，不会使用固定合成 demo。 |
-| Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、七个固定模板、硬上限输出 volume、超时、取消、日志、受控 Python、镜像内固定 micromamba/Conda、CMake 和 GPU 请求、LaTeX 已实现；主题专属模板和真实 GPU 主机验证未完成。 |
+| Idea 专属实验与统计计划 | 已实现（受控 Runner） | API 已按当前 ProjectSpec、页码级全文证据和策略生成绑定 Idea 版本的结构化计划 Proposal，并经过审批/二次校验；批准后只执行项目固定 `experiment/main.py`，要求 `metrics.json` 与 `checkpoint.json`，失败不替换为固定合成 demo。 |
+| Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、八个固定模板、硬上限输出 volume、超时、取消、日志、固定主题入口、受控 Python、镜像内固定 micromamba/Conda、CMake 和 GPU 请求、LaTeX 已实现；真实 GPU 主机验证仍未完成。 |
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 已实现（受限闭环） | `POST /api/projects/{project_id}/diagnostics` 由 Python 计算有限数值指标的 count/mean/population std/min/max，解析结构化失败码和成功但缺失指标的运行；异常会生成去重、只记录证据且不执行的 `diagnostic_suggestion` Proposal，模型只能解释/质疑，不能计算或启动建议。任意日志/CSV/多模态自动推断仍不属于当前能力。 |
 | PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
@@ -78,7 +78,7 @@
 | 同一项目对话监督 | 部分实现 | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；分类主要靠关键词，不是健壮的结构化意图模型。 |
 | Proposal、diff、审批、审计 | 部分实现 | 实验、Idea 修订、配置和 LaTeX 有两阶段流程；代码补丁、依赖安装、删除、外发只有契约/提案模型，没有完整执行器。 |
 | 长期项目策略 | 已实现（MVP） | 可通过审批写入 `policies`，不依赖聊天历史；中英文种子、引用证据和高成本/对外审批规则会结构化显示，种子规则在计划、API 提交和 Runner 三处执行。其他自由文本规则仍需扩展解析器。 |
-| Idea 版本、影响分析与局部重跑 | 部分实现 | Idea v2、审计、检查点、实体级依赖失效和需审批的检查点局部重跑 Proposal 已实现；批准后会自动提交原白名单重跑并记录失败；主题 Runner 和完整语义级失效仍未完成。 |
+| Idea 版本、影响分析与局部重跑 | 部分实现 | Idea v2、审计、检查点、实体级依赖失效和需审批的检查点局部重跑 Proposal 已实现；批准后会自动提交匹配的原白名单或主题固定入口重跑并记录失败；完整语义级失效仍未完成。 |
 | n8n AI Agent 和高层子工作流工具 | 部分实现 | 3 个激活工作流负责聊天网关、主流程和报告；多数工具是受限 FastAPI 端点，不是独立 n8n 子工作流，也未使用 n8n AI Agent 长循环。 |
 | 严格 JSON、双重校验、Shell/路径隔离 | 已实现（MVP） | API 与 Runner 使用 Pydantic `extra=forbid` 和白名单；LLM 不接触任意 Shell/SQL/路径，n8n 节点不能读取容器环境变量。 |
 | Related Work 与完整论文自动写作 | 未实现 | 只生成最小 LaTeX 模板并受控编译 PDF；Related Work 明确是占位文字，没有证据驱动的完整论文撰写。 |
@@ -102,4 +102,4 @@
 
 ## 达到原始目标仍需完成
 
-优先级最高的是官方代码验证与许可后下载、主题专属 Runner 执行模板和通用隔离作业、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。主题专属计划本身已完成生成与审批门控，但在 Runner 模板完成前不得声称实验已执行。完成其余能力之前，系统应继续标记为 MVP。
+优先级最高的是官方代码验证与许可后下载、真实 GPU 主机验证、语义依赖失效/自动检查点恢复、外部通知，以及完整证据驱动论文生成。主题专属计划、固定入口执行和主题检查点恢复已完成受控实现，但这不等于用户研究假设已经得到科学验证。完成其余能力之前，系统应继续标记为 MVP。

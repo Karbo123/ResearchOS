@@ -4,6 +4,7 @@ import hashlib
 import errno
 import json
 import os
+import re
 import subprocess
 import threading
 import time
@@ -48,6 +49,8 @@ class SubmitRequest(BaseModel):
     random_seeds: list[StrictInt] = Field(min_length=1, max_length=10)
     policy_constraints: PolicyConstraints = Field(default_factory=PolicyConstraints)
     reproducibility: ReproducibilityContract
+    topic_plan: dict | None = None
+    topic_resume: dict | None = None
 
     @field_validator("experiment_type")
     @classmethod
@@ -66,9 +69,15 @@ class SubmitRequest(BaseModel):
     @model_validator(mode="after")
     def allowlisted_config(self):
         validate_template_config(self.experiment_type, self.config)
-        if self.experiment_type in {"demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
+        if self.experiment_type in {"topic_specific", "demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
             if len(set(self.random_seeds)) < self.policy_constraints.minimum_random_seed_count:
                 raise ValueError("random_seeds violate the submitted minimum seed-count policy")
+        if self.experiment_type == "topic_specific" and not isinstance(self.topic_plan, dict):
+            raise ValueError("topic_specific jobs require a structured topic plan")
+        if self.experiment_type == "topic_specific":
+            validate_topic_plan(self.topic_plan)
+        if self.experiment_type != "topic_specific" and (self.topic_plan is not None or self.topic_resume is not None):
+            raise ValueError("topic plan fields are only valid for topic_specific jobs")
         if self.policy_constraints.explicit_approval_required and not self.policy_constraints.approval_granted:
             raise ValueError("explicit approval is required by the submitted project policy")
         return self
@@ -78,7 +87,7 @@ app = FastAPI(title="Research OS Restricted Runner", version="0.1.0")
 ARTIFACTS_ROOT = Path(os.getenv("ARTIFACTS_ROOT", "/workspace/artifacts")).resolve()
 STATE_ROOT = Path(os.getenv("RUNNER_STATE_ROOT", str(ARTIFACTS_ROOT / ".runner-state"))).resolve()
 SHARED_SECRET = os.getenv("RUNNER_SHARED_SECRET", "runner-dev-secret")
-MAX_SECONDS = int(os.getenv("RUNNER_MAX_SECONDS", "600"))
+MAX_SECONDS = int(os.getenv("RUNNER_MAX_SECONDS", "1800"))
 EXECUTOR_URL = os.getenv("RUNNER_EXECUTOR_URL", "http://runner-launcher:8020")
 EXECUTOR_TIMEOUT_SECONDS = float(os.getenv("RUNNER_EXECUTOR_TIMEOUT_SECONDS", "15"))
 RUNS: dict[str, dict] = {}
@@ -88,6 +97,17 @@ LOCK = threading.Lock()
 
 class RunCancelled(Exception):
     pass
+
+
+class StructuredExecutionError(ValueError):
+    def __init__(self, code: str, message: str, **details):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+        self.details = details
+
+    def as_dict(self) -> dict[str, object]:
+        return {"code": self.code, "message": self.message, **self.details}
 
 
 class DiskQuotaExceeded(Exception):
@@ -188,6 +208,62 @@ def _project_entrypoint(project_root: Path, relative_entrypoint: str) -> Path:
     return candidate
 
 
+TOPIC_PLAN_FIELDS = {
+    "schema_version", "plan_type", "project_id", "idea_version", "research_question", "objective",
+    "source_evidence_ids", "policy_ids", "data_sources", "baselines", "metrics", "ablations",
+    "statistical_tests", "random_seeds", "resource_budget", "risks", "success_criteria",
+}
+TOPIC_FORBIDDEN_KEYS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image", "environment", "dependencies"}
+TOPIC_NAME = re.compile(r"^[A-Za-z0-9_.-]{1,80}$")
+
+
+def _validate_json_tree(value: object, *, depth: int = 0) -> None:
+    if depth > 8:
+        raise StructuredExecutionError("topic_payload_too_deep", "主题计划或检查点嵌套层级超过固定上限。")
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if not isinstance(key, str) or key.lower() in TOPIC_FORBIDDEN_KEYS:
+                raise StructuredExecutionError("topic_payload_forbidden_field", "主题计划或检查点包含禁止的执行字段。")
+            _validate_json_tree(child, depth=depth + 1)
+    elif isinstance(value, list):
+        for child in value:
+            _validate_json_tree(child, depth=depth + 1)
+    elif not isinstance(value, (str, int, float, bool)) and value is not None:
+        raise StructuredExecutionError("topic_payload_invalid", "主题计划或检查点只能包含 JSON 标量、数组和对象。")
+
+
+def validate_topic_plan(plan: dict) -> dict:
+    if set(plan) != TOPIC_PLAN_FIELDS or plan.get("plan_type") != "topic_specific":
+        raise StructuredExecutionError("topic_plan_invalid", "主题计划不符合固定执行契约。")
+    if len(json.dumps(plan, ensure_ascii=False).encode("utf-8")) > 256 * 1024:
+        raise StructuredExecutionError("topic_plan_too_large", "主题计划超过固定大小上限。")
+    _validate_json_tree(plan)
+    return plan
+
+
+def read_topic_checkpoint(run_dir: Path) -> dict:
+    path = run_dir / "checkpoint.json"
+    if not path.is_file():
+        raise StructuredExecutionError(
+            "topic_checkpoint_missing",
+            "主题入口必须在固定输出目录生成 checkpoint.json，运行未产生可恢复检查点。",
+        )
+    if path.stat().st_size > 64 * 1024:
+        raise StructuredExecutionError("topic_checkpoint_too_large", "主题检查点超过固定大小上限。")
+    try:
+        checkpoint = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise StructuredExecutionError("topic_checkpoint_invalid", "主题 checkpoint.json 不是有效 JSON。") from exc
+    if not isinstance(checkpoint, dict) or set(checkpoint) != {"schema_version", "name", "state"}:
+        raise StructuredExecutionError("topic_checkpoint_invalid", "主题检查点必须包含 schema_version、name 和 state。")
+    if checkpoint.get("schema_version") != "1.0" or not isinstance(checkpoint.get("name"), str) or not TOPIC_NAME.fullmatch(checkpoint["name"]):
+        raise StructuredExecutionError("topic_checkpoint_invalid", "主题检查点版本或名称不符合固定契约。")
+    if not isinstance(checkpoint.get("state"), dict):
+        raise StructuredExecutionError("topic_checkpoint_invalid", "主题检查点 state 必须是对象。")
+    _validate_json_tree(checkpoint)
+    return checkpoint
+
+
 def _run_fixed_process(
     command: list[str],
     *,
@@ -238,7 +314,34 @@ def execute_project_template(request: SubmitRequest, project_root: Path, run_dir
         "RESEARCH_OS_OUTPUT_DIR": str(run_dir),
         "RESEARCH_OS_NETWORK_POLICY": template.network_policy,
     })
-    if request.experiment_type in {"python_analysis", "gpu_python", "conda_python"}:
+    if request.experiment_type == "topic_specific":
+        validate_topic_plan(request.topic_plan or {})
+        input_dir = (Path("/tmp/research-os-topic-input") / str(request.run_id)).resolve()
+        input_dir.mkdir(parents=True, exist_ok=True)
+        plan_path = input_dir / "plan.json"
+        plan_path.write_text(json.dumps(request.topic_plan, ensure_ascii=False, indent=2), encoding="utf-8")
+        resume_path = input_dir / "resume.json"
+        if request.topic_resume is not None:
+            _validate_json_tree(request.topic_resume)
+            resume_path.write_text(json.dumps(request.topic_resume, ensure_ascii=False, indent=2), encoding="utf-8")
+        environment.update({
+            "RESEARCH_OS_PLAN_PATH": str(plan_path),
+            "RESEARCH_OS_RESUME_PATH": str(resume_path) if request.topic_resume is not None else "",
+            "RESEARCH_OS_CHECKPOINT_PATH": str(run_dir / "checkpoint.json"),
+            "RESEARCH_OS_METRICS_PATH": str(run_dir / "metrics.json"),
+        })
+        try:
+            entrypoint = _project_entrypoint(project_root, "experiment/main.py")
+        except ValueError as exc:
+            raise StructuredExecutionError(
+                "topic_entrypoint_missing",
+                "项目 Git 工作区缺少固定主题入口 experiment/main.py。",
+            ) from exc
+        _run_fixed_process(
+            ["python", str(entrypoint)], cwd=project_root, environment=environment,
+            log_path=log_path, ensure_running=ensure_running,
+        )
+    elif request.experiment_type in {"python_analysis", "gpu_python", "conda_python"}:
         entrypoint = _project_entrypoint(project_root, request.config.get("entrypoint", "experiment/main.py"))
         command = ["python", str(entrypoint)]
         if request.experiment_type == "conda_python":
@@ -270,8 +373,11 @@ def execute_project_template(request: SubmitRequest, project_root: Path, run_dir
     for path in sorted(run_dir.rglob("*")):
         if not path.is_file() or path == log_path or path.name == "metrics.json":
             continue
-        kind = "project_output"
-        outputs.append(artifact(path, kind, run_dir, {"task_template": template.task_id}))
+        kind = "topic_checkpoint" if request.experiment_type == "topic_specific" and path.name == "checkpoint.json" else "project_output"
+        metadata = {"task_template": template.task_id}
+        if kind == "topic_checkpoint":
+            metadata["topic_checkpoint"] = read_topic_checkpoint(run_dir)
+        outputs.append(artifact(path, kind, run_dir, metadata))
     return outputs
 
 
@@ -300,7 +406,8 @@ def write_point_cloud(run_dir: Path, seed: int) -> tuple[Path, Path]:
 
 def execute(request: SubmitRequest):
     key = str(request.run_id)
-    deadline = time.monotonic() + MAX_SECONDS
+    template_limit = validate_template_config(request.experiment_type, request.config).max_runtime_seconds
+    deadline = time.monotonic() + min(MAX_SECONDS, template_limit)
 
     def ensure_running() -> None:
         if CANCEL_EVENTS[key].is_set():
@@ -371,9 +478,14 @@ def execute(request: SubmitRequest):
                 "policy_explicit_approval_required": request.policy_constraints.explicit_approval_required,
             })
             mlflow.log_metrics({"system_cpu_count": float(psutil.cpu_count() or 0), "system_memory_available_mb": psutil.virtual_memory().available / 1024 / 1024})
-            if request.experiment_type in {"python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
+            if request.experiment_type in {"topic_specific", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
                 produced.extend(execute_project_template(request, project_root, run_dir, execution_log, ensure_running))
                 metrics_file = run_dir / "metrics.json"
+                if request.experiment_type == "topic_specific" and not metrics_file.is_file():
+                    raise StructuredExecutionError(
+                        "topic_metrics_missing",
+                        "主题入口必须在固定输出目录生成 metrics.json，运行结果未通过结构化产物校验。",
+                    )
                 if metrics_file.is_file():
                     raw_metrics = json.loads(metrics_file.read_text(encoding="utf-8"))
                     if not isinstance(raw_metrics, dict) or not all(
@@ -475,6 +587,17 @@ def execute(request: SubmitRequest):
         update_state(key, status="cancelled", finished_at=utcnow(), error=None)
     except DiskQuotaExceeded as exc:
         update_state(key, status="failed", finished_at=utcnow(), error=json.dumps(exc.as_dict(), ensure_ascii=False))
+    except StructuredExecutionError as exc:
+        update_state(key, status="failed", finished_at=utcnow(), error=json.dumps(exc.as_dict(), ensure_ascii=False))
+    except subprocess.CalledProcessError as exc:
+        if request.experiment_type == "topic_specific":
+            update_state(key, status="failed", finished_at=utcnow(), error=json.dumps({
+                "code": "topic_entrypoint_failed",
+                "message": "项目固定主题入口执行失败；没有替代实验或执行路径。",
+                "exit_code": exc.returncode,
+            }, ensure_ascii=False))
+        else:
+            update_state(key, status="failed", finished_at=utcnow(), error=f"{exc}\n{traceback.format_exc(limit=3)}")
     except OSError as exc:
         if exc.errno == errno.EFBIG:
             update_state(key, status="failed", finished_at=utcnow(), error=json.dumps({

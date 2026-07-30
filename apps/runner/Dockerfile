@@ -17,13 +17,14 @@ RUN git config --system --add safe.directory '*'
 ENV MAMBA_ROOT_PREFIX=/opt/conda
 RUN micromamba create --yes --channel conda-forge --prefix /opt/conda/envs/research-os python=3.12 pip \
     && micromamba clean --all --yes
+RUN mkdir -p /workspace/artifacts /workspace/projects \
+    && chown -R runner:runner /workspace /opt/conda
 WORKDIR /app
 COPY apps/runner/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-COPY apps/runner/app ./app
-COPY apps/runner/tests ./tests
-COPY apps/api/app/reproducibility.py ./reproducibility.py
-RUN mkdir -p /workspace/artifacts /workspace/projects && chown -R runner:runner /app /workspace /opt/conda
+COPY --chown=runner:runner apps/runner/app ./app
+COPY --chown=runner:runner apps/runner/tests ./tests
+COPY --chown=runner:runner apps/api/app/reproducibility.py ./reproducibility.py
 USER runner
 EXPOSE 8010
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010"]

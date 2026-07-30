@@ -24,6 +24,16 @@ class JobTemplate:
 
 
 TASK_TEMPLATES = {
+    "topic_specific": JobTemplate(
+        task_id="topic_specific.v1",
+        allowed_config=frozenset({"project_slug"}),
+        max_runtime_seconds=1800,
+        memory_mb=4096,
+        pid_limit=128,
+        disk_mb=2048,
+        network_policy="internal-mlflow-only",
+        runtime="python",
+    ),
     "demo_classification": JobTemplate(
         task_id="demo_classification.v1",
         allowed_config=frozenset({"project_slug", "n_samples", "n_features", "delay_seconds"}),

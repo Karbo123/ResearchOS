@@ -11,6 +11,13 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, mod
 from .reproducibility import ReproducibilityContract
 
 
+TOPIC_PLAN_FIELDS = {
+    "schema_version", "plan_type", "project_id", "idea_version", "research_question", "objective",
+    "source_evidence_ids", "policy_ids", "data_sources", "baselines", "metrics", "ablations",
+    "statistical_tests", "random_seeds", "resource_budget", "risks", "success_criteria",
+}
+
+
 class RiskLevel(str, Enum):
     low = "low"
     medium = "medium"
@@ -192,9 +199,11 @@ class ExperimentRequest(BaseModel):
 
     project_id: UUID
     proposal_id: UUID
-    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
+    experiment_type: Literal["topic_specific", "demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[int] = Field(default_factory=lambda: [13, 37, 73], min_length=1, max_length=10)
+    topic_plan: dict[str, Any] | None = None
+    topic_resume: dict[str, Any] | None = None
 
     @field_validator("config")
     @classmethod
@@ -207,6 +216,7 @@ class ExperimentRequest(BaseModel):
     @model_validator(mode="after")
     def validate_allowlisted_config(self):
         allowed = {
+            "topic_specific": set(),
             "demo_classification": {"n_samples", "n_features", "delay_seconds"},
             "point_cloud_demo": {"delay_seconds"},
             "compile_latex": {"delay_seconds"},
@@ -218,6 +228,15 @@ class ExperimentRequest(BaseModel):
         unknown = set(self.config) - allowed
         if unknown:
             raise ValueError(f"config contains unsupported fields: {sorted(unknown)}")
+        if self.experiment_type == "topic_specific":
+            if not isinstance(self.topic_plan, dict) or not self.topic_plan:
+                raise ValueError("topic_specific execution requires a structured topic_plan")
+            if set(self.topic_plan) != TOPIC_PLAN_FIELDS or self.topic_plan.get("plan_type") != "topic_specific":
+                raise ValueError("topic_plan does not match the strict topic-specific plan schema")
+            if self.topic_resume is not None and not isinstance(self.topic_resume, dict):
+                raise ValueError("topic_resume must be an object when supplied")
+        elif self.topic_plan is not None or self.topic_resume is not None:
+            raise ValueError("topic_plan and topic_resume are only valid for topic_specific execution")
         delay = self.config.get("delay_seconds", 0)
         if not isinstance(delay, (int, float)) or isinstance(delay, bool) or not 0 <= delay <= 10:
             raise ValueError("delay_seconds must be between 0 and 10")
@@ -343,10 +362,12 @@ class RunnerSubmitRequest(BaseModel):
 
     run_id: UUID
     project_id: UUID
-    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
+    experiment_type: Literal["topic_specific", "demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[int]
     reproducibility: ReproducibilityContract
+    topic_plan: dict[str, Any] | None = None
+    topic_resume: dict[str, Any] | None = None
 
 
 class ArtifactInfo(BaseModel):

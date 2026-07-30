@@ -1183,6 +1183,10 @@ def generate_experiment_plan(project_id: UUID):
     } for item in policy_records]
     proposal_payload = {
         "plan_type": "topic_specific",
+        "experiment_type": "topic_specific",
+        "config": {},
+        "random_seeds": plan.random_seeds,
+        "topic_plan": plan_json,
         "plan": plan_json,
         "project_id": str(project_id),
         "idea_version": current_idea_version,
@@ -1191,6 +1195,12 @@ def generate_experiment_plan(project_id: UUID):
         "policy_fingerprint": fingerprint(policy_records_json),
         "policy_snapshot": policy_snapshot,
         "execution_status": "awaiting_topic_specific_runner",
+        "execution_contract": {
+            "entrypoint": "experiment/main.py",
+            "metrics_file": "metrics.json",
+            "checkpoint_file": "checkpoint.json",
+            "no_model_commands": True,
+        },
     }
     impact = {
         "idea_version": current_idea_version,
@@ -1332,6 +1342,8 @@ async def _auto_submit_checkpoint_rerun(proposal_id: UUID) -> dict[str, Any]:
                 experiment_type=payload["experiment_type"],
                 config=payload.get("config", {}),
                 random_seeds=payload["random_seeds"],
+                topic_plan=payload.get("topic_plan"),
+                topic_resume=payload.get("topic_resume"),
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise HTTPException(status_code=409, detail={
@@ -1559,11 +1571,24 @@ async def submit_experiment(request: ExperimentRequest):
                     "code": "experiment_plan_stale",
                     "message": "批准的实验计划与当前 Idea、证据或策略快照不一致，不能执行。",
                 })
-            raise HTTPException(status_code=409, detail={
-                "code": "topic_specific_runner_not_implemented",
-                "message": "当前 Runner 尚未提供该主题专属计划的执行模板；系统不会改用无关演示实验或其他路径。",
-                "plan_status": "approved_and_revalidated",
-            })
+            expected_topic_payload = {
+                "experiment_type": "topic_specific",
+                "config": {},
+                "random_seeds": approved_plan.random_seeds,
+                "topic_plan": approved_plan.model_dump(mode="json"),
+            }
+            requested_topic_payload = {
+                "experiment_type": request.experiment_type,
+                "config": request.config,
+                "random_seeds": request.random_seeds,
+                "topic_plan": request.topic_plan,
+            }
+            if requested_topic_payload != expected_topic_payload or request.topic_resume is not None:
+                raise HTTPException(status_code=409, detail={
+                    "code": "topic_plan_payload_mismatch",
+                    "message": "主题实验提交必须精确匹配已批准的结构化计划；初次执行不能携带检查点恢复状态。",
+                    "expected": expected_topic_payload,
+                })
         constraints = load_policy_constraints(session, request.project_id)
         violations = experiment_policy_violations(
             constraints,
@@ -1583,11 +1608,15 @@ async def submit_experiment(request: ExperimentRequest):
             "experiment_type": request.experiment_type,
             "config": request.config,
             "random_seeds": request.random_seeds,
+            "topic_plan": request.topic_plan,
+            "topic_resume": request.topic_resume,
         }
         expected_payload = {
             "experiment_type": approved_payload.get("experiment_type"),
             "config": approved_payload.get("config", {}),
             "random_seeds": approved_payload.get("random_seeds", [13]),
+            "topic_plan": approved_payload.get("topic_plan"),
+            "topic_resume": approved_payload.get("topic_resume"),
         }
         if requested_payload != expected_payload:
             raise HTTPException(409, detail={
@@ -1620,6 +1649,10 @@ async def submit_experiment(request: ExperimentRequest):
         ]
     effective_config = dict(request.config)
     effective_config["project_slug"] = project_slug
+    if request.experiment_type == "topic_specific":
+        effective_config["_topic_plan"] = request.topic_plan
+        if request.topic_resume is not None:
+            effective_config["_topic_resume"] = request.topic_resume
     run_id = uuid.uuid4()
 
     try:
@@ -1654,6 +1687,9 @@ async def submit_experiment(request: ExperimentRequest):
         }) from exc
 
     contract = snapshot["contract"]
+    runner_config = dict(effective_config)
+    runner_config.pop("_topic_plan", None)
+    runner_config.pop("_topic_resume", None)
     with session_scope() as session:
         project = require_active_project(session, request.project_id, "recording experiment snapshot")
         proposal = session.get(Proposal, request.proposal_id)
@@ -1739,8 +1775,10 @@ async def submit_experiment(request: ExperimentRequest):
         })
     payload = {
         "run_id": str(run_id), "project_id": str(request.project_id),
-        "experiment_type": request.experiment_type, "config": effective_config,
+        "experiment_type": request.experiment_type, "config": runner_config,
         "random_seeds": request.random_seeds,
+        "topic_plan": request.topic_plan,
+        "topic_resume": request.topic_resume,
         "reproducibility": contract,
         "policy_constraints": {
             "minimum_random_seed_count": constraints.minimum_random_seed_count,
@@ -1834,6 +1872,11 @@ async def sync_experiment(run_id: UUID):
                         upstream_id=upstream_id,
                     ))
         project = session.get(Project, experiment.project_id)
+        topic_checkpoint = next(
+            (item.metadata.get("topic_checkpoint") for item in status.artifacts
+             if item.kind == "topic_checkpoint" and isinstance(item.metadata.get("topic_checkpoint"), dict)),
+            None,
+        )
         if status.status == "succeeded" and project.status == "active":
             project.current_stage = "results_review"
             prior = session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id, Checkpoint.stage == "experiment_succeeded")).all()
@@ -1845,7 +1888,10 @@ async def sync_experiment(run_id: UUID):
                     idea_version=project.current_idea_version,
                     git_commit=metadata.get("git_commit"),
                     data_version=metadata.get("data_version"),
-                    state={"run_id": str(run_id), "mlflow_run_id": status.mlflow_run_id, "metrics": status.metrics},
+                    state={
+                        "run_id": str(run_id), "mlflow_run_id": status.mlflow_run_id,
+                        "metrics": status.metrics, **({"topic_checkpoint": topic_checkpoint} if topic_checkpoint else {}),
+                    },
                 ))
         elif status.status == "failed" and project.status == "active":
             project.current_stage = "experiment_failed"
@@ -1857,7 +1903,10 @@ async def sync_experiment(run_id: UUID):
                     idea_version=project.current_idea_version,
                     git_commit=(experiment.config or {}).get("_reproducibility", {}).get("project_git_commit"),
                     data_version=(experiment.config or {}).get("_reproducibility", {}).get("data_version"),
-                    state={"run_id": str(run_id), "error": status.error, "metrics": status.metrics},
+                    state={
+                        "run_id": str(run_id), "error": status.error, "metrics": status.metrics,
+                        **({"topic_checkpoint": topic_checkpoint} if topic_checkpoint else {}),
+                    },
                 ))
         audit(session, "experiment.synced", experiment.project_id, {"run_id": str(run_id), "status": status.status})
         return status

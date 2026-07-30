@@ -8,6 +8,25 @@ from app import main as api_main
 from app.checkpoint_recovery import CheckpointRecoveryError, build_rerun_payload, validate_rerun_payload
 
 
+def topic_plan(project_id):
+    evidence_id = uuid4()
+    return {
+        "schema_version": "1.0", "plan_type": "topic_specific", "project_id": str(project_id),
+        "idea_version": 1, "research_question": "How does the approved method affect the target outcome?",
+        "objective": "Evaluate the approved topic-specific method with reproducible measurements.",
+        "source_evidence_ids": [str(evidence_id)], "policy_ids": [],
+        "data_sources": [{"name": "dataset", "purpose": "evaluation input", "access_and_provenance": "approved local source", "split_and_preprocessing": "fixed split"}],
+        "baselines": [{"name": "baseline", "rationale": "direct comparison", "implementation_scope": "same data", "comparison": "same metrics", "basis_evidence_ids": [str(evidence_id)]}],
+        "metrics": [{"name": "score", "definition": "primary evaluation score", "primary": True, "aggregation": "mean", "basis_evidence_ids": [str(evidence_id)]}],
+        "ablations": [{"component": "approved component", "removed_or_changed": "remove it", "rationale": "test contribution", "expected_signal": "score changes", "basis_evidence_ids": [str(evidence_id)]}],
+        "statistical_tests": [{"name": "paired test", "comparison": "method vs baseline", "null_hypothesis": "no difference", "alpha": 0.05, "multiple_comparison_correction": "none", "basis_evidence_ids": [str(evidence_id)]}],
+        "random_seeds": [13, 37, 73],
+        "resource_budget": {"compute_environment": "fixed runner", "max_runtime_hours": 1, "max_gpu_hours": 0, "memory_gb": 4, "budget_usd": 0, "assumptions": []},
+        "risks": [{"risk": "data shift", "mitigation": "record split", "detection": "compare validation", "stop_condition": "missing data", "basis_evidence_ids": [str(evidence_id)]}],
+        "success_criteria": [{"criterion": "produce the primary metric", "metric": "score", "target_or_decision_rule": "report without scientific overclaim", "basis_evidence_ids": [str(evidence_id)]}],
+    }
+
+
 def test_checkpoint_rerun_preserves_only_original_allowlisted_request():
     checkpoint_id = uuid4()
     experiment_id = uuid4()
@@ -39,7 +58,7 @@ def test_checkpoint_rerun_preserves_only_original_allowlisted_request():
         ({"checkpoint_stage": "project_paused"}, "checkpoint_not_rerunnable"),
         ({"experiment_status": "running"}, "experiment_not_terminal"),
         ({"checkpoint_state": {"run_id": str(uuid4())}}, "checkpoint_experiment_mismatch"),
-        ({"experiment_type": "topic_specific"}, "experiment_type_not_rerunnable"),
+        ({"experiment_type": "topic_specific"}, "topic_plan_missing"),
         ({"experiment_config": {}}, "checkpoint_random_seeds_missing"),
     ],
 )
@@ -76,6 +95,25 @@ def test_checkpoint_rerun_rejects_tampered_proposal_payload():
     with pytest.raises(CheckpointRecoveryError) as error:
         validate_rerun_payload(proposal_payload=payload, **source)
     assert error.value.code == "checkpoint_rerun_payload_mismatch"
+
+
+def test_topic_checkpoint_rerun_preserves_plan_and_fixed_resume_context():
+    experiment_id = str(uuid4())
+    plan = topic_plan(uuid4())
+    source = {
+        "checkpoint_id": str(uuid4()),
+        "checkpoint_stage": "experiment_succeeded",
+        "checkpoint_state": {"run_id": experiment_id, "topic_checkpoint": {"schema_version": "1.0", "name": "epoch-1", "state": {"step": 1}}},
+        "experiment_id": experiment_id,
+        "experiment_status": "succeeded",
+        "experiment_type": "topic_specific",
+        "experiment_config": {"_random_seeds": [13, 37, 73], "_topic_plan": plan},
+    }
+    payload = build_rerun_payload(**source)
+    assert payload["config"] == {}
+    assert payload["topic_plan"] == plan
+    assert payload["topic_resume"]["checkpoint_id"] == source["checkpoint_id"]
+    assert payload["rerun_mode"] == "topic_specific_fixed_entrypoint_resume"
 
 
 def test_approved_checkpoint_rerun_uses_the_normal_submission_chain(monkeypatch):

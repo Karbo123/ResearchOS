@@ -8,6 +8,7 @@ from typing import Any
 TERMINAL_RERUN_STATUSES = {"succeeded", "failed", "cancelled"}
 RERUN_CHECKPOINT_STAGES = {"experiment_succeeded", "experiment_failed"}
 RERUN_CONFIG_FIELDS = {
+    "topic_specific": set(),
     "demo_classification": {"n_samples", "n_features", "delay_seconds"},
     "point_cloud_demo": {"delay_seconds"},
     "compile_latex": {"delay_seconds"},
@@ -16,6 +17,12 @@ RERUN_CONFIG_FIELDS = {
     "gpu_python": {"entrypoint", "delay_seconds"},
     "conda_python": {"entrypoint", "delay_seconds"},
 }
+TOPIC_PLAN_FIELDS = {
+    "schema_version", "plan_type", "project_id", "idea_version", "research_question", "objective",
+    "source_evidence_ids", "policy_ids", "data_sources", "baselines", "metrics", "ablations",
+    "statistical_tests", "random_seeds", "resource_budget", "risks", "success_criteria",
+}
+FORBIDDEN_TOPIC_KEYS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image", "environment", "dependencies"}
 
 
 class CheckpointRecoveryError(ValueError):
@@ -26,6 +33,30 @@ class CheckpointRecoveryError(ValueError):
 
     def as_dict(self) -> dict[str, str]:
         return {"code": self.code, "message": self.message}
+
+
+def _validate_topic_tree(value: Any, *, depth: int = 0) -> None:
+    if depth > 8:
+        raise CheckpointRecoveryError("topic_checkpoint_invalid", "主题计划或检查点嵌套层级超过固定上限。")
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if not isinstance(key, str) or key.lower() in FORBIDDEN_TOPIC_KEYS:
+                raise CheckpointRecoveryError("topic_checkpoint_invalid", "主题计划或检查点包含禁止的执行字段。")
+            _validate_topic_tree(child, depth=depth + 1)
+    elif isinstance(value, list):
+        for child in value:
+            _validate_topic_tree(child, depth=depth + 1)
+    elif not isinstance(value, (str, int, float, bool)) and value is not None:
+        raise CheckpointRecoveryError("topic_checkpoint_invalid", "主题计划或检查点只能包含 JSON 标量、数组和对象。")
+
+
+def _validate_topic_plan(plan: Any) -> dict[str, Any]:
+    if not isinstance(plan, dict) or set(plan) != TOPIC_PLAN_FIELDS or plan.get("plan_type") != "topic_specific":
+        raise CheckpointRecoveryError("topic_plan_missing", "源主题实验没有可验证的结构化计划，不能恢复。")
+    if len(str(plan).encode("utf-8")) > 256 * 1024:
+        raise CheckpointRecoveryError("topic_plan_too_large", "主题计划超过固定大小上限。")
+    _validate_topic_tree(plan)
+    return plan
 
 
 def build_rerun_payload(
@@ -82,6 +113,27 @@ def build_rerun_payload(
             "checkpoint_random_seeds_missing",
             "源实验没有持久化随机种子，不能安全重建原始运行请求。",
         )
+    if experiment_type == "topic_specific":
+        plan = _validate_topic_plan(config.get("_topic_plan"))
+        resume = {
+            "checkpoint_id": str(checkpoint_id),
+            "source_experiment_id": str(experiment_id),
+            "checkpoint_stage": checkpoint_stage,
+            "state": state,
+        }
+        _validate_topic_tree(resume)
+        if len(str(resume).encode("utf-8")) > 128 * 1024:
+            raise CheckpointRecoveryError("topic_checkpoint_too_large", "主题检查点恢复状态超过固定大小上限。")
+        return {
+            "checkpoint_id": str(checkpoint_id),
+            "source_experiment_id": str(experiment_id),
+            "experiment_type": experiment_type,
+            "config": {},
+            "random_seeds": random_seeds,
+            "topic_plan": plan,
+            "topic_resume": resume,
+            "rerun_mode": "topic_specific_fixed_entrypoint_resume",
+        }
     sanitized_config = {key: config[key] for key in allowed if key in config}
     return {
         "checkpoint_id": str(checkpoint_id),

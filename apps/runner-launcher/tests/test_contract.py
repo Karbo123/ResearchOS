@@ -48,7 +48,7 @@ class LauncherContractTests(unittest.TestCase):
         self.assertEqual(context.exception.status_code, 401)
 
     def test_template_limits_are_fixed_and_positive(self):
-        self.assertTrue({"demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}.issubset(TEMPLATE_LIMITS))
+        self.assertTrue({"topic_specific", "demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}.issubset(TEMPLATE_LIMITS))
         self.assertTrue(all(item["cpu"] > 0 and item["memory"] > 0 and item["pids"] > 0 for item in TEMPLATE_LIMITS.values()))
         self.assertTrue(TEMPLATE_LIMITS["gpu_python"]["gpu"])
 

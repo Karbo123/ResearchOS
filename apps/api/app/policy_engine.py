@@ -151,7 +151,7 @@ def experiment_policy_violations(
     estimated_cost_usd: float = 0,
 ) -> list[dict[str, Any]]:
     violations = list(constraints.unsupported_constraints)
-    if experiment_type in {"demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
+    if experiment_type in {"topic_specific", "demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
         distinct_seed_count = len(set(random_seeds))
         if distinct_seed_count < constraints.minimum_random_seed_count:
             violations.append({

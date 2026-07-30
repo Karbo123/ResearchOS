@@ -55,6 +55,7 @@ PostgreSQL 是业务状态源；聊天记录不是唯一记忆。代码、配置
 - 新项目聊天的 `clarification_mode` 只能是 `automatic|detailed`，默认 `automatic`。全自动模式尽量推断可逆信息并只询问阻碍规格或执行的少量关键问题；详细模式基于当前缺口扩大了解范围，但仍不得采用固定问题顺序、重复询问或臆造关键事实。实际模式必须写入用户和助手消息 metadata。
 - `tests/idea-cases/` 是所有自动化 Idea/研究对话测试输入的唯一来源。测试脚本只能通过 `scripts/idea_case_loader.py` 按公开 case ID 读取 UTF-8 JSON；禁止在测试代码、命令行参数、fixture 或运行时生成器中隐藏、硬编码或临时增添 Idea。新增/修改测试必须提交独立 case 文件并通过 `python scripts/check_idea_case_sources.py`。
 - LLM 调用失败必须返回结构化 API 错误；不得切换 provider，不得生成规则/关键词回复、静默继续或写入伪造助手消息。当前只支持 `RESEARCH_LLM_PROVIDER=openai`，变更提供方必须作为代码/配置变更审查，不能在请求失败时动态切换。
+- 主题专属实验只能执行项目 Git 工作区内固定的 `experiment/main.py`；计划只能通过结构化 JSON 输入文件传递，Runner 必须要求数值 `metrics.json` 和结构化 `checkpoint.json`，不得把模型文本转换为命令、路径、依赖、镜像或网络参数。
 - Idea 变更必须创建新版本并记录影响；不得静默覆盖旧 Idea 或继续使用已失效结果。
 
 ## 实现规则
