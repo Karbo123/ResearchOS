@@ -176,6 +176,8 @@ class PaperRecord(BaseModel):
     verified: bool = False
     evidence: list[dict[str, Any]] = Field(default_factory=list)
     code_repositories: list[dict[str, Any]] = Field(default_factory=list)
+    resource_type: Literal["paper", "code", "dataset", "model", "web_page"] = "paper"
+    compliance: dict[str, Any] = Field(default_factory=dict)
 
 
 class ChangeProposalRequest(BaseModel):

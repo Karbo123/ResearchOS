@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-18 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-19 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -37,7 +37,7 @@
 - 从自然语言 Idea 和自适应 AI 多轮澄清开始：自动识别明显上下文、公开假设，不使用固定问卷。默认开启的**全自动模式**尽量少问；关闭开关后进入**详细模式**，更全面但仍自适应地了解需求。
 - 在创建项目之前拦截信息不足或明显不可行的 Idea。
 - 将 Idea、策略、审批、检查点、任务、实验、证据和产物持久化到 PostgreSQL；聊天记录不是唯一状态源。
-- 通过 Crossref、OpenAlex、Semantic Scholar、arXiv 和 DBLP 检索，保存 DOI/BibTeX 以及提供方错误。
+- 通过 Crossref、OpenAlex、Semantic Scholar、arXiv 和 DBLP 检索，保存 DOI/BibTeX、GitLab/Hugging Face/网页候选、提供方错误及合规元数据。
 - 明确区分 `metadata-only` 候选和带 PDF 哈希、页码/章节、原文 quote 与来源 URL 的 `fulltext-evidence`。
 - 高成本实验、代码/配置/LaTeX 修改、安装依赖、覆盖/删除及对外发布必须先生成方案并得到明确审批。
 - 以非 root、资源受限 Runner 执行少量白名单实验，通过自托管 MLflow 与 MinIO 记录指标和产物。
@@ -77,7 +77,7 @@ flowchart LR
     API --> R["Runner\n白名单异步作业"]
     R --> ML["MLflow"]
     ML --> MI[("MinIO\n大文件产物")]
-    API --> S["学术检索\nCrossref/OpenAlex/S2/arXiv/DBLP"]
+    API --> S["学术检索\nCrossref/OpenAlex/S2/arXiv/DBLP/GitLab/HF/网页"]
     API --> B["配置的模型 API\nAPI 容器直连"]
     B --> C[".env 提供方/模型覆盖\nLuna low / Terra medium / Sol high"]
 ```
@@ -94,7 +94,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | --- | --- | --- |
 | Idea 对话与澄清 | **已实现（自适应 MVP）** | 全草稿 AI 分析、默认全自动/可选详细模式、假设/风险记录、Luna/Terra/Sol 成本路由、可见等待状态、严格 Schema 和结构化模型错误。模型调用失败不会切换提供方，也不会生成规则回复。 |
 | 项目初始化 | **已实现** | UUID、Git 工作区、目录、Idea v1、PostgreSQL 状态、检查点和 n8n 触发。 |
-| 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub/GitLab 先作为候选，经过论文记录、仓库引用、许可证和固定 commit 交叉核验后才能申请下载。 |
+| 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX，以及 GitLab、Hugging Face 数据集/模型和 DuckDuckGo 网页结果候选。结果保存限流快照、条款链接和 robots 状态；代码、数据集、模型和网页结果均需人工核验。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
 | Idea 专属实验规划 | **已实现（需审批）** | API 使用当前 ProjectSpec、页码级全文证据和生效策略快照，生成包含数据源、基线、指标、消融、统计检验、种子、预算、风险和成功标准的严格主题专属计划 Proposal。 |
 | 人工监督 | **已实现（MVP）** | 对解释/建议、Idea/策略变更、状态和审批请求使用严格模型意图分类；只有具体 Idea/策略变更会创建审批 Proposal，暂停/恢复/取消及批准/驳回不会从聊天直接执行。 |

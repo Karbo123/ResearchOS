@@ -24,14 +24,16 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，继续 P2-QUEUE-020、P1-PAPER-016、P1-UPLOAD-009；完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，继续 P2-SEARCH-018；继续 P2-QUEUE-020、P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+
+本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，前端文献页显示候选合规摘要。定向测试 apps/api/tests/test_search.py 为 4 passed；node 前端语法、聊天 UX 5 passed、Compose/JSON/文档同步、Idea case 和 git diff --check 通过。API 容器全量测试与真实浏览器检查待 Docker Desktop Linux 引擎恢复后执行，任务保持进行中。
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进持久队列、论文语义/编译验收、受限图片视觉输入与大规模材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P2-SEARCH-018`、`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进合规检索、持久队列、论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -187,7 +189,9 @@
   - 已完成部分：`installer/windows/` 已包含 bootstrap、Inno Setup、构建脚本和说明；`.github/workflows/installer-release.yml` 可在 `v*` tag 的 Windows runner 生成 EXE、SHA-256 和草稿 Release；尚未形成可发布二进制。
   - 剩余工作：本机缺 Inno Setup 且 GitHub CLI token 已失效，需在具备编译器和有效 GitHub 权限的 release 机器生成正式 EXE；完成代码签名、Docker Desktop 下载/许可边界复核，以及无 n8n 的干净 VM 安装、重启、升级、保留数据卸载与全删除卸载测试。
 
-- [ ] `P2-SEARCH-018` 增加 GitLab、数据集/模型注册表和合规网页检索，并统一限流、robots.txt 与条款记录。
+- [~] `P2-SEARCH-018` 增加 GitLab、数据集/模型注册表和合规网页检索，并统一限流、robots.txt 与条款记录。
+  - 当前范围：为每个外部提供方使用固定 HTTPS 主机、合法 User-Agent、并发安全限流和超时；GitLab、Hugging Face 数据集/模型注册表和明确允许的网页检索结果只保留候选元数据；robots.txt 与条款/许可状态作为合规记录返回，任何失败只进入 `provider_errors`，不伪造结果。
+  - 完成标准：结构化结果包含提供方、资源类型、robots/terms 状态和限流信息；GitLab、数据集/模型注册表、网页合规检查有定向测试；双语 README、需求审计、安全/运维、Schema、工具契约和 TODO 同步。
 - [ ] `P2-TRACKING-019` 按部署需求评估自托管 W&B/TensorBoard；不能削弱现有离线 MLflow 路径。
 - [~] `P2-QUEUE-020` 为长任务增加持久队列、租约、重试退避、幂等键和崩溃恢复。
   - 本轮范围：将研究启动任务从 FastAPI `BackgroundTasks` 移到独立 `queue-worker` 容器；Task 持久化幂等键、最大尝试次数、下一次执行时间、租约截止时间和 lease token。worker 使用 PostgreSQL `FOR UPDATE SKIP LOCKED` 领取任务，租约过期可恢复，失败按固定指数退避并在上限后结构化终止；项目暂停/取消仍是后端闸门。

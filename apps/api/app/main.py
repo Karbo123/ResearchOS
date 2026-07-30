@@ -924,7 +924,7 @@ async def run_search(request: SearchRequest):
         spec = ProjectSpec.model_validate(idea.spec)
         query = request.query or " ".join(spec.idea.keywords[:8]) or spec.idea.research_question[:300]
     try:
-        records, provider_errors = await search_literature(query, request.limit)
+        records, provider_errors, resource_candidates = await search_literature(query, request.limit)
     except httpx.HTTPError as exc:
         raise HTTPException(502, f"literature provider failed: {exc}") from exc
     with session_scope() as session:
@@ -956,13 +956,18 @@ async def run_search(request: SearchRequest):
                 ))
             stored.append(str(paper.id))
         project.current_stage = "literature_review"
-        audit(session, "literature.searched", project.id, {"query": query, "new_records": len(stored), "provider_errors": provider_errors})
+        audit(session, "literature.searched", project.id, {
+            "query": query, "new_records": len(stored),
+            "resource_candidates": len(resource_candidates),
+            "provider_errors": provider_errors,
+        })
         return {
             "query": query,
             "new_records": len(stored),
             "paper_ids": stored,
+            "resource_candidates": resource_candidates,
             "provider_errors": provider_errors,
-            "note": "GitHub matches are candidates until repository ownership is manually verified.",
+            "note": "Code, dataset, model, and web matches are candidates until their source, license, terms, robots status, and ownership are manually verified.",
         }
 
 

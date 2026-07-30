@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-18 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-19 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -27,7 +27,7 @@ Research projects usually lose context between a chat, a paper spreadsheet, an e
 - Start with a natural-language idea and an adaptive AI clarification loop that infers obvious context, exposes assumptions, and avoids a fixed questionnaire. Default-on **Automatic mode** asks as little as possible; turning it off selects **Detailed mode** for broader, still-adaptive discovery.
 - Refuse incomplete or clearly infeasible ideas before project creation.
 - Persist ideas, policies, approvals, checkpoints, tasks, experiments, evidence, and artifacts in PostgreSQL; chat is not the source of truth.
-- Search Crossref, OpenAlex, Semantic Scholar, arXiv, and DBLP with DOI/BibTeX records and provider-error tracking.
+- Search Crossref, OpenAlex, Semantic Scholar, arXiv, and DBLP with DOI/BibTeX records, GitLab/Hugging Face/web candidates, provider-error tracking, and compliance metadata.
 - Distinguish `metadata-only` candidates from `fulltext-evidence` records with PDF hash, page/section locator, quote, and source URL.
 - Require a proposal and explicit approval before expensive experiments, code/config/LaTeX changes, dependency installation, overwrite/delete, or external publication.
 - Run a small allowlisted experiment set as a non-root, resource-limited Runner and record metrics in self-hosted MLflow with MinIO artifacts.
@@ -67,7 +67,7 @@ flowchart LR
     API --> R["Runner\nallowlisted async jobs"]
     R --> ML["MLflow"]
     ML --> MI[("MinIO\nartifacts")]
-    API --> S["Academic search\nCrossref/OpenAlex/S2/arXiv/DBLP"]
+    API --> S["Academic search\nCrossref/OpenAlex/S2/arXiv/DBLP/GitLab/HF/web"]
     API --> B["Configured model APIs\nfrom API container"]
     B --> C[".env provider/model overrides\nLuna low / Terra medium / Sol high"]
 ```
@@ -82,7 +82,7 @@ Runner isolation uses a fresh non-root job container for each Run. The `runner-l
 | --- | --- | --- |
 | Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, and structured model errors. Failed model calls do not switch providers or generate rule-based replies. |
 | Project initialization | **Implemented** | UUID, Git workspace, directories, Idea v1, PostgreSQL records, checkpoints, n8n trigger. |
-| Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX; GitHub is a candidate source only. |
+| Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX, GitLab, Hugging Face datasets/models, and DuckDuckGo web-result candidates. Results expose provider rate-limit snapshots and terms/robots status; all code, dataset, model, and web results remain unverified candidates. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
 | Idea-specific experiment planning | **Implemented (approval-gated)** | The API uses the current ProjectSpec, verified page-level evidence, and active policy snapshot to generate a strict topic-specific plan Proposal with datasets, baselines, metrics, ablations, statistical tests, seeds, budget, risks, and success criteria; an approved plan can execute through the fixed project entrypoint contract. |
 | Human supervision | **Implemented (MVP)** | Strict model-backed supervision intent classification for explanation/advice, Idea/policy changes, state, and approval requests; only concrete Idea/policy changes create approval Proposals, while pause/resume/cancel and approval/rejection intents never execute directly from chat. |

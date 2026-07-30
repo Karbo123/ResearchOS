@@ -8,7 +8,7 @@ flowchart LR
   API --> PG["PostgreSQL\nsource of truth"]
   API --> GIT["Per-project Git repository"]
   API --> SNAP["Reproducibility snapshot\ncontrolled artifacts"]
-  API --> EXT["Crossref / OpenAlex / S2 / arXiv / DBLP / DOI / GitHub APIs"]
+  API --> EXT["Crossref / OpenAlex / S2 / arXiv / DBLP / DOI / GitHub / GitLab / HF / web"]
   API --> MODEL["Configured OpenAI-compatible model APIs"]
   API -->|"approved allowlisted request"| RUN["Restricted Runner"]
   RUN --> MLF["MLflow tracking"]
@@ -20,6 +20,8 @@ flowchart LR
 ```
 
 PostgreSQL 是状态源，聊天历史不是。核心依赖链为：
+
+检索是元数据发现层，不是全文证据核验。论文提供方、GitHub/GitLab、Hugging Face 数据集/模型和网页结果分别记录 provider_errors、提供方限流快照、条款链接和 robots 状态。API 结果的 robots 状态为 not_applicable_api；网页候选只保留搜索摘要，robots 状态为 deferred_until_fetch，后续正文访问必须先检查 robots.txt。所有代码、数据集、模型和网页结果仍是未核验候选，不能直接成为事实性证据或官方实现。
 
 ## 自适应 Idea 澄清
 

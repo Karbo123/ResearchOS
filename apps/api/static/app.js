@@ -2,7 +2,7 @@ const chatUX = window.ResearchChatUX;
 const CHAT_REQUEST_TIMEOUT_MS = 300000;
 const chatGate = chatUX.createBusyGate();
 const projectChatGate = chatUX.createBusyGate();
-const state = { sessionId: null, projectId: null, project: null, queuedFiles: [], activeTab: "overview", chatBusy: false, projectChatBusy: false, clarificationMode: "automatic", settingsDirty: false };
+const state = { sessionId: null, projectId: null, project: null, searchCandidates: [], queuedFiles: [], activeTab: "overview", chatBusy: false, projectChatBusy: false, clarificationMode: "automatic", settingsDirty: false };
 const $ = (id) => document.getElementById(id);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
@@ -347,6 +347,7 @@ async function loadProjects() {
   } catch (error) { toast(error.message); }
 }
 async function openProject(id) {
+  if (state.projectId !== id) state.searchCandidates = [];
   state.projectId = id; state.project = await api(`/api/projects/${id}`);
   $("newView").classList.add("hidden"); $("projectView").classList.remove("hidden");
   $("pageTitle").textContent = state.project.project.title; $("projectMeta").textContent = `${state.project.project.stage} · v${state.project.project.idea_version} · ${id.slice(0,8)}`;
@@ -526,7 +527,64 @@ function renderProject() {
   renderCheckpointActions(d, executionDisabled);
   renderRerunProposalActions(d, executionDisabled);
   renderRepositoryCandidates(d.repositories, !isActive);
+  renderSearchCandidates();
   loadNovelty();
+}
+function renderSearchCandidates() {
+  const old = $("searchCandidatesPanel");
+  if (old) old.remove();
+  const candidates = state.searchCandidates || [];
+  if (!candidates.length || !$("tab-literature")) return;
+  const panel = document.createElement("section");
+  panel.id = "searchCandidatesPanel";
+  panel.className = "section search-candidates";
+  const heading = document.createElement("div");
+  heading.className = "section-head";
+  heading.innerHTML = '<div><h2>外部资源候选</h2><p class="muted">仅供发现，尚未核验来源、许可、所有权或全文证据。</p></div>';
+  const count = document.createElement("span");
+  count.className = "badge neutral";
+  count.textContent = String(candidates.length) + " 条";
+  heading.appendChild(count);
+  panel.appendChild(heading);
+  const list = document.createElement("div");
+  list.className = "data-list";
+  candidates.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "data-row";
+    const body = document.createElement("div");
+    const link = document.createElement("a");
+    link.href = item.url || "#";
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = item.name || item.title || item.url || "候选资源";
+    const title = document.createElement("h3");
+    title.appendChild(link);
+    const compliance = item.compliance || {};
+    const metadata = document.createElement("p");
+    metadata.textContent = String(item.resource_type || "resource") + " · " + String(item.provider || "unknown") + " · robots " + String(compliance.robots_status || "unknown");
+    if (compliance.terms_url) {
+      const terms = document.createElement("a");
+      terms.href = compliance.terms_url;
+      terms.target = "_blank";
+      terms.rel = "noreferrer";
+      terms.textContent = "查看条款";
+      metadata.append(" · 条款 ", terms);
+    }
+    body.append(title, metadata);
+    if (item.snippet) {
+      const snippet = document.createElement("p");
+      snippet.className = "muted";
+      snippet.textContent = item.snippet;
+      body.appendChild(snippet);
+    }
+    const badge = document.createElement("span");
+    badge.className = "badge pending";
+    badge.textContent = "待核验";
+    row.append(body, badge);
+    list.appendChild(row);
+  });
+  panel.appendChild(list);
+  $("tab-literature").prepend(panel);
 }
 async function loadNovelty() {
   if (!state.projectId || !$("tab-literature")) return;
@@ -540,7 +598,7 @@ async function loadNovelty() {
   } catch (error) { toast(error.message); }
 }
 async function refreshProject() { if (state.projectId) await openProject(state.projectId); else await loadProjects(); }
-async function runSearch() { try { toast("正在并行检索多个学术来源与代码候选…"); const result=await api("/api/search",{method:"POST",body:JSON.stringify({project_id:state.projectId,limit:8})}); await refreshProject(); toast("检索完成；"+result.provider_errors.length+" 个来源暂时失败"); } catch(e){ toast(e.message); } }
+async function runSearch() { try { toast("正在并行检索多个学术来源与资源注册表…"); const result=await api("/api/search",{method:"POST",body:JSON.stringify({project_id:state.projectId,limit:8})}); state.searchCandidates=result.resource_candidates || []; await refreshProject(); toast("检索完成；"+result.provider_errors.length+" 个来源暂时失败，"+state.searchCandidates.length+" 条候选待核验"); } catch(e){ toast(e.message); } }
 async function ingestEvidence() { try { toast("正在下载开放 PDF 并提取页码原文证据…"); const r=await api(`/api/projects/${state.projectId}/evidence/ingest`,{method:"POST",body:JSON.stringify({limit:3})}); await refreshProject(); toast(`已保存 ${r.stored_count} 条全文证据；${r.errors.length} 条失败`); } catch(e){toast(e.message);} }
 async function createCompilePlan() { try { const r=await api(`/api/projects/${state.projectId}/compile-plan`,{method:"POST"}); await refreshProject(); switchTab("approvals"); toast(`编译计划 ${r.proposal_id.slice(0,8)} 待审批`); } catch(e){toast(e.message);} }
 async function createPaperDraft() { try { const r=await api(`/api/projects/${state.projectId}/paper-draft`,{method:"POST"}); await refreshProject(); switchTab("approvals"); toast(`证据论文草稿 Proposal ${r.proposal_id.slice(0,8)} 待审批`); } catch(e){toast(e.message);} }
