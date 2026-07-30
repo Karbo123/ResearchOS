@@ -198,6 +198,64 @@ class ChangeProposalRequest(BaseModel):
         return self
 
 
+class PatchOperationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    action: Literal["create", "replace", "delete"]
+    path: str = Field(min_length=1, max_length=240)
+    content: str | None = Field(default=None, max_length=512 * 1024)
+    expected_sha256: str | None = Field(default=None, pattern=r"^[0-9a-fA-F]{64}$")
+
+    @field_validator("path")
+    @classmethod
+    def safe_relative_path(cls, value: str) -> str:
+        if "\\" in value or value.startswith("/") or "\x00" in value:
+            raise ValueError("patch path must be a relative POSIX path")
+        parts = value.split("/")
+        if not parts or any(part in {"", ".", ".."} for part in parts):
+            raise ValueError("patch path contains an invalid segment")
+        if any(part.lower() in {".git", ".env", ".env.local", "auth.json", "credentials.json"} for part in parts):
+            raise ValueError("patch path targets protected metadata")
+        return value
+
+    @model_validator(mode="after")
+    def operation_contract(self):
+        if self.action in {"create", "replace"} and self.content is None:
+            raise ValueError("create and replace operations require content")
+        if self.action == "delete" and self.content is not None:
+            raise ValueError("delete operations cannot contain content")
+        if self.action in {"replace", "delete"} and not self.expected_sha256:
+            raise ValueError("replace and delete operations require expected_sha256")
+        if self.action == "create" and self.expected_sha256:
+            raise ValueError("create operations cannot contain an existing-file hash")
+        return self
+
+
+class PatchProposalRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    project_id: UUID
+    patch_kind: Literal["code", "config", "latex"]
+    base_git_commit: str = Field(pattern=r"^[0-9a-fA-F]{40}$")
+    reason: str = Field(min_length=5, max_length=2000)
+    summary: str = Field(min_length=5, max_length=2000)
+    operations: list[PatchOperationRequest] = Field(min_length=1, max_length=50)
+
+    @model_validator(mode="after")
+    def unique_paths_and_size(self):
+        if len({item.path for item in self.operations}) != len(self.operations):
+            raise ValueError("each patch path may appear only once")
+        if sum(len((item.content or "").encode("utf-8")) for item in self.operations) > 4 * 1024 * 1024:
+            raise ValueError("patch payload exceeds the aggregate size limit")
+        return self
+
+
+class PatchRollbackRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reason: str = Field(min_length=5, max_length=2000)
+
+
 class ApprovalDecision(BaseModel):
     decision: Literal["approved", "rejected"]
     comment: str | None = Field(default=None, max_length=4000)

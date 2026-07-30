@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-TRACKING-012、P1-REPORT-013；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
+最后更新：2026-07-30（Asia/Shanghai，完成 P1-PATCH-015；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -144,8 +144,9 @@
   - 完成标准：解释、建议、执行变更、长期策略、暂停/恢复/取消、批准/驳回均有 Schema 和歧义测试；任何执行型输出仍需审批。
   - 已完成：已有项目聊天通过容器内配置模型返回严格 `SupervisionIntent`；只有白名单 Idea 字段和值或明确策略规则才创建 Proposal，暂停/恢复/取消/批准/驳回只提示对应闸门，不从聊天直接执行；分类失败直接返回 `llm_*` 结构化错误，不使用关键词或本地回复。
   - 验证结果：Schema `extra=forbid`、模型失败直返、关键词路径静态门禁和 API 全量 `78 passed, 2 skipped` 通过；`docker compose build api`、Compose、文档同步、Idea case、JSON 和 `git diff --check` 已通过。未调用真实模型、外部学术 API 或无关实验。
-- [ ] `P1-PATCH-015` 完成代码/配置/LaTeX patch 的“提案—diff—审批—隔离验证—Git commit—审计”执行器。
+- [x] `P1-PATCH-015` 完成代码/配置/LaTeX patch 的“提案—diff—审批—隔离验证—Git commit—审计”执行器。
   - 完成标准：覆盖冲突、验证失败、回滚、依赖安装、覆盖/删除和对外发布禁用路径。
+  - 验证结果：新增严格结构化文件操作契约和临时隔离验证器；批准后只对干净且仍位于基准 commit 的项目 Git 工作区执行，暂存、写入、验证、冲突和提交失败均恢复原文件并返回结构化错误。回滚通过新的待审批 Proposal 触发并固定使用 `git revert --no-edit`；外部发布保持明确拒绝。API 容器 `96 passed, 2 skipped`，patch 执行器与路由定向测试 `12 passed`，Compose、API `py_compile`、JSON、Idea case、文档同步和 `git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。
 - [ ] `P1-PAPER-016` 实现基于验证证据的完整 LaTeX 论文生成与更新。
   - 依赖：`P0-EVIDENCE-001`、`P0-RELATED-002`、`P0-PLAN-006`。
   - 完成标准：Introduction、Related Work、Method、Experiments、Results、Limitations 和 References 可追踪；编译前必须审批 diff。

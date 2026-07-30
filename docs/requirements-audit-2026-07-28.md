@@ -4,6 +4,8 @@
 
 2026-07-30 影响传播增量：Proposal 创建和审批现在按 `ArtifactDependency` 计算 Idea、策略、代码、数据和产物删除变更的依赖后代，只使受影响的有效产物失效，并记录节点/边影响图、关联实验、检查点和局部重跑候选。影响分析现在使用显式变更类型契约；未知类型、缺少基准 Git/数据版本、缺少删除目标或目标不属于当前项目时直接返回结构化 `impact_*` 错误，不把未知根默认为 `current`。批准变更后，API 会为可安全恢复的终态检查点自动创建待审批 `experiment_rerun` Proposal；Proposal 仅允许成功/失败终态检查点，重建原白名单配置和持久化随机种子，仍需人工批准后才通过匹配的受控实验提交链，失败保留结构化错误。主题专属重跑同样只复用固定入口、原结构化计划和检查点状态，不会改用无关演示实验。
 
+2026-07-30 patch 执行增量：新增结构化代码/配置/LaTeX patch Proposal，绑定项目 Git commit 与文件 SHA-256，生成确定性 diff；批准时复制到临时隔离目录，执行固定 Python/JSON/TOML/LaTeX 校验，再二次核对工作区、写回并提交 Git。暂存、写入、冲突、验证失败和提交失败会恢复原文件并保留结构化错误；成功 patch 可创建新的审批回滚 Proposal，回滚只使用固定 `git revert --no-edit`。外部发布明确禁用。patch 执行器与 API 路由测试 `12 passed`，完整 API 回归 `96 passed, 2 skipped`。
+
 2026-07-30 Artifact 预览增量：新增受限 `/api/artifacts/{artifact_id}/preview`，网页产物页现在可以显示 JSON/文本/CSV/TSV/PDF，以及不执行 HTML 的转义文本；ASCII PLY/PCD 通过固定点数/面片上限、降采样和 Canvas 拖拽旋转/缩放/重置进行预览，并保留下载入口。二进制点云、失效/缺失文件和解析限制直接返回结构化错误。API 容器 `70 passed, 2 skipped`，Node 语法检查、Compose、文档/Idea case 检查、桌面浏览器产物页和模型设置页检查通过；未调用模型、外部学术 API 或无关实验。
 
 2026-07-30 MLflow 追踪增量：Runner 新增固定频率资源采样器，在活跃 MLflow Run 中记录进程/系统 CPU、内存和固定 GPU 数值查询，并将同一数值时间序列保存为受控 `resource-usage.jsonl`。Run 参数显式记录学习率、模型版本、Git/Research OS commit、镜像 digest、数据版本、种子、平台和网络策略；Runner 状态继续记录终态。GPU 不可用时只记录 `gpu_available=0`，不切换执行路径；采样器不记录 Secret、任意环境或命令输出。Runner 容器 `unittest`（9 tests）、不落盘导入/语法验证和镜像重建通过；未调用模型、外部学术 API 或无关实验。
@@ -80,7 +82,7 @@
 | PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
 | 日报/周报与推送 | 已实现（受限范围） | n8n 每日/每周定时生成确定性运营报告并存入 Web UI，覆盖文献/证据/代码候选、实验状态、已报告资源与成本、产物、审计决策和待审批项；可通过默认关闭的 HTTPS webhook 在显式 `notify=true` 请求中推送。未实现特定飞书、Slack、Telegram 或邮件 SDK，缺失的 provider 成本不会被猜测。 |
 | 同一项目对话监督 | 已实现（受限范围） | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；已有项目消息由容器内模型返回严格 `SupervisionIntent`，Idea/策略变更仍需 Proposal 审批，状态/审批意图不从聊天直接执行。模型失败直接返回结构化错误。 |
-| Proposal、diff、审批、审计 | 部分实现 | 实验、Idea 修订、配置和 LaTeX 有两阶段流程；代码补丁、依赖安装、删除、外发只有契约/提案模型，没有完整执行器。 |
+| Proposal、diff、审批、审计 | 已实现（受控范围） | 实验、Idea 修订、策略、代码/配置/LaTeX patch 和依赖安装具有 Proposal/diff/审批/审计路径；patch 执行器只接受结构化文件操作，在临时隔离目录验证后提交 Git，覆盖冲突、失败恢复、覆盖/删除和审批回滚；外部发布明确禁用。更复杂的多文件语义合并和生产级队列仍不属于 MVP。 |
 | 长期项目策略 | 已实现（MVP） | 可通过审批写入 `policies`，不依赖聊天历史；中英文种子、引用证据和高成本/对外审批规则会结构化显示，种子规则在计划、API 提交和 Runner 三处执行。其他自由文本规则仍需扩展解析器。 |
 | Idea 版本、影响分析与局部重跑 | 部分实现 | Idea v2、审计、实体级依赖失效、显式变更类型/根校验、可审阅节点/边影响图和需审批的检查点局部重跑 Proposal 已实现；批准变更会为安全终态检查点自动创建待审批重跑 Proposal，批准后提交匹配的原白名单或主题固定入口并记录失败；复杂语义规则和完整生产级恢复编排仍未完成。 |
 | n8n AI Agent 和高层子工作流工具 | 部分实现 | 3 个激活工作流负责聊天网关、主流程和报告；多数工具是受限 FastAPI 端点，不是独立 n8n 子工作流，也未使用 n8n AI Agent 长循环。 |

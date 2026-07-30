@@ -28,7 +28,10 @@ from .models import (
     Report, RepositoryRecord, Task, UploadedFile,
 )
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
-from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
+from .reproducibility import (
+    GIT_COMMIT_RE, ReproducibilityError, create_reproducibility_snapshot, project_git_commit,
+    validate_git_workspace, validate_snapshot_contract,
+)
 from .llm import (
     LLMRequestError, classify_supervision_intent, clarify_idea_with_llm, generate_experiment_plan_with_llm,
     model_catalog, router_thresholds, select_model_route,
@@ -40,6 +43,10 @@ from .experiment_planning import ExperimentPlanValidationError, fingerprint, val
 from .diagnostics import build_diagnostic_report
 from .impact_analysis import ImpactAnalysisError, analyze_impact, apply_impact
 from .material_parser import MaterialParseError, context_for_materials, parse_material
+from .patch_executor import (
+    PatchExecutionError, build_patch_diff, execute_patch, parse_patch_payload,
+    validate_patch_against_workspace,
+)
 from .malware_scanner import MalwareScanError, scan_file
 from .reporting import ReportNotificationError, build_report_content, send_report_webhook
 from .repository_service import (
@@ -53,7 +60,8 @@ from .policy_engine import (
 from .schemas import (
     ApprovalDecision, ChangeProposalRequest, CheckpointRerunRequest, ChatRequest, ChatResponse, EvidenceIngestRequest, ExperimentPlan,
     ExperimentRequest,
-    ModelSettingsRequest, PolicyUpdate, ProjectCreateRequest, ProjectSpec, ProjectStateRequest, ReportRequest,
+    ModelSettingsRequest, PatchProposalRequest, PatchRollbackRequest, PolicyUpdate, ProjectCreateRequest, ProjectSpec,
+    ProjectStateRequest, ReportRequest,
     RunnerStatus, SearchRequest,
 )
 from .search import search_literature
@@ -1416,6 +1424,136 @@ def generate_experiment_plan(project_id: UUID):
         }
 
 
+@app.post("/api/projects/{project_id}/patch-proposals")
+def create_patch_proposal(project_id: UUID, request: PatchProposalRequest):
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "creating a patch proposal")
+        root = (PROJECTS_ROOT / project.slug).resolve()
+        try:
+            current_commit = project_git_commit(root)
+            validate_git_workspace(root, require_clean=True)
+        except ReproducibilityError as exc:
+            raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+        if current_commit != request.base_git_commit.lower():
+            raise HTTPException(status_code=409, detail={
+                "code": "patch_conflict",
+                "message": "patch 基准 commit 与项目当前 HEAD 不一致。",
+                "expected": request.base_git_commit.lower(),
+                "actual": current_commit,
+            })
+        payload = {
+            "patch_schema_version": "1.0",
+            "patch_kind": request.patch_kind,
+            "base_git_commit": current_commit,
+            "operations": [item.model_dump(mode="json") for item in request.operations],
+        }
+        try:
+            patch = parse_patch_payload(payload)
+            validate_patch_against_workspace(patch, root)
+            diff = build_patch_diff(patch, root)
+        except PatchExecutionError as exc:
+            raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+        impact = project_change_impact(session, project, "code_patch", payload)
+        impact = {
+            **impact,
+            "patch_kind": request.patch_kind,
+            "execution": "isolated_validation_then_git_commit",
+            "external_publish": "disabled",
+        }
+        proposal = Proposal(
+            project_id=project_id,
+            kind="code_patch",
+            reason=request.reason,
+            summary=request.summary,
+            diff=diff,
+            impact=impact,
+            payload=payload,
+        )
+        session.add(proposal)
+        session.flush()
+        audit(session, "patch.proposed", project_id, {
+            "proposal_id": str(proposal.id),
+            "patch_kind": request.patch_kind,
+            "base_git_commit": current_commit,
+            "changed_paths": [item.path for item in request.operations],
+        }, "local-user")
+        return {
+            "proposal_id": str(proposal.id), "status": proposal.status,
+            "kind": proposal.kind, "diff": diff, "impact": impact,
+        }
+
+
+@app.post("/api/proposals/{proposal_id}/rollback")
+def propose_patch_rollback(proposal_id: UUID, request: PatchRollbackRequest):
+    with session_scope() as session:
+        original = session.get(Proposal, proposal_id)
+        if not original or original.kind != "code_patch" or original.status != "approved":
+            raise HTTPException(status_code=409, detail={
+                "code": "patch_rollback_source_invalid",
+                "message": "只有已经执行成功的 code/config/LaTeX patch 才能提出回滚。",
+            })
+        execution = (original.impact or {}).get("patch_execution") or {}
+        commit = str(execution.get("commit") or "").lower()
+        patch_kind = str(execution.get("patch_kind") or "code")
+        if not GIT_COMMIT_RE.fullmatch(commit):
+            raise HTTPException(status_code=409, detail={
+                "code": "patch_commit_missing",
+                "message": "原 patch 没有可验证的 Git 提交，不能回滚。",
+            })
+        project = require_active_project(session, original.project_id, "creating a patch rollback proposal")
+        root = (PROJECTS_ROOT / project.slug).resolve()
+        try:
+            current = project_git_commit(root)
+            validate_git_workspace(root, require_clean=True)
+        except ReproducibilityError as exc:
+            raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+        if current != commit:
+            raise HTTPException(status_code=409, detail={
+                "code": "patch_rollback_conflict",
+                "message": "项目 HEAD 已不再是原 patch 提交，不能盲目回滚。",
+                "expected": commit, "actual": current,
+            })
+        pending = session.scalar(select(Proposal).where(
+            Proposal.project_id == project.id,
+            Proposal.kind == "code_patch",
+            Proposal.status == "pending",
+        ).order_by(desc(Proposal.created_at)))
+        if pending and (pending.payload or {}).get("rollback_of") == str(original.id):
+            raise HTTPException(status_code=409, detail={
+                "code": "patch_rollback_already_proposed",
+                "message": "该 patch 已有待审批的回滚 Proposal。",
+                "proposal_id": str(pending.id),
+            })
+        payload = {
+            "patch_schema_version": "1.0",
+            "patch_kind": patch_kind,
+            "base_git_commit": commit,
+            "operations": [],
+            "rollback": True,
+            "rollback_of": str(original.id),
+            "rollback_commit": commit,
+        }
+        impact = project_change_impact(session, project, "code_patch", payload)
+        impact = {**impact, "rollback_of": str(original.id), "execution": "git_revert_after_approval"}
+        rollback = Proposal(
+            project_id=project.id,
+            kind="code_patch",
+            reason=request.reason,
+            summary=f"Rollback approved patch {str(original.id)[:8]}",
+            diff=f"git revert --no-edit {commit}",
+            impact=impact,
+            payload=payload,
+        )
+        session.add(rollback)
+        session.flush()
+        audit(session, "patch.rollback_proposed", project.id, {
+            "proposal_id": str(rollback.id),
+            "rollback_of": str(original.id),
+            "commit": commit,
+        }, "local-user")
+        return {"proposal_id": str(rollback.id), "status": rollback.status, "impact": impact}
+
+
 @app.post("/api/projects/{project_id}/compile-plan")
 def generate_compile_plan(project_id: UUID):
     with session_scope() as session:
@@ -1544,6 +1682,11 @@ async def decide(proposal_id: UUID, request: ApprovalDecision):
         if proposal.status != "pending": raise HTTPException(409, "proposal already decided")
         project = session.get(Project, proposal.project_id)
         if not project: raise HTTPException(404, "project not found")
+        if request.decision == "approved" and proposal.kind == "external_publish":
+            raise HTTPException(status_code=403, detail={
+                "code": "external_publish_disabled",
+                "message": "当前部署明确禁用对外发布；不会通过审批执行外发。",
+            })
         impact: dict[str, Any] | None = None
         download_result: dict[str, Any] | None = None
         if request.decision == "approved" and proposal.kind == "experiment_rerun":
@@ -1596,6 +1739,24 @@ async def decide(proposal_id: UUID, request: ApprovalDecision):
             impact = project_change_impact(session, project, proposal.kind, proposal.payload)
             apply_impact(session, impact)
             proposal.impact = {**proposal.impact, **impact}
+        if request.decision == "approved" and proposal.kind == "code_patch":
+            root = (PROJECTS_ROOT / project.slug).resolve()
+            try:
+                patch_execution = execute_patch(
+                    proposal.payload or {},
+                    project_root=root,
+                    proposal_id=proposal.id,
+                    staging_root=ARTIFACTS_ROOT / ".patch-staging",
+                )
+            except PatchExecutionError as exc:
+                status_code = 409 if exc.code in {
+                    "patch_conflict", "patch_workspace_dirty", "patch_rollback_conflict",
+                } else 422
+                raise HTTPException(status_code=status_code, detail=exc.as_dict()) from exc
+            proposal.impact = {**proposal.impact, "patch_execution": patch_execution}
+            audit(session, "patch.executed", project.id, {
+                "proposal_id": str(proposal.id), **patch_execution,
+            }, "system")
         if request.decision == "approved" and proposal.kind == "dependency_install":
             download_result = _download_verified_repository(session, project, proposal)
         proposal.status = request.decision

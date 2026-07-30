@@ -145,6 +145,10 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 实验同步为 `succeeded` 或 `failed` 后，网页实验行会在存在对应检查点时显示“提出局部重跑”。已批准的 Idea、策略、代码、数据或依赖变更也会依据 `ArtifactDependency` 影响图自动创建对应的待审批 Proposal。该按钮和自动生成的 Proposal 都只接受成功/失败检查点、已终止源实验、原白名单配置和已持久化随机种子。通用 Proposal 接口不能伪造 `experiment_rerun`，审批和提交阶段还会再次比较检查点快照。未知变更类型、缺少基准 Git/数据版本或删除当前项目之外的产物会在影响分析阶段直接返回结构化 `impact_*` 错误。批准后 API 自动使用现有 `/api/experiments` 提交链；提交失败会把结构化错误写入 Proposal 影响和审计记录，前端不提供第二个执行入口，也不会替换成与当前 Idea 无关的分类或点云实验。
 
+## 代码/配置/LaTeX patch
+
+调用 `POST /api/projects/<project_id>/patch-proposals` 创建 patch Proposal。请求必须绑定当前项目的完整 Git commit，并逐个声明固定目录内的 `create`、`replace` 或 `delete` 文件操作；替换和删除必须提供文件 SHA-256。代码只能写入 `experiment/`/`src/`，配置只能写入 `configs/`，LaTeX 只能写入 `paper/`。API 先生成可审阅 diff，批准时在临时隔离目录运行固定 Python、JSON、TOML 和 LaTeX 结构校验，再二次核对 HEAD/hash 并提交 Git。冲突、脏工作树、验证失败或 commit 失败都会返回结构化错误并恢复原文件。已提交 patch 的回滚必须调用 `POST /api/proposals/<proposal_id>/rollback` 创建新的待审批 Proposal；对外发布 Proposal 审批会明确返回 `external_publish_disabled`。
+
 ## 修改配置
 
 1. 修改 `.env` 或版本化 Schema/工作流。
