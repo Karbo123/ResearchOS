@@ -6,6 +6,7 @@
   - 范围：`OPENAI_BASE_URL`/`OPENAI_API_KEY` 作为三档共享 `.env` 默认值，显式 tier 配置和网页 runtime 配置优先；模型失败仍直接返回结构化错误。
   - 完成标准：API、Compose、`.env.example`、双语 README、设置面板、自动化测试和真实浏览器桌面/窄屏检查一致。
   - 验证结果：API settings endpoint 显示 Luna/Terra/Sol 的 URL 为 `https://api.openai.com/v1` 且三档 key 已配置；API 测试、Compose、文档同步、Node UX、桌面/窄屏浏览器和控制台检查通过，未提交 key。
+  - 实现提交：`895ec03`。
 - [x] `P1-N8N-043` 明确并扩展 n8n 编排边界。
   - 范围：n8n 负责固定的聊天、检索、报告和项目流程编排；API 保留模型请求、Schema、权限、审批、状态和 fail-fast 安全边界。不得把 key 放进 workflow JSON 或让节点读取环境变量。
   - 完成标准：工作流 JSON、架构/运维文档和测试明确该边界；不以 n8n 重复实现 API 校验或引入 fallback。
