@@ -29,7 +29,7 @@ Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint ac
 
 - Runner 使用非 root UID、`no-new-privileges`、drop all capabilities、只读 root filesystem、PID/CPU/内存限制、每 Run 文件大小/累计磁盘配额和临时目录配额。超限返回结构化错误，不继续写入或提交产物。
 - 每个 Run 使用由 `runner-launcher` 创建的新非 root 作业容器；监控器保护取消/失败终态，超时或取消会停止该 Run 容器。只有 launcher 挂载 Docker socket，API 和 Runner supervisor 不挂载；launcher 仅使用固定镜像、固定网络、固定入口和受控挂载。Launcher/Runner 不接受任意命令、路径、URL、网络、镜像或环境字段。启动失败和主题不支持都直接返回结构化错误，不使用 fallback 或无关实验替代。
-- Runner 只加入 Compose 的 `internal` `runner-internal` 网络；它不能通过默认网络访问其他服务，也没有外部网络出口。`internal-mlflow-only` 是当前任务模板的受限策略标签，API/MLflow 仍共享该内部控制网络；per-run 容器、硬上限 tmpfs 输出 volume 和受控 GPU `DeviceRequest` 已由 launcher 创建。Conda 环境、主题专属模板和真实 GPU 主机验证仍是未完成能力。
+- Runner 只加入 Compose 的 `internal` `runner-internal` 网络；它不能通过默认网络访问其他服务，也没有外部网络出口。`internal-mlflow-only` 是当前任务模板的受限策略标签，API/MLflow 仍共享该内部控制网络；per-run 容器、硬上限 tmpfs 输出 volume、镜像内固定 micromamba/Conda 环境和受控 GPU `DeviceRequest` 已由 launcher 创建。主题专属模板和真实 GPU 主机验证仍是未完成能力。
 - API/Runner 的仓库根目录构建上下文由 `.dockerignore` 限制；`.env`、Git 元数据、`projects/`、`artifacts/`、n8n 数据和文档不会进入镜像构建上下文。运行时绑定目录不是镜像内容，不能用构建代替挂载。
 - 生产环境为 Runner 增加独立 Docker network，默认拒绝出站网络；按数据源或任务临时授权。
 - 每个真实 GPU 任务在独立非 root 容器/作业中执行，并带磁盘配额、超时、取消、镜像 digest 和命令模板 ID；当前 GPU 能力只保证受控请求和结构化失败，不宣称已在 GPU 主机完成验证。

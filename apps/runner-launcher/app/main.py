@@ -21,7 +21,7 @@ JOB_ARTIFACTS_ROOT = "/workspace/artifacts"
 JOB_PROJECTS_ROOT = "/workspace/projects"
 FORBIDDEN_FIELDS = {"command", "cmd", "shell", "cwd", "path", "url", "network", "image", "environment"}
 ALLOWED_TYPES = {"demo_classification", "point_cloud_demo", "compile_latex"}
-ALLOWED_TYPES.update({"python_analysis", "cpp_cmake", "gpu_python"})
+ALLOWED_TYPES.update({"python_analysis", "cpp_cmake", "gpu_python", "conda_python"})
 TEMPLATE_LIMITS = {
     "demo_classification": {"cpu": 1.0, "memory": 768 * 1024 * 1024, "pids": 64, "disk_mb": 512, "seconds": 600},
     "point_cloud_demo": {"cpu": 1.0, "memory": 768 * 1024 * 1024, "pids": 64, "disk_mb": 512, "seconds": 600},
@@ -29,6 +29,7 @@ TEMPLATE_LIMITS = {
     "python_analysis": {"cpu": 1.5, "memory": 1024 * 1024 * 1024, "pids": 96, "disk_mb": 1024, "seconds": 600, "gpu": False},
     "cpp_cmake": {"cpu": 2.0, "memory": 1024 * 1024 * 1024, "pids": 128, "disk_mb": 1024, "seconds": 600, "gpu": False},
     "gpu_python": {"cpu": 2.0, "memory": 4096 * 1024 * 1024, "pids": 128, "disk_mb": 2048, "seconds": 600, "gpu": True},
+    "conda_python": {"cpu": 1.5, "memory": 1024 * 1024 * 1024, "pids": 96, "disk_mb": 1024, "seconds": 600, "gpu": False},
 }
 
 SYNC_CODE = (
@@ -47,7 +48,7 @@ class LaunchRequest(BaseModel):
 
     run_id: UUID
     project_id: UUID
-    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python"]
+    experiment_type: Literal["demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"]
     config: dict[str, Any] = Field(default_factory=dict)
     random_seeds: list[StrictInt] = Field(min_length=1, max_length=10)
     policy_constraints: dict[str, Any] = Field(default_factory=dict)

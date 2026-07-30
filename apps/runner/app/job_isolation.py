@@ -44,4 +44,5 @@ def job_environment(template: JobTemplate) -> dict[str, str]:
         "RESEARCH_OS_NETWORK_POLICY": template.network_policy,
         "RESEARCH_OS_NO_ARBITRARY_COMMANDS": "true",
         "RESEARCH_OS_GPU_REQUIRED": "true" if template.requires_gpu else "false",
+        "RESEARCH_OS_RUNTIME": template.runtime,
     }

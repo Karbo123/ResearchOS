@@ -1,4 +1,8 @@
+FROM mambaorg/micromamba:2.3.2 AS micromamba
+
 FROM python:3.12-slim
+
+COPY --from=micromamba /bin/micromamba /usr/local/bin/micromamba
 
 RUN sed -i \
       -e 's|http://deb.debian.org/debian-security|https://mirrors.ustc.edu.cn/debian-security|g' \
@@ -10,13 +14,16 @@ RUN sed -i \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home --uid 10002 runner
 RUN git config --system --add safe.directory '*'
+ENV MAMBA_ROOT_PREFIX=/opt/conda
+RUN micromamba create --yes --channel conda-forge --prefix /opt/conda/envs/research-os python=3.12 pip \
+    && micromamba clean --all --yes
 WORKDIR /app
 COPY apps/runner/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY apps/runner/app ./app
 COPY apps/runner/tests ./tests
 COPY apps/api/app/reproducibility.py ./reproducibility.py
-RUN mkdir -p /workspace/artifacts /workspace/projects && chown -R runner:runner /app /workspace
+RUN mkdir -p /workspace/artifacts /workspace/projects && chown -R runner:runner /app /workspace /opt/conda
 USER runner
 EXPOSE 8010
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010"]

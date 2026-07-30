@@ -9,7 +9,7 @@ from app import main as runner_main
 
 class JobTemplateTests(unittest.TestCase):
     def test_all_templates_have_bounded_task_metadata(self):
-        self.assertTrue({"demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python"}.issubset(TASK_TEMPLATES))
+        self.assertTrue({"demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}.issubset(TASK_TEMPLATES))
         self.assertTrue(all(template.task_id.endswith(".v1") for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.memory_mb > 0 and template.pid_limit > 0 and template.disk_mb > 0 for template in TASK_TEMPLATES.values()))
         self.assertTrue(all(template.network_policy == "internal-mlflow-only" for template in TASK_TEMPLATES.values()))
@@ -26,6 +26,7 @@ class JobTemplateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_template_config("point_cloud_demo", {"project_slug": "project", "learning_rate": 0.1})
         validate_template_config("python_analysis", {"entrypoint": "experiment/main.py", "project_slug": "project"})
+        validate_template_config("conda_python", {"entrypoint": "experiment/main.py", "project_slug": "project"})
         for entrypoint in ("/tmp/job.py", "../job.py", "experiment/../job.py", "experiment/job.sh"):
             with self.assertRaises(ValueError):
                 validate_template_config("python_analysis", {"entrypoint": entrypoint, "project_slug": "project"})

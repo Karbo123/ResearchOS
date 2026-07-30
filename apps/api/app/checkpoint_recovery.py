@@ -14,6 +14,7 @@ RERUN_CONFIG_FIELDS = {
     "python_analysis": {"entrypoint", "delay_seconds"},
     "cpp_cmake": {"delay_seconds"},
     "gpu_python": {"entrypoint", "delay_seconds"},
+    "conda_python": {"entrypoint", "delay_seconds"},
 }
 
 

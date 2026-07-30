@@ -215,6 +215,11 @@ def test_runner_contract_accepts_only_fixed_project_entrypoints_and_gpu_template
         config={}, random_seeds=[1],
     )
     assert gpu_request.experiment_type == "gpu_python"
+    conda_request = ExperimentRequest(
+        project_id=uuid4(), proposal_id=uuid4(), experiment_type="conda_python",
+        config={"entrypoint": "experiment/main.py"}, random_seeds=[1],
+    )
+    assert conda_request.experiment_type == "conda_python"
     with pytest.raises(ValidationError):
         ExperimentRequest(
             project_id=uuid4(), proposal_id=uuid4(), experiment_type="python_analysis",

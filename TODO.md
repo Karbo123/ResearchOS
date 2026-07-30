@@ -82,8 +82,8 @@
   - 验证结果：新增严格 `ExperimentPlan` Pydantic 契约和证据/Idea 版本/策略/预算/主题关联二次校验；`POST /api/projects/{project_id}/experiment-plan` 只在当前 ProjectSpec 有页码级全文证据时调用复杂层模型并创建 pending Proposal。批准主题计划提交时重新校验当前状态，Runner 未有匹配模板则返回 `topic_specific_runner_not_implemented`，不会回退到分类或点云 demo。API 容器 `pytest -q`（32 passed）、API 镜像重建、Compose 配置、JSON 契约、双语文档/需求审计同步和 `git diff --check` 通过；未调用真实模型、其他 Idea 或无关实验。
 - [~] `P0-RUNNER-007` 增加每任务独立容器/作业隔离和参数化白名单任务模板。
   - 完成标准：支持受控 Python、C++/CMake、Conda 环境和可选 GPU；非 root、镜像 digest、网络策略、磁盘/CPU/GPU/内存/PID 配额、超时、取消和完整日志均有集成测试。
-  - 当前实现：已有六个白名单模板：三个既有演示/LaTeX 模板，以及固定入口的 `python_analysis`、固定 `experiment/cpp`/`research_os_job` target 的 `cpp_cmake` 和带 Docker GPU `DeviceRequest` 的 `gpu_python`。每个 Run 由 launcher 创建新的非 root 作业容器，使用固定镜像/入口/内部网络/受控挂载，具备 CPU、内存、PID、超时、取消和硬上限 tmpfs 输出 volume；终态同步产物后删除 job container 与 volume。用户不能提交镜像、命令、路径、网络或环境字段。
-  - 当前缺口：Conda 运行时尚未实现；GPU 仅完成受控 Docker 请求和无 GPU 时的结构化失败路径，未在真实 GPU 主机验证；主题专属 Runner/检查点恢复仍未实现。任何模型或主题 Runner 失败都直接返回结构化错误，不使用 fallback 或无关演示实验。
+  - 当前实现：已有七个白名单模板：三个既有演示/LaTeX 模板，以及固定入口的 `python_analysis`、固定 `experiment/cpp`/`research_os_job` target 的 `cpp_cmake`、带 Docker GPU `DeviceRequest` 的 `gpu_python` 和使用镜像内固定 `/opt/conda/envs/research-os` micromamba Python 环境的 `conda_python`。每个 Run 由 launcher 创建新的非 root 作业容器，使用固定镜像/入口/内部网络/受控挂载，具备 CPU、内存、PID、超时、取消和硬上限 tmpfs 输出 volume；终态同步产物后删除 job container 与 volume。用户不能提交镜像、命令、路径、网络、环境文件或依赖字段。
+  - 当前缺口：GPU 仅完成受控 Docker 请求和无 GPU 时的结构化失败路径，未在真实 GPU 主机验证；主题专属 Runner/检查点恢复仍未实现。任何模型或主题 Runner 失败都直接返回结构化错误，不使用 fallback 或无关演示实验。
 - [~] `P0-IMPACT-008` 实现实体级影响分析、精确失效传播和检查点局部重跑。
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
   - 当前实现：Proposal 创建与审批重新计算 `ArtifactDependency` 影响图；Idea/策略/代码/数据/删除产物变更只使受影响的有效 Artifact 失效，记录受影响实验、检查点、重跑候选和审计事件；旧 Idea 版本 Proposal 会被拒绝。
@@ -243,8 +243,8 @@
 - 2026-07-30：完成 `P0-LLM-040` 与 `P0-RELATED-002`；验证 API `29 passed`、前端 UX `5 passed`、浏览器设置面板桌面/窄屏检查、Compose/JSON/Idea case/文档同步/AST/`git diff --check`，清理历史 dangling Docker 镜像，删除废弃 Bridge 脚本并清理验收脚本中的旧通用实验路径。未运行真实模型、其他 Idea 或无关实验；功能提交 `4ff3ef4`、清理提交 `4fb4905`、验收入口提交 `8798473`。
 - 2026-07-30：开始并完成 `P0-PLAN-006`；新增严格主题专属实验计划契约、复杂层模型直连、全文证据/Idea 版本/策略/预算/主题关联校验、审批 Proposal 持久化、批准后二次校验和前端生成入口。主题 Runner 尚未实现时直接结构化报错，禁止 fallback；同步双语 README、架构/运维/安全边界、需求审计和工具契约。API 容器 `32 passed`，Compose/API 镜像重建、JSON、文档同步和 `git diff --check` 已通过；未调用真实模型、其他 Idea 或无关实验。
 - P0-RUNNER-007 当前实现：`runner-launcher` 是唯一 Docker socket 控制边界；每个 Run 使用新的非 root 作业容器、固定 `python -m app.worker` 入口、六个白名单任务模板、固定内部网络、受控继承挂载、CPU/内存/PID/硬上限 tmpfs 输出 volume、超时、取消和结构化终态监控。用户不能提交镜像、命令、路径、网络或环境字段；模型失败和主题不支持不触发任何 fallback。
-- P0-RUNNER-007 当前缺口：Conda 运行时和主题专属 Runner/检查点恢复尚未实现；GPU 仅完成受控 Docker 请求和无 GPU 时的结构化失败路径，未在真实 GPU 主机验证。未运行无关分类/点云实验，任务继续保持 `[~]`。
-- P0-RUNNER-007 验证：`docker compose build api runner runner-launcher` 与服务重建成功；API 容器 `57 passed`，Runner unittest `6 passed`，launcher 普通契约测试 `8 passed`（2 个显式集成用例跳过），真实 per-run Docker 集成测试 `8 passed`；集成后 `docker volume ls -f label=research_os.managed=true -q` 无输出。未调用模型、外部学术 API 或无关实验；任务保持 `[~]`。提交：`7d28b1e`。
+- P0-RUNNER-007 当前缺口：GPU 仅完成受控 Docker 请求和无 GPU 时的结构化失败路径，未在真实 GPU 主机验证；主题专属 Runner/检查点恢复尚未实现。未运行无关分类/点云实验，任务继续保持 `[~]`。
+- P0-RUNNER-007 验证：`docker compose build api runner runner-launcher` 与服务重建成功；容器内 `micromamba 2.3.2`、固定环境 Python `3.12.13`；API `57 passed`，Runner unittest `6 passed`，launcher 普通契约测试 `8 passed`（2 个显式集成用例跳过），真实 per-run Docker 集成测试 `8 passed`；集成后受控 volume 无残留。未调用模型、外部学术 API 或无关实验；任务保持 `[~]`。
 - P0-RUNNER-007 提交：`efacc9d` 已创建并与 `d0ad650` 一起推送到 `origin/main`。
 - 2026-07-30：完成本轮 `P0-IMPACT-008` 实体级影响分析部分；发现 Idea 审批仍会使项目全部有效 Artifact 失效，新增只读依赖图分析、审批时重新计算、局部 Artifact 失效和审计记录；补齐数据/代码根与检查点建议。验证通过：API `38 passed`、Compose/JSON/Idea case/文档同步/`git diff --check`；提交 `c559704` 已创建，P0-IMPACT-008 继续保持 `[~]`，因为自动主题重跑和 Runner 检查点恢复尚未实现。
 - 2026-07-30：开始 `P1-UPLOAD-009`；新增受限材料解析和摘要上下文，前端改为先上传/解析再请求模型，失败直接阻止本轮调用；图片保持 metadata-only，ZIP 只读清单，不解压或执行。同步双语 README、架构、运维、安全和需求审计。验证：API 容器 `42 passed`、`py_compile`、Compose、文档同步、Idea case、前端 UX `5 passed`、`git diff --check` 和浏览器设置面板桌面/窄屏检查通过；图片 OCR、独立恶意样本扫描和大规模材料库仍未实现，任务保持 `[~]`。实现提交：`00441b5` 已推送到 `origin/main`。
@@ -252,3 +252,5 @@
 - 2026-07-30：继续 `P0-IMPACT-008`；开始将已批准的检查点重跑自动提交到现有白名单 Runner 链，保留源实验/检查点/payload 二次校验，禁止前端二次执行和任何 fallback。待补齐 API 单测、浏览器状态显示、文档同步和验证。
 - 2026-07-30：完成本轮 `P0-IMPACT-008` 自动检查点提交：批准 `experiment_rerun` 后自动复用 `/api/experiments` 受控链，失败保留结构化错误并写入审计，前端移除二次执行按钮；主题专属 Runner 仍未实现，不能把它标记为已完成。API `56 passed`；文档同步、Schema/Compose/JSON、Idea case、API 容器编译、前端语法/UX、浏览器面板和 `git diff --check` 均通过。实现提交：`dd8d552`。
 - 2026-07-30：继续 `P0-RUNNER-007`；开始扩展受控 Python/C++/GPU 模板和每 Run Docker volume 配额。所有入口保持固定命令、项目内受限入口文件和无 fallback；Conda 运行时与真实 volume 集成验证完成前不标记任务完成。
+- 2026-07-30：继续 `P0-RUNNER-007`；开始加入镜像内预构建的固定 micromamba/Conda Python 环境。请求只能选择 `experiment/*.py` 入口，不能提交环境文件、依赖、命令或网络配置；待完成镜像构建、容器运行时检查、契约测试和文档同步。
+- 2026-07-30：完成本轮 `P0-RUNNER-007` Conda 增量；修正 micromamba 2.3.2 不支持的 `--quiet/--no-capture-output` 参数，固定命令改为 `micromamba run --prefix /opt/conda/envs/research-os python experiment/*.py`。最终容器内 `micromamba 2.3.2`、Conda Python `3.12.13`、API `57 passed`、Runner `6 passed`、launcher `8 passed`（含两个真实 Docker 集成测试）、`check_docs_sync.py`、Idea case、Compose、前端 UX 和 `git diff --check` 均通过；清理 4 个 dangling 中间镜像。主题专属 Runner/检查点恢复和真实 GPU 主机验证仍未实现，任务保持 `[~]`。

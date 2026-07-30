@@ -66,7 +66,7 @@ class SubmitRequest(BaseModel):
     @model_validator(mode="after")
     def allowlisted_config(self):
         validate_template_config(self.experiment_type, self.config)
-        if self.experiment_type in {"demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python"}:
+        if self.experiment_type in {"demo_classification", "point_cloud_demo", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
             if len(set(self.random_seeds)) < self.policy_constraints.minimum_random_seed_count:
                 raise ValueError("random_seeds violate the submitted minimum seed-count policy")
         if self.policy_constraints.explicit_approval_required and not self.policy_constraints.approval_granted:
@@ -238,9 +238,15 @@ def execute_project_template(request: SubmitRequest, project_root: Path, run_dir
         "RESEARCH_OS_OUTPUT_DIR": str(run_dir),
         "RESEARCH_OS_NETWORK_POLICY": template.network_policy,
     })
-    if request.experiment_type in {"python_analysis", "gpu_python"}:
+    if request.experiment_type in {"python_analysis", "gpu_python", "conda_python"}:
         entrypoint = _project_entrypoint(project_root, request.config.get("entrypoint", "experiment/main.py"))
-        _run_fixed_process(["python", str(entrypoint)], cwd=project_root, environment=environment, log_path=log_path, ensure_running=ensure_running)
+        command = ["python", str(entrypoint)]
+        if request.experiment_type == "conda_python":
+            command = [
+                "micromamba", "run", "--prefix", "/opt/conda/envs/research-os",
+                "python", str(entrypoint),
+            ]
+        _run_fixed_process(command, cwd=project_root, environment=environment, log_path=log_path, ensure_running=ensure_running)
     elif request.experiment_type == "cpp_cmake":
         source_dir = (project_root / "experiment" / "cpp").resolve()
         if project_root not in source_dir.parents or not (source_dir / "CMakeLists.txt").is_file():
@@ -365,7 +371,7 @@ def execute(request: SubmitRequest):
                 "policy_explicit_approval_required": request.policy_constraints.explicit_approval_required,
             })
             mlflow.log_metrics({"system_cpu_count": float(psutil.cpu_count() or 0), "system_memory_available_mb": psutil.virtual_memory().available / 1024 / 1024})
-            if request.experiment_type in {"python_analysis", "cpp_cmake", "gpu_python"}:
+            if request.experiment_type in {"python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
                 produced.extend(execute_project_template(request, project_root, run_dir, execution_log, ensure_running))
                 metrics_file = run_dir / "metrics.json"
                 if metrics_file.is_file():
