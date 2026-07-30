@@ -103,7 +103,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | MLflow 追踪 | **已实现（受限范围）** | 每个 Runner 任务记录学习率/模型版本、Git/数据/种子/镜像身份、平台和网络策略；Runner 状态保存终态，并以固定频率将进程/系统 CPU、内存和 GPU 数值写入 MLflow 及 `resource-usage.jsonl`。无 GPU 时明确记录 `gpu_available=0`，不使用其他执行路径。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
 | 产物预览 | **已实现（受限范围）** | 网页以转义文本预览 JSON/文本/CSV/TSV/PDF/HTML，并以固定上限渲染 ASCII PLY/PCD 点云，支持旋转、缩放、重置、可选网格线框、谱系元数据和下载。二进制点云、缺失/失效产物及解析上限错误均返回结构化错误。 |
-| 通用科研自治 | **部分实现/路线图** | 真实 GPU 主机验证、更完整的多模态材料库、证据驱动 Related Work 与完整论文仍待实现。网页现在可以在存在页码级核验证据时生成证据论文草稿 Proposal；metadata-only 记录会被拒绝，没有真实实验指标时会明确标为未执行。当前已支持固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求模板，并在每 Run 独立非 root 容器中使用硬上限输出 volume；代码/配置/LaTeX 修改已支持结构化操作、隔离验证、冲突检查、Git 提交、审计和需审批的 Git 回滚；对外发布明确禁用。官方 GitHub/GitLab 仓库核验、审批后固定 commit 导入、确定性报告和可选 HTTPS 报告 webhook 已实现。 |
+| 通用科研自治 | **部分实现/路线图** | 真实 GPU 主机验证、更完整的多模态材料库、证据驱动 Related Work 与完整论文仍待实现。网页现在可以在存在页码级核验证据时生成证据论文草稿 Proposal；生成器要求 PDF 哈希、BibTeX、稳定 URL、定位、claim 和 quote，并输出确定性的 claim-to-evidence map；metadata-only 记录会被拒绝，没有真实实验指标时会明确标为未执行。当前已支持固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求模板，并在每 Run 独立非 root 容器中使用硬上限输出 volume；代码/配置/LaTeX 修改已支持结构化操作、隔离验证、冲突检查、Git 提交、审计和需审批的 Git 回滚；对外发布明确禁用。官方 GitHub/GitLab 仓库核验、审批后固定 commit 导入、确定性报告和可选 HTTPS 报告 webhook 已实现。 |
 
 ## 前置条件
 
@@ -189,10 +189,10 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查 **Related Work** 的证据覆盖、研究空白候选和重复研究候选。它们都只是候选，不证明新颖性或科学结论。
 7. 在**实验**页生成主题专属计划前，必须先有页码级全文证据。API 会把严格计划保存为待审批 Proposal，并绑定当前 Idea 版本、证据 ID 和策略快照。在**审批**页批准后才允许进入执行闸门；当前 Runner 仍会对主题专属执行返回结构化错误，绝不会替换成通用 demo。
-8. 在项目概览的研究规格区域点击“生成证据论文草稿”前，必须已经导入页码级核验证据。API 只创建绑定当前 Idea 版本、证据 ID 和真实成功运行的 `paper/main.tex` 替换 patch Proposal；metadata-only 会直接拒绝，没有实验结果则明确保留未执行状态。批准前不会写文件，也不会编译 LaTeX。
-8. 在项目对话中要求解释、建议或提出变更。执行型请求会转换为结构化 Proposal 并等待批准，不会静默执行。
-9. 在**策略**页添加“所有实验至少使用五个随机种子”等长期规则。批准后的策略保存在 PostgreSQL，并在计划、API 提交和 Runner 三处强制执行。
-10. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。成功或失败实验的检查点可在网页中创建需人工审批的局部重跑 Proposal；它只复用原白名单模板、配置和已持久化随机种子，批准后由 API 自动进入同一个受控 `/api/experiments` 提交链。代码/配置/LaTeX 修改使用结构化 patch、隔离验证、冲突检查和需审批的 Git 提交；回滚必须创建新的审批 Proposal。提交失败会保留结构化错误，绝不会选择无关实验。未知变更类型、没有可验证 Git/数据/产物根的变更以及对外发布会直接拒绝。已取消项目是终止状态，不能恢复。
+8. 在项目概览的研究规格区域点击“生成证据论文草稿”前，必须已经导入页码级核验证据。API 只创建绑定当前 Idea 版本、证据 ID、确定性 claim map 和真实成功运行的 `paper/main.tex` 替换 patch Proposal；Related Work 每条事实句带 evidence ID，结果带 run ID；metadata-only 会直接拒绝，没有实验结果则明确保留未执行状态。批准前不会写文件，也不会编译 LaTeX。
+9. 在项目对话中要求解释、建议或提出变更。执行型请求会转换为结构化 Proposal 并等待批准，不会静默执行。
+10. 在**策略**页添加“所有实验至少使用五个随机种子”等长期规则。批准后的策略保存在 PostgreSQL，并在计划、API 提交和 Runner 三处强制执行。
+11. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。成功或失败实验的检查点可在网页中创建需人工审批的局部重跑 Proposal；它只复用原白名单模板、配置和已持久化随机种子，批准后由 API 自动进入同一个受控 `/api/experiments` 提交链。代码/配置/LaTeX 修改使用结构化 patch、隔离验证、冲突检查和需审批的 Git 提交；回滚必须创建新的审批 Proposal。提交失败会保留结构化错误，绝不会选择无关实验。未知变更类型、没有可验证 Git/数据/产物根的变更以及对外发布会直接拒绝。已取消项目是终止状态，不能恢复。
 
 ## 运行自带验收示例
 

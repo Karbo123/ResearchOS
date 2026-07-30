@@ -10,7 +10,7 @@ from scripts.idea_case_loader import IDEA_CASES_ROOT, load_enabled_idea_cases, l
 from app.clarification import build_spec, initial_draft, required_spec_gaps
 from app.llm import LLMRequestError, _system_prompt, classify_supervision_intent, clarification_mode_instruction, clarify_idea_with_llm, select_model_route
 from app.policy_engine import compile_policy_constraints, experiment_policy_violations, seeds_for_constraints
-from app.project_service import build_evidence_grounded_paper
+from app.project_service import build_evidence_grounded_paper, build_paper_claim_map
 from app.evidence_pipeline import validate_open_pdf_url
 from app.related_work import build_related_work_analysis
 from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest, SupervisionIntent
@@ -196,15 +196,24 @@ def test_paper_draft_requires_verified_page_evidence_and_records_only_real_metri
     })
     spec = build_spec(draft)
     evidence = [{
-        "id": "evidence-1", "paper_id": "paper-1", "quote": "A verified page-level result.",
-        "locator": "page 4", "metadata": {"verified": True},
+        "id": "evidence-1", "paper_id": "paper-1", "claim": "Active learning improves labeling.",
+        "quote": "A verified page-level result.", "locator": "page 4", "source_url": "https://example.invalid/paper.pdf",
+        "metadata": {"verified": True, "pdf_sha256": "a" * 64, "bibtex": "@article{example}", "pdf_artifact_id": "artifact-1"},
     }]
     paper = [{"id": "paper-1", "title": "Verified study", "doi": "10.1000/example", "source_url": "https://example.invalid/paper"}]
     source = build_evidence_grounded_paper(spec, evidence, paper, [{"id": "run-1", "status": "succeeded", "metrics": {"accuracy": 0.91}}])
     assert all(f"\\section{{{section}}}" in source for section in ("Introduction", "Related Work", "Method", "Experiments", "Results", "Limitations", "References"))
-    assert "evidence-1" in source and "accuracy=0.91" in source
+    assert "Evidence ID evidence-1" in source and "accuracy=0.91" in source and "Run run-1" in source
+    claim_map = build_paper_claim_map(spec, evidence)
+    assert claim_map["verified_evidence_ids"] == ["evidence-1"]
+    assert claim_map["factual_claims"][0]["evidence_id"] == "evidence-1"
     with pytest.raises(ValueError, match="paper_evidence_required"):
         build_evidence_grounded_paper(spec, [{"id": "metadata", "locator": "metadata/title", "quote": "title", "metadata": {"verified": False}}], paper, [])
+    with pytest.raises(ValueError, match="paper_evidence_required"):
+        build_evidence_grounded_paper(spec, [{
+            "id": "unhashed", "claim": "Unverified claim", "locator": "page 2", "quote": "quote",
+            "source_url": "https://example.invalid/paper.pdf", "metadata": {"verified": True, "bibtex": "@article{x}"},
+        }], paper, [])
 
 
 def test_related_work_links_only_verified_page_evidence_and_marks_candidates_for_review():

@@ -27,7 +27,10 @@ from .models import (
     Experiment, HumanFeedback, IdeaVersion, Message, Paper, Policy, Project, Proposal,
     Report, RepositoryRecord, Task, UploadedFile,
 )
-from .project_service import PROJECTS_ROOT, build_evidence_grounded_paper, initialize_project, safe_slug
+from .project_service import (
+    PROJECTS_ROOT, build_evidence_grounded_paper, build_paper_claim_map,
+    initialize_project, safe_slug,
+)
 from .reproducibility import (
     GIT_COMMIT_RE, ReproducibilityError, create_reproducibility_snapshot, project_git_commit,
     validate_git_workspace, validate_snapshot_contract,
@@ -1594,7 +1597,9 @@ def generate_paper_draft(project_id: UUID):
         paper_rows = [{"id": str(item.id), "title": item.title, "doi": item.doi, "source_url": item.source_url} for item in papers]
         experiment_rows = [{"id": str(item.id), "status": item.status, "metrics": item.metrics} for item in experiments]
         try:
-            source = build_evidence_grounded_paper(ProjectSpec.model_validate(idea.spec), evidence_rows, paper_rows, experiment_rows)
+            project_spec = ProjectSpec.model_validate(idea.spec)
+            claim_map = build_paper_claim_map(project_spec, evidence_rows)
+            source = build_evidence_grounded_paper(project_spec, evidence_rows, paper_rows, experiment_rows)
         except ValueError as exc:
             if str(exc) == "paper_evidence_required":
                 raise HTTPException(status_code=409, detail={
@@ -1609,13 +1614,7 @@ def generate_paper_draft(project_id: UUID):
             "action": "replace", "path": "paper/main.tex", "content": source,
             "expected_sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
         }
-        evidence_ids = [
-            str(item["id"]) for item in evidence_rows
-            if isinstance(item.get("metadata"), dict)
-            and item["metadata"].get("verified") is True
-            and str(item.get("locator") or "").strip()
-            and not str(item.get("locator") or "").lower().startswith("metadata/")
-        ]
+        evidence_ids = claim_map["verified_evidence_ids"]
         payload = {
             "patch_schema_version": "1.0", "patch_kind": "latex", "base_git_commit": current_commit,
             "operations": [operation],
@@ -1630,6 +1629,7 @@ def generate_paper_draft(project_id: UUID):
         impact = {
             **impact, "patch_kind": "latex", "evidence_grounded": True,
             "idea_version": idea.version, "evidence_ids": evidence_ids,
+            "claim_map": claim_map,
             "execution": "approval_then_isolated_latex_validation",
         }
         proposal = Proposal(

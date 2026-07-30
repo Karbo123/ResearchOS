@@ -38,7 +38,62 @@ def _verified_evidence(rows: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
         and str(row.get("locator") or "").strip()
         and not str(row.get("locator") or "").lower().startswith("metadata/")
         and str(row.get("quote") or "").strip()
+        and str(row.get("claim") or "").strip()
+        and re.fullmatch(r"[0-9a-fA-F]{64}", str(row["metadata"].get("pdf_sha256") or ""))
+        and str(row["metadata"].get("bibtex") or "").strip()
+        and str(row.get("source_url") or "").strip()
     ]
+
+
+def _claim_tokens(value: str) -> set[str]:
+    words = re.findall(r"[a-z0-9][a-z0-9_+-]{2,}", (value or "").lower())
+    return {word for word in words if word not in {"the", "and", "for", "with", "from", "that", "this"}}
+
+
+def build_paper_claim_map(
+    spec: ProjectSpec,
+    evidence: Iterable[dict[str, Any]],
+) -> dict[str, Any]:
+    """Return deterministic provenance for paper claims without asserting novelty."""
+    verified = _verified_evidence(evidence)
+    if not verified:
+        raise ValueError("paper_evidence_required")
+    factual_claims = [{
+        "evidence_id": str(row.get("id")),
+        "paper_id": str(row.get("paper_id") or "") or None,
+        "claim": str(row.get("claim") or "").strip(),
+        "locator": str(row.get("locator") or "").strip(),
+    } for row in verified if str(row.get("claim") or "").strip()]
+    targets = [
+        ("hypothesis", item) for item in spec.idea.hypotheses if str(item).strip()
+    ] + [
+        ("expected_contribution", item)
+        for item in spec.idea.expected_contributions if str(item).strip()
+    ]
+    target_map = []
+    for kind, target in targets:
+        target_terms = _claim_tokens(target)
+        matches = []
+        for row in verified:
+            evidence_terms = _claim_tokens(f"{row.get('claim', '')} {row.get('quote', '')}")
+            overlap = sorted(target_terms & evidence_terms)
+            minimum = 1 if len(target_terms) <= 2 else 2
+            if len(overlap) >= minimum:
+                matches.append({"evidence_id": str(row.get("id")), "overlap_terms": overlap[:8]})
+        target_map.append({
+            "kind": kind,
+            "target": target,
+            "status": "supported_candidate" if matches else "no_matching_evidence",
+            "evidence_ids": [item["evidence_id"] for item in matches],
+            "requires_human_review": True,
+        })
+    return {
+        "schema_version": "1.0",
+        "verified_evidence_ids": [str(row.get("id")) for row in verified],
+        "factual_claims": factual_claims,
+        "idea_target_support": target_map,
+        "claim_gate": "Factual Related Work sentences must cite an evidence ID; Idea hypotheses and contributions remain proposed unless independently supported.",
+    }
 
 
 def build_evidence_grounded_paper(
@@ -48,9 +103,9 @@ def build_evidence_grounded_paper(
     experiments: Iterable[dict[str, Any]],
 ) -> str:
     """Build a reviewable paper draft from verified evidence and recorded runs only."""
-    verified = _verified_evidence(evidence)
-    if not verified:
-        raise ValueError("paper_evidence_required")
+    evidence_rows = list(evidence)
+    claim_map = build_paper_claim_map(spec, evidence_rows)
+    verified = _verified_evidence(evidence_rows)
     paper_by_id = {str(row.get("id")): row for row in papers if isinstance(row, dict)}
     evidence_blocks = []
     reference_blocks = []
@@ -63,9 +118,10 @@ def build_evidence_grounded_paper(
         locator = str(row.get("locator"))
         quote = str(row.get("quote"))[:1200]
         evidence_blocks.append(
-            "\\item \\textbf{Evidence " + latex_escape(evidence_id) + "}: "
+            "\\item \\textbf{Evidence ID " + latex_escape(evidence_id) + "}: "
+            + "Claim: " + latex_escape(str(row.get("claim") or "Unspecified claim")) + ". "
             + latex_escape(title) + " (" + latex_escape(locator) + "). "
-            + "\\emph{" + latex_escape(quote) + "}"
+            + "Quoted support: \\emph{" + latex_escape(quote) + "}"
         )
         if paper_id and paper_id not in referenced_papers:
             referenced_papers.add(paper_id)
@@ -75,7 +131,7 @@ def build_evidence_grounded_paper(
                 "\\bibitem{" + latex_escape(paper_id) + "} "
                 + latex_escape(title) + ". "
                 + ("DOI: " + latex_escape(doi) + ". " if doi else "")
-                + ("Stable source: \\url{" + source_url + "}." if source_url else "")
+                + ("Stable source: \\url{" + latex_escape(source_url) + "}." if source_url else "")
             )
 
     recorded_results = []
@@ -88,7 +144,7 @@ def build_evidence_grounded_paper(
             recorded_results.append(f"Run {experiment.get('id')}: {metric_text}")
     idea = spec.idea
     results_section = (
-        "Recorded successful runs only:\\begin{itemize}\\n"
+        "Recorded successful runs only; each result is computational evidence identified by its run ID:\\begin{itemize}\\n"
         + _latex_lines(recorded_results) + "\\n\\end{itemize}"
         if recorded_results else
         "No successful experiment output is recorded for this draft; no scientific result is claimed."
@@ -98,17 +154,20 @@ def build_evidence_grounded_paper(
         "\\title{" + latex_escape(idea.title) + "}", "\\author{Research OS Project}",
         "\\begin{document}", "\\maketitle",
         "\\begin{abstract}This is an evidence-linked draft. It reports only verified page-level evidence and recorded experiment outputs; unexecuted work remains explicitly unexecuted.\\end{abstract}",
-        "\\section{Introduction}", latex_escape(idea.research_question),
-        "\\subsection{Hypotheses}", "\\begin{itemize}", _latex_lines(idea.hypotheses), "\\end{itemize}",
-        "\\subsection{Contributions}", "\\begin{itemize}", _latex_lines(idea.expected_contributions), "\\end{itemize}",
-        "\\section{Related Work}", "The following claims are linked to retained page-level evidence; metadata-only records are excluded.",
+        "\\section{Introduction}", "Proposed research question (not a reported factual claim): " + latex_escape(idea.research_question),
+        "\\subsection{Hypotheses}", "The following are proposed hypotheses, not established results.", "\\begin{itemize}", _latex_lines(idea.hypotheses), "\\end{itemize}",
+        "\\subsection{Contributions}", "The following are proposed contributions pending validation.", "\\begin{itemize}", _latex_lines(idea.expected_contributions), "\\end{itemize}",
+        "\\section{Related Work}", "Each factual statement below is tied to a retained page-level evidence ID; metadata-only records are excluded.",
         "\\begin{itemize}", "\n".join(evidence_blocks), "\\end{itemize}",
-        "\\section{Method}", "\\textbf{Domain:} " + latex_escape(idea.domain) + "\\par\\smallskip",
+        "\\section{Method}", "Project specification supplied by the user (not independently verified).\\par\\smallskip",
+        "\\textbf{Domain:} " + latex_escape(idea.domain) + "\\par\\smallskip",
         "\\textbf{Available data:} " + latex_escape(idea.available_data or "Not confirmed."),
         "\\subsection{Success criteria}", "\\begin{itemize}", _latex_lines(idea.success_criteria), "\\end{itemize}",
         "\\section{Experiments}", "The experiment plan remains subject to the project's approval gates and must be specific to the confirmed research question.",
         "\\section{Results}", results_section,
         "\\section{Limitations}", "\\begin{itemize}", _latex_lines(idea.risks, "Risks and unresolved limitations require review."), "\\end{itemize}",
+        "\\subsection{Provenance audit}", "\\textbf{Verified evidence IDs:} " + latex_escape(", ".join(claim_map["verified_evidence_ids"])) + ".\\par "
+        + "Idea target support is a candidate lexical map only and requires human review.",
         "\\section{References}", "\\begin{thebibliography}{99}", "\n".join(reference_blocks), "\\end{thebibliography}",
         "\\end{document}",
     ]) + "\n"

@@ -8,7 +8,7 @@ import pytest
 from fastapi import HTTPException
 
 from app import main as api_main
-from app.models import Proposal
+from app.models import Evidence, Experiment, IdeaVersion, Paper, Project, Proposal
 from app.schemas import ApprovalDecision, PatchOperationRequest, PatchProposalRequest, PatchRollbackRequest
 
 
@@ -34,6 +34,25 @@ class FakeSession:
         return None
 
 
+class PaperDraftSession(FakeSession):
+    def __init__(self, project, idea=None, evidence=None, papers=None, experiments=None):
+        super().__init__({(Project, project.id): project})
+        self.idea = idea
+        self.records = {
+            Evidence: evidence or [],
+            Paper: papers or [],
+            Experiment: experiments or [],
+        }
+
+    def scalar(self, statement):
+        entity = statement.column_descriptions[0].get("entity")
+        return self.idea if entity is IdeaVersion else None
+
+    def scalars(self, statement):
+        entity = statement.column_descriptions[0].get("entity")
+        return SimpleNamespace(all=lambda: list(self.records.get(entity, [])))
+
+
 class FakeContext:
     def __init__(self, session):
         self.session = session
@@ -47,6 +66,22 @@ class FakeContext:
 
 def project(project_id):
     return SimpleNamespace(id=project_id, slug="route-test", status="active", current_idea_version=1)
+
+
+def paper_draft_spec():
+    return {
+        "schema_version": "1.0",
+        "idea": {
+            "title": "Evidence route test",
+            "research_question": "Does verified evidence improve a bounded research workflow?",
+            "domain": "research automation",
+            "hypotheses": ["Verified evidence improves traceability."],
+            "expected_contributions": ["A reviewable evidence map."],
+            "available_data": "A local test corpus.",
+            "success_criteria": ["Every factual claim has a retained source."],
+            "constraints": {"compute": "CPU", "data_access": "public"},
+        },
+    }
 
 
 def test_patch_proposal_route_persists_structured_diff(monkeypatch):
@@ -85,6 +120,78 @@ def test_patch_proposal_route_persists_structured_diff(monkeypatch):
     assert proposal.payload["base_git_commit"] == base_commit
     assert proposal.payload["operations"][0]["path"] == "experiment/main.py"
     assert proposal.diff.startswith("--- a/experiment/main.py")
+
+
+def test_paper_draft_route_rejects_missing_current_idea(monkeypatch):
+    project_id = uuid4()
+    fake_project = project(project_id)
+    session = PaperDraftSession(fake_project)
+    monkeypatch.setattr(api_main, "session_scope", lambda: FakeContext(session))
+    monkeypatch.setattr(api_main, "project_git_commit", lambda *_args: "a" * 40)
+    monkeypatch.setattr(api_main, "validate_git_workspace", lambda *_args, **_kwargs: {})
+
+    with pytest.raises(HTTPException) as error:
+        api_main.generate_paper_draft(project_id)
+
+    assert error.value.status_code == 409
+    assert error.value.detail["code"] == "paper_idea_version_missing"
+
+
+def test_paper_draft_route_rejects_metadata_only_evidence(monkeypatch, tmp_path):
+    project_id = uuid4()
+    fake_project = project(project_id)
+    idea = SimpleNamespace(version=1, spec=paper_draft_spec())
+    evidence = SimpleNamespace(
+        id=uuid4(), paper_id=None, claim="Metadata candidate", quote="Title only",
+        locator="metadata/title", source_url="https://example.invalid/paper",
+        metadata_json={"verified": False},
+    )
+    session = PaperDraftSession(fake_project, idea=idea, evidence=[evidence])
+    monkeypatch.setattr(api_main, "session_scope", lambda: FakeContext(session))
+    monkeypatch.setattr(api_main, "PROJECTS_ROOT", tmp_path)
+    monkeypatch.setattr(api_main, "project_git_commit", lambda *_args: "a" * 40)
+    monkeypatch.setattr(api_main, "validate_git_workspace", lambda *_args, **_kwargs: {})
+
+    with pytest.raises(HTTPException) as error:
+        api_main.generate_paper_draft(project_id)
+
+    assert error.value.status_code == 409
+    assert error.value.detail["code"] == "paper_evidence_required"
+
+
+def test_paper_draft_route_proposal_contains_claim_provenance(monkeypatch, tmp_path):
+    project_id = uuid4()
+    fake_project = project(project_id)
+    root = tmp_path / fake_project.slug / "paper"
+    root.mkdir(parents=True)
+    (root / "main.tex").write_text("old manuscript\n", encoding="utf-8")
+    idea = SimpleNamespace(version=1, spec=paper_draft_spec())
+    paper_id = uuid4()
+    evidence = SimpleNamespace(
+        id=uuid4(), paper_id=paper_id, claim="Verified evidence improves traceability.",
+        quote="Verified evidence improves traceability in review.", locator="page 4",
+        source_url="https://example.invalid/paper.pdf",
+        metadata_json={"verified": True, "pdf_sha256": "a" * 64, "bibtex": "@article{x}"},
+    )
+    paper = SimpleNamespace(id=paper_id, title="Verified source", doi="10.1000/example", source_url="https://example.invalid/paper")
+    run = SimpleNamespace(id=uuid4(), status="succeeded", metrics={"accuracy": 0.91})
+    session = PaperDraftSession(fake_project, idea=idea, evidence=[evidence], papers=[paper], experiments=[run])
+    monkeypatch.setattr(api_main, "session_scope", lambda: FakeContext(session))
+    monkeypatch.setattr(api_main, "PROJECTS_ROOT", tmp_path)
+    monkeypatch.setattr(api_main, "project_git_commit", lambda *_args: "a" * 40)
+    monkeypatch.setattr(api_main, "validate_git_workspace", lambda *_args, **_kwargs: {})
+    monkeypatch.setattr(api_main, "validate_patch_against_workspace", lambda *_args: [])
+    monkeypatch.setattr(api_main, "build_patch_diff", lambda *_args: "--- a/paper/main.tex\n+++ b/paper/main.tex\n")
+    monkeypatch.setattr(api_main, "project_change_impact", lambda *_args: {"changed": True})
+    monkeypatch.setattr(api_main, "audit", lambda *_args, **_kwargs: None)
+
+    result = api_main.generate_paper_draft(project_id)
+
+    assert result["status"] == "pending"
+    assert result["impact"]["evidence_grounded"] is True
+    assert result["impact"]["idea_version"] == 1
+    assert result["impact"]["evidence_ids"] == [str(evidence.id)]
+    assert result["impact"]["claim_map"]["verified_evidence_ids"] == [str(evidence.id)]
 
 
 def test_approved_patch_route_executes_and_records_commit(monkeypatch, tmp_path):

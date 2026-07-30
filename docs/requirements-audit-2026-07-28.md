@@ -6,7 +6,7 @@
 
 2026-07-30 patch 执行增量：新增结构化代码/配置/LaTeX patch Proposal，绑定项目 Git commit 与文件 SHA-256，生成确定性 diff；批准时复制到临时隔离目录，执行固定 Python/JSON/TOML/LaTeX 校验，再二次核对工作区、写回并提交 Git。暂存、写入、冲突、验证失败和提交失败会恢复原文件并保留结构化错误；成功 patch 可创建新的审批回滚 Proposal，回滚只使用固定 `git revert --no-edit`。外部发布明确禁用。patch 执行器与 API 路由测试 `12 passed`，完整 API 回归 `96 passed, 2 skipped`。
 
-2026-07-30 论文草稿增量：项目概览新增“生成证据论文草稿”入口。`POST /api/projects/{project_id}/paper-draft` 只接受当前 Idea、页码/章节定位和非空 quote 的已核验证据，并只写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会进入事实性论文内容。接口仅创建绑定 Idea 版本和 evidence IDs 的 `paper/main.tex` LaTeX patch Proposal，必须经现有 diff、审批、隔离验证和 Git 执行链；证据不足直接返回结构化错误。完整 Related Work、语义 claim 映射和生产级论文编译验收仍未完成。
+2026-07-30 论文草稿增量：项目概览新增“生成证据论文草稿”入口。`POST /api/projects/{project_id}/paper-draft` 只接受当前 Idea、具备 PDF SHA-256/BibTeX/稳定 URL、页码/章节定位、claim 和非空 quote 的已核验证据，并只写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会进入事实性论文内容。接口仅创建绑定 Idea 版本、evidence IDs 和确定性 claim map 的 `paper/main.tex` LaTeX patch Proposal，Related Work 条目带 evidence ID、结果带 run ID，必须经现有 diff、审批、隔离验证和 Git 执行链；证据不足直接返回结构化错误。完整语义 claim 映射质量、生产级论文编译验收和完整论文能力仍未完成。
 
 2026-07-30 Artifact 预览增量：新增受限 `/api/artifacts/{artifact_id}/preview`，网页产物页现在可以显示 JSON/文本/CSV/TSV/PDF，以及不执行 HTML 的转义文本；ASCII PLY/PCD 通过固定点数/面片上限、降采样和 Canvas 拖拽旋转/缩放/重置进行预览，并保留下载入口。二进制点云、失效/缺失文件和解析限制直接返回结构化错误。API 容器 `70 passed, 2 skipped`，Node 语法检查、Compose、文档/Idea case 检查、桌面浏览器产物页和模型设置页检查通过；未调用模型、外部学术 API 或无关实验。
 
