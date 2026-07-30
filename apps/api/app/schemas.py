@@ -127,6 +127,22 @@ class ChatResponse(BaseModel):
     clarification_mode: Literal["automatic", "detailed"] = "automatic"
 
 
+class SupervisionIntent(BaseModel):
+    """Strict, non-executing classification for messages in an existing project."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    intent: Literal[
+        "explanation", "advice", "change_request", "policy_change",
+        "pause_request", "resume_request", "cancel_request",
+        "approval_request", "rejection_request", "ambiguous",
+    ]
+    target_field: Literal["title", "research_question", "domain", "available_data", "ethics_and_compliance"] | None = None
+    proposed_value: str | None = Field(default=None, max_length=4000)
+    policy_rule: str | None = Field(default=None, max_length=2000)
+    clarification_question: str | None = Field(default=None, max_length=2000)
+
+
 class ProjectCreateRequest(BaseModel):
     session_id: UUID
     confirmed: Literal[True]

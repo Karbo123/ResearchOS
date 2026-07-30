@@ -89,7 +89,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | 文献检索 | **已实现（有限范围）** | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX；GitHub/GitLab 先作为候选，经过论文记录、仓库引用、许可证和固定 commit 交叉核验后才能申请下载。 |
 | 全文证据 | **已实现（MVP）** | 白名单 HTTPS PDF、PDF/quote SHA-256、页码/章节、原文与 BibTeX 持久化。 |
 | Idea 专属实验规划 | **已实现（需审批）** | API 使用当前 ProjectSpec、页码级全文证据和生效策略快照，生成包含数据源、基线、指标、消融、统计检验、种子、预算、风险和成功标准的严格主题专属计划 Proposal。 |
-| 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
+| 人工监督 | **已实现（MVP）** | 对解释/建议、Idea/策略变更、状态和审批请求使用严格模型意图分类；只有具体 Idea/策略变更会创建审批 Proposal，暂停/恢复/取消及批准/驳回不会从聊天直接执行。 |
 | 实验执行 | **已实现（有限范围）** | 八个 Runner 白名单任务，其中包含固定主题入口契约和镜像内固定 micromamba/Conda Python 环境；非 root、CPU/内存/PID/每 Run 硬上限 tmpfs 输出 volume、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
 | 数值诊断 | **已实现（受限范围）** | 实验页由 Python 确定性计算已持久化指标和结构化失败码，并生成需审批、不会自动执行的后续建议。LLM 只能解释或质疑结果，不能计算统计量或启动后续工作。 |
 | MLflow 追踪 | **已实现（受限范围）** | 每个 Runner 任务记录学习率/模型版本、Git/数据/种子/镜像身份、平台和网络策略；Runner 状态保存终态，并以固定频率将进程/系统 CPU、内存和 GPU 数值写入 MLflow 及 `resource-usage.jsonl`。无 GPU 时明确记录 `gpu_available=0`，不使用其他执行路径。 |
@@ -355,7 +355,6 @@ python scripts/acceptance_test.py
 
 主题专属实验规划已经实现为证据绑定、策略校验和审批门控的 Proposal；批准计划会通过固定 `experiment/main.py` 入口执行，并要求结构化指标与检查点产物。系统不会回退到无关的分类或点云 demo。
 
-最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、真实 GPU 主机验证、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求已通过每 Run 独立容器与硬上限输出 volume 执行。批准后的检查点重跑只通过匹配的白名单提交链自动进入队列；失败仍直接保留结构化错误，不会改用无关演示实验。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、真实 GPU 主机验证、持久队列、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求已通过每 Run 独立容器与硬上限输出 volume 执行。批准后的检查点重跑只通过匹配的白名单提交链自动进入队列；失败仍直接保留结构化错误，不会改用无关演示实验。确定性日报/周报已经包含运营指标，并可在启用后显式推送一次 HTTPS webhook。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 
 不要把当前合成分类/点云任务当作科学结果，不要把 `metadata-only` 当作页码已核验引用，也不要把本地自动登录入口暴露到个人电脑之外。

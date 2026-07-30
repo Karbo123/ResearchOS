@@ -30,7 +30,7 @@ from .models import (
 from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
 from .reproducibility import ReproducibilityError, create_reproducibility_snapshot, validate_snapshot_contract
 from .llm import (
-    LLMRequestError, clarify_idea_with_llm, generate_experiment_plan_with_llm,
+    LLMRequestError, classify_supervision_intent, clarify_idea_with_llm, generate_experiment_plan_with_llm,
     model_catalog, router_thresholds, select_model_route,
 )
 from .model_settings import load_settings, public_settings, save_settings
@@ -457,22 +457,56 @@ def chat(request: ChatRequest):
         ))
         if conversation.project_id:
             project = session.get(Project, conversation.project_id)
-            change_markers = ["修改", "改为", "调整", "重新", "change", "update", "rerun"]
-            is_change = any(marker in request.message.lower() for marker in change_markers)
+            transcript = [
+                {"role": item.role, "content": item.content}
+                for item in session.scalars(
+                    select(Message).where(Message.session_id == conversation.id).order_by(desc(Message.created_at)).limit(12)
+                ).all()[::-1]
+            ]
+            try:
+                intent_outcome = classify_supervision_intent(
+                    request.message,
+                    project_context={
+                        "project_id": str(project.id), "title": project.title,
+                        "current_stage": project.current_stage, "idea_version": project.current_idea_version,
+                    },
+                    transcript=transcript,
+                )
+            except LLMRequestError as exc:
+                raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
+            intent = intent_outcome.result
+            is_change = intent.intent in {"change_request", "policy_change"}
             session.add(HumanFeedback(
                 project_id=project.id,
                 session_id=conversation.id,
-                category="change_request" if is_change else "explanation_or_advice",
+                category=intent.intent,
                 instruction=request.message,
             ))
             if is_change:
-                policy_markers = ["所有实验", "所有引用", "必须", "每个实验", "always", "every experiment", "every citation"]
-                is_policy = any(marker in request.message.lower() for marker in policy_markers)
-                target_field = "research_question"
-                revised_value = request.message.split("改为", 1)[-1].strip() if "改为" in request.message else request.message
+                is_policy = intent.intent == "policy_change"
+                target_field = intent.target_field
+                revised_value = intent.proposed_value
+                policy_rule = intent.policy_rule
+                if (is_policy and not policy_rule) or (not is_policy and (not target_field or not revised_value)):
+                    reply = intent.clarification_question or "请明确要修改的字段、目标值或长期规则；在确认前不会创建变更提案。"
+                    session.add(Message(
+                        session_id=conversation.id, role="assistant", content=reply,
+                        metadata_json={
+                            "intent": intent.model_dump(mode="json"),
+                            "model_tier": intent_outcome.route.tier,
+                            "model": intent_outcome.route.model,
+                            "reasoning_effort": intent_outcome.route.reasoning_effort,
+                        },
+                    ))
+                    return ChatResponse(
+                        session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply,
+                        clarification_mode=request.clarification_mode, model_tier=intent_outcome.route.tier,
+                        model=intent_outcome.route.model, reasoning_effort=intent_outcome.route.reasoning_effort,
+                    )
                 proposal_payload = {
                     "user_instruction": request.message,
-                    **({"policy_rule": request.message} if is_policy else {
+                    "intent": intent.model_dump(mode="json"),
+                    **({"policy_rule": policy_rule} if is_policy else {
                         "target_field": target_field,
                         "value": revised_value,
                         "base_idea_version": project.current_idea_version,
@@ -489,12 +523,36 @@ def chat(request: ChatRequest):
                 )
                 session.add(proposal); session.flush()
                 reply = "我已把这条指令转换为变更提案，但尚未执行。请在审批面板检查影响范围并批准或驳回。"
-                session.add(Message(session_id=conversation.id, role="assistant", content=reply, metadata_json={"proposal_id": str(proposal.id)}))
+                session.add(Message(session_id=conversation.id, role="assistant", content=reply, metadata_json={
+                    "proposal_id": str(proposal.id),
+                    "intent": intent.model_dump(mode="json"),
+                    "model_tier": intent_outcome.route.tier,
+                    "model": intent_outcome.route.model,
+                    "reasoning_effort": intent_outcome.route.reasoning_effort,
+                }))
                 audit(session, "change.proposed", project.id, {"proposal_id": str(proposal.id)}, "local-user")
-                return ChatResponse(session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply, action_required=str(proposal.id), clarification_mode=request.clarification_mode)
+                return ChatResponse(
+                    session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply,
+                    action_required=str(proposal.id), clarification_mode=request.clarification_mode,
+                    model_tier=intent_outcome.route.tier, model=intent_outcome.route.model,
+                    reasoning_effort=intent_outcome.route.reasoning_effort,
+                )
             reply = f"项目当前阶段为 {project.current_stage}。这条消息被识别为解释或建议请求，没有触发执行。需要执行变更时请明确写出要修改的内容。"
-            session.add(Message(session_id=conversation.id, role="assistant", content=reply))
-            return ChatResponse(session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply, clarification_mode=request.clarification_mode)
+            if intent.intent in {"pause_request", "resume_request", "cancel_request", "approval_request", "rejection_request"}:
+                reply = "已识别为状态或审批请求，但聊天不会直接执行此操作；请使用对应的项目状态或 Proposal 审批入口。"
+            elif intent.intent == "ambiguous":
+                reply = intent.clarification_question or "我无法确定这条消息是建议、变更还是状态请求；请补充具体目标。"
+            session.add(Message(session_id=conversation.id, role="assistant", content=reply, metadata_json={
+                "intent": intent.model_dump(mode="json"),
+                "model_tier": intent_outcome.route.tier,
+                "model": intent_outcome.route.model,
+                "reasoning_effort": intent_outcome.route.reasoning_effort,
+            }))
+            return ChatResponse(
+                session_id=conversation.id, project_id=project.id, phase="supervising", reply=reply,
+                clarification_mode=request.clarification_mode, model_tier=intent_outcome.route.tier,
+                model=intent_outcome.route.model, reasoning_effort=intent_outcome.route.reasoning_effort,
+            )
 
         if conversation.phase == "ready_for_confirmation":
             conversation.phase = "clarifying"

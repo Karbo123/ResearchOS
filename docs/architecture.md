@@ -50,6 +50,10 @@ Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDepend
 
 项目策略先生成 `config_change` Proposal，明确批准后才写入 `policies`。策略编译器识别中英文随机种子下限、引用 DOI/来源与原文证据要求，以及高成本/对外操作审批要求。实验计划按当前规则生成，`POST /api/experiments` 重新读取数据库策略，Runner 再校验受限策略快照；策略在批准后变化时，旧 Proposal 不能绕过新规则。无法识别的自由文本规则会保留并显示为人工规则，不会虚假标记为自动执行。
 
+## Project supervision intent
+
+Messages in an existing project conversation are classified by the configured container-internal model into a strict `SupervisionIntent` schema: explanation, advice, Idea change, long-term policy, pause/resume/cancel, approval/rejection, or ambiguous. The classifier receives only bounded project context and recent messages. A concrete change must include an allowlisted Idea field/value or a policy rule before the API creates a Proposal; state and approval intents never execute from chat. Classification failures return structured `llm_*` errors, and the old keyword marker path is not used.
+
 ## Idea-specific experiment planning
 
 `POST /api/projects/{project_id}/experiment-plan` reads the current `ProjectSpec`, verified page-level `Evidence`, and active policy snapshot, then calls only the configured complex model tier for a strict `ExperimentPlan`. The API validates every referenced evidence ID, the current Idea version and fingerprints, topic relevance, policy seed minimum, and confirmed resource budget before storing a pending `experiment_plan` Proposal. The payload contains no shell command, path, arbitrary runner argument, or generic demo task. Approval is mandatory; submission revalidates the stored plan against current state and sends it to the fixed topic template only when the request exactly matches the approved plan. The template runs the project's fixed `experiment/main.py`, passes plan/resume JSON through fixed environment paths, and requires numeric `metrics.json` plus structured `checkpoint.json`; missing or invalid output is a structured failure. It never substitutes `demo_classification` or `point_cloud_demo` for an unsupported or failed topic.

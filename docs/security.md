@@ -25,6 +25,7 @@ Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint ac
 - 明显领域可以作为可纠正假设推断；数据权限、GPU/预算、截止时间、新颖性、引用和结果不得臆造。
 - API 容器直接调用三个独立配置的 OpenAI-compatible URL；运行时不读取宿主机 Codex 配置目录或 `auth.json`，也不复制或返回认证对象、refresh token、Cookie 或其他 Secret。模型设置 GET 只显示 model、URL、推理强度和 `key_configured`，PUT 将 key 写入忽略的 runtime 挂载文件。
 - 模型失败必须返回结构化 API 错误；系统不切换未显式选择的 provider，不生成规则/关键词回复，不静默继续，也不写入助手消息。
+- 已有项目聊天先通过容器内模型生成严格 `SupervisionIntent`；只有白名单 Idea 字段/值或长期策略字段完整时才创建审批 Proposal。暂停、恢复、取消、批准和驳回意图不会直接执行；分类失败直接返回 `llm_*` 结构化错误。
 
 ## Container policy
 

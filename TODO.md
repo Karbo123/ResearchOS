@@ -139,8 +139,10 @@
   - 完成标准：覆盖新论文/BibTeX/代码、创新性变化、实验状态、异常、重点产物、真实资源/API 成本、Agent 决策和待审批事项；至少实现一种本地以外渠道并可关闭。
   - 已完成：报告由确定性服务汇总文献、页码/章节证据、代码候选、实验状态、显式记录的资源/成本、有效产物谱系、审计决策和待审批项；缺失成本不推断，元数据不升级为科学结论。`notify` 默认关闭，显式请求在启用配置后只发送一次 HTTPS webhook；禁用、URL、超时或非 2xx 失败均返回结构化错误，不尝试备用通道。
   - 验证结果：新增 `apps/api/app/reporting.py` 和 `apps/api/tests/test_reporting.py`；API 容器 `75 passed, 2 skipped`，报告/脱敏/时间窗口/webhook 失败不重试测试通过；`docker compose build api`、`docker compose config --quiet`、7 个 Schema/Workflow JSON、`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py` 和 `git diff --check` 通过。未调用模型、外部学术 API 或无关实验。
-- [ ] `P1-INTENT-014` 用严格结构化分类替代对话变更的关键词识别。
+- [x] `P1-INTENT-014` 用严格结构化分类替代对话变更的关键词识别。
   - 完成标准：解释、建议、执行变更、长期策略、暂停/恢复/取消、批准/驳回均有 Schema 和歧义测试；任何执行型输出仍需审批。
+  - 已完成：已有项目聊天通过容器内配置模型返回严格 `SupervisionIntent`；只有白名单 Idea 字段和值或明确策略规则才创建 Proposal，暂停/恢复/取消/批准/驳回只提示对应闸门，不从聊天直接执行；分类失败直接返回 `llm_*` 结构化错误，不使用关键词或本地回复。
+  - 验证结果：Schema `extra=forbid`、模型失败直返、关键词路径静态门禁和 API 全量 `78 passed, 2 skipped` 通过；`docker compose build api`、Compose、文档同步、Idea case、JSON 和 `git diff --check` 已通过。未调用真实模型、外部学术 API 或无关实验。
 - [ ] `P1-PATCH-015` 完成代码/配置/LaTeX patch 的“提案—diff—审批—隔离验证—Git commit—审计”执行器。
   - 完成标准：覆盖冲突、验证失败、回滚、依赖安装、覆盖/删除和对外发布禁用路径。
 - [ ] `P1-PAPER-016` 实现基于验证证据的完整 LaTeX 论文生成与更新。
@@ -268,3 +270,4 @@
 - 2026-07-30：修正 `scripts/acceptance_test.py` 的过时主题计划断言；验收入口不再期待 `topic_specific` “未实现”，也不调用模型-backed 计划生成或用分类/点云实验替代，而是明确记录计划仍需审批且本入口未启动模型请求。静态检查和容器测试继续通过；`P0-RUNNER-007` 的真实 GPU 主机验证与 `P0-IMPACT-008` 的影响图自动 Proposal 仍未完成。
 - 2026-07-30：继续 `P0-IMPACT-008`；影响图新增 artifact 节点/依赖边和实验依赖识别，批准变更后自动创建待审批局部重跑 Proposal，重跑 payload 仍由源检查点和白名单模板重建，禁止自动执行或 fallback。API 容器 `63 passed`；文档待最终同步检查，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。
 - 2026-07-30：继续 `P0-IMPACT-008`；修正影响图检查点选择，只推荐与受影响实验绑定的最新 `experiment_succeeded`/`experiment_failed` 检查点，忽略项目暂停等不可重跑检查点；补充回归夹具。API 容器全量 `76 passed, 2 skipped`，未调用模型、外部学术 API 或无关实验；任务继续保持 `[~]`，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。
+- 2026-07-30：完成 `P1-INTENT-014`；已有项目聊天改用容器内模型的严格 `SupervisionIntent` 分类，移除变更/策略关键词识别；只有白名单 Idea/策略字段完整时创建审批 Proposal，状态和审批意图不直接执行，模型失败直接返回结构化错误。API `78 passed, 2 skipped`、Compose/文档同步/Idea case/JSON/`git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。

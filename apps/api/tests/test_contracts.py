@@ -8,11 +8,11 @@ from pydantic import ValidationError
 from scripts.idea_case_loader import IDEA_CASES_ROOT, load_enabled_idea_cases, load_idea_case
 
 from app.clarification import build_spec, initial_draft, required_spec_gaps
-from app.llm import LLMRequestError, _system_prompt, clarification_mode_instruction, clarify_idea_with_llm, select_model_route
+from app.llm import LLMRequestError, _system_prompt, classify_supervision_intent, clarification_mode_instruction, clarify_idea_with_llm, select_model_route
 from app.policy_engine import compile_policy_constraints, experiment_policy_violations, seeds_for_constraints
 from app.evidence_pipeline import validate_open_pdf_url
 from app.related_work import build_related_work_analysis
-from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest
+from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest, SupervisionIntent
 
 
 def test_clarification_produces_valid_project_spec():
@@ -107,6 +107,29 @@ def test_model_provider_must_be_explicit(monkeypatch):
         clarify_idea_with_llm("简短研究想法")
     assert error.value.code == "llm_provider_not_configured"
     assert error.value.status_code == 503
+
+
+def test_supervision_intent_is_strict_and_keyword_detection_is_removed():
+    with pytest.raises(ValidationError):
+        SupervisionIntent(intent="change_request", unexpected="value")
+    main_source = (Path(__file__).parents[1] / "app" / "main.py").read_text(encoding="utf-8")
+    assert "change_markers" not in main_source
+    assert "policy_markers" not in main_source
+
+
+def test_supervision_intent_model_failure_is_returned_without_fallback(monkeypatch):
+    monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("RESEARCH_MODEL_URL_SIMPLE", "https://simple.invalid/v1")
+    monkeypatch.setenv("RESEARCH_MODEL_KEY_SIMPLE", "test-key")
+
+    def direct_failure(*args, **kwargs):
+        raise RuntimeError("model unavailable")
+
+    monkeypatch.setattr("app.llm.OpenAI", direct_failure)
+    with pytest.raises(LLMRequestError) as error:
+        classify_supervision_intent("请解释当前阶段", {"project_id": str(uuid4())})
+    assert error.value.code == "llm_request_failed"
+    assert error.value.status_code == 502
 
 
 def test_related_work_keeps_metadata_candidates_out_of_factual_evidence():
