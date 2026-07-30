@@ -124,7 +124,7 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 Use separate generated values for `POSTGRES_PASSWORD`, `MINIO_ROOT_PASSWORD`, `N8N_ENCRYPTION_KEY`, `N8N_LOCAL_OWNER_PASSWORD`, and `RUNNER_SHARED_SECRET`. Configure the three model URLs and keys in `.env` or through the Web UI model settings panel. Do not commit `.env`.
 
-The API container calls each configured OpenAI-compatible URL directly. The default routes are `gpt-5.6-luna`/low, `gpt-5.6-terra`/medium, and `gpt-5.6-sol`/high (`reasoning_effort=high`). A failed model request is returned as a structured API error; there is no provider switch, local reply, or unrelated experiment generation.
+The API container calls each configured OpenAI-compatible URL directly. The default routes are `gpt-5.6-luna`/low, `gpt-5.6-terra`/medium, and `gpt-5.6-sol`/high (`reasoning_effort=high`). The Web UI shows whether each URL/key comes from the container `.env` default or a runtime override; an empty key on save keeps the existing key. A failed model request is returned as a structured API error; there is no provider switch, local reply, or unrelated experiment generation.
 
 ### Build and start Compose
 
@@ -234,7 +234,7 @@ The previous acceptance record is retained as historical evidence at [`acceptanc
 | `RESEARCH_MODEL_SIMPLE`, `RESEARCH_MODEL_URL_SIMPLE`, `RESEARCH_MODEL_KEY_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Independent simple/Luna route; defaults to `gpt-5.6-luna` and `low`. |
 | `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Independent medium/Terra route; defaults to `gpt-5.6-terra` and `medium`. |
 | `RESEARCH_MODEL_COMPLEX`, `RESEARCH_MODEL_URL_COMPLEX`, `RESEARCH_MODEL_KEY_COMPLEX`, `RESEARCH_REASONING_COMPLEX` | Yes | Independent complex/Sol route; defaults to `gpt-5.6-sol` and `high`. |
-| `MODEL_SETTINGS_PATH` | Compose internal | Writable mounted `runtime/model-settings.json`; the UI stores keys there and GET responses expose only `key_configured`. |
+| `MODEL_SETTINGS_PATH` | Compose internal | Writable mounted `runtime/model-settings.json`; the UI stores keys there and GET responses expose only `key_configured` plus redacted per-field source labels (`env_default` or `runtime_override`). |
 | `RESEARCH_ROUTER_SIMPLE_MAX`, `RESEARCH_ROUTER_MEDIUM_MAX` | Yes | Deterministic complexity-score boundaries; defaults are `2` and `7`. |
 | `GITHUB_TOKEN`, `GITLAB_TOKEN` | Optional | Raise provider API limits; repository results remain unverified candidates until cross-checked. Tokens are read only by the API container and never mounted into n8n or Runner. |
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional | Optional Semantic Scholar quota credential. |

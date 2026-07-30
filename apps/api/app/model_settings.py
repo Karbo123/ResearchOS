@@ -62,12 +62,31 @@ def load_settings() -> dict[str, dict[str, str]]:
 
 def public_settings() -> dict[str, dict[str, Any]]:
     settings = load_settings()
+    runtime_fields: dict[str, set[str]] = {tier: set() for tier in TIERS}
+    try:
+        raw = json.loads(settings_path().read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        raw = None
+    except (OSError, json.JSONDecodeError):
+        raw = None
+    if isinstance(raw, dict):
+        for tier in TIERS:
+            item = raw.get(tier)
+            if isinstance(item, dict):
+                runtime_fields[tier] = {
+                    field for field in ("model", "url", "key", "reasoning_effort")
+                    if str(item.get(field, "")).strip()
+                }
     return {
         tier: {
             "model": item["model"],
             "url": item["url"],
             "reasoning_effort": item["reasoning_effort"],
             "key_configured": bool(item["key"]),
+            "sources": {
+                field: ("runtime_override" if field in runtime_fields[tier] else "env_default")
+                for field in ("model", "url", "key", "reasoning_effort")
+            },
         }
         for tier, item in settings.items()
     }

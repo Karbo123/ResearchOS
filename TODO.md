@@ -2,6 +2,11 @@
 
 ## 本轮新增任务
 
+- [x] `P1-UX-045` 修正模型设置来源诊断并提升前端交互与发布交付体验。
+  - 范围：明确显示三档模型的容器 `.env` 默认值/运行时覆盖来源；留空 key 保留既有值；改进配置错误诊断、设置弹窗、聊天/项目工作区的响应式交互和视觉一致性；核对 n8n 编排边界与 Windows GitHub Release 流程。
+  - 完成标准：`medium` 不再因旧空 runtime 字段或错误保存语义被误报未配置；模型失败仍直接结构化报错；前端桌面/窄屏可操作且无溢出；n8n 不读取 key，安装器 Release 门禁与文档一致；适用测试和浏览器检查通过。
+  - 验证结果：API 容器 `107 passed, 2 skipped`；`node --check apps/api/static/app.js`、`node --test scripts/test_chat_ux.mjs`（5 passed）、`docker compose config --quiet`、JSON/Idea case/文档同步检查通过；真实页面确认三档来源显示为“容器 .env 默认”、桌面/窄屏无横向溢出且设置卡片可操作；静态资源增加版本查询参数，避免浏览器缓存旧前端；GitHub token 失效，无法从本机直接发布 Release，保留工作流草稿/签名门禁状态。
+
 - [x] `P1-MODEL-044` 修复环境默认模型配置被空运行时字段遮蔽，并提升模型设置页的可用性。
   - 范围：三档运行时配置按字段覆盖容器环境默认值；空 URL/key 不得覆盖 `.env`；补回归测试；改进前端设置页视觉层和错误反馈；发布流程只在容器内执行模型调用。
   - 完成标准：共享 `OPENAI_BASE_URL`/`OPENAI_API_KEY` 能为三档提供默认值，旧的空 runtime 字段不再导致 `medium` 未配置；前端设置页在桌面和窄屏可操作；测试、文档同步和浏览器检查通过。
@@ -19,14 +24,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，完成 P1-UX-045、P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009、P2-INSTALLER-029）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P2-INSTALLER-029`；`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进真实 GPU 主机验证、材料解析、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P2-INSTALLER-029`；`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进真实 GPU 主机验证、材料解析、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -296,3 +301,4 @@
 - 2026-07-30：完成 `P1-INTENT-014`；已有项目聊天改用容器内模型的严格 `SupervisionIntent` 分类，移除变更/策略关键词识别；只有白名单 Idea/策略字段完整时创建审批 Proposal，状态和审批意图不直接执行，模型失败直接返回结构化错误。API `78 passed, 2 skipped`、Compose/文档同步/Idea case/JSON/`git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。
 - 2026-07-30：完成 `P1-MODEL-044`；修复空的旧 `runtime/model-settings.json` 字段遮蔽容器 `.env` 默认值的问题，统一设置页的轻量卡片视觉和默认值说明；新增 Windows GitHub Actions EXE/SHA-256 草稿 Release 工作流。n8n 继续负责固定工作流编排，模型调用、严格 Schema、审批和 fail-fast 校验仍由 API 容器负责，避免把动态 key 写入 workflow。API 容器 `102 passed, 2 skipped`，浏览器桌面/窄屏检查通过；P2-INSTALLER-029 因缺 Inno Setup、签名证书、干净 VM 和失效 GitHub token 继续进行中。
 - 2026-07-30：继续 `P1-PAPER-016`；新增 evidence-grounded `paper/main.tex` 生成器和 `POST /api/projects/{project_id}/paper-draft`，只接受当前 Idea、已核验页码/章节 quote，并仅写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会升级为论文事实。前端概览新增“生成证据论文草稿”按钮，接口只创建需审批的 LaTeX replace Proposal，批准前不写文件。同步工具契约、双语 README、运维说明和需求审计；新增缺失 Idea、metadata-only 和严格证据 Proposal 路由回归；API 容器 `106 passed, 2 skipped`，Node UX `5 passed`，文档/Idea case/Compose/容器 Python/JSON/`git diff --check` 和浏览器模型设置桌面/窄屏检查通过，控制台错误为 0。完整语义 claim 映射、生产级论文编译和完整论文能力仍未完成，任务保持 `[~]`。提交：`72b4c68`。
+- 2026-07-30：完成 `P1-UX-045`；修复浏览器缓存旧静态资源导致的模型来源不显示问题，新增 `app.js`/`styles.css` 版本查询参数；确认三档共享容器 `.env` 默认 URL/key、设置弹窗、未保存保护和模型失败直报错误；n8n/API 边界与 Windows Release 签名门禁保持一致。API `107 passed, 2 skipped`，Node UX `5 passed`，Compose/JSON/文档同步/Idea case/JS 检查通过；浏览器桌面/窄屏无横向溢出。GitHub token 失效，正式 Release 仍待有效权限和签名/干净 VM 验收。

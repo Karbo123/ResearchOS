@@ -52,7 +52,7 @@ Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDepend
 
 ## n8n orchestration boundary
 
-n8n owns the JSON workflow graph for the chat gateway, research start/search/evidence review, and scheduled reports. Its nodes call fixed high-level `http://api:8080` endpoints inside the Compose network; they do not read environment variables, hold model keys, construct SQL, or submit Runner commands. The API remains the enforcement boundary for model routing, strict Pydantic output, approvals, database state, and fail-fast errors. Moving a model request into an n8n HTTP node would duplicate secret/configuration state and bypass the shared three-tier settings panel, so the current design keeps that request in the API container while n8n coordinates the surrounding workflow.
+n8n owns the JSON workflow graph for the chat gateway, research start/search/evidence review, and scheduled reports. Its nodes call fixed high-level `http://api:8080` endpoints inside the Compose network; they do not read environment variables, hold model keys, construct SQL, or submit Runner commands. The API remains the enforcement boundary for model routing, strict Pydantic output, approvals, database state, and fail-fast errors. Moving a model request into an n8n HTTP node would duplicate secret/configuration state and bypass the shared three-tier settings panel, so the current design keeps the model request in the API container while n8n coordinates the surrounding workflow. This is intentional orchestration separation, not a Windows-side Bridge: all services remain inside Compose.
 
 ## Project supervision intent
 

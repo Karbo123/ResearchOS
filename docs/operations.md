@@ -45,7 +45,7 @@ docker compose exec -T postgres psql -U research -d research_os -c "SELECT versi
 
 三档未单独覆盖时，API 从容器环境中的 `OPENAI_BASE_URL` 和 `OPENAI_API_KEY` 读取共同默认值；显式 `RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 或运行时文件中的非空字段覆盖默认值，旧运行时文件的空字段会继承 `.env`。配置缺失或模型请求失败都直接返回结构化错误，不切换 provider、不生成本地回复，也不启动无关实验。
 
-默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。每档分别通过 `RESEARCH_MODEL_*`、`RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 和 `RESEARCH_REASONING_*` 配置；网页左下角的模型设置也会写入挂载的 `runtime/model-settings.json`。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界。
+默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。每档分别通过 `RESEARCH_MODEL_*`、`RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 和 `RESEARCH_REASONING_*` 配置；未填写的 tier URL/key 继承共享 `OPENAI_BASE_URL`/`OPENAI_API_KEY`。网页左下角的模型设置会写入挂载的 `runtime/model-settings.json`，并显示每个字段的脱敏来源；已配置 key 留空保存时保持原值。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界。
 
 修改 `.env` 中的模型配置后重启 API；通过网页设置面板保存的配置无需重启：
 

@@ -139,7 +139,7 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 API 容器在 Docker Compose 私有网络内直接调用三个模型 URL。Windows 不需要启动 Bridge 或其他 API 服务；网页设置接口只返回 `key_configured`，不会返回 key。
 
-默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high（`reasoning_effort=high`）。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。模型服务失败时 API 返回结构化错误，不切换提供方，也不生成本地回复。
+默认路由为：简单轮次 `gpt-5.6-luna`/low，中等轮次 `gpt-5.6-terra`/medium，复杂轮次 `gpt-5.6-sol`/high（`reasoning_effort=high`）。API 通过可配置的确定性阈值选择层级，模型不能自行升级到更昂贵层级。网页会显示每个 URL/key 来自容器 `.env` 默认值还是运行时覆盖；保存时 key 留空会保留原 key。模型服务失败时 API 返回结构化错误，不切换提供方，也不生成本地回复。
 
 ### 构建并启动 Compose
 
@@ -245,7 +245,7 @@ python scripts/acceptance_test.py
 | `RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_URL_SIMPLE`、`RESEARCH_MODEL_KEY_SIMPLE`、`RESEARCH_REASONING_SIMPLE` | 是 | 独立的 Luna 简单层，默认 `gpt-5.6-luna`/`low`。 |
 | `RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM` | 是 | 独立的 Terra 中等层，默认 `gpt-5.6-terra`/`medium`。 |
 | `RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX` | 是 | 独立的 Sol 复杂层，默认 `gpt-5.6-sol`/`high`。 |
-| `MODEL_SETTINGS_PATH` | Compose 内部 | 可写的 `runtime/model-settings.json` 挂载路径；网页保存 key，读取接口只返回 `key_configured`。 |
+| `MODEL_SETTINGS_PATH` | Compose 内部 | 可写的 `runtime/model-settings.json` 挂载路径；网页保存 key，读取接口只返回 `key_configured` 和脱敏的字段来源（`env_default` 或 `runtime_override`）。 |
 | `RESEARCH_ROUTER_SIMPLE_MAX`、`RESEARCH_ROUTER_MEDIUM_MAX` | 是 | 确定性复杂度分数边界，默认 `2` 与 `7`。 |
 | `GITHUB_TOKEN`、`GITLAB_TOKEN` | 可选 | 提高提供方 API 配额；仓库结果在交叉验证前仍只是候选。凭据只由 API 容器读取，不挂载给 n8n 或 Runner。 |
 | `SEMANTIC_SCHOLAR_API_KEY` | 可选 | Semantic Scholar 的可选配额凭据。 |

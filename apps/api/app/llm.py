@@ -181,7 +181,11 @@ def _openai_clarification(
     except (OSError, RuntimeError, ValueError) as exc:
         raise LLMRequestError("llm_provider_not_configured", "当前模型层级配置无效，请检查模型设置。", 503) from exc
     if not settings["key"] or not settings["url"]:
-        raise LLMRequestError("llm_provider_not_configured", f"{route.tier} 模型层级的 URL 或 key 未配置。", 503)
+        raise LLMRequestError(
+            "llm_provider_not_configured",
+            f"{route.tier} 模型层级的 URL 或 key 未配置；请检查容器 .env 默认值或该层级的运行时覆盖。",
+            503,
+        )
     try:
         client = OpenAI(
             api_key=settings["key"],
@@ -256,7 +260,11 @@ def classify_supervision_intent(
     except (OSError, RuntimeError, ValueError) as exc:
         raise LLMRequestError("llm_provider_not_configured", "当前模型层级配置无效，请检查模型设置。", 503) from exc
     if not settings["key"] or not settings["url"]:
-        raise LLMRequestError("llm_provider_not_configured", f"{route.tier} 模型层级的 URL 或 key 未配置。", 503)
+        raise LLMRequestError(
+            "llm_provider_not_configured",
+            f"{route.tier} 模型层级的 URL 或 key 未配置；请检查容器 .env 默认值或该层级的运行时覆盖。",
+            503,
+        )
     if os.getenv("RESEARCH_LLM_PROVIDER", "openai").strip().lower() != "openai":
         raise LLMRequestError(
             "llm_provider_not_configured",
@@ -316,7 +324,11 @@ def generate_experiment_plan_with_llm(payload: dict[str, Any], project_id: UUID,
     except (OSError, RuntimeError, ValueError) as exc:
         raise LLMRequestError("llm_provider_not_configured", "复杂层模型配置无效，请检查模型设置。", 503) from exc
     if not settings["key"] or not settings["url"]:
-        raise LLMRequestError("llm_provider_not_configured", "复杂层模型的 URL 或 key 未配置。", 503)
+        raise LLMRequestError(
+            "llm_provider_not_configured",
+            "complex 模型层级的 URL 或 key 未配置；请检查容器 .env 默认值或该层级的运行时覆盖。",
+            503,
+        )
     route = ModelRoute(tier="complex", model=settings["model"], reasoning_effort=settings["reasoning_effort"])
     try:
         client = OpenAI(

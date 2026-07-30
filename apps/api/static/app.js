@@ -2,7 +2,7 @@ const chatUX = window.ResearchChatUX;
 const CHAT_REQUEST_TIMEOUT_MS = 300000;
 const chatGate = chatUX.createBusyGate();
 const projectChatGate = chatUX.createBusyGate();
-const state = { sessionId: null, projectId: null, project: null, queuedFiles: [], activeTab: "overview", chatBusy: false, projectChatBusy: false, clarificationMode: "automatic" };
+const state = { sessionId: null, projectId: null, project: null, queuedFiles: [], activeTab: "overview", chatBusy: false, projectChatBusy: false, clarificationMode: "automatic", settingsDirty: false };
 const $ = (id) => document.getElementById(id);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
@@ -24,9 +24,11 @@ const MODEL_TIERS = [
 function renderModelSettings(tiers) {
   $("modelSettingsTiers").innerHTML = MODEL_TIERS.map(([tier, label, defaultEffort]) => {
     const item = tiers[tier] || {};
+    const source = item.sources || {};
     const keyState = item.key_configured ? "已配置 key" : "待配置 key";
     const urlState = item.url ? "URL 已就绪" : "待配置 URL";
-    return `<section class="model-tier"><div class="model-tier-heading"><div><h3>${label}<span class="badge neutral">${tier}</span></h3><div class="tier-status"><span class="status-dot ${item.key_configured && item.url ? "ready" : "pending"}"></span>${keyState} · ${urlState}</div></div><span class="tier-default">默认 ${defaultEffort}</span></div><div class="model-tier-grid">
+    const sourceLabel = value => value === "runtime_override" ? "运行时覆盖" : "容器 .env 默认";
+    return `<section class="model-tier"><div class="model-tier-heading"><div><h3>${label}<span class="badge neutral">${tier}</span></h3><div class="tier-status"><span class="status-dot ${item.key_configured && item.url ? "ready" : "pending"}"></span>${keyState} · ${urlState}</div><div class="tier-sources"><span>URL：${sourceLabel(source.url)}</span><span>key：${sourceLabel(source.key)}</span></div></div><span class="tier-default">默认 ${defaultEffort}</span></div><div class="model-tier-grid">
       <label>模型名称<input name="${tier}.model" value="${escapeHtml(item.model || "")}" required maxlength="200"></label>
       <label>推理强度<select name="${tier}.reasoning_effort"><option value="low" ${item.reasoning_effort === "low" ? "selected" : ""}>low</option><option value="medium" ${item.reasoning_effort === "medium" ? "selected" : ""}>medium</option><option value="high" ${item.reasoning_effort === "high" ? "selected" : ""}>high</option></select></label>
       <label>模型 URL<input name="${tier}.url" type="url" value="${escapeHtml(item.url || "")}" placeholder="https://.../v1" required maxlength="500"></label>
@@ -38,13 +40,17 @@ function renderModelSettings(tiers) {
 async function openModelSettings() {
   try {
     const result = await api("/api/settings/models");
-    renderModelSettings(result.tiers);
+    renderModelSettings(result.tiers); state.settingsDirty = false;
     $("modelSettingsError").classList.add("hidden");
     $("modelSettingsModal").classList.remove("hidden");
     window.setTimeout(() => $("modelSettingsTiers").querySelector("input")?.focus(), 0);
   } catch (error) { toast(error.message); }
 }
-function closeModelSettings() { $("modelSettingsModal").classList.add("hidden"); $("openModelSettings").focus(); }
+function closeModelSettings() {
+  if (state.settingsDirty && !window.confirm("配置尚未保存，确定关闭吗？")) return;
+  state.settingsDirty = false;
+  $("modelSettingsModal").classList.add("hidden"); $("openModelSettings").focus();
+}
 async function saveModelSettings(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget), payload = {};
@@ -54,8 +60,8 @@ async function saveModelSettings(event) {
   };
   const saveButton = $("saveModelSettings"), errorBox = $("modelSettingsError");
   saveButton.disabled = true; errorBox.classList.add("hidden");
-  try { const result = await api("/api/settings/models", {method:"PUT", body:JSON.stringify(payload)}); renderModelSettings(result.tiers); toast("模型配置已保存"); closeModelSettings(); }
-  catch (error) { errorBox.textContent = error.message; errorBox.classList.remove("hidden"); }
+  try { const result = await api("/api/settings/models", {method:"PUT", body:JSON.stringify(payload)}); renderModelSettings(result.tiers); state.settingsDirty = false; toast("模型配置已保存"); closeModelSettings(); }
+  catch (error) { errorBox.textContent = `保存失败：${error.message}。已配置的 key 留空即可保留；模型调用失败不会切换或降级。`; errorBox.classList.remove("hidden"); }
   finally { saveButton.disabled = false; iconRefresh(); }
 }
 function iconRefresh() { if (window.lucide) lucide.createIcons(); }
@@ -214,6 +220,7 @@ async function sendChat(event) {
     const decoder = new TextDecoder();
     let buffer = "";
     let result = null;
+    let streamError = null;
 
     while (true) {
       const {done, value} = await reader.read();
@@ -229,12 +236,13 @@ async function sendChat(event) {
         if (line.startsWith("event: ")) { currentEvent = line.slice(7); currentData = ""; }
         else if (line.startsWith("data: ")) { currentData = line.slice(6); }
         else if (line === "" && currentEvent) {
-          try { const parsed = JSON.parse(currentData); handleSSEEventIn(sessionId, currentEvent, parsed, clarificationMode); if (currentEvent === "result") result = parsed; } catch(e) {}
+          try { const parsed = JSON.parse(currentData); handleSSEEventIn(sessionId, currentEvent, parsed, clarificationMode); if (currentEvent === "result") result = parsed; if (currentEvent === "error") streamError = parsed; } catch(e) {}
           currentEvent = ""; currentData = "";
         }
       }
     }
 
+    if (streamError) throw new Error(streamError.message || "模型请求失败");
     if (result) {
       state.sessionId = result.session_id || state.sessionId;
       const routeMeta = modelMeta(result);
@@ -545,6 +553,7 @@ async function changeProjectState(action) { if(action==="cancel"&&!window.confir
 async function addPolicy(event) { event.preventDefault(); const input=$("policyInput"); try{const r=await api("/api/policies",{method:"POST",body:JSON.stringify({project_id:state.projectId,rule:input.value})});await refreshProject();switchTab("approvals");toast(`策略提案 ${r.proposal_id.slice(0,8)} 待审批`);}catch(e){toast(e.message);} }
 async function generateReport(period) { try { const r=await api("/api/reports",{method:"POST",body:JSON.stringify({project_id:state.projectId,period})}); $("reportOutput").className="report"; $("reportOutput").textContent=r.content; }catch(e){toast(e.message);} }
 function switchTab(name) { state.activeTab=name; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab===name)); document.querySelectorAll(".tab-panel").forEach(x=>x.classList.add("hidden")); $(`tab-${name}`).classList.remove("hidden"); }
+function toggleMobileProjectChat(open) { $("projectChatPane").classList.toggle("mobile-open", open); if (open) $("projectChatInput").focus(); }
 async function sendProjectChat(event){event.preventDefault();const input=$("projectChatInput"),message=input.value.trim();if(!message||state.projectChatBusy||!projectChatGate.tryStart())return;addMessage($("projectMessages"),"user",message);input.value="";state.projectChatBusy=true;const stopProgress=startAiProgress({progressId:"projectAiProgress",formId:"projectChatForm",elapsedId:"projectAiProgressElapsed",stageId:"projectAiProgressStage",project:true});try{const r=await api("/api/chat",{method:"POST",body:JSON.stringify({session_id:state.sessionId,project_id:state.projectId,message})});addMessage($("projectMessages"),"assistant",r.reply,modelMeta(r));if(r.action_required){await refreshProject();switchTab("approvals");}}catch(e){const message=chatUX.formatRequestError(e);addMessage($("projectMessages"),"assistant",`请求失败：${message}`);toast(message);}finally{stopProgress();projectChatGate.finish();state.projectChatBusy=false;}}
 
 function bindComposerKeyboard(formId, inputId) {
@@ -559,11 +568,13 @@ function bindComposerKeyboard(formId, inputId) {
 
 $("chatForm").addEventListener("submit", sendChat); $("confirmProject").addEventListener("click", confirmProject); $("newProject").addEventListener("click",newProject); $("refresh").addEventListener("click",refreshProject); $("projectChatForm").addEventListener("submit",sendProjectChat);
 $("openModelSettings").addEventListener("click", openModelSettings); $("closeModelSettings").addEventListener("click", closeModelSettings); $("cancelModelSettings").addEventListener("click", closeModelSettings); $("modelSettingsForm").addEventListener("submit", saveModelSettings);
+$("modelSettingsForm").addEventListener("input", () => { state.settingsDirty = true; });
 $("modelSettingsModal").addEventListener("click", event => { if (event.target === $("modelSettingsModal")) closeModelSettings(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && !$("modelSettingsModal").classList.contains("hidden")) closeModelSettings(); });
 bindComposerKeyboard("chatForm", "chatInput"); bindComposerKeyboard("projectChatForm", "projectChatInput");
 $("fileInput").addEventListener("change", e => { state.queuedFiles=[...e.target.files]; $("fileQueue").textContent=state.queuedFiles.map(f=>f.name).join(" · "); });
 $("clarificationMode").addEventListener("change", () => syncClarificationMode());
 $("tabs").querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+$("mobileChatToggle").addEventListener("click", () => toggleMobileProjectChat(true)); $("mobileChatClose").addEventListener("click", () => toggleMobileProjectChat(false));
 api("/api/health").then(()=>{$("health").classList.add("ok");$("health").lastChild.textContent="已连接";}).catch(()=>{$("health").lastChild.textContent="离线";});
 syncClarificationMode(); loadProjects(); iconRefresh();

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Research OS</title>
   <script src="/lucide.min.js"></script>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css?v=20260730-ux45">
 </head>
 <body>
   <div class="app-shell">
@@ -30,7 +30,7 @@
         </div>
         <div class="top-actions">
           <span class="health" id="health"><span></span>连接中</span>
-          <button class="icon-btn" id="refresh" title="刷新"><i data-lucide="refresh-cw"></i></button>
+          <button class="icon-btn" id="refresh" title="刷新" aria-label="刷新"><i data-lucide="refresh-cw"></i></button>
         </div>
       </header>
 
@@ -93,8 +93,9 @@
             <div id="tab-policies" class="tab-panel hidden"></div>
             <div id="tab-reports" class="tab-panel hidden"></div>
           </div>
-          <aside class="project-chat">
-            <div class="pane-heading"><h2>项目对话</h2><span class="badge live">监督中</span></div>
+          <button class="mobile-chat-toggle secondary" id="mobileChatToggle" type="button"><i data-lucide="message-circle"></i>项目对话</button>
+          <aside class="project-chat" id="projectChatPane">
+            <div class="pane-heading"><h2>项目对话</h2><div class="chat-heading-actions"><span class="badge live">监督中</span><button class="icon-btn mobile-chat-close" id="mobileChatClose" type="button" title="关闭项目对话" aria-label="关闭项目对话"><i data-lucide="x"></i></button></div></div>
             <div id="projectMessages" class="messages compact"></div>
             <div id="projectAiProgress" class="ai-progress compact hidden" role="status" aria-live="polite">
               <div class="ai-progress-head"><span class="thinking-dot"></span><strong>AI 正在分析</strong><span id="projectAiProgressElapsed">0 秒</span></div>
@@ -121,8 +122,8 @@
       </form>
     </div>
   </div>
-  <div id="toast" class="toast hidden"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <script src="/chat-ux.js"></script>
-  <script src="/app.js"></script>
+  <script src="/app.js?v=20260730-ux45"></script>
 </body>
 </html>

@@ -136,6 +136,26 @@ def test_empty_runtime_fields_do_not_mask_environment_defaults(monkeypatch, tmp_
     assert settings["medium"]["reasoning_effort"] == "medium"
 
 
+def test_public_model_settings_expose_sources_without_exposing_keys(monkeypatch, tmp_path):
+    settings_path = tmp_path / "model-settings.json"
+    monkeypatch.setenv("MODEL_SETTINGS_PATH", str(settings_path))
+    monkeypatch.setenv("OPENAI_BASE_URL", "https://shared.invalid/v1")
+    monkeypatch.setenv("OPENAI_API_KEY", "shared-key")
+    settings_path.write_text(json.dumps({
+        tier: {"model": "", "url": "", "key": "", "reasoning_effort": ""}
+        for tier in ("simple", "medium", "complex")
+    }), encoding="utf-8")
+
+    from app.model_settings import public_settings
+
+    medium = public_settings()["medium"]
+    assert medium["key_configured"] is True
+    assert medium["url"] == "https://shared.invalid/v1"
+    assert medium["sources"]["url"] == "env_default"
+    assert medium["sources"]["key"] == "env_default"
+    assert "key" not in medium
+
+
 def test_model_provider_must_be_explicit(monkeypatch):
     monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "")
     with pytest.raises(LLMRequestError) as error:
