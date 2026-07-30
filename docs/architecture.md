@@ -64,6 +64,10 @@ The Runner service is a non-root, read-only supervisor on the internal `runner-i
 
 `POST /api/projects/{project_id}/diagnostics` reads persisted terminal experiment rows and calculates finite numeric metric count, mean, population standard deviation, minimum, maximum, structured failure codes, and succeeded runs with missing metrics. It does not call a model and does not execute a suggested action. When failures, missing metrics, or high dispersion meet a deterministic threshold, the API creates one deduplicated `diagnostic_suggestion` Proposal with the affected run IDs and evidence; approval is required before any follow-up change can be proposed or executed. The LLM may later explain or challenge this report, but it never computes the statistics.
 
+## Reports and notifications
+
+`POST /api/reports` builds daily, weekly, or manual Markdown from persisted rows without a model call. It includes literature and page/section evidence counts, code repository verification state, experiment statuses, explicitly reported resource/cost fields, valid artifact lineage, audit decisions, and pending approvals. It does not infer missing costs or turn metadata into scientific conclusions. `notify` defaults to `false`; when explicitly enabled, `REPORT_NOTIFICATIONS_ENABLED=true` and a credential-free `https://` `REPORT_WEBHOOK_URL` are required. One webhook request is attempted, with an optional bearer secret from `REPORT_WEBHOOK_SECRET`; failure returns a structured error and does not try another channel. n8n continues to generate local reports without notification by default.
+
 ## 实验可复现快照
 
 批准的实验进入 Runner 前，API 在固定项目 Git 工作区执行一次可复现快照门禁：工作树必须干净，Git 索引与状态中的文件必须通过扩展名、目录和 10 MB 单文件大小门禁，然后从当前 commit 创建不可变的 `run/<run_id>` annotated tag。`git archive` 生成的 `source.tar` 不写回项目仓库，而是保存到 `artifacts/reproducibility/<project_id>/<run_id>/`。

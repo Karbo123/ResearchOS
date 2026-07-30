@@ -41,6 +41,7 @@ from .diagnostics import build_diagnostic_report
 from .impact_analysis import analyze_impact, apply_impact
 from .material_parser import MaterialParseError, context_for_materials, parse_material
 from .malware_scanner import MalwareScanError, scan_file
+from .reporting import ReportNotificationError, build_report_content, send_report_webhook
 from .repository_service import (
     RepositoryVerificationError, archive_sha256, download_archive, repository_directory_name,
     safe_extract_archive, validate_download_gate, verify_repository_candidate,
@@ -2295,26 +2296,29 @@ def create_report(request: ReportRequest):
         project = session.get(Project, request.project_id)
         if not project: raise HTTPException(404, "project not found")
         papers = session.scalars(select(Paper).where(Paper.project_id == project.id)).all()
+        evidence = session.scalars(select(Evidence).where(Evidence.project_id == project.id)).all()
+        repositories = session.scalars(select(RepositoryRecord).where(RepositoryRecord.project_id == project.id)).all()
         experiments = session.scalars(select(Experiment).where(Experiment.project_id == project.id)).all()
         pending = session.scalars(select(Proposal).where(Proposal.project_id == project.id, Proposal.status == "pending")).all()
         artifacts = session.scalars(select(Artifact).where(Artifact.project_id == project.id, Artifact.valid.is_(True))).all()
-        recent = papers[-5:]
-        content = "\n".join([
-            f"# {project.title} - {request.period.title()} report",
-            f"Generated: {datetime.now(timezone.utc).isoformat()}", f"Current stage: **{project.current_stage}**",
-            f"\n## Literature\nVerified records: {sum(1 for p in papers if p.verified)} / {len(papers)}",
-            *[f"- [{p.title}]({p.source_url}) DOI: {p.doi or 'not available'}" for p in recent],
-            f"\n## Experiments\nTotal: {len(experiments)}; running: {sum(1 for e in experiments if e.status in {'queued', 'running'})}; failed: {sum(1 for e in experiments if e.status == 'failed')}",
-            *[f"- {e.experiment_type}: {e.status}; metrics={json.dumps(e.metrics, ensure_ascii=False)}" for e in experiments[-5:]],
-            f"\n## Visual artifacts\nAvailable: {len(artifacts)}",
-            *[f"- {a.kind}: {a.name} (run {a.experiment_id})" for a in artifacts[-8:]],
-            f"\n## Approval required\n{len(pending)} pending proposal(s).",
-            *[f"- {p.kind}: {p.summary} (estimated ${p.estimated_cost_usd:.2f})" for p in pending],
-            "\n## Cost\nExternal API and compute cost accounting is zero/unknown in this local MVP unless supplied by a provider.",
-        ])
-        report = Report(project_id=project.id, period=request.period, content=content); session.add(report); session.flush()
+        audit_events = session.scalars(select(AuditEvent).where(AuditEvent.project_id == project.id).order_by(AuditEvent.created_at)).all()
+        content = build_report_content(
+            project=project, period=request.period, papers=papers, evidence=evidence,
+            repositories=repositories, experiments=experiments, artifacts=artifacts,
+            proposals=pending, audit_events=audit_events,
+        )
+        report = Report(project_id=project.id, period=request.period, content=content)
+        session.add(report); session.flush()
+        notification = None
+        if request.notify:
+            try:
+                notification = send_report_webhook(
+                    report_id=str(report.id), project_id=str(project.id), period=request.period, content=content,
+                )
+            except ReportNotificationError as exc:
+                raise HTTPException(status_code=502, detail=exc.as_dict()) from exc
         audit(session, "report.generated", project.id, {"report_id": str(report.id), "period": request.period})
-        return {"id": str(report.id), "content": content}
+        return {"id": str(report.id), "content": content, "notification": notification}
 
 
 @app.get("/api/projects/{project_id}/audit")

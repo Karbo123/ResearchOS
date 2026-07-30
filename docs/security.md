@@ -35,6 +35,7 @@ Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint ac
 - 生产环境为 Runner 增加独立 Docker network，默认拒绝出站网络；按数据源或任务临时授权。
 - 每个真实 GPU 任务在独立非 root 容器/作业中执行，并带磁盘配额、超时、取消、镜像 digest 和命令模板 ID；当前 GPU 能力只保证受控请求和结构化失败，不宣称已在 GPU 主机完成验证。
 - 资源追踪只使用固定的 psutil 字段和固定 `nvidia-smi` 数值查询，按固定间隔写入 MLflow 与 `resource-usage.jsonl`；不记录任意环境、命令输出、Secret 或用户输入。GPU 不可用时记录显式不可用状态，不触发备用执行器或其他实验。
+- 报告是确定性的运营汇总，不调用模型；外部报告推送默认关闭，只接受无内嵌凭据的 HTTPS `REPORT_WEBHOOK_URL`。`REPORT_WEBHOOK_SECRET` 仅作为 Authorization header 发送，不进入报告内容或审计详情。显式请求只尝试一次，失败返回结构化错误，不使用其他传输方式。
 - 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。文件先通过 Compose 私有网络的 ClamAV `clamd` 扫描；扫描不可用、超时、发现威胁或返回不可验证结果都会 fail-closed。PDF/JSON/CSV/文本/代码解析有长度和行数上限；图片 OCR 有尺寸、超时和文本上限；ZIP 只读取清单并拒绝路径穿越、过高压缩比和过大声明解压量，不解压或执行。API 在锁定会话/项目行后核对文件数量和累计字节配额。解析摘要进入模型请求时标记为不可信上下文，上传/扫描/解析/配额失败会阻止模型调用。
 
 ## Experiment snapshot boundary

@@ -78,7 +78,7 @@
 | PNG/PLY/PDF 产物及谱系 | 已实现（受限预览） | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；网页支持 JSON/文本/CSV/TSV/PDF 和转义 HTML 文本，以及固定上限的 ASCII PLY/PCD 点云 Canvas、旋转、缩放、重置和可选网格线框。二进制点云、失效文件和解析限制返回结构化错误；这仍不是完整任意格式 3D 引擎。 |
 | 实验跟踪 | 已实现（受限范围） | 自托管 MLflow + MinIO 记录参数、学习率/模型版本、种子、Git、数据版本、镜像 digest、指标和产物；Runner 按固定频率记录进程/系统 CPU、内存和 GPU 数值，并保存 `resource-usage.jsonl`。没有 W&B/TensorBoard；真实 GPU 主机验证仍属于 Runner 任务缺口。 |
 | PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
-| 日报/周报与推送 | 部分实现 | n8n 每日/每周定时生成报告并存入 Web UI；未接入飞书、Slack、Telegram、邮件，也不完整统计资源/API 成本和关键 Agent 决策。 |
+| 日报/周报与推送 | 已实现（受限范围） | n8n 每日/每周定时生成确定性运营报告并存入 Web UI，覆盖文献/证据/代码候选、实验状态、已报告资源与成本、产物、审计决策和待审批项；可通过默认关闭的 HTTPS webhook 在显式 `notify=true` 请求中推送。未实现特定飞书、Slack、Telegram 或邮件 SDK，缺失的 provider 成本不会被猜测。 |
 | 同一项目对话监督 | 部分实现 | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；分类主要靠关键词，不是健壮的结构化意图模型。 |
 | Proposal、diff、审批、审计 | 部分实现 | 实验、Idea 修订、配置和 LaTeX 有两阶段流程；代码补丁、依赖安装、删除、外发只有契约/提案模型，没有完整执行器。 |
 | 长期项目策略 | 已实现（MVP） | 可通过审批写入 `policies`，不依赖聊天历史；中英文种子、引用证据和高成本/对外审批规则会结构化显示，种子规则在计划、API 提交和 Runner 三处执行。其他自由文本规则仍需扩展解析器。 |

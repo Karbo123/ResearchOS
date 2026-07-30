@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-TRACKING-012；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
+最后更新：2026-07-30（Asia/Shanghai，完成 P1-TRACKING-012、P1-REPORT-013；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-TRACKING-012`、`P1-VIEWER-011` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -135,8 +135,10 @@
   - 已完成：补充固定频率的 CPU、内存、进程和 GPU 数值采样，写入 MLflow 时间序列与受控 `resource-usage.jsonl`；同时记录学习率、模型版本、平台/网络策略、镜像 digest、数据版本、Git commit、随机种子和 Runner 终态，禁止把 Secret 或任意用户环境传入采样产物。
   - 完成标准：记录学习率、连续 CPU/内存/GPU、模型版本、镜像 digest、数据版本、Git commit、种子和状态；敏感字段不会进入日志。
   - 验证结果：新增 `apps/runner/app/resource_tracking.py` 和 `apps/runner/tests/test_resource_tracking.py`；固定 `nvidia-smi` 数值查询、无 GPU 状态、JSONL 数值字段和 MLflow step 序列测试通过；Runner 镜像重建成功，容器 `python -B -m unittest discover -s tests -v`（9 tests）通过，Runner 只读文件系统保持不变；`docker compose config --quiet`、API 容器 `70 passed, 2 skipped`、`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py` 和 `git diff --check` 通过。未调用模型、外部学术 API 或无关实验。
-- [ ] `P1-REPORT-013` 完善日报/周报内容及外部推送适配器。
+- [x] `P1-REPORT-013` 完善日报/周报内容及外部推送适配器。
   - 完成标准：覆盖新论文/BibTeX/代码、创新性变化、实验状态、异常、重点产物、真实资源/API 成本、Agent 决策和待审批事项；至少实现一种本地以外渠道并可关闭。
+  - 已完成：报告由确定性服务汇总文献、页码/章节证据、代码候选、实验状态、显式记录的资源/成本、有效产物谱系、审计决策和待审批项；缺失成本不推断，元数据不升级为科学结论。`notify` 默认关闭，显式请求在启用配置后只发送一次 HTTPS webhook；禁用、URL、超时或非 2xx 失败均返回结构化错误，不尝试备用通道。
+  - 验证结果：新增 `apps/api/app/reporting.py` 和 `apps/api/tests/test_reporting.py`；API 容器 `75 passed, 2 skipped`，报告/脱敏/时间窗口/webhook 失败不重试测试通过；`docker compose build api`、`docker compose config --quiet`、7 个 Schema/Workflow JSON、`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py` 和 `git diff --check` 通过。未调用模型、外部学术 API 或无关实验。
 - [ ] `P1-INTENT-014` 用严格结构化分类替代对话变更的关键词识别。
   - 完成标准：解释、建议、执行变更、长期策略、暂停/恢复/取消、批准/驳回均有 Schema 和歧义测试；任何执行型输出仍需审批。
 - [ ] `P1-PATCH-015` 完成代码/配置/LaTeX patch 的“提案—diff—审批—隔离验证—Git commit—审计”执行器。

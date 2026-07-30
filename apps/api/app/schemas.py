@@ -398,8 +398,11 @@ class PolicyUpdate(BaseModel):
 
 
 class ReportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     project_id: UUID
     period: Literal["daily", "weekly", "manual"] = "manual"
+    notify: bool = False
 
 
 class ModelTierSettings(BaseModel):

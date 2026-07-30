@@ -117,6 +117,7 @@ docker compose restart n8n api
 
 - 项目未进入 `awaiting_experiment_approval`：查看项目 `tasks`、`/api/projects/{id}/audit` 和 n8n 日志。
 - n8n webhook 404：确认三个工作流为 Active，且数据库存在 `research-os/start` 与 `research-os/chat` 路径。
+- 报告推送：日报/周报默认只保存到 Web UI。若需要外部推送，设置 `REPORT_NOTIFICATIONS_ENABLED=true`、无内嵌凭据的 HTTPS `REPORT_WEBHOOK_URL`，可选设置 `REPORT_WEBHOOK_SECRET`，再向 `/api/reports` 显式发送 `{ "project_id": "<uuid>", "period": "daily", "notify": true }`。禁用、URL 无效、超时或非 2xx 都返回结构化错误，不尝试备用通道；API 容器负责请求，Windows 不启动通知服务。
 - 文献部分失败：`/api/search` 会返回 `provider_errors`，其他提供方继续落库；外部 API 限流不应伪造结果。
 - Runner 状态不同步：调用 `/api/experiments/{run_id}/sync`。Runner 状态保存在 `artifacts/.runner-state`；重启时未完成任务会标记为中断失败。
 - Runner 在快照门禁被拒：检查结构化错误 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing`、`snapshot_manifest_missing` 或 `runner_image_changed`；提交项目源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。

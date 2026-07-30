@@ -95,7 +95,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | MLflow 追踪 | **已实现（受限范围）** | 每个 Runner 任务记录学习率/模型版本、Git/数据/种子/镜像身份、平台和网络策略；Runner 状态保存终态，并以固定频率将进程/系统 CPU、内存和 GPU 数值写入 MLflow 及 `resource-usage.jsonl`。无 GPU 时明确记录 `gpu_available=0`，不使用其他执行路径。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
 | 产物预览 | **已实现（受限范围）** | 网页以转义文本预览 JSON/文本/CSV/TSV/PDF/HTML，并以固定上限渲染 ASCII PLY/PCD 点云，支持旋转、缩放、重置、可选网格线框、谱系元数据和下载。二进制点云、缺失/失效产物及解析上限错误均返回结构化错误。 |
-| 通用科研自治 | **部分实现/路线图** | 真实 GPU 主机验证、外部通知、证据驱动 Related Work 与完整论文仍待实现。当前已支持固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求模板，并在每 Run 独立非 root 容器中使用硬上限输出 volume；官方 GitHub/GitLab 仓库核验和审批后固定 commit 导入已实现。 |
+| 通用科研自治 | **部分实现/路线图** | 真实 GPU 主机验证、更完整的多模态材料库、证据驱动 Related Work 与完整论文仍待实现。当前已支持固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求模板，并在每 Run 独立非 root 容器中使用硬上限输出 volume；官方 GitHub/GitLab 仓库核验、审批后固定 commit 导入、确定性报告和可选 HTTPS 报告 webhook 已实现。 |
 
 ## 前置条件
 
@@ -241,6 +241,7 @@ python scripts/acceptance_test.py
 | `RUNNER_IMAGE_DIGEST` | 发布必需；本地可用占位值 | 期望的不可变 Runner 镜像 digest，例如 `sha256:<64 位十六进制字符>`。本地开发的 `unavailable` 会被记录为未核验，不能作为发布身份。 |
 | `RESEARCH_OS_COMMIT` | 发布必需；本地可自动探测 | 每次运行记录的 Research OS 完整 40 位 Git commit。容器部署应显式设置；宿主机 API 可自动探测仓库 commit。 |
 | `REPORT_TIMEZONE` | 是 | n8n 定时与报告时区，默认 `Asia/Shanghai`。 |
+| `REPORT_NOTIFICATIONS_ENABLED`、`REPORT_WEBHOOK_URL`、`REPORT_WEBHOOK_SECRET`、`REPORT_WEBHOOK_TIMEOUT_SECONDS` | 可选，默认关闭 | 报告请求显式传 `notify=true` 时可发送一次 HTTPS webhook；URL 无效、服务不可用或发送失败都会返回结构化错误，不尝试备用通道。 |
 
 `DATABASE_URL`、`RUNNER_URL`、`MLFLOW_TRACKING_URI`、`PROJECTS_ROOT`、`ARTIFACTS_ROOT` 与固定 n8n webhook URL 等内部变量由 `docker-compose.yml` 生成，不应作为用户侧 Secret 暴露。
 
@@ -341,6 +342,7 @@ python scripts/acceptance_test.py
 | n8n 要求输入密码 | 从 Research OS 侧边栏或 `/api/n8n/open` 打开；确认 `.env` Owner 与 n8n 数据库一致。不要关闭用户管理。 |
 | n8n 自动登录返回 503/401 | 确认 n8n 正常、Owner 密码至少 12 位、`N8N_INTERNAL_URL` 为 `http://n8n:5678`，然后重启 `api n8n`。 |
 | webhook 返回 404 | 确认三个内置工作流均为 Active；修改工作流 JSON 后需要重新创建 n8n 容器。 |
+| 报告推送失败 | 默认保持关闭；启用后检查 HTTPS URL、超时、目标响应和 `REPORT_NOTIFICATIONS_ENABLED=true`。API 不尝试其他通道。 |
 | 检索论文数量较少 | 检查 `provider_errors`；外部 API 可能限流或不返回 DOI，系统只记录缺失，绝不伪造结果。 |
 | Runner 请求被拒绝 | 查看结构化策略错误与待审批 Proposal；暂停/取消状态和随机种子不足都是强制闸门。 |
 | Runner 请求被快照闸门拒绝 | 查看 `project_worktree_dirty`、`git_policy_violation`、`project_source_missing` 或 `snapshot_manifest_missing` 等结构化错误；提交源代码/配置、移除被禁止的大文件，并保持项目 Git 工作树干净后重试。 |
@@ -354,6 +356,7 @@ python scripts/acceptance_test.py
 主题专属实验规划已经实现为证据绑定、策略校验和审批门控的 Proposal；批准计划会通过固定 `experiment/main.py` 入口执行，并要求结构化指标与检查点产物。系统不会回退到无关的分类或点云 demo。
 
 最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、真实 GPU 主机验证、持久队列、外部通知、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求已通过每 Run 独立容器与硬上限输出 volume 执行。批准后的检查点重跑只通过匹配的白名单提交链自动进入队列；失败仍直接保留结构化错误，不会改用无关演示实验。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
+最重要的未完成项记录在 [`TODO.md`](TODO.md)：需审批的多用例澄清回归、聊天超时/键盘测试、证据驱动 Related Work/新颖性分析、真实 GPU 主机验证、持久队列、更完整的材料解析、交互式 3D 查看器、完整证据驱动 LaTeX 写作，以及单 EXE 安装器的签名与干净 VM 验收。固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求已通过每 Run 独立容器与硬上限输出 volume 执行。批准后的检查点重跑只通过匹配的白名单提交链自动进入队列；失败仍直接保留结构化错误，不会改用无关演示实验。确定性日报/周报已经包含运营指标，并可在启用后显式推送一次 HTTPS webhook。官方仓库/许可证核验和受控固定 commit 下载已实现并保留审批闸门；已批准变更的实体级依赖失效和局部重跑建议也已实现。RAGFlow/LlamaIndex 与 LangGraph 会等到数据规模或流程复杂度确实需要时再引入。
 
 不要把当前合成分类/点云任务当作科学结果，不要把 `metadata-only` 当作页码已核验引用，也不要把本地自动登录入口暴露到个人电脑之外。
 
