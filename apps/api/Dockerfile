@@ -17,8 +17,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY apps/api/app ./app
 COPY apps/api/static ./static
 COPY apps/api/tests ./tests
+COPY alembic.ini /workspace/alembic.ini
+COPY migrations /workspace/migrations
 COPY schemas /workspace/schemas
 COPY scripts/idea_case_loader.py /workspace/scripts/idea_case_loader.py
+COPY scripts/provision_db_roles.py /workspace/scripts/provision_db_roles.py
 COPY tests/idea-cases /workspace/tests/idea-cases
 RUN chown -R app:app /workspace
 USER app

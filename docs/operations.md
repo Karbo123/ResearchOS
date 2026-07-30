@@ -22,11 +22,28 @@ API 应返回 `status=ok`，n8n 和 MLflow 应返回 HTTP 200。Runner 不发布
 
 `.env` 中的 PostgreSQL、MinIO、n8n 加密密钥和 Owner 凭据与现有 Docker volume 绑定。初始化 volume 后直接修改这些值通常不会自动迁移已有数据；应先备份并执行恢复/轮换方案。
 
+## 数据库迁移与角色
+
+Compose 的 `db-migrate` 是唯一的 Schema 变更入口。它使用 bootstrap `POSTGRES_USER` 仅在迁移阶段幂等创建 `API_DB_USER`、`N8N_DB_USER` 和 `MLFLOW_DB_USER`，再执行 `/workspace/migrations/versions/` 中的 Alembic revisions。API、n8n 和 MLflow 只有在 migration 成功后启动；API 启动时只检查 `alembic_version`，不执行 `create_all` 或隐式 `ALTER TABLE`。
+
+数据库结构变更前先备份 PostgreSQL 和相关 volume，然后运行：
+
+```powershell
+docker compose up -d db-migrate
+docker compose logs --tail=100 db-migrate
+docker compose up -d api n8n mlflow runner runner-launcher
+docker compose exec -T postgres psql -U research -d research_os -c "SELECT version_num FROM alembic_version"
+```
+
+迁移失败时不要强行启动 API；保留失败日志，修正迁移或恢复备份后重新运行。生产环境应将 bootstrap 凭据只提供给受控 migration job，并为三个运行角色设置不同的随机密码。
+
 ## 代码仓库核验与下载
 
 文献检索写入的仓库只是候选。文献页的交叉验证动作调用 `POST /api/projects/{project_id}/repositories/{repository_id}/verify`，核对 GitHub/GitLab 元数据、论文 DOI/完整标题、仓库引用文件、许可证和默认分支 commit。只有已知 SPDX 和完整 40 位 commit 的成功核验结果才能创建下载 Proposal；必须通过正常 Proposal 审批端点才会下载受大小、条目、解压大小、路径和文件类型限制的归档，并提交到项目 Git。失败、过期或未知许可证直接返回结构化错误，不会触发归档请求。
 
 ## 自适应模型路由
+
+三档未单独覆盖时，API 从容器环境中的 `OPENAI_BASE_URL` 和 `OPENAI_API_KEY` 读取共同默认值；显式 `RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 或网页保存的 `runtime/model-settings.json` 优先。配置缺失或模型请求失败都直接返回结构化错误，不切换 provider、不生成本地回复，也不启动无关实验。
 
 默认层级为 `gpt-5.6-luna`/low、`gpt-5.6-terra`/medium、`gpt-5.6-sol`/high。每档分别通过 `RESEARCH_MODEL_*`、`RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 和 `RESEARCH_REASONING_*` 配置；网页左下角的模型设置也会写入挂载的 `runtime/model-settings.json`。`RESEARCH_ROUTER_SIMPLE_MAX=2`、`RESEARCH_ROUTER_MEDIUM_MAX=7` 是 API 侧确定性复杂度评分边界。
 

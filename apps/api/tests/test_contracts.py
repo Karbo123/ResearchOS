@@ -101,6 +101,21 @@ def test_model_tiers_are_independent(monkeypatch, tmp_path):
     assert all("key" not in item for item in catalog.values())
 
 
+def test_shared_environment_model_defaults_are_used_when_tier_overrides_are_empty(monkeypatch, tmp_path):
+    monkeypatch.setenv("MODEL_SETTINGS_PATH", str(tmp_path / "model-settings.json"))
+    monkeypatch.setenv("OPENAI_BASE_URL", "https://shared.invalid/v1")
+    monkeypatch.setenv("OPENAI_API_KEY", "shared-key")
+    for tier in ("SIMPLE", "MEDIUM", "COMPLEX"):
+        monkeypatch.setenv(f"RESEARCH_MODEL_URL_{tier}", "")
+        monkeypatch.setenv(f"RESEARCH_MODEL_KEY_{tier}", "")
+
+    from app.model_settings import load_settings
+
+    settings = load_settings()
+    assert all(item["url"] == "https://shared.invalid/v1" for item in settings.values())
+    assert all(item["key"] == "shared-key" for item in settings.values())
+
+
 def test_model_provider_must_be_explicit(monkeypatch):
     monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "")
     with pytest.raises(LLMRequestError) as error:

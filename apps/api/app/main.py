@@ -21,7 +21,7 @@ from sqlalchemy import desc, func, select, text
 from .clarification import build_spec, initial_draft, required_spec_gaps
 from .artifact_preview import ArtifactPreviewError, preview_artifact as build_artifact_preview
 from .checkpoint_recovery import CheckpointRecoveryError, build_rerun_payload, validate_rerun_payload
-from .db import Base, engine, session_scope
+from .db import engine, session_scope
 from .models import (
     Artifact, ArtifactDependency, AuditEvent, Checkpoint, ConversationSession, Evidence,
     Experiment, HumanFeedback, IdeaVersion, Message, Paper, Policy, Project, Proposal,
@@ -88,10 +88,10 @@ MATERIAL_MAX_PROJECT_BYTES = int(os.getenv("MATERIAL_MAX_PROJECT_BYTES", str(2 *
 def startup() -> None:
     PROJECTS_ROOT.mkdir(parents=True, exist_ok=True)
     ARTIFACTS_ROOT.mkdir(parents=True, exist_ok=True)
-    Base.metadata.create_all(engine)
-    with engine.begin() as connection:
-        connection.execute(text("ALTER TABLE evidence ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb"))
-        connection.execute(text("ALTER TABLE uploaded_files ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb"))
+    with engine.connect() as connection:
+        migration = connection.execute(text("SELECT version_num FROM alembic_version LIMIT 1")).scalar_one_or_none()
+    if not migration:
+        raise RuntimeError("database schema migration is missing; run the db-migrate Compose service first")
 
 
 def audit(session, action: str, project_id: UUID | None, details: dict[str, Any], actor: str = "system"):

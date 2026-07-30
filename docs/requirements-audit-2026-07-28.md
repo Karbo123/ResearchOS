@@ -79,7 +79,7 @@
 | 数值分析与失败诊断 | 已实现（受限闭环） | `POST /api/projects/{project_id}/diagnostics` 由 Python 计算有限数值指标的 count/mean/population std/min/max，解析结构化失败码和成功但缺失指标的运行；异常会生成去重、只记录证据且不执行的 `diagnostic_suggestion` Proposal，模型只能解释/质疑，不能计算或启动建议。任意日志/CSV/多模态自动推断仍不属于当前能力。 |
 | PNG/PLY/PDF 产物及谱系 | 已实现（受限预览） | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；网页支持 JSON/文本/CSV/TSV/PDF 和转义 HTML 文本，以及固定上限的 ASCII PLY/PCD 点云 Canvas、旋转、缩放、重置和可选网格线框。二进制点云、失效文件和解析限制返回结构化错误；这仍不是完整任意格式 3D 引擎。 |
 | 实验跟踪 | 已实现（受限范围） | 自托管 MLflow + MinIO 记录参数、学习率/模型版本、种子、Git、数据版本、镜像 digest、指标和产物；Runner 按固定频率记录进程/系统 CPU、内存和 GPU 数值，并保存 `resource-usage.jsonl`。没有 W&B/TensorBoard；真实 GPU 主机验证仍属于 Runner 任务缺口。 |
-| PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
+| PostgreSQL/Git/大文件持久化 | 已实现（受控 MVP） | 18 张业务表由版本化 Alembic migration 管理；`db-migrate` 在 API/n8n/MLflow 启动前幂等创建独立运行角色。API 只使用业务表 CRUD 权限，n8n 只使用 `n8n` schema，MLflow 使用独立数据库；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。正式备份轮换、恢复演练和更细的生产网络隔离仍属于 P2 运维范围。 |
 | 日报/周报与推送 | 已实现（受限范围） | n8n 每日/每周定时生成确定性运营报告并存入 Web UI，覆盖文献/证据/代码候选、实验状态、已报告资源与成本、产物、审计决策和待审批项；可通过默认关闭的 HTTPS webhook 在显式 `notify=true` 请求中推送。未实现特定飞书、Slack、Telegram 或邮件 SDK，缺失的 provider 成本不会被猜测。 |
 | 同一项目对话监督 | 已实现（受限范围） | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；已有项目消息由容器内模型返回严格 `SupervisionIntent`，Idea/策略变更仍需 Proposal 审批，状态/审批意图不从聊天直接执行。模型失败直接返回结构化错误。 |
 | Proposal、diff、审批、审计 | 已实现（受控范围） | 实验、Idea 修订、策略、代码/配置/LaTeX patch 和依赖安装具有 Proposal/diff/审批/审计路径；patch 执行器只接受结构化文件操作，在临时隔离目录验证后提交 Git，覆盖冲突、失败恢复、覆盖/删除和审批回滚；外部发布明确禁用。更复杂的多文件语义合并和生产级队列仍不属于 MVP。 |
@@ -98,7 +98,11 @@
 2026-07-30 Runner 模板/配额增量：`P0-RUNNER-007` 增加固定入口的 Python、固定 CMake target 的 C++ 和 Docker GPU 请求模板；每 Run 改用带硬大小上限的 tmpfs 输出 volume，终态同步产物后清理 job container 与 volume。Runner `6 passed`、launcher 普通/真实 Docker 集成各 `8 passed`、API `57 passed`，集成后无 managed volume 残留。Conda、主题专属 Runner 和真实 GPU 主机验证仍未完成；未调用模型、外部学术 API 或无关实验。
 2026-07-30 Runner Conda 增量：`P0-RUNNER-007` 在 `research-os-runner` 镜像内预构建固定 `/opt/conda/envs/research-os` micromamba Python 3.12 环境，新增 `conda_python` 白名单模板；请求仍只能选择 `experiment/*.py` 入口，不能提交环境文件、依赖、命令或网络配置。`micromamba 2.3.2`、固定环境 Python `3.12.13`、API `57 passed`、Runner `6 passed`、launcher `8 passed`（含两个真实 Docker 集成测试）通过；主题专属 Runner 和真实 GPU 主机验证仍未完成，未调用模型、外部学术 API 或无关实验。
 
+2026-07-30 数据库迁移增量：`P1-DB-017` 新增一次性 `db-migrate` Compose 服务、版本化 Alembic 初始 revision 和幂等角色 provisioning。API 使用只授予业务表 CRUD 的独立角色，n8n 只访问 `n8n` schema，MLflow 使用独立 `research_os_mlflow` 数据库和角色；API 启动缺少 `alembic_version` 时直接失败，不再隐式 `create_all`/`ALTER TABLE`。备份轮换、恢复演练和生产级网络隔离仍属于 P2 运维范围。
+
 ## 关键风险
+
+2026-07-30 模型配置与编排增量：三档模型在容器启动时读取共享 `OPENAI_BASE_URL`/`OPENAI_API_KEY` 默认值，显式 tier 配置和网页 runtime 设置覆盖共享值；配置缺失或请求失败直接返回结构化错误。n8n 保留固定聊天、检索、报告和项目编排，模型请求与严格 Schema/审批/状态校验仍在 API 容器，避免复制 Secret 或绕过安全边界。
 
 1. UI 已区分元数据记录与页码原文证据；但自动提取 quote 仍需在 Related Work 阶段把具体事实性 claim 精确映射到 evidence ID，不能仅因论文已有全文证据就宣称任意结论成立。
 2. 合成实验只能验证系统编排和产物链，不能证明用户研究 Idea 的科学结论。

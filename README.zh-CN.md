@@ -1,5 +1,13 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-13 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-14 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
+
+说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
+
+模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或网页保存的运行时配置优先，API 不会返回 key。
+
+模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或网页保存的运行时配置优先，API 不会返回 key。
+
+说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
 
 `RUNNER_EXECUTOR_TIMEOUT_SECONDS` 控制 Runner 到固定 launcher 的请求超时；每 Run 容器在 Compose 内部创建，Windows 不启动 API 或模型服务。
 
@@ -226,6 +234,9 @@ python scripts/acceptance_test.py
 | 变量 | 是否必需 | 说明 |
 | --- | --- | --- |
 | `POSTGRES_DB`、`POSTGRES_USER`、`POSTGRES_PASSWORD` | 是 | PostgreSQL 数据库和凭据。使用唯一密码；已有 volume 后修改需要迁移/恢复方案。 |
+| `API_DB_USER`、`API_DB_PASSWORD` | 是 | API 专用运行角色；API 不使用 PostgreSQL bootstrap 角色，也不会在启动时执行 Schema DDL。 |
+| `N8N_DB_USER`、`N8N_DB_PASSWORD` | 是 | n8n 专用角色，用于 `n8n` Schema。由于 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`，还需要数据库 `CREATE`；不会获得业务表权限。 |
+| `MLFLOW_DB_USER`、`MLFLOW_DB_PASSWORD` | 是 | MLflow 专用角色，并作为独立 `research_os_mlflow` 数据库的 owner。 |
 | `MINIO_ROOT_USER`、`MINIO_ROOT_PASSWORD` | 是 | MinIO 管理凭据，MLflow 使用它把产物保存到 `research-artifacts`。 |
 | `N8N_ENCRYPTION_KEY` | 是 | 必须长期保持不变的 n8n 加密密钥；丢失后已存凭据可能无法解密。 |
 | `N8N_LOCAL_OWNER_EMAIL`、`N8N_LOCAL_OWNER_PASSWORD` | 自动登录必需 | 仅供 `/api/n8n/open` 使用的本地 Owner，密码只在服务端使用，不渲染到页面。 |
@@ -243,7 +254,7 @@ python scripts/acceptance_test.py
 | `REPORT_TIMEZONE` | 是 | n8n 定时与报告时区，默认 `Asia/Shanghai`。 |
 | `REPORT_NOTIFICATIONS_ENABLED`、`REPORT_WEBHOOK_URL`、`REPORT_WEBHOOK_SECRET`、`REPORT_WEBHOOK_TIMEOUT_SECONDS` | 可选，默认关闭 | 报告请求显式传 `notify=true` 时可发送一次 HTTPS webhook；URL 无效、服务不可用或发送失败都会返回结构化错误，不尝试备用通道。 |
 
-`DATABASE_URL`、`RUNNER_URL`、`MLFLOW_TRACKING_URI`、`PROJECTS_ROOT`、`ARTIFACTS_ROOT` 与固定 n8n webhook URL 等内部变量由 `docker-compose.yml` 生成，不应作为用户侧 Secret 暴露。
+`DATABASE_URL`、`MIGRATION_DATABASE_URL`、`RUNNER_URL`、`MLFLOW_TRACKING_URI`、`PROJECTS_ROOT`、`ARTIFACTS_ROOT` 与固定 n8n webhook URL 等内部变量由 `docker-compose.yml` 生成，不应作为用户侧 Secret 暴露。一次性的 `db-migrate` 服务负责创建三个运行角色并执行版本化 Alembic migration，然后 API、n8n 和 MLflow 才会启动。
 
 ## 存储与谱系
 

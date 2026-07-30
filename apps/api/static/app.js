@@ -24,7 +24,9 @@ const MODEL_TIERS = [
 function renderModelSettings(tiers) {
   $("modelSettingsTiers").innerHTML = MODEL_TIERS.map(([tier, label, defaultEffort]) => {
     const item = tiers[tier] || {};
-    return `<section class="model-tier"><h3>${label}<span class="badge neutral">${tier}</span></h3><div class="model-tier-grid">
+    const keyState = item.key_configured ? "已配置 key" : "待配置 key";
+    const urlState = item.url ? "URL 已就绪" : "待配置 URL";
+    return `<section class="model-tier"><div class="model-tier-heading"><div><h3>${label}<span class="badge neutral">${tier}</span></h3><div class="tier-status"><span class="status-dot ${item.key_configured && item.url ? "ready" : "pending"}"></span>${keyState} · ${urlState}</div></div><span class="tier-default">默认 ${defaultEffort}</span></div><div class="model-tier-grid">
       <label>模型名称<input name="${tier}.model" value="${escapeHtml(item.model || "")}" required maxlength="200"></label>
       <label>推理强度<select name="${tier}.reasoning_effort"><option value="low" ${item.reasoning_effort === "low" ? "selected" : ""}>low</option><option value="medium" ${item.reasoning_effort === "medium" ? "selected" : ""}>medium</option><option value="high" ${item.reasoning_effort === "high" ? "selected" : ""}>high</option></select></label>
       <label>模型 URL<input name="${tier}.url" type="url" value="${escapeHtml(item.url || "")}" placeholder="https://.../v1" required maxlength="500"></label>
@@ -37,10 +39,12 @@ async function openModelSettings() {
   try {
     const result = await api("/api/settings/models");
     renderModelSettings(result.tiers);
+    $("modelSettingsError").classList.add("hidden");
     $("modelSettingsModal").classList.remove("hidden");
+    window.setTimeout(() => $("modelSettingsTiers").querySelector("input")?.focus(), 0);
   } catch (error) { toast(error.message); }
 }
-function closeModelSettings() { $("modelSettingsModal").classList.add("hidden"); }
+function closeModelSettings() { $("modelSettingsModal").classList.add("hidden"); $("openModelSettings").focus(); }
 async function saveModelSettings(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget), payload = {};
@@ -48,8 +52,11 @@ async function saveModelSettings(event) {
     model: String(form.get(`${tier}.model`) || "").trim(), url: String(form.get(`${tier}.url`) || "").trim(),
     key: String(form.get(`${tier}.key`) || ""), reasoning_effort: String(form.get(`${tier}.reasoning_effort`) || "medium"),
   };
+  const saveButton = $("saveModelSettings"), errorBox = $("modelSettingsError");
+  saveButton.disabled = true; errorBox.classList.add("hidden");
   try { const result = await api("/api/settings/models", {method:"PUT", body:JSON.stringify(payload)}); renderModelSettings(result.tiers); toast("模型配置已保存"); closeModelSettings(); }
-  catch (error) { toast(error.message); }
+  catch (error) { errorBox.textContent = error.message; errorBox.classList.remove("hidden"); }
+  finally { saveButton.disabled = false; iconRefresh(); }
 }
 function iconRefresh() { if (window.lucide) lucide.createIcons(); }
 function addMessage(container, role, text, meta = "") {
@@ -552,6 +559,7 @@ function bindComposerKeyboard(formId, inputId) {
 $("chatForm").addEventListener("submit", sendChat); $("confirmProject").addEventListener("click", confirmProject); $("newProject").addEventListener("click",newProject); $("refresh").addEventListener("click",refreshProject); $("projectChatForm").addEventListener("submit",sendProjectChat);
 $("openModelSettings").addEventListener("click", openModelSettings); $("closeModelSettings").addEventListener("click", closeModelSettings); $("cancelModelSettings").addEventListener("click", closeModelSettings); $("modelSettingsForm").addEventListener("submit", saveModelSettings);
 $("modelSettingsModal").addEventListener("click", event => { if (event.target === $("modelSettingsModal")) closeModelSettings(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && !$("modelSettingsModal").classList.contains("hidden")) closeModelSettings(); });
 bindComposerKeyboard("chatForm", "chatInput"); bindComposerKeyboard("projectChatForm", "projectChatInput");
 $("fileInput").addEventListener("change", e => { state.queuedFiles=[...e.target.files]; $("fileQueue").textContent=state.queuedFiles.map(f=>f.name).join(" · "); });
 $("clarificationMode").addEventListener("change", () => syncClarificationMode());

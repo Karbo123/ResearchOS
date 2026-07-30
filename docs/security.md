@@ -69,12 +69,14 @@ The project `.gitignore` is part of this boundary, but it is not the only contro
 
 - 更换所有默认密钥，使用 Docker secrets/Vault，轮换 API token。
 - 反向代理启用 TLS、SSO/RBAC、CSRF 防护和请求限速。
-- PostgreSQL 拆分 API、n8n、MLflow 角色并限制 schema 权限。
+- PostgreSQL 由一次性 `db-migrate` 容器执行版本化 Alembic migration；API 使用只授予业务表 CRUD 的 `API_DB_USER`，n8n 使用只授予 `n8n` schema 的 `N8N_DB_USER`，MLflow 使用独立数据库和 `MLFLOW_DB_USER`。运行时服务不使用 bootstrap 管理员，也不在 API 启动时执行 DDL；角色和默认权限由迁移前的幂等 provisioning 脚本建立。
 - MinIO bucket 使用服务账号、版本化、对象锁和生命周期策略。
 - 审计日志发送到只追加存储；关键审批使用签名身份而非 `local-user`。
 - 为 PDF/LaTeX/代码解析使用无网络沙箱和恶意内容扫描。
 
 ## Local n8n auto-login
+
+n8n 专用运行角色除 `n8n` schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；该角色没有业务表权限。
 
 `/api/n8n/open` 只为本机个人部署提供无感登录。它使用服务端保存的本地 Owner 凭据调用 n8n 官方登录接口，并转发 n8n 签发的 HttpOnly Cookie；它不会关闭 n8n 用户管理，也不会自行签发或解析 n8n JWT。
 

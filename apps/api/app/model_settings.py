@@ -24,10 +24,12 @@ def settings_path() -> Path:
 
 def _env_settings(tier: str) -> dict[str, str]:
     suffix = tier.upper()
+    shared_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").strip()
+    shared_key = os.getenv("OPENAI_API_KEY", "").strip()
     return {
         "model": os.getenv(f"RESEARCH_MODEL_{suffix}", DEFAULTS[tier]["model"]).strip(),
-        "url": os.getenv(f"RESEARCH_MODEL_URL_{suffix}", "").strip(),
-        "key": os.getenv(f"RESEARCH_MODEL_KEY_{suffix}", "").strip(),
+        "url": os.getenv(f"RESEARCH_MODEL_URL_{suffix}", "").strip() or shared_url,
+        "key": os.getenv(f"RESEARCH_MODEL_KEY_{suffix}", "").strip() or shared_key,
         "reasoning_effort": os.getenv(
             f"RESEARCH_REASONING_{suffix}", DEFAULTS[tier]["reasoning_effort"]
         ).strip(),

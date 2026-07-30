@@ -1,7 +1,7 @@
 name: research-os
 
 x-app-env: &app-env
-  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-research}:${POSTGRES_PASSWORD:-research-dev}@postgres:5432/${POSTGRES_DB:-research_os}
+  DATABASE_URL: postgresql+psycopg://${API_DB_USER:-research_api}:${API_DB_PASSWORD:-api-development-password}@postgres:5432/${POSTGRES_DB:-research_os}
   RUNNER_URL: http://runner:8010
   MLFLOW_TRACKING_URI: http://mlflow:5000
   MINIO_ENDPOINT: minio:9000
@@ -11,6 +11,8 @@ x-app-env: &app-env
   PROJECTS_ROOT: /workspace/projects
   ARTIFACTS_ROOT: /workspace/artifacts
   RESEARCH_LLM_PROVIDER: ${RESEARCH_LLM_PROVIDER:-openai}
+  OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
   MODEL_SETTINGS_PATH: /workspace/runtime/model-settings.json
   MODEL_REQUEST_TIMEOUT_SECONDS: ${MODEL_REQUEST_TIMEOUT_SECONDS:-240}
   RESEARCH_MODEL_SIMPLE: ${RESEARCH_MODEL_SIMPLE:-gpt-5.6-luna}
@@ -67,6 +69,28 @@ services:
       retries: 20
     restart: unless-stopped
 
+  db-migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    working_dir: /workspace
+    environment:
+      MIGRATION_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-research}:${POSTGRES_PASSWORD:-research-dev}@postgres:5432/${POSTGRES_DB:-research_os}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-research}:${POSTGRES_PASSWORD:-research-dev}@postgres:5432/${POSTGRES_DB:-research_os}
+      API_DB_USER: ${API_DB_USER:-research_api}
+      API_DB_PASSWORD: ${API_DB_PASSWORD:-api-development-password}
+      N8N_DB_USER: ${N8N_DB_USER:-research_n8n}
+      N8N_DB_PASSWORD: ${N8N_DB_PASSWORD:-n8n-development-password}
+      MLFLOW_DB_USER: ${MLFLOW_DB_USER:-research_mlflow}
+      MLFLOW_DB_PASSWORD: ${MLFLOW_DB_PASSWORD:-mlflow-development-password}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["sh", "-c", "python scripts/provision_db_roles.py && alembic -c /workspace/alembic.ini upgrade head"]
+    networks:
+      - default
+    restart: "no"
+
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     command: server /data --console-address :9001
@@ -109,7 +133,7 @@ services:
     build: ./apps/mlflow
     command: >-
       mlflow server --host 0.0.0.0 --port 5000
-      --backend-store-uri postgresql+psycopg2://${POSTGRES_USER:-research}:${POSTGRES_PASSWORD:-research-dev}@postgres:5432/research_os_mlflow
+      --backend-store-uri postgresql+psycopg2://${MLFLOW_DB_USER:-research_mlflow}:${MLFLOW_DB_PASSWORD:-mlflow-development-password}@postgres:5432/research_os_mlflow
       --artifacts-destination s3://research-artifacts/mlflow
       --serve-artifacts
     environment:
@@ -119,6 +143,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
       minio-init:
         condition: service_completed_successfully
     ports:
@@ -206,6 +232,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
       clamav:
         condition: service_healthy
       runner:
@@ -233,8 +261,8 @@ services:
       DB_POSTGRESDB_HOST: postgres
       DB_POSTGRESDB_PORT: 5432
       DB_POSTGRESDB_DATABASE: ${POSTGRES_DB:-research_os}
-      DB_POSTGRESDB_USER: ${POSTGRES_USER:-research}
-      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-research-dev}
+      DB_POSTGRESDB_USER: ${N8N_DB_USER:-research_n8n}
+      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n-development-password}
       DB_POSTGRESDB_SCHEMA: n8n
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-local-development-only-key}
       N8N_SECURE_COOKIE: "false"
@@ -254,6 +282,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
       api:
         condition: service_started
     restart: unless-stopped

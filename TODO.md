@@ -1,15 +1,26 @@
 # Research OS TODO
 
+## 本轮新增任务
+
+- [x] `P0-LLM-041` 修正容器模型默认配置与三档设置面板体验。
+  - 范围：`OPENAI_BASE_URL`/`OPENAI_API_KEY` 作为三档共享 `.env` 默认值，显式 tier 配置和网页 runtime 配置优先；模型失败仍直接返回结构化错误。
+  - 完成标准：API、Compose、`.env.example`、双语 README、设置面板、自动化测试和真实浏览器桌面/窄屏检查一致。
+  - 验证结果：API settings endpoint 显示 Luna/Terra/Sol 的 URL 为 `https://api.openai.com/v1` 且三档 key 已配置；API 测试、Compose、文档同步、Node UX、桌面/窄屏浏览器和控制台检查通过，未提交 key。
+- [x] `P1-N8N-043` 明确并扩展 n8n 编排边界。
+  - 范围：n8n 负责固定的聊天、检索、报告和项目流程编排；API 保留模型请求、Schema、权限、审批、状态和 fail-fast 安全边界。不得把 key 放进 workflow JSON 或让节点读取环境变量。
+  - 完成标准：工作流 JSON、架构/运维文档和测试明确该边界；不以 n8n 重复实现 API 校验或引入 fallback。
+  - 验证结果：n8n 工作流节点标注 API strict/fail-fast 边界，JSON 解析通过，容器重新导入并激活聊天、主流程和报告工作流；n8n 仍只访问 Compose 私有 `http://api:8080`，未复制模型 key 或启动 Windows 服务。
+
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-PATCH-015；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
+最后更新：2026-07-30（Asia/Shanghai，完成 P1-DB-017、P0-LLM-041、P1-N8N-043；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -150,8 +161,9 @@
 - [ ] `P1-PAPER-016` 实现基于验证证据的完整 LaTeX 论文生成与更新。
   - 依赖：`P0-EVIDENCE-001`、`P0-RELATED-002`、`P0-PLAN-006`。
   - 完成标准：Introduction、Related Work、Method、Experiments、Results、Limitations 和 References 可追踪；编译前必须审批 diff。
-- [ ] `P1-DB-017` 引入正式数据库迁移和最小权限角色。
+- [x] `P1-DB-017` 引入正式数据库迁移和最小权限角色。
   - 完成标准：使用迁移工具管理 18 张业务表；API、n8n、MLflow 使用独立角色/schema；备份恢复测试通过。
+  - 验证结果：新增一次性 `db-migrate` 服务、Alembic `0001_initial` revision 和幂等角色 provisioning；API 使用业务表 CRUD 角色，n8n 使用 `n8n` schema 角色并保留启动所需数据库 `CREATE` 权限，MLflow 使用独立 `research_os_mlflow` 数据库。现有 PostgreSQL volume 上迁移成功，恢复到临时数据库后验证 19 张 public 表和 `0001_initial`，随后清理临时数据库与备份。API `99 passed, 2 skipped`、n8n 工作流启动并激活、Compose/JSON/文档同步/容器 Python 语法/`git diff --check` 通过。
 
 ## P2：覆盖面与长期运行
 

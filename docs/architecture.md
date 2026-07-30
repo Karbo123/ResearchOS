@@ -50,6 +50,10 @@ Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDepend
 
 项目策略先生成 `config_change` Proposal，明确批准后才写入 `policies`。策略编译器识别中英文随机种子下限、引用 DOI/来源与原文证据要求，以及高成本/对外操作审批要求。实验计划按当前规则生成，`POST /api/experiments` 重新读取数据库策略，Runner 再校验受限策略快照；策略在批准后变化时，旧 Proposal 不能绕过新规则。无法识别的自由文本规则会保留并显示为人工规则，不会虚假标记为自动执行。
 
+## n8n orchestration boundary
+
+n8n owns the JSON workflow graph for the chat gateway, research start/search/evidence review, and scheduled reports. Its nodes call fixed high-level `http://api:8080` endpoints inside the Compose network; they do not read environment variables, hold model keys, construct SQL, or submit Runner commands. The API remains the enforcement boundary for model routing, strict Pydantic output, approvals, database state, and fail-fast errors. Moving a model request into an n8n HTTP node would duplicate secret/configuration state and bypass the shared three-tier settings panel, so the current design keeps that request in the API container while n8n coordinates the surrounding workflow.
+
 ## Project supervision intent
 
 Messages in an existing project conversation are classified by the configured container-internal model into a strict `SupervisionIntent` schema: explanation, advice, Idea change, long-term policy, pause/resume/cancel, approval/rejection, or ambiguous. The classifier receives only bounded project context and recent messages. A concrete change must include an allowlisted Idea field/value or a policy rule before the API creates a Proposal; state and approval intents never execute from chat. Classification failures return structured `llm_*` errors, and the old keyword marker path is not used.
@@ -87,6 +91,8 @@ API 提交和 Runner 执行各自校验：项目 commit、tag 指向、快照 ma
 Repository search results are stored as unverified `RepositoryRecord` candidates. The verification endpoint reads GitHub/GitLab metadata, the project paper record, and `CITATION.cff` or README content; a DOI or exact paper-title match is required before `verified_official` can be set. A known SPDX identifier and a full 40-character commit are also required. Only an approved `dependency_install` Proposal may download a bounded archive, reject traversal/symlink/special-file entries, record its SHA-256, and commit it under `code/repositories/`.
 
 ## PostgreSQL entities
+
+PostgreSQL schema changes are applied by the one-shot Compose `db-migrate` service through versioned Alembic revisions. The API runtime connects with a dedicated CRUD-only role, n8n connects to the same database through a separate role restricted to the `n8n` schema, and MLflow uses a separate `research_os_mlflow` database owned by its own role. The bootstrap role is used only for role provisioning and migrations; API startup fails when `alembic_version` is missing instead of creating or altering tables implicitly.
 
 ## Uploaded material boundary
 
