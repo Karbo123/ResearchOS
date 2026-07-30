@@ -43,7 +43,7 @@ docker compose exec -T postgres psql -U research -d research_os -c "SELECT versi
 
 ## 自适应模型路由
 
-文献检索还查询 GitLab、Hugging Face 数据集/模型注册表和受限网页搜索；代码、数据集、模型与网页结果都只作为候选返回。每条候选带提供方条款链接、robots 状态和响应限流快照，网页正文不会在搜索阶段抓取，robots 状态为 deferred_until_fetch 时必须在后续访问前重新检查。提供方部分失败只写入 provider_errors，不补造结果。
+文献检索还查询 GitLab、Hugging Face 数据集/模型注册表和受限网页搜索；代码、数据集、模型与网页结果都只作为候选返回。每条候选带 `provider`、`resource_type`、提供方条款链接、robots 状态和响应限流快照，网页正文不会在搜索阶段抓取，robots 状态为 deferred_until_fetch 时必须在后续访问前重新检查。提供方部分失败只写入 `provider_errors`，错误至少保留异常类型或 HTTP 状态，不补造结果。
 
 三档未单独覆盖时，API 从容器环境中的 `OPENAI_BASE_URL` 和 `OPENAI_API_KEY` 读取共同默认值；显式 `RESEARCH_MODEL_URL_*`、`RESEARCH_MODEL_KEY_*` 或运行时文件中的非空字段覆盖默认值，旧运行时文件的空字段会继承 `.env`。配置缺失或模型请求失败都直接返回结构化错误，不切换 provider、不生成本地回复，也不启动无关实验。
 

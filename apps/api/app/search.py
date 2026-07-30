@@ -150,6 +150,16 @@ def _clean(value: str | None) -> str:
     return re.sub(r"<[^>]+>", "", value or "").strip()
 
 
+def _error_text(exc: BaseException) -> str:
+    message = str(exc).strip()
+    if message:
+        return message[:500]
+    response = getattr(exc, "response", None)
+    if response is not None:
+        return f"{type(exc).__name__}: HTTP {response.status_code}"
+    return type(exc).__name__
+
+
 def _doi(value: str | None) -> str | None:
     if not value:
         return None
@@ -426,9 +436,9 @@ async def _fetch_bibtex(client: httpx.AsyncClient, record: PaperRecord) -> dict[
         record.compliance["bibtex"] = {
             "status": "error",
             "provider": "doi_bibtex",
-            "error": str(exc)[:500],
+            "error": _error_text(exc),
         }
-        return {"provider": "doi_bibtex", "error": str(exc)[:500]}
+        return {"provider": "doi_bibtex", "error": _error_text(exc)}
 
 
 async def _github_candidates(client: httpx.AsyncClient, record: PaperRecord) -> tuple[list[dict[str, Any]], dict[str, str] | None]:
@@ -443,6 +453,7 @@ async def _github_candidates(client: httpx.AsyncClient, record: PaperRecord) -> 
         )
         compliance = _compliance("github", response)
         repositories = [{
+                "resource_type": "code", "provider": "github",
                 "url": item["html_url"], "name": item["full_name"],
                 "license": (item.get("license") or {}).get("spdx_id"),
                 "default_branch": item.get("default_branch"),
@@ -452,7 +463,7 @@ async def _github_candidates(client: httpx.AsyncClient, record: PaperRecord) -> 
         record.code_repositories = repositories
         return repositories, None
     except Exception as exc:
-        return [], {"provider": "github", "error": str(exc)[:500]}
+        return [], {"provider": "github", "error": _error_text(exc)}
 
 
 def _deduplicate(groups: list[list[PaperRecord]], limit: int) -> list[PaperRecord]:
@@ -498,7 +509,7 @@ async def search_literature(
         errors = []
         for name, result in zip(providers, results):
             if isinstance(result, Exception):
-                errors.append({"provider": name, "error": str(result)[:500]})
+                errors.append({"provider": name, "error": _error_text(result)})
             else:
                 groups.append(result)
         records = _deduplicate(groups, limit)
@@ -519,7 +530,7 @@ async def search_literature(
         registry_results = await asyncio.gather(*registry_tasks.values(), return_exceptions=True)
         for name, result in zip(registry_tasks, registry_results):
             if isinstance(result, Exception):
-                errors.append({"provider": name, "error": str(result)[:500]})
+                errors.append({"provider": name, "error": _error_text(result)})
             else:
                 resource_candidates.extend(result)
         return records, errors, resource_candidates

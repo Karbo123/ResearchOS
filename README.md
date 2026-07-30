@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-22 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-23 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -84,7 +84,7 @@ Runner isolation uses a fresh non-root job container for each Run. The `runner-l
 | --- | --- | --- |
 | Idea chat and clarification | **Implemented (adaptive MVP)** | Whole-draft AI analysis, default Automatic / optional Detailed mode, assumption/risk tracking, Luna/Terra/Sol cost routing, visible wait state, strict schemas, and structured model errors. Failed model calls do not switch providers or generate rule-based replies. |
 | Project initialization | **Implemented** | UUID, Git workspace, directories, Idea v1, PostgreSQL records, checkpoints, n8n trigger. |
-| Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX, GitLab, Hugging Face datasets/models, and DuckDuckGo web-result candidates. Results expose provider rate-limit snapshots and terms/robots status; all code, dataset, model, and web results remain unverified candidates. |
+| Literature search | **Implemented (bounded)** | Crossref, OpenAlex, Semantic Scholar, arXiv, DBLP, DOI BibTeX, GitLab, Hugging Face datasets/models, and DuckDuckGo web-result candidates. Every external resource candidate carries its provider, resource type, rate-limit snapshot, terms URL, and robots status; provider failures are retained in `provider_errors`, and all code, dataset, model, and web results remain unverified candidates. |
 | Full-text evidence | **Implemented (MVP)** | Allowlisted HTTPS PDF download, PDF/quote SHA-256, page/section locator, quote and BibTeX persistence. |
 | Idea-specific experiment planning | **Implemented (approval-gated)** | The API uses the current ProjectSpec, verified page-level evidence, and active policy snapshot to generate a strict topic-specific plan Proposal with datasets, baselines, metrics, ablations, statistical tests, seeds, budget, risks, and success criteria; an approved plan can execute through the fixed project entrypoint contract. |
 | Human supervision | **Implemented (MVP)** | Strict model-backed supervision intent classification for explanation/advice, Idea/policy changes, state, and approval requests; only concrete Idea/policy changes create approval Proposals, while pause/resume/cancel and approval/rejection intents never execute directly from chat. |

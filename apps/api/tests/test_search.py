@@ -2,7 +2,8 @@ import asyncio
 
 import httpx
 
-from app.search import _search_gitlab, _search_huggingface, _search_web_pages
+from app.schemas import PaperRecord
+from app.search import _error_text, _github_candidates, _search_gitlab, _search_huggingface, _search_web_pages
 
 
 class FakeClient:
@@ -37,6 +38,32 @@ def test_gitlab_candidates_are_unverified_and_record_compliance(monkeypatch):
     assert candidates[0]["verified_official"] is False
     assert candidates[0]["compliance"]["provider"] == "gitlab"
     assert candidates[0]["compliance"]["rate_limit"]["remaining"] == "12"
+
+
+def test_github_candidates_have_structured_resource_identity(monkeypatch):
+    monkeypatch.setattr("app.search._throttle", lambda provider: asyncio.sleep(0))
+    client = FakeClient(response(200, json={"items": [{
+        "html_url": "https://github.com/org/project",
+        "full_name": "org/project",
+        "license": {"spdx_id": "MIT"},
+        "default_branch": "main",
+    }]}))
+    record = PaperRecord(title="A paper", source_url="https://example.org/paper", source_provider="arxiv")
+
+    candidates, error = asyncio.run(_github_candidates(client, record))
+
+    assert error is None
+    assert candidates[0]["resource_type"] == "code"
+    assert candidates[0]["provider"] == "github"
+    assert candidates[0]["compliance"]["provider"] == "github"
+
+
+def test_empty_provider_errors_keep_exception_identity():
+    request = httpx.Request("GET", "https://provider.invalid/api")
+    response_value = httpx.Response(503, request=request)
+    error = httpx.HTTPStatusError("", request=request, response=response_value)
+
+    assert _error_text(error) == "HTTPStatusError: HTTP 503"
 
 
 def test_huggingface_registry_separates_dataset_and_model_candidates(monkeypatch):

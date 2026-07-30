@@ -72,7 +72,7 @@
 | 文件、论文、图片、数据、代码上传 | 部分实现 | 已接入私有 ClamAV 扫描、受限 PDF、JSON、CSV/TSV、文本/代码、图片 OCR 和最多 4 张/单张 4 MB/总量 12 MB 的临时图片视觉输入，并执行单文件、会话和项目配额；附件仍是不可信上下文，ZIP 仅安全清单，大规模材料库仍未实现。 |
 | 确认后项目初始化 | 已实现 | 创建 UUID、Git、工作目录、Idea v1、数据库记录、文献/实验/论文目录和检查点，并触发 n8n。 |
 | 可行性、重复、资源风险 | 部分实现 | 不可行/资源不足目标会保持在澄清或标为中等可行性；资源字段会澄清；重复研究与创新性只能做 DOI 元数据级初筛。（2026-07-29：危险/未授权目标阻断已按用户要求移除。） |
-| 多源论文与 BibTeX 检索 | 部分实现 | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP 和 DOI BibTeX 已接入；没有 GitLab 和通用网页检索。 |
+| 多源论文与 BibTeX 检索 | 已实现（有限范围） | Crossref、OpenAlex、Semantic Scholar、arXiv、DBLP、DOI BibTeX、GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选均已接入；每条资源带 provider/resource_type、限流快照、条款与 robots 状态，部分失败进入 provider_errors。结果仍是未核验候选，不代表官方实现或许可确认。 |
 | PDF、引用关系、页码原文证据 | 部分实现 | 开放 PDF allowlist 下载、哈希、pypdf 页码 quote、BibTeX、Artifact/Dependency、Git JSON 已用 3 篇论文验证；尚未构建引用关系图，也未完成 claim 到多证据的语义核验。 |
 | 官方代码、数据集、模型与主页定位 | 部分实现 | GitHub/GitLab 先生成候选；API 已能读取提供方元数据、项目论文记录和仓库 `CITATION.cff`/README，要求 DOI 或完整标题形成显式双源匹配。作者主页、数据集和模型定位仍不是通用能力。 |
 | 代码许可审查与受控下载 | 已实现（需审批） | 已知 SPDX、40 位 commit 和 `verified_official=true` 才能创建 `dependency_install` Proposal；批准后下载受限归档，拒绝路径穿越/链接/特殊文件，记录下载时间、URL、SHA-256、论文关系并提交项目 Git。未知许可证、未验证候选和未批准 Proposal 均不能触发网络下载。 |

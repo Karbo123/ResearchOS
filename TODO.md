@@ -24,19 +24,19 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P2-TRACKING-019；继续 P2-SEARCH-018、P2-QUEUE-020、P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，完成 P2-SEARCH-018；继续 P2-QUEUE-020、P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
-本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，前端文献页显示候选合规摘要。定向测试 apps/api/tests/test_search.py 为 4 passed；node 前端语法、聊天 UX 5 passed、Compose/JSON/文档同步、Idea case 和 git diff --check 通过。API 容器全量测试与真实浏览器检查待 Docker Desktop Linux 引擎恢复后执行，任务保持进行中。
+本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、提供方、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，空异常也保留异常类型或 HTTP 状态，前端文献页显示候选合规摘要。
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - Installer status: GitHub Actions run `30545994558` built `ResearchOS-Setup-0.2.0-x64.exe` and `SHA256SUMS.txt` for tag `v0.2.0`; the Release is intentionally Draft until signing and clean-VM acceptance are complete.
-- Current work item: `P1-PAPER-016` is in progress; this batch targets stronger multilingual claim matching and an actual container LaTeX compile check without upgrading lexical candidates into scientific evidence.
+- Current work item: `P2-QUEUE-020` is in progress; this batch will validate durable task recovery, idempotency, lease reclaim, retry backoff, and final failure auditing without handing arbitrary commands or model secrets to the worker.
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P2-SEARCH-018`、`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进合规检索、持久队列、论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
+- 当前进行中：`P2-QUEUE-020`、`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-SEARCH-018`、`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进持久队列、论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -192,9 +192,10 @@
   - 已完成部分：`installer/windows/` 已包含 bootstrap、Inno Setup、构建脚本和说明；`.github/workflows/installer-release.yml` 可在 `v*` tag 的 Windows runner 生成 EXE、SHA-256 和草稿 Release；尚未形成可发布二进制。
   - 剩余工作：本机缺 Inno Setup 且 GitHub CLI token 已失效，需在具备编译器和有效 GitHub 权限的 release 机器生成正式 EXE；完成代码签名、Docker Desktop 下载/许可边界复核，以及无 n8n 的干净 VM 安装、重启、升级、保留数据卸载与全删除卸载测试。
 
-- [~] `P2-SEARCH-018` 增加 GitLab、数据集/模型注册表和合规网页检索，并统一限流、robots.txt 与条款记录。
+- [x] `P2-SEARCH-018` 增加 GitLab、数据集/模型注册表和合规网页检索，并统一限流、robots.txt 与条款记录。
   - 当前范围：为每个外部提供方使用固定 HTTPS 主机、合法 User-Agent、并发安全限流和超时；GitLab、Hugging Face 数据集/模型注册表和明确允许的网页检索结果只保留候选元数据；robots.txt 与条款/许可状态作为合规记录返回，任何失败只进入 `provider_errors`，不伪造结果。
   - 完成标准：结构化结果包含提供方、资源类型、robots/terms 状态和限流信息；GitLab、数据集/模型注册表、网页合规检查有定向测试；双语 README、需求审计、安全/运维、Schema、工具契约和 TODO 同步。
+  - 验证结果：搜索定向 `6 passed`，API 全量 `119 passed, 2 skipped`；Docker Compose、文档同步、JSON 和前端 JS 语法通过；活动 MNIST 项目真实搜索在 Literature 页面显示 `code · github · robots not_applicable_api`、条款链接和“待核验”，控制台错误为 0；Semantic Scholar/网页不可用只记录 `provider_errors`，不伪造候选。
 - [x] `P2-TRACKING-019` 按部署需求评估自托管 W&B/TensorBoard；不能削弱现有离线 MLflow 路径。
   - 当前评估：Research OS 的当前单机 Compose MVP 已由 MLflow + MinIO 记录参数、指标、资源采样、Run、产物和谱系；W&B 需要额外账号/服务与出站控制，TensorBoard 不能覆盖当前 PostgreSQL/Artifact/MLflow 统一谱系。因此本轮不增加第二状态源或外部 SaaS 依赖。
   - 完成标准：双语 README、架构/运维说明明确比较、保留 MLflow 离线路径；若部署需求以后证明需要 TensorBoard/W&B，必须作为独立 Proposal/架构变更评审。
@@ -322,3 +323,4 @@
 - 2026-07-30：Docker Desktop Linux engine 恢复后复核模型配置和前端：`docker compose config --quiet` 通过；API 容器 `112 passed, 2 skipped`；`GET /api/settings/models` 脱敏结果显示 Luna/Terra/Sol 三档 URL/key 均来自 `env_default` 且 `key_configured=true`，medium 不再误报未配置；浏览器设置面板桌面 1440px 和窄屏 390px 均无横向溢出，三档卡片可操作，控制台错误为 0。GitHub CLI 当前已登录，但正式安装器 Release 仍受签名证书、Authenticode 验证和干净 Windows VM 门禁约束；不绕过门禁发布未签名 EXE。
 - 2026-07-30：继续 `P1-PAPER-016`；claim map 增加多语言归一化 lexical candidate 与人工复核字段，新增 Runner 容器内固定 `latexmk` 最小文档回归。候选仍不升级为语义证据或科学结论；`semantic_status=not_proven_lexical_candidates_only`、完整语义核验和生产级论文编译验收继续保持未完成。
 - 2026-07-30：本轮验证通过文档同步、Compose、JSON、JS、聊天 UX、API `117 passed, 2 skipped`、Runner `10 passed` 和 launcher `6 passed, 2 skipped`；新增 `test_fixed_latexmk_command_produces_a_nonempty_pdf` 通过。`scripts/acceptance_test.py` 在首次真实模型请求处收到 HTTP 502 `llm_request_failed`，未使用 fallback、未写伪造助手消息且未生成验收通过产物；P1-PAPER-016 继续保持 `[~]`。实现提交：`8ee8e57`。
+- 2026-07-30：完成 `P2-SEARCH-018`；修正 GitHub 资源候选缺少 `provider/resource_type` 导致前端显示 `unknown` 的问题，并让空的 provider 异常保留异常类型/HTTP 状态。活动项目真实检索、浏览器 Literature 页面、provider errors 和合规候选显示均已验证，任务标记 `[x]`。
