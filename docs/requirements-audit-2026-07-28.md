@@ -10,6 +10,8 @@
 
 2026-07-30 论文草稿增量：项目概览新增“生成证据论文草稿”入口。`POST /api/projects/{project_id}/paper-draft` 只接受当前 Idea、具备 PDF SHA-256/BibTeX/稳定 URL、页码/章节定位、claim 和非空 quote 的已核验证据，并只写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会进入事实性论文内容。接口仅创建绑定 Idea 版本、evidence IDs 和确定性 claim map 的 `paper/main.tex` LaTeX patch Proposal。生成器现已确定性地产出完整章节结构、Method/Experiment 状态表、成功 Run 指标表、未执行结果说明、逐条 evidence ID/定位、claim-to-evidence map 和 References；Related Work 条目带 evidence ID、结果带 run ID，必须经现有 diff、审批、隔离验证和 Git 执行链。claim map 现在额外记录归一化词汇重叠、目标/证据覆盖率、短语命中和有上限的多证据候选；中文二元片段仅改善候选召回，`semantic_status=not_proven_lexical_candidates_only` 明确禁止将其当作语义核验。新增固定 `latexmk` 最小文档容器回归，但完整语义 claim 映射质量、生产级论文编译验收和完整论文能力仍未完成。
 
+2026-07-30 论文编译门禁增量：`compile-plan` Proposal 绑定干净项目工作树中的 `paper/main.tex` Git commit 和 SHA-256；审批时与 Runner 提交前都重新核验，源文件变化直接返回 `compile_approval_source_changed`，不得编译未审批内容。真实 Runner 容器按固定工作目录编译带 `references.bib` 的现有项目 `paper/main.tex`，输出 PDF 非空；完整论文语义核验和更广泛论文内容质量仍未完成。
+
 2026-07-30 Artifact 预览增量：新增受限 `/api/artifacts/{artifact_id}/preview`，网页产物页现在可以显示 JSON/文本/CSV/TSV/PDF，以及不执行 HTML 的转义文本；ASCII PLY/PCD 通过固定点数/面片上限、降采样和 Canvas 拖拽旋转/缩放/重置进行预览，并保留下载入口。二进制点云、失效/缺失文件和解析限制直接返回结构化错误。API 容器 `70 passed, 2 skipped`，Node 语法检查、Compose、文档/Idea case 检查、桌面浏览器产物页和模型设置页检查通过；未调用模型、外部学术 API 或无关实验。
 
 2026-07-30 MLflow 追踪增量：Runner 新增固定频率资源采样器，在活跃 MLflow Run 中记录进程/系统 CPU、内存和固定 GPU 数值查询，并将同一数值时间序列保存为受控 `resource-usage.jsonl`。Run 参数显式记录学习率、模型版本、Git/Research OS commit、镜像 digest、数据版本、种子、平台和网络策略；Runner 状态继续记录终态。GPU 不可用时只记录 `gpu_available=0`，不切换执行路径；采样器不记录 Secret、任意环境或命令输出。Runner 容器 `unittest`（9 tests）、不落盘导入/语法验证和镜像重建通过；未调用模型、外部学术 API 或无关实验。
@@ -91,7 +93,7 @@
 | Idea 版本、影响分析与局部重跑 | 部分实现 | Idea v2、审计、实体级依赖失效、显式变更类型/根校验、可审阅节点/边影响图和需审批的检查点局部重跑 Proposal 已实现；批准变更会为安全终态检查点自动创建待审批重跑 Proposal，批准后提交匹配的原白名单或主题固定入口并记录失败；复杂语义规则和完整生产级恢复编排仍未完成。 |
 | n8n AI Agent 和高层子工作流工具 | 部分实现 | 3 个激活工作流负责聊天网关、主流程和报告；多数工具是受限 FastAPI 端点，不是独立 n8n 子工作流，也未使用 n8n AI Agent 长循环。 |
 | 严格 JSON、双重校验、Shell/路径隔离 | 已实现（MVP） | API 与 Runner 使用 Pydantic `extra=forbid` 和白名单；LLM 不接触任意 Shell/SQL/路径，n8n 节点不能读取容器环境变量。 |
-| Related Work 与完整论文自动写作 | 部分实现 | 已可从当前 Idea、页码级核验证据和真实成功实验生成完整章节结构的 `paper/main.tex` patch Proposal；metadata-only 会被拒绝，没有结果会明确保留未执行状态，且批准前不写文件。仍未完成语义 claim 到多证据的精确映射、完整 Related Work 内容质量和生产级论文编译验收。 |
+| Related Work 与完整论文自动写作 | 部分实现 | 已可从当前 Idea、页码级核验证据和真实成功实验生成完整章节结构的 `paper/main.tex` patch Proposal；metadata-only 会被拒绝，没有结果会明确保留未执行状态，且批准前不写文件。编译 Proposal 绑定并在审批/Runner 提交前复核源文件 commit/SHA-256。仍未完成语义 claim 到多证据的精确映射、完整 Related Work 内容质量和生产级论文内容验收。 |
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
 | 长期运行与生产可靠性 | 部分实现 | Compose restart、项目启动/恢复的 PostgreSQL 持久任务队列、租约/幂等键/指数退避、过期 lease 防陈旧 worker 覆盖、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；Runner 执行链持久排队、HA、完整告警轮换、每任务独立容器的生产级验证和默认拒绝出网仍未完成。 |
 | Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。`v*` tag 可生成 EXE、SHA-256 和草稿 Release；正式发布要求手动发布门禁、Authenticode 签名 Secret、Docker 许可复核及干净 VM、升级/卸载验收，尚未完成。 |

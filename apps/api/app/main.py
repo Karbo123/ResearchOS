@@ -1578,15 +1578,60 @@ def propose_patch_rollback(proposal_id: UUID, request: PatchRollbackRequest):
         return {"proposal_id": str(rollback.id), "status": rollback.status, "impact": impact}
 
 
+def _compile_source_contract(root: Path) -> dict[str, str]:
+    """Bind a compile approval to the exact clean Git source being reviewed."""
+    root = root.resolve()
+    commit = project_git_commit(root)
+    validate_git_workspace(root, require_clean=True)
+    target = (root / "paper" / "main.tex").resolve()
+    if root not in target.parents or not target.is_file():
+        raise ReproducibilityError("paper_source_missing", "项目 paper/main.tex 不存在，不能编译。")
+    try:
+        digest = hashlib.sha256(target.read_bytes()).hexdigest()
+    except OSError as exc:
+        raise ReproducibilityError("paper_source_unreadable", "项目 paper/main.tex 无法读取，不能编译。") from exc
+    return {"path": "paper/main.tex", "git_commit": commit, "sha256": digest}
+
+
+def _require_approved_compile_source(project: Project, approved_payload: dict[str, Any]) -> dict[str, str]:
+    expected = approved_payload.get("paper_source")
+    if not isinstance(expected, dict) or set(expected) != {"path", "git_commit", "sha256"}:
+        raise HTTPException(status_code=409, detail={
+            "code": "compile_approval_source_missing",
+            "message": "LaTeX 编译 Proposal 没有绑定已审批的 paper/main.tex 源文件。",
+        })
+    root = (PROJECTS_ROOT / project.slug).resolve()
+    try:
+        actual = _compile_source_contract(root)
+    except ReproducibilityError as exc:
+        raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+    if expected != actual:
+        raise HTTPException(status_code=409, detail={
+            "code": "compile_approval_source_changed",
+            "message": "已审批的 LaTeX 源文件已变化；必须重新生成并审批编译 Proposal。",
+            "approved": expected,
+            "actual": actual,
+        })
+    return actual
+
+
 @app.post("/api/projects/{project_id}/compile-plan")
 def generate_compile_plan(project_id: UUID):
     with session_scope() as session:
         project = require_active_project(session, project_id, "LaTeX compilation planning")
+        root = (PROJECTS_ROOT / project.slug).resolve()
+        try:
+            source = _compile_source_contract(root)
+        except ReproducibilityError as exc:
+            raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
         proposal = Proposal(
             project_id=project_id, kind="experiment_plan", reason="Compile the versioned LaTeX manuscript in the isolated runner",
             summary="Compile paper/main.tex with the fixed latexmk command and archive the resulting PDF and build log.",
-            impact={"rerun_experiments": ["latex-build"], "invalidates": ["previous paper PDF"], "artifacts": ["paper PDF"]},
-            estimated_cost_usd=0, payload={"experiment_type": "compile_latex", "config": {}, "random_seeds": [13]},
+            diff=("Compile-only approval for paper/main.tex\n"
+                  f"git commit: {source['git_commit']}\n"
+                  f"sha256: {source['sha256']}\n"),
+            impact={"rerun_experiments": ["latex-build"], "invalidates": ["previous paper PDF"], "artifacts": ["paper PDF"], "paper_source": source},
+            estimated_cost_usd=0, payload={"experiment_type": "compile_latex", "config": {}, "random_seeds": [13], "paper_source": source},
         )
         session.add(proposal); session.flush()
         audit(session, "latex_compile.proposed", project_id, {"proposal_id": str(proposal.id)})
@@ -1784,6 +1829,8 @@ async def decide(proposal_id: UUID, request: ApprovalDecision):
                 "code": "external_publish_disabled",
                 "message": "当前部署明确禁用对外发布；不会通过审批执行外发。",
             })
+        if request.decision == "approved" and (proposal.payload or {}).get("experiment_type") == "compile_latex":
+            _require_approved_compile_source(project, proposal.payload or {})
         impact: dict[str, Any] | None = None
         download_result: dict[str, Any] | None = None
         if request.decision == "approved" and proposal.kind == "experiment_rerun":
@@ -1922,6 +1969,13 @@ async def submit_experiment(request: ExperimentRequest):
         if proposal.status != "approved": raise HTTPException(409, "approved proposal required")
         if proposal.kind not in {"experiment_plan", "config_change", "experiment_rerun"}: raise HTTPException(409, "proposal kind cannot launch an experiment")
         approved_payload = proposal.payload or {}
+        if request.experiment_type == "compile_latex":
+            if approved_payload.get("experiment_type") != "compile_latex":
+                raise HTTPException(status_code=409, detail={
+                    "code": "compile_approval_required",
+                    "message": "LaTeX 编译必须使用已批准的编译 Proposal。",
+                })
+            _require_approved_compile_source(project, approved_payload)
         if proposal.kind == "experiment_rerun":
             checkpoint_id = approved_payload.get("checkpoint_id")
             source_experiment_id = approved_payload.get("source_experiment_id")

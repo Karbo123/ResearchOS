@@ -137,6 +137,45 @@ def test_paper_draft_route_rejects_missing_current_idea(monkeypatch):
     assert error.value.detail["code"] == "paper_idea_version_missing"
 
 
+def test_compile_plan_binds_approval_to_clean_paper_source(monkeypatch, tmp_path):
+    project_id = uuid4()
+    fake_project = project(project_id)
+    root = tmp_path / fake_project.slug / "paper"
+    root.mkdir(parents=True)
+    (root / "main.tex").write_text("\\documentclass{article}\n\\begin{document}x\\end{document}\n", encoding="utf-8")
+    session = FakeSession()
+    monkeypatch.setattr(api_main, "session_scope", lambda: FakeContext(session))
+    monkeypatch.setattr(api_main, "PROJECTS_ROOT", tmp_path)
+    monkeypatch.setattr(api_main, "require_active_project", lambda *_args: fake_project)
+    monkeypatch.setattr(api_main, "project_git_commit", lambda *_args: "a" * 40)
+    monkeypatch.setattr(api_main, "validate_git_workspace", lambda *_args, **_kwargs: {})
+
+    result = api_main.generate_compile_plan(project_id)
+
+    proposal = session.added[0]
+    source = proposal.payload["paper_source"]
+    assert result["status"] == "pending"
+    assert source["path"] == "paper/main.tex"
+    assert source["git_commit"] == "a" * 40
+    assert len(source["sha256"]) == 64
+    assert source["sha256"] in proposal.diff
+
+
+def test_compile_submission_rejects_stale_approved_source(monkeypatch, tmp_path):
+    project_id = uuid4()
+    fake_project = project(project_id)
+    monkeypatch.setattr(api_main, "PROJECTS_ROOT", tmp_path)
+    actual = {"path": "paper/main.tex", "git_commit": "a" * 40, "sha256": "b" * 64}
+    approved = {"path": "paper/main.tex", "git_commit": "a" * 40, "sha256": "c" * 64}
+    monkeypatch.setattr(api_main, "_compile_source_contract", lambda *_args: actual)
+
+    with pytest.raises(HTTPException) as error:
+        api_main._require_approved_compile_source(fake_project, {"paper_source": approved})
+
+    assert error.value.status_code == 409
+    assert error.value.detail["code"] == "compile_approval_source_changed"
+
+
 def test_paper_draft_route_rejects_metadata_only_evidence(monkeypatch, tmp_path):
     project_id = uuid4()
     fake_project = project(project_id)

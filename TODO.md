@@ -24,7 +24,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P2-QUEUE-020；继续 P1-PAPER-016、P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，继续 P1-PAPER-016；并行保留 P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
 本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、提供方、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，空异常也保留异常类型或 HTTP 状态，前端文献页显示候选合规摘要。
 
@@ -179,6 +179,7 @@
   - 完成标准：Introduction、Related Work、Method、Experiments、Results、Limitations 和 References 可追踪；编译前必须审批 diff。
   - 本轮范围：生成器只接受具备 PDF SHA-256、BibTeX、稳定来源、页码/章节定位和非空 quote 的当前 Idea 证据；建立确定性的 claim-to-evidence map，Related Work 每条事实句必须带 evidence ID，实验结果必须带 run ID provenance；未支持的假设、贡献和结果明确标为 proposed/unexecuted，不补造论文事实。
   - 本轮进展：生成器现已输出完整章节、Scope/Method/Experiment 状态表、成功 Run 指标表、未执行结果说明、逐条 evidence ID/定位、claim-to-evidence map、Conclusion 和 References；可选预算/约束字段安全处理。claim map 增加 Unicode 归一化、英文 token、中文二元片段、目标/证据覆盖率、短语命中和有上限的多证据候选，但明确标记 `semantic_status=not_proven_lexical_candidates_only`。新增固定 `latexmk` 最小文档容器回归；本轮验证完成前语义 claim 映射质量和生产级 LaTeX 编译验收仍保持 `[~]`。
+  - 编译 Proposal 现在绑定干净 `paper/main.tex` 的 Git commit/SHA-256，并在审批和 Runner 提交前复核，陈旧源直接结构化拒绝。完整语义 claim 映射和论文内容验收仍保持 `[~]`。
 - [x] `P1-DB-017` 引入正式数据库迁移和最小权限角色。
   - 完成标准：使用迁移工具管理 18 张业务表；API、n8n、MLflow 使用独立角色/schema；备份恢复测试通过。
   - 验证结果：新增一次性 `db-migrate` 服务、Alembic `0001_initial` revision 和幂等角色 provisioning；API 使用业务表 CRUD 角色，n8n 使用 `n8n` schema 角色并保留启动所需数据库 `CREATE` 权限，MLflow 使用独立 `research_os_mlflow` 数据库。现有 PostgreSQL volume 上迁移成功，恢复到临时数据库后验证 19 张 public 表和 `0001_initial`，随后清理临时数据库与备份。API `99 passed, 2 skipped`、n8n 工作流启动并激活、Compose/JSON/文档同步/容器 Python 语法/`git diff --check` 通过。
@@ -322,6 +323,7 @@
 - 2026-07-30：继续 `P2-QUEUE-020`；研究启动/恢复任务改由 PostgreSQL 持久队列和独立 `queue-worker` 领取，增加 lease、幂等键、指数退避和过期 lease 回收；API 不再把必需的 n8n 编排交给进程内 `BackgroundTasks`。真实数据库迁移为 `0002_task_queue`，临时过期任务集成验证成功，API `112 passed, 2 skipped`，Compose/语法/文档/Idea case/`git diff --check` 通过。实验 Runner 队列、完整崩溃恢复和生产级队列观测仍未完成。
 - 2026-07-30：Docker Desktop Linux engine 恢复后复核模型配置和前端：`docker compose config --quiet` 通过；API 容器 `112 passed, 2 skipped`；`GET /api/settings/models` 脱敏结果显示 Luna/Terra/Sol 三档 URL/key 均来自 `env_default` 且 `key_configured=true`，medium 不再误报未配置；浏览器设置面板桌面 1440px 和窄屏 390px 均无横向溢出，三档卡片可操作，控制台错误为 0。GitHub CLI 当前已登录，但正式安装器 Release 仍受签名证书、Authenticode 验证和干净 Windows VM 门禁约束；不绕过门禁发布未签名 EXE。
 - 2026-07-30：完成 `P2-QUEUE-020`；API 创建/恢复项目任务统一走白名单幂等入队函数，唯一键冲突返回已有 Task；项目详情返回 `max_attempts`、下一次执行时间、租约截止时间和更新时间，但不返回 lease token。API `122 passed, 2 skipped`；真实 PostgreSQL 集成验证幂等入队、过期 lease 重新领取和陈旧 lease 忽略；queue-worker 已恢复运行。实现仍不把实验 Runner 执行链误称为持久队列。
+- 2026-07-30：继续 `P1-PAPER-016`；编译 Proposal 绑定干净项目 `paper/main.tex` 的 Git commit/SHA-256，审批时和 `compile_latex` Runner 提交前双重核验，源文件变化返回 `compile_approval_source_changed`。论文/patch 定向测试 `40 passed`，Runner 固定 latexmk 测试通过；真实带 `references.bib` 项目的 `paper/main.tex` 在 Runner 容器按实际工作目录编译成功并生成 77KB 非空 PDF。语义 claim 映射仍只是人工复核候选，P1-PAPER-016 继续保持 `[~]`。
 - 2026-07-30：继续 `P1-PAPER-016`；claim map 增加多语言归一化 lexical candidate 与人工复核字段，新增 Runner 容器内固定 `latexmk` 最小文档回归。候选仍不升级为语义证据或科学结论；`semantic_status=not_proven_lexical_candidates_only`、完整语义核验和生产级论文编译验收继续保持未完成。
 - 2026-07-30：本轮验证通过文档同步、Compose、JSON、JS、聊天 UX、API `117 passed, 2 skipped`、Runner `10 passed` 和 launcher `6 passed, 2 skipped`；新增 `test_fixed_latexmk_command_produces_a_nonempty_pdf` 通过。`scripts/acceptance_test.py` 在首次真实模型请求处收到 HTTP 502 `llm_request_failed`，未使用 fallback、未写伪造助手消息且未生成验收通过产物；P1-PAPER-016 继续保持 `[~]`。实现提交：`8ee8e57`。
 - 2026-07-30：完成 `P2-SEARCH-018`；修正 GitHub 资源候选缺少 `provider/resource_type` 导致前端显示 `unknown` 的问题，并让空的 provider 异常保留异常类型/HTTP 状态。活动项目真实检索、浏览器 Literature 页面、provider errors 和合规候选显示均已验证，任务标记 `[x]`。

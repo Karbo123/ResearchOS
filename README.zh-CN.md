@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-24 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-25 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -189,7 +189,7 @@ Research OS 侧边栏通过 `/api/n8n/open` 打开 n8n。API 使用 `.env` 中�
 5. 检查**文献**页。把 `metadata-only` 当作检索候选；只有同时具有稳定来源、PDF 哈希、页码/章节与原文 quote 的 `fulltext-evidence` 才能支撑事实性结论。
 6. 检查 **Related Work** 的证据覆盖、研究空白候选和重复研究候选。它们都只是候选，不证明新颖性或科学结论。
 7. 在**实验**页生成主题专属计划前，必须先有页码级全文证据。API 会把严格计划保存为待审批 Proposal，并绑定当前 Idea 版本、证据 ID 和策略快照。在**审批**页批准后才允许进入执行闸门；当前 Runner 仍会对主题专属执行返回结构化错误，绝不会替换成通用 demo。
-8. 在项目概览的研究规格区域点击“生成证据论文草稿”前，必须已经导入页码级核验证据。API 只创建绑定当前 Idea 版本、证据 ID、确定性 claim map 和真实成功运行的 `paper/main.tex` 替换 patch Proposal；Related Work 每条事实句带 evidence ID，结果带 run ID；metadata-only 会直接拒绝，没有实验结果则明确保留未执行状态。批准前不会写文件，也不会编译 LaTeX。
+8. 在项目概览的研究规格区域点击“生成证据论文草稿”前，必须已经导入页码级核验证据。API 只创建绑定当前 Idea 版本、证据 ID、确定性 claim map 和真实成功运行的 `paper/main.tex` 替换 patch Proposal；Related Work 每条事实句带 evidence ID，结果带 run ID；metadata-only 会直接拒绝，没有实验结果则明确保留未执行状态。批准前不会写文件，也不会编译 LaTeX。编译 Proposal 还会记录 `paper/main.tex` 的准确 Git commit 和 SHA-256；审批时及提交 Runner 前都会拒绝已变化的源文件。
 9. 在项目对话中要求解释、建议或提出变更。执行型请求会转换为结构化 Proposal 并等待批准，不会静默执行。
 10. 在**策略**页添加“所有实验至少使用五个随机种子”等长期规则。批准后的策略保存在 PostgreSQL，并在计划、API 提交和 Runner 三处强制执行。
 11. 可以暂停、恢复、取消、修改 Idea 或从适当检查点请求局部重跑。成功或失败实验的检查点可在网页中创建需人工审批的局部重跑 Proposal；它只复用原白名单模板、配置和已持久化随机种子，批准后由 API 自动进入同一个受控 `/api/experiments` 提交链。代码/配置/LaTeX 修改使用结构化 patch、隔离验证、冲突检查和需审批的 Git 提交；回滚必须创建新的审批 Proposal。提交失败会保留结构化错误，绝不会选择无关实验。未知变更类型、没有可验证 Git/数据/产物根的变更以及对外发布会直接拒绝。已取消项目是终止状态，不能恢复。

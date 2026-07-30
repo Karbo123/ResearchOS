@@ -186,6 +186,8 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 Claim map 会对 claim 与证据的归一化词汇重叠、目标/证据覆盖率、短语命中和有上限的多证据候选进行排序；英文 token 与中文二元片段只改善候选召回，字段 `semantic_status=not_proven_lexical_candidates_only` 明确表示它们不是语义核验或科学结论。容器回归测试会用固定 `latexmk -pdf -interaction=nonstopmode -halt-on-error` 编译最小文档并检查非空 PDF；这不等于完整生产级论文编译验收。
 
+`POST /api/projects/<project_id>/compile-plan` 只创建编译 Proposal，不直接运行编译。Proposal 的 diff 绑定干净工作树中 `paper/main.tex` 的完整 Git commit 和 SHA-256；审批时以及 `POST /api/experiments` 提交 `compile_latex` 前都会重新计算并比较这两个值。源文件变化时返回 `compile_approval_source_changed`，必须重新生成并审批 Proposal。
+
 调用 `POST /api/projects/<project_id>/patch-proposals` 创建 patch Proposal。请求必须绑定当前项目的完整 Git commit，并逐个声明固定目录内的 `create`、`replace` 或 `delete` 文件操作；替换和删除必须提供文件 SHA-256。代码只能写入 `experiment/`/`src/`，配置只能写入 `configs/`，LaTeX 只能写入 `paper/`。API 先生成可审阅 diff，批准时在临时隔离目录运行固定 Python、JSON、TOML 和 LaTeX 结构校验，再二次核对 HEAD/hash 并提交 Git。冲突、脏工作树、验证失败或 commit 失败都会返回结构化错误并恢复原文件。已提交 patch 的回滚必须调用 `POST /api/proposals/<proposal_id>/rollback` 创建新的待审批 Proposal；对外发布 Proposal 审批会明确返回 `external_publish_disabled`。
 
 ## 修改配置
