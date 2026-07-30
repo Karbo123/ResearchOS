@@ -10,6 +10,7 @@ from scripts.idea_case_loader import IDEA_CASES_ROOT, load_enabled_idea_cases, l
 from app.clarification import build_spec, initial_draft, required_spec_gaps
 from app.llm import LLMRequestError, _system_prompt, classify_supervision_intent, clarification_mode_instruction, clarify_idea_with_llm, select_model_route
 from app.policy_engine import compile_policy_constraints, experiment_policy_violations, seeds_for_constraints
+from app.project_service import build_evidence_grounded_paper
 from app.evidence_pipeline import validate_open_pdf_url
 from app.related_work import build_related_work_analysis
 from app.schemas import ChangeProposalRequest, ChatRequest, ExperimentRequest, SupervisionIntent
@@ -179,6 +180,33 @@ def test_related_work_keeps_metadata_candidates_out_of_factual_evidence():
     assert analysis["assessment"] == "metadata_only_insufficient_evidence"
 
 
+def test_paper_draft_requires_verified_page_evidence_and_records_only_real_metrics():
+    case = load_idea_case("active-learning-3d")
+    draft = initial_draft(case.initial_message)
+    facts = case.confirmed_facts
+    draft.update({
+        "research_question": facts["research_question"],
+        "domain": facts["domain"],
+        "hypotheses": facts["hypotheses"].split("; "),
+        "expected_contributions": facts["expected_contributions"].split("; "),
+        "available_data": facts["available_data"],
+        "success_criteria": [facts["success_criteria"]],
+        "constraints": {"compute": facts["constraints"], "data_access": "public"},
+        "ethics_and_compliance": facts["ethics_and_compliance"],
+    })
+    spec = build_spec(draft)
+    evidence = [{
+        "id": "evidence-1", "paper_id": "paper-1", "quote": "A verified page-level result.",
+        "locator": "page 4", "metadata": {"verified": True},
+    }]
+    paper = [{"id": "paper-1", "title": "Verified study", "doi": "10.1000/example", "source_url": "https://example.invalid/paper"}]
+    source = build_evidence_grounded_paper(spec, evidence, paper, [{"id": "run-1", "status": "succeeded", "metrics": {"accuracy": 0.91}}])
+    assert all(f"\\section{{{section}}}" in source for section in ("Introduction", "Related Work", "Method", "Experiments", "Results", "Limitations", "References"))
+    assert "evidence-1" in source and "accuracy=0.91" in source
+    with pytest.raises(ValueError, match="paper_evidence_required"):
+        build_evidence_grounded_paper(spec, [{"id": "metadata", "locator": "metadata/title", "quote": "title", "metadata": {"verified": False}}], paper, [])
+
+
 def test_related_work_links_only_verified_page_evidence_and_marks_candidates_for_review():
     analysis = build_related_work_analysis(
         {"research_question": "Does active learning improve point cloud labeling?", "hypotheses": ["active learning improves labeling"], "expected_contributions": ["a labeling budget comparison"]},
@@ -340,11 +368,14 @@ def test_tool_catalog_contains_valid_schemas():
     expected = {
         "clarify_research_idea", "create_research_project", "evaluate_novelty_and_feasibility",
         "search_papers_and_bibtex", "find_official_code_repository", "download_open_source_code",
-        "retrieve_citation_evidence", "generate_experiment_plan", "configure_model_settings", "submit_experiment",
+        "retrieve_citation_evidence", "generate_experiment_plan", "generate_evidence_grounded_paper", "configure_model_settings", "submit_experiment",
         "query_experiment_status", "read_metrics", "collect_visual_artifacts", "rerun_experiment_from_checkpoint",
         "render_point_cloud_preview", "propose_code_patch", "rollback_project_patch", "update_project_policy", "compile_latex",
     }
     assert {tool["name"] for tool in catalog["tools"]} == expected
+    paper_tool = next(tool for tool in catalog["tools"] if tool["name"] == "generate_evidence_grounded_paper")
+    assert paper_tool["status"] == "implemented-approval-gated-evidence-only"
+    assert paper_tool["approval_endpoint"] == "POST /api/proposals/{proposal_id}/decision"
     for tool in catalog["tools"]:
         assert isinstance(tool["input"], dict) and tool["input"]
         assert isinstance(tool["output"], dict) and tool["output"]

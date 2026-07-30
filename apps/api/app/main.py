@@ -27,7 +27,7 @@ from .models import (
     Experiment, HumanFeedback, IdeaVersion, Message, Paper, Policy, Project, Proposal,
     Report, RepositoryRecord, Task, UploadedFile,
 )
-from .project_service import PROJECTS_ROOT, initialize_project, safe_slug
+from .project_service import PROJECTS_ROOT, build_evidence_grounded_paper, initialize_project, safe_slug
 from .reproducibility import (
     GIT_COMMIT_RE, ReproducibilityError, create_reproducibility_snapshot, project_git_commit,
     validate_git_workspace, validate_snapshot_contract,
@@ -1567,6 +1567,82 @@ def generate_compile_plan(project_id: UUID):
         session.add(proposal); session.flush()
         audit(session, "latex_compile.proposed", project_id, {"proposal_id": str(proposal.id)})
         return {"proposal_id": str(proposal.id), "status": "pending", "plan": proposal.payload, "impact": proposal.impact}
+
+
+@app.post("/api/projects/{project_id}/paper-draft")
+def generate_paper_draft(project_id: UUID):
+    """Create an approval-gated LaTeX patch from verified evidence and recorded runs."""
+    with session_scope() as session:
+        project = require_active_project(session, project_id, "generating an evidence-grounded paper draft")
+        root = (PROJECTS_ROOT / project.slug).resolve()
+        try:
+            current_commit = project_git_commit(root)
+            validate_git_workspace(root, require_clean=True)
+        except ReproducibilityError as exc:
+            raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
+        idea = session.scalar(select(IdeaVersion).where(IdeaVersion.project_id == project_id).order_by(desc(IdeaVersion.version)))
+        if not idea or idea.version != project.current_idea_version:
+            raise HTTPException(status_code=409, detail={"code": "paper_idea_version_missing", "message": "当前 Idea 版本不可用，不能生成论文草稿。"})
+        evidence = session.scalars(select(Evidence).where(Evidence.project_id == project_id)).all()
+        papers = session.scalars(select(Paper).where(Paper.project_id == project_id)).all()
+        experiments = session.scalars(select(Experiment).where(Experiment.project_id == project_id)).all()
+        evidence_rows = [{
+            "id": str(item.id), "paper_id": str(item.paper_id) if item.paper_id else None,
+            "claim": item.claim, "quote": item.quote, "locator": item.locator,
+            "source_url": item.source_url, "metadata": item.metadata_json,
+        } for item in evidence]
+        paper_rows = [{"id": str(item.id), "title": item.title, "doi": item.doi, "source_url": item.source_url} for item in papers]
+        experiment_rows = [{"id": str(item.id), "status": item.status, "metrics": item.metrics} for item in experiments]
+        try:
+            source = build_evidence_grounded_paper(ProjectSpec.model_validate(idea.spec), evidence_rows, paper_rows, experiment_rows)
+        except ValueError as exc:
+            if str(exc) == "paper_evidence_required":
+                raise HTTPException(status_code=409, detail={
+                    "code": "paper_evidence_required",
+                    "message": "至少需要一条已核验的页码级全文证据，才能生成论文草稿。",
+                }) from exc
+            raise HTTPException(status_code=422, detail={"code": "paper_draft_invalid", "message": "论文草稿内容无法通过证据门禁。"}) from exc
+        target = (root / "paper" / "main.tex").resolve()
+        if root not in target.parents or not target.is_file():
+            raise HTTPException(status_code=409, detail={"code": "paper_source_missing", "message": "项目 paper/main.tex 不存在。"})
+        operation = {
+            "action": "replace", "path": "paper/main.tex", "content": source,
+            "expected_sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
+        }
+        evidence_ids = [
+            str(item["id"]) for item in evidence_rows
+            if isinstance(item.get("metadata"), dict)
+            and item["metadata"].get("verified") is True
+            and str(item.get("locator") or "").strip()
+            and not str(item.get("locator") or "").lower().startswith("metadata/")
+        ]
+        payload = {
+            "patch_schema_version": "1.0", "patch_kind": "latex", "base_git_commit": current_commit,
+            "operations": [operation],
+        }
+        try:
+            patch = parse_patch_payload(payload)
+            validate_patch_against_workspace(patch, root)
+            diff = build_patch_diff(patch, root)
+        except PatchExecutionError as exc:
+            raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+        impact = project_change_impact(session, project, "code_patch", payload)
+        impact = {
+            **impact, "patch_kind": "latex", "evidence_grounded": True,
+            "idea_version": idea.version, "evidence_ids": evidence_ids,
+            "execution": "approval_then_isolated_latex_validation",
+        }
+        proposal = Proposal(
+            project_id=project_id, kind="code_patch", reason="Generate an evidence-grounded LaTeX manuscript draft.",
+            summary="Update paper/main.tex from the current Idea, verified page evidence, and recorded experiment metrics.",
+            diff=diff, impact=impact, payload=payload,
+        )
+        session.add(proposal); session.flush()
+        audit(session, "paper.draft_proposed", project_id, {
+            "proposal_id": str(proposal.id), "idea_version": idea.version,
+            "evidence_count": len(evidence_ids), "changed_paths": ["paper/main.tex"],
+        }, "local-user")
+        return {"proposal_id": str(proposal.id), "status": proposal.status, "kind": proposal.kind, "diff": diff, "impact": impact}
 
 
 @app.post("/api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun")

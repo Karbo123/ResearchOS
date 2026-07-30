@@ -6,6 +6,8 @@
 
 2026-07-30 patch 执行增量：新增结构化代码/配置/LaTeX patch Proposal，绑定项目 Git commit 与文件 SHA-256，生成确定性 diff；批准时复制到临时隔离目录，执行固定 Python/JSON/TOML/LaTeX 校验，再二次核对工作区、写回并提交 Git。暂存、写入、冲突、验证失败和提交失败会恢复原文件并保留结构化错误；成功 patch 可创建新的审批回滚 Proposal，回滚只使用固定 `git revert --no-edit`。外部发布明确禁用。patch 执行器与 API 路由测试 `12 passed`，完整 API 回归 `96 passed, 2 skipped`。
 
+2026-07-30 论文草稿增量：项目概览新增“生成证据论文草稿”入口。`POST /api/projects/{project_id}/paper-draft` 只接受当前 Idea、页码/章节定位和非空 quote 的已核验证据，并只写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会进入事实性论文内容。接口仅创建绑定 Idea 版本和 evidence IDs 的 `paper/main.tex` LaTeX patch Proposal，必须经现有 diff、审批、隔离验证和 Git 执行链；证据不足直接返回结构化错误。完整 Related Work、语义 claim 映射和生产级论文编译验收仍未完成。
+
 2026-07-30 Artifact 预览增量：新增受限 `/api/artifacts/{artifact_id}/preview`，网页产物页现在可以显示 JSON/文本/CSV/TSV/PDF，以及不执行 HTML 的转义文本；ASCII PLY/PCD 通过固定点数/面片上限、降采样和 Canvas 拖拽旋转/缩放/重置进行预览，并保留下载入口。二进制点云、失效/缺失文件和解析限制直接返回结构化错误。API 容器 `70 passed, 2 skipped`，Node 语法检查、Compose、文档/Idea case 检查、桌面浏览器产物页和模型设置页检查通过；未调用模型、外部学术 API 或无关实验。
 
 2026-07-30 MLflow 追踪增量：Runner 新增固定频率资源采样器，在活跃 MLflow Run 中记录进程/系统 CPU、内存和固定 GPU 数值查询，并将同一数值时间序列保存为受控 `resource-usage.jsonl`。Run 参数显式记录学习率、模型版本、Git/Research OS commit、镜像 digest、数据版本、种子、平台和网络策略；Runner 状态继续记录终态。GPU 不可用时只记录 `gpu_available=0`，不切换执行路径；采样器不记录 Secret、任意环境或命令输出。Runner 容器 `unittest`（9 tests）、不落盘导入/语法验证和镜像重建通过；未调用模型、外部学术 API 或无关实验。
@@ -87,7 +89,7 @@
 | Idea 版本、影响分析与局部重跑 | 部分实现 | Idea v2、审计、实体级依赖失效、显式变更类型/根校验、可审阅节点/边影响图和需审批的检查点局部重跑 Proposal 已实现；批准变更会为安全终态检查点自动创建待审批重跑 Proposal，批准后提交匹配的原白名单或主题固定入口并记录失败；复杂语义规则和完整生产级恢复编排仍未完成。 |
 | n8n AI Agent 和高层子工作流工具 | 部分实现 | 3 个激活工作流负责聊天网关、主流程和报告；多数工具是受限 FastAPI 端点，不是独立 n8n 子工作流，也未使用 n8n AI Agent 长循环。 |
 | 严格 JSON、双重校验、Shell/路径隔离 | 已实现（MVP） | API 与 Runner 使用 Pydantic `extra=forbid` 和白名单；LLM 不接触任意 Shell/SQL/路径，n8n 节点不能读取容器环境变量。 |
-| Related Work 与完整论文自动写作 | 未实现 | 只生成最小 LaTeX 模板并受控编译 PDF；Related Work 明确是占位文字，没有证据驱动的完整论文撰写。 |
+| Related Work 与完整论文自动写作 | 部分实现 | 已可从当前 Idea、页码级核验证据和真实成功实验生成完整章节结构的 `paper/main.tex` patch Proposal；metadata-only 会被拒绝，没有结果会明确保留未执行状态，且批准前不写文件。仍未完成语义 claim 到多证据的精确映射、完整 Related Work 内容质量和生产级论文编译验收。 |
 | 项目暂停、恢复与取消 | 已实现（MVP） | 状态是后端强制闸门；暂停阻止新检索/计划/Runner 提交并取消活动任务，恢复使用暂停检查点，cancelled 不可恢复；完整验收和浏览器交互已验证。 |
 | 长期运行与生产可靠性 | 部分实现 | Compose restart、n8n 重试、Runner 状态落盘、中断恢复和项目状态闸门可用；没有持久队列、HA、每任务独立容器、磁盘配额和默认拒绝出网。 |
 | Windows 单 EXE 安装 | 部分实现 | 已有 Inno Setup 在线引导安装器、自动 Secret、官方 Docker 下载签名校验和 Compose/n8n 自动启动；当前不打包或启动 Windows Bridge。尚未生成签名发布 EXE，也未完成干净 VM、升级/卸载和 Docker 许可验收。 |

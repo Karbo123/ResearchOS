@@ -164,9 +164,10 @@
 - [x] `P1-PATCH-015` 完成代码/配置/LaTeX patch 的“提案—diff—审批—隔离验证—Git commit—审计”执行器。
   - 完成标准：覆盖冲突、验证失败、回滚、依赖安装、覆盖/删除和对外发布禁用路径。
   - 验证结果：新增严格结构化文件操作契约和临时隔离验证器；批准后只对干净且仍位于基准 commit 的项目 Git 工作区执行，暂存、写入、验证、冲突和提交失败均恢复原文件并返回结构化错误。回滚通过新的待审批 Proposal 触发并固定使用 `git revert --no-edit`；外部发布保持明确拒绝。API 容器 `96 passed, 2 skipped`，patch 执行器与路由定向测试 `12 passed`，Compose、API `py_compile`、JSON、Idea case、文档同步和 `git diff --check` 通过；提交 `327c592` 已推送到 `origin/main`；未调用真实模型、外部学术 API 或无关实验。
-- [ ] `P1-PAPER-016` 实现基于验证证据的完整 LaTeX 论文生成与更新。
+- [~] `P1-PAPER-016` 实现基于验证证据的完整 LaTeX 论文生成与更新。
   - 依赖：`P0-EVIDENCE-001`、`P0-RELATED-002`、`P0-PLAN-006`。
   - 完成标准：Introduction、Related Work、Method、Experiments、Results、Limitations 和 References 可追踪；编译前必须审批 diff。
+  - 本轮范围：生成器只接受当前 Idea、已核验页码证据和真实实验指标，生成完整可审阅 LaTeX patch Proposal；没有页码证据或不存在真实指标时直接保留“未执行/待核验”状态，不补造论文事实。
 - [x] `P1-DB-017` 引入正式数据库迁移和最小权限角色。
   - 完成标准：使用迁移工具管理 18 张业务表；API、n8n、MLflow 使用独立角色/schema；备份恢复测试通过。
   - 验证结果：新增一次性 `db-migrate` 服务、Alembic `0001_initial` revision 和幂等角色 provisioning；API 使用业务表 CRUD 角色，n8n 使用 `n8n` schema 角色并保留启动所需数据库 `CREATE` 权限，MLflow 使用独立 `research_os_mlflow` 数据库。现有 PostgreSQL volume 上迁移成功，恢复到临时数据库后验证 19 张 public 表和 `0001_initial`，随后清理临时数据库与备份。API `99 passed, 2 skipped`、n8n 工作流启动并激活、Compose/JSON/文档同步/容器 Python 语法/`git diff --check` 通过。
@@ -293,3 +294,4 @@
 - 2026-07-30：继续 `P0-IMPACT-008`；修正影响图检查点选择，只推荐与受影响实验绑定的最新 `experiment_succeeded`/`experiment_failed` 检查点，忽略项目暂停等不可重跑检查点；补充回归夹具。API 容器全量 `76 passed, 2 skipped`，未调用模型、外部学术 API 或无关实验；任务继续保持 `[~]`，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。
 - 2026-07-30：完成 `P1-INTENT-014`；已有项目聊天改用容器内模型的严格 `SupervisionIntent` 分类，移除变更/策略关键词识别；只有白名单 Idea/策略字段完整时创建审批 Proposal，状态和审批意图不直接执行，模型失败直接返回结构化错误。API `78 passed, 2 skipped`、Compose/文档同步/Idea case/JSON/`git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。
 - 2026-07-30：完成 `P1-MODEL-044`；修复空的旧 `runtime/model-settings.json` 字段遮蔽容器 `.env` 默认值的问题，统一设置页的轻量卡片视觉和默认值说明；新增 Windows GitHub Actions EXE/SHA-256 草稿 Release 工作流。n8n 继续负责固定工作流编排，模型调用、严格 Schema、审批和 fail-fast 校验仍由 API 容器负责，避免把动态 key 写入 workflow。API 容器 `102 passed, 2 skipped`，浏览器桌面/窄屏检查通过；P2-INSTALLER-029 因缺 Inno Setup、签名证书、干净 VM 和失效 GitHub token 继续进行中。
+- 2026-07-30：继续 `P1-PAPER-016`；新增 evidence-grounded `paper/main.tex` 生成器和 `POST /api/projects/{project_id}/paper-draft`，只接受当前 Idea、已核验页码/章节 quote，并仅写入真实成功实验指标；metadata-only、缺失证据和未执行结果不会升级为论文事实。前端概览新增“生成证据论文草稿”按钮，接口只创建需审批的 LaTeX replace Proposal，批准前不写文件。同步工具契约、双语 README、运维说明和需求审计；API 容器 `103 passed, 2 skipped`，Node UX `5 passed`，文档/Idea case/Compose/JSON/`git diff --check` 和浏览器设置/桌面/窄屏检查通过。完整语义 claim 映射、生产级论文编译和完整论文能力仍未完成，任务保持 `[~]`。提交：`25334f2`。
