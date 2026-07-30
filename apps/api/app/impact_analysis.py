@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from collections import defaultdict, deque
+from datetime import datetime, timezone
 from typing import Any, Iterable
 
 
 TERMINAL_EXPERIMENT_STATUSES = {"succeeded", "failed", "cancelled"}
+RERUN_CHECKPOINT_STAGES = {"experiment_succeeded", "experiment_failed"}
 
 
 def _value(item: Any, name: str, default: Any = None) -> Any:
@@ -18,6 +20,15 @@ def _value(item: Any, name: str, default: Any = None) -> Any:
 def _artifact_metadata(artifact: Any) -> dict[str, Any]:
     value = _value(artifact, "metadata_json", {})
     return value if isinstance(value, dict) else {}
+
+
+def _checkpoint_sort_key(checkpoint: Any) -> tuple[datetime, str]:
+    created_at = _value(checkpoint, "created_at")
+    if not isinstance(created_at, datetime):
+        created_at = datetime.min
+    if created_at.tzinfo is not None:
+        created_at = created_at.astimezone(timezone.utc).replace(tzinfo=None)
+    return created_at, str(_value(checkpoint, "id"))
 
 
 def _matches_root(
@@ -144,8 +155,14 @@ def analyze_impact(
     checkpoint_by_run: dict[str, Any] = {}
     for checkpoint in checkpoint_rows:
         state = _value(checkpoint, "state", {}) or {}
-        if isinstance(state, dict) and state.get("run_id"):
-            checkpoint_by_run[str(state["run_id"])] = checkpoint
+        if not isinstance(state, dict) or not state.get("run_id"):
+            continue
+        if _value(checkpoint, "stage") not in RERUN_CHECKPOINT_STAGES:
+            continue
+        run_id = str(state["run_id"])
+        previous = checkpoint_by_run.get(run_id)
+        if previous is None or _checkpoint_sort_key(checkpoint) > _checkpoint_sort_key(previous):
+            checkpoint_by_run[run_id] = checkpoint
     rerun_candidates = [
         {
             "experiment_id": str(_value(experiment, "id")),

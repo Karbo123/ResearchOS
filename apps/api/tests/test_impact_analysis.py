@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from types import SimpleNamespace
 from uuid import uuid4
 
@@ -113,11 +114,34 @@ def test_affected_terminal_experiment_exposes_its_checkpoint_for_local_rerun():
         artifacts=[SimpleNamespace(id=artifact_id, experiment_id=experiment_id, metadata_json={})],
         dependencies=[SimpleNamespace(artifact_id=artifact_id, upstream_type="idea_version", upstream_id="1")],
         experiments=[SimpleNamespace(id=experiment_id, experiment_type="topic", status="succeeded")],
-        checkpoints=[SimpleNamespace(id=checkpoint_id, state={"run_id": str(experiment_id)})],
+        checkpoints=[SimpleNamespace(id=checkpoint_id, stage="experiment_succeeded", state={"run_id": str(experiment_id)})],
     )
     assert impact["affected_checkpoint_ids"] == [str(checkpoint_id)]
     assert impact["recommended_checkpoint_ids"] == [str(checkpoint_id)]
     assert impact["rerun_candidates"][0]["checkpoint_id"] == str(checkpoint_id)
+
+
+def test_recommended_checkpoint_is_latest_rerunnable_terminal_checkpoint():
+    artifact_id = uuid4()
+    experiment_id = uuid4()
+    older = uuid4()
+    newer = uuid4()
+    paused = uuid4()
+    impact = analyze_impact(
+        change_kind="idea_revision",
+        payload={"base_idea_version": 1},
+        current_idea_version=1,
+        artifacts=[SimpleNamespace(id=artifact_id, experiment_id=experiment_id, metadata_json={})],
+        dependencies=[SimpleNamespace(artifact_id=artifact_id, upstream_type="idea_version", upstream_id="1")],
+        experiments=[SimpleNamespace(id=experiment_id, experiment_type="topic", status="succeeded")],
+        checkpoints=[
+            SimpleNamespace(id=older, stage="experiment_succeeded", state={"run_id": str(experiment_id)}, created_at=datetime(2026, 7, 29, tzinfo=timezone.utc)),
+            SimpleNamespace(id=paused, stage="project_paused", state={"run_id": str(experiment_id)}, created_at=datetime(2026, 7, 31, tzinfo=timezone.utc)),
+            SimpleNamespace(id=newer, stage="experiment_failed", state={"run_id": str(experiment_id)}, created_at=datetime(2026, 7, 30, tzinfo=timezone.utc)),
+        ],
+    )
+    assert impact["recommended_checkpoint_ids"] == [str(newer)]
+    assert impact["rerun_candidates"][0]["checkpoint_id"] == str(newer)
 
 
 def test_impact_contains_reviewable_dependency_graph_and_experiment_edges():
