@@ -68,7 +68,7 @@
 ## Runner 隔离增量（2026-07-30）
 
 - Runner supervisor 现在通过唯一的 `runner-launcher` 服务为每个 Run 创建新的非 root 作业容器；launcher 使用固定镜像、固定 `python -m app.worker` 入口、固定内部网络、受控继承挂载和模板级 CPU/内存/PID 限制，Runner supervisor/API 不挂载 Docker socket。
-- Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 使用带硬大小上限的 Docker tmpfs 输出 volume，终态同步产物后删除 job container 与 volume；Linux 单文件 `RLIMIT_FSIZE` 与运行目录累计检查仍作为第二道边界。
+- Launcher/Runner 任务契约拒绝任意 command、path、URL、network、image 和 environment 字段；监控器负责容器超时、取消和无终态退出的结构化错误。每 Run 使用带硬大小上限的 Docker tmpfs 输出 volume，终态同步产物后删除 job container 与 volume；同步过程串行且幂等，容器或 volume 清理失败时不会报告成功，Runner 超时/取消也会校验 `artifacts_synced`；Linux 单文件 `RLIMIT_FSIZE` 与运行目录累计检查仍作为第二道边界。
 - 当前已是每 Run 独立容器，已完成固定主题入口、受控 Python、固定 micromamba/Conda Python、C++/CMake 和 GPU 请求模板；真实 GPU 主机验证仍未完成，`P0-RUNNER-007` 继续保持部分实现。未运行与当前用户主题无关的分类/点云实验，也没有把它们作为主题计划的替代路径。
 
 ## 逐项覆盖
@@ -109,6 +109,8 @@
 2026-07-30 Runner 隔离增量：`P0-RUNNER-007` 新增唯一 Docker launcher 和每 Run 独立非 root 作业容器；固定镜像、入口、内部网络、受控挂载、CPU/内存/PID/超时/取消和白名单契约均由容器内代码执行。累计目录配额、Linux `RLIMIT_FSIZE` 单文件上限和结构化超限错误继续保留；真正 volume 级磁盘配额、GPU、通用 Python/C++/Conda 仍未实现，任务保持 `[~]`。
 2026-07-30 Runner 模板/配额增量：`P0-RUNNER-007` 增加固定入口的 Python、固定 CMake target 的 C++ 和 Docker GPU 请求模板；每 Run 改用带硬大小上限的 tmpfs 输出 volume，终态同步产物后清理 job container 与 volume。Runner `6 passed`、launcher 普通/真实 Docker 集成各 `8 passed`、API `57 passed`，集成后无 managed volume 残留。Conda、主题专属 Runner 和真实 GPU 主机验证仍未完成；未调用模型、外部学术 API 或无关实验。
 2026-07-30 Runner Conda 增量：`P0-RUNNER-007` 在 `research-os-runner` 镜像内预构建固定 `/opt/conda/envs/research-os` micromamba Python 3.12 环境，新增 `conda_python` 白名单模板；请求仍只能选择 `experiment/*.py` 入口，不能提交环境文件、依赖、命令或网络配置。`micromamba 2.3.2`、固定环境 Python `3.12.13`、API `57 passed`、Runner `6 passed`、launcher `8 passed`（含两个真实 Docker 集成测试）通过；主题专属 Runner 和真实 GPU 主机验证仍未完成，未调用模型、外部学术 API 或无关实验。
+
+2026-07-30 Runner 终态清理增量：`P0-RUNNER-007` 为 Launcher 终态输出同步增加串行幂等保护；同步 helper 使用只读根文件系统，只有 job container、helper 和输出 volume 清理都成功时才报告 `artifacts_synced=true`。Runner 的超时/取消路径现在必须确认同步结果，失败直接返回结构化清理错误，不把 HTTP 成功或停止请求误报为已清理。容器内 Runner `10 passed`、Launcher `10 passed`（两个真实 Docker 集成测试启用后均通过），Runner/Launcher 语法检查通过；真实 GPU 主机验证仍未完成，任务保持 `[~]`，未调用模型、外部学术 API 或无关实验。
 
 2026-07-30 数据库迁移增量：`P1-DB-017` 新增一次性 `db-migrate` Compose 服务、版本化 Alembic 初始 revision 和幂等角色 provisioning。API 使用只授予业务表 CRUD 的独立角色，n8n 只访问 `n8n` schema，MLflow 使用独立 `research_os_mlflow` 数据库和角色；API 启动缺少 `alembic_version` 时直接失败，不再隐式 `create_all`/`ALTER TABLE`。备份轮换、恢复演练和生产级网络隔离仍属于 P2 运维范围。
 

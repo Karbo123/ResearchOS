@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from typing import Any, Literal
 from uuid import UUID
 
@@ -42,6 +43,7 @@ SYNC_CODE = (
     "shutil.copytree(source,destination,dirs_exist_ok=True)"
 )
 SYNC_RESULTS: dict[str, dict[str, Any]] = {}
+SYNC_LOCK = threading.Lock()
 
 
 class LaunchRequest(BaseModel):
@@ -124,51 +126,61 @@ def sync_output_volume(container) -> dict[str, Any]:
     project_id = container.labels.get("research_os.project_id")
     if not run_id or not project_id:
         return {"artifacts_synced": False, "artifact_sync_error": "managed job labels are incomplete"}
-    if run_id in SYNC_RESULTS:
-        return SYNC_RESULTS[run_id]
-    volume_name = container.labels.get("research_os.output_volume") or output_volume_name(UUID(run_id))
-    result = {"artifacts_synced": False}
-    helper = None
-    try:
-        volume = client.volumes.get(volume_name)
-        helper = client.containers.run(
-            image=JOB_IMAGE,
-            name=f"research-os-sync-{run_id}",
-            command=["python", "-c", SYNC_CODE],
-            environment={"SYNC_PROJECT_ID": project_id, "SYNC_RUN_ID": run_id},
-            volumes_from=[RUNNER_CONTAINER_NAME],
-            volumes={volume_name: {"bind": "/run-output", "mode": "ro"}},
-            network=RUNNER_NETWORK,
-            user="10002",
-            detach=True,
-            cap_drop=["ALL"],
-            security_opt=["no-new-privileges:true"],
-            pids_limit=32,
-            mem_limit=256 * 1024 * 1024,
-        )
-        wait_result = helper.wait(timeout=30)
-        exit_code = wait_result.get("StatusCode", 1) if isinstance(wait_result, dict) else int(wait_result)
-        if exit_code != 0:
-            raise RuntimeError(f"artifact sync helper exited with code {exit_code}")
-        result = {"artifacts_synced": True, "output_volume": volume_name}
-    except (APIError, NotFound, OSError, RuntimeError, ValueError) as exc:
-        result = {"artifacts_synced": False, "artifact_sync_error": str(exc)[:500], "output_volume": volume_name}
-    finally:
-        if helper is not None:
+    with SYNC_LOCK:
+        if run_id in SYNC_RESULTS:
+            return SYNC_RESULTS[run_id]
+        volume_name = container.labels.get("research_os.output_volume") or output_volume_name(UUID(run_id))
+        result = {"artifacts_synced": False, "output_volume": volume_name}
+        helper = None
+        cleanup_errors: list[str] = []
+        try:
+            client.volumes.get(volume_name)
+            helper = client.containers.run(
+                image=JOB_IMAGE,
+                name=f"research-os-sync-{run_id}",
+                command=["python", "-c", SYNC_CODE],
+                environment={"SYNC_PROJECT_ID": project_id, "SYNC_RUN_ID": run_id},
+                volumes_from=[RUNNER_CONTAINER_NAME],
+                volumes={volume_name: {"bind": "/run-output", "mode": "ro"}},
+                network=RUNNER_NETWORK,
+                user="10002",
+                detach=True,
+                read_only=True,
+                tmpfs={"/tmp": "rw,size=64m,mode=1777"},
+                cap_drop=["ALL"],
+                security_opt=["no-new-privileges:true"],
+                pids_limit=32,
+                mem_limit=256 * 1024 * 1024,
+            )
+            wait_result = helper.wait(timeout=30)
+            exit_code = wait_result.get("StatusCode", 1) if isinstance(wait_result, dict) else int(wait_result)
+            if exit_code != 0:
+                raise RuntimeError(f"artifact sync helper exited with code {exit_code}")
+            result = {"artifacts_synced": True, "output_volume": volume_name}
+        except (APIError, NotFound, OSError, RuntimeError, ValueError) as exc:
+            result = {"artifacts_synced": False, "artifact_sync_error": str(exc)[:500], "output_volume": volume_name}
+        finally:
+            if helper is not None:
+                try:
+                    helper.remove(force=True)
+                except (APIError, OSError) as exc:
+                    cleanup_errors.append(f"sync helper cleanup failed: {str(exc)[:200]}")
             try:
-                helper.remove(force=True)
-            except (APIError, OSError):
-                pass
-        try:
-            container.remove(force=True)
-        except (APIError, NotFound, OSError):
-            pass
-        try:
-            client.volumes.get(volume_name).remove(force=True)
-        except (APIError, NotFound, OSError):
-            pass
-    SYNC_RESULTS[run_id] = result
-    return result
+                container.remove(force=True)
+            except (APIError, NotFound, OSError) as exc:
+                cleanup_errors.append(f"job container cleanup failed: {str(exc)[:200]}")
+            try:
+                client.volumes.get(volume_name).remove(force=True)
+            except (APIError, NotFound, OSError) as exc:
+                cleanup_errors.append(f"output volume cleanup failed: {str(exc)[:200]}")
+        if cleanup_errors:
+            result = {
+                "artifacts_synced": False,
+                "artifact_sync_error": "; ".join(cleanup_errors),
+                "output_volume": volume_name,
+            }
+        SYNC_RESULTS[run_id] = result
+        return result
 
 
 @app.get("/health")

@@ -129,7 +129,7 @@ Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
 
 ## Runner 作业隔离
 
-当前每个 Run 由 `runner-launcher` 启动一个新的非 root `research-os-runner` 作业容器。只有 launcher 挂载 Docker socket；API、Runner supervisor 和 Windows 都不挂载，也不启动本地 API/模型服务。作业使用固定镜像、固定 `python -m app.worker` 入口、固定内部 `research-os-runner-internal` 网络和 Runner 的受控项目/产物挂载。任务模板固定 task ID、配置字段、CPU/内存/PID/每 Run 磁盘配额和 `internal-mlflow-only` 网络策略标签；取消会停止容器，超出模板或全局运行时限会返回结构化 `job_timeout` 错误，超出累计或单文件磁盘限制会返回结构化配额错误。Launcher/Runner 都不接受命令、路径、URL、网络、镜像或环境注入字段。失败只返回结构化错误，不使用备用执行器、provider fallback 或无关实验替代。
+当前每个 Run 由 `runner-launcher` 启动一个新的非 root `research-os-runner` 作业容器。只有 launcher 挂载 Docker socket；API、Runner supervisor 和 Windows 都不挂载，也不启动本地 API/模型服务。作业使用固定镜像、固定 `python -m app.worker` 入口、固定内部 `research-os-runner-internal` 网络和 Runner 的受控项目/产物挂载。任务模板固定 task ID、配置字段、CPU/内存/PID/每 Run 磁盘配额和 `internal-mlflow-only` 网络策略标签；取消会停止容器并确认终态产物同步，超出模板或全局运行时限会返回结构化 `job_timeout` 错误，取消/超时清理失败会返回 `job_timeout_cleanup_failed` 或直接的取消错误，超出累计或单文件磁盘限制会返回结构化配额错误。Launcher 的终态同步有并发锁且只有容器、输出 volume 清理成功才报告 `artifacts_synced=true`。Launcher/Runner 都不接受命令、路径、URL、网络、镜像或环境注入字段。失败只返回结构化错误，不使用备用执行器、provider fallback 或无关实验替代。
 
 这是隔离基础设施的部分实现：每 Run 独立容器、八个白名单模板（包括固定 `experiment/main.py` 主题入口和镜像内固定 micromamba/Conda Python 环境）、硬上限 tmpfs 输出 volume，以及受控 GPU 请求已经由 launcher 提供；真实 GPU 主机验证仍由 `P0-RUNNER-007` 跟踪。主题入口必须读取固定环境路径中的结构化计划，可选读取恢复状态，并在输出目录写入 `metrics.json` 与 `checkpoint.json`；缺少入口、进程失败或产物不合法都会直接生成结构化错误，不会运行无关的分类或点云实验。
 

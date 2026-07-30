@@ -33,7 +33,7 @@
 ## 当前状态
 
 - Installer status: GitHub Actions run `30545994558` built `ResearchOS-Setup-0.2.0-x64.exe` and `SHA256SUMS.txt` for tag `v0.2.0`; the Release is intentionally Draft until signing and clean-VM acceptance are complete.
-- Current work item: `P1-PAPER-016` is in progress; the project bootstrap/resume queue is complete, while persistent queueing for the separate Runner execution chain remains tracked with Runner work.
+- Current work item: `P0-RUNNER-007` is in progress; terminal cleanup is now fail-closed, while real GPU-host validation and production-grade Runner recovery remain open.
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
 - 当前进行中：`P1-PAPER-016`、`P1-UPLOAD-009`、`P0-RUNNER-007`、`P0-IMPACT-008`、`P2-INSTALLER-029`；`P2-SEARCH-018`、`P2-QUEUE-020`、`P2-TRACKING-019`、`P1-UX-045`、`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，当前推进论文语义/编译验收、材料库、真实 GPU 主机验证、影响图自动 Proposal 和正式安装器验收。
@@ -298,7 +298,8 @@
 - 2026-07-30：继续 `P0-LLM-040` 与 `P0-RELATED-002`；Windows 安装器不再打包或启动 Bridge，前端移除无效的通用实验计划按钮，Related Work 新增证据边界单元测试。历史验收中的 Bridge/合成实验记录仅作历史证据，不代表当前运行路径。
 - 2026-07-30：完成 `P0-LLM-040` 与 `P0-RELATED-002`；验证 API `29 passed`、前端 UX `5 passed`、浏览器设置面板桌面/窄屏检查、Compose/JSON/Idea case/文档同步/AST/`git diff --check`，清理历史 dangling Docker 镜像，删除废弃 Bridge 脚本并清理验收脚本中的旧通用实验路径。未运行真实模型、其他 Idea 或无关实验；功能提交 `4ff3ef4`、清理提交 `4fb4905`、验收入口提交 `8798473`。
 - 2026-07-30：开始并完成 `P0-PLAN-006`；新增严格主题专属实验计划契约、复杂层模型直连、全文证据/Idea 版本/策略/预算/主题关联校验、审批 Proposal 持久化、批准后二次校验和前端生成入口。主题 Runner 尚未实现时直接结构化报错，禁止 fallback；同步双语 README、架构/运维/安全边界、需求审计和工具契约。API 容器 `32 passed`，Compose/API 镜像重建、JSON、文档同步和 `git diff --check` 已通过；未调用真实模型、其他 Idea 或无关实验。
-- P0-RUNNER-007 当前实现：`runner-launcher` 是唯一 Docker socket 控制边界；每个 Run 使用新的非 root 作业容器、固定 `python -m app.worker` 入口、六个白名单任务模板、固定内部网络、受控继承挂载、CPU/内存/PID/硬上限 tmpfs 输出 volume、超时、取消和结构化终态监控。用户不能提交镜像、命令、路径、网络或环境字段；模型失败和主题不支持不触发任何 fallback。
+- P0-RUNNER-007 当前实现：`runner-launcher` 是唯一 Docker socket 控制边界；每个 Run 使用新的非 root 作业容器、固定 `python -m app.worker` 入口、八个白名单任务模板、固定内部网络、受控继承挂载、CPU/内存/PID/硬上限 tmpfs 输出 volume、超时、取消和结构化终态监控。用户不能提交镜像、命令、路径、网络或环境字段；模型失败和主题不支持不触发任何 fallback。
+- P0-RUNNER-007 终态清理：Launcher 的输出同步现在串行且幂等；只读同步 helper、job container 和输出 volume 的清理必须全部成功才返回 `artifacts_synced=true`。Runner 超时和取消会校验该字段，清理失败返回结构化错误，不把停止请求或 HTTP 成功误报为已清理。
 - P0-RUNNER-007 当前缺口：GPU 仅完成受控 Docker 请求和无 GPU 时的结构化失败路径，未在真实 GPU 主机验证；主题固定入口和检查点恢复已实现。未运行无关分类/点云实验，任务继续保持 `[~]`。
 - P0-RUNNER-007 验证：`docker compose build api runner runner-launcher` 与服务重建成功；容器内 `micromamba 2.3.2`、固定环境 Python `3.12.13`；API `57 passed`，Runner unittest `6 passed`，launcher 普通契约测试 `8 passed`（2 个显式集成用例跳过），真实 per-run Docker 集成测试 `8 passed`；集成后受控 volume 无残留。未调用模型、外部学术 API 或无关实验；任务保持 `[~]`。
 - P0-RUNNER-007 提交：`efacc9d` 已创建并与 `d0ad650` 一起推送到 `origin/main`。
@@ -328,4 +329,5 @@
 - 2026-07-30：继续 `P1-PAPER-016`；编译 Proposal 绑定干净项目 `paper/main.tex` 的 Git commit/SHA-256，审批时和 `compile_latex` Runner 提交前双重核验，源文件变化返回 `compile_approval_source_changed`。论文/patch 定向测试 `40 passed`，Runner 固定 latexmk 测试通过；真实带 `references.bib` 项目的 `paper/main.tex` 在 Runner 容器按实际工作目录编译成功并生成 77KB 非空 PDF。语义 claim 映射仍只是人工复核候选，P1-PAPER-016 继续保持 `[~]`。
 - 2026-07-30：继续 `P1-PAPER-016`；claim map 增加多语言归一化 lexical candidate 与人工复核字段，新增 Runner 容器内固定 `latexmk` 最小文档回归。候选仍不升级为语义证据或科学结论；`semantic_status=not_proven_lexical_candidates_only`、完整语义核验和生产级论文编译验收继续保持未完成。
 - 2026-07-30：本轮验证通过文档同步、Compose、JSON、JS、聊天 UX、API `117 passed, 2 skipped`、Runner `10 passed` 和 launcher `6 passed, 2 skipped`；新增 `test_fixed_latexmk_command_produces_a_nonempty_pdf` 通过。`scripts/acceptance_test.py` 在首次真实模型请求处收到 HTTP 502 `llm_request_failed`，未使用 fallback、未写伪造助手消息且未生成验收通过产物；P1-PAPER-016 继续保持 `[~]`。实现提交：`8ee8e57`。
+- 2026-07-30：继续 `P0-RUNNER-007`；修复 Launcher 终态同步并发竞态，清理 helper/job container/output volume 任一失败都 fail-closed；Runner 超时/取消必须确认 `artifacts_synced=true`。容器内 Runner `10 passed`、Launcher `10 passed`，启用显式 Docker 集成测试后两个真实隔离测试均通过，Runner/Launcher `py_compile` 通过，Compose 服务重建成功。真实 GPU 主机验证仍未完成，任务保持 `[~]`；未调用模型、外部学术 API 或无关实验。
 - 2026-07-30：完成 `P2-SEARCH-018`；修正 GitHub 资源候选缺少 `provider/resource_type` 导致前端显示 `unknown` 的问题，并让空的 provider 异常保留异常类型/HTTP 状态。活动项目真实检索、浏览器 Literature 页面、provider errors 和合规候选显示均已验证，任务标记 `[x]`。

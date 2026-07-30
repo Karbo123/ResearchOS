@@ -3,8 +3,10 @@ import os
 import time
 from uuid import uuid4
 from fastapi import HTTPException
+from types import SimpleNamespace
+from unittest.mock import patch
 
-from app.main import LaunchRequest, TEMPLATE_LIMITS, authenticate, client, health, launch, status
+from app.main import LaunchRequest, TEMPLATE_LIMITS, authenticate, client, health, launch, status, sync_output_volume, SYNC_RESULTS
 
 
 def valid_payload():
@@ -51,6 +53,88 @@ class LauncherContractTests(unittest.TestCase):
         self.assertTrue({"topic_specific", "demo_classification", "point_cloud_demo", "compile_latex", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}.issubset(TEMPLATE_LIMITS))
         self.assertTrue(all(item["cpu"] > 0 and item["memory"] > 0 and item["pids"] > 0 for item in TEMPLATE_LIMITS.values()))
         self.assertTrue(TEMPLATE_LIMITS["gpu_python"]["gpu"])
+
+    def test_terminal_sync_is_idempotent_and_uses_read_only_helper(self):
+        run_id = str(uuid4())
+        project_id = str(uuid4())
+        calls = {"helper_remove": 0, "container_remove": 0, "volume_remove": 0}
+
+        class FakeHelper:
+            def wait(self, timeout):
+                self.timeout = timeout
+                return {"StatusCode": 0}
+
+            def remove(self, force=False):
+                calls["helper_remove"] += 1
+
+        class FakeContainer:
+            labels = {
+                "research_os.run_id": run_id,
+                "research_os.project_id": project_id,
+                "research_os.output_volume": "test-output-volume",
+            }
+
+            def remove(self, force=False):
+                calls["container_remove"] += 1
+
+        class FakeVolume:
+            def remove(self, force=False):
+                calls["volume_remove"] += 1
+
+        class FakeVolumes:
+            def get(self, name):
+                return FakeVolume()
+
+        class FakeContainers:
+            def run(self, **kwargs):
+                self.kwargs = kwargs
+                return FakeHelper()
+
+        fake_containers = FakeContainers()
+        fake_client = SimpleNamespace(volumes=FakeVolumes(), containers=fake_containers)
+        with patch("app.main.client", fake_client), patch.dict(SYNC_RESULTS, {}, clear=True):
+            result = sync_output_volume(FakeContainer())
+            cached = sync_output_volume(FakeContainer())
+
+        self.assertEqual(result, cached)
+        self.assertTrue(result["artifacts_synced"])
+        self.assertTrue(fake_containers.kwargs["read_only"])
+        self.assertEqual(calls, {"helper_remove": 1, "container_remove": 1, "volume_remove": 1})
+
+    def test_terminal_sync_fails_closed_when_cleanup_fails(self):
+        run_id = str(uuid4())
+        project_id = str(uuid4())
+
+        class FakeHelper:
+            def wait(self, timeout):
+                return {"StatusCode": 0}
+
+            def remove(self, force=False):
+                raise OSError("helper cleanup unavailable")
+
+        class FakeContainer:
+            labels = {
+                "research_os.run_id": run_id,
+                "research_os.project_id": project_id,
+                "research_os.output_volume": "test-output-volume",
+            }
+
+            def remove(self, force=False):
+                pass
+
+        class FakeVolume:
+            def remove(self, force=False):
+                pass
+
+        fake_client = SimpleNamespace(
+            volumes=SimpleNamespace(get=lambda name: FakeVolume()),
+            containers=SimpleNamespace(run=lambda **kwargs: FakeHelper()),
+        )
+        with patch("app.main.client", fake_client), patch.dict(SYNC_RESULTS, {}, clear=True):
+            result = sync_output_volume(FakeContainer())
+
+        self.assertFalse(result["artifacts_synced"])
+        self.assertIn("cleanup failed", result["artifact_sync_error"])
 
     def test_running_launcher_can_reach_the_docker_socket(self):
         self.assertTrue(client.ping())

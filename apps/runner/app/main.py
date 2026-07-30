@@ -680,17 +680,29 @@ def _monitor_container_job(request: SubmitRequest) -> None:
     deadline = time.monotonic() + min(MAX_SECONDS, validate_template_config(request.experiment_type, request.config).max_runtime_seconds)
     while True:
         if time.monotonic() > deadline:
+            cleanup_error = None
             try:
                 with httpx.Client(timeout=EXECUTOR_TIMEOUT_SECONDS) as client:
-                    client.post(f"{EXECUTOR_URL}/v1/jobs/{key}/cancel", headers={"X-Runner-Secret": SHARED_SECRET})
-            except httpx.HTTPError:
-                pass
+                    response = client.post(f"{EXECUTOR_URL}/v1/jobs/{key}/cancel", headers={"X-Runner-Secret": SHARED_SECRET})
+                    response.raise_for_status()
+                    cancellation_state = response.json()
+                    if not isinstance(cancellation_state, dict) or cancellation_state.get("artifacts_synced") is not True:
+                        cleanup_error = (
+                            cancellation_state.get("artifact_sync_error", "artifact synchronization was not confirmed")
+                            if isinstance(cancellation_state, dict)
+                            else "invalid cancellation response"
+                        )
+            except (httpx.HTTPError, ValueError) as exc:
+                cleanup_error = str(exc)[:500]
             with LOCK:
-                RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps({
-                    "code": "job_timeout",
+                error = {
+                    "code": "job_timeout_cleanup_failed" if cleanup_error else "job_timeout",
                     "message": "The isolated per-run container exceeded its runtime limit.",
                     "max_runtime_seconds": min(MAX_SECONDS, validate_template_config(request.experiment_type, request.config).max_runtime_seconds),
-                }))
+                }
+                if cleanup_error:
+                    error["cleanup_error"] = cleanup_error
+                RUNS[key].update(status="failed", finished_at=utcnow(), error=json.dumps(error, ensure_ascii=False))
                 persist_state(key)
             return
         try:
@@ -813,6 +825,10 @@ def cancel(run_id: UUID, x_runner_secret: str | None = Header(default=None)):
                 headers={"X-Runner-Secret": SHARED_SECRET},
             )
             response.raise_for_status()
+            cancellation_state = response.json()
+            if not isinstance(cancellation_state, dict) or cancellation_state.get("artifacts_synced") is not True:
+                detail = cancellation_state.get("artifact_sync_error", "artifact synchronization was not confirmed") if isinstance(cancellation_state, dict) else "invalid cancellation response"
+                raise httpx.HTTPError(detail)
     except httpx.HTTPStatusError as exc:
         raise HTTPException(status_code=409, detail={
             "code": "job_container_cancel_rejected",

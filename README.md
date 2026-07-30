@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-26 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-27 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -77,7 +77,7 @@ flowchart LR
 
 The API and Runner are the enforcement boundary. n8n coordinates bounded workflows but cannot read container environment variables, issue arbitrary SQL, or pass arbitrary shell commands to the Runner. Idea clarification is an adaptive, schema-constrained conversational agent: it updates the whole draft each turn, but it has no shell, filesystem, SQL, or network tools. The API container calls the independently configured OpenAI-compatible model URLs directly. It never reads the Windows Codex configuration directory, `auth.json`, or host model service. A failed call is returned as a structured error with no provider switch or local reply.
 
-Runner isolation uses a fresh non-root job container for each Run. The `runner-launcher` service is the only Docker-control boundary and the only service with the Docker socket; API and Runner have no socket, and Windows starts no API, Runner, or model process. The fixed job image, internal network, controlled mounts, task template, command, resource limits, timeout, cancellation, and environment are selected by deployment code. User payloads cannot select an image, command, path, network, or environment. A topic-specific plan executes only the project Git workspace's fixed `experiment/main.py` entrypoint and receives the plan/checkpoint through fixed JSON paths; it must publish numeric `metrics.json` and a structured `checkpoint.json`. Missing files, invalid output, or process failure return structured errors; the API never substitutes a generic demo task or another model/provider.
+Runner isolation uses a fresh non-root job container for each Run. The `runner-launcher` service is the only Docker-control boundary and the only service with the Docker socket; API and Runner have no socket, and Windows starts no API, Runner, or model process. The fixed job image, internal network, controlled mounts, task template, command, resource limits, timeout, cancellation, and environment are selected by deployment code. User payloads cannot select an image, command, path, network, or environment. Terminal output synchronization is serialized and idempotent; container/volume cleanup must also succeed before the Launcher reports `artifacts_synced=true`, and timeout/cancellation cleanup failures are returned as structured errors. A topic-specific plan executes only the project Git workspace's fixed `experiment/main.py` entrypoint and receives the plan/checkpoint through fixed JSON paths; it must publish numeric `metrics.json` and a structured `checkpoint.json`. Missing files, invalid output, or process failure return structured errors; the API never substitutes a generic demo task or another model/provider.
 
 ## Capability matrix
 

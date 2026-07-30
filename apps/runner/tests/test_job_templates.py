@@ -2,6 +2,8 @@ import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
+from uuid import uuid4
 from unittest.mock import patch
 
 from app.job_templates import TASK_TEMPLATES, validate_template_config
@@ -74,3 +76,40 @@ class JobTemplateTests(unittest.TestCase):
             small = template.__class__(**{**template.__dict__, "disk_mb": 0})
             with self.assertRaises(DiskQuotaExceeded):
                 enforce_disk_quota(run_dir, small)
+
+    def test_monitor_marks_timeout_cleanup_failure_structurally(self):
+        run_id = uuid4()
+        key = str(run_id)
+
+        class FakeResponse:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return {"artifacts_synced": False, "artifact_sync_error": "volume cleanup failed"}
+
+        class FakeClient:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, traceback):
+                return False
+
+            def post(self, *args, **kwargs):
+                return FakeResponse()
+
+        request = SimpleNamespace(
+            run_id=run_id,
+            experiment_type="demo_classification",
+            config={"project_slug": "project"},
+        )
+        with TemporaryDirectory() as directory, \
+                patch.object(runner_main, "RUNS", {key: {"run_id": key, "status": "running"}}), \
+                patch.object(runner_main, "STATE_ROOT", Path(directory)), \
+                patch.object(runner_main, "MAX_SECONDS", 0), \
+                patch.object(runner_main.httpx, "Client", return_value=FakeClient()):
+            runner_main._monitor_container_job(request)
+            error = json.loads(runner_main.RUNS[key]["error"])
+
+        self.assertEqual(error["code"], "job_timeout_cleanup_failed")
+        self.assertEqual(error["cleanup_error"], "volume cleanup failed")

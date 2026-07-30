@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-26 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-27 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
@@ -85,7 +85,7 @@ flowchart LR
 
 API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不能读取容器环境变量、执行任意 SQL，或把任意 Shell 命令交给 Runner。Idea 澄清采用受严格 Schema 约束的自适应对话 Agent：每轮整体更新草稿，但没有 Shell、文件系统、SQL 或网络工具。模型请求由 API 容器直接发送到三个独立配置的 OpenAI-compatible URL。API 不读取 Windows Codex 配置目录、`auth.json`，也不依赖 Windows 模型服务；调用失败直接返回结构化错误，不切换提供方、不生成本地回复。
 
-当前 Runner 隔离方式是为每个 Run 创建一个新的非 root 作业容器。`runner-launcher` 是唯一的 Docker 控制边界，也是唯一挂载 Docker socket 的服务；API 和 Runner 都不挂载 socket，Windows 不启动 API、Runner 或模型进程。固定作业镜像、内部网络、受控挂载、任务模板、命令、资源限制、超时、取消和环境均由部署代码选择；用户请求不能选择镜像、命令、路径、网络或环境。未支持的主题专属执行直接返回结构化错误，API 不会替换成通用 demo 或其他模型/provider。
+当前 Runner 隔离方式是为每个 Run 创建一个新的非 root 作业容器。`runner-launcher` 是唯一的 Docker 控制边界，也是唯一挂载 Docker socket 的服务；API 和 Runner 都不挂载 socket，Windows 不启动 API、Runner 或模型进程。固定作业镜像、内部网络、受控挂载、任务模板、命令、资源限制、超时、取消和环境均由部署代码选择；用户请求不能选择镜像、命令、路径、网络或环境。终态产物同步会串行且幂等执行；只有作业容器和输出 volume 都清理成功，Launcher 才会报告 `artifacts_synced=true`，超时/取消清理失败会直接返回结构化错误。未支持的主题专属执行直接返回结构化错误，API 不会替换成通用 demo 或其他模型/provider。
 
 ## 能力矩阵
 
