@@ -36,6 +36,7 @@ from .model_settings import load_settings, public_settings, save_settings
 from .related_work import build_related_work_analysis
 from .evidence_pipeline import download_open_pdf, extract_page_evidence, validate_open_pdf_url
 from .experiment_planning import ExperimentPlanValidationError, fingerprint, validate_topic_specific_plan
+from .diagnostics import build_diagnostic_report
 from .impact_analysis import analyze_impact, apply_impact
 from .material_parser import MaterialParseError, context_for_materials, parse_material
 from .repository_service import (
@@ -1919,6 +1920,65 @@ def experiment_reproducibility(run_id: UUID):
                 "note": "The source tar is a controlled recovery bundle; it is not tracked in the project Git repository.",
             },
         }
+
+
+@app.post("/api/projects/{project_id}/diagnostics")
+def project_diagnostics(project_id: UUID):
+    """Analyze stored numeric results and failures without executing a suggestion."""
+    with session_scope() as session:
+        project = session.get(Project, project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail={"code": "project_not_found", "message": "项目不存在。"})
+        experiments = list(session.scalars(
+            select(Experiment).where(Experiment.project_id == project_id).order_by(Experiment.created_at)
+        ))
+        report = build_diagnostic_report(experiments)
+        if report["suggestions"]:
+            analysis_fingerprint = fingerprint({
+                "run_ids": [item["experiment_id"] for item in report["runs"]],
+                "metrics": report["metrics"],
+                "failures": report["failures"],
+                "missing_metrics": report["missing_metrics_experiment_ids"],
+            })
+            existing = None
+            for candidate in session.scalars(select(Proposal).where(
+                Proposal.project_id == project_id,
+                Proposal.kind == "diagnostic_suggestion",
+                Proposal.status == "pending",
+            )):
+                if (candidate.payload or {}).get("analysis_fingerprint") == analysis_fingerprint:
+                    existing = candidate
+                    break
+            if existing:
+                report["proposal_id"] = str(existing.id)
+            else:
+                proposal = Proposal(
+                    project_id=project_id,
+                    kind="diagnostic_suggestion",
+                    reason="Deterministic numerical and failure analysis found reviewable follow-up items.",
+                    summary="Review experiment diagnostics before proposing another run.",
+                    diff="No code or configuration was changed; this Proposal only records bounded diagnostic evidence.",
+                    impact={
+                        "schema_version": "1.0",
+                        "requires_manual_review": True,
+                        "execution_allowed": False,
+                        "suggestion_codes": [item["code"] for item in report["suggestions"]],
+                    },
+                    estimated_cost_usd=0,
+                    payload={
+                        "analysis_fingerprint": analysis_fingerprint,
+                        "run_ids": [item["experiment_id"] for item in report["runs"]],
+                        "suggestions": report["suggestions"],
+                    },
+                )
+                session.add(proposal)
+                session.flush()
+                audit(session, "diagnostics.suggestion_proposed", project_id, {
+                    "proposal_id": str(proposal.id),
+                    "suggestion_codes": [item["code"] for item in report["suggestions"]],
+                })
+                report["proposal_id"] = str(proposal.id)
+        return report
 
 
 @app.get("/api/artifacts/{artifact_id}")

@@ -60,6 +60,10 @@ Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDepend
 
 The Runner service is a non-root, read-only supervisor on the internal `runner-internal` Compose network. Each accepted Run is launched by the separate `runner-launcher` service into a fresh non-root `research-os-runner` job container. Only the launcher has Docker socket access; API, supervisor Runner, and Windows have none. The launcher uses the fixed deployment image, fixed internal network, controlled inherited mounts, fixed `python -m app.worker` entrypoint, and seven allowlisted templates with template-specific CPU/memory/PID/timeout and hard per-run tmpfs output-volume limits. The Python template accepts only a single `experiment/*.py` entrypoint; the Conda template uses the prebuilt `/opt/conda/envs/research-os` micromamba prefix with the same entrypoint restriction; the CMake template builds only `experiment/cpp` target `research_os_job`; the GPU template requests one Docker GPU device. Terminal output is synchronized before the job container and volume are removed. Its contract rejects arbitrary command, path, URL, network, image, and environment fields. Topic-specific templates and real GPU-host validation remain roadmap work.
 
+## Deterministic diagnostics
+
+`POST /api/projects/{project_id}/diagnostics` reads persisted terminal experiment rows and calculates finite numeric metric count, mean, population standard deviation, minimum, maximum, structured failure codes, and succeeded runs with missing metrics. It does not call a model and does not execute a suggested action. When failures, missing metrics, or high dispersion meet a deterministic threshold, the API creates one deduplicated `diagnostic_suggestion` Proposal with the affected run IDs and evidence; approval is required before any follow-up change can be proposed or executed. The LLM may later explain or challenge this report, but it never computes the statistics.
+
 ## 实验可复现快照
 
 批准的实验进入 Runner 前，API 在固定项目 Git 工作区执行一次可复现快照门禁：工作树必须干净，Git 索引与状态中的文件必须通过扩展名、目录和 10 MB 单文件大小门禁，然后从当前 commit 创建不可变的 `run/<run_id>` annotated tag。`git archive` 生成的 `source.tar` 不写回项目仓库，而是保存到 `artifacts/reproducibility/<project_id>/<run_id>/`。

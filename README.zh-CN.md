@@ -90,6 +90,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | Idea 专属实验规划 | **已实现（需审批）** | API 使用当前 ProjectSpec、页码级全文证据和生效策略快照，生成包含数据源、基线、指标、消融、统计检验、种子、预算、风险和成功标准的严格主题专属计划 Proposal。 |
 | 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
 | 实验执行 | **已实现（有限范围）** | 七个 Runner 白名单任务，其中包含镜像内固定 micromamba/Conda Python 环境；非 root、CPU/内存/PID/每 Run 硬上限 tmpfs 输出 volume、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
+| 数值诊断 | **已实现（受限范围）** | 实验页由 Python 确定性计算已持久化指标和结构化失败码，并生成需审批、不会自动执行的后续建议。LLM 只能解释或质疑结果，不能计算统计量或启动后续工作。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
 | 通用科研自治 | **部分实现/路线图** | 主题专属 Runner、任意 GPU 调度/真实 GPU 主机验证、外部通知、证据驱动 Related Work 与完整论文仍待实现。当前已支持受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求模板，并在每 Run 独立非 root 容器中使用硬上限输出 volume；官方 GitHub/GitLab 仓库核验和审批后固定 commit 导入已实现。 |
 

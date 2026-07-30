@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，进行 P0-RUNNER-007、P0-IMPACT-008）
+最后更新：2026-07-30（Asia/Shanghai，进行 P0-RUNNER-007、P0-IMPACT-008、P1-DIAG-010）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；分别推进每任务隔离、实体级影响传播和材料解析。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P1-DIAG-010`；分别推进每任务隔离、实体级影响传播、材料解析和数值诊断。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -122,8 +122,9 @@
   - 已完成部分：API 在模型请求前上传并解析材料；保留原文件、MIME、SHA-256、解析器版本和派生元数据/文本；PDF 页码文本、JSON/CSV 预览、UTF-8 文本/代码、图片格式尺寸和 ZIP 安全清单均有边界；路径穿越、二进制文本、压缩比、解压大小、条目数和 50 MB 限制会直接返回结构化错误。
   - 完成标准：上传或解析失败必须阻止本轮模型调用；摘要只作为不可信上下文，不得执行附件命令或把图片/元数据表述为全文证据；测试覆盖格式、边界、上下文截断和前端上传顺序。
   - 剩余范围：图片 OCR/视觉理解、独立恶意样本扫描、持久化配额和大规模材料库尚未实现，不得标记为完整多模态材料能力。
-- [ ] `P1-DIAG-010` 实现通用数值分析、失败诊断和后续实验建议闭环。
+- [x] `P1-DIAG-010` 实现通用数值分析、失败诊断和后续实验建议闭环。
   - 完成标准：统计由 Python 计算；LLM 只解释和质疑；错误日志、异常指标和缺失数据会形成待审批建议。
+-  - 验证结果：新增 `apps/api/app/diagnostics.py` 和 `POST /api/projects/{project_id}/diagnostics`；计算有限指标的 count/mean/population std/min/max，解析结构化失败码与成功但缺失指标的运行，并生成去重、不可执行的 `diagnostic_suggestion` Proposal。API 测试 `60 passed`，前端 `node --check`、聊天 UX `5 passed`、Compose、文档同步、Idea case 和 `git diff --check` 通过；未调用真实模型、外部学术 API 或任何后续实验。
 - [ ] `P1-VIEWER-011` 增加 PLY/PCD/网格交互式 3D 查看器及 HTML/PDF/表格预览。
   - 完成标准：桌面和移动端可加载、旋转、缩放、下载；大型文件有降采样；产物谱系在查看器中可见。
 - [ ] `P1-TRACKING-012` 完善 MLflow 资源和环境追踪。
@@ -254,3 +255,4 @@
 - 2026-07-30：继续 `P0-RUNNER-007`；开始扩展受控 Python/C++/GPU 模板和每 Run Docker volume 配额。所有入口保持固定命令、项目内受限入口文件和无 fallback；Conda 运行时与真实 volume 集成验证完成前不标记任务完成。
 - 2026-07-30：继续 `P0-RUNNER-007`；开始加入镜像内预构建的固定 micromamba/Conda Python 环境。请求只能选择 `experiment/*.py` 入口，不能提交环境文件、依赖、命令或网络配置；待完成镜像构建、容器运行时检查、契约测试和文档同步。
 - 2026-07-30：完成本轮 `P0-RUNNER-007` Conda 增量；修正 micromamba 2.3.2 不支持的 `--quiet/--no-capture-output` 参数，固定命令改为 `micromamba run --prefix /opt/conda/envs/research-os python experiment/*.py`。最终容器内 `micromamba 2.3.2`、Conda Python `3.12.13`、API `57 passed`、Runner `6 passed`、launcher `8 passed`（含两个真实 Docker 集成测试）、`check_docs_sync.py`、Idea case、Compose、前端 UX 和 `git diff --check` 均通过；清理 4 个 dangling 中间镜像。主题专属 Runner/检查点恢复和真实 GPU 主机验证仍未实现，任务保持 `[~]`。
+- 2026-07-30：完成 `P1-DIAG-010`；诊断结果由 Python 确定性计算，失败/缺失指标只生成需要人工审批且不自动执行的建议，禁止模型计算或启动后续工作。API `60 passed`，未调用真实模型、外部学术 API 或无关实验。

@@ -8,6 +8,7 @@
 4. 高成本实验、代码/配置变更、依赖安装、删除、外发和论文编译先进入 `proposals`，明确批准后才执行。
 5. Secret 只通过容器环境或 secret manager 注入，不写入项目 Git、聊天或实验配置。
 6. 实验快照只从固定项目 Git 根和受控 `artifacts/` 根生成；相对路径、Git 状态、tag、manifest 和 SHA-256 均由 API 与 Runner 双重校验。
+7. 数值指标和失败诊断由确定性 Python 计算；诊断建议只保存为需审批且不可执行的 Proposal。模型只能解释或质疑，不能计算统计量或启动后续工作。
 
 ## Topic-specific planning boundary
 

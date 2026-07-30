@@ -70,7 +70,7 @@
 | Idea 专属实验与统计计划 | 部分实现 | API 已按当前 ProjectSpec、页码级全文证据和策略生成绑定 Idea 版本的结构化计划 Proposal，并经过审批/二次校验；主题专属 Runner 执行模板尚未完成，不会使用固定合成 demo。 |
 | Python/C++/Conda/CMake/LaTeX Runner | 部分实现 | HTTP 异步 Runner、非 root、白名单、只读项目挂载、七个固定模板、硬上限输出 volume、超时、取消、日志、受控 Python、镜像内固定 micromamba/Conda、CMake 和 GPU 请求、LaTeX 已实现；主题专属模板和真实 GPU 主机验证未完成。 |
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
-| 数值分析与失败诊断 | 部分实现 | Python 计算均值、标准差、混淆矩阵并写 MLflow；没有面向任意日志/CSV/多模态结果的自动诊断闭环。 |
+| 数值分析与失败诊断 | 已实现（受限闭环） | `POST /api/projects/{project_id}/diagnostics` 由 Python 计算有限数值指标的 count/mean/population std/min/max，解析结构化失败码和成功但缺失指标的运行；异常会生成去重、只记录证据且不执行的 `diagnostic_suggestion` Proposal，模型只能解释/质疑，不能计算或启动建议。任意日志/CSV/多模态自动推断仍不属于当前能力。 |
 | PNG/PLY/PDF 产物及谱系 | 部分实现 | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；PLY 只有 PNG 预览，没有交互式 3D/PCD/网格查看器。 |
 | 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；真实验收已验证配置的 Runner digest 与 Research OS commit 进入快照谱系；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |
 | PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |

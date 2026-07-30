@@ -159,7 +159,7 @@ class ChangeProposalRequest(BaseModel):
     project_id: UUID
     kind: Literal[
         "experiment_plan", "code_patch", "config_change", "idea_revision", "data_change",
-        "dependency_install", "delete_artifact", "external_publish"
+        "dependency_install", "delete_artifact", "external_publish", "diagnostic_suggestion"
     ]
     reason: str = Field(min_length=5)
     summary: str = Field(min_length=5)
