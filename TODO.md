@@ -2,6 +2,11 @@
 
 ## 本轮新增任务
 
+- [x] `P1-MODEL-044` 修复环境默认模型配置被空运行时字段遮蔽，并提升模型设置页的可用性。
+  - 范围：三档运行时配置按字段覆盖容器环境默认值；空 URL/key 不得覆盖 `.env`；补回归测试；改进前端设置页视觉层和错误反馈；发布流程只在容器内执行模型调用。
+  - 完成标准：共享 `OPENAI_BASE_URL`/`OPENAI_API_KEY` 能为三档提供默认值，旧的空 runtime 字段不再导致 `medium` 未配置；前端设置页在桌面和窄屏可操作；测试、文档同步和浏览器检查通过。
+  - 验证结果：API 容器 `102 passed, 2 skipped`；三档公开设置均为 `https://api.openai.com/v1` 且 `key_configured=true`；`check_docs_sync.py`、Idea case、Schema/Workflow JSON、Node UX `5 passed`、Compose 配置、浏览器桌面/窄屏无横向溢出和控制台错误为 0 均通过。未调用真实模型或外部学术 API。
+
 - [x] `P0-LLM-041` 修正容器模型默认配置与三档设置面板体验。
   - 范围：`OPENAI_BASE_URL`/`OPENAI_API_KEY` 作为三档共享 `.env` 默认值，显式 tier 配置和网页 runtime 配置优先；模型失败仍直接返回结构化错误。
   - 完成标准：API、Compose、`.env.example`、双语 README、设置面板、自动化测试和真实浏览器桌面/窄屏检查一致。
@@ -14,14 +19,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-DB-017、P0-LLM-041、P1-N8N-043；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
+最后更新：2026-07-30（Asia/Shanghai，完成 P1-DB-017、P0-LLM-041、P1-N8N-043、P1-MODEL-044；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009、P2-INSTALLER-029）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`、`P2-INSTALLER-029`；`P1-DB-017`、`P1-TRACKING-012`、`P1-REPORT-013`、`P1-VIEWER-011`、`P1-PATCH-015`、`P1-MODEL-044` 已完成，继续推进真实 GPU 主机验证、材料解析、影响图自动 Proposal 和正式安装器验收。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -168,12 +173,12 @@
 
 ## P2：覆盖面与长期运行
 
-- [ ] `P2-INSTALLER-029` 提供 Windows 单 EXE 引导安装器，使用户无需预配置 n8n 或手工复制配置。
-  - 完成标准：发布一个签名/可校验的安装 EXE，内置 Research OS 应用文件和 Compose/n8n 工作流，首次运行生成本地 Secret、选择数据目录、检查 WSL2/虚拟化和 Docker Engine；Docker Desktop 缺失时可经用户明确同意下载官方安装器并请求管理员权限，完成后自动启动 Compose、Codex Bridge 和本地入口。
+- [~] `P2-INSTALLER-029` 提供 Windows 单 EXE 引导安装器，使用户无需预配置 n8n 或手工复制配置。
+  - 完成标准：发布一个签名/可校验的安装 EXE，内置 Research OS 应用文件和 Compose/n8n 工作流，首次运行生成本地 Secret、选择数据目录、检查 WSL2/虚拟化和 Docker Engine；Docker Desktop 缺失时可经用户明确同意下载官方安装器并请求管理员权限，完成后自动启动 Compose 和本地入口；模型请求始终在 API 容器内，不启动 Windows Bridge。
   - 边界：受 Docker Desktop 许可、体积和 Windows 管理员权限约束，不把 Docker 二进制、账号、Cookie、API key 或 Codex `auth.json` 硬编码进仓库/安装包；离线全量包需单独评估官方再分发许可。n8n 由 Research OS Compose 自动部署，用户无需已有 n8n。
   - 完成验证：在未安装 n8n 的干净 Windows VM 中仅运行 EXE，完成健康检查并打开 `http://127.0.0.1:8080/`；卸载保留/删除数据必须由用户选择；升级不覆盖 PostgreSQL/MinIO/n8n volumes。
-  - 已完成部分：`installer/windows/` 已包含 bootstrap、Inno Setup、构建脚本和说明；尚未形成可发布二进制。
-  - 剩余工作：生成正式 EXE、签名并发布 SHA-256；复核 Docker Desktop 下载/许可边界；完成无 n8n 的干净 VM 安装、重启、升级、保留数据卸载与全删除卸载测试。
+  - 已完成部分：`installer/windows/` 已包含 bootstrap、Inno Setup、构建脚本和说明；`.github/workflows/installer-release.yml` 可在 `v*` tag 的 Windows runner 生成 EXE、SHA-256 和草稿 Release；尚未形成可发布二进制。
+  - 剩余工作：本机缺 Inno Setup 且 GitHub CLI token 已失效，需在具备编译器和有效 GitHub 权限的 release 机器生成正式 EXE；完成代码签名、Docker Desktop 下载/许可边界复核，以及无 n8n 的干净 VM 安装、重启、升级、保留数据卸载与全删除卸载测试。
 
 - [ ] `P2-SEARCH-018` 增加 GitLab、数据集/模型注册表和合规网页检索，并统一限流、robots.txt 与条款记录。
 - [ ] `P2-TRACKING-019` 按部署需求评估自托管 W&B/TensorBoard；不能削弱现有离线 MLflow 路径。
@@ -287,3 +292,4 @@
 - 2026-07-30：继续 `P0-IMPACT-008`；影响图新增 artifact 节点/依赖边和实验依赖识别，批准变更后自动创建待审批局部重跑 Proposal，重跑 payload 仍由源检查点和白名单模板重建，禁止自动执行或 fallback。API 容器 `63 passed`；文档待最终同步检查，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。
 - 2026-07-30：继续 `P0-IMPACT-008`；修正影响图检查点选择，只推荐与受影响实验绑定的最新 `experiment_succeeded`/`experiment_failed` 检查点，忽略项目暂停等不可重跑检查点；补充回归夹具。API 容器全量 `76 passed, 2 skipped`，未调用模型、外部学术 API 或无关实验；任务继续保持 `[~]`，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。
 - 2026-07-30：完成 `P1-INTENT-014`；已有项目聊天改用容器内模型的严格 `SupervisionIntent` 分类，移除变更/策略关键词识别；只有白名单 Idea/策略字段完整时创建审批 Proposal，状态和审批意图不直接执行，模型失败直接返回结构化错误。API `78 passed, 2 skipped`、Compose/文档同步/Idea case/JSON/`git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。
+- 2026-07-30：完成 `P1-MODEL-044`；修复空的旧 `runtime/model-settings.json` 字段遮蔽容器 `.env` 默认值的问题，统一设置页的轻量卡片视觉和默认值说明；新增 Windows GitHub Actions EXE/SHA-256 草稿 Release 工作流。n8n 继续负责固定工作流编排，模型调用、严格 Schema、审批和 fail-fast 校验仍由 API 容器负责，避免把动态 key 写入 workflow。API 容器 `102 passed, 2 skipped`，浏览器桌面/窄屏检查通过；P2-INSTALLER-029 因缺 Inno Setup、签名证书、干净 VM 和失效 GitHub token 继续进行中。

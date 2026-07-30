@@ -51,7 +51,12 @@ def load_settings() -> dict[str, dict[str, str]]:
         item = raw[tier]
         if not isinstance(item, dict) or set(item) != {"model", "url", "key", "reasoning_effort"}:
             raise RuntimeError("model settings file has an invalid tier")
-        result[tier] = {key: str(item[key]).strip() for key in item}
+        # Runtime settings are overrides. Empty values from an older or
+        # partially written file must not erase the container's .env defaults.
+        for key in ("model", "url", "key", "reasoning_effort"):
+            value = str(item[key]).strip()
+            if value:
+                result[tier][key] = value
     return result
 
 

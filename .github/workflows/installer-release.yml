@@ -1,0 +1,55 @@
+name: Windows installer
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --yes --no-progress
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') { $Matches[1] } else { '0.2.0-ci' }
+          .\installer\windows\build-installer.ps1 -Version $version
+
+      - name: Create checksum
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem .\installer\windows\dist\ResearchOS-Setup-*.exe | Select-Object -First 1
+          if (-not $installer) { throw 'Installer EXE was not produced.' }
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $installer.FullName).Hash.ToLowerInvariant()
+          "$hash  $($installer.Name)" | Set-Content -Encoding ASCII .\installer\windows\dist\SHA256SUMS.txt
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-os-windows-installer
+          path: installer/windows/dist/*
+
+      - name: Create draft GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            installer/windows/dist/*.exe
+            installer/windows/dist/SHA256SUMS.txt
+          body: |
+            This is a draft build. Before publishing, verify the SHA-256 checksum,
+            apply the project signing certificate, and complete the clean Windows VM
+            install/upgrade/uninstall acceptance described in P2-INSTALLER-029.

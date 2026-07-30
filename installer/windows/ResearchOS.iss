@@ -1,5 +1,7 @@
 #define MyAppName "Research OS"
+#ifndef MyAppVersion
 #define MyAppVersion "0.2.0-dev"
+#endif
 #define MyAppPublisher "Research OS"
 #define RepoRoot "..\.."
 

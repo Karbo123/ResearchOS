@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-14 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-15 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 <div align="center">
@@ -105,7 +105,7 @@ Runner isolation uses a fresh non-root job container for each Run. The `runner-l
 
 ### Single-EXE installer status
 
-An online-bootstrap installer definition now lives in [`installer/windows`](installer/windows/README.md). It packages Research OS and Compose/n8n definitions; the current runtime keeps model requests inside the API container and does not start a Windows Bridge. When Docker Desktop is absent, it can download the official installer only after opt-in and verifies the Authenticode signature before elevation. The generated EXE is intentionally ignored by Git. This path is **not a released one-click installer yet**: code signing, Docker Desktop redistribution/license review, and a clean Windows VM acceptance run remain required by `P2-INSTALLER-029`.
+An online-bootstrap installer definition now lives in [`installer/windows`](installer/windows/README.md). It packages Research OS and Compose/n8n definitions; the current runtime keeps model requests inside the API container and does not start a Windows Bridge. When Docker Desktop is absent, it can download the official installer only after opt-in and verifies the Authenticode signature before elevation. The generated EXE is intentionally ignored by Git. A tag-driven GitHub Actions workflow builds the EXE, checksum, and draft Release; this path is **not a released one-click installer yet** because code signing, Docker Desktop redistribution/license review, and a clean Windows VM acceptance run remain required by `P2-INSTALLER-029`.
 
 The manual path below remains the supported installation method.
 
@@ -228,7 +228,7 @@ The previous acceptance record is retained as historical evidence at [`acceptanc
 | `N8N_ENCRYPTION_KEY` | Yes | Stable n8n encryption key. Keep it across restarts; losing it can make stored n8n credentials unreadable. |
 | `N8N_LOCAL_OWNER_EMAIL`, `N8N_LOCAL_OWNER_PASSWORD` | Yes for auto-login | Internal local Owner used only by `/api/n8n/open`. The password is server-side and never rendered into the UI. |
 | `RESEARCH_LLM_PROVIDER`, `MODEL_REQUEST_TIMEOUT_SECONDS` | Yes | Must be `openai`; the API container calls the configured provider and returns failures directly. |
-| `OPENAI_BASE_URL`, `OPENAI_API_KEY` | Default source | Shared `.env` defaults for all three tiers; tier-specific URL/key variables or saved runtime settings take precedence. The key is never returned by the API. |
+| `OPENAI_BASE_URL`, `OPENAI_API_KEY` | Default source | Shared `.env` defaults for all three tiers; non-empty tier-specific URL/key variables or runtime fields override them, while empty legacy runtime fields inherit them. The key is never returned by the API. |
 | `OPENAI_BASE_URL`, `OPENAI_API_KEY` | Default source | Shared `.env` defaults for all three tiers; tier-specific URL/key variables or saved runtime settings take precedence. The key is never returned by the API. |
 | `RESEARCH_MODEL_SIMPLE`, `RESEARCH_MODEL_URL_SIMPLE`, `RESEARCH_MODEL_KEY_SIMPLE`, `RESEARCH_REASONING_SIMPLE` | Yes | Independent simple/Luna route; defaults to `gpt-5.6-luna` and `low`. |
 | `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM` | Yes | Independent medium/Terra route; defaults to `gpt-5.6-terra` and `medium`. |

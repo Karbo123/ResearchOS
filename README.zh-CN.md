@@ -1,11 +1,11 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-30-14 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-30-15 -->
 <!-- ACCEPTANCE_PROJECT: 6d91ff49-12a5-406c-b7aa-cb96aa3f22e4 -->
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
 
-模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或网页保存的运行时配置优先，API 不会返回 key。
+模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或运行时文件中的非空字段覆盖默认值，旧空字段会继承 `.env`，API 不会返回 key。
 
-模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或网页保存的运行时配置优先，API 不会返回 key。
+模型默认连接使用 `.env` 中的 `OPENAI_BASE_URL` 与 `OPENAI_API_KEY`；三档显式 `RESEARCH_MODEL_URL_*` / `RESEARCH_MODEL_KEY_*` 或运行时文件中的非空字段覆盖默认值，旧空字段会继承 `.env`，API 不会返回 key。
 
 说明：n8n 专用运行角色除 `n8n` Schema 权限外，还需要数据库 `CREATE` 权限，因为 n8n 启动时会执行 `CREATE SCHEMA IF NOT EXISTS`；它没有业务表权限。
 
@@ -118,7 +118,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 
 ### 单 EXE 安装器状态
 
-[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：打包 Research OS 与 Compose/n8n 工作流；当前运行时把模型请求留在 API 容器内，不启动 Windows Bridge。若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。该路径目前**还不是正式发布的一键安装包**：代码签名、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
+[`installer/windows`](installer/windows/README.md) 已包含在线引导安装器定义：打包 Research OS 与 Compose/n8n 工作流；当前运行时把模型请求留在 API 容器内，不启动 Windows Bridge。若缺少 Docker Desktop，只在用户勾选同意后从官方地址下载，并在提权执行前校验 Authenticode 签名。生成的 EXE 不进入 Git。GitHub Actions 已支持按 `v*` tag 在 Windows runner 构建 EXE、SHA-256 和草稿 Release；该路径目前**还不是正式发布的一键安装包**：代码签名、Docker Desktop 再分发/许可复核及干净 Windows VM 验收仍属于 `P2-INSTALLER-029`。
 
 下方手动方式仍是当前受支持的安装路径。
 

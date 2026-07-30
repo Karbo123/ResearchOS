@@ -116,6 +116,25 @@ def test_shared_environment_model_defaults_are_used_when_tier_overrides_are_empt
     assert all(item["key"] == "shared-key" for item in settings.values())
 
 
+def test_empty_runtime_fields_do_not_mask_environment_defaults(monkeypatch, tmp_path):
+    settings_path = tmp_path / "model-settings.json"
+    monkeypatch.setenv("MODEL_SETTINGS_PATH", str(settings_path))
+    monkeypatch.setenv("OPENAI_BASE_URL", "https://shared.invalid/v1")
+    monkeypatch.setenv("OPENAI_API_KEY", "shared-key")
+    settings_path.write_text(json.dumps({
+        tier: {"model": "", "url": "", "key": "", "reasoning_effort": ""}
+        for tier in ("simple", "medium", "complex")
+    }), encoding="utf-8")
+
+    from app.model_settings import load_settings
+
+    settings = load_settings()
+    assert settings["medium"]["url"] == "https://shared.invalid/v1"
+    assert settings["medium"]["key"] == "shared-key"
+    assert settings["medium"]["model"] == "gpt-5.6-terra"
+    assert settings["medium"]["reasoning_effort"] == "medium"
+
+
 def test_model_provider_must_be_explicit(monkeypatch):
     monkeypatch.setenv("RESEARCH_LLM_PROVIDER", "")
     with pytest.raises(LLMRequestError) as error:

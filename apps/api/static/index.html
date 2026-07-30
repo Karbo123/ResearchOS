@@ -112,7 +112,7 @@
   </div>
   <div id="modelSettingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modelSettingsTitle" aria-describedby="modelSettingsDescription">
     <div class="modal-panel">
-      <div class="modal-heading"><div><div class="eyebrow">运行时设置</div><h2 id="modelSettingsTitle">模型配置</h2><p id="modelSettingsDescription" class="muted">Luna、Terra、Sol 三档分别生效，保存后立即用于下一次请求。</p></div><button class="icon-btn" id="closeModelSettings" type="button" title="关闭"><i data-lucide="x"></i></button></div>
+      <div class="modal-heading"><div><div class="eyebrow">运行时设置</div><h2 id="modelSettingsTitle">模型配置</h2><p id="modelSettingsDescription" class="muted">Luna、Terra、Sol 三档分别生效。未单独覆盖时，默认使用容器 .env 中的 URL 和 key，保存后立即用于下一次请求。</p></div><button class="icon-btn" id="closeModelSettings" type="button" title="关闭"><i data-lucide="x"></i></button></div>
       <form id="modelSettingsForm" class="model-settings-form">
         <div id="modelSettingsTiers"></div>
         <p class="settings-note"><i data-lucide="shield-check"></i><span>密钥只写入容器挂载的本地 runtime 文件，读取接口不会返回密钥。留空已配置的 key 会保持不变。</span></p>
