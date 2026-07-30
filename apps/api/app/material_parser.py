@@ -10,18 +10,22 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+from PIL import Image, UnidentifiedImageError
 from pypdf import PdfReader
+import pytesseract
 
 
 MAX_EXTRACTED_CHARS = 120_000
 MAX_CONTEXT_CHARS = 12_000
+MAX_TOTAL_CONTEXT_CHARS = 48_000
+MAX_OCR_SECONDS = 20
 MAX_PDF_PAGES = 200
 MAX_PREVIEW_ROWS = 100
 MAX_PREVIEW_ITEMS = 100
 MAX_ZIP_ENTRIES = 500
 MAX_ZIP_UNCOMPRESSED_BYTES = 200 * 1024 * 1024
 MAX_ZIP_COMPRESSION_RATIO = 100
-PARSER_VERSION = "material-parser-1"
+PARSER_VERSION = "material-parser-2"
 
 
 class MaterialParseError(ValueError):
@@ -81,6 +85,31 @@ def _image_dimensions(path: Path) -> tuple[str, int, int]:
                 return "jpeg", width, height
             index += segment_length
     raise MaterialParseError("invalid_image", "图片格式或图片头无效。")
+
+
+def _parse_image(path: Path) -> dict[str, Any]:
+    kind, width, height = _image_dimensions(path)
+    if width <= 0 or height <= 0 or width * height > 100_000_000:
+        raise MaterialParseError("image_dimension_limit", "图片尺寸超过安全上限。")
+    try:
+        with Image.open(path) as image:
+            image.verify()
+        with Image.open(path) as image:
+            if image.width != width or image.height != height:
+                raise MaterialParseError("image_metadata_mismatch", "图片头信息与解码尺寸不一致。")
+            text = pytesseract.image_to_string(image, lang="eng+chi_sim", config="--psm 6", timeout=MAX_OCR_SECONDS)
+    except MaterialParseError:
+        raise
+    except (UnidentifiedImageError, OSError) as exc:
+        raise MaterialParseError("invalid_image", "图片无法安全解码。") from exc
+    except (pytesseract.TesseractError, RuntimeError) as exc:
+        raise MaterialParseError("image_ocr_failed", "图片 OCR 失败，已阻止材料进入模型上下文。") from exc
+    extracted, truncated = _truncate(text)
+    return {
+        "kind": "image", "parse_status": "parsed", "image_format": kind,
+        "width": width, "height": height, "ocr_performed": True,
+        "ocr_text": extracted, "ocr_truncated": truncated,
+    }
 
 
 def _parse_pdf(path: Path) -> dict[str, Any]:
@@ -185,10 +214,7 @@ def parse_material(path: Path, name: str, mime_type: str) -> dict[str, Any]:
     elif suffix in {".csv", ".tsv"} or mime in {"text/csv", "text/tab-separated-values"}:
         result = _parse_csv(path)
     elif suffix in {".png", ".jpg", ".jpeg", ".gif"} or mime.startswith("image/"):
-        kind, width, height = _image_dimensions(path)
-        if width <= 0 or height <= 0 or width * height > 100_000_000:
-            raise MaterialParseError("image_dimension_limit", "图片尺寸超过安全上限。")
-        result = {"kind": "image", "parse_status": "metadata_only", "image_format": kind, "width": width, "height": height, "ocr_performed": False, "note": "当前版本只读取图片格式和尺寸，不将图片元数据表述为视觉内容。"}
+        result = _parse_image(path)
     elif suffix == ".zip" or mime == "application/zip":
         result = _parse_zip(path)
     else:
@@ -198,19 +224,44 @@ def parse_material(path: Path, name: str, mime_type: str) -> dict[str, Any]:
     return result
 
 
-def context_for_materials(records: list[dict[str, Any]], per_material_limit: int = MAX_CONTEXT_CHARS) -> list[dict[str, Any]]:
+def context_for_materials(
+    records: list[dict[str, Any]],
+    per_material_limit: int = MAX_CONTEXT_CHARS,
+    total_limit: int = MAX_TOTAL_CONTEXT_CHARS,
+) -> list[dict[str, Any]]:
     """Return bounded model context; never include raw paths or credentials."""
     context: list[dict[str, Any]] = []
+    remaining = total_limit
     for record in records:
+        if remaining <= 0:
+            break
         metadata = record.get("metadata") if isinstance(record.get("metadata"), dict) else {}
         item = {"id": str(record.get("id")), "name": str(record.get("name", ""))[:255], "mime_type": str(record.get("mime_type", ""))[:120], "sha256": str(record.get("sha256", "")), "kind": metadata.get("kind"), "parse_status": metadata.get("parse_status"), "parser_version": metadata.get("parser_version")}
         if isinstance(metadata.get("text"), str):
-            item["text"] = metadata["text"][:per_material_limit]
+            item["text"] = metadata["text"][:min(per_material_limit, remaining)]
         elif metadata.get("kind") in {"json", "csv"}:
             item["preview"] = _safe_json_preview(metadata.get("preview", metadata.get("preview_rows", [])))
+        elif metadata.get("kind") == "image" and isinstance(metadata.get("ocr_text"), str):
+            item["ocr_text"] = metadata["ocr_text"][:min(per_material_limit, remaining)]
         else:
             for key in ("page_count", "columns", "preview_row_count", "width", "height", "note"):
                 if key in metadata:
                     item[key] = metadata[key]
+        serialized = json.dumps(item, ensure_ascii=False, separators=(",", ":"))
+        if len(serialized) > remaining:
+            item = {
+                "id": item["id"],
+                "name": item["name"],
+                "mime_type": item["mime_type"],
+                "sha256": item["sha256"],
+                "kind": item.get("kind"),
+                "parse_status": item.get("parse_status"),
+                "parser_version": item.get("parser_version"),
+                "truncated": True,
+            }
+            serialized = json.dumps(item, ensure_ascii=False, separators=(",", ":"))
+        if len(serialized) > remaining:
+            break
+        remaining -= len(serialized)
         context.append(item)
     return context

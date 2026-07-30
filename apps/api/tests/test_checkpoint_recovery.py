@@ -1,11 +1,13 @@
 import asyncio
 from uuid import uuid4
 from unittest.mock import AsyncMock
+from types import SimpleNamespace
 
 import pytest
 
 from app import main as api_main
 from app.checkpoint_recovery import CheckpointRecoveryError, build_rerun_payload, validate_rerun_payload
+from app.models import Checkpoint, Experiment
 
 
 def topic_plan(project_id):
@@ -217,3 +219,63 @@ def test_checkpoint_rerun_submission_failure_stays_structured_and_never_falls_ba
     request = submit.await_args.args[0]
     assert request.experiment_type == "point_cloud_demo"
     assert request.random_seeds == [13]
+
+
+def test_approved_change_creates_pending_rerun_from_impact_graph():
+    project_id = uuid4()
+    proposal_id = uuid4()
+    experiment_id = uuid4()
+    checkpoint_id = uuid4()
+    project = SimpleNamespace(id=project_id)
+    source_proposal = SimpleNamespace(id=proposal_id)
+    checkpoint = SimpleNamespace(
+        id=checkpoint_id, project_id=project_id, stage="experiment_succeeded",
+        state={"run_id": str(experiment_id)},
+    )
+    experiment = SimpleNamespace(
+        id=experiment_id, project_id=project_id, status="succeeded",
+        experiment_type="python_analysis", config={"entrypoint": "experiment/main.py", "_random_seeds": [13, 37, 73]},
+    )
+
+    class FakeResult:
+        def all(self):
+            return []
+
+    class FakeSession:
+        def __init__(self):
+            self.added = []
+
+        def get(self, model, identifier):
+            if model is Checkpoint and identifier == checkpoint_id:
+                return checkpoint
+            if model is Experiment and identifier == experiment_id:
+                return experiment
+            return None
+
+        def scalars(self, _statement):
+            return FakeResult()
+
+        def add(self, value):
+            self.added.append(value)
+
+        def flush(self):
+            for value in self.added:
+                if getattr(value, "id", None) is None:
+                    value.id = uuid4()
+
+    impact = {
+        "rerun_candidates": [{
+            "experiment_id": str(experiment_id),
+            "checkpoint_id": str(checkpoint_id),
+        }],
+    }
+    session = FakeSession()
+    api_main._create_impact_rerun_proposals(session, project, source_proposal, impact)
+
+    reruns = [item for item in session.added if getattr(item, "kind", None) == "experiment_rerun"]
+    assert len(reruns) == 1
+    assert reruns[0].status == "pending"
+    assert reruns[0].payload["source_experiment_id"] == str(experiment_id)
+    assert reruns[0].impact["source_proposal_id"] == str(proposal_id)
+    assert reruns[0].impact["automatic_execution"] is False
+    assert impact["automatic_rerun_proposals"] == [str(reruns[0].id)]

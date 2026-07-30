@@ -2,7 +2,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，进行 P0-RUNNER-007、P0-IMPACT-008、P1-DIAG-010）
+最后更新：2026-07-30（Asia/Shanghai，进行 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
@@ -88,7 +88,8 @@
   - 完成标准：Idea/配置/数据/代码修改只失效依赖后代；生成可审阅影响图；自动选择正确检查点，不再默认使全部产物失效。
   - 当前实现：Proposal 创建与审批重新计算 `ArtifactDependency` 影响图；Idea/策略/代码/数据/删除产物变更只使受影响的有效 Artifact 失效，记录受影响实验、检查点、重跑候选和审计事件；旧 Idea 版本 Proposal 会被拒绝。
   - 当前实现：新增 `POST /api/projects/{project_id}/checkpoints/{checkpoint_id}/rerun`；仅允许 `experiment_succeeded`/`experiment_failed` 的终态检查点，重建原白名单模板配置与持久化随机种子。通用 Proposal API 不能创建 `experiment_rerun`；审批与自动提交阶段再次核对源实验、检查点和完整 payload。批准后自动复用现有 `/api/experiments` 提交链，失败写入 Proposal 影响和审计记录；前端只显示自动提交状态，不提供第二个执行入口。
-  - 当前缺口：主题检查点重跑已通过固定入口、原结构化计划和源检查点状态接入自动提交链；仍未完成从影响图自动创建 Proposal，以及完整语义级依赖失效，因此任务继续保持 `[~]`。任何模型或主题 Runner 失败都直接返回结构化错误，不使用 fallback 或无关演示实验。
+  - 当前进展：影响图现在输出可审阅的 artifact 节点/依赖边，并在批准 Idea、策略、代码、数据或依赖变更后，为有安全终态检查点的受影响实验自动创建待审批 `experiment_rerun` Proposal；Proposal 重新构建并绑定源实验、检查点、白名单配置和随机种子，仍需人工批准后才提交。任何模型或主题 Runner 失败都直接返回结构化错误，不使用 fallback 或无关演示实验。
+  - 当前缺口：完整语义级规则覆盖和生产级恢复编排仍需更多真实数据库/队列验证，因此任务继续保持 `[~]`。
   - 验证：API 容器 `56 passed`；新增测试覆盖合法重建、终态/类型/种子/篡改 payload 拒绝、自动提交和提交失败结构化错误；前端 `node --check`、聊天 UX `5 passed`、`docker compose config --quiet`、JSON、Idea case、文档同步和 `git diff --check` 通过。
 - [x] `P0-REPRO-026` 为每次实验建立不可变、可复核但不追踪大文件的代码与环境快照。
   - 完成标准：实验开始前要求项目 Git 工作树干净；将已批准的代码/配置变更提交并创建 `run/<run_id>` tag；记录项目仓库 commit、Research OS 主仓库 commit、Runner 镜像 digest、ProjectSpec/策略/配置/随机种子、依赖锁文件和数据 manifest/hash；输出与源码快照建立 PostgreSQL 依赖关系。
@@ -119,9 +120,10 @@
   - 验证结果：`docker compose exec -T api pytest -q`（25 passed）、`node --test scripts/test_chat_ux.mjs`（5 passed）、`python scripts/check_idea_case_sources.py`（`IDEA_CASES_OK=4`）、`docker compose config --quiet`、`python scripts/check_docs_sync.py` 和 `git diff --check` 通过。浏览器桌面与窄屏检查无元素越界、无“思维”字样且控制台 error 为 0；未提交 Idea，未调用真实模型或外部学术 API。
 
 - [~] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将受限摘要纳入澄清与规划。
-  - 已完成部分：API 在模型请求前上传并解析材料；保留原文件、MIME、SHA-256、解析器版本和派生元数据/文本；PDF 页码文本、JSON/CSV 预览、UTF-8 文本/代码、图片格式尺寸和 ZIP 安全清单均有边界；路径穿越、二进制文本、压缩比、解压大小、条目数和 50 MB 限制会直接返回结构化错误。
+  - 已完成部分：API 在模型请求前上传、通过私有 ClamAV 扫描并解析材料；保留原文件、MIME、SHA-256、解析器版本和派生元数据/文本；PDF 页码文本、JSON/CSV 预览、UTF-8 文本/代码、图片 OCR 和 ZIP 安全清单均有边界；路径穿越、二进制文本、恶意样本、扫描服务不可用、压缩比、解压大小、条目数、单文件 50 MB 以及会话/项目累计配额会直接返回结构化错误。
   - 完成标准：上传或解析失败必须阻止本轮模型调用；摘要只作为不可信上下文，不得执行附件命令或把图片/元数据表述为全文证据；测试覆盖格式、边界、上下文截断和前端上传顺序。
-  - 剩余范围：图片 OCR/视觉理解、独立恶意样本扫描、持久化配额和大规模材料库尚未实现，不得标记为完整多模态材料能力。
+  - 剩余范围：完整图片视觉理解和大规模材料库尚未实现，不得标记为完整多模态材料能力。
+  - 本轮验证进展：`docker compose build api` 成功；ClamAV 服务显示 `healthy`；真实 ClamAV 清洁文件/EICAR 集成测试 `5 passed`；API 容器 `66 passed, 2 skipped`；容器内 `py_compile`、Compose 配置、文档同步和 `git diff --check` 已通过。
 - [x] `P1-DIAG-010` 实现通用数值分析、失败诊断和后续实验建议闭环。
   - 完成标准：统计由 Python 计算；LLM 只解释和质疑；错误日志、异常指标和缺失数据会形成待审批建议。
 -  - 验证结果：新增 `apps/api/app/diagnostics.py` 和 `POST /api/projects/{project_id}/diagnostics`；计算有限指标的 count/mean/population std/min/max，解析结构化失败码与成功但缺失指标的运行，并生成去重、不可执行的 `diagnostic_suggestion` Proposal。API 测试 `60 passed`，前端 `node --check`、聊天 UX `5 passed`、Compose、文档同步、Idea case 和 `git diff --check` 通过；未调用真实模型、外部学术 API 或任何后续实验。
@@ -258,3 +260,4 @@
 - 2026-07-30：完成 `P1-DIAG-010`；诊断结果由 Python 确定性计算，失败/缺失指标只生成需要人工审批且不自动执行的建议，禁止模型计算或启动后续工作。API `60 passed`，未调用真实模型、外部学术 API 或无关实验。
 - 2026-07-30：继续 `P0-RUNNER-007` 与 `P0-IMPACT-008`；新增 `topic_specific` 白名单模板，固定执行项目 `experiment/main.py`，以固定 JSON 路径传入已批准计划和检查点恢复状态，并要求结构化 `metrics.json`/`checkpoint.json`；API、Runner、launcher 三层拒绝命令/路径/镜像/网络/依赖字段。批准主题计划现在可通过网页执行，主题检查点重跑复用原计划和源状态并自动进入受控提交链；缺少入口、产物或进程失败直接返回结构化错误，不使用任何 fallback。容器验证：API `61 passed`，Runner `7 passed`，launcher `8 passed`（2 skipped）；新增主题恢复/产物测试，前端 `node --check` 已通过，真实 GPU 主机验证和影响图自动创建 Proposal 仍未完成，任务保持 `[~]`。
 - 2026-07-30：修正 `scripts/acceptance_test.py` 的过时主题计划断言；验收入口不再期待 `topic_specific` “未实现”，也不调用模型-backed 计划生成或用分类/点云实验替代，而是明确记录计划仍需审批且本入口未启动模型请求。静态检查和容器测试继续通过；`P0-RUNNER-007` 的真实 GPU 主机验证与 `P0-IMPACT-008` 的影响图自动 Proposal 仍未完成。
+- 2026-07-30：继续 `P0-IMPACT-008`；影响图新增 artifact 节点/依赖边和实验依赖识别，批准变更后自动创建待审批局部重跑 Proposal，重跑 payload 仍由源检查点和白名单模板重建，禁止自动执行或 fallback。API 容器 `63 passed`；文档待最终同步检查，真实 GPU 主机验证、完整语义规则和生产级恢复编排仍未完成。

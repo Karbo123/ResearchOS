@@ -41,7 +41,7 @@ Invoke-RestMethod http://127.0.0.1:8080/api/health
 
 ## 上传材料
 
-新项目聊天中的文件会在模型请求前上传到 API 容器。若任一文件上传或解析失败，前端会直接显示结构化错误并阻止本轮模型调用；成功解析的摘要才会进入后续澄清和主题规划。PDF、JSON、CSV/TSV、UTF-8 文本和代码只读取受限内容；图片仅保存格式和尺寸元数据，不做 OCR；ZIP 只读取安全清单，不解压或执行。原文件、SHA-256 和解析元数据保存在受控 `artifacts/inbox/<session_id>/` 路径，不能把附件当作已验证全文证据或执行指令。
+新项目聊天中的文件会在模型请求前上传到 API 容器。文件先通过 Compose 私有网络中的 `clamav` 服务扫描，再通过受限解析和事务配额检查；扫描服务不可用、发现威胁、超时、解析失败或超出会话/项目配额时，前端会显示结构化错误并阻止本轮模型调用。成功解析的摘要才会进入后续澄清和主题规划。PDF、JSON、CSV/TSV、UTF-8 文本和代码只读取受限内容；图片执行有超时和长度上限的 OCR；ZIP 只读取安全清单，不解压或执行。原文件、SHA-256 和解析元数据保存在受控 `artifacts/inbox/<session_id>/` 路径，不能把附件当作已验证全文证据或执行指令。ClamAV 不映射 Windows 端口，容器不可用时没有本地扫描替代路径。
 
 ## Windows 单 EXE 安装器
 
@@ -136,7 +136,7 @@ Invoke-RestMethod -Method Post -ContentType application/json -Body '{"action":"r
 
 ## 检查点局部重跑
 
-实验同步为 `succeeded` 或 `failed` 后，网页实验行会在存在对应检查点时显示“提出局部重跑”。该按钮只创建待审批 Proposal；API 只接受成功/失败检查点、已终止源实验、原白名单配置和已持久化随机种子。通用 Proposal 接口不能伪造 `experiment_rerun`，审批和提交阶段还会再次比较检查点快照。批准后 API 自动使用现有 `/api/experiments` 提交链；提交失败会把结构化错误写入 Proposal 影响和审计记录，前端不提供第二个执行入口，也不会替换成与当前 Idea 无关的分类或点云实验。
+实验同步为 `succeeded` 或 `failed` 后，网页实验行会在存在对应检查点时显示“提出局部重跑”。已批准的 Idea、策略、代码、数据或依赖变更也会依据 `ArtifactDependency` 影响图自动创建对应的待审批 Proposal。该按钮和自动生成的 Proposal 都只接受成功/失败检查点、已终止源实验、原白名单配置和已持久化随机种子。通用 Proposal 接口不能伪造 `experiment_rerun`，审批和提交阶段还会再次比较检查点快照。批准后 API 自动使用现有 `/api/experiments` 提交链；提交失败会把结构化错误写入 Proposal 影响和审计记录，前端不提供第二个执行入口，也不会替换成与当前 Idea 无关的分类或点云实验。
 
 ## 修改配置
 

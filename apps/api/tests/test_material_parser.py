@@ -1,9 +1,9 @@
 import io
 import json
-import struct
 import zipfile
 
 import pytest
+from PIL import Image, ImageDraw
 from pypdf import PdfWriter
 
 from app.material_parser import MaterialParseError, context_for_materials, parse_material
@@ -34,21 +34,19 @@ def test_json_csv_text_and_pdf_are_bounded_and_structured(tmp_path):
     pdf_result = parse_material(pdf_path, pdf_path.name, "application/pdf")
     assert pdf_result["page_count"] == 1
     assert pdf_result["parse_status"] == "parsed"
-    assert pdf_result["parser_version"] == "material-parser-1"
+    assert pdf_result["parser_version"] == "material-parser-2"
 
 
-def test_image_metadata_is_explicitly_not_ocr(tmp_path):
+def test_image_is_decoded_and_ocr_text_is_bounded(tmp_path):
     path = tmp_path / "image.png"
-    data = bytearray(b"\x89PNG\r\n\x1a\n")
-    data.extend(struct.pack(">I", 13))
-    data.extend(b"IHDR")
-    data.extend(struct.pack(">II", 32, 16))
-    data.extend(b"\x08\x02\x00\x00\x00")
-    path.write_bytes(data)
+    image = Image.new("RGB", (240, 80), "white")
+    ImageDraw.Draw(image).text((8, 20), "hello research", fill="black")
+    image.save(path)
     result = parse_material(path, path.name, "image/png")
-    assert result["parse_status"] == "metadata_only"
-    assert result["ocr_performed"] is False
-    assert (result["width"], result["height"]) == (32, 16)
+    assert result["parse_status"] == "parsed"
+    assert result["ocr_performed"] is True
+    assert "hello" in result["ocr_text"].lower()
+    assert (result["width"], result["height"]) == (240, 80)
 
 
 def test_zip_manifest_rejects_path_traversal_without_extracting(tmp_path):
@@ -77,3 +75,9 @@ def test_binary_text_and_context_are_rejected_or_capped(tmp_path):
         "metadata": {"kind": "text", "parse_status": "parsed", "text": "x" * 50},
     }], per_material_limit=10)
     assert len(context[0]["text"]) == 10
+
+    preview_context = context_for_materials([{
+        "id": "file-2", "name": "data.json", "mime_type": "application/json", "sha256": "b" * 64,
+        "metadata": {"kind": "json", "parse_status": "parsed", "preview": {"value": "x" * 500}},
+    }], total_limit=120)
+    assert len(json.dumps(preview_context, ensure_ascii=False, separators=(",", ":"))) <= 120

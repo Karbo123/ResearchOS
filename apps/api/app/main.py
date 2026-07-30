@@ -16,7 +16,7 @@ import httpx
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import desc, select, text
+from sqlalchemy import desc, func, select, text
 
 from .clarification import build_spec, initial_draft, required_spec_gaps
 from .checkpoint_recovery import CheckpointRecoveryError, build_rerun_payload, validate_rerun_payload
@@ -39,6 +39,7 @@ from .experiment_planning import ExperimentPlanValidationError, fingerprint, val
 from .diagnostics import build_diagnostic_report
 from .impact_analysis import analyze_impact, apply_impact
 from .material_parser import MaterialParseError, context_for_materials, parse_material
+from .malware_scanner import MalwareScanError, scan_file
 from .repository_service import (
     RepositoryVerificationError, archive_sha256, download_archive, repository_directory_name,
     safe_extract_archive, validate_download_gate, verify_repository_candidate,
@@ -66,6 +67,11 @@ N8N_INTERNAL_URL = os.getenv("N8N_INTERNAL_URL", "http://n8n:5678").rstrip("/")
 N8N_PUBLIC_URL = os.getenv("N8N_PUBLIC_URL", "http://127.0.0.1:5678").rstrip("/")
 N8N_LOCAL_OWNER_EMAIL = os.getenv("N8N_LOCAL_OWNER_EMAIL", "").strip()
 N8N_LOCAL_OWNER_PASSWORD = os.getenv("N8N_LOCAL_OWNER_PASSWORD", "")
+MATERIAL_MAX_FILE_BYTES = int(os.getenv("MATERIAL_MAX_FILE_BYTES", str(50 * 1024 * 1024)))
+MATERIAL_MAX_SESSION_FILES = int(os.getenv("MATERIAL_MAX_SESSION_FILES", "50"))
+MATERIAL_MAX_SESSION_BYTES = int(os.getenv("MATERIAL_MAX_SESSION_BYTES", str(250 * 1024 * 1024)))
+MATERIAL_MAX_PROJECT_FILES = int(os.getenv("MATERIAL_MAX_PROJECT_FILES", "200"))
+MATERIAL_MAX_PROJECT_BYTES = int(os.getenv("MATERIAL_MAX_PROJECT_BYTES", str(2 * 1024 * 1024 * 1024)))
 
 
 @app.on_event("startup")
@@ -152,6 +158,106 @@ def project_change_impact(session, project: Project, change_kind: str, payload: 
         experiments=session.scalars(select(Experiment).where(Experiment.project_id == project.id)).all(),
         checkpoints=session.scalars(select(Checkpoint).where(Checkpoint.project_id == project.id)).all(),
     )
+
+
+def _create_impact_rerun_proposals(session, project: Project, source_proposal: Proposal, impact: dict[str, Any]) -> None:
+    """Create reviewable checkpoint reruns for terminal affected experiments."""
+    created: list[str] = []
+    reused: list[str] = []
+    skipped: list[dict[str, Any]] = []
+    for candidate in impact.get("rerun_candidates", []):
+        checkpoint_id = candidate.get("checkpoint_id")
+        experiment_id = candidate.get("experiment_id")
+        if not checkpoint_id or not experiment_id:
+            skipped.append({
+                "experiment_id": experiment_id,
+                "code": "checkpoint_missing",
+                "message": "受影响实验没有可重跑的终态检查点，未生成不安全的重跑提案。",
+            })
+            continue
+        try:
+            checkpoint = session.get(Checkpoint, UUID(str(checkpoint_id)))
+            experiment = session.get(Experiment, UUID(str(experiment_id)))
+        except (TypeError, ValueError):
+            checkpoint = None
+            experiment = None
+        if (
+            not checkpoint
+            or checkpoint.project_id != project.id
+            or not experiment
+            or experiment.project_id != project.id
+        ):
+            skipped.append({
+                "experiment_id": str(experiment_id),
+                "checkpoint_id": str(checkpoint_id),
+                "code": "impact_rerun_source_invalid",
+                "message": "影响图中的源实验或检查点已失效，未生成重跑提案。",
+            })
+            continue
+        try:
+            payload = build_rerun_payload(
+                checkpoint_id=str(checkpoint.id), checkpoint_stage=checkpoint.stage,
+                checkpoint_state=checkpoint.state, experiment_id=str(experiment.id),
+                experiment_status=experiment.status, experiment_type=experiment.experiment_type,
+                experiment_config=experiment.config,
+            )
+        except CheckpointRecoveryError as exc:
+            skipped.append({
+                "experiment_id": str(experiment.id),
+                "checkpoint_id": str(checkpoint.id),
+                "code": exc.code,
+                "message": exc.message,
+            })
+            continue
+
+        existing = next(
+            (
+                item for item in session.scalars(select(Proposal).where(
+                    Proposal.project_id == project.id,
+                    Proposal.kind == "experiment_rerun",
+                    Proposal.status.in_(["pending", "approved"]),
+                )).all()
+                if (item.payload or {}).get("source_experiment_id") == str(experiment.id)
+            ),
+            None,
+        )
+        if existing:
+            reused.append(str(existing.id))
+            continue
+        rerun_impact = {
+            "schema_version": "1.0",
+            "rerun_scope": "impact_graph_checkpoint",
+            "source_proposal_id": str(source_proposal.id),
+            "source_experiment_id": str(experiment.id),
+            "checkpoint_id": str(checkpoint.id),
+            "requires_manual_review": True,
+            "approval_required": True,
+            "automatic_execution": False,
+            "no_fallback": True,
+        }
+        rerun = Proposal(
+            project_id=project.id,
+            kind="experiment_rerun",
+            status="pending",
+            reason=f"Approved change {str(source_proposal.id)[:8]} affected this experiment's dependency graph.",
+            summary=f"Review local rerun for affected experiment {str(experiment.id)[:8]}",
+            diff="Generated from the approved dependency impact graph; no run has started.",
+            impact=rerun_impact,
+            estimated_cost_usd=0,
+            payload=payload,
+        )
+        session.add(rerun)
+        session.flush()
+        created.append(str(rerun.id))
+        audit(session, "experiment_rerun.impact_proposed", project.id, {
+            "proposal_id": str(rerun.id),
+            "source_proposal_id": str(source_proposal.id),
+            "source_experiment_id": str(experiment.id),
+            "checkpoint_id": str(checkpoint.id),
+        }, "system")
+    impact["automatic_rerun_proposals"] = created
+    impact["reused_rerun_proposals"] = reused
+    impact["automatic_rerun_skipped"] = skipped
 
 
 def uploaded_material_context(session, session_id: UUID | None = None, project_id: UUID | None = None) -> list[dict[str, Any]]:
@@ -1407,7 +1513,9 @@ async def decide(proposal_id: UUID, request: ApprovalDecision):
                 )
             except CheckpointRecoveryError as exc:
                 raise HTTPException(status_code=409, detail=exc.as_dict()) from exc
-        if request.decision == "approved" and proposal.kind in {"config_change", "idea_revision"}:
+        if request.decision == "approved" and proposal.kind in {
+            "config_change", "idea_revision", "code_patch", "dependency_install", "data_change", "delete_artifact",
+        }:
             if proposal.kind == "idea_revision":
                 base_version = proposal.payload.get("base_idea_version")
                 try:
@@ -1452,6 +1560,9 @@ async def decide(proposal_id: UUID, request: ApprovalDecision):
                 subprocess.run(["git", "-C", str(root), "commit", "-m", f"Revise research idea to v{next_version}"], check=True, timeout=20)
             except (subprocess.SubprocessError, FileNotFoundError):
                 pass
+        if request.decision == "approved" and impact and impact.get("rerun_candidates"):
+            _create_impact_rerun_proposals(session, project, proposal, impact)
+            proposal.impact = {**proposal.impact, **impact}
         auto_rerun = request.decision == "approved" and proposal.kind == "experiment_rerun"
         project_id = proposal.project_id
         audit(session, f"proposal.{request.decision}", proposal.project_id, {
@@ -2051,27 +2162,79 @@ async def upload(session_id: UUID = Form(...), file: UploadFile = File(...)):
     target = root / f"{uuid.uuid4()}-{safe_name}"
     size = 0
     digest = hashlib.sha256()
-    with target.open("wb") as handle:
-        while chunk := await file.read(1024 * 1024):
-            size += len(chunk)
-            if size > 50 * 1024 * 1024:
-                target.unlink(missing_ok=True); raise HTTPException(413, "file exceeds 50 MB")
-            handle.write(chunk)
-            digest.update(chunk)
+    try:
+        with target.open("wb") as handle:
+            while chunk := await file.read(1024 * 1024):
+                size += len(chunk)
+                if size > MATERIAL_MAX_FILE_BYTES:
+                    raise HTTPException(status_code=413, detail={
+                        "code": "material_file_quota_exceeded",
+                        "message": "单个材料超过文件大小上限。",
+                        "limit_bytes": MATERIAL_MAX_FILE_BYTES,
+                    })
+                handle.write(chunk)
+                digest.update(chunk)
+        scan_file(target)
+    except MalwareScanError as exc:
+        target.unlink(missing_ok=True)
+        raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+    except HTTPException:
+        target.unlink(missing_ok=True)
+        raise
+    except OSError as exc:
+        target.unlink(missing_ok=True)
+        raise HTTPException(status_code=500, detail={
+            "code": "material_write_failed",
+            "message": "材料无法写入受控存储。",
+        }) from exc
     try:
         parsed_metadata = parse_material(target, safe_name, file.content_type or "application/octet-stream")
     except MaterialParseError as exc:
         target.unlink(missing_ok=True)
         raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
     relative_path = str(target.relative_to(ARTIFACTS_ROOT)).replace("\\", "/")
-    with session_scope() as session:
-        conversation = session.get(ConversationSession, session_id)
-        if not conversation:
-            target.unlink(missing_ok=True); raise HTTPException(404, "conversation not found")
-        uploaded = UploadedFile(session_id=session_id, project_id=conversation.project_id, name=safe_name, relative_path=relative_path, mime_type=file.content_type or "application/octet-stream", size_bytes=size, sha256=digest.hexdigest(), metadata_json=parsed_metadata)
-        session.add(uploaded); session.flush()
-        audit(session, "attachment.uploaded", conversation.project_id, {"upload_id": str(uploaded.id), "name": safe_name, "size": size, "parse_status": parsed_metadata.get("parse_status"), "kind": parsed_metadata.get("kind")}, "local-user")
-        return {"id": str(uploaded.id), "name": safe_name, "relative_path": relative_path, "size": size, "sha256": digest.hexdigest(), "parse_status": parsed_metadata.get("parse_status"), "kind": parsed_metadata.get("kind")}
+    try:
+        with session_scope() as session:
+            conversation = session.scalar(
+                select(ConversationSession).where(ConversationSession.id == session_id).with_for_update()
+            )
+            if not conversation:
+                raise HTTPException(status_code=404, detail={"code": "conversation_not_found", "message": "对话不存在。"})
+            if conversation.project_id:
+                session.execute(
+                    select(Project).where(Project.id == conversation.project_id).with_for_update()
+                ).scalar_one()
+            session_count, session_bytes = session.execute(select(
+                func.count(UploadedFile.id), func.coalesce(func.sum(UploadedFile.size_bytes), 0)
+            ).where(UploadedFile.session_id == session_id)).one()
+            if session_count >= MATERIAL_MAX_SESSION_FILES or session_bytes + size > MATERIAL_MAX_SESSION_BYTES:
+                raise HTTPException(status_code=413, detail={
+                    "code": "material_session_quota_exceeded",
+                    "message": "当前对话的材料数量或累计大小超过上限。",
+                    "file_count": int(session_count), "file_count_limit": MATERIAL_MAX_SESSION_FILES,
+                    "size_bytes": int(session_bytes), "size_bytes_limit": MATERIAL_MAX_SESSION_BYTES,
+                })
+            if conversation.project_id:
+                project_count, project_bytes = session.execute(select(
+                    func.count(UploadedFile.id), func.coalesce(func.sum(UploadedFile.size_bytes), 0)
+                ).where(UploadedFile.project_id == conversation.project_id)).one()
+                if project_count >= MATERIAL_MAX_PROJECT_FILES or project_bytes + size > MATERIAL_MAX_PROJECT_BYTES:
+                    raise HTTPException(status_code=413, detail={
+                        "code": "material_project_quota_exceeded",
+                        "message": "项目的材料数量或累计大小超过上限。",
+                        "file_count": int(project_count), "file_count_limit": MATERIAL_MAX_PROJECT_FILES,
+                        "size_bytes": int(project_bytes), "size_bytes_limit": MATERIAL_MAX_PROJECT_BYTES,
+                    })
+            uploaded = UploadedFile(session_id=session_id, project_id=conversation.project_id, name=safe_name, relative_path=relative_path, mime_type=file.content_type or "application/octet-stream", size_bytes=size, sha256=digest.hexdigest(), metadata_json=parsed_metadata)
+            session.add(uploaded); session.flush()
+            audit(session, "attachment.uploaded", conversation.project_id, {"upload_id": str(uploaded.id), "name": safe_name, "size": size, "parse_status": parsed_metadata.get("parse_status"), "kind": parsed_metadata.get("kind"), "malware_scan": "clean"}, "local-user")
+            return {"id": str(uploaded.id), "name": safe_name, "relative_path": relative_path, "size": size, "sha256": digest.hexdigest(), "parse_status": parsed_metadata.get("parse_status"), "kind": parsed_metadata.get("kind"), "malware_scan": "clean"}
+    except HTTPException:
+        target.unlink(missing_ok=True)
+        raise
+    except Exception:
+        target.unlink(missing_ok=True)
+        raise
 
 
 @app.post("/api/policies")

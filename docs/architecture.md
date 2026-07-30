@@ -36,7 +36,7 @@ PostgreSQL 是状态源，聊天历史不是。核心依赖链为：
 
 模型可以依据 PyTorch/CNN/MNIST 等明确线索推断候选领域，但必须公开为可纠正假设；不得推断数据授权、GPU 可用性、预算、截止时间或科研新颖性。模型不可自行提高成本层级，也没有 Shell、文件、SQL 或网络工具。ReAct/外部编码 Agent 只有在出现真实的受控工具循环需求后才评估，并且仍必须经过高层工具 Schema 与审批闸门。
 
-模型 URL、key、model 和 reasoning effort 由 `.env` 或网页模型设置面板分别配置；key 只保存于忽略的 runtime 挂载文件。模型请求失败直接返回结构化错误，不做 provider 切换、本地降级或规则回复。Windows 不启动 API 或模型服务。
+模型 URL、key、model 和 reasoning effort 由 `.env` 或网页模型设置面板分别配置；key 只保存于忽略的 runtime 挂载文件。模型请求失败直接返回结构化错误，不做 provider 切换、本地降级或规则回复。Windows 不启动 API、Bridge 或模型服务。上传先经过私有 ClamAV、受限解析和事务配额检查；任一扫描/解析/配额失败都会阻止材料进入模型上下文。
 
 ```text
 IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper claim
@@ -44,7 +44,7 @@ IdeaVersion -> Proposal/Policy -> Experiment -> Metric/Artifact -> Report/Paper 
                    +---- approval ----+
 ```
 
-Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDependency` 计算 Idea、策略、代码、数据或产物删除变更的依赖后代，只使受影响的有效产物失效，并在 Proposal 与审计事件中记录影响图、重跑候选和关联检查点。已批准的白名单检查点重跑会自动复用受控实验提交链；主题专属重跑和检查点恢复执行仍是后续范围。
+Idea 修订创建新版本并进入 `impact_review`。API 依据 `ArtifactDependency` 计算 Idea、策略、代码、数据或产物删除变更的依赖后代，只使受影响的有效产物失效，并在 Proposal 与审计事件中记录可审阅的节点/边影响图、重跑候选和关联检查点。批准变更后，API 会为每个可安全恢复的终态实验自动创建待审批的局部重跑 Proposal；每个 Proposal 重新绑定源实验、检查点、白名单配置和随机种子，绝不会自动执行或替换为无关实验。批准的检查点重跑仍通过受控实验提交链执行，主题专属重跑和检查点恢复也使用固定主题入口。
 
 项目状态是执行闸门，不只是 UI 标签。`paused` 和 `cancelled` 会阻止检索、创新性评估、实验/编译计划及 Runner 提交；暂停/取消会取消活动任务和 Runner run，并写入状态检查点。恢复仅允许从 `paused` 回到检查点保存的稳定阶段；`cancelled` 是终止状态。定时 n8n 报告只枚举 active 项目。
 

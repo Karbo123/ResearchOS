@@ -118,3 +118,25 @@ def test_affected_terminal_experiment_exposes_its_checkpoint_for_local_rerun():
     assert impact["affected_checkpoint_ids"] == [str(checkpoint_id)]
     assert impact["recommended_checkpoint_ids"] == [str(checkpoint_id)]
     assert impact["rerun_candidates"][0]["checkpoint_id"] == str(checkpoint_id)
+
+
+def test_impact_contains_reviewable_dependency_graph_and_experiment_edges():
+    artifact_id = uuid4()
+    experiment_id = uuid4()
+    impact = analyze_impact(
+        change_kind="data_change",
+        payload={"base_data_version": "v1"},
+        current_idea_version=1,
+        artifacts=[SimpleNamespace(id=artifact_id, experiment_id=None, valid=True, metadata_json={})],
+        dependencies=[SimpleNamespace(
+            artifact_id=artifact_id, upstream_type="experiment", upstream_id=str(experiment_id), relation="generated_by",
+        ), SimpleNamespace(
+            artifact_id=artifact_id, upstream_type="data_version", upstream_id="v1", relation="captured_data",
+        )],
+        experiments=[SimpleNamespace(id=experiment_id, experiment_type="python_analysis", status="succeeded")],
+        checkpoints=[],
+    )
+    assert impact["affected_artifact_ids"] == [str(artifact_id)]
+    assert impact["affected_experiment_ids"] == [str(experiment_id)]
+    assert impact["dependency_graph"]["nodes"][0]["affected"] is True
+    assert {edge["upstream_type"] for edge in impact["dependency_graph"]["edges"]} == {"experiment", "data_version"}

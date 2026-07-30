@@ -7,6 +7,7 @@ RUN sed -i \
     && apt-get -o Acquire::Retries=5 -o Acquire::https::Timeout=30 update \
     && apt-get -o Acquire::Retries=5 -o Acquire::https::Timeout=30 install -y --no-install-recommends \
       git ca-certificates \
+      tesseract-ocr tesseract-ocr-chi-sim \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home --uid 10001 app
 WORKDIR /workspace/apps/api

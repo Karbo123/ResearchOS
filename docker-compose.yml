@@ -33,6 +33,14 @@ x-app-env: &app-env
   REPORT_TIMEZONE: ${REPORT_TIMEZONE:-Asia/Shanghai}
   N8N_RESEARCH_WEBHOOK_URL: http://n8n:5678/webhook/research-os/start
   N8N_INTERNAL_URL: http://n8n:5678
+  CLAMAV_HOST: clamav
+  CLAMAV_PORT: 3310
+  MALWARE_SCAN_TIMEOUT_SECONDS: ${MALWARE_SCAN_TIMEOUT_SECONDS:-30}
+  MATERIAL_MAX_FILE_BYTES: ${MATERIAL_MAX_FILE_BYTES:-52428800}
+  MATERIAL_MAX_SESSION_FILES: ${MATERIAL_MAX_SESSION_FILES:-50}
+  MATERIAL_MAX_SESSION_BYTES: ${MATERIAL_MAX_SESSION_BYTES:-262144000}
+  MATERIAL_MAX_PROJECT_FILES: ${MATERIAL_MAX_PROJECT_FILES:-200}
+  MATERIAL_MAX_PROJECT_BYTES: ${MATERIAL_MAX_PROJECT_BYTES:-2147483648}
   N8N_PUBLIC_URL: http://127.0.0.1:5678
   N8N_LOCAL_OWNER_EMAIL: ${N8N_LOCAL_OWNER_EMAIL:-local-owner@research-os.invalid}
   N8N_LOCAL_OWNER_PASSWORD: ${N8N_LOCAL_OWNER_PASSWORD:-local-development-password-change-me}
@@ -80,6 +88,18 @@ services:
         mc mb --ignore-existing local/research-artifacts
         mc anonymous set none local/research-artifacts
     restart: "no"
+
+  clamav:
+    image: clamav/clamav:1.4.3
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "clamdscan --ping 2 >/dev/null 2>&1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    restart: unless-stopped
 
   mlflow:
     build: ./apps/mlflow
@@ -181,6 +201,8 @@ services:
       - "127.0.0.1:8080:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      clamav:
         condition: service_healthy
       runner:
         condition: service_started

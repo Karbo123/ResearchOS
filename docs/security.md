@@ -16,7 +16,7 @@ The experiment-plan endpoint accepts only the current ProjectSpec, stored page-l
 
 ## Checkpoint rerun boundary
 
-Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint accepts only terminal success/failure checkpoints, resolves the source experiment inside the same project, and reconstructs an allowlisted payload from persisted configuration and seeds. The generic Proposal endpoint cannot mint rerun proposals; approval and the automatic submission repeat the source and payload checks through the normal guarded experiment endpoint. Submission failure is recorded as a structured error, with no provider fallback or unrelated experiment substitution.
+Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint accepts only terminal success/failure checkpoints, resolves the source experiment inside the same project, and reconstructs an allowlisted payload from persisted configuration and seeds. Approved Idea/config/code/data/dependency changes also compute a deterministic artifact dependency graph and create pending rerun Proposals for safe terminal checkpoints. The generic Proposal endpoint cannot mint fabricated rerun payloads; approval and the automatic submission repeat the source and payload checks through the normal guarded experiment endpoint. Submission failure is recorded as a structured error, with no provider fallback or unrelated experiment substitution.
 
 ## Adaptive clarification agent
 
@@ -30,11 +30,11 @@ Checkpoint reruns are approval-gated recovery actions. The dedicated endpoint ac
 
 - Runner 使用非 root UID、`no-new-privileges`、drop all capabilities、只读 root filesystem、PID/CPU/内存限制、每 Run 文件大小/累计磁盘配额和临时目录配额。超限返回结构化错误，不继续写入或提交产物。
 - 每个 Run 使用由 `runner-launcher` 创建的新非 root 作业容器；监控器保护取消/失败终态，超时或取消会停止该 Run 容器。只有 launcher 挂载 Docker socket，API 和 Runner supervisor 不挂载；launcher 仅使用固定镜像、固定网络、固定入口和受控挂载。Launcher/Runner 不接受任意命令、路径、URL、网络、镜像或环境字段。启动失败和主题不支持都直接返回结构化错误，不使用 fallback 或无关实验替代。
-- Runner 只加入 Compose 的 `internal` `runner-internal` 网络；它不能通过默认网络访问其他服务，也没有外部网络出口。`internal-mlflow-only` 是当前任务模板的受限策略标签，API/MLflow 仍共享该内部控制网络；per-run 容器、硬上限 tmpfs 输出 volume、镜像内固定 micromamba/Conda 环境和受控 GPU `DeviceRequest` 已由 launcher 创建。主题专属模板和真实 GPU 主机验证仍是未完成能力。
+- Runner 只加入 Compose 的 `internal` `runner-internal` 网络；它不能通过默认网络访问其他服务，也没有外部网络出口。`internal-mlflow-only` 是当前任务模板的受限策略标签，API/MLflow 仍共享该内部控制网络；per-run 容器、硬上限 tmpfs 输出 volume、镜像内固定 micromamba/Conda 环境和受控 GPU `DeviceRequest` 已由 launcher 创建。真实 GPU 主机验证仍是未完成能力。
 - API/Runner 的仓库根目录构建上下文由 `.dockerignore` 限制；`.env`、Git 元数据、`projects/`、`artifacts/`、n8n 数据和文档不会进入镜像构建上下文。运行时绑定目录不是镜像内容，不能用构建代替挂载。
 - 生产环境为 Runner 增加独立 Docker network，默认拒绝出站网络；按数据源或任务临时授权。
 - 每个真实 GPU 任务在独立非 root 容器/作业中执行，并带磁盘配额、超时、取消、镜像 digest 和命令模板 ID；当前 GPU 能力只保证受控请求和结构化失败，不宣称已在 GPU 主机完成验证。
-- 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。PDF/JSON/CSV/文本/代码解析有长度和行数上限；图片只读取格式和尺寸；ZIP 只读取清单并拒绝路径穿越、过高压缩比和过大声明解压量，不解压或执行。解析摘要进入模型请求时标记为不可信上下文，上传/解析失败会阻止模型调用。生产环境仍需接入独立恶意文件扫描、内容隔离和持久化配额。
+- 上传文件限制 50 MB、允许 MIME 清单并去除客户端路径。文件先通过 Compose 私有网络的 ClamAV `clamd` 扫描；扫描不可用、超时、发现威胁或返回不可验证结果都会 fail-closed。PDF/JSON/CSV/文本/代码解析有长度和行数上限；图片 OCR 有尺寸、超时和文本上限；ZIP 只读取清单并拒绝路径穿越、过高压缩比和过大声明解压量，不解压或执行。API 在锁定会话/项目行后核对文件数量和累计字节配额。解析摘要进入模型请求时标记为不可信上下文，上传/扫描/解析/配额失败会阻止模型调用。
 
 ## Experiment snapshot boundary
 

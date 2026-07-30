@@ -130,6 +130,9 @@ def analyze_impact(
     for artifact in artifact_rows:
         if str(_value(artifact, "id")) in affected and _value(artifact, "experiment_id"):
             affected_experiments.add(str(_value(artifact, "experiment_id")))
+    for dependency in dependency_rows:
+        if str(_value(dependency, "artifact_id")) in affected and _value(dependency, "upstream_type") == "experiment":
+            affected_experiments.add(str(_value(dependency, "upstream_id")))
 
     affected_checkpoints: set[str] = set()
     for checkpoint in checkpoint_rows:
@@ -158,6 +161,28 @@ def analyze_impact(
     ]
     artifact_ids = {str(_value(artifact, "id")) for artifact in artifact_rows}
     unaffected = sorted(artifact_ids - affected)
+    dependency_graph = {
+        "nodes": [
+            {
+                "id": artifact_id,
+                "type": "artifact",
+                "experiment_id": str(_value(artifact, "experiment_id")) if _value(artifact, "experiment_id") else None,
+                "valid": bool(_value(artifact, "valid", True)),
+                "affected": artifact_id in affected,
+            }
+            for artifact in artifact_rows
+        ],
+        "edges": [
+            {
+                "artifact_id": str(_value(dependency, "artifact_id")),
+                "upstream_type": str(_value(dependency, "upstream_type")),
+                "upstream_id": str(_value(dependency, "upstream_id")),
+                "relation": str(_value(dependency, "relation", "generated_from")),
+                "affected": str(_value(dependency, "artifact_id")) in affected,
+            }
+            for dependency in dependency_rows
+        ],
+    }
     return {
         "schema_version": "1.0",
         "change_kind": change_kind,
@@ -175,6 +200,7 @@ def analyze_impact(
         "invalidated_immediately": sorted(affected),
         "rerun_scope": "dependent_descendants_only" if affected else "none",
         "requires_manual_review": bool(affected_experiments),
+        "dependency_graph": dependency_graph,
     }
 
 
