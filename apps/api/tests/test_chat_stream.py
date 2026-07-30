@@ -10,7 +10,7 @@ from fastapi import HTTPException
 
 import app.main as main
 from app.clarification import initial_draft
-from app.llm import ClarificationOutcome, select_model_route
+from app.llm import ClarificationOutcome, LLMRequestError, select_model_route
 from app.models import ConversationSession
 from app.schemas import AdaptiveClarificationResult, ChatRequest, ProjectCreateRequest, ResearchIdeaDraft
 from scripts.idea_case_loader import load_idea_case
@@ -101,6 +101,67 @@ def test_chat_stream_reports_observable_progress_without_model_thinking(monkeypa
     assert 'event: thinking' not in body
     assert "思维" not in body
     assert len(store.messages) == 2
+
+
+def test_chat_stream_blocks_model_when_material_context_cannot_be_loaded(monkeypatch):
+    case = load_idea_case("mnist-cnn")
+    store = _ConversationSessionStore(case.initial_message)
+    model_calls = 0
+
+    def forbidden_model_call(*_args, **_kwargs):
+        nonlocal model_calls
+        model_calls += 1
+        raise AssertionError("model must not run when material context loading fails")
+
+    monkeypatch.setattr(main, "session_scope", _fake_session_scope(store))
+    monkeypatch.setattr(
+        main,
+        "uploaded_material_context",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            LLMRequestError("material_context_unavailable", "材料上下文读取失败。", 422)
+        ),
+    )
+    monkeypatch.setattr(main, "clarify_idea_with_llm", forbidden_model_call)
+
+    body = _collect_stream(ChatRequest(
+        session_id=store.conversation.id,
+        message=case.initial_message,
+    ))
+
+    assert 'event: error' in body
+    assert 'material_context_unavailable' in body
+    assert 'event: model_route' not in body
+    assert model_calls == 0
+    assert len(store.messages) == 1
+
+
+def test_sync_chat_blocks_model_when_material_context_cannot_be_loaded(monkeypatch):
+    case = load_idea_case("mnist-cnn")
+    store = _ConversationSessionStore(case.initial_message)
+    model_calls = 0
+
+    def forbidden_model_call(*_args, **_kwargs):
+        nonlocal model_calls
+        model_calls += 1
+        raise AssertionError("model must not run when material context loading fails")
+
+    monkeypatch.setattr(main, "session_scope", _fake_session_scope(store))
+    monkeypatch.setattr(
+        main,
+        "uploaded_material_context",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            LLMRequestError("material_context_unavailable", "材料上下文读取失败。", 422)
+        ),
+    )
+    monkeypatch.setattr(main, "clarify_idea_with_llm", forbidden_model_call)
+
+    with pytest.raises(HTTPException) as error:
+        main.chat(ChatRequest(session_id=store.conversation.id, message=case.initial_message))
+
+    assert error.value.status_code == 422
+    assert error.value.detail["code"] == "material_context_unavailable"
+    assert model_calls == 0
+    assert len(store.messages) == 1
 
 
 def test_project_creation_requires_ready_for_confirmation(monkeypatch):

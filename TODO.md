@@ -24,7 +24,7 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，继续 P1-PAPER-016；并行保留 P1-UPLOAD-009、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
+最后更新：2026-07-30（Asia/Shanghai，继续 P1-UPLOAD-009；并行保留 P1-PAPER-016、P0-RUNNER-007、P0-IMPACT-008、P2-INSTALLER-029）
 
 本轮 P2-SEARCH-018 进展：GitLab、Hugging Face 数据集/模型注册表和受限 DuckDuckGo 网页候选已接入；记录资源类型、提供方、条款链接、限流快照和 robots 状态，网页搜索先检查 DuckDuckGo robots，正文候选状态为 deferred_until_fetch。提供方和 DOI BibTeX 失败进入 provider_errors，空异常也保留异常类型或 HTTP 状态，前端文献页显示候选合规摘要。
 
@@ -146,6 +146,8 @@
   - 完成标准：项目只能在结构化规格 `ready_for_confirmation` 后创建；前端显示路由和阶段状态、错误和完成结果，桌面/窄屏无重叠，SSE 断流可安全处理；API 契约、自动化测试、双语 README/需求审计和 `TODO.md` 一致。
   - 验证：SSE 路由/进度/错误/结果、项目创建闸门和同步端点均有自动化测试；浏览器检查流式状态和控制台无错误；不为本项调用真实模型或外部学术 API。
   - 验证结果：`docker compose exec -T api pytest -q`（25 passed）、`node --test scripts/test_chat_ux.mjs`（5 passed）、`python scripts/check_idea_case_sources.py`（`IDEA_CASES_OK=4`）、`docker compose config --quiet`、`python scripts/check_docs_sync.py` 和 `git diff --check` 通过。浏览器桌面与窄屏检查无元素越界、无“思维”字样且控制台 error 为 0；未提交 Idea，未调用真实模型或外部学术 API。
+
+- 2026-07-30 本轮 `P1-UPLOAD-009`：补齐上传路由回归，扫描/解析异常统一清理临时文件并返回结构化错误；同步和流式聊天在材料上下文失败时均不调用模型、不写助手消息；前端逐个上传，失败即停止且不发送聊天请求。API 定向 `16 passed, 2 skipped`、全量 `131 passed, 2 skipped`，Node UX `6 passed`，JS 语法检查、Compose、JSON、文档同步和 `git diff --check` 通过。提交：`fix:material-upload-fail-closed`。大规模材料库、跨材料检索和更广泛视觉能力仍未实现，任务保持 `[~]`。
 
 - [~] `P1-UPLOAD-009` 解析已上传 PDF、图片、CSV/JSON、日志、文本和代码材料，并将受限摘要纳入澄清与规划。
   - 已完成部分：API 在模型请求前上传、通过私有 ClamAV 扫描并解析材料；保留原文件、MIME、SHA-256、解析器版本和派生元数据/文本；PDF 页码文本、JSON/CSV 预览、UTF-8 文本/代码、图片 OCR 和 ZIP 安全清单均有边界；路径穿越、二进制文本、恶意样本、扫描服务不可用、压缩比、解压大小、条目数、单文件 50 MB 以及会话/项目累计配额会直接返回结构化错误。

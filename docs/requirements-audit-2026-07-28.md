@@ -59,6 +59,12 @@
 - Windows 安装器已同步为只启动 Docker Compose，不再打包或启动 Bridge；前端不再显示会请求通用实验计划的操作按钮。
 - Related Work 当前只生成证据覆盖、研究空白候选和重复研究候选；metadata-only 文献不能进入事实性证据，所有候选均要求人工复核。
 
+## 材料上传失败闭环增量（2026-07-30）
+
+- 上传路由现在对 ClamAV 扫描、受限解析和会话/项目配额失败统一执行临时文件清理；未预期的扫描/解析异常也转换为结构化错误，不会留下可被后续上下文读取的文件。
+- `/api/chat` 和 `/api/chat/stream` 在材料摘要或视觉文件读取失败时均直接返回结构化错误；失败路径不调用 `clarify_idea_with_llm`，不写入助手消息。前端通过可测试的顺序上传 helper 保证首个失败停止队列，因此不会继续发送聊天请求。
+- 本轮新增 `test_upload_routes.py`、同步/流式材料阻断回归和前端上传顺序测试；API 定向结果为 `16 passed, 2 skipped`，Node UX 为 `6 passed`。大规模材料库、跨材料检索和更广泛视觉能力仍未实现。
+
 ## Runner 隔离增量（2026-07-30）
 
 - Runner supervisor 现在通过唯一的 `runner-launcher` 服务为每个 Run 创建新的非 root 作业容器；launcher 使用固定镜像、固定 `python -m app.worker` 入口、固定内部网络、受控继承挂载和模板级 CPU/内存/PID 限制，Runner supervisor/API 不挂载 Docker socket。

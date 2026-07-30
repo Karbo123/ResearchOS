@@ -317,7 +317,7 @@ function renderSpec(spec) {
 
 async function uploadQueuedFiles() {
   const files = [...state.queuedFiles];
-  for (const file of files) {
+  await chatUX.uploadSequentially(files, async file => {
     const form = new FormData(); form.append("session_id", state.sessionId); form.append("file", file);
     const response = await chatUX.fetchWithTimeout(window.fetch.bind(window), "/api/uploads", {method:"POST", body:form}, CHAT_REQUEST_TIMEOUT_MS);
     if (!response.ok) {
@@ -329,7 +329,7 @@ async function uploadQueuedFiles() {
     const completedIndex = state.queuedFiles.indexOf(file);
     if (completedIndex >= 0) state.queuedFiles.splice(completedIndex, 1);
     $("fileQueue").textContent = state.queuedFiles.map(item => item.name).join(" · ");
-  }
+  });
   toast(`已保存 ${files.length} 个附件`);
 }
 

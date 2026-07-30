@@ -571,8 +571,8 @@ def chat(request: ChatRequest):
             ).all()[::-1]
         ]
         draft_before = json.loads(json.dumps(conversation.draft))
-        attachment_context = uploaded_material_context(session, session_id=conversation.id)
         try:
+            attachment_context = uploaded_material_context(session, session_id=conversation.id)
             attachment_images = uploaded_material_images(session, session_id=conversation.id)
         except LLMRequestError as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.as_dict()) from exc
@@ -2584,11 +2584,23 @@ async def upload(session_id: UUID = Form(...), file: UploadFile = File(...)):
             "code": "material_write_failed",
             "message": "材料无法写入受控存储。",
         }) from exc
+    except Exception as exc:
+        target.unlink(missing_ok=True)
+        raise HTTPException(status_code=422, detail={
+            "code": "malware_scan_failed",
+            "message": "恶意样本扫描失败，上传已阻止。",
+        }) from exc
     try:
         parsed_metadata = parse_material(target, safe_name, file.content_type or "application/octet-stream")
     except MaterialParseError as exc:
         target.unlink(missing_ok=True)
         raise HTTPException(status_code=422, detail=exc.as_dict()) from exc
+    except Exception as exc:
+        target.unlink(missing_ok=True)
+        raise HTTPException(status_code=422, detail={
+            "code": "material_parse_failed",
+            "message": "材料解析失败，上传已阻止。",
+        }) from exc
     relative_path = str(target.relative_to(ARTIFACTS_ROOT)).replace("\\", "/")
     try:
         with session_scope() as session:

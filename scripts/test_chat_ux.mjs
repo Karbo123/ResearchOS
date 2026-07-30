@@ -8,6 +8,7 @@ const {
   fetchWithTimeout,
   formatRequestError,
   shouldSubmitOnKeyboard,
+  uploadSequentially,
 } = require("../apps/api/static/chat-ux.js");
 
 test("busy gate rejects duplicate submissions and reopens after completion", () => {
@@ -56,4 +57,16 @@ test("successful requests return the response and do not report an error", async
   assert.deepEqual(response, {ok: true, aborted: false});
 });
 
-console.log("CHAT_UX_OK=5");
+test("attachment uploads stop at the first failure and preserve ordering", async () => {
+  const calls = [];
+  await assert.rejects(
+    uploadSequentially(["first", "second", "third"], async file => {
+      calls.push(file);
+      if (file === "second") throw new Error("upload failed");
+    }),
+    /upload failed/,
+  );
+  assert.deepEqual(calls, ["first", "second"]);
+});
+
+console.log("CHAT_UX_OK=6");

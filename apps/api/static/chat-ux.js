@@ -33,6 +33,10 @@
     return event.key === "Enter" && (event.ctrlKey || event.metaKey);
   }
 
+  async function uploadSequentially(files, uploadFile) {
+    for (const file of files) await uploadFile(file);
+  }
+
   async function fetchWithTimeout(fetchImpl, input, init = {}, timeoutMs = 300000) {
     const Controller = root.AbortController;
     const controller = new Controller();
@@ -58,5 +62,5 @@
     return error && error.message ? error.message : "请求失败，请稍后重试。";
   }
 
-  return {ChatRequestError, createBusyGate, shouldSubmitOnKeyboard, fetchWithTimeout, formatRequestError};
+  return {ChatRequestError, createBusyGate, shouldSubmitOnKeyboard, fetchWithTimeout, formatRequestError, uploadSequentially};
 });
