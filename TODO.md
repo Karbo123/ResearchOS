@@ -2,14 +2,14 @@
 
 > 这是项目的实时任务源。任何功能、修复、审计或文档工作都必须在开始、状态变化和完成时更新本文件。
 
-最后更新：2026-07-30（Asia/Shanghai，完成 P1-VIEWER-011；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
+最后更新：2026-07-30（Asia/Shanghai，完成 P1-TRACKING-012；继续 P0-RUNNER-007、P0-IMPACT-008、P1-UPLOAD-009）
 
 状态说明：`[ ]` 待处理，`[~]` 进行中，`[x]` 已完成并验证，`[!]` 阻塞。完成项必须附验证证据；不能用“已有 Schema/接口占位”代替真实实现。
 
 ## 当前状态
 
 - 当前可用版本：可运行、可审计的本地 MVP，不是完整生产系统。
-- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-VIEWER-011` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
+- 当前进行中：`P0-RUNNER-007`、`P0-IMPACT-008`、`P1-UPLOAD-009`；`P1-TRACKING-012`、`P1-VIEWER-011` 已完成，继续推进真实 GPU 主机验证、材料解析和影响图自动 Proposal。
 - 最新完整验收：`artifacts/acceptance/acceptance-20260730-015132.json`。
 - 最新测试项目：`6d91ff49-12a5-406c-b7aa-cb96aa3f22e4`。
 - 需求审计：`docs/requirements-audit-2026-07-28.md`。
@@ -131,8 +131,10 @@
   - 已完成：增加受限 Artifact 预览契约、PLY/PCD 点云查看器和 HTML/PDF/表格预览；大文件固定降采样，HTML 只显示转义文本，解析失败直接返回结构化错误；保留产物谱系元数据和下载入口。
   - 完成标准：桌面和移动端可加载、旋转、缩放、下载；大型文件有降采样；产物谱系在查看器中可见。
   - 验证结果：`docker compose config --quiet`、API 容器 `70 passed, 2 skipped`、`node --check apps/api/static/app.js`、`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py` 和 `git diff --check` 通过；浏览器实际检查模型设置页与完成项目产物页，确认 Luna/Terra/Sol 独立配置、JSON/PNG/ASCII PLY 预览、PLY 旋转/缩放/重置和下载入口，桌面无重叠、控制台错误为 0。未调用模型、外部学术 API 或无关实验。
-- [ ] `P1-TRACKING-012` 完善 MLflow 资源和环境追踪。
+- [x] `P1-TRACKING-012` 完善 MLflow 资源和环境追踪。
+  - 已完成：补充固定频率的 CPU、内存、进程和 GPU 数值采样，写入 MLflow 时间序列与受控 `resource-usage.jsonl`；同时记录学习率、模型版本、平台/网络策略、镜像 digest、数据版本、Git commit、随机种子和 Runner 终态，禁止把 Secret 或任意用户环境传入采样产物。
   - 完成标准：记录学习率、连续 CPU/内存/GPU、模型版本、镜像 digest、数据版本、Git commit、种子和状态；敏感字段不会进入日志。
+  - 验证结果：新增 `apps/runner/app/resource_tracking.py` 和 `apps/runner/tests/test_resource_tracking.py`；固定 `nvidia-smi` 数值查询、无 GPU 状态、JSONL 数值字段和 MLflow step 序列测试通过；Runner 镜像重建成功，容器 `python -B -m unittest discover -s tests -v`（9 tests）通过，Runner 只读文件系统保持不变；`docker compose config --quiet`、API 容器 `70 passed, 2 skipped`、`python scripts/check_docs_sync.py`、`python scripts/check_idea_case_sources.py` 和 `git diff --check` 通过。未调用模型、外部学术 API 或无关实验。
 - [ ] `P1-REPORT-013` 完善日报/周报内容及外部推送适配器。
   - 完成标准：覆盖新论文/BibTeX/代码、创新性变化、实验状态、异常、重点产物、真实资源/API 成本、Agent 决策和待审批事项；至少实现一种本地以外渠道并可关闭。
 - [ ] `P1-INTENT-014` 用严格结构化分类替代对话变更的关键词识别。

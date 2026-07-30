@@ -94,6 +94,8 @@ Invoke-RestMethod http://127.0.0.1:8080/api/experiments/<run_id>/reproducibility
 
 这是隔离基础设施的部分实现：每 Run 独立容器、八个白名单模板（包括固定 `experiment/main.py` 主题入口和镜像内固定 micromamba/Conda Python 环境）、硬上限 tmpfs 输出 volume，以及受控 GPU 请求已经由 launcher 提供；真实 GPU 主机验证仍由 `P0-RUNNER-007` 跟踪。主题入口必须读取固定环境路径中的结构化计划，可选读取恢复状态，并在输出目录写入 `metrics.json` 与 `checkpoint.json`；缺少入口、进程失败或产物不合法都会直接生成结构化错误，不会运行无关的分类或点云实验。
 
+每个 Runner 任务还会在 MLflow 活跃 Run 内按固定间隔记录进程/系统 CPU、内存和固定 `nvidia-smi` 查询得到的 GPU 数值，并在受控输出目录保存 `resource-usage.jsonl`。运行参数显式记录 `learning_rate`、`model_version`、Git commit、Research OS commit、镜像 digest、数据版本、随机种子和策略快照；Secret、任意环境变量和 GPU 命令输出不会进入记录。无 GPU 时记录 `gpu_available=0`，不会改用其他 Runner 路径。
+
 ## n8n 自动登录
 
 n8n 当前版本已不支持旧的 `N8N_BASIC_AUTH_*` 和 `N8N_USER_MANAGEMENT_DISABLED`。本项目保留一个内部本地 Owner：API 调用官方 Login/Owner Setup，转发 n8n 签发的 HttpOnly Cookie，不伪造 JWT，也不把密码写进浏览器页面或聊天。

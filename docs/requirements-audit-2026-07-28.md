@@ -6,6 +6,8 @@
 
 2026-07-30 Artifact 预览增量：新增受限 `/api/artifacts/{artifact_id}/preview`，网页产物页现在可以显示 JSON/文本/CSV/TSV/PDF，以及不执行 HTML 的转义文本；ASCII PLY/PCD 通过固定点数/面片上限、降采样和 Canvas 拖拽旋转/缩放/重置进行预览，并保留下载入口。二进制点云、失效/缺失文件和解析限制直接返回结构化错误。API 容器 `70 passed, 2 skipped`，Node 语法检查、Compose、文档/Idea case 检查、桌面浏览器产物页和模型设置页检查通过；未调用模型、外部学术 API 或无关实验。
 
+2026-07-30 MLflow 追踪增量：Runner 新增固定频率资源采样器，在活跃 MLflow Run 中记录进程/系统 CPU、内存和固定 GPU 数值查询，并将同一数值时间序列保存为受控 `resource-usage.jsonl`。Run 参数显式记录学习率、模型版本、Git/Research OS commit、镜像 digest、数据版本、种子、平台和网络策略；Runner 状态继续记录终态。GPU 不可用时只记录 `gpu_available=0`，不切换执行路径；采样器不记录 Secret、任意环境或命令输出。Runner 容器 `unittest`（9 tests）、不落盘导入/语法验证和镜像重建通过；未调用模型、外部学术 API 或无关实验。
+
 当前仓库是可运行、可审计的 Research OS MVP，不是原始需求的完整实现，更不能称为生产级或“完美实现”。核心闭环已经真实跑通，但完整论文证据链、官方代码复现、真实 GPU 主机验证、规则自动执行和外部通知仍未完成。
 
 ## 本轮真实验收
@@ -74,7 +76,7 @@
 | 实验可复现快照与 Git 大文件门禁 | 已实现（MVP 已完成） | 干净工作树、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖 manifest、SHA-256、API/Runner 双重校验和 Artifact/Dependency/Checkpoint 谱系已接入；`RUNNER_IMAGE_DIGEST` 与 `RESEARCH_OS_COMMIT` 已配置真实值；Run `26103a27` 真实实验（demo_classification）已验证完整快照持久化，实验成功执行（accuracy=0.8467）。Runner 非 root Git 门禁已修复。 |
 | 数值分析与失败诊断 | 已实现（受限闭环） | `POST /api/projects/{project_id}/diagnostics` 由 Python 计算有限数值指标的 count/mean/population std/min/max，解析结构化失败码和成功但缺失指标的运行；异常会生成去重、只记录证据且不执行的 `diagnostic_suggestion` Proposal，模型只能解释/质疑，不能计算或启动建议。任意日志/CSV/多模态自动推断仍不属于当前能力。 |
 | PNG/PLY/PDF 产物及谱系 | 已实现（受限预览） | 真实生成、预览/下载，并关联实验、Idea 版本、Git、数据版本和 MLflow；网页支持 JSON/文本/CSV/TSV/PDF 和转义 HTML 文本，以及固定上限的 ASCII PLY/PCD 点云 Canvas、旋转、缩放、重置和可选网格线框。二进制点云、失效文件和解析限制返回结构化错误；这仍不是完整任意格式 3D 引擎。 |
-| 实验跟踪 | 部分实现 | 自托管 MLflow + MinIO 可用，记录参数、种子、Git、数据版本、指标和产物；真实验收已验证配置的 Runner digest 与 Research OS commit 进入快照谱系；没有 W&B/TensorBoard、GPU 轨迹或连续资源曲线。 |
+| 实验跟踪 | 已实现（受限范围） | 自托管 MLflow + MinIO 记录参数、学习率/模型版本、种子、Git、数据版本、镜像 digest、指标和产物；Runner 按固定频率记录进程/系统 CPU、内存和 GPU 数值，并保存 `resource-usage.jsonl`。没有 W&B/TensorBoard；真实 GPU 主机验证仍属于 Runner 任务缺口。 |
 | PostgreSQL/Git/大文件持久化 | 已实现（MVP） | 18 张 SQLAlchemy 表覆盖状态源；Git 管理文本和 manifest，受控 artifacts 保存源码 bundle/大文件元数据，MLflow artifact 使用 MinIO，快照通过 Artifact/Dependency 建立谱系。缺少正式迁移工具和细粒度数据库角色。 |
 | 日报/周报与推送 | 部分实现 | n8n 每日/每周定时生成报告并存入 Web UI；未接入飞书、Slack、Telegram、邮件，也不完整统计资源/API 成本和关键 Agent 决策。 |
 | 同一项目对话监督 | 部分实现 | 对话、反馈、解释/建议与变更分类可持久化；新项目和项目监督聊天支持等待阶段、重复提交锁定、Ctrl/Cmd+Enter 提交及超时/断线后重试；分类主要靠关键词，不是健壮的结构化意图模型。 |

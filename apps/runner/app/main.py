@@ -30,6 +30,7 @@ from sklearn.model_selection import train_test_split
 
 from reproducibility import ReproducibilityError, ReproducibilityContract, runtime_identity, validate_snapshot_contract
 from .job_templates import TASK_TEMPLATES, validate_template_config
+from .resource_tracking import ResourceTracker
 
 
 class PolicyConstraints(BaseModel):
@@ -430,6 +431,7 @@ def execute(request: SubmitRequest):
             "message": "Runner project workspace is outside the fixed projects root.",
         }))
         return
+    resource_tracker = None
     try:
         validate_snapshot_contract(
             request.reproducibility,
@@ -476,8 +478,18 @@ def execute(request: SubmitRequest):
                 "python": platform.python_version(), "random_seeds": ",".join(map(str, request.random_seeds)),
                 "policy_minimum_random_seed_count": request.policy_constraints.minimum_random_seed_count,
                 "policy_explicit_approval_required": request.policy_constraints.explicit_approval_required,
+                "learning_rate": str(request.config.get("learning_rate", "not_declared")),
+                "model_version": str(request.config.get("model_version", "not_declared")),
             })
-            mlflow.log_metrics({"system_cpu_count": float(psutil.cpu_count() or 0), "system_memory_available_mb": psutil.virtual_memory().available / 1024 / 1024})
+            mlflow.set_tags({
+                "run_status": "running",
+                "runner_platform": platform.platform(aliased=True, terse=True),
+                "python_version": platform.python_version(),
+                "network_policy": template.network_policy,
+            })
+            resource_tracker = ResourceTracker(run_dir, mlflow)
+            resource_tracker.start()
+            resource_tracker.sample_once()
             if request.experiment_type in {"topic_specific", "python_analysis", "cpp_cmake", "gpu_python", "conda_python"}:
                 produced.extend(execute_project_template(request, project_root, run_dir, execution_log, ensure_running))
                 metrics_file = run_dir / "metrics.json"
@@ -562,6 +574,12 @@ def execute(request: SubmitRequest):
             produced.append(artifact(execution_log, "execution_log", run_dir))
             for name, value in metrics.items():
                 mlflow.log_metric(name, value)
+            resource_tracker.stop()
+            produced.append(artifact(resource_tracker.path, "resource_usage", run_dir, {
+                "sample_count": resource_tracker.sample_count,
+                "format": "jsonl",
+            }))
+            mlflow.set_tag("run_status", "succeeded")
             mlflow.log_artifacts(str(run_dir), artifact_path="outputs")
             mlflow_id = active_run.info.run_id
             for item in produced:
@@ -608,6 +626,9 @@ def execute(request: SubmitRequest):
             update_state(key, status="failed", finished_at=utcnow(), error=f"{exc}\n{traceback.format_exc(limit=3)}")
     except Exception as exc:
         update_state(key, status="failed", finished_at=utcnow(), error=f"{exc}\n{traceback.format_exc(limit=3)}")
+    finally:
+        if resource_tracker is not None:
+            resource_tracker.stop()
 
 
 @app.get("/health")

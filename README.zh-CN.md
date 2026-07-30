@@ -92,6 +92,7 @@ API 与 Runner 是执行强制边界。n8n 负责编排受限工作流，但不�
 | 人工监督 | **已实现（MVP）** | 实验、Idea 修订、策略和 LaTeX 的 Proposal/审批/审计，以及暂停/恢复/取消闸门。 |
 | 实验执行 | **已实现（有限范围）** | 八个 Runner 白名单任务，其中包含固定主题入口契约和镜像内固定 micromamba/Conda Python 环境；非 root、CPU/内存/PID/每 Run 硬上限 tmpfs 输出 volume、超时/取消、指标、MLflow、PNG/PLY/PDF/日志产物，以及执行前可复核快照闸门。 |
 | 数值诊断 | **已实现（受限范围）** | 实验页由 Python 确定性计算已持久化指标和结构化失败码，并生成需审批、不会自动执行的后续建议。LLM 只能解释或质疑结果，不能计算统计量或启动后续工作。 |
+| MLflow 追踪 | **已实现（受限范围）** | 每个 Runner 任务记录学习率/模型版本、Git/数据/种子/镜像身份、平台和网络策略；Runner 状态保存终态，并以固定频率将进程/系统 CPU、内存和 GPU 数值写入 MLflow 及 `resource-usage.jsonl`。无 GPU 时明确记录 `gpu_available=0`，不使用其他执行路径。 |
 | 产物谱系 | **已实现（MVP）** | Idea 版本、实验、不可变 run tag、源码 tar、ProjectSpec/策略/配置/环境/数据/模型/依赖清单、Git/数据/配置哈希、MLflow Run、产物与依赖元数据。正式镜像 digest 仍需配置，实时验收仍待执行。 |
 | 产物预览 | **已实现（受限范围）** | 网页以转义文本预览 JSON/文本/CSV/TSV/PDF/HTML，并以固定上限渲染 ASCII PLY/PCD 点云，支持旋转、缩放、重置、可选网格线框、谱系元数据和下载。二进制点云、缺失/失效产物及解析上限错误均返回结构化错误。 |
 | 通用科研自治 | **部分实现/路线图** | 真实 GPU 主机验证、外部通知、证据驱动 Related Work 与完整论文仍待实现。当前已支持固定主题 `experiment/main.py`、受控 Python、固定 micromamba/Conda Python、C++/CMake 和白名单 GPU 请求模板，并在每 Run 独立非 root 容器中使用硬上限输出 volume；官方 GitHub/GitLab 仓库核验和审批后固定 commit 导入已实现。 |
