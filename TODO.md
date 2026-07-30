@@ -146,7 +146,7 @@
   - 验证结果：Schema `extra=forbid`、模型失败直返、关键词路径静态门禁和 API 全量 `78 passed, 2 skipped` 通过；`docker compose build api`、Compose、文档同步、Idea case、JSON 和 `git diff --check` 已通过。未调用真实模型、外部学术 API 或无关实验。
 - [x] `P1-PATCH-015` 完成代码/配置/LaTeX patch 的“提案—diff—审批—隔离验证—Git commit—审计”执行器。
   - 完成标准：覆盖冲突、验证失败、回滚、依赖安装、覆盖/删除和对外发布禁用路径。
-  - 验证结果：新增严格结构化文件操作契约和临时隔离验证器；批准后只对干净且仍位于基准 commit 的项目 Git 工作区执行，暂存、写入、验证、冲突和提交失败均恢复原文件并返回结构化错误。回滚通过新的待审批 Proposal 触发并固定使用 `git revert --no-edit`；外部发布保持明确拒绝。API 容器 `96 passed, 2 skipped`，patch 执行器与路由定向测试 `12 passed`，Compose、API `py_compile`、JSON、Idea case、文档同步和 `git diff --check` 通过；未调用真实模型、外部学术 API 或无关实验。
+  - 验证结果：新增严格结构化文件操作契约和临时隔离验证器；批准后只对干净且仍位于基准 commit 的项目 Git 工作区执行，暂存、写入、验证、冲突和提交失败均恢复原文件并返回结构化错误。回滚通过新的待审批 Proposal 触发并固定使用 `git revert --no-edit`；外部发布保持明确拒绝。API 容器 `96 passed, 2 skipped`，patch 执行器与路由定向测试 `12 passed`，Compose、API `py_compile`、JSON、Idea case、文档同步和 `git diff --check` 通过；提交 `327c592` 已推送到 `origin/main`；未调用真实模型、外部学术 API 或无关实验。
 - [ ] `P1-PAPER-016` 实现基于验证证据的完整 LaTeX 论文生成与更新。
   - 依赖：`P0-EVIDENCE-001`、`P0-RELATED-002`、`P0-PLAN-006`。
   - 完成标准：Introduction、Related Work、Method、Experiments、Results、Limitations 和 References 可追踪；编译前必须审批 diff。
