@@ -25,7 +25,10 @@
 ## 后续任务
 
 - [ ] `P1-DEPS-049` 跟进 Mastra 固定的 `@ai-sdk/provider-utils@3.0.30` 上游审计告警；等待兼容补丁后升级并重跑生产依赖审计，禁止强制覆盖不兼容的间接依赖。
-- [ ] `P0-REPO-048` 补齐原生仓库双源验证、许可证检查和审批后归档下载。
+- [x] `P0-REPO-048` 补齐原生仓库双源验证、许可证检查和审批后归档下载。
+  - 已完成：候选录入、GitHub/GitLab 双源 DOI/精确标题匹配、SPDX 与固定 commit 门禁、审批后固定归档 Artifact、安全解压、项目 Git 提交、Artifact 依赖谱系、审计记录和前端入口。
+  - 验证：`npm run typecheck`、`npm test --workspace @research-os/server -- --no-cache`（6 files/15 tests）、`npm run build`（Node 24.14.0）、`npm run docs:check`、`git diff --check`、API `127.0.0.1:8080/api/health` 和 Mastra `127.0.0.1:4111/health`。
+  - 限制：本轮未执行真实第三方仓库下载；真实 provider 网络、许可证元数据和论文关联仍需在用户选择候选后通过界面验证，系统不会把未执行结果标为成功。
 - [ ] `P0-IMPACT-008` 补齐完整语义依赖失效和复杂检查点恢复。
 - [ ] `P0-RUNNER-007` 在真实 GPU Windows/WSL2 主机验证 GPU 任务与资源记录。
 - [ ] `P1-UPLOAD-009` 增加大规模异步材料索引和跨材料语义检索。

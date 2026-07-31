@@ -44,6 +44,12 @@ The first approved Python run creates `projects/<id>/.venv` with `RESEARCH_PYTHO
 
 Install a TeX distribution separately when `compile_latex` is needed. Missing `latexmk.exe` produces a structured experiment failure.
 
+## Repository Verification and Acquisition
+
+From a project Literature tab, add a GitHub or GitLab HTTPS repository candidate to a paper. Verify it before requesting download. Verification records the provider metadata, repository citation files, DOI or exact-title match, SPDX license status, default branch, and fixed 40-character commit.
+
+Downloading is always a `dependency_install` Proposal. Approval revalidates the provider snapshot and commit, downloads the fixed archive, enforces archive size/entry/uncompressed-size limits, rejects traversal and link entries, stores the archive as a SHA-256 Artifact, extracts it below `projects/<id>/code/repositories/`, records the Artifact dependency, and commits only that repository path with fixed local Git identity. Failed operations return structured errors and remove temporary files.
+
 ## Upgrade
 
 Stop the current process, back up data, install the new source, run `npm ci`, `npm run build`, and `npm run db:migrate`, then restart. Never delete `projects/`, `artifacts/`, `.env`, or `runtime/` during an in-place upgrade.

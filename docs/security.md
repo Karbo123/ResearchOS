@@ -26,6 +26,12 @@ PDF evidence is downloaded only from a fixed HTTPS host allowlist, limited to 25
 
 `.env`, `runtime/`, local databases, backup archives, model keys, cookies, and authentication material are ignored and must never be committed. Project patches cannot target `.git`, `.env`, credentials, or paths outside the project. Approved patches bind a Git commit and content hash; conflicts fail before commit and modified files are restored.
 
+## Repository Acquisition
+
+Repository candidates accept only GitHub or GitLab HTTPS URLs without credentials, query strings, fragments, or custom ports. Verification must record a paper DOI or exact title match in repository citation files, a known SPDX license, and a 40-character commit. Download is blocked until the candidate is verified and a human approves the `dependency_install` Proposal.
+
+Archives are fetched only from the approved provider hosts, bounded by byte, entry, and uncompressed-size limits, and extracted with traversal, absolute-path, symbolic-link, and hard-link rejection. The original archive is SHA-256 hashed and stored as a controlled Artifact; the extracted path is constrained beneath the project Git workspace. No model output supplies a URL, path, commit, or Git command.
+
 ## Network
 
 Only fixed academic providers, approved repository providers, configured model endpoints, and local loopback services are valid network destinations. External requests use timeouts and a project User-Agent. Do not bind API or Studio to a LAN or public interface.

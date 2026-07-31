@@ -88,6 +88,7 @@ export const approvalDecision = z.object({
 export const projectStateRequest = z.object({ action: z.enum(['pause', 'resume', 'cancel']), reason: z.string().min(3).max(2000) }).strict()
 export const policyRequest = z.object({ project_id: uuid, rule: z.string().min(5).max(2000), rationale: z.string().max(2000).nullable().optional() }).strict()
 export const reportRequest = z.object({ project_id: uuid, period: z.enum(['daily', 'weekly', 'manual']).default('manual'), notify: z.boolean().default(false) }).strict()
+export const repositoryCandidateRequest = z.object({ paper_id: uuid, source_url: z.string().url().max(500) }).strict()
 
 export function emptyIdeaDraft(): z.infer<typeof ideaDraft> {
   return ideaDraft.parse({})

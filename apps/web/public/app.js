@@ -23165,6 +23165,7 @@
     renderCheckpointActions(d, executionDisabled);
     renderRerunProposalActions(d, executionDisabled);
     renderRepositoryCandidates(d.repositories, !isActive);
+    renderRepositoryCandidateActions(d.papers, !isActive);
     renderMaterialSearchPanel();
     renderSearchCandidates();
     loadNovelty();
@@ -23364,6 +23365,38 @@
   }).catch(() => {
     $("health").lastChild.textContent = "\u79BB\u7EBF";
   });
+  function renderRepositoryCandidateActions(papers, disabled = false) {
+    const list = $("tab-literature").querySelector(".section-head + .data-list");
+    if (!list || !papers?.length) return;
+    const rows = list.querySelectorAll(".data-row");
+    papers.forEach((paper, index) => {
+      const row = rows[index];
+      if (!row || row.querySelector('[data-repository-paper="' + paper.id + '"]')) return;
+      const actions = document.createElement("div");
+      actions.className = "button-row";
+      const button = document.createElement("button");
+      button.className = "secondary";
+      button.dataset.repositoryPaper = paper.id;
+      button.disabled = Boolean(disabled);
+      button.title = "Add a GitHub or GitLab repository candidate";
+      button.innerHTML = '<i data-lucide="git-branch"></i>\u6DFB\u52A0\u4EE3\u7801\u4ED3\u5E93';
+      button.addEventListener("click", () => addRepositoryCandidate(paper.id));
+      actions.appendChild(button);
+      row.appendChild(actions);
+    });
+    iconRefresh();
+  }
+  async function addRepositoryCandidate(paperId) {
+    const sourceUrl = window.prompt("\u8BF7\u8F93\u5165 GitHub \u6216 GitLab HTTPS \u4ED3\u5E93\u5730\u5740");
+    if (!sourceUrl?.trim()) return;
+    try {
+      await api("/api/projects/" + state.projectId + "/repositories", { method: "POST", body: JSON.stringify({ paper_id: paperId, source_url: sourceUrl.trim() }) });
+      await refreshProject();
+      toast("\u4EE3\u7801\u4ED3\u5E93\u5019\u9009\u5DF2\u6DFB\u52A0\uFF0C\u8BF7\u6267\u884C\u4EA4\u53C9\u9A8C\u8BC1");
+    } catch (error) {
+      toast(error.message);
+    }
+  }
   syncClarificationMode();
   loadProjects();
   iconRefresh();

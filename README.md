@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-03 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-04 -->
 
 # Research OS
 
@@ -14,7 +14,7 @@ Model failures are final structured errors. The application never substitutes a 
 
 ## Architecture
 
-- `apps/server`: Hono API, PGlite state, queue, evidence, approvals, reports, artifact ledger, and native experiment supervisor.
+- `apps/server`: Hono API, PGlite state, queue, evidence, approvals, reports, repository verification/acquisition, artifact ledger, and native experiment supervisor.
 - `apps/mastra`: Mastra Agents, Memory, Skills, bounded Tools, Workflows, schedules, and Studio graph.
 - `apps/web`: TypeScript browser source and generated static assets.
 - `projects/<project-id>`: isolated Git workspaces. Scientific Python uses `projects/<project-id>/.venv`.
@@ -80,6 +80,12 @@ The model never supplies a command, executable, path, URL, environment, or netwo
 
 Each scientific Python project uses its own `.venv`; dependencies are never installed into the application runtime. The supervisor enforces a fixed project root, timeout, process-tree cancellation, bounded logs, finite numeric `metrics.json`, structured `checkpoint.json`, SHA-256 artifacts, and audit events. Native process isolation is weaker than a dedicated virtual machine and is documented as such.
 
+## Repository Verification and Acquisition
+
+The Literature tab accepts GitHub or GitLab HTTPS repository candidates linked to a paper. Verification records the provider metadata and citation files, requires a DOI or exact-title match, checks a known SPDX license, and pins the candidate to a 40-character commit. Download is never automatic: it creates a `dependency_install` Proposal and approval revalidates the snapshot before downloading.
+
+The approved archive is bounded, checked for path traversal and link entries, stored as a SHA-256 Artifact, extracted beneath `projects/<project-id>/code/repositories/`, linked in the Artifact dependency ledger, and committed to the project Git workspace. These records document reproducible source acquisition; they do not by themselves prove that a repository is an official implementation or that its code is scientifically valid.
+
 ## Validation
 
 ```powershell
@@ -96,4 +102,4 @@ The final acceptance command uses the configured real model and external academi
 
 ## Limitations
 
-This is a local MVP, not a production security boundary or a scientific oracle. Metadata candidates are not full-text evidence. Page quotes still require claim-level review. Experiment outputs establish only what the experiment measured, not the truth of a research hypothesis. Native process controls do not provide virtual-machine isolation. GPU host validation, complete repository acquisition, semantic claim mapping, and clean-machine installer acceptance remain open work.
+This is a local MVP, not a production security boundary or a scientific oracle. Metadata candidates are not full-text evidence. Page quotes still require claim-level review. Experiment outputs establish only what the experiment measured, not the truth of a research hypothesis. Native process controls do not provide virtual-machine isolation. GPU host validation, semantic claim mapping, and clean-machine installer acceptance remain open work. Repository acquisition is limited to the verified, approval-gated archive path described above.

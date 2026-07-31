@@ -537,6 +537,7 @@ function renderProject() {
   renderCheckpointActions(d, executionDisabled);
   renderRerunProposalActions(d, executionDisabled);
   renderRepositoryCandidates(d.repositories, !isActive);
+  renderRepositoryCandidateActions(d.papers, !isActive);
   renderMaterialSearchPanel();
   renderSearchCandidates();
   loadNovelty();
@@ -687,4 +688,35 @@ $("clarificationMode").addEventListener("change", () => syncClarificationMode())
 $("tabs").querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 $("mobileChatToggle").addEventListener("click", () => toggleMobileProjectChat(true)); $("mobileChatClose").addEventListener("click", () => toggleMobileProjectChat(false));
 api("/api/health").then(()=>{$("health").classList.add("ok");$("health").lastChild.textContent="已连接";}).catch(()=>{$("health").lastChild.textContent="离线";});
+function renderRepositoryCandidateActions(papers, disabled = false) {
+  const list = $("tab-literature").querySelector(".section-head + .data-list");
+  if (!list || !papers?.length) return;
+  const rows = list.querySelectorAll(".data-row");
+  papers.forEach((paper, index) => {
+    const row = rows[index];
+    if (!row || row.querySelector('[data-repository-paper="' + paper.id + '"]')) return;
+    const actions = document.createElement("div");
+    actions.className = "button-row";
+    const button = document.createElement("button");
+    button.className = "secondary";
+    button.dataset.repositoryPaper = paper.id;
+    button.disabled = Boolean(disabled);
+    button.title = "Add a GitHub or GitLab repository candidate";
+    button.innerHTML = '<i data-lucide="git-branch"></i>添加代码仓库';
+    button.addEventListener("click", () => addRepositoryCandidate(paper.id));
+    actions.appendChild(button);
+    row.appendChild(actions);
+  });
+  iconRefresh();
+}
+async function addRepositoryCandidate(paperId) {
+  const sourceUrl = window.prompt("请输入 GitHub 或 GitLab HTTPS 仓库地址");
+  if (!sourceUrl?.trim()) return;
+  try {
+    await api("/api/projects/" + state.projectId + "/repositories", {method:"POST", body:JSON.stringify({paper_id: paperId, source_url: sourceUrl.trim()})});
+    await refreshProject();
+    toast("代码仓库候选已添加，请执行交叉验证");
+  } catch (error) { toast(error.message); }
+}
+
 syncClarificationMode(); loadProjects(); iconRefresh();

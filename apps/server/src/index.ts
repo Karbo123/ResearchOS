@@ -10,7 +10,7 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest,
-  policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, uuid,
+  policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
@@ -26,11 +26,15 @@ import { createCompileProposal, createPaperDraftProposal } from './paper-service
 import { applyApprovedPatch } from './patch-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { scanFile } from './malware-scanner.js'
+import { canonicalRepositoryUrl, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
+import { installRepositoryArchive } from './repository-install-service.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
 type MessageRow = { role: string; content: string }
 type ProposalRow = { id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown> }
 type ExperimentRow = { id: string; project_id: string; status: string; metrics: Record<string, number>; error: string | null }
+type RepositoryRow = { id: string; project_id: string; paper_id: string | null; source_url: string; license_spdx: string | null; commit_or_tag: string | null; verified_official: boolean; metadata: Record<string, unknown>; retrieved_at: string }
+type PaperIdentity = { id: string; title: string; doi: string | null }
 
 const app = new Hono()
 app.onError(errorResponse)
@@ -170,6 +174,63 @@ app.post('/api/projects/:projectId/evidence/ingest', async context => {
   return context.json(await ingestEvidence(projectId, body.limit))
 })
 
+async function refreshRepositoryVerification(repository: RepositoryRow, paper: PaperIdentity): Promise<RepositoryRow> {
+  const verification = await verifyRepositoryCandidate(repository.source_url, paper.title, paper.doi)
+  const updated = {
+    ...repository,
+    license_spdx: typeof verification.license_spdx === 'string' ? verification.license_spdx : null,
+    commit_or_tag: typeof verification.commit === 'string' ? verification.commit : null,
+    verified_official: verification.official_match === true,
+    metadata: { ...repository.metadata, verification },
+  }
+  await database.query('UPDATE repositories SET license_spdx=$2,commit_or_tag=$3,verified_official=$4,metadata=$5,retrieved_at=NOW() WHERE id=$1', [repository.id, updated.license_spdx, updated.commit_or_tag, updated.verified_official, updated.metadata])
+  return updated
+}
+
+app.post('/api/projects/:projectId/repositories', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, repositoryCandidateRequest)
+  await requireProject(projectId, true)
+  const paper = await one<PaperIdentity>('SELECT id,title,doi FROM papers WHERE id=$1 AND project_id=$2', [body.paper_id, projectId])
+  if (!paper) throw new ApiError(404, 'paper_not_found', '该文献不属于当前项目。')
+  const sourceUrl = canonicalRepositoryUrl(parseRepositoryUrl(body.source_url))
+  const existing = await one<{ id: string }>('SELECT id FROM repositories WHERE project_id=$1 AND paper_id=$2 AND source_url=$3', [projectId, paper.id, sourceUrl])
+  if (existing) throw new ApiError(409, 'repository_candidate_exists', '该项目已经添加过这个仓库候选。')
+  const repositoryId = crypto.randomUUID()
+  await database.query('INSERT INTO repositories(id,project_id,paper_id,source_url,metadata) VALUES ($1,$2,$3,$4,$5)', [repositoryId, projectId, paper.id, sourceUrl, { candidate_source: 'user_submitted', paper_title: paper.title, paper_doi: paper.doi }])
+  await audit('repository.candidate_created', projectId, { repository_id: repositoryId, paper_id: paper.id, source_url: sourceUrl }, 'local-user')
+  return context.json({ repository_id: repositoryId, status: 'candidate' }, 201)
+})
+
+app.post('/api/projects/:projectId/repositories/:repositoryId/verify', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const repositoryId = uuid.parse(context.req.param('repositoryId'))
+  await requireProject(projectId, true)
+  const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, projectId])
+  if (!repository) throw new ApiError(404, 'repository_not_found', '仓库候选不存在。')
+  if (!repository.paper_id) throw new ApiError(422, 'repository_paper_missing', '仓库候选没有关联论文。')
+  const paper = await one<PaperIdentity>('SELECT id,title,doi FROM papers WHERE id=$1 AND project_id=$2', [repository.paper_id, projectId])
+  if (!paper) throw new ApiError(404, 'paper_not_found', '仓库关联论文不存在。')
+  const updated = await refreshRepositoryVerification(repository, paper)
+  await audit('repository.verified', projectId, { repository_id: repositoryId, official_match: updated.verified_official, commit: updated.commit_or_tag, license_spdx: updated.license_spdx }, 'local-user')
+  return context.json({ repository_id: repositoryId, verified_official: updated.verified_official, verification: updated.metadata.verification })
+})
+
+app.post('/api/projects/:projectId/repositories/:repositoryId/download', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const repositoryId = uuid.parse(context.req.param('repositoryId'))
+  await requireProject(projectId, true)
+  const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, projectId])
+  if (!repository) throw new ApiError(404, 'repository_not_found', '仓库候选不存在。')
+  const commit = validateDownloadGate(repository)
+  const existing = await one<{ id: string }>("SELECT id FROM proposals WHERE project_id=$1 AND kind='dependency_install' AND status IN ('pending','approved') AND payload->>'repository_id'=$2", [projectId, repositoryId])
+  if (existing) throw new ApiError(409, 'repository_download_proposal_exists', '该仓库已经有待处理或已批准的下载 Proposal。')
+  const proposalId = crypto.randomUUID()
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,impact,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'dependency_install', 'User requested a verified repository archive', 'Download verified repository at fixed commit', { repository_id: repositoryId, commit, license_spdx: repository.license_spdx, source_url: repository.source_url }, { repository_id: repositoryId, requested_commit: commit, source_url: repository.source_url, paper_id: repository.paper_id }])
+  await audit('proposal.created', projectId, { proposal_id: proposalId, kind: 'dependency_install', repository_id: repositoryId, commit }, 'local-user')
+  return context.json({ proposal_id: proposalId, status: 'pending', commit }, 201)
+})
+
 app.post('/api/proposals', async context => {
   const body = await jsonBody(context, proposalCreateRequest)
   await requireProject(body.project_id, true)
@@ -198,10 +259,21 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   if (proposal.status !== 'pending') throw new ApiError(409, 'proposal_already_decided', 'Proposal 已经完成决策。')
   let gitCommit: string | null = null
   if (body.decision === 'approved' && proposal.kind === 'code_patch') gitCommit = applyApprovedPatch(proposal.project_id, proposal.payload, body.actor)
+  let repositoryInstall: Awaited<ReturnType<typeof installRepositoryArchive>> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'dependency_install') {
+    const repositoryId = uuid.parse(String(proposal.payload.repository_id || ''))
+    const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, proposal.project_id])
+    if (!repository || !repository.paper_id) throw new ApiError(404, 'repository_not_found', '待下载的仓库候选不存在。')
+    const paper = await one<PaperIdentity>('SELECT id,title,doi FROM papers WHERE id=$1 AND project_id=$2', [repository.paper_id, proposal.project_id])
+    if (!paper) throw new ApiError(404, 'paper_not_found', '仓库关联论文不存在。')
+    const refreshed = await refreshRepositoryVerification(repository, paper)
+    const commit = validateDownloadGate(refreshed, String(proposal.payload.requested_commit || ''))
+    repositoryInstall = await installRepositoryArchive(refreshed, body.actor, commit)
+  }
   await database.query('UPDATE proposals SET status=$2,decided_by=$3,decision_comment=$4,decided_at=NOW() WHERE id=$1', [proposalId, body.decision, body.actor, body.comment ?? null])
   if (body.decision === 'approved' && proposal.kind === 'config_change' && typeof proposal.payload.rule === 'string') await database.query('INSERT INTO policies(id,project_id,rule,rationale) VALUES ($1,$2,$3,$4)', [crypto.randomUUID(), proposal.project_id, proposal.payload.rule, body.comment ?? null])
   await audit(`proposal.${body.decision}`, proposal.project_id, { proposal_id: proposalId }, body.actor)
-  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit })
+  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, repository_install: repositoryInstall })
 })
 
 app.post('/api/projects/:projectId/paper-draft', async context => context.json(await createPaperDraftProposal(uuid.parse(context.req.param('projectId'))), 201))
