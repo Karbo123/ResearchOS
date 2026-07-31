@@ -1,12 +1,15 @@
 import { createHash } from 'node:crypto'
-import { ChildProcess, spawn } from 'node:child_process'
+import { ChildProcess, execFileSync, spawn } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { basename, relative, resolve } from 'node:path'
 import { once } from 'node:events'
 import type { z } from 'zod'
-import { database, audit } from './database.js'
+import { database, audit, one } from './database.js'
 import type { experimentRequest } from './contracts.js'
 import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
+import { fingerprintValue, registerLineageDependencies, type LineageNode } from './impact-service.js'
+import { artifactMimeType, MetricsValidationError, parseMetricsJsonl, type MetricsSeries } from './metrics-service.js'
+import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
 
 type ExperimentRequest = z.infer<typeof experimentRequest>
 type RunState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled'
@@ -64,7 +67,7 @@ function collectFiles(root: string, current = root): string[] {
   return result
 }
 
-function readValidatedResults(runDirectory: string) {
+function readValidatedResults(runDirectory: string): { metrics: Record<string, number>; checkpoint: Record<string, unknown>; metricsSeries: MetricsSeries | null } {
   const metricsPath = resolve(runDirectory, 'metrics.json')
   const checkpointPath = resolve(runDirectory, 'checkpoint.json')
   if (!existsSync(metricsPath) || !existsSync(checkpointPath)) throw new Error('required_experiment_outputs_missing')
@@ -72,7 +75,9 @@ function readValidatedResults(runDirectory: string) {
   const checkpoint = JSON.parse(readFileSync(checkpointPath, 'utf8')) as Record<string, unknown>
   if (!metrics || Array.isArray(metrics) || Object.values(metrics).some(value => typeof value !== 'number' || !Number.isFinite(value))) throw new Error('metrics_must_be_finite_numbers')
   if (!checkpoint || Array.isArray(checkpoint)) throw new Error('checkpoint_must_be_an_object')
-  return { metrics: metrics as Record<string, number>, checkpoint }
+  const metricsJsonlPath = resolve(runDirectory, 'metrics.jsonl')
+  const metricsSeries = existsSync(metricsJsonlPath) ? parseMetricsJsonl(metricsJsonlPath) : null
+  return { metrics: metrics as Record<string, number>, checkpoint, metricsSeries }
 }
 
 function spawnExperiment(request: ExperimentRequest, projectRoot: string, runDirectory: string, venv: string): ChildProcess {
@@ -142,17 +147,65 @@ async function execute(runId: string, request: ExperimentRequest): Promise<void>
       writeFileSync(resolve(runDirectory, 'metrics.json'), '{"compiled":1}\n')
       writeFileSync(resolve(runDirectory, 'checkpoint.json'), `${JSON.stringify({ source: 'paper/main.tex', backend: request.execution_backend })}\n`)
     }
-    const { metrics, checkpoint } = readValidatedResults(runDirectory)
+    const { metrics, checkpoint, metricsSeries } = readValidatedResults(runDirectory)
     await database.query("UPDATE experiments SET status='succeeded', metrics=$2, finished_at=NOW() WHERE id=$1", [runId, metrics])
-    await database.query('INSERT INTO checkpoints(id,project_id,stage,idea_version,state) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), request.project_id, 'experiment_succeeded', Number(request.topic_plan?.idea_version || 1), { ...checkpoint, source_run_id: runId }])
+    const artifactIds: string[] = []
     for (const file of collectFiles(runDirectory)) {
       const relativePath = relative(artifactsRoot, file).replaceAll('\\', '/')
-      await database.query('INSERT INTO artifacts(id,project_id,experiment_id,kind,name,relative_path,mime_type,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [crypto.randomUUID(), request.project_id, runId, 'experiment_output', basename(file), relativePath, 'application/octet-stream', hashFile(file), { backend: request.execution_backend }])
+      const artifactId = crypto.randomUUID()
+      artifactIds.push(artifactId)
+      const name = basename(file)
+      await database.query('INSERT INTO artifacts(id,project_id,experiment_id,kind,name,relative_path,mime_type,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [artifactId, request.project_id, runId, 'experiment_output', name, relativePath, artifactMimeType(name), hashFile(file), {
+        backend: request.execution_backend,
+        ...(name === 'metrics.jsonl' && metricsSeries ? {
+          metrics_series: { points: metricsSeries.points.length, bytes: metricsSeries.bytes, sha256: metricsSeries.sha256, seeds: metricsSeries.seeds, units: metricsSeries.units },
+        } : {}),
+      }])
     }
+    if (supermemoryEnabled()) {
+      await ingestProjectMemory(request.project_id, {
+        source_type: 'experiment_summary',
+        source_id: runId,
+        artifact_id: null,
+        uploaded_file_id: null,
+        content: `Experiment ${runId} completed with metrics ${JSON.stringify(metrics)}. Controlled artifacts: ${artifactIds.join(', ')}. This is an integration result and not a scientific conclusion.`,
+        source_url: null,
+        quote: null,
+        locator: null,
+        metadata: { experiment_id: runId, artifact_ids: artifactIds, evidence_status: 'integration_result_requires_review' },
+        task_type: 'memory',
+        idempotency_key: `experiment-summary:${runId}`,
+      })
+    }
+    const ideaVersionNumber = typeof request.topic_plan?.idea_version === 'number' ? request.topic_plan.idea_version : null
+    const ideaVersion = ideaVersionNumber === null
+      ? await one<{ id: string; version: number }>('SELECT id,version FROM idea_versions WHERE project_id=$1 ORDER BY version DESC LIMIT 1', [request.project_id])
+      : await one<{ id: string; version: number }>('SELECT id,version FROM idea_versions WHERE project_id=$1 AND version=$2', [request.project_id, ideaVersionNumber])
+    if (!ideaVersion) throw new Error('experiment_idea_version_missing')
+    const gitCommit = execFileSync('git.exe', ['rev-parse', 'HEAD'], { cwd: projectRoot, windowsHide: true, encoding: 'utf8' }).trim()
+    const configFingerprint = fingerprintValue({ experiment_type: request.experiment_type, config: request.config, execution_backend: request.execution_backend, random_seeds: request.random_seeds, topic_plan: request.topic_plan })
+    const upstream: LineageNode[] = [
+      { type: 'idea_version', id: ideaVersion.id },
+      { type: 'git_commit', id: gitCommit },
+      { type: 'config', id: configFingerprint },
+    ]
+    const topicPlan = request.topic_plan || {}
+    for (const key of ['paper_ids', 'evidence_ids', 'repository_ids', 'uploaded_file_ids']) {
+      const type = key.replace(/_ids$/, '') as LineageNode['type']
+      const values = Array.isArray(topicPlan[key]) ? topicPlan[key] : []
+      for (const value of values) if (typeof value === 'string') upstream.push({ type, id: value })
+    }
+    const experimentDependencies = await registerLineageDependencies(request.project_id, upstream.map(item => ({ downstream: { type: 'experiment', id: runId }, upstream: item, relation: 'experiment_input' })))
+    const checkpointId = crypto.randomUUID()
+    await database.query('INSERT INTO checkpoints(id,project_id,stage,idea_version,git_commit,data_version,state) VALUES ($1,$2,$3,$4,$5,$6,$7)', [checkpointId, request.project_id, 'experiment_succeeded', ideaVersion.version, gitCommit, typeof request.config.data_version === 'string' ? request.config.data_version : null, { ...checkpoint, source_run_id: runId, artifact_ids: artifactIds, lineage_dependencies: experimentDependencies }])
+    await registerLineageDependencies(request.project_id, [
+      ...upstream.map(item => ({ downstream: { type: 'checkpoint' as const, id: checkpointId }, upstream: item, relation: 'checkpoint_input' })),
+      { downstream: { type: 'checkpoint', id: checkpointId }, upstream: { type: 'experiment', id: runId }, relation: 'checkpoint_source_run' },
+    ])
     await audit('experiment.succeeded', request.project_id, { run_id: runId, backend: request.execution_backend })
   } catch (error) {
     activeRuns.delete(runId)
-    const message = error instanceof Error ? error.message : 'experiment_failed'
+    const message = error instanceof MetricsValidationError ? error.code : error instanceof Error ? error.message : 'experiment_failed'
     await database.query("UPDATE experiments SET status='failed', error=$2, finished_at=NOW() WHERE id=$1", [runId, message])
     await audit('experiment.failed', request.project_id, { run_id: runId, code: message })
   }

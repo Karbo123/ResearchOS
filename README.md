@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-11 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS is a local, auditable research-automation MVP. The application is im
 
 ## Status
 
-The native Windows migration is implemented and verified for the local MVP. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The verified acceptance covers real model calls, project state transitions, native scientific execution, cancellation, Mastra Studio, and the browser UI. Clean-machine installer signing/release and GPU-host validation remain separate open work.
+The native Windows migration is implemented at the code level and its application tests and Node.js 26.5.1 build pass under NVM for Windows. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, refreshed Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The original `runtime/research-os.pglite` is preserved as a legacy PostgreSQL cluster; the project `.env` now explicitly selects the verified non-overwriting recovery candidate `runtime/restore-pglite-20260731`, which serves the local API and Mastra Studio on `127.0.0.1:8080` and `127.0.0.1:4111`. Clean-machine installer signing/release and GPU-host validation remain separate open work.
 
 Model failures are final structured errors. The application never substitutes a local reply, another provider, or an unrelated experiment.
 
@@ -26,7 +26,7 @@ PGlite is the durable business state source. Mastra Memory is local and does not
 ## Requirements
 
 - Windows 10/11 x64
-- Node.js 22.13 or newer, with Node.js 22.22 LTS used by the installer
+- NVM for Windows with Node.js `26.5.1` (the repository default; `package.json` accepts Node.js `>=22.13`)
 - Git for Windows
 - Windows Defender for uploads
 - Optional: Python 3.11+ for scientific Python experiments
@@ -36,12 +36,18 @@ PGlite is the durable business state source. Mastra Memory is local and does not
 ## Quick Start
 
 ```powershell
+nvm install 26.5.1
+nvm use 26.5.1
 npm ci
 npm run build
 npm start
 ```
 
-Open [http://127.0.0.1:8080](http://127.0.0.1:8080). Mastra Studio and workflow graphs are available at [http://127.0.0.1:4111](http://127.0.0.1:4111) and from the lower-left navigation.
+The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. The Windows installer source currently bundles its own Node.js runtime independently of the development shell.
+
+The currently selected and verified recovery candidate is available at [http://127.0.0.1:8080](http://127.0.0.1:8080). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and the legacy database directory remains untouched.
+
+The legacy primary directory is preserved. A non-overwriting recovery candidate can be generated and checked with `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731`. After inspection, select it explicitly in `.env` with `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731`; `npm start` loads that setting automatically.
 
 Development:
 
@@ -66,13 +72,19 @@ HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC19
 
 ## Verification Evidence
 
-The current local UI and Mastra graph were checked in a real browser. The model-settings screenshot shows all three tiers, the configured `/v1` endpoint, reasoning effort, and only key status; no key material is displayed.
+The current local UI and Mastra graph were checked in a real browser. The refreshed UI was checked at desktop and mobile sizes across the new-Idea composer, project overview, artifact gallery, model settings, and project chat; the mobile layout has no horizontal overflow. The model-settings screenshot shows all three tiers, the configured `/v1` endpoint, reasoning effort, and only key status; no key material is displayed.
 
 ![Research OS overview](docs/assets/research-os-overview.jpg)
 
 ![Independent model settings](docs/assets/research-os-model-settings.jpg)
 
 ![Mastra workflow graph](docs/assets/research-os-mastra-workflow.jpg)
+
+## Project Semantic Memory
+
+Supermemory integration is partially implemented and remains disabled unless `SUPERMEMORY_ENABLED=true` or `SUPERMEMORY_API_KEY` is configured. Every operation is scoped by an immutable project container tag. The API provides status, ingestion, project-scoped hybrid search, Graph Memory context, link inspection, and approval-gated forget/delete operations. PDF and image ingestion is limited to validated project Artifacts or Defender-scanned uploads; the local Artifact keeps the original bytes and SHA-256.
+
+Semantic results are candidates only and retain source, Artifact, locator, hash, and evidence-status metadata. A missing key, timeout, authentication failure, invalid response, or remote write failure returns a structured error and never falls back to local semantic search, another provider, or an unrelated experiment. Real Supermemory API validation, cross-project leakage testing with two configured projects, and end-to-end revoke/delete testing remain open in `TODO.md`.
 
 ## Experiment Isolation
 
@@ -86,6 +98,12 @@ The Literature tab accepts GitHub or GitLab HTTPS repository candidates linked t
 
 The approved archive is bounded, checked for path traversal and link entries, stored as a SHA-256 Artifact, extracted beneath `projects/<project-id>/code/repositories/`, linked in the Artifact dependency ledger, and committed to the project Git workspace. These records document reproducible source acquisition; they do not by themselves prove that a repository is an official implementation or that its code is scientifically valid.
 
+## Dependency Lineage and Checkpoint Recovery
+
+Successful experiments register their Idea version, project Git commit, configuration fingerprint, referenced papers/evidence/repositories/uploads, generated Artifacts, and Checkpoint in a semantic dependency ledger. Project inspection reconciles upstream fingerprints; an approved Idea or code revision, a changed upstream record, a missing source, or an invalid Artifact recursively invalidates dependent experiments, Artifacts, and Checkpoints.
+
+Checkpoint recovery is never a direct rerun. The API verifies the Checkpoint, source run status, current Idea version, Git baseline, Artifact paths, symlink status, file existence, and SHA-256 values, then creates an `experiment_rerun` Proposal. Only approval queues the exact recovered request; a failed or invalidated dependency returns a structured error and cannot be displayed as a successful run.
+
 ## Validation
 
 ```powershell
@@ -95,10 +113,11 @@ npm run build
 npm run idea-cases:check
 npm run docs:check
 npm run ops:status
+npm run mastra:hitl:check
 npm run acceptance
 ```
 
-The final acceptance command uses the configured real model and external academic APIs. It must fail directly when the model endpoint or key is invalid.
+The code-level checks and real-model acceptance use the configured model and external academic APIs; model endpoint or key failures remain direct structured failures. Runtime checks pass against the verified recovery candidate; the original primary database still requires an explicit operator decision.
 
 ## Limitations
 

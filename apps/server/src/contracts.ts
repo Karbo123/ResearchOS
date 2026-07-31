@@ -51,7 +51,7 @@ export const modelSettingsRequest = z.object({
 
 export const proposalCreateRequest = z.object({
   project_id: uuid,
-  kind: z.enum(['experiment_plan', 'code_patch', 'config_change', 'idea_revision', 'data_change', 'dependency_install', 'delete_artifact', 'external_publish', 'diagnostic_suggestion']),
+  kind: z.enum(['experiment_plan', 'experiment_rerun', 'code_patch', 'config_change', 'idea_revision', 'data_change', 'dependency_install', 'delete_artifact', 'memory_revoke', 'external_publish', 'diagnostic_suggestion']),
   reason: z.string().min(5),
   summary: z.string().min(5),
   diff: z.string().nullable().optional(),
@@ -84,11 +84,35 @@ export const approvalDecision = z.object({
   decision: z.enum(['approved', 'rejected']),
   comment: z.string().max(4000).nullable().optional(),
   actor: z.string().max(200).default('local-user'),
+  mastra_run_id: z.string().trim().min(1).max(200).nullable().optional(),
+  tool_name: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9_.:-]+$/).nullable().optional(),
+  args_fingerprint: z.string().regex(/^[0-9a-f]{64}$/).nullable().optional(),
+  policy_version: z.string().trim().min(1).max(120).nullable().optional(),
 }).strict()
 export const projectStateRequest = z.object({ action: z.enum(['pause', 'resume', 'cancel']), reason: z.string().min(3).max(2000) }).strict()
 export const policyRequest = z.object({ project_id: uuid, rule: z.string().min(5).max(2000), rationale: z.string().max(2000).nullable().optional() }).strict()
 export const reportRequest = z.object({ project_id: uuid, period: z.enum(['daily', 'weekly', 'manual']).default('manual'), notify: z.boolean().default(false) }).strict()
 export const repositoryCandidateRequest = z.object({ paper_id: uuid, source_url: z.string().url().max(500) }).strict()
+const flatMemoryMetadata = z.record(z.string(), z.union([z.string().max(4000), z.number().finite(), z.boolean(), z.array(z.string().max(4000)).max(20)])).default({})
+export const memoryIngestRequest = z.object({
+  source_type: z.enum(['idea_message', 'report', 'experiment_summary', 'experiment_plan', 'related_work', 'artifact', 'manual']),
+  source_id: uuid.nullable().optional(),
+  artifact_id: uuid.nullable().optional(),
+  uploaded_file_id: uuid.nullable().optional(),
+  content: z.string().trim().min(1).max(200_000).nullable().optional(),
+  source_url: z.string().url().max(2000).nullable().optional(),
+  quote: z.string().max(20_000).nullable().optional(),
+  locator: z.string().max(255).nullable().optional(),
+  metadata: flatMemoryMetadata,
+  task_type: z.enum(['memory', 'superrag']).default('memory'),
+  idempotency_key: z.string().trim().min(1).max(200).nullable().optional(),
+}).strict().superRefine((value, context) => {
+  if (!value.content && !value.artifact_id && !value.uploaded_file_id) context.addIssue({ code: 'custom', path: ['content'], message: 'memory ingestion requires content or a controlled file id' })
+  if (value.artifact_id && value.uploaded_file_id) context.addIssue({ code: 'custom', path: ['artifact_id'], message: 'provide only one controlled file id' })
+  if (value.source_type === 'artifact' && !value.artifact_id && !value.uploaded_file_id) context.addIssue({ code: 'custom', path: ['artifact_id'], message: 'artifact source requires artifact_id or uploaded_file_id' })
+})
+export const memorySearchRequest = z.object({ query: z.string().trim().min(1).max(2000), limit: z.number().int().min(1).max(20).default(8), search_mode: z.enum(['memories', 'hybrid', 'documents']).default('hybrid') }).strict()
+export const memoryRevokeRequest = z.object({ reason: z.string().trim().min(3).max(2000), operation: z.enum(['forget', 'delete']).default('forget') }).strict()
 
 export function emptyIdeaDraft(): z.infer<typeof ideaDraft> {
   return ideaDraft.parse({})

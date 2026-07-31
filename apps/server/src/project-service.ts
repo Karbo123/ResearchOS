@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { pathInside, projectsRoot } from './paths.js'
 import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
+import { reconcileProjectLineage } from './impact-service.js'
 
 export type ProjectRow = { id: string; slug: string; title: string; status: string; current_idea_version: number; current_stage: string; created_at: string; updated_at: string }
 
@@ -28,6 +29,7 @@ export async function createProjectWorkspace(projectId: string, slug: string, sp
 
 export async function projectDetail(projectId: string) {
   const project = await requireProject(projectId)
+  const lineage = await reconcileProjectLineage(projectId)
   const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints] = await Promise.all([
     rows('SELECT * FROM idea_versions WHERE project_id=$1 ORDER BY version DESC', [projectId]),
     rows('SELECT * FROM papers WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
@@ -52,8 +54,9 @@ export async function projectDetail(projectId: string) {
   }))
   const artifactRows = (artifacts as Array<Record<string, unknown>>).map(artifact => ({
     ...artifact,
-    preview_url: `/api/artifacts/${artifact.id}/preview`,
-    download_url: `/api/artifacts/${artifact.id}/download`,
+    preview_url: `/api/projects/${projectId}/artifacts/${artifact.id}/preview`,
+    download_url: `/api/projects/${projectId}/artifacts/${artifact.id}/download`,
+    url: `/api/projects/${projectId}/artifacts/${artifact.id}/download`,
   }))
   return {
     ...project,
@@ -70,6 +73,7 @@ export async function projectDetail(projectId: string) {
     reports,
     tasks,
     checkpoints,
+    lineage,
   }
 }
 

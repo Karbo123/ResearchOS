@@ -1,6 +1,7 @@
 import { database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { requireProject } from './project-service.js'
+import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
 
 type Candidate = { title: string; authors: string[]; year: number | null; doi: string | null; source_url: string; source_provider: string; abstract?: string | null; pdf_url?: string | null; verified: false; resource_type: 'paper' }
 
@@ -97,5 +98,11 @@ export async function createOperationalReport(projectId: string, period: string)
   const content = [`# ${period === 'weekly' ? 'Weekly' : period === 'daily' ? 'Daily' : 'Manual'} Research Report`, '', `Project: ${project.title}`, `Status: ${project.status}`, `Stage: ${project.current_stage}`, '', `- Literature candidates: ${counts.papers}`, `- Verified evidence records: ${counts.evidence}`, `- Experiments: ${counts.experiments}`, `- Pending approvals: ${counts.pending}`, '', 'Metadata candidates are not full-text evidence. Experiment outputs do not establish scientific conclusions.'].join('\n')
   const id = crypto.randomUUID()
   await database.query('INSERT INTO reports(id,project_id,period,content) VALUES ($1,$2,$3,$4)', [id, projectId, period, content])
+  if (supermemoryEnabled()) {
+    await ingestProjectMemory(projectId, {
+      source_type: 'report', source_id: id, artifact_id: null, uploaded_file_id: null,
+      content, source_url: null, quote: null, locator: null, metadata: { report_period: period }, task_type: 'memory', idempotency_key: `report:${id}`,
+    })
+  }
   return { id, project_id: projectId, period, content }
 }

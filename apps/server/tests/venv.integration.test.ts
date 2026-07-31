@@ -5,7 +5,7 @@ import { ensureWindowsVenv } from '../src/experiment-runner.js'
 import { projectsRoot } from '../src/paths.js'
 
 const created: string[] = []
-afterAll(() => { for (const path of created) rmSync(path, { recursive: true, force: true }) })
+afterAll(() => { for (const path of created) rmSync(path, { recursive: true, force: true }) }, 120_000)
 
 describe('per-project scientific environment', () => {
   it('creates an interpreter under the project .venv', async () => {

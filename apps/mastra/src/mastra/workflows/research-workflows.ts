@@ -1,6 +1,6 @@
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
-import { chatWorkflowInputSchema, reportWorkflowInputSchema, researchWorkflowInputSchema } from '../contracts.js'
+import { approvalGateInputSchema, approvalGateOutputSchema, approvalGateResumeSchema, chatWorkflowInputSchema, reportWorkflowInputSchema, researchWorkflowInputSchema } from '../contracts.js'
 import { apiJson } from './api-client.js'
 
 const searchOutputSchema = z.object({
@@ -78,3 +78,50 @@ export const supervisionReportsWorkflow = createWorkflow({
     { id: 'weekly', cron: '30 9 * * 1', timezone: 'Asia/Shanghai', inputData: { period: 'weekly' } },
   ],
 }).then(listActiveProjectsStep).then(generateReportsStep).commit()
+
+const approvalGateStep = createStep({
+  id: 'human-approval',
+  inputSchema: approvalGateInputSchema,
+  outputSchema: approvalGateOutputSchema,
+  suspendSchema: z.object({
+    reason: z.string(), project_id: z.string().uuid(), proposal_id: z.string().uuid(), tool_name: z.string(), args_fingerprint: z.string(), policy_version: z.string(),
+  }).strict(),
+  resumeSchema: approvalGateResumeSchema,
+  execute: async ({ inputData, resumeData, suspend }) => {
+    if (!resumeData) {
+      return await suspend({
+        reason: inputData.reason,
+        project_id: inputData.project_id,
+        proposal_id: inputData.proposal_id,
+        tool_name: inputData.tool_name,
+        args_fingerprint: inputData.args_fingerprint,
+        policy_version: inputData.policy_version,
+      })
+    }
+    const decision = await apiJson(`/api/proposals/${inputData.proposal_id}/decision`, {
+      method: 'POST',
+      body: JSON.stringify({
+        decision: resumeData.approved ? 'approved' : 'rejected',
+        actor: resumeData.actor,
+        comment: resumeData.comment ?? null,
+        mastra_run_id: inputData.mastra_run_id ?? null,
+        tool_name: inputData.tool_name,
+        args_fingerprint: inputData.args_fingerprint,
+        policy_version: inputData.policy_version,
+      }),
+    })
+    return {
+      status: resumeData.approved ? 'approved' as const : 'rejected' as const,
+      project_id: inputData.project_id,
+      proposal_id: inputData.proposal_id,
+      tool_name: inputData.tool_name,
+      args_fingerprint: inputData.args_fingerprint,
+      policy_version: inputData.policy_version,
+      decision,
+    }
+  },
+})
+
+export const approvalGateWorkflow = createWorkflow({
+  id: 'proposal-approval-gate', inputSchema: approvalGateInputSchema, outputSchema: approvalGateOutputSchema,
+}).then(approvalGateStep).commit()

@@ -20,10 +20,18 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 
 状态只使用 `[ ]`、`[~]`、`[x]`、`[!]`。
 
-## 模型与 Mastra
+## 模型、Mastra 与 Supermemory
 
+- Mastra 官方 LLM 文档导航为 `https://mastra.ai/llms.txt`。需要查阅 Mastra 能力、API 或版本行为时，先从该地址定位主题，再阅读对应的 `https://mastra.ai/docs/` 官方页面和当前安装版本的类型定义；不得根据搜索摘要、旧缓存或未核对版本的示例推断实现。
+- Mastra 文档只能说明框架能力，不能放宽本项目的安全边界、无 fallback 约束、审批门禁、固定实验入口或密钥处理规则。接入新能力前必须把范围、依赖、数据流和验收补充到 `TODO.md`，并以当前项目的严格 Zod 契约和审计要求复核。
 - Idea 澄清、项目监督和实验规划使用 Mastra Agent；不得手写 Agent 循环或复制提示词。
-- Idea Agent 使用有界 Memory、Skills 和 Tools。Agent 不得获得任意 Shell、SQL、文件路径、可执行程序或网络工具。
+- Idea Agent 使用 Mastra Agent、Skills 和 Tools；语义 Agent Memory 统一由 Supermemory 管理，并通过 Supermemory 官方 Mastra 集成接入。Mastra 自带 Memory 不能作为 Research OS 的唯一或默认语义事实源。Agent 不得获得任意 Shell、SQL、文件路径、可执行程序或网络工具。
+- Supermemory 是长文本、事实、记录、文献知识和多模态内容的语义记忆系统；PGlite 只保存结构化业务状态、实体 ID、状态、审批、哈希、权限和审计，不把句子级语义内容硬编码为 SQL 查询。
+- Supermemory 官方资料入口：`https://supermemory.ai/docs/integrations/mastra.md`、`https://supermemory.ai/docs/concepts/graph-memory.md`、`https://supermemory.ai/docs/concepts/super-rag.md`、`https://supermemory.ai/docs/llms.txt`、`https://supermemory.ai/llms.txt`。接入前必须按官方文档和当前安装版本类型定义核对 API，不能依据摘要或臆造字段。
+- 所有 Supermemory memory 必须绑定一个不可变的 Research OS `project_id` 隔离域。读、写、检索、Graph Memory 可视化和 Super RAG 查询都必须带项目范围；禁止使用无项目的全局 memory、仅靠 prompt 约束隔离或把一个项目的 memory 作为另一个项目的上下文。跨项目查询必须是显式、经过审批且有审计记录的功能，目前默认禁止。
+- 项目隔离必须同时落在 Supermemory 的官方 scope/container/resource/metadata 机制（以核对后的 API 为准）和本地权限校验中；每条语义 memory 还要保留项目、来源 Artifact、SHA-256、文献页码/章节、Idea 版本、实验/报告 ID 和证据状态等可审计关联。Supermemory 失败、超时、鉴权失败或返回无效数据时直接返回结构化错误，不得本地降级、换 provider、静默写入 SQL 或继续生成助手内容。
+- 参考 PDF、Idea 讨论、日报/周报 feedback、日报/周报正文、实验结果总结、实验设计依据和探索点、论文/related work 参考，以及图片分析/识别等多模态内容，按项目范围写入 Supermemory；原始文件和哈希仍由受控 Artifact 管理，Supermemory 不改变 PDF 证据、页码 quote 和人工复核约束。
+- 网页左下角应提供项目范围内的 Supermemory Graph Memory 与语义检索入口。Graph 图和 Super RAG 结果必须显示当前 project scope、来源和权限状态，不得暴露其他项目的节点、事实或文献内容；功能未完成前不得在文档中表述为已实现。
 - Luna、Terra、Sol 三档的 model、URL、key 和 reasoning effort 完全独立。读取接口只返回 `key_configured`。
 - 运行时只读取项目 `.env` 和 `runtime/model-settings.json`，不得读取 Codex 配置目录或 `auth.json`。
 - 模型失败必须直接返回结构化错误；不得本地回复、隐式切换提供方、规则回答、伪造助手消息或替换为无关实验。
@@ -45,7 +53,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 
 ## 数据与证据
 
-- PGlite 是业务状态源；聊天和 Mastra Memory 不是唯一记忆。
+- PGlite 是结构化业务状态源；Supermemory 是项目范围的语义 Agent Memory；聊天记录、Mastra 自带 Memory 或 Supermemory 任一单独系统都不能替代另一方的职责。SQL 不保存未经必要的句子级语义副本，Supermemory 也不能替代审批、权限、状态、Artifact 哈希或审计账本。
 - 代码、配置、BibTeX 和 LaTeX 使用项目 Git；大文件进入 `artifacts/`。
 - 外部 API 使用合法 User-Agent、超时、限流意识和部分失败记录。
 - 没有 PDF SHA-256、稳定来源、页码/章节和原文 quote 时，记录只能是元数据候选。
@@ -65,7 +73,7 @@ npm run docs:check
 npx tsx scripts/ops-guard.ts status
 ```
 
-主链、模型、Mastra、实验、数据库或产物谱系变化还必须运行 `npx tsx scripts/acceptance-test.ts`。真实模型无效时记录结构化失败，不得伪造通过。
+主链、模型、Mastra、实验、数据库或产物谱系变化还必须运行 `npx tsx scripts/acceptance-test.ts`；Mastra Approval/HITL 变化还必须运行 `npm run mastra:hitl:check`。真实模型无效时记录结构化失败，不得伪造通过。
 
 README.md 保持英文，README.zh-CN.md 保持中文，章节顺序、命令、端口、环境变量、能力和限制同步；更新时同步 `DOCS_SYNC_VERSION`。重大更新同步 `.env.example`、架构、运维、安全、需求审计和 TODO。UI 变化需要真实浏览器检查和无重叠截图。
 

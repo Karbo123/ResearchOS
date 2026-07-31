@@ -4,7 +4,9 @@ import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { audit, database, rows } from './database.js'
 import { ApiError } from './http.js'
 import { artifactsRoot, pathInside } from './paths.js'
+import { registerLineageDependencies } from './impact-service.js'
 import { requireProject } from './project-service.js'
+import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
 
 type Paper = { id: string; title: string; doi: string | null; source_url: string; bibtex: string | null; metadata: Record<string, unknown> }
 const allowedPdfHosts = new Set(['arxiv.org', 'export.arxiv.org', 'openaccess.thecvf.com', 'aclanthology.org', 'proceedings.mlr.press'])
@@ -60,8 +62,20 @@ export async function ingestEvidence(projectId: string, limit: number) {
       const quotes = await pageQuotes(bytes)
       if (!quotes.length) throw new Error('pdf_text_not_extractable')
       for (const item of quotes) {
-        await database.query('INSERT INTO evidence(id,project_id,paper_id,claim,quote,locator,source_url,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [crypto.randomUUID(), projectId, paper.id, 'Candidate passage requiring claim-level human review', item.quote, `page ${item.page}`, pdfUrl, { pdf_sha256: sha256, artifact_id: artifactId, evidence_status: 'page_quote_candidate' }])
+        const evidenceId = crypto.randomUUID()
+        await database.query('INSERT INTO evidence(id,project_id,paper_id,claim,quote,locator,source_url,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [evidenceId, projectId, paper.id, 'Candidate passage requiring claim-level human review', item.quote, `page ${item.page}`, pdfUrl, { pdf_sha256: sha256, artifact_id: artifactId, evidence_status: 'page_quote_candidate' }])
+        await registerLineageDependencies(projectId, [
+          { downstream: { type: 'artifact', id: artifactId }, upstream: { type: 'paper', id: paper.id }, relation: 'source_pdf' },
+          { downstream: { type: 'evidence', id: evidenceId }, upstream: { type: 'paper', id: paper.id }, relation: 'paper_evidence' },
+        ])
         storedCount += 1
+      }
+      if (supermemoryEnabled()) {
+        await ingestProjectMemory(projectId, {
+          source_type: 'related_work', source_id: paper.id, artifact_id: artifactId, uploaded_file_id: null,
+          content: null, source_url: pdfUrl, quote: quotes.map(item => `page ${item.page}: ${item.quote}`).join('\n').slice(0, 4000), locator: `pages ${quotes[0]?.page || 1}-${quotes.at(-1)?.page || quotes[0]?.page || 1}`,
+          metadata: { paper_id: paper.id, source_url: pdfUrl, page_quote_count: quotes.length }, task_type: 'superrag', idempotency_key: `paper-pdf:${paper.id}:${sha256}`,
+        })
       }
       await database.query('UPDATE papers SET verified=TRUE WHERE id=$1', [paper.id])
     } catch (error) { errors.push({ paper_id: paper.id, code: error instanceof Error ? error.message : 'evidence_ingest_failed' }) }

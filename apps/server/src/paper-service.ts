@@ -5,6 +5,7 @@ import { ApiError } from './http.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot } from './paths.js'
 import { projectDetail } from './project-service.js'
+import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
 
 function latex(value: unknown): string {
   return String(value ?? '').replace(/([#$%&_{}])/g, '\\$1').replaceAll('~', '\\textasciitilde{}').replaceAll('^', '\\textasciicircum{}')
@@ -48,6 +49,21 @@ Metadata candidates are not full-text evidence. System integration results do no
     ? { action: 'replace', path: 'paper/main.tex', content, expected_sha256: createHash('sha256').update(existing).digest('hex') }
     : { action: 'create', path: 'paper/main.tex', content }
   await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded LaTeX draft', 'Create evidence-grounded paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic draft`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations: [operation], evidence_ids: evidence.map(item => item.id) }])
+  if (supermemoryEnabled()) {
+    await ingestProjectMemory(projectId, {
+      source_type: 'related_work',
+      source_id: proposalId,
+      artifact_id: null,
+      uploaded_file_id: null,
+      content: evidence.map(item => `${String(item.claim || '')}\n${String(item.quote || '')}\n${String(item.locator || '')}\n${String(item.source_url || '')}`).join('\n\n'),
+      source_url: null,
+      quote: null,
+      locator: null,
+      metadata: { proposal_id: proposalId, evidence_ids: evidence.map(item => String(item.id)), evidence_status: 'page_quote_requires_claim_review' },
+      task_type: 'memory',
+      idempotency_key: `related-work-proposal:${proposalId}`,
+    })
+  }
   return { proposal_id: proposalId, status: 'pending' }
 }
 

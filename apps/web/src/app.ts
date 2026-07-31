@@ -360,7 +360,7 @@ async function openProject(id) {
   if (state.projectId !== id) state.searchCandidates = [];
   state.projectId = id; state.project = await api(`/api/projects/${id}`);
   $("newView").classList.add("hidden"); $("projectView").classList.remove("hidden");
-  $("pageTitle").textContent = state.project.project.title; $("projectMeta").textContent = `${state.project.project.stage} · v${state.project.project.idea_version} · ${id.slice(0,8)}`;
+  $("pageTitle").textContent = state.project.title; $("projectMeta").textContent = `${state.project.current_stage} · v${state.project.current_idea_version} · ${id.slice(0,8)}`;
   state.sessionId = state.project.session_id || state.sessionId || null;
   renderProject(); loadProjects();
 }
@@ -374,7 +374,7 @@ function newProject() {
 function statusBadge(status) { const kind = status === "approved" || status === "succeeded" ? "live" : status === "failed" || status === "rejected" ? "failed" : "pending"; return `<span class="badge ${kind}">${escapeHtml(status)}</span>`; }
 function artifactPreviewMarkup(artifact) {
   const previewUrl = escapeHtml(artifact.preview_url || "");
-  const downloadUrl = escapeHtml(artifact.url || "");
+  const downloadUrl = escapeHtml(artifact.download_url || artifact.url || "");
   if (artifact.mime_type.startsWith("image/")) return `<img class="artifact-image" src="${downloadUrl}" alt="${escapeHtml(artifact.name)}">`;
   return `<div class="artifact-preview" data-preview-url="${previewUrl}"><div class="preview-loading">加载预览…</div></div>`;
 }
@@ -412,8 +412,29 @@ function renderPointCloudPreview(container, preview) {
   container.querySelector(".point-reset").addEventListener("click", () => { state3d.yaw = .55; state3d.pitch = .25; state3d.zoom = 1; draw(); });
   draw(); iconRefresh();
 }
+function renderTimeseriesPreview(container, preview) {
+  const points = Array.isArray(preview.points) ? preview.points.filter(point => point && Number.isFinite(Number(point.step))) : [];
+  const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(metric => points.some(point => Number.isFinite(Number(point[metric]))));
+  if (!points.length || !metrics.length) { container.innerHTML = `<div class="preview-error">没有可绘制的有限数值指标。</div>`; return; }
+  const maxVisible = Math.max(10, points.length);
+  container.innerHTML = `<div class="timeseries-toolbar"><label>指标<select class="timeseries-metric">${metrics.map(metric => `<option value="${metric}">${metric}</option>`).join("")}</select></label><label>点数<input class="timeseries-window" type="range" min="10" max="${maxVisible}" value="${maxVisible}"></label><span class="muted timeseries-count"></span></div><svg class="timeseries-chart" viewBox="0 0 720 300" role="img" aria-label="指标曲线"></svg>`;
+  const metricSelect = container.querySelector(".timeseries-metric"), windowInput = container.querySelector(".timeseries-window"), svg = container.querySelector(".timeseries-chart"), count = container.querySelector(".timeseries-count");
+  const colors = ["#16856b", "#d97706", "#2563eb", "#be123c", "#7c3aed", "#0f766e"];
+  const draw = () => {
+    const metric = metricSelect.value, visible = points.slice(-Number(windowInput.value)), numeric = visible.filter(point => Number.isFinite(Number(point[metric])));
+    const steps = numeric.map(point => Number(point.step)), minStep = Math.min(...steps), stepSpan = Math.max(Math.max(...steps) - minStep, 1);
+    const values = numeric.map(point => Number(point[metric])), minValue = Math.min(...values), maxValue = Math.max(...values), span = Math.max(maxValue - minValue, 1e-12);
+    const groups = [...new Set(numeric.map(point => String(point.seed ?? "all")))];
+    const body = [`<rect x="0" y="0" width="720" height="300" fill="#f7faf8" rx="8"/><line x1="48" y1="18" x2="48" y2="266" stroke="#cbd5d1"/><line x1="48" y1="266" x2="704" y2="266" stroke="#cbd5d1"/>`, `<text x="52" y="18" fill="#60706a" font-size="11">${escapeHtml(metric)} · ${escapeHtml(String(minValue.toPrecision(4)))}–${escapeHtml(String(maxValue.toPrecision(4)))}</text>`];
+    groups.forEach((seed, groupIndex) => { const group = numeric.filter(point => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step)); const coords = group.map(point => `${48 + ((Number(point.step) - minStep) / stepSpan) * 656},${250 - ((Number(point[metric]) - minValue) / span) * 220}`).join(" "); const color = colors[groupIndex % colors.length]; body.push(`<polyline points="${coords}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/><text x="${56 + groupIndex * 86}" y="288" fill="${color}" font-size="11">seed ${escapeHtml(String(seed))}</text>`); group.forEach(point => { const x = 48 + ((Number(point.step) - minStep) / stepSpan) * 656, y = 250 - ((Number(point[metric]) - minValue) / span) * 220; body.push(`<circle cx="${x}" cy="${y}" r="3" fill="${color}"><title>step ${escapeHtml(String(point.step))} · ${escapeHtml(metric)} ${escapeHtml(String(Number(point[metric]).toPrecision(6)))}</title></circle>`); }); });
+    svg.innerHTML = body.join(""); count.textContent = `${numeric.length}/${points.length} 个点`;
+  };
+  metricSelect.addEventListener("change", draw); windowInput.addEventListener("input", draw); draw();
+}
 function renderArtifactPreview(container, preview) {
   if (preview.type === "point_cloud") return renderPointCloudPreview(container, preview);
+  if (preview.type === "timeseries") return renderTimeseriesPreview(container, preview);
+  if (preview.type === "video") { container.innerHTML = `<video class="artifact-video" controls preload="metadata" src="${escapeHtml(preview.download_url)}"></video>`; return; }
   if (preview.type === "image") { container.innerHTML = `<div class="preview-footnote">图片直接使用下载接口展示。</div>`; return; }
   const value = preview.type === "json" ? formatPreviewValue(preview.value) : preview.text || "";
   const label = preview.type === "pdf" ? `PDF · ${Number(preview.page_count || 0)} 页，仅展示前 3 页可提取文本` : preview.type === "table" ? `${String(preview.format || "table").toUpperCase()} · 最多展示 200 行` : preview.type === "html_text" ? "HTML 原文（未执行脚本）" : "文本预览";
@@ -508,18 +529,20 @@ async function runDiagnostics() {
   catch (error) { toast(error.message); }
 }
 function renderProject() {
-  const d = state.project, c = d.counts;
-  const pe = d.policy_enforcement || {}, cr = pe.citation_readiness || {};
-  const isActive = d.project.status === "active";
+  const raw = state.project;
+  const d = raw.project ? { ...raw, ...raw.project } : raw;
+  const c = d.counts || { papers: (d.papers || []).length, experiments: (d.experiments || []).length, artifacts: (d.artifacts || []).length };
+  const pe = d.policy_enforcement || { status: "unknown", runner_compatible: null, minimum_random_seed_count: 1, approval: {} }, cr = pe.citation_readiness || {};
+  const isActive = d.status === "active";
   const executionDisabled = isActive ? "" : "disabled";
-  const stateControls = d.project.status === "active"
+  const stateControls = d.status === "active"
     ? `<button class="secondary" onclick="changeProjectState('pause')"><i data-lucide="pause"></i>暂停</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>取消项目</button>`
-    : d.project.status === "paused"
+    : d.status === "paused"
       ? `<button class="approve" onclick="changeProjectState('resume')"><i data-lucide="play"></i>恢复</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>取消项目</button>`
       : "";
   $("tab-overview").innerHTML = `<div class="metric-grid"><div class="metric"><span>论文</span><strong>${c.papers}</strong></div><div class="metric"><span>实验</span><strong>${c.experiments}</strong></div><div class="metric"><span>产物</span><strong>${c.artifacts}</strong></div><div class="metric"><span>待审批</span><strong>${d.proposals.filter(p=>p.status==='pending').length}</strong></div></div>
     <div class="section"><div class="section-head"><h2>研究规格</h2><div class="button-row"><button class="secondary" onclick="runSearch()" ${executionDisabled}><i data-lucide="search"></i>检索文献</button><button class="secondary" onclick="createPaperDraft()" ${executionDisabled}><i data-lucide="file-pen-line"></i>生成证据论文草稿</button><button class="secondary" onclick="createCompilePlan()" ${executionDisabled}><i data-lucide="file-check"></i>编译论文</button></div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.spec.idea.research_question)}</h3><p>${escapeHtml(d.spec.idea.domain)} · ${escapeHtml((d.spec.idea.keywords||[]).join(', '))}</p></div>${statusBadge(d.spec.feasibility)}</div></div></div>
-    <div class="section"><div class="section-head"><h2>项目状态</h2><div class="button-row">${stateControls}</div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.project.stage)}</h3><p>Idea version ${d.project.idea_version} · ${escapeHtml(d.project.status)}</p></div>${statusBadge(d.project.status)}</div></div></div>`;
+    <div class="section"><div class="section-head"><h2>项目状态</h2><div class="button-row">${stateControls}</div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.current_stage)}</h3><p>Idea version ${d.current_idea_version} · ${escapeHtml(d.status)}</p></div>${statusBadge(d.status)}</div></div></div>`;
   $("tab-literature").innerHTML = `<div class="section-head"><h2>可验证文献记录</h2><div class="button-row"><button class="secondary" onclick="runSearch()"><i data-lucide="search"></i>更新检索</button><button class="secondary" onclick="ingestEvidence()" ${executionDisabled}><i data-lucide="scan-text"></i>提取全文证据</button></div></div>${d.papers.length ? `<div class="data-list">${d.papers.map(p=>`<div class="data-row"><div><h3><a href="${escapeHtml(p.source_url)}" target="_blank">${escapeHtml(p.title)}</a></h3><p>${p.year||''} ${escapeHtml(p.venue||'')} · ${escapeHtml(p.source_provider||'unknown')} · DOI ${escapeHtml(p.doi||'未提供')} · ${p.verified?'元数据已验证':'待验证'} · 页码原文证据 ${Number(p.fulltext_evidence_count||0)} · 代码候选 ${(p.code_repositories||[]).length}</p>${p.pdf_url?`<p><a href="${escapeHtml(p.pdf_url)}" target="_blank">打开来源 PDF</a></p>`:''}${p.bibtex?`<details><summary>BibTeX</summary><pre class="code-block">${escapeHtml(p.bibtex)}</pre></details>`:''}</div>${statusBadge((p.fulltext_evidence_count||0)>0?'fulltext-evidence':'metadata-only')}</div>`).join('')}</div>` : `<div class="empty">尚无文献记录。</div>`}`;
   $("tab-experiments").innerHTML = `<div class="section-head"><h2>实验规划与运行</h2><div class="button-row"><button class="secondary" onclick="createExperimentPlan()" ${executionDisabled}><i data-lucide="list-checks"></i>生成主题专属计划</button><button class="secondary" onclick="runDiagnostics()"><i data-lucide="activity"></i>数值诊断</button></div></div>${d.experiments.length ? `<div class="data-list">${d.experiments.map(e=>`<div class="data-row"><div><h3>${escapeHtml(e.experiment_type)}</h3><p>${escapeHtml(JSON.stringify(e.metrics))}${e.run_id?` · Run ${escapeHtml(e.run_id)}`:''}</p></div><div class="button-row">${statusBadge(e.status)}<button class="secondary" onclick="syncRun('${e.id}')"><i data-lucide="refresh-cw"></i>同步</button>${['queued','running'].includes(e.status)?`<button class="reject" onclick="cancelRun('${e.id}')"><i data-lucide="square"></i>取消</button>`:''}</div></div>`).join('')}</div>` : `<div class="empty">生成计划后会先进入审批；系统不会自动创建无关实验。</div>`}<div id="diagnosticsOutput" class="section"><div class="empty">运行数值诊断以计算指标并检查失败日志。</div></div>`;
   const artifactCards = d.artifacts.map(a => `<article class="artifact-card">${artifactPreviewMarkup(a)}<div class="artifact-body"><h3>${escapeHtml(a.name)}</h3><p class="muted">${escapeHtml(a.kind)} · ${a.valid ? "有效" : "已失效"}</p><a href="${escapeHtml(a.url)}" download>下载产物</a></div></article>`).join("");
@@ -583,6 +606,50 @@ async function queryProjectMaterials(panel, query, offset, append) {
   }
   iconRefresh();
 }
+function openMemoryGraph() {
+  if (!state.projectId) { toast("请先打开一个研究项目。"); return; }
+  $("memoryGraphModal").classList.remove("hidden");
+  setMemoryView("graph");
+  $("memoryGraphQuery").focus();
+  loadMemoryGraphStatus();
+}
+function closeMemoryGraph() { $("memoryGraphModal").classList.add("hidden"); $("openMemoryGraph").focus(); }
+let memoryView: "graph" | "search" = "graph";
+function setMemoryView(view: "graph" | "search") {
+  memoryView = view;
+  const graphMode = $("memoryGraphMode"), searchMode = $("memorySearchMode");
+  graphMode.classList.toggle("active", view === "graph"); searchMode.classList.toggle("active", view === "search");
+  graphMode.setAttribute("aria-selected", String(view === "graph")); searchMode.setAttribute("aria-selected", String(view === "search"));
+  $("memoryGraphCanvas").classList.toggle("hidden", view !== "graph"); $("memoryGraphResults").classList.toggle("hidden", view !== "graph"); $("memorySearchResults").classList.toggle("hidden", view !== "search");
+  $("memoryGraphStatus").textContent = view === "graph" ? "输入查询以加载当前项目的 Graph Memory。" : "输入查询以检索当前项目的语义候选。";
+}
+async function loadMemoryGraphStatus() {
+  try {
+    const status = await api(`/api/projects/${state.projectId}/memory/status`);
+    $("memoryGraphStatus").textContent = status.key_configured ? "Supermemory 已配置，输入查询后加载项目范围图。" : "Supermemory 尚未配置 API key；不会使用本地或无关数据替代。";
+  } catch (error) { $("memoryGraphStatus").textContent = `状态读取失败：${error.message}`; }
+}
+type MemoryGraphNode = { id: string; label: string; kind: string; metadata?: Record<string, unknown> };
+type MemoryGraphEdge = { id: string; source: string; target: string; relation: string };
+type MemoryGraphResponse = { project_id: string; nodes: MemoryGraphNode[]; edges: MemoryGraphEdge[] };
+type MemorySearchResult = { id: unknown; memory: unknown; similarity: unknown; metadata: Record<string, unknown>; source_type?: string | null; source_id?: string | null; artifact_id?: string | null; evidence_status?: string | null };
+type MemorySearchResponse = { project_id: string; query: string; total: number; results: MemorySearchResult[] };
+
+function renderMemoryGraph(graph: MemoryGraphResponse) {
+  const svg = $("memoryGraphCanvas");
+  const nodes = graph.nodes || []; const edges = graph.edges || [];
+  const positions = new Map(nodes.map((node, index) => [node.id, { x: 80 + (index % 5) * 150, y: 70 + Math.floor(index / 5) * 120 }]));
+  svg.innerHTML = edges.map(edge => { const a = positions.get(edge.source), b = positions.get(edge.target); return a && b ? `<line class="memory-graph-edge" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>` : ""; }).join("") + nodes.map(node => { const p = positions.get(node.id); return `<g><circle class="memory-graph-node ${node.kind !== "memory" ? "related" : ""}" cx="${p.x}" cy="${p.y}" r="18"><title>${escapeHtml(node.label)}</title></circle><text class="memory-graph-label" x="${p.x}" y="${p.y + 36}" text-anchor="middle">${escapeHtml(node.label.slice(0, 20))}</text></g>`; }).join("");
+  $("memoryGraphResults").innerHTML = (graph.nodes || []).filter(node => node.kind === "memory").map(node => `<article class="memory-graph-result"><strong>${escapeHtml(node.label)}</strong><p>项目范围：${escapeHtml(graph.project_id)} · 语义候选，需人工证据复核</p></article>`).join("") || '<div class="empty">没有返回当前项目的关系节点。</div>';
+}
+function renderMemorySearch(result: MemorySearchResponse) {
+  $("memorySearchResults").innerHTML = result.results.map(item => {
+    const metadata = item.metadata || {};
+    const source = item.source_type ? `${item.source_type}${item.source_id ? ` · ${item.source_id}` : ""}` : "Supermemory semantic result";
+    return `<article class="memory-search-result"><h3>${escapeHtml(String(item.memory || "未命名候选"))}</h3><p>相似度：${escapeHtml(String(item.similarity ?? "未提供"))} · 来源：${escapeHtml(source)}</p><p>Artifact：${escapeHtml(String(item.artifact_id || metadata.artifact_id || "无"))} · 证据状态：${escapeHtml(String(item.evidence_status || "semantic_candidate"))}</p></article>`;
+  }).join("") || '<div class="empty">没有返回当前项目的语义候选。</div>';
+}
+async function searchMemoryGraph(event) { event.preventDefault(); if (!state.projectId) return; const query = $("memoryGraphQuery").value.trim(); if (!query) return; $("memoryGraphStatus").textContent = "正在检索当前项目范围…"; $("memoryGraphResults").innerHTML = ""; $("memorySearchResults").innerHTML = ""; try { if (memoryView === "search") { const result = await api(`/api/projects/${state.projectId}/memory/search`, { method: "POST", body: JSON.stringify({ query, limit: 20, search_mode: "hybrid" }) }) as MemorySearchResponse; renderMemorySearch(result); $("memoryGraphStatus").textContent = `${result.total} 条候选 · 来源：Supermemory · 当前项目范围`; return; } const graph = await api(`/api/projects/${state.projectId}/memory/graph`, { method: "POST", body: JSON.stringify({ query, limit: 8 }) }) as MemoryGraphResponse; renderMemoryGraph(graph); $("memoryGraphStatus").textContent = `${graph.nodes.length} 个节点 · ${graph.edges.length} 条关系 · 来源：Supermemory`; } catch (error) { $("memoryGraphStatus").textContent = `请求失败：${error.message}`; $("memoryGraphCanvas").innerHTML = ""; $("memoryGraphResults").innerHTML = ""; $("memorySearchResults").innerHTML = ""; } }
 function renderSearchCandidates() {
   const old = $("searchCandidatesPanel");
   if (old) old.remove();
@@ -679,6 +746,8 @@ function bindComposerKeyboard(formId, inputId) {
 
 $("chatForm").addEventListener("submit", sendChat); $("confirmProject").addEventListener("click", confirmProject); $("newProject").addEventListener("click",newProject); $("refresh").addEventListener("click",refreshProject); $("projectChatForm").addEventListener("submit",sendProjectChat);
 $("openModelSettings").addEventListener("click", openModelSettings); $("closeModelSettings").addEventListener("click", closeModelSettings); $("cancelModelSettings").addEventListener("click", closeModelSettings); $("modelSettingsForm").addEventListener("submit", saveModelSettings);
+$("openMemoryGraph").addEventListener("click", openMemoryGraph); $("closeMemoryGraph").addEventListener("click", closeMemoryGraph); $("memoryGraphForm").addEventListener("submit", searchMemoryGraph); $("memoryGraphModal").addEventListener("click", event => { if (event.target === $("memoryGraphModal")) closeMemoryGraph(); });
+$("memoryGraphMode").addEventListener("click", () => setMemoryView("graph")); $("memorySearchMode").addEventListener("click", () => setMemoryView("search"));
 $("modelSettingsForm").addEventListener("input", () => { state.settingsDirty = true; });
 $("modelSettingsModal").addEventListener("click", event => { if (event.target === $("modelSettingsModal")) closeModelSettings(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && !$("modelSettingsModal").classList.contains("hidden")) closeModelSettings(); });

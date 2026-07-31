@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url'
 
 const sourceDirectory = dirname(fileURLToPath(import.meta.url))
 export const repositoryRoot = resolve(sourceDirectory, '../../..')
-export const runtimeRoot = resolve(repositoryRoot, process.env.RESEARCH_RUNTIME_DIR || 'runtime')
+const defaultRuntimeDirectory = process.env.NODE_ENV === 'test' ? `runtime/test-${process.pid}` : 'runtime'
+export const runtimeRoot = resolve(repositoryRoot, process.env.RESEARCH_RUNTIME_DIR || defaultRuntimeDirectory)
 export const projectsRoot = resolve(repositoryRoot, process.env.RESEARCH_PROJECTS_DIR || 'projects')
 export const artifactsRoot = resolve(repositoryRoot, process.env.RESEARCH_ARTIFACTS_DIR || 'artifacts')
 export const publicRoot = resolve(repositoryRoot, 'apps/web/public')

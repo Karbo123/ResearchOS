@@ -16,6 +16,10 @@ Only approved, allowlisted experiment types run. Project paths are derived from 
 
 The supervisor provides fixed launch arguments, timeout, process-tree termination, bounded logs, required structured outputs, SHA-256 registration, and audit records. Untrusted high-risk code requires a separately managed virtual machine because native process controls cannot guarantee kernel isolation or resource hard limits.
 
+## Lineage and Recovery Gates
+
+Experiment outputs are bound to the Idea version, Git commit, configuration fingerprint, source records, Artifact hashes, and Checkpoint. Fingerprint reconciliation and approved revisions recursively invalidate dependent material and record an audit event. Recovery checks project ownership, source-run success, current Idea and Git baselines, Artifact validity, path containment, symlink rejection, file existence, and SHA-256 equality before creating an `experiment_rerun` Proposal. Approval is required before queueing; invalidated or changed dependencies fail closed and cannot be treated as successful output.
+
 ## Uploads and Evidence
 
 Uploads are size- and extension-limited and scanned with Windows Defender. Scanner absence, threat detection, timeout, or scan failure rejects the upload. Uploaded material remains untrusted context and is not executed.
@@ -35,6 +39,12 @@ Archives are fetched only from the approved provider hosts, bounded by byte, ent
 ## Network
 
 Only fixed academic providers, approved repository providers, configured model endpoints, and local loopback services are valid network destinations. External requests use timeouts and a project User-Agent. Do not bind API or Studio to a LAN or public interface.
+
+## Supermemory Boundary
+
+Supermemory is a remote, optional semantic-memory processor. The API sends only bounded, project-scoped content and metadata; the local Artifact remains the source of the original PDF/image bytes and SHA-256. Every request includes the deterministic project container tag and the local `memory_links` ledger records source IDs, Artifact IDs, hashes, evidence status, remote IDs, and failure state.
+
+The browser receives only `key_configured`, never the key or unrestricted remote URLs. Search and Graph responses are labeled semantic candidates and cannot be promoted to evidence or experiment conclusions. Missing configuration, timeout, authentication failure, invalid response, or remote mutation failure is a direct structured error. There is no local semantic fallback, provider switch, or silent SQL copy of the failed content. Forget/delete is an external side effect and requires a project Proposal approval.
 
 ## Dependency Risk
 

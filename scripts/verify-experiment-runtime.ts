@@ -12,6 +12,7 @@ const runtimeDirectory = resolve(repositoryRoot, process.env.RESEARCH_RUNTIME_DI
 const { experimentRequest } = await import('../apps/server/src/contracts.js')
 const { database, migrate } = await import('../apps/server/src/database.js')
 const { cancelRun, submitRun } = await import('../apps/server/src/experiment-runner.js')
+const { buildArtifactPreview } = await import('../apps/server/src/artifact-preview-service.js')
 const { artifactsRoot, projectsRoot } = await import('../apps/server/src/paths.js')
 
 const projectIds = [crypto.randomUUID(), crypto.randomUUID()]
@@ -53,6 +54,7 @@ try {
     const projectId = projectIds[index]!
     const proposalId = proposalIds[index]!
     await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [projectId, `runtime-check-${index}-${checkId.slice(0, 8)}`, `Runtime check ${index}`])
+    await database.query('INSERT INTO idea_versions(id,project_id,version,spec,change_reason) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), projectId, 1, { schema_version: '1.0', idea: { title: `Runtime check ${index}`, research_question: 'Verify the native experiment contract and artifact lineage.' } }, 'test fixture'])
     await database.query("INSERT INTO proposals(id,project_id,kind,status,reason,summary,payload) VALUES ($1,$2,'experiment_plan','approved',$3,$4,$5)", [proposalId, projectId, 'Native experiment integration check', 'Approved test-only scientific experiment', {}])
     mkdirSync(resolve(projectDirectories[index]!, 'experiment'), { recursive: true })
   }
@@ -62,6 +64,7 @@ try {
     'output = pathlib.Path(sys.argv[2])',
     'output.mkdir(parents=True, exist_ok=True)',
     '(output / "metrics.json").write_text(json.dumps({"accuracy": 0.875, "loss": 0.25}), encoding="utf-8")',
+    '(output / "metrics.jsonl").write_text("\\n".join(json.dumps(item) for item in [{"step": 1, "unit": "epoch", "seed": 13, "loss": 0.4, "accuracy": 0.75}, {"step": 2, "unit": "epoch", "seed": 13, "loss": 0.25, "accuracy": 0.875}]) + "\\n", encoding="utf-8")',
     '(output / "checkpoint.json").write_text(json.dumps({"stage": "complete", "samples": 8}), encoding="utf-8")',
     '(output / "preview.ply").write_text("ply\\nformat ascii 1.0\\nelement vertex 3\\nproperty float x\\nproperty float y\\nproperty float z\\nend_header\\n0 0 0\\n1 0 0\\n0 1 0\\n", encoding="ascii")',
   ].join('\n')
@@ -82,12 +85,16 @@ try {
     throw new Error(`successful experiment failed: ${success.error || 'unknown'}\n${logTail}`)
   }
   if (success.metrics.accuracy !== 0.875 || success.metrics.loss !== 0.25) throw new Error('experiment metrics were not persisted')
-  for (const name of ['metrics.json', 'checkpoint.json', 'preview.ply']) {
+  for (const name of ['metrics.json', 'metrics.jsonl', 'checkpoint.json', 'preview.ply']) {
     const path = resolve(runDirectories[0]!, name)
     if (!existsSync(path) || readFileSync(path).length === 0) throw new Error(`required artifact missing: ${name}`)
   }
+  const metricsPreview = buildArtifactPreview(resolve(runDirectories[0]!, 'metrics.jsonl'), 'metrics.jsonl', 'application/x-ndjson', '/download')
+  if (metricsPreview.type !== 'timeseries' || metricsPreview.point_count !== 2 || !/^[0-9a-f]{64}$/.test(String(metricsPreview.sha256))) throw new Error('metrics.jsonl artifact preview contract failed')
+  const plyPreview = buildArtifactPreview(resolve(runDirectories[0]!, 'preview.ply'), 'preview.ply', 'model/ply', '/download')
+  if (plyPreview.type !== 'point_cloud' || plyPreview.source_point_count !== 3) throw new Error('PLY artifact preview contract failed')
   const artifactRows = await database.query<{ sha256: string }>('SELECT sha256 FROM artifacts WHERE experiment_id=$1', [runIds[0]])
-  if (artifactRows.rows.length < 3 || artifactRows.rows.some(row => !/^[0-9a-f]{64}$/.test(row.sha256))) throw new Error('artifact SHA-256 ledger is incomplete')
+  if (artifactRows.rows.length < 4 || artifactRows.rows.some(row => !/^[0-9a-f]{64}$/.test(row.sha256))) throw new Error('artifact SHA-256 ledger is incomplete')
 
   const cancellationSource = [
     'import pathlib, subprocess, sys, time',
@@ -117,7 +124,7 @@ try {
 
   console.log(JSON.stringify({
     status: 'passed', per_project_venv: projectDirectories.every(path => existsSync(resolve(path, '.venv', 'Scripts', 'python.exe'))),
-    successful_metrics: success.metrics, artifact_sha256_records: artifactRows.rows.length,
+    successful_metrics: success.metrics, artifact_sha256_records: artifactRows.rows.length, metrics_preview: { type: metricsPreview.type, point_count: metricsPreview.point_count },
     process_tree_cancelled: true, generated_python_removed_after_check: true,
   }, null, 2))
 } finally {

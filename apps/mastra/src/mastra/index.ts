@@ -10,32 +10,38 @@ import {
 } from './agents/research-agents.js'
 import {
   adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema,
-  experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
+  approvalGateRequestSchema, approvalGateResumeRequestSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
   supervisionIntentSchema, supervisionRequestSchema, type ModelTier,
 } from './contracts.js'
 import { loadModelConfig, ModelConfigurationError } from './model-config.js'
+import { strictSupermemoryProcessors, SupermemoryConfigurationError } from './supermemory.js'
 import { inspectIdeaDraft, inspectIdeaDraftTool } from './tools/inspect-idea-draft.js'
-import { projectChatWorkflow, researchBootstrapWorkflow, supervisionReportsWorkflow } from './workflows/research-workflows.js'
+import { approvalGateWorkflow, projectChatWorkflow, researchBootstrapWorkflow, supervisionReportsWorkflow } from './workflows/research-workflows.js'
 import { researchRoot } from './env.js'
 
 const storage = new LibSQLStore({
   id: 'research-os-mastra-storage', url: `file:${resolve(researchRoot, 'runtime', 'mastra.db')}`,
 })
 
-function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'detailed') {
+function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'detailed', projectId?: string | null, conversationId?: string | null) {
   const context = new RequestContext<z.infer<typeof agentRequestContextSchema>>()
   context.set('tier', tier)
   context.set('modelConfig', loadModelConfig(tier))
   if (clarificationMode) context.set('clarificationMode', clarificationMode)
+  if (projectId) context.set('supermemoryProjectId', projectId)
+  if (conversationId) context.set('supermemoryConversationId', conversationId)
   return context
 }
 function generationOptions(context: RequestContext<z.infer<typeof agentRequestContextSchema>>) {
   const config = context.get('modelConfig')
+  const projectId = context.get('supermemoryProjectId')
+  const conversationId = context.get('supermemoryConversationId')
   return {
     requestContext: context,
     model: configuredModel(context.get('tier')),
     maxRetries: 0,
     providerOptions: { openai: { reasoningEffort: config.reasoningEffort } },
+    ...(projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId) : {}),
   }
 }
 function safeStatus(status: number): 400 | 401 | 403 | 404 | 409 | 422 | 500 | 502 | 503 {
@@ -45,6 +51,10 @@ function routeError(error: unknown, operation: string) {
   if (error instanceof ModelConfigurationError) return {
     status: 503,
     body: { code: 'llm_provider_not_configured', message: '当前模型层级配置无效，请检查模型设置。' },
+  }
+  if (error instanceof SupermemoryConfigurationError) return {
+    status: 503,
+    body: { code: error.code, message: error.message },
   }
   if (error instanceof z.ZodError) return {
     status: 422,
@@ -68,7 +78,7 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, clarifyRequestSchema)
-        const context = requestContext(body.tier, body.clarification_mode)
+        const context = requestContext(body.tier, body.clarification_mode, body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null, body.memory_thread?.startsWith('session:') ? body.memory_thread.slice('session:'.length) : null)
         const gapResult = inspectIdeaDraft(body.current_draft)
         const payload = {
           latest_user_message: body.message,
@@ -103,7 +113,7 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, supervisionRequestSchema)
-        const context = requestContext(body.tier)
+        const context = requestContext(body.tier, undefined, body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null, body.memory_thread?.startsWith('session:') ? body.memory_thread.slice('session:'.length) : null)
         const response = await supervisionIntentAgent.generate(JSON.stringify({
           latest_user_message: body.message,
           project_context: body.project_context,
@@ -129,7 +139,7 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, experimentPlanRequestSchema)
-        const context = requestContext('complex')
+        const context = requestContext('complex', undefined, body.project_id, `planning-${body.project_id}-${body.idea_version}`)
         const response = await experimentPlanningAgent.generate(JSON.stringify({
           project_id: body.project_id, idea_version: body.idea_version, planning_context: body.planning_context,
         }), {
@@ -160,6 +170,46 @@ const apiRoutes = [
       }
     },
   }),
+  registerApiRoute('/internal/workflows/approval-gate', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, approvalGateRequestSchema)
+        const workflow = c.get('mastra').getWorkflow('approvalGateWorkflow')
+        const run = await workflow.createRun(body.run_id ? { runId: body.run_id, resourceId: body.project_id } : { resourceId: body.project_id })
+        const { run_id: _runId, ...input } = body
+        const result = await run.start({ inputData: { ...input, mastra_run_id: run.runId } })
+        if (result.status === 'suspended') {
+          const stepId = result.suspended[0]
+          const stepKey = stepId.at(-1) || ''
+          const step = (result.steps as Record<string, { suspendPayload?: unknown }>)[stepKey]
+          return c.json({ status: 'suspended', run_id: run.runId, suspended: result.suspended, suspend_payload: step?.suspendPayload ?? null })
+        }
+        if (result.status !== 'success') return c.json({ code: 'approval_workflow_failed', message: '审批工作流执行失败。' }, 502)
+        return c.json({ status: result.result.status, run_id: run.runId, result: result.result })
+      } catch (error) {
+        const failure = routeError(error, 'Proposal 审批工作流')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/workflows/approval-gate/resume', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, approvalGateResumeRequestSchema)
+        const workflow = c.get('mastra').getWorkflow('approvalGateWorkflow')
+        const run = await workflow.createRun({ runId: body.run_id })
+        const result = await run.resume({ step: 'human-approval', resumeData: { approved: body.approved, actor: body.actor, comment: body.comment ?? null } })
+        if (result.status === 'suspended') return c.json({ status: 'suspended', run_id: run.runId, suspended: result.suspended })
+        if (result.status !== 'success') return c.json({ code: 'approval_workflow_failed', message: '审批工作流恢复失败。' }, 502)
+        return c.json({ status: result.result.status, run_id: run.runId, result: result.result })
+      } catch (error) {
+        const failure = routeError(error, 'Proposal 审批工作流恢复')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
 ]
 
 export const mastra = new Mastra({
@@ -167,7 +217,7 @@ export const mastra = new Mastra({
   logger: false,
   agents: { ideaClarificationAgent, supervisionIntentAgent, experimentPlanningAgent },
   tools: { inspectIdeaDraftTool },
-  workflows: { researchBootstrapWorkflow, projectChatWorkflow, supervisionReportsWorkflow },
+  workflows: { researchBootstrapWorkflow, projectChatWorkflow, supervisionReportsWorkflow, approvalGateWorkflow },
   server: {
     host: '127.0.0.1', port: 4111, studioHost: '127.0.0.1', studioPort: 4111,
     build: { swaggerUI: true, openAPIDocs: true }, apiRoutes,

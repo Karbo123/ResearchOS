@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-11 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-原生 Windows 迁移已经完成本地 MVP 范围内的实现和验收。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。验收已覆盖真实模型请求、项目状态切换、本机科研执行、取消、Mastra Studio 和浏览器界面。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
+原生 Windows 迁移已经完成代码级实现，应用测试和 NVM for Windows 管理的 Node.js 26.5.1 构建均已通过。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、刷新后的 Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。原始 `runtime/research-os.pglite` 被保留为旧 PostgreSQL 集群目录；项目 `.env` 现在通过显式配置选择经过验证的非覆盖式恢复候选 `runtime/restore-pglite-20260731`，该候选为 `127.0.0.1:8080` 和 `127.0.0.1:4111` 提供本地 API 与 Mastra Studio。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -26,7 +26,7 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 ## 环境要求
 
 - Windows 10/11 x64
-- Node.js 22.13 或更新版本；安装器固定使用 Node.js 22.22 LTS
+- NVM for Windows，以及仓库默认的 Node.js `26.5.1`（`package.json` 仍兼容 Node.js `>=22.13`）
 - Git for Windows
 - Windows Defender，用于上传扫描
 - 可选：Python 3.11+，仅用于科研 Python 实验
@@ -36,12 +36,18 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 ## 快速启动
 
 ```powershell
+nvm install 26.5.1
+nvm use 26.5.1
 npm ci
 npm run build
 npm start
 ```
 
-打开 [http://127.0.0.1:8080](http://127.0.0.1:8080)。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。
+仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。Windows 安装器源码目前单独携带自己的 Node.js 运行时，与开发 shell 的版本管理相互独立。
+
+当前已选择并验证的恢复候选可从 [http://127.0.0.1:8080](http://127.0.0.1:8080) 访问。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，旧数据库目录保持不动。
+
+旧主数据库目录会保留不动。可以使用 `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731` 生成并检查非覆盖式恢复候选。检查完成后，在 `.env` 中显式设置 `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731`；`npm start` 会自动加载该配置。
 
 开发命令：
 
@@ -66,13 +72,19 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 
 ## 验证证据
 
-当前 Web UI 和 Mastra 图已经在真实浏览器中检查。模型设置截图显示三档配置、正确的 `/v1` 地址、推理强度和 key 状态；不会显示任何 key 内容。
+当前 Web UI 和 Mastra 图已经在真实浏览器中检查。刷新后的页面已覆盖桌面和移动端的新 Idea 输入、项目概览、产物图库、模型设置和项目对话；移动端没有横向溢出。模型设置截图显示三档配置、正确的 `/v1` 地址、推理强度和 key 状态；不会显示任何 key 内容。
 
 ![Research OS 总览](docs/assets/research-os-overview.jpg)
 
 ![独立模型设置](docs/assets/research-os-model-settings.jpg)
 
 ![Mastra 工作流图](docs/assets/research-os-mastra-workflow.jpg)
+
+## 项目语义记忆
+
+Supermemory 集成目前是部分实现，只有设置 `SUPERMEMORY_ENABLED=true` 或配置 `SUPERMEMORY_API_KEY` 后才启用。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF 和图片摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；原始文件和 SHA-256 仍由本地 Artifact 保存。
+
+语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。缺少 key、超时、鉴权失败、返回数据无效或远程写入失败时，系统直接返回结构化错误，不会降级到本地语义检索、其他 provider 或无关实验。真实 Supermemory API 验收、两个已配置项目的跨项目泄漏测试，以及端到端撤销/删除验收仍记录在 `TODO.md` 中。
 
 ## 实验隔离
 
@@ -86,6 +98,12 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 
 批准后的归档会执行大小、条目数、解压大小、路径穿越和链接文件检查，保存为带 SHA-256 的 Artifact，解压到 `projects/<project-id>/code/repositories/`，写入 Artifact 依赖谱系，并提交到项目 Git 工作区。这些记录证明可复现的源码获取过程，但不能单独证明仓库一定是官方实现，也不能证明代码具有科学有效性。
 
+## 依赖谱系与检查点恢复
+
+成功实验会把 Idea 版本、项目 Git commit、配置指纹、引用的论文/证据/仓库/上传材料、生成的 Artifact 和 Checkpoint 登记到语义依赖账本。项目查看时会重新核对上游指纹；批准后的 Idea 或代码修改、上游记录变化、来源缺失或 Artifact 失效会递归使相关实验、Artifact 和 Checkpoint 失效。
+
+检查点恢复绝不是直接重跑。API 会校验 Checkpoint、来源运行状态、当前 Idea 版本、Git 基线、Artifact 路径、链接文件状态、文件存在性和 SHA-256，然后创建 `experiment_rerun` Proposal。只有批准后才会按原请求入队；依赖失败或已失效时直接返回结构化错误，不能显示为成功运行。
+
 ## 验证
 
 ```powershell
@@ -95,10 +113,11 @@ npm run build
 npm run idea-cases:check
 npm run docs:check
 npm run ops:status
+npm run mastra:hitl:check
 npm run acceptance
 ```
 
-最终验收会调用当前配置的真实模型和外部学术 API；模型端点或 key 无效时必须直接失败。
+代码级检查和真实模型验收已经使用当前配置的模型与外部学术 API；模型端点或 key 无效时仍会直接返回结构化错误。针对经过验证的恢复候选的运行检查已经通过；原始主数据库仍需要操作员明确决定。
 
 ## 限制
 

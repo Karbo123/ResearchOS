@@ -23,14 +23,26 @@ CREATE TABLE IF NOT EXISTS tasks (id UUID PRIMARY KEY, project_id UUID NOT NULL 
 CREATE UNIQUE INDEX IF NOT EXISTS uq_tasks_idempotency_key ON tasks (idempotency_key) WHERE idempotency_key IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ix_tasks_queue_claim ON tasks (status, next_attempt_at, leased_until, created_at);
 CREATE TABLE IF NOT EXISTS checkpoints (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), stage VARCHAR(100) NOT NULL, idea_version INTEGER NOT NULL, git_commit VARCHAR(64), data_version VARCHAR(255), state JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS valid BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS invalidated_reason TEXT;
+ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS invalidated_at TIMESTAMPTZ;
 CREATE TABLE IF NOT EXISTS human_feedback (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), session_id UUID REFERENCES conversation_sessions(id), category VARCHAR(40) NOT NULL, instruction TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS repositories (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), paper_id UUID REFERENCES papers(id), source_url TEXT NOT NULL, license_spdx VARCHAR(100), commit_or_tag VARCHAR(255), verified_official BOOLEAN NOT NULL DEFAULT FALSE, metadata JSONB NOT NULL DEFAULT '{}', retrieved_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS artifact_dependencies (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), artifact_id UUID NOT NULL REFERENCES artifacts(id), upstream_type VARCHAR(40) NOT NULL, upstream_id VARCHAR(255) NOT NULL, relation VARCHAR(80) NOT NULL DEFAULT 'generated_from', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS lineage_dependencies (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), downstream_type VARCHAR(40) NOT NULL, downstream_id VARCHAR(255) NOT NULL, upstream_type VARCHAR(40) NOT NULL, upstream_id VARCHAR(255) NOT NULL, upstream_fingerprint VARCHAR(64) NOT NULL, relation VARCHAR(120) NOT NULL, valid BOOLEAN NOT NULL DEFAULT TRUE, invalidated_reason TEXT, invalidated_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(project_id,downstream_type,downstream_id,upstream_type,upstream_id,relation));
+CREATE INDEX IF NOT EXISTS ix_lineage_upstream ON lineage_dependencies(project_id,upstream_type,upstream_id,valid);
+CREATE INDEX IF NOT EXISTS ix_lineage_downstream ON lineage_dependencies(project_id,downstream_type,downstream_id,valid);
+CREATE TABLE IF NOT EXISTS memory_links (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), source_type VARCHAR(80) NOT NULL, source_id UUID, artifact_id UUID REFERENCES artifacts(id), uploaded_file_id UUID REFERENCES uploaded_files(id), content_sha256 VARCHAR(64) NOT NULL, custom_id VARCHAR(100) NOT NULL, supermemory_id VARCHAR(255) NOT NULL, container_tag VARCHAR(120) NOT NULL, task_type VARCHAR(20) NOT NULL DEFAULT 'memory', status VARCHAR(30) NOT NULL DEFAULT 'active', metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), revoked_at TIMESTAMPTZ, deleted_at TIMESTAMPTZ, UNIQUE(project_id,source_type,source_id,content_sha256));
+ALTER TABLE memory_links ADD COLUMN IF NOT EXISTS uploaded_file_id UUID REFERENCES uploaded_files(id);
+CREATE INDEX IF NOT EXISTS ix_memory_links_project ON memory_links(project_id,status,created_at);
+CREATE INDEX IF NOT EXISTS ix_memory_links_remote ON memory_links(project_id,supermemory_id);
 `
 
 export async function migrate(): Promise<void> {
   await database.exec(migrationSql)
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0001-native-typescript') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0002-lineage-checkpoint-integrity') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0003-supermemory-links') ON CONFLICT DO NOTHING")
 }
 
 export async function rows<T extends object>(sql: string, params: unknown[] = []): Promise<T[]> {

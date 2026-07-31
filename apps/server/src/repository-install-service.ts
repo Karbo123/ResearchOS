@@ -5,6 +5,7 @@ import { audit, database } from './database.js'
 import { ApiError } from './http.js'
 import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
 import { archiveSha256, downloadArchive, projectRepositoryRoot, repositoryDirectoryName, safeExtractArchive, type RepositoryIdentity, parseRepositoryUrl } from './repository-service.js'
+import { registerLineageDependencies } from './impact-service.js'
 
 type RepositoryRecord = {
   id: string
@@ -68,6 +69,7 @@ export async function installRepositoryArchive(repository: RepositoryRecord, act
       await transaction.query('UPDATE repositories SET metadata=$2,retrieved_at=NOW() WHERE id=$1', [repository.id, { ...repository.metadata, download: { artifact_id: artifactId, relative_path: `code/repositories/${directoryName}`, archive_relative_path: archiveRelativePath, commit, sha256: archiveSha256Value } }])
     })
     databaseRecorded = true
+    await registerLineageDependencies(repository.project_id, [{ downstream: { type: 'artifact', id: artifactId }, upstream: { type: 'repository', id: repository.id }, relation: 'repository_archive' }])
 
     const projectRoot = pathInside(projectsRoot, repository.project_id)
     const relativePath = relative(projectRoot, targetDirectory).replaceAll('\\', '/')

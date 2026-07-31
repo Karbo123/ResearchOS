@@ -1063,7 +1063,7 @@
     MailX: () => MailX,
     Mailbox: () => Mailbox,
     Mails: () => Mails,
-    Map: () => Map,
+    Map: () => Map2,
     MapPin: () => MapPin,
     MapPinCheck: () => MapPinCheck,
     MapPinCheckInside: () => MapPinCheckInside,
@@ -13716,7 +13716,7 @@
   ];
 
   // ../../node_modules/lucide/dist/esm/icons/map.js
-  var Map = [
+  var Map2 = [
     "svg",
     defaultAttributes,
     [
@@ -22936,8 +22936,8 @@
     state.project = await api(`/api/projects/${id}`);
     $("newView").classList.add("hidden");
     $("projectView").classList.remove("hidden");
-    $("pageTitle").textContent = state.project.project.title;
-    $("projectMeta").textContent = `${state.project.project.stage} \xB7 v${state.project.project.idea_version} \xB7 ${id.slice(0, 8)}`;
+    $("pageTitle").textContent = state.project.title;
+    $("projectMeta").textContent = `${state.project.current_stage} \xB7 v${state.project.current_idea_version} \xB7 ${id.slice(0, 8)}`;
     state.sessionId = state.project.session_id || state.sessionId || null;
     renderProject();
     loadProjects();
@@ -22962,7 +22962,7 @@
   }
   function artifactPreviewMarkup(artifact) {
     const previewUrl = escapeHtml(artifact.preview_url || "");
-    const downloadUrl = escapeHtml(artifact.url || "");
+    const downloadUrl = escapeHtml(artifact.download_url || artifact.url || "");
     if (artifact.mime_type.startsWith("image/")) return `<img class="artifact-image" src="${downloadUrl}" alt="${escapeHtml(artifact.name)}">`;
     return `<div class="artifact-preview" data-preview-url="${previewUrl}"><div class="preview-loading">\u52A0\u8F7D\u9884\u89C8\u2026</div></div>`;
   }
@@ -23049,8 +23049,47 @@
     draw();
     iconRefresh();
   }
+  function renderTimeseriesPreview(container, preview) {
+    const points = Array.isArray(preview.points) ? preview.points.filter((point) => point && Number.isFinite(Number(point.step))) : [];
+    const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter((metric) => points.some((point) => Number.isFinite(Number(point[metric]))));
+    if (!points.length || !metrics.length) {
+      container.innerHTML = `<div class="preview-error">\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\u3002</div>`;
+      return;
+    }
+    const maxVisible = Math.max(10, points.length);
+    container.innerHTML = `<div class="timeseries-toolbar"><label>\u6307\u6807<select class="timeseries-metric">${metrics.map((metric) => `<option value="${metric}">${metric}</option>`).join("")}</select></label><label>\u70B9\u6570<input class="timeseries-window" type="range" min="10" max="${maxVisible}" value="${maxVisible}"></label><span class="muted timeseries-count"></span></div><svg class="timeseries-chart" viewBox="0 0 720 300" role="img" aria-label="\u6307\u6807\u66F2\u7EBF"></svg>`;
+    const metricSelect = container.querySelector(".timeseries-metric"), windowInput = container.querySelector(".timeseries-window"), svg = container.querySelector(".timeseries-chart"), count = container.querySelector(".timeseries-count");
+    const colors = ["#16856b", "#d97706", "#2563eb", "#be123c", "#7c3aed", "#0f766e"];
+    const draw = () => {
+      const metric = metricSelect.value, visible = points.slice(-Number(windowInput.value)), numeric = visible.filter((point) => Number.isFinite(Number(point[metric])));
+      const steps = numeric.map((point) => Number(point.step)), minStep = Math.min(...steps), stepSpan = Math.max(Math.max(...steps) - minStep, 1);
+      const values = numeric.map((point) => Number(point[metric])), minValue = Math.min(...values), maxValue = Math.max(...values), span = Math.max(maxValue - minValue, 1e-12);
+      const groups = [...new Set(numeric.map((point) => String(point.seed ?? "all")))];
+      const body = [`<rect x="0" y="0" width="720" height="300" fill="#f7faf8" rx="8"/><line x1="48" y1="18" x2="48" y2="266" stroke="#cbd5d1"/><line x1="48" y1="266" x2="704" y2="266" stroke="#cbd5d1"/>`, `<text x="52" y="18" fill="#60706a" font-size="11">${escapeHtml(metric)} \xB7 ${escapeHtml(String(minValue.toPrecision(4)))}\u2013${escapeHtml(String(maxValue.toPrecision(4)))}</text>`];
+      groups.forEach((seed, groupIndex) => {
+        const group = numeric.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step));
+        const coords = group.map((point) => `${48 + (Number(point.step) - minStep) / stepSpan * 656},${250 - (Number(point[metric]) - minValue) / span * 220}`).join(" ");
+        const color = colors[groupIndex % colors.length];
+        body.push(`<polyline points="${coords}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/><text x="${56 + groupIndex * 86}" y="288" fill="${color}" font-size="11">seed ${escapeHtml(String(seed))}</text>`);
+        group.forEach((point) => {
+          const x = 48 + (Number(point.step) - minStep) / stepSpan * 656, y = 250 - (Number(point[metric]) - minValue) / span * 220;
+          body.push(`<circle cx="${x}" cy="${y}" r="3" fill="${color}"><title>step ${escapeHtml(String(point.step))} \xB7 ${escapeHtml(metric)} ${escapeHtml(String(Number(point[metric]).toPrecision(6)))}</title></circle>`);
+        });
+      });
+      svg.innerHTML = body.join("");
+      count.textContent = `${numeric.length}/${points.length} \u4E2A\u70B9`;
+    };
+    metricSelect.addEventListener("change", draw);
+    windowInput.addEventListener("input", draw);
+    draw();
+  }
   function renderArtifactPreview(container, preview) {
     if (preview.type === "point_cloud") return renderPointCloudPreview(container, preview);
+    if (preview.type === "timeseries") return renderTimeseriesPreview(container, preview);
+    if (preview.type === "video") {
+      container.innerHTML = `<video class="artifact-video" controls preload="metadata" src="${escapeHtml(preview.download_url)}"></video>`;
+      return;
+    }
     if (preview.type === "image") {
       container.innerHTML = `<div class="preview-footnote">\u56FE\u7247\u76F4\u63A5\u4F7F\u7528\u4E0B\u8F7D\u63A5\u53E3\u5C55\u793A\u3002</div>`;
       return;
@@ -23140,14 +23179,16 @@
     }
   }
   function renderProject() {
-    const d = state.project, c = d.counts;
-    const pe = d.policy_enforcement || {}, cr = pe.citation_readiness || {};
-    const isActive = d.project.status === "active";
+    const raw = state.project;
+    const d = raw.project ? { ...raw, ...raw.project } : raw;
+    const c = d.counts || { papers: (d.papers || []).length, experiments: (d.experiments || []).length, artifacts: (d.artifacts || []).length };
+    const pe = d.policy_enforcement || { status: "unknown", runner_compatible: null, minimum_random_seed_count: 1, approval: {} }, cr = pe.citation_readiness || {};
+    const isActive = d.status === "active";
     const executionDisabled = isActive ? "" : "disabled";
-    const stateControls = d.project.status === "active" ? `<button class="secondary" onclick="changeProjectState('pause')"><i data-lucide="pause"></i>\u6682\u505C</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>\u53D6\u6D88\u9879\u76EE</button>` : d.project.status === "paused" ? `<button class="approve" onclick="changeProjectState('resume')"><i data-lucide="play"></i>\u6062\u590D</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>\u53D6\u6D88\u9879\u76EE</button>` : "";
+    const stateControls = d.status === "active" ? `<button class="secondary" onclick="changeProjectState('pause')"><i data-lucide="pause"></i>\u6682\u505C</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>\u53D6\u6D88\u9879\u76EE</button>` : d.status === "paused" ? `<button class="approve" onclick="changeProjectState('resume')"><i data-lucide="play"></i>\u6062\u590D</button><button class="reject" onclick="changeProjectState('cancel')"><i data-lucide="square"></i>\u53D6\u6D88\u9879\u76EE</button>` : "";
     $("tab-overview").innerHTML = `<div class="metric-grid"><div class="metric"><span>\u8BBA\u6587</span><strong>${c.papers}</strong></div><div class="metric"><span>\u5B9E\u9A8C</span><strong>${c.experiments}</strong></div><div class="metric"><span>\u4EA7\u7269</span><strong>${c.artifacts}</strong></div><div class="metric"><span>\u5F85\u5BA1\u6279</span><strong>${d.proposals.filter((p) => p.status === "pending").length}</strong></div></div>
     <div class="section"><div class="section-head"><h2>\u7814\u7A76\u89C4\u683C</h2><div class="button-row"><button class="secondary" onclick="runSearch()" ${executionDisabled}><i data-lucide="search"></i>\u68C0\u7D22\u6587\u732E</button><button class="secondary" onclick="createPaperDraft()" ${executionDisabled}><i data-lucide="file-pen-line"></i>\u751F\u6210\u8BC1\u636E\u8BBA\u6587\u8349\u7A3F</button><button class="secondary" onclick="createCompilePlan()" ${executionDisabled}><i data-lucide="file-check"></i>\u7F16\u8BD1\u8BBA\u6587</button></div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.spec.idea.research_question)}</h3><p>${escapeHtml(d.spec.idea.domain)} \xB7 ${escapeHtml((d.spec.idea.keywords || []).join(", "))}</p></div>${statusBadge(d.spec.feasibility)}</div></div></div>
-    <div class="section"><div class="section-head"><h2>\u9879\u76EE\u72B6\u6001</h2><div class="button-row">${stateControls}</div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.project.stage)}</h3><p>Idea version ${d.project.idea_version} \xB7 ${escapeHtml(d.project.status)}</p></div>${statusBadge(d.project.status)}</div></div></div>`;
+    <div class="section"><div class="section-head"><h2>\u9879\u76EE\u72B6\u6001</h2><div class="button-row">${stateControls}</div></div><div class="data-list"><div class="data-row"><div><h3>${escapeHtml(d.current_stage)}</h3><p>Idea version ${d.current_idea_version} \xB7 ${escapeHtml(d.status)}</p></div>${statusBadge(d.status)}</div></div></div>`;
     $("tab-literature").innerHTML = `<div class="section-head"><h2>\u53EF\u9A8C\u8BC1\u6587\u732E\u8BB0\u5F55</h2><div class="button-row"><button class="secondary" onclick="runSearch()"><i data-lucide="search"></i>\u66F4\u65B0\u68C0\u7D22</button><button class="secondary" onclick="ingestEvidence()" ${executionDisabled}><i data-lucide="scan-text"></i>\u63D0\u53D6\u5168\u6587\u8BC1\u636E</button></div></div>${d.papers.length ? `<div class="data-list">${d.papers.map((p) => `<div class="data-row"><div><h3><a href="${escapeHtml(p.source_url)}" target="_blank">${escapeHtml(p.title)}</a></h3><p>${p.year || ""} ${escapeHtml(p.venue || "")} \xB7 ${escapeHtml(p.source_provider || "unknown")} \xB7 DOI ${escapeHtml(p.doi || "\u672A\u63D0\u4F9B")} \xB7 ${p.verified ? "\u5143\u6570\u636E\u5DF2\u9A8C\u8BC1" : "\u5F85\u9A8C\u8BC1"} \xB7 \u9875\u7801\u539F\u6587\u8BC1\u636E ${Number(p.fulltext_evidence_count || 0)} \xB7 \u4EE3\u7801\u5019\u9009 ${(p.code_repositories || []).length}</p>${p.pdf_url ? `<p><a href="${escapeHtml(p.pdf_url)}" target="_blank">\u6253\u5F00\u6765\u6E90 PDF</a></p>` : ""}${p.bibtex ? `<details><summary>BibTeX</summary><pre class="code-block">${escapeHtml(p.bibtex)}</pre></details>` : ""}</div>${statusBadge((p.fulltext_evidence_count || 0) > 0 ? "fulltext-evidence" : "metadata-only")}</div>`).join("")}</div>` : `<div class="empty">\u5C1A\u65E0\u6587\u732E\u8BB0\u5F55\u3002</div>`}`;
     $("tab-experiments").innerHTML = `<div class="section-head"><h2>\u5B9E\u9A8C\u89C4\u5212\u4E0E\u8FD0\u884C</h2><div class="button-row"><button class="secondary" onclick="createExperimentPlan()" ${executionDisabled}><i data-lucide="list-checks"></i>\u751F\u6210\u4E3B\u9898\u4E13\u5C5E\u8BA1\u5212</button><button class="secondary" onclick="runDiagnostics()"><i data-lucide="activity"></i>\u6570\u503C\u8BCA\u65AD</button></div></div>${d.experiments.length ? `<div class="data-list">${d.experiments.map((e) => `<div class="data-row"><div><h3>${escapeHtml(e.experiment_type)}</h3><p>${escapeHtml(JSON.stringify(e.metrics))}${e.run_id ? ` \xB7 Run ${escapeHtml(e.run_id)}` : ""}</p></div><div class="button-row">${statusBadge(e.status)}<button class="secondary" onclick="syncRun('${e.id}')"><i data-lucide="refresh-cw"></i>\u540C\u6B65</button>${["queued", "running"].includes(e.status) ? `<button class="reject" onclick="cancelRun('${e.id}')"><i data-lucide="square"></i>\u53D6\u6D88</button>` : ""}</div></div>`).join("")}</div>` : `<div class="empty">\u751F\u6210\u8BA1\u5212\u540E\u4F1A\u5148\u8FDB\u5165\u5BA1\u6279\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u81EA\u52A8\u521B\u5EFA\u65E0\u5173\u5B9E\u9A8C\u3002</div>`}<div id="diagnosticsOutput" class="section"><div class="empty">\u8FD0\u884C\u6570\u503C\u8BCA\u65AD\u4EE5\u8BA1\u7B97\u6307\u6807\u5E76\u68C0\u67E5\u5931\u8D25\u65E5\u5FD7\u3002</div></div>`;
     const artifactCards = d.artifacts.map((a) => `<article class="artifact-card">${artifactPreviewMarkup(a)}<div class="artifact-body"><h3>${escapeHtml(a.name)}</h3><p class="muted">${escapeHtml(a.kind)} \xB7 ${a.valid ? "\u6709\u6548" : "\u5DF2\u5931\u6548"}</p><a href="${escapeHtml(a.url)}" download>\u4E0B\u8F7D\u4EA7\u7269</a></div></article>`).join("");
@@ -23210,6 +23251,87 @@
       results.appendChild(more);
     }
     iconRefresh();
+  }
+  function openMemoryGraph() {
+    if (!state.projectId) {
+      toast("\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\u3002");
+      return;
+    }
+    $("memoryGraphModal").classList.remove("hidden");
+    setMemoryView("graph");
+    $("memoryGraphQuery").focus();
+    loadMemoryGraphStatus();
+  }
+  function closeMemoryGraph() {
+    $("memoryGraphModal").classList.add("hidden");
+    $("openMemoryGraph").focus();
+  }
+  var memoryView = "graph";
+  function setMemoryView(view) {
+    memoryView = view;
+    const graphMode = $("memoryGraphMode"), searchMode = $("memorySearchMode");
+    graphMode.classList.toggle("active", view === "graph");
+    searchMode.classList.toggle("active", view === "search");
+    graphMode.setAttribute("aria-selected", String(view === "graph"));
+    searchMode.setAttribute("aria-selected", String(view === "search"));
+    $("memoryGraphCanvas").classList.toggle("hidden", view !== "graph");
+    $("memoryGraphResults").classList.toggle("hidden", view !== "graph");
+    $("memorySearchResults").classList.toggle("hidden", view !== "search");
+    $("memoryGraphStatus").textContent = view === "graph" ? "\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002" : "\u8F93\u5165\u67E5\u8BE2\u4EE5\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u8BED\u4E49\u5019\u9009\u3002";
+  }
+  async function loadMemoryGraphStatus() {
+    try {
+      const status = await api(`/api/projects/${state.projectId}/memory/status`);
+      $("memoryGraphStatus").textContent = status.key_configured ? "Supermemory \u5DF2\u914D\u7F6E\uFF0C\u8F93\u5165\u67E5\u8BE2\u540E\u52A0\u8F7D\u9879\u76EE\u8303\u56F4\u56FE\u3002" : "Supermemory \u5C1A\u672A\u914D\u7F6E API key\uFF1B\u4E0D\u4F1A\u4F7F\u7528\u672C\u5730\u6216\u65E0\u5173\u6570\u636E\u66FF\u4EE3\u3002";
+    } catch (error) {
+      $("memoryGraphStatus").textContent = `\u72B6\u6001\u8BFB\u53D6\u5931\u8D25\uFF1A${error.message}`;
+    }
+  }
+  function renderMemoryGraph(graph) {
+    const svg = $("memoryGraphCanvas");
+    const nodes = graph.nodes || [];
+    const edges = graph.edges || [];
+    const positions = new Map(nodes.map((node, index) => [node.id, { x: 80 + index % 5 * 150, y: 70 + Math.floor(index / 5) * 120 }]));
+    svg.innerHTML = edges.map((edge) => {
+      const a = positions.get(edge.source), b = positions.get(edge.target);
+      return a && b ? `<line class="memory-graph-edge" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>` : "";
+    }).join("") + nodes.map((node) => {
+      const p = positions.get(node.id);
+      return `<g><circle class="memory-graph-node ${node.kind !== "memory" ? "related" : ""}" cx="${p.x}" cy="${p.y}" r="18"><title>${escapeHtml(node.label)}</title></circle><text class="memory-graph-label" x="${p.x}" y="${p.y + 36}" text-anchor="middle">${escapeHtml(node.label.slice(0, 20))}</text></g>`;
+    }).join("");
+    $("memoryGraphResults").innerHTML = (graph.nodes || []).filter((node) => node.kind === "memory").map((node) => `<article class="memory-graph-result"><strong>${escapeHtml(node.label)}</strong><p>\u9879\u76EE\u8303\u56F4\uFF1A${escapeHtml(graph.project_id)} \xB7 \u8BED\u4E49\u5019\u9009\uFF0C\u9700\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838</p></article>`).join("") || '<div class="empty">\u6CA1\u6709\u8FD4\u56DE\u5F53\u524D\u9879\u76EE\u7684\u5173\u7CFB\u8282\u70B9\u3002</div>';
+  }
+  function renderMemorySearch(result) {
+    $("memorySearchResults").innerHTML = result.results.map((item) => {
+      const metadata = item.metadata || {};
+      const source = item.source_type ? `${item.source_type}${item.source_id ? ` \xB7 ${item.source_id}` : ""}` : "Supermemory semantic result";
+      return `<article class="memory-search-result"><h3>${escapeHtml(String(item.memory || "\u672A\u547D\u540D\u5019\u9009"))}</h3><p>\u76F8\u4F3C\u5EA6\uFF1A${escapeHtml(String(item.similarity ?? "\u672A\u63D0\u4F9B"))} \xB7 \u6765\u6E90\uFF1A${escapeHtml(source)}</p><p>Artifact\uFF1A${escapeHtml(String(item.artifact_id || metadata.artifact_id || "\u65E0"))} \xB7 \u8BC1\u636E\u72B6\u6001\uFF1A${escapeHtml(String(item.evidence_status || "semantic_candidate"))}</p></article>`;
+    }).join("") || '<div class="empty">\u6CA1\u6709\u8FD4\u56DE\u5F53\u524D\u9879\u76EE\u7684\u8BED\u4E49\u5019\u9009\u3002</div>';
+  }
+  async function searchMemoryGraph(event) {
+    event.preventDefault();
+    if (!state.projectId) return;
+    const query = $("memoryGraphQuery").value.trim();
+    if (!query) return;
+    $("memoryGraphStatus").textContent = "\u6B63\u5728\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u8303\u56F4\u2026";
+    $("memoryGraphResults").innerHTML = "";
+    $("memorySearchResults").innerHTML = "";
+    try {
+      if (memoryView === "search") {
+        const result = await api(`/api/projects/${state.projectId}/memory/search`, { method: "POST", body: JSON.stringify({ query, limit: 20, search_mode: "hybrid" }) });
+        renderMemorySearch(result);
+        $("memoryGraphStatus").textContent = `${result.total} \u6761\u5019\u9009 \xB7 \u6765\u6E90\uFF1ASupermemory \xB7 \u5F53\u524D\u9879\u76EE\u8303\u56F4`;
+        return;
+      }
+      const graph = await api(`/api/projects/${state.projectId}/memory/graph`, { method: "POST", body: JSON.stringify({ query, limit: 8 }) });
+      renderMemoryGraph(graph);
+      $("memoryGraphStatus").textContent = `${graph.nodes.length} \u4E2A\u8282\u70B9 \xB7 ${graph.edges.length} \u6761\u5173\u7CFB \xB7 \u6765\u6E90\uFF1ASupermemory`;
+    } catch (error) {
+      $("memoryGraphStatus").textContent = `\u8BF7\u6C42\u5931\u8D25\uFF1A${error.message}`;
+      $("memoryGraphCanvas").innerHTML = "";
+      $("memoryGraphResults").innerHTML = "";
+      $("memorySearchResults").innerHTML = "";
+    }
   }
   function renderSearchCandidates() {
     const old = $("searchCandidatesPanel");
@@ -23340,6 +23462,14 @@
   $("closeModelSettings").addEventListener("click", closeModelSettings);
   $("cancelModelSettings").addEventListener("click", closeModelSettings);
   $("modelSettingsForm").addEventListener("submit", saveModelSettings);
+  $("openMemoryGraph").addEventListener("click", openMemoryGraph);
+  $("closeMemoryGraph").addEventListener("click", closeMemoryGraph);
+  $("memoryGraphForm").addEventListener("submit", searchMemoryGraph);
+  $("memoryGraphModal").addEventListener("click", (event) => {
+    if (event.target === $("memoryGraphModal")) closeMemoryGraph();
+  });
+  $("memoryGraphMode").addEventListener("click", () => setMemoryView("graph"));
+  $("memorySearchMode").addEventListener("click", () => setMemoryView("search"));
   $("modelSettingsForm").addEventListener("input", () => {
     state.settingsDirty = true;
   });

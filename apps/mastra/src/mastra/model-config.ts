@@ -31,10 +31,8 @@ function environmentSettings(tier: ModelTier): ModelConfig {
   const suffix = tier.toUpperCase()
   return {
     model: (process.env[`RESEARCH_MODEL_${suffix}`] || DEFAULTS[tier].model).trim(),
-    url: (process.env[`RESEARCH_MODEL_URL_${suffix}`] || '').trim()
-      || (process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1').trim(),
-    key: (process.env[`RESEARCH_MODEL_KEY_${suffix}`] || '').trim()
-      || (process.env.OPENAI_API_KEY || '').trim(),
+    url: (process.env[`RESEARCH_MODEL_URL_${suffix}`] || '').trim(),
+    key: (process.env[`RESEARCH_MODEL_KEY_${suffix}`] || '').trim(),
     reasoningEffort: (
       process.env[`RESEARCH_REASONING_${suffix}`] || DEFAULTS[tier].reasoningEffort
     ).trim() as ModelConfig['reasoningEffort'],

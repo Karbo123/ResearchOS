@@ -16,6 +16,8 @@ export const agentRequestContextSchema = z.object({
   tier: modelTierSchema,
   modelConfig: modelConfigSchema,
   clarificationMode: z.enum(['automatic', 'detailed']).optional(),
+  supermemoryProjectId: z.string().uuid().optional(),
+  supermemoryConversationId: z.string().min(1).max(200).optional(),
 }).strict()
 
 export const resourceConstraintsSchema = z.object({
@@ -186,4 +188,34 @@ export const chatWorkflowInputSchema = z.object({
 
 export const reportWorkflowInputSchema = z.object({
   period: z.enum(['daily', 'weekly']),
+}).strict()
+
+export const approvalGateInputSchema = z.object({
+  project_id: z.string().uuid(),
+  proposal_id: z.string().uuid(),
+  tool_name: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9_.:-]+$/),
+  args_fingerprint: z.string().regex(/^[0-9a-f]{64}$/),
+  policy_version: z.string().trim().min(1).max(120),
+  actor: z.string().trim().min(1).max(200),
+  reason: z.string().trim().min(3).max(2000),
+  mastra_run_id: z.string().min(1).max(200).optional(),
+}).strict()
+
+export const approvalGateResumeSchema = z.object({
+  approved: z.boolean(),
+  actor: z.string().trim().min(1).max(200),
+  comment: z.string().max(4000).nullable().optional(),
+}).strict()
+
+export const approvalGateRequestSchema = approvalGateInputSchema.extend({ run_id: z.string().min(1).max(200).optional() }).strict()
+export const approvalGateResumeRequestSchema = approvalGateResumeSchema.extend({ run_id: z.string().min(1).max(200) }).strict()
+
+export const approvalGateOutputSchema = z.object({
+  status: z.enum(['approved', 'rejected']),
+  project_id: z.string().uuid(),
+  proposal_id: z.string().uuid(),
+  tool_name: z.string(),
+  args_fingerprint: z.string(),
+  policy_version: z.string(),
+  decision: z.unknown(),
 }).strict()

@@ -13,8 +13,8 @@ const defaults: Record<ModelTier, { model: string; url: string; key: string; rea
 function envTier(suffix: string, model: string, effort: 'low' | 'medium' | 'high') {
   return {
     model: process.env[`RESEARCH_MODEL_${suffix}`]?.trim() || model,
-    url: process.env[`RESEARCH_MODEL_URL_${suffix}`]?.trim() || process.env.OPENAI_BASE_URL?.trim() || '',
-    key: process.env[`RESEARCH_MODEL_KEY_${suffix}`]?.trim() || process.env.OPENAI_API_KEY?.trim() || '',
+    url: process.env[`RESEARCH_MODEL_URL_${suffix}`]?.trim() || '',
+    key: process.env[`RESEARCH_MODEL_KEY_${suffix}`]?.trim() || '',
     reasoning_effort: (process.env[`RESEARCH_REASONING_${suffix}`]?.trim() || effort) as 'low' | 'medium' | 'high',
   }
 }

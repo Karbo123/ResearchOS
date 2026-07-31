@@ -10,7 +10,7 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest,
-  policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
+  memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
@@ -23,15 +23,19 @@ import { createProjectWorkspace, enqueue, projectDetail, requireProject, type Pr
 import { createOperationalReport, diagnostics, noveltyAnalysis, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal } from './paper-service.js'
-import { applyApprovedPatch } from './patch-service.js'
+import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { scanFile } from './malware-scanner.js'
 import { canonicalRepositoryUrl, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { installRepositoryArchive } from './repository-install-service.js'
+import { applyApprovedIdeaRevision } from './idea-service.js'
+import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
+import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
+import { buildArtifactPreview } from './artifact-preview-service.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
 type MessageRow = { role: string; content: string }
-type ProposalRow = { id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown> }
+type ProposalRow = { id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown>; impact: Record<string, unknown> }
 type ExperimentRow = { id: string; project_id: string; status: string; metrics: Record<string, number>; error: string | null }
 type RepositoryRow = { id: string; project_id: string; paper_id: string | null; source_url: string; license_spdx: string | null; commit_or_tag: string | null; verified_official: boolean; metadata: Record<string, unknown>; retrieved_at: string }
 type PaperIdentity = { id: string; title: string; doi: string | null }
@@ -113,6 +117,53 @@ app.put('/api/settings/models', async context => {
 })
 app.get('/api/mastra/open', context => context.redirect(process.env.MASTRA_STUDIO_URL || 'http://127.0.0.1:4111'))
 
+app.get('/api/projects/:projectId/memory/status', async context => {
+  await requireProject(uuid.parse(context.req.param('projectId')))
+  return context.json(memoryStatus())
+})
+app.get('/api/projects/:projectId/memory/links', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json({ project_id: projectId, links: await listProjectMemoryLinks(projectId) })
+})
+app.post('/api/projects/:projectId/memory/ingest', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, memoryIngestRequest)
+  try { return context.json(await ingestProjectMemory(projectId, body), 201) }
+  catch (error) {
+    if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) throw new ApiError(error.status, error.code, error.message)
+    throw error
+  }
+})
+app.post('/api/projects/:projectId/memory/search', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, memorySearchRequest)
+  try { return context.json(await searchProjectMemory(projectId, body.query, body.limit, body.search_mode)) }
+  catch (error) { if (error instanceof SupermemoryConfigurationError) throw new ApiError(error.status, error.code, error.message); throw error }
+})
+app.post('/api/projects/:projectId/memory/links/:linkId/revoke', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const linkId = uuid.parse(context.req.param('linkId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, memoryRevokeRequest)
+  const link = await one<{ id: string; status: string; project_id: string }>('SELECT id,status,project_id FROM memory_links WHERE id=$1 AND project_id=$2', [linkId, projectId])
+  if (!link) throw new ApiError(404, 'memory_link_not_found', '项目语义记忆关联不存在。')
+  if (link.status !== 'active') throw new ApiError(409, 'memory_link_not_active', '只有 active 语义记忆可以撤销或删除。')
+  const proposalId = crypto.randomUUID()
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload,impact) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'memory_revoke', body.reason, 'Revoke project semantic memory', { memory_link_id: linkId, operation: body.operation }, { memory_link_id: linkId, operation: body.operation, external_side_effect: true }])
+  await audit('memory.revoke_proposal_created', projectId, { proposal_id: proposalId, memory_link_id: linkId, operation: body.operation })
+  return context.json({ proposal_id: proposalId, status: 'pending' }, 201)
+})
+app.post('/api/projects/:projectId/memory/graph', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, z.object({ query: z.string().min(1).max(2000), limit: z.number().int().min(1).max(20) }).strict())
+  try { return context.json(await memoryGraph(projectId, body.query, body.limit)) }
+  catch (error) { if (error instanceof SupermemoryConfigurationError) throw new ApiError(error.status, error.code, error.message); throw error }
+})
+
 app.get('/api/sessions/:sessionId/messages', async context => {
   const sessionId = uuid.parse(context.req.param('sessionId'))
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE id=$1', [sessionId])
@@ -151,6 +202,13 @@ app.post('/api/projects', async context => {
   catch (error) {
     await database.query('DELETE FROM projects WHERE id=$1', [id])
     throw error
+  }
+  if (supermemoryEnabled()) {
+    try { await ingestConversationMemory(id, session.id) }
+    catch (error) {
+      if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) throw new ApiError(error.status, error.code, error.message)
+      throw error
+    }
   }
   await enqueue(id, 'research_bootstrap', { project_id: id }, `research-bootstrap:${id}:v1`)
   return context.json({ project_id: id, project: { id, slug, title, status: 'active' } }, 201)
@@ -257,8 +315,19 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   const proposal = await one<ProposalRow>('SELECT * FROM proposals WHERE id=$1', [proposalId])
   if (!proposal) throw new ApiError(404, 'proposal_not_found', 'Proposal 不存在。')
   if (proposal.status !== 'pending') throw new ApiError(409, 'proposal_already_decided', 'Proposal 已经完成决策。')
+  const mastraApprovalFields = [body.mastra_run_id, body.tool_name, body.args_fingerprint, body.policy_version]
+  if (mastraApprovalFields.some(value => value !== undefined && value !== null) && mastraApprovalFields.some(value => !value)) {
+    throw new ApiError(422, 'mastra_approval_binding_incomplete', 'Mastra 审批必须同时绑定 run、工具、参数指纹和策略版本。')
+  }
   let gitCommit: string | null = null
-  if (body.decision === 'approved' && proposal.kind === 'code_patch') gitCommit = applyApprovedPatch(proposal.project_id, proposal.payload, body.actor)
+  let lineageInvalidation: unknown = null
+  if (body.decision === 'approved' && proposal.kind === 'code_patch') {
+    const previousGitCommit = typeof proposal.payload.base_git_commit === 'string' ? proposal.payload.base_git_commit : null
+    gitCommit = applyApprovedPatch(proposal.project_id, proposal.payload, body.actor)
+    if (previousGitCommit) lineageInvalidation = await invalidateFromNodes(proposal.project_id, [{ type: 'git_commit', id: previousGitCommit }], 'approved_code_change', body.actor)
+  }
+  let ideaRevision: unknown = null
+  if (body.decision === 'approved' && proposal.kind === 'idea_revision') ideaRevision = await applyApprovedIdeaRevision(proposal.project_id, proposal.payload, body.actor)
   let repositoryInstall: Awaited<ReturnType<typeof installRepositoryArchive>> | null = null
   if (body.decision === 'approved' && proposal.kind === 'dependency_install') {
     const repositoryId = uuid.parse(String(proposal.payload.repository_id || ''))
@@ -270,10 +339,54 @@ app.post('/api/proposals/:proposalId/decision', async context => {
     const commit = validateDownloadGate(refreshed, String(proposal.payload.requested_commit || ''))
     repositoryInstall = await installRepositoryArchive(refreshed, body.actor, commit)
   }
-  await database.query('UPDATE proposals SET status=$2,decided_by=$3,decision_comment=$4,decided_at=NOW() WHERE id=$1', [proposalId, body.decision, body.actor, body.comment ?? null])
+  let memoryRevocation: unknown = null
+  if (body.decision === 'approved' && proposal.kind === 'memory_revoke') {
+    const memoryLinkId = uuid.parse(String(proposal.payload.memory_link_id || ''))
+    const operation = proposal.payload.operation === 'delete' ? 'delete' : 'forget'
+    try { memoryRevocation = await applyMemoryRevocation(proposal.project_id, memoryLinkId, operation, body.actor) }
+    catch (error) {
+      if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) throw new ApiError(error.status, error.code, error.message)
+      throw error
+    }
+  }
+  let automaticExecution: Record<string, unknown> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'experiment_rerun') {
+    const checkpointId = uuid.parse(String(proposal.payload.checkpoint_id || ''))
+    const recovered = await assertCheckpointRecoverable(proposal.project_id, checkpointId)
+    const project = await requireProject(proposal.project_id, true)
+    if (Number(recovered.checkpoint.idea_version) !== project.current_idea_version) throw new ApiError(409, 'checkpoint_idea_version_stale', '检查点属于旧 Idea 版本，不能直接恢复。')
+    const currentGit = readGitCommit(proposal.project_id)
+    if (typeof recovered.checkpoint.git_commit === 'string' && recovered.checkpoint.git_commit !== currentGit) throw new ApiError(409, 'checkpoint_git_base_changed', '检查点 Git 基线已变化，不能直接恢复。')
+    const source = recovered.sourceRun
+    const sourceConfig = (source.config || {}) as Record<string, unknown>
+    const rerunRequest = experimentRequest.parse({
+      project_id: proposal.project_id,
+      proposal_id: proposalId,
+      experiment_type: proposal.payload.experiment_type,
+      execution_backend: proposal.payload.execution_backend,
+      config: sourceConfig,
+      random_seeds: proposal.payload.random_seeds,
+      topic_plan: proposal.payload.topic_plan ?? null,
+      topic_resume: { ...(recovered.checkpoint.state as Record<string, unknown>), recovery_checkpoint_id: checkpointId },
+    })
+    const runId = crypto.randomUUID()
+    await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runId, proposal.project_id, proposalId, rerunRequest.experiment_type, { ...rerunRequest.config, execution_backend: rerunRequest.execution_backend, random_seeds: rerunRequest.random_seeds, topic_plan: rerunRequest.topic_plan ?? null, topic_resume: rerunRequest.topic_resume }, runId])
+    submitRun(runId, rerunRequest)
+    automaticExecution = { status: 'queued', run_id: runId, checkpoint_id: checkpointId }
+  }
+  const impact = automaticExecution ? { ...proposal.impact, automatic_execution: automaticExecution } : proposal.impact
+  await database.query('UPDATE proposals SET status=$2,decided_by=$3,decision_comment=$4,impact=$5,decided_at=NOW() WHERE id=$1', [proposalId, body.decision, body.actor, body.comment ?? null, impact])
   if (body.decision === 'approved' && proposal.kind === 'config_change' && typeof proposal.payload.rule === 'string') await database.query('INSERT INTO policies(id,project_id,rule,rationale) VALUES ($1,$2,$3,$4)', [crypto.randomUUID(), proposal.project_id, proposal.payload.rule, body.comment ?? null])
-  await audit(`proposal.${body.decision}`, proposal.project_id, { proposal_id: proposalId }, body.actor)
-  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, repository_install: repositoryInstall })
+  await audit(`proposal.${body.decision}`, proposal.project_id, {
+    proposal_id: proposalId,
+    mastra_approval: body.mastra_run_id ? {
+      run_id: body.mastra_run_id,
+      tool_name: body.tool_name,
+      args_fingerprint: body.args_fingerprint,
+      policy_version: body.policy_version,
+    } : null,
+  }, body.actor)
+  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, idea_revision: ideaRevision, repository_install: repositoryInstall, lineage_invalidation: lineageInvalidation, automatic_execution: automaticExecution, memory_revocation: memoryRevocation })
 })
 
 app.post('/api/projects/:projectId/paper-draft', async context => context.json(await createPaperDraftProposal(uuid.parse(context.req.param('projectId'))), 201))
@@ -282,14 +395,17 @@ app.post('/api/projects/:projectId/checkpoints/:checkpointId/rerun', async conte
   const projectId = uuid.parse(context.req.param('projectId'))
   const checkpointId = uuid.parse(context.req.param('checkpointId'))
   const body = await jsonBody(context, z.object({ reason: z.string().min(5).max(2000) }).strict())
-  await requireProject(projectId, true)
-  const checkpoint = await one<{ state: Record<string, unknown> }>('SELECT state FROM checkpoints WHERE id=$1 AND project_id=$2', [checkpointId, projectId])
-  if (!checkpoint || typeof checkpoint.state.source_run_id !== 'string') throw new ApiError(422, 'checkpoint_not_rerunnable', '该检查点不包含可审查的来源运行。')
-  const source = await one<{ experiment_type: string; config: Record<string, unknown> }>('SELECT experiment_type,config FROM experiments WHERE id=$1 AND project_id=$2', [checkpoint.state.source_run_id, projectId])
-  if (!source) throw new ApiError(404, 'source_experiment_not_found', '来源实验不存在。')
+  const project = await requireProject(projectId, true)
+  const recovered = await assertCheckpointRecoverable(projectId, checkpointId)
+  if (Number(recovered.checkpoint.idea_version) !== project.current_idea_version) throw new ApiError(409, 'checkpoint_idea_version_stale', '检查点属于旧 Idea 版本，不能直接恢复。')
+  const currentGit = readGitCommit(projectId)
+  if (typeof recovered.checkpoint.git_commit === 'string' && recovered.checkpoint.git_commit !== currentGit) throw new ApiError(409, 'checkpoint_git_base_changed', '检查点 Git 基线已变化，不能直接恢复。')
+  const source = recovered.sourceRun
+  const sourceConfig = (source.config || {}) as Record<string, unknown>
+  const state = recovered.checkpoint.state as Record<string, unknown>
   const proposalId = crypto.randomUUID()
-  const config = source.config || {}
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', body.reason, 'Rerun from reviewed checkpoint', { experiment_type: source.experiment_type, execution_backend: config.execution_backend || 'windows', config, random_seeds: config.random_seeds || [13, 37, 73], topic_plan: config.topic_plan || null, topic_resume: checkpoint.state }])
+  const payload = { checkpoint_id: checkpointId, experiment_type: source.experiment_type, execution_backend: sourceConfig.execution_backend, config: sourceConfig, random_seeds: sourceConfig.random_seeds, topic_plan: sourceConfig.topic_plan ?? null, topic_resume: { ...state, recovery_checkpoint_id: checkpointId }, expected_idea_version: project.current_idea_version, expected_git_commit: currentGit }
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,impact,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'experiment_rerun', body.reason, 'Recover approved experiment from verified checkpoint', { checkpoint_id: checkpointId, recovery_mode: 'exact_dependency_and_git_match' }, payload])
   return context.json({ proposal_id: proposalId, status: 'pending' }, 201)
 })
 
@@ -299,6 +415,7 @@ app.post('/api/experiments', async context => {
   const proposal = await one<ProposalRow>('SELECT * FROM proposals WHERE id=$1 AND project_id=$2', [body.proposal_id, body.project_id])
   if (!proposal) throw new ApiError(404, 'proposal_not_found', '实验 Proposal 不存在。')
   if (proposal.status !== 'approved') throw new ApiError(409, 'proposal_not_approved', '实验必须先获得明确批准。')
+  if (proposal.kind !== 'experiment_plan') throw new ApiError(409, 'experiment_proposal_kind_invalid', '只有新的实验计划 Proposal 可以手动提交；检查点恢复由批准流程自动提交。')
   const runId = crypto.randomUUID()
   await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runId, body.project_id, body.proposal_id, body.experiment_type, { ...body.config, execution_backend: body.execution_backend, random_seeds: body.random_seeds, topic_plan: body.topic_plan ?? null }, runId])
   submitRun(runId, body)
@@ -382,6 +499,34 @@ app.post('/api/uploads', async context => {
   return context.json({ artifact_id: id, name: safeName, size_bytes: bytes.length, sha256, evidence_status: 'untrusted_uploaded_material' }, 201)
 })
 
+app.get('/api/projects/:projectId/artifacts/:artifactId/preview', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const artifactId = uuid.parse(context.req.param('artifactId'))
+  await requireProject(projectId)
+  const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND project_id=$2 AND valid=TRUE', [artifactId, projectId])
+  if (!artifact) throw new ApiError(404, 'artifact_not_found', '项目中不存在该产物或产物已经失效。')
+  const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
+  if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
+  try {
+    return context.json(buildArtifactPreview(path, artifact.name, artifact.mime_type, `/api/projects/${projectId}/artifacts/${artifactId}/download`))
+  } catch (error) {
+    const code = error instanceof Error ? error.message : 'artifact_preview_unavailable'
+    throw new ApiError(422, code, '产物预览不可用或不符合受控预览契约。')
+  }
+})
+app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const artifactId = uuid.parse(context.req.param('artifactId'))
+  await requireProject(projectId)
+  const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND project_id=$2 AND valid=TRUE', [artifactId, projectId])
+  if (!artifact) throw new ApiError(404, 'artifact_not_found', '项目中不存在该产物或产物已经失效。')
+  const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
+  if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
+  context.header('content-type', artifact.mime_type)
+  context.header('content-disposition', `attachment; filename="${artifact.name.replaceAll('"', '')}"`)
+  return context.body(readFileSync(path))
+})
+
 app.get('/api/artifacts/:artifactId', async context => {
   const artifact = await one<Record<string, unknown>>('SELECT * FROM artifacts WHERE id=$1', [uuid.parse(context.req.param('artifactId'))])
   if (!artifact) throw new ApiError(404, 'artifact_not_found', '产物不存在。')
@@ -391,9 +536,13 @@ app.get('/api/artifacts/:artifactId/preview', async context => {
   const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND valid=TRUE', [uuid.parse(context.req.param('artifactId'))])
   if (!artifact) throw new ApiError(404, 'artifact_not_found', '产物不存在或已经失效。')
   const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
-  if (!existsSync(path) || statSync(path).size > 20 * 1024 * 1024) throw new ApiError(422, 'artifact_preview_unavailable', '产物缺失或超过预览限制。')
-  const textual = /json|text|csv|tab-separated/.test(artifact.mime_type) || ['.json', '.txt', '.csv', '.tsv', '.log', '.ply', '.pcd'].includes(extname(path).toLowerCase())
-  return textual ? context.json({ kind: 'text', name: artifact.name, content: readFileSync(path, 'utf8').slice(0, 1_000_000), download_url: `/api/artifacts/${context.req.param('artifactId')}/download` }) : context.json({ kind: 'download', name: artifact.name, download_url: `/api/artifacts/${context.req.param('artifactId')}/download` })
+  if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
+  try {
+    return context.json(buildArtifactPreview(path, artifact.name, artifact.mime_type, `/api/artifacts/${context.req.param('artifactId')}/download`))
+  } catch (error) {
+    const code = error instanceof Error ? error.message : 'artifact_preview_unavailable'
+    throw new ApiError(422, code, '产物预览不可用或不符合受控预览契约。')
+  }
 })
 app.get('/api/artifacts/:artifactId/download', async context => {
   const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND valid=TRUE', [uuid.parse(context.req.param('artifactId'))])
