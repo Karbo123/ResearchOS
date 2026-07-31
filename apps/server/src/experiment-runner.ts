@@ -1,0 +1,174 @@
+import { createHash } from 'node:crypto'
+import { ChildProcess, spawn } from 'node:child_process'
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
+import { basename, relative, resolve } from 'node:path'
+import { once } from 'node:events'
+import type { z } from 'zod'
+import { database, audit } from './database.js'
+import type { experimentRequest } from './contracts.js'
+import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
+
+type ExperimentRequest = z.infer<typeof experimentRequest>
+type RunState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled'
+type ActiveRun = { child: ChildProcess; state: RunState; timeout: NodeJS.Timeout }
+const activeRuns = new Map<string, ActiveRun>()
+const entrypointPattern = /^experiment\/[A-Za-z0-9_.-]+\.py$/
+
+function safeEnvironment(venv?: string): NodeJS.ProcessEnv {
+  const path = [venv ? resolve(venv, 'Scripts') : '', process.env.SystemRoot ? resolve(process.env.SystemRoot, 'System32') : '', process.env.PATH || ''].filter(Boolean).join(';')
+  return { SystemRoot: process.env.SystemRoot, ComSpec: process.env.ComSpec, TEMP: process.env.TEMP, TMP: process.env.TMP, PATH: path, PYTHONNOUSERSITE: '1', PYTHONDONTWRITEBYTECODE: '1' }
+}
+
+async function runFixed(executable: string, args: string[], options: { cwd: string; env?: NodeJS.ProcessEnv }): Promise<void> {
+  const child = spawn(executable, args, { cwd: options.cwd, env: options.env, windowsHide: true, stdio: 'ignore' })
+  const [code] = await once(child, 'exit') as [number | null]
+  if (code !== 0) throw new Error(`fixed_process_failed:${basename(executable)}:${code ?? 'signal'}`)
+}
+
+export async function ensureWindowsVenv(projectRoot: string): Promise<string> {
+  const venv = pathInside(projectRoot, '.venv')
+  const python = resolve(venv, 'Scripts', 'python.exe')
+  if (existsSync(python)) return venv
+  const configuredPython = process.env.RESEARCH_PYTHON_EXECUTABLE || 'python.exe'
+  await runFixed(configuredPython, ['-m', 'venv', venv], { cwd: projectRoot, env: safeEnvironment() })
+  if (!existsSync(python)) throw new Error('project_venv_creation_failed')
+  return venv
+}
+
+function windowsToWsl(path: string): string {
+  const match = /^([A-Za-z]):\\(.*)$/.exec(resolve(path))
+  if (!match) throw new Error('wsl_path_conversion_failed')
+  return `/mnt/${match[1]!.toLowerCase()}/${match[2]!.replaceAll('\\', '/')}`
+}
+
+async function ensureWslVenv(projectRoot: string): Promise<string> {
+  const root = windowsToWsl(projectRoot)
+  const venv = `${root}/.venv`
+  await runFixed('wsl.exe', ['--exec', 'sh', '-lc', 'test -x "$1/.venv/bin/python" || python3 -m venv "$1/.venv"', 'research-os', root], { cwd: projectRoot, env: safeEnvironment() })
+  return venv
+}
+
+function hashFile(path: string): string {
+  return createHash('sha256').update(readFileSync(path)).digest('hex')
+}
+
+function collectFiles(root: string, current = root): string[] {
+  const result: string[] = []
+  for (const name of readdirSync(current)) {
+    const path = resolve(current, name)
+    const info = statSync(path)
+    if (info.isSymbolicLink()) throw new Error('artifact_symlink_forbidden')
+    if (info.isDirectory()) result.push(...collectFiles(root, path))
+    else if (info.isFile()) result.push(path)
+  }
+  return result
+}
+
+function readValidatedResults(runDirectory: string) {
+  const metricsPath = resolve(runDirectory, 'metrics.json')
+  const checkpointPath = resolve(runDirectory, 'checkpoint.json')
+  if (!existsSync(metricsPath) || !existsSync(checkpointPath)) throw new Error('required_experiment_outputs_missing')
+  const metrics = JSON.parse(readFileSync(metricsPath, 'utf8')) as Record<string, unknown>
+  const checkpoint = JSON.parse(readFileSync(checkpointPath, 'utf8')) as Record<string, unknown>
+  if (!metrics || Array.isArray(metrics) || Object.values(metrics).some(value => typeof value !== 'number' || !Number.isFinite(value))) throw new Error('metrics_must_be_finite_numbers')
+  if (!checkpoint || Array.isArray(checkpoint)) throw new Error('checkpoint_must_be_an_object')
+  return { metrics: metrics as Record<string, number>, checkpoint }
+}
+
+function spawnExperiment(request: ExperimentRequest, projectRoot: string, runDirectory: string, venv: string): ChildProcess {
+  const entrypoint = String(request.config.entrypoint || 'experiment/main.py')
+  if (!entrypointPattern.test(entrypoint)) throw new Error('invalid_experiment_entrypoint')
+  const entryPath = pathInside(projectRoot, ...entrypoint.split('/'))
+  if (!existsSync(entryPath)) throw new Error('experiment_entrypoint_missing')
+  const planPath = resolve(runDirectory, 'plan.json')
+  writeFileSync(planPath, `${JSON.stringify({ plan: request.topic_plan ?? null, resume: request.topic_resume ?? null, random_seeds: request.random_seeds }, null, 2)}\n`)
+  const outputLog = resolve(runDirectory, 'run.log')
+  if (request.execution_backend === 'wsl2') {
+    const args = ['--exec', `${venv}/bin/python`, windowsToWsl(entryPath), windowsToWsl(planPath), windowsToWsl(runDirectory)]
+    return spawn('wsl.exe', args, { cwd: projectRoot, env: safeEnvironment(), windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
+  }
+  const python = resolve(venv, 'Scripts', 'python.exe')
+  const command = `""${python}" "${entryPath}" "${planPath}" "${runDirectory}""`
+  const child = spawn(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', command], {
+    cwd: projectRoot, env: safeEnvironment(venv), windowsHide: true, windowsVerbatimArguments: true,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  let logBytes = 0
+  const append = (chunk: Buffer) => {
+    if (logBytes >= 5 * 1024 * 1024) return
+    const bounded = chunk.subarray(0, 5 * 1024 * 1024 - logBytes)
+    logBytes += bounded.length
+    writeFileSync(outputLog, bounded, { flag: 'a' })
+  }
+  child.stdout?.on('data', append)
+  child.stderr?.on('data', append)
+  return child
+}
+
+function spawnLatex(projectRoot: string, runDirectory: string): ChildProcess {
+  const source = pathInside(projectRoot, 'paper', 'main.tex')
+  if (!existsSync(source)) throw new Error('paper_source_missing')
+  return spawn('latexmk.exe', ['-pdf', '-interaction=nonstopmode', '-halt-on-error', `-outdir=${runDirectory}`, source], {
+    cwd: pathInside(projectRoot, 'paper'), env: safeEnvironment(), windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
+  })
+}
+
+async function terminateTree(child: ChildProcess): Promise<void> {
+  if (!child.pid) return
+  if (process.platform === 'win32') {
+    const killer = spawn('taskkill.exe', ['/pid', String(child.pid), '/t', '/f'], { windowsHide: true, stdio: 'ignore' })
+    await once(killer, 'exit')
+  } else child.kill('SIGKILL')
+}
+
+async function execute(runId: string, request: ExperimentRequest): Promise<void> {
+  const projectRoot = pathInside(projectsRoot, request.project_id)
+  const runDirectory = pathInside(artifactsRoot, 'runs', runId)
+  mkdirSync(runDirectory, { recursive: true })
+  try {
+    await database.query("UPDATE experiments SET status='running', run_id=$2 WHERE id=$1", [runId, runId])
+    const child = request.experiment_type === 'compile_latex'
+      ? spawnLatex(projectRoot, runDirectory)
+      : spawnExperiment(request, projectRoot, runDirectory, request.execution_backend === 'wsl2' ? await ensureWslVenv(projectRoot) : await ensureWindowsVenv(projectRoot))
+    const timeout = setTimeout(() => void terminateTree(child), Number(process.env.EXPERIMENT_TIMEOUT_SECONDS || 3600) * 1000)
+    activeRuns.set(runId, { child, state: 'running', timeout })
+    const [exitCode] = await once(child, 'exit') as [number | null]
+    clearTimeout(timeout)
+    const active = activeRuns.get(runId)
+    activeRuns.delete(runId)
+    if (active?.state === 'cancelled') return
+    if (exitCode !== 0) throw new Error(`experiment_process_failed:${exitCode ?? 'signal'}`)
+    if (request.experiment_type === 'compile_latex') {
+      writeFileSync(resolve(runDirectory, 'metrics.json'), '{"compiled":1}\n')
+      writeFileSync(resolve(runDirectory, 'checkpoint.json'), `${JSON.stringify({ source: 'paper/main.tex', backend: request.execution_backend })}\n`)
+    }
+    const { metrics, checkpoint } = readValidatedResults(runDirectory)
+    await database.query("UPDATE experiments SET status='succeeded', metrics=$2, finished_at=NOW() WHERE id=$1", [runId, metrics])
+    await database.query('INSERT INTO checkpoints(id,project_id,stage,idea_version,state) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), request.project_id, 'experiment_succeeded', Number(request.topic_plan?.idea_version || 1), { ...checkpoint, source_run_id: runId }])
+    for (const file of collectFiles(runDirectory)) {
+      const relativePath = relative(artifactsRoot, file).replaceAll('\\', '/')
+      await database.query('INSERT INTO artifacts(id,project_id,experiment_id,kind,name,relative_path,mime_type,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [crypto.randomUUID(), request.project_id, runId, 'experiment_output', basename(file), relativePath, 'application/octet-stream', hashFile(file), { backend: request.execution_backend }])
+    }
+    await audit('experiment.succeeded', request.project_id, { run_id: runId, backend: request.execution_backend })
+  } catch (error) {
+    activeRuns.delete(runId)
+    const message = error instanceof Error ? error.message : 'experiment_failed'
+    await database.query("UPDATE experiments SET status='failed', error=$2, finished_at=NOW() WHERE id=$1", [runId, message])
+    await audit('experiment.failed', request.project_id, { run_id: runId, code: message })
+  }
+}
+
+export function submitRun(runId: string, request: ExperimentRequest): void {
+  void execute(runId, request)
+}
+
+export async function cancelRun(runId: string): Promise<boolean> {
+  const active = activeRuns.get(runId)
+  if (!active) return false
+  active.state = 'cancelled'
+  clearTimeout(active.timeout)
+  await terminateTree(active.child)
+  activeRuns.delete(runId)
+  await database.query("UPDATE experiments SET status='cancelled', finished_at=NOW() WHERE id=$1", [runId])
+  return true
+}

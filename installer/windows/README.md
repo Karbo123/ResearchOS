@@ -1,13 +1,13 @@
-# Windows installer
+# Windows Installer
 
-This directory builds an online bootstrap installer. The resulting single EXE contains Research OS and the n8n workflow definitions. All API and model requests run inside Docker Compose; the installer never starts a Windows API service or model Bridge. It does not redistribute Docker Desktop. When Docker is missing and the user opts in, the bootstrap downloads the official installer and verifies its Authenticode signature before requesting elevation.
+The Inno Setup installer copies the source and native build configuration into `%LOCALAPPDATA%\ResearchOS`. Its bootstrapper verifies Node.js 22.13+, optionally downloads the signed Node.js 22.22 LTS MSI from `nodejs.org`, runs `npm ci`, builds the TypeScript packages, and starts the API and Mastra as a hidden local process tree.
 
-`.github/workflows/installer-release.yml` builds the EXE on a Windows GitHub runner for `v*` tags, writes `SHA256SUMS.txt`, and creates a draft Release. A normal tag push can only create a draft. To publish, manually run the workflow from the same tag with `publish=true`; the job then requires `INSTALLER_SIGNING_CERT_PFX_B64` and `INSTALLER_SIGNING_CERT_PASSWORD`, signs with Authenticode, verifies the signature, refreshes the checksum, and publishes the Release. No `.env`, credential, Docker binary, or Codex auth file is packaged.
+The app writes the parent PID and logs under `runtime/`. Uninstall invokes `bootstrap.ps1 -Stop`, which terminates only the recorded Research OS process tree. User data directories are not treated as disposable during upgrades.
 
-Build on a Windows release machine with Python and Inno Setup 6:
+Build locally:
 
 ```powershell
-.\installer\windows\build-installer.ps1
+.\installer\windows\build-installer.ps1 -Version 0.3.0
 ```
 
-The build output is intentionally ignored by Git. A clean-VM acceptance run is required before publishing or marking `P2-INSTALLER-029` complete. The workflow does not bypass missing signing secrets, and it does not claim that Docker Desktop is redistributed.
+Publishing remains gated by Authenticode signing, SHA-256 output, a clean Windows VM installation test, model-error verification, upgrade/uninstall checks, and an explicit GitHub Release action.

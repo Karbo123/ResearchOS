@@ -22,6 +22,22 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+          cache: npm
+
+      - name: Validate native TypeScript build
+        shell: pwsh
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+          npm run idea-cases:check
+          npm run docs:check
+
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup --yes --no-progress
@@ -29,7 +45,7 @@ jobs:
       - name: Build installer
         shell: pwsh
         run: |
-          $version = if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') { $Matches[1] } else { '0.2.0-ci' }
+          $version = if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') { $Matches[1] } else { '0.3.0-ci' }
           .\installer\windows\build-installer.ps1 -Version $version
 
       - name: Create checksum

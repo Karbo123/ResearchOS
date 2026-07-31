@@ -1,20 +1,22 @@
-.PHONY: up down logs test validate docs-check
+.PHONY: install build start dev test validate
 
-up:
-	docker compose up --build -d
+install:
+	npm ci
 
-down:
-	docker compose down
+build:
+	npm run build
 
-logs:
-	docker compose logs -f api runner n8n
+start:
+	npm start
+
+dev:
+	npm run dev
 
 test:
-	docker compose run --rm api pytest -q
+	npm test
 
 validate:
-	docker compose config --quiet
-	python scripts/check_docs_sync.py
-
-docs-check:
-	python scripts/check_docs_sync.py
+	npm run typecheck
+	npm test
+	npm run idea-cases:check
+	npm run docs:check

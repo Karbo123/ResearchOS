@@ -12,7 +12,7 @@
 
 ## 实验与指标
 
-{{ completed_running_failed_runs_with_mlflow_links_cost_and_resources }}
+{{ completed_running_failed_runs_with_internal_run_ids_cost_and_resources }}
 
 ## 可视化产物
 

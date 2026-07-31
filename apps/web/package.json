@@ -1,0 +1,12 @@
+{
+  "name": "@research-os/web",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/chat-ux.ts src/app.ts --bundle --outdir=public --format=iife --target=es2022",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": { "lucide": "0.468.0" },
+  "devDependencies": { "esbuild": "0.25.3", "typescript": "5.8.3" }
+}

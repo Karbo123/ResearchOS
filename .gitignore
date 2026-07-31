@@ -1,14 +1,15 @@
 .env
-__pycache__/
-.pytest_cache/
-*.pyc
+node_modules/
+.mastra/
+apps/mastra/.mastra/
+apps/server/dist/
 projects/*
 !projects/.gitkeep
 artifacts/*
 !artifacts/.gitkeep
 
-# Reproducibility policy: source/config text is versioned, runtime and large
-# research files remain in controlled artifacts or MinIO and are never staged.
+# Reproducibility policy: source/config text is versioned; runtime and large
+# research files remain in controlled artifact storage and are never staged.
 projects/*/experiments/runs/
 projects/*/artifacts/
 projects/*/source-bundles/
@@ -31,13 +32,8 @@ projects/*/*.db
 projects/*/*.sqlite
 projects/*/*.bak
 projects/*/*.log
-postgres-data/
-minio-data/
-mlflow-data/
-n8n-data/
 runtime/*
 !runtime/.gitkeep
 installer/windows/build/
 installer/windows/dist/
 installer/windows/*.exe
-.venv-installer/
