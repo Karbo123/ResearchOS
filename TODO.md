@@ -49,3 +49,4 @@
 - 浏览器证据已写入 `docs/assets/research-os-overview.jpg`、`docs/assets/research-os-model-settings.jpg` 和 `docs/assets/research-os-mastra-workflow.jpg`，截图不含 key 内容；README 双语版已引用同一组证据。
 - 最终仓库扫描：业务源码、脚本和测试没有 `.py`；没有旧编排、容器文件、旧 Python 服务路径或旧模型服务路径；`.env`、运行时数据库、备份和密钥未进入变更范围。
 - 交付边界：本地 MVP 迁移已完成；签名 EXE、干净 Windows VM 安装/升级/卸载、GitHub Release 发布、真实 GPU 主机验证和后续研究能力仍由后续任务保留。
+- 提交审计：`d02f649`（`feat:migrate-research-os-to-native-typescript`）。
