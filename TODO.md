@@ -44,6 +44,7 @@
 
 ## 后续任务
 
+- [x] `P1-UI-055` 将 `apps/web` 从前端原生 DOM/HTML 实现整体重写为 React 19 + TypeScript 组件应用；保留当前 API、Supermemory、Mastra、实验和审批功能契约，删除过时的 `public/index.html` 大段标记、`app.ts`/`chat-ux.ts` 原生 DOM 代码和未使用的旧产物；构建仍由 server 静态托管，桌面与移动端真实浏览器验收通过。
 - [x] `P1-UI-054` 使用已安装的 `ui-skills`/`baseline-ui` 对 `apps/web` 主界面完成统一视觉重设计；保留当前 API、Supermemory、Mastra、实验和审批功能契约，统一导航层级、信息密度、表单反馈、产物展示和桌面/移动端布局。`npm run build --workspace @research-os/web` 通过；真实浏览器已检查新 Idea、项目概览、产物图库、模型设置弹窗和移动端，页面无横向溢出、无重叠、无新增控制台错误；未引入渐变、无边界装饰卡片或模型失败 fallback。
 - [ ] `P1-DEPS-049` 跟进 Mastra 固定的 `@ai-sdk/provider-utils@3.0.30` 上游审计告警；等待兼容补丁后升级并重跑生产依赖审计，禁止强制覆盖不兼容的间接依赖。
 - [ ] `P1-MASTRA-050` 按 Mastra 官方能力扩展 Research OS，官方文档入口为 `https://mastra.ai/llms.txt`；先从该导航定位主题，再核对 `https://mastra.ai/docs/` 和当前安装版本类型定义。所有子任务必须保持无 fallback、严格 schema、Proposal 审批、Git/audit 记录和本地服务边界。
@@ -78,6 +79,7 @@
 
 ## 本轮验证记录
 
+- `2026-07-31` `P1-UI-055` 复查：`apps/web` 已从原生 DOM 脚本重写为 React 19 + TypeScript 组件应用；`index.html` 只剩挂载点，旧 `app.ts`/`chat-ux.ts`/`chat-ux.js` 已删除，新增 `favicon.svg`。根目录 `npm run typecheck`、`npm test -- --no-cache`（9 个测试文件、27 个测试）、`npm run docs:check`、`npm run idea-cases:check`、完整 `npm run build` 和 `ops-guard status` 均通过；真实浏览器桌面/移动端检查无横向溢出、无控制台错误，项目、文献、实验、报告、模型设置和项目记忆图弹窗均可打开。
 - `P0-SUPERMEMORY-052` 复查：已加入 `supermemory` 官方 SDK、严格输入/输出 Processor、项目 `containerTag` 隔离、`/memory/status|search|graph` API 和左下角 Graph Memory UI；未配置 Supermemory key 时直接返回 `supermemory_not_configured`，不显示本地伪造结果。真实 Supermemory API、两个项目跨项目泄漏测试、长文本/PDF/图片摄取、幂等删除/撤销、来源链和浏览器运行态验收仍未完成，任务保持 `[~]`。
 - `2026-07-31` 复查：修复 `apps/web/src/app.ts` Graph 响应的 TypeScript 类型错误；`npm run typecheck`、提升权限后的 `npm run build` 和 `npm test -- --no-cache` 均通过（8 个测试文件、20 个测试）。API/Mastra 旧进程重启时发现当前系统 `node` 为 `20.13.1`，不满足仓库 `>=22.13`，服务因 `pdfjs-dist` 的 `DOMMatrix` 依赖退出；因此不能记录为运行时启动通过，需使用 Node 22.13+ 后重新验收。
 - `2026-07-31` 运行态复查：使用官方 Node `22.22.0` 便携运行时和未覆盖主库的 `runtime/restore-pglite-20260731` 启动 API/Mastra；健康检查、项目读取、三档模型设置、`/memory/status` 和未配置 key 时的 `503 supermemory_not_configured` 均通过。浏览器确认项目详情页契约归一化、项目统计、Graph Memory 弹窗和直接失败状态正常；修复 `apps/web/src/app.ts` 的扁平/嵌套项目响应兼容，重建 Web 并确认无新增控制台错误。默认损坏数据库仍未切换，真实 Supermemory key/API 仍未配置。

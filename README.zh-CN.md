@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-11 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-12 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-原生 Windows 迁移已经完成代码级实现，应用测试和 NVM for Windows 管理的 Node.js 26.5.1 构建均已通过。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、刷新后的 Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。原始 `runtime/research-os.pglite` 被保留为旧 PostgreSQL 集群目录；项目 `.env` 现在通过显式配置选择经过验证的非覆盖式恢复候选 `runtime/restore-pglite-20260731`，该候选为 `127.0.0.1:8080` 和 `127.0.0.1:4111` 提供本地 API 与 Mastra Studio。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
+原生 Windows 迁移已经完成代码级实现，应用测试和 NVM for Windows 管理的 Node.js 26.5.1 构建均已通过。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。原始 `runtime/research-os.pglite` 被保留为旧 PostgreSQL 集群目录；项目 `.env` 现在通过显式配置选择经过验证的非覆盖式恢复候选 `runtime/restore-pglite-20260731`，该候选为 `127.0.0.1:8080` 和 `127.0.0.1:4111` 提供本地 API 与 Mastra Studio。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -16,7 +16,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 - `apps/server`：Hono API、PGlite 状态、队列、证据、审批、报告、仓库验证/获取、产物账本和本机实验监控器。
 - `apps/mastra`：Mastra Agents、Memory、Skills、受限 Tools、Workflows、定时任务和 Studio 工作流图。
-- `apps/web`：TypeScript 浏览器源码和生成的静态资源。
+- `apps/web`：React 19 + TypeScript 组件源码，以及由 esbuild 生成、API 直接托管的静态资源。
 - `projects/<project-id>`：独立 Git 工作区。科研 Python 使用 `projects/<project-id>/.venv`。
 - `artifacts`：受控上传、证据 PDF、实验产物、验收结果和备份。
 - `runtime`：被 Git 忽略的应用状态、模型覆盖、Mastra Memory、日志和 PID 数据。
@@ -72,7 +72,7 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 
 ## 验证证据
 
-当前 Web UI 和 Mastra 图已经在真实浏览器中检查。刷新后的页面已覆盖桌面和移动端的新 Idea 输入、项目概览、产物图库、模型设置和项目对话；移动端没有横向溢出。模型设置截图显示三档配置、正确的 `/v1` 地址、推理强度和 key 状态；不会显示任何 key 内容。
+当前 Web UI 已经重写为 React + TypeScript 组件应用，不再使用原生 DOM/HTML 实现，并已在真实浏览器中检查。桌面和移动端的新 Idea 输入、项目概览、文献/材料检索、产物图库、模型设置、项目对话和 Mastra 入口均已覆盖；移动端没有横向溢出，控制台没有错误。模型设置截图显示三档配置、正确的 `/v1` 地址、推理强度和 key 状态；不会显示任何 key 内容。
 
 ![Research OS 总览](docs/assets/research-os-overview.jpg)
 

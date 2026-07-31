@@ -362,6 +362,7 @@ h1 { font-size: 20px; line-height: 1.25; }
   .project-chat { top: 76px; width: min(380px, 90vw); box-shadow: -8px 0 30px rgba(0,0,0,.12); }
 }
 @media (max-width: 760px) {
+  .app-shell { grid-template-columns: 1fr; }
   .sidebar { height: 60px; min-height: auto; padding: 9px 12px; }
   .brand { margin: 0 auto 0 0; padding: 0; }
   .sidebar .primary { width: 40px; height: 40px; min-height: 40px; font-size: 0; padding: 9px; }
@@ -392,4 +393,90 @@ h1 { font-size: 20px; line-height: 1.25; }
 @media (prefers-reduced-motion: reduce) {
   .thinking-dot, .ai-progress-track span, .thinking-stage.active .stage-icon { animation: none; }
   *, *::before, *::after { transition-duration: .01ms !important; }
+}
+
+/* React UI additions */
+.thinking-session-header {
+  width: 100%;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.thinking-session-header .toggle-icon {
+  transition: transform .15s ease;
+}
+.spec-pane-content {
+  min-width: 0;
+}
+.material-search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.material-search-form input {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.material-search-results {
+  display: grid;
+  gap: 10px;
+}
+.inline-repo-form {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.inline-repo-form input {
+  width: min(240px, 42vw);
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 9px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.loading-view {
+  padding: 28px;
+}
+.confirm-panel {
+  width: min(420px, 100%);
+}
+.confirm-description {
+  margin: 0 0 18px;
+}
+.artifact-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #eef2ef;
+}
+.memory-graph-canvas {
+  display: block;
+}
+@media (max-width: 760px) {
+  .material-search-form,
+  .inline-repo-form {
+    grid-template-columns: 1fr;
+  }
+  .inline-repo-form input {
+    width: 100%;
+  }
 }

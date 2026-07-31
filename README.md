@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-11 -->
+<!-- DOCS_SYNC_VERSION: 2026-07-31-12 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS is a local, auditable research-automation MVP. The application is im
 
 ## Status
 
-The native Windows migration is implemented at the code level and its application tests and Node.js 26.5.1 build pass under NVM for Windows. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, refreshed Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The original `runtime/research-os.pglite` is preserved as a legacy PostgreSQL cluster; the project `.env` now explicitly selects the verified non-overwriting recovery candidate `runtime/restore-pglite-20260731`, which serves the local API and Mastra Studio on `127.0.0.1:8080` and `127.0.0.1:4111`. Clean-machine installer signing/release and GPU-host validation remain separate open work.
+The native Windows migration is implemented at the code level and its application tests and Node.js 26.5.1 build pass under NVM for Windows. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The original `runtime/research-os.pglite` is preserved as a legacy PostgreSQL cluster; the project `.env` now explicitly selects the verified non-overwriting recovery candidate `runtime/restore-pglite-20260731`, which serves the local API and Mastra Studio on `127.0.0.1:8080` and `127.0.0.1:4111`. Clean-machine installer signing/release and GPU-host validation remain separate open work.
 
 Model failures are final structured errors. The application never substitutes a local reply, another provider, or an unrelated experiment.
 
@@ -16,7 +16,7 @@ Model failures are final structured errors. The application never substitutes a 
 
 - `apps/server`: Hono API, PGlite state, queue, evidence, approvals, reports, repository verification/acquisition, artifact ledger, and native experiment supervisor.
 - `apps/mastra`: Mastra Agents, Memory, Skills, bounded Tools, Workflows, schedules, and Studio graph.
-- `apps/web`: TypeScript browser source and generated static assets.
+- `apps/web`: React 19 + TypeScript component source and esbuild-generated static assets served by the API.
 - `projects/<project-id>`: isolated Git workspaces. Scientific Python uses `projects/<project-id>/.venv`.
 - `artifacts`: controlled uploads, evidence PDFs, experiment outputs, acceptance results, and backups.
 - `runtime`: ignored local application state, model overrides, Mastra memory, logs, and PID data.
@@ -72,7 +72,7 @@ HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC19
 
 ## Verification Evidence
 
-The current local UI and Mastra graph were checked in a real browser. The refreshed UI was checked at desktop and mobile sizes across the new-Idea composer, project overview, artifact gallery, model settings, and project chat; the mobile layout has no horizontal overflow. The model-settings screenshot shows all three tiers, the configured `/v1` endpoint, reasoning effort, and only key status; no key material is displayed.
+The current local UI is a React + TypeScript component application with no native DOM/HTML implementation and was checked in a real browser. Desktop and mobile flows across the new-Idea composer, project overview, literature/material search, artifact gallery, model settings, project chat, and Mastra link were exercised; there is no horizontal overflow and no console error. The model-settings screenshot shows all three tiers, the configured `/v1` endpoint, reasoning effort, and only key status; no key material is displayed.
 
 ![Research OS overview](docs/assets/research-os-overview.jpg)
 

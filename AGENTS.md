@@ -8,7 +8,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 
 业务应用、数据库迁移、运维脚本、验收和测试只使用 TypeScript。科研实验允许任意语言；Python 只允许出现在 `projects/<project-id>/experiment/`，并使用该项目自己的 `projects/<project-id>/.venv`。应用运行不得依赖容器引擎。
 
-主要组件：`apps/server/` 原生 API 与实验监督器，`apps/mastra/` Agents/Memory/Skills/Tools/Workflows/Studio，`apps/web/` TypeScript 前端，`projects/` 项目 Git 工作区，`artifacts/` 受控产物，`runtime/` 本机状态。
+主要组件：`apps/server/` 原生 API 与实验监督器，`apps/mastra/` Agents/Memory/Skills/Tools/Workflows/Studio，`apps/web/` React + TypeScript 组件前端，`projects/` 项目 Git 工作区，`artifacts/` 受控产物，`runtime/` 本机状态。
 
 ## TODO 实时契约
 
