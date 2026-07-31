@@ -40,7 +40,7 @@ type ExperimentRow = { id: string; project_id: string; status: string; metrics: 
 type RepositoryRow = { id: string; project_id: string; paper_id: string | null; source_url: string; license_spdx: string | null; commit_or_tag: string | null; verified_official: boolean; metadata: Record<string, unknown>; retrieved_at: string }
 type PaperIdentity = { id: string; title: string; doi: string | null }
 
-const app = new Hono()
+export const app = new Hono()
 app.onError((error, context) => {
   if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) {
     return context.json({ code: error.code, message: error.message }, error.status)
@@ -636,8 +636,11 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context
 
 app.use('/*', serveStatic({ root: publicRoot, rewriteRequestPath: path => path === '/' ? '/index.html' : path }))
 
-await migrate()
-await recoverInterruptedWork()
-const port = Number(process.env.RESEARCH_API_PORT || 8080)
-serve({ fetch: app.fetch, hostname: '127.0.0.1', port }, info => console.log(`Research OS native TypeScript server: http://127.0.0.1:${info.port}`))
-startTaskWorker()
+const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
+if (!isTestRuntime) {
+  await migrate()
+  await recoverInterruptedWork()
+  const port = Number(process.env.RESEARCH_API_PORT || 8080)
+  serve({ fetch: app.fetch, hostname: '127.0.0.1', port }, info => console.log(`Research OS native TypeScript server: http://127.0.0.1:${info.port}`))
+  startTaskWorker()
+}

@@ -26,6 +26,8 @@ Uploads are size- and extension-limited and scanned with Windows Defender. Scann
 
 PDF evidence is downloaded only from a fixed HTTPS host allowlist, limited to 25 MB, checked for a PDF signature, hashed, parsed without evaluation, and stored with page locators. Extracted passages are candidates for claim-level review, not automatic proof.
 
+Claim Review endpoints accept only evidence IDs owned by the current project, allow exactly one terminal decision, preserve the `page_quote_requires_claim_review` status, and write creation/decision audit events. Acceptance records human review of the selected quote; it does not establish a scientific conclusion.
+
 ## Files and Secrets
 
 `.env`, `runtime/`, local databases, backup archives, model keys, cookies, and authentication material are ignored and must never be committed. Project patches cannot target `.git`, `.env`, credentials, or paths outside the project. Approved patches bind a Git commit and content hash; conflicts fail before commit and modified files are restored.

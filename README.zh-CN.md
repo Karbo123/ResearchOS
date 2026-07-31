@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-02 -->
 
 # Research OS
 
@@ -49,6 +49,8 @@ npm start
 
 旧主数据库目录会保留不动。可以使用 `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731` 生成并检查非覆盖式恢复候选。检查完成后，在 `.env` 中显式设置 `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731`；`npm start` 会自动加载该配置。
 
+无人值守运行可以使用 `npm run ops:monitor -- once` 做一次有界的 API/Mastra 健康检查，也可以使用 `npm run ops:monitor -- watch 3600` 运行一小时监控；结构化事件会追加到 `runtime/ops/health-events.jsonl`。显式配置 `RESEARCH_ALERT_WEBHOOK_URL` 后，状态转移和失败事件可以发送到告警接收端。`npm run ops:recovery-drill -- <backup-id>` 会校验备份哈希，在临时目录安全列出并解压归档，拒绝链接和路径穿越，检查必要目录后删除演练目录，不接触在线数据。
+
 开发命令：
 
 ```powershell
@@ -69,6 +71,10 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 - 共享请求时限：`MODEL_REQUEST_TIMEOUT_SECONDS`
 
 系统接受 HTTPS 端点；HTTP 只允许回环地址和 RFC1918 私有地址，包括本地 OpenAI-compatible 服务。
+
+## Claim 与证据复核
+
+PDF 页码原文在人工创建并决定 Claim Review 前都只是证据候选。“文献”页和 `/api/projects/<project-id>/claim-reviews` 接口会强制当前项目 evidence ID、一次性终态决策、证据状态标记和审计记录。接受复核只表示人工检查过 quote，不会把元数据升级为全文证据，也不会证明科学结论。
 
 ## 验证证据
 

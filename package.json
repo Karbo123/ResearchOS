@@ -23,6 +23,8 @@
     "docs:check": "tsx scripts/check-docs-sync.ts",
     "idea-cases:check": "tsx scripts/check-idea-case-sources.ts",
     "ops:status": "tsx scripts/ops-guard.ts status",
+    "ops:monitor": "tsx scripts/ops-monitor.ts",
+    "ops:recovery-drill": "tsx scripts/ops-recovery-drill.ts",
     "acceptance": "tsx scripts/acceptance-test.ts",
     "mastra:hitl:check": "tsx scripts/verify-mastra-hitl.ts",
     "mastra:evals:check": "tsx scripts/mastra-evals-check.ts",

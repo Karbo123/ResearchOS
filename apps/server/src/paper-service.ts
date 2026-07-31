@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
-import { database, rows } from './database.js'
+import { database } from './database.js'
 import { ApiError } from './http.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot } from './paths.js'
@@ -15,10 +15,17 @@ export async function createPaperDraftProposal(projectId: string) {
   const project = await projectDetail(projectId)
   const evidence = project.evidence as Array<Record<string, unknown>>
   if (!evidence.length) throw new ApiError(422, 'verified_evidence_required', '生成论文草稿前至少需要一条页码级全文证据。')
+  const claimReviews = (project.claim_reviews as Array<Record<string, unknown>> | undefined) || []
+  const acceptedReviews = claimReviews.filter(item => item.status === 'accepted')
+  const reviewedEvidenceIds = new Set(acceptedReviews.flatMap(item => Array.isArray(item.evidence_ids) ? item.evidence_ids.map(String) : []))
   const idea = (project.idea_versions[0] as Record<string, unknown> | undefined)?.spec as Record<string, unknown> | undefined
   const ideaBody = (idea?.idea || {}) as Record<string, unknown>
   const experiments = (project.experiments as Array<Record<string, unknown>>).filter(item => item.status === 'succeeded')
-  const evidenceText = evidence.map((item, index) => `\\item [E${index + 1}] ${latex(item.quote)} (${latex(item.locator)}, ${latex(item.source_url)})`).join('\n')
+  const evidenceText = evidence.map((item, index) => reviewedEvidenceIds.has(String(item.id)) ? null : `\\item [E${index + 1}] ${latex(item.quote)} (${latex(item.locator)}, ${latex(item.source_url)})`).filter(Boolean).join('\n') || '\\item No unreviewed evidence candidates remain.'
+  const reviewedText = acceptedReviews.map((review, index) => {
+    const references = Array.isArray(review.evidence_ids) ? review.evidence_ids.map(id => `E${Math.max(1, evidence.findIndex(item => String(item.id) === String(id)) + 1)}`).join(', ') : 'none'
+    return `\\item [C${index + 1}] ${latex(review.claim)} (reviewed evidence: ${latex(references)})`
+  }).join('\n') || '\\item No claim has completed human review; no quote is treated as factual support.'
   const resultText = experiments.length
     ? experiments.map(item => `\\item Run ${latex(item.id)}: \\texttt{${latex(JSON.stringify(item.metrics || {}))}}`).join('\n')
     : '\\item No approved experiment has completed; no scientific result is claimed.'
@@ -29,8 +36,13 @@ export async function createPaperDraftProposal(projectId: string) {
 \\maketitle
 \\section{Research Question}
 ${latex(ideaBody.research_question || 'Not yet confirmed.')}
+\\section{Human-Reviewed Claim Mappings}
+The following mappings record human review of selected page-level quotes. They do not establish a scientific conclusion.
+\\begin{description}
+${reviewedText}
+\\end{description}
 \\section{Evidence Candidates}
-The following page-level passages require claim-level human review before use as factual support.
+The following page-level passages remain candidates and require claim-level human review before use as factual support.
 \\begin{description}
 ${evidenceText}
 \\end{description}
@@ -48,7 +60,7 @@ Metadata candidates are not full-text evidence. System integration results do no
   const operation = existing
     ? { action: 'replace', path: 'paper/main.tex', content, expected_sha256: createHash('sha256').update(existing).digest('hex') }
     : { action: 'create', path: 'paper/main.tex', content }
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded LaTeX draft', 'Create evidence-grounded paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic draft`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations: [operation], evidence_ids: evidence.map(item => item.id) }])
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded LaTeX draft', 'Create evidence-grounded paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic draft`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations: [operation], evidence_ids: evidence.map(item => item.id), claim_review_ids: acceptedReviews.map(item => item.id), reviewed_evidence_ids: [...reviewedEvidenceIds] }])
   if (supermemoryEnabled()) {
     await ingestProjectMemory(projectId, {
       source_type: 'related_work',

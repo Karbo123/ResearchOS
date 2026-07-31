@@ -47,7 +47,7 @@
 - [x] `P1-UI-055` 将 `apps/web` 从前端原生 DOM/HTML 实现整体重写为 React 19 + TypeScript 组件应用；保留当前 API、Supermemory、Mastra、实验和审批功能契约，删除过时的 `public/index.html` 大段标记、`app.ts`/`chat-ux.ts` 原生 DOM 代码和未使用的旧产物；构建仍由 server 静态托管，桌面与移动端真实浏览器验收通过。
 - [x] `P1-UI-054` 使用已安装的 `ui-skills`/`baseline-ui` 对 `apps/web` 主界面完成统一视觉重设计；保留当前 API、Supermemory、Mastra、实验和审批功能契约，统一导航层级、信息密度、表单反馈、产物展示和桌面/移动端布局。`npm run build --workspace @research-os/web` 通过；真实浏览器已检查新 Idea、项目概览、产物图库、模型设置弹窗和移动端，页面无横向溢出、无重叠、无新增控制台错误；未引入渐变、无边界装饰卡片或模型失败 fallback。
 - [!] `P1-DEPS-049` 跟进 Mastra 固定的 `@ai-sdk/provider-utils@3.0.30` 上游审计告警；直接 `tar` 已升级到 `7.5.22` 并清除严重漏洞，剩余 `@ai-sdk/provider-utils`/`undici` 风险仍由当前 Mastra/Supermemory 上游传递依赖固定，暂无兼容补丁，禁止强制覆盖不兼容的间接依赖。解除条件是上游发布兼容修复后重跑 `npm audit --omit=dev`。
-- [ ] `P1-MASTRA-050` 按 Mastra 官方能力扩展 Research OS，官方文档入口为 `https://mastra.ai/llms.txt`；先从该导航定位主题，再核对 `https://mastra.ai/docs/` 和当前安装版本类型定义。所有子任务必须保持无 fallback、严格 schema、Proposal 审批、Git/audit 记录和本地服务边界。
+- [~] `P1-MASTRA-050` 按 Mastra 官方能力扩展 Research OS，官方文档入口为 `https://mastra.ai/llms.txt`；先从该导航定位主题，再核对 `https://mastra.ai/docs/` 和当前安装版本类型定义。所有子任务必须保持无 fallback、严格 schema、Proposal 审批、Git/audit 记录和本地服务边界；仅真实 Supermemory provider 的材料索引验收仍待外部 key。
   - [x] `P1-MASTRA-050-A` 接入 Mastra Agent Approval 与 Workflow Human-in-the-loop：为高成本工具、依赖安装、代码/配置修改、实验提交和外部发布定义 `requireApproval` 或 `suspend()/resume()`；审批绑定工具名、参数指纹、用户、Proposal、策略版本和审计记录；PGlite Proposal 仍是业务审批源。已通过 `npm run mastra:hitl:check` 验证暂停载荷、拒绝恢复、Proposal 状态和审计绑定；当前没有把测试 Proposal 当作业务批准。
   - [x] `P1-MASTRA-050-B` 接入 Guardrails/Processors：Unicode 规范化、secret block、提示注入检测、system prompt 清理、严格 structured output 和失败关闭已接入；不会生成本地回答或切换 provider。
   - [x] `P1-MASTRA-050-C` 评估 Supervisor Agents、Agent-as-tool、Workflow-as-tool 和 delegation hooks：新增有界 Research Coordinator，限定三个 specialist、消息过滤、单次委派步数和最大步骤，不形成无界循环。
@@ -73,9 +73,10 @@
   - 验证：`npm run typecheck`、`npm test --workspace @research-os/server`（7 files/18 tests）、Mastra Node 24 构建、`git diff --check`、`npm run docs:check`。
 - [!] `P0-RUNNER-007` 在真实 GPU Windows/WSL2 主机验证 GPU 任务与资源记录；解除条件是可用的真实 GPU 主机，当前只能完成 CPU/固定监督器验收。
 - [~] `P1-UPLOAD-009` 增加大规模异步材料索引和跨材料语义检索：已加入固定 `material_index` 队列、Defender 后索引、PDF/文本有界 chunk、图片/不可提取 PDF 原文件上传和项目范围 Supermemory hybrid 搜索；真实 Supermemory API、失败重放和跨材料结果验收待配置 key。
-- [~] `P1-PAPER-016B` 完成 claim 到多证据的语义人工复核工作台：已加入严格多 evidence API、项目权限、接受/拒绝决策、审计记录和文献页 UI；仍需补完整 API/浏览器回归和与论文 Patch 的端到端验收。
+- [x] `P1-PAPER-016B` 完成 claim 到多证据的语义人工复核工作台：严格多 evidence API、项目权限、接受/拒绝决策、审计记录、文献页 UI，以及 Claim Review 到 LaTeX Proposal/Patch 的端到端约束和验证均已完成。已通过隔离 API 测试、临时项目 Git Patch 测试和真实浏览器表单检查；接受复核仍只表示人工检查 quote，不等于科学结论。
 - [!] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布；工作流和 Inno Setup 源码已准备，解除条件是签名证书、干净 VM 和用户授权的 Release 发布。
-- [ ] `P2-HA-021` 增加长期无人值守运行、外部告警和恢复演练。
+- [~] `P2-HA-021` 增加长期无人值守运行、外部告警和恢复演练。
+  - 当前推进：增加有界健康监控、失败事件 JSONL、受限告警 webhook 配置和只读备份恢复演练；真实长期部署、外部告警接收端和跨重启恢复演练仍需在目标 Windows 主机上执行。
 
 ## 本轮验证记录
 
@@ -90,6 +91,7 @@
 - `P0-TS-NATIVE-047` 当前复查：`npm run typecheck`、提升权限后的 `npm test -- --no-cache`（7 files/18 tests）和 `npm run build` 均通过；默认目录仍复现 `PGlite RuntimeError: Aborted()`，但恢复候选实际通过 `8080`/`4111` 健康检查、项目读取、三档模型设置和 Mastra workflow graph 检查；未覆盖主库，默认运行目录切换仍待用户批准。
 - `2026-07-31` 本次复查：项目 Node 22.22.0 下 `npm run typecheck`、`npm run docs:check`、`npm run idea-cases:check`、API/Mastra 健康检查和 `npm test -- --no-cache`（9 个测试文件、27 个测试）通过；Web/API 构建通过，但完整 `npm run build` 仍在 Mastra Studio 产出目录因已存在的 `@libsql` 原生模块被占用而以 `EPERM` 失败。因此当前仍不能标记全部完成；P0-TS-NATIVE-047、P0-SUPERMEMORY-052 和 P1-VIZ-051 继续保持未完成/阻塞状态，其他开放任务不变。
 - `2026-07-31` Node 运行时复查：NVM for Windows 已接管当前 shell，`nvm current` 为 `26.5.1`，实际 `node` 路径为 `C:\nvm4w\nodejs\node.exe`；Node 26 下 `npm run typecheck`、`npm test -- --no-cache`（9 个测试文件、27 个测试）和完整 `npm run build` 均通过。新增根目录 `.nvmrc` 和双语运行说明；此前创建的 `C:\tmp\research-os-node22` 便携运行时已确认，但删除操作被破坏性操作审查服务 `503` 阻塞，目录仍保留；NVM 管理的版本未删除。
+- `2026-08-01` Claim Review 与运维复查：新增隔离 API 回归（项目 evidence scope、一次性决策、审计）及 Claim Review 到 LaTeX Proposal/批准 Patch 的临时 Git 工作区端到端测试；真实浏览器确认文献页表单、页码 quote 选择和提交门禁。新增有界 `ops:monitor` 健康事件记录/受限告警与 `ops:recovery-drill` 备份哈希、归档安全和临时恢复演练；两份历史备份演练通过，API/Mastra 健康检查通过。
 - `2026-07-31` Mastra HITL 复查：Node 26 下 `npm run mastra:hitl:check` 真实调用本地 Mastra/API，验证 `suspend()` 返回项目、Proposal、工具、参数指纹和策略版本，随后用 `resume()` 拒绝测试 Proposal；Proposal 状态、用户和 Mastra 审批绑定均在项目审计账本中核对通过。该检查不调用模型、不执行实验、不批准任何高成本操作。
 - `npm run typecheck`：TypeScript server、web、scripts 和 Mastra 已通过。
 - `npm run idea-cases:check`：4 个公开 Idea case 通过；来源扫描改用 TypeScript 目录递归，不依赖 Node 22 专有的 `fs.globSync`。

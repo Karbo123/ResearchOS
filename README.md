@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-02 -->
 
 # Research OS
 
@@ -49,6 +49,8 @@ The currently selected and verified recovery candidate is available at [http://1
 
 The legacy primary directory is preserved. A non-overwriting recovery candidate can be generated and checked with `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731`. After inspection, select it explicitly in `.env` with `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731`; `npm start` loads that setting automatically.
 
+For unattended operation, `npm run ops:monitor -- once` performs bounded API and Mastra health checks and appends structured events to `runtime/ops/health-events.jsonl`; `npm run ops:monitor -- watch 3600` runs a one-hour bounded watch. An explicitly configured `RESEARCH_ALERT_WEBHOOK_URL` can receive transition/failure events. `npm run ops:recovery-drill -- <backup-id>` verifies the backup hash, safely lists and extracts the archive into a temporary directory, rejects links and traversal, checks required roots, and removes the drill directory without touching live data.
+
 Development:
 
 ```powershell
@@ -69,6 +71,10 @@ The project `.env` currently defaults all three tiers to the local OpenAI-compat
 - Shared request limit: `MODEL_REQUEST_TIMEOUT_SECONDS`
 
 HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC1918 private addresses, including local OpenAI-compatible services.
+
+## Claim Review and Evidence
+
+Page-level PDF passages remain evidence candidates until a human creates and decides a Claim Review. The Literature tab and `/api/projects/<project-id>/claim-reviews` endpoints enforce project-scoped evidence IDs, one terminal decision, evidence-status labels, and audit events. An accepted review records that a quote was reviewed; it does not turn metadata into full-text evidence or establish a scientific conclusion.
 
 ## Verification Evidence
 

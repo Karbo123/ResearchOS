@@ -23,6 +23,24 @@ npx tsx scripts/ops-guard.ts capacity
 
 The expected endpoints are `http://127.0.0.1:8080/api/health` and `http://127.0.0.1:4111/health`. Do not expose either listener beyond the local host.
 
+For bounded unattended monitoring:
+
+```powershell
+npm run ops:monitor -- once
+npm run ops:monitor -- watch 3600
+```
+
+The monitor checks only the configured local API and Mastra health endpoints, records JSONL events under `runtime/ops/health-events.jsonl`, rotates the log at 5 MB, and exits non-zero when a health check or configured alert delivery fails. `RESEARCH_ALERT_WEBHOOK_URL` is optional; HTTP receivers must be loopback/private and HTTPS receivers must be explicitly configured. The monitor never substitutes a healthy result when a check fails.
+
+Run a read-only recovery drill against the newest backup or an explicit compact timestamp backup ID:
+
+```powershell
+npm run ops:recovery-drill
+npm run ops:recovery-drill -- 20260730T200648Z
+```
+
+The drill validates the manifest hash, rejects traversal and link entries, extracts only into a temporary directory, checks `runtime/`, `projects/`, and `artifacts/`, then removes the temporary directory. It never overwrites live state and is not a virtual-machine isolation guarantee.
+
 If startup raises `PGlite RuntimeError: Aborted()`, stop and preserve `runtime/research-os.pglite` and all backups. Do not delete the database or initialize an empty replacement as an automatic recovery. Validate a separate copy of a backup first; the retained PostgreSQL `pg_dump` requires an explicit, separately verified migration into PGlite and is not a drop-in restore.
 
 ## Backup and Restore Check
