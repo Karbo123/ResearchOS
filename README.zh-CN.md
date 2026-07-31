@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-12 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-01 -->
 
 # Research OS
 
@@ -82,9 +82,9 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 
 ## 项目语义记忆
 
-Supermemory 集成目前是部分实现，只有设置 `SUPERMEMORY_ENABLED=true` 或配置 `SUPERMEMORY_API_KEY` 后才启用。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF 和图片摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；原始文件和 SHA-256 仍由本地 Artifact 保存。
+Supermemory 集成目前是部分实现，只有设置 `SUPERMEMORY_ENABLED=true` 或配置 `SUPERMEMORY_API_KEY` 后才启用。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
 
-语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。缺少 key、超时、鉴权失败、返回数据无效或远程写入失败时，系统直接返回结构化错误，不会降级到本地语义检索、其他 provider 或无关实验。真实 Supermemory API 验收、两个已配置项目的跨项目泄漏测试，以及端到端撤销/删除验收仍记录在 `TODO.md` 中。
+语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。项目材料接口 `/api/projects/<project-id>/materials/search` 使用同一项目范围的 Supermemory hybrid 检索；服务不可用时不会用本地 SQL 词法结果代替。缺少 key、超时、鉴权失败、返回数据无效或远程写入失败时，系统直接返回结构化错误，不会降级到本地语义检索、其他 provider 或无关实验。真实 Supermemory API 验收、两个已配置项目的跨项目泄漏测试，以及端到端撤销/删除验收仍记录在 `TODO.md` 中。
 
 ## 实验隔离
 

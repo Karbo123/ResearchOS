@@ -52,6 +52,8 @@ Supermemory is optional project-scoped semantic memory. Configure `SUPERMEMORY_E
 
 The available endpoints are `/api/projects/<project-id>/memory/status`, `/memory/ingest`, `/memory/search`, `/memory/graph`, and `/memory/links`. Ingestion accepts bounded text or a project-owned PDF/image Artifact or scanned upload. Links are idempotent by project, source, and content SHA-256. Forget/delete requests create a `memory_revoke` Proposal and perform the remote mutation only after approval.
 
+Scanned uploaded materials are dispatched through the durable `material_index` task. PDFs are bounded to the implementation limits and extracted into overlapping text chunks; text files use the same bounded chunk contract; images and non-extractable PDFs use the controlled document upload path. Query `/api/projects/<project-id>/materials/search` for project-scoped Supermemory hybrid results. It returns 503 when Supermemory is not configured or the remote request fails, and never falls back to local metadata keyword search.
+
 If the key is absent, the remote request fails, the response is invalid, or the remote operation times out, the API returns a structured error. It does not use local semantic fallback or silently continue. Keep the local `memory_links` ledger for replay, source tracing, failure inspection, and deletion audit. Real provider validation is still required before calling the integration production-ready.
 
 ## Scientific Environments

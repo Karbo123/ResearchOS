@@ -13943,6 +13943,8 @@
     const [nextOffset, setNextOffset] = (0, import_react7.useState)(null);
     const [repoInputFor, setRepoInputFor] = (0, import_react7.useState)(null);
     const [repoUrl, setRepoUrl] = (0, import_react7.useState)("");
+    const [claimText, setClaimText] = (0, import_react7.useState)("");
+    const [selectedEvidence, setSelectedEvidence] = (0, import_react7.useState)([]);
     (0, import_react7.useEffect)(() => {
       setNovelty(null);
       api(`/api/projects/${project.id}/novelty`).then(setNovelty).catch(() => setNovelty(null));
@@ -14023,6 +14025,34 @@
         await onRefresh();
         onNavigate("approvals");
         showToast(`\u4E0B\u8F7D Proposal ${result.proposal_id.slice(0, 8)} \u5DF2\u521B\u5EFA`);
+      } catch (error) {
+        showToast(errorMessage(error));
+      }
+    };
+    const createClaimReview = async () => {
+      const claim = claimText.trim();
+      if (!claim || !selectedEvidence.length) return;
+      try {
+        await api(`/api/projects/${project.id}/claim-reviews`, {
+          method: "POST",
+          body: JSON.stringify({ claim, evidence_ids: selectedEvidence })
+        });
+        setClaimText("");
+        setSelectedEvidence([]);
+        await onRefresh();
+        showToast("Claim \u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838");
+      } catch (error) {
+        showToast(errorMessage(error));
+      }
+    };
+    const decideClaimReview = async (review, decision) => {
+      try {
+        await api(`/api/projects/${project.id}/claim-reviews/${review.id}/decision`, {
+          method: "POST",
+          body: JSON.stringify({ decision, actor: "local-user" })
+        });
+        await onRefresh();
+        showToast(decision === "accepted" ? "\u4EBA\u5DE5\u590D\u6838\u5DF2\u8BB0\u5F55" : "Claim \u5DF2\u6807\u8BB0\u4E3A\u672A\u901A\u8FC7\u590D\u6838");
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14115,7 +14145,7 @@
         ] })
       ] }, paper.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u5C1A\u65E0\u6587\u732E\u8BB0\u5F55\u3002" }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section material-search-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u9879\u76EE\u6750\u6599\u5E93", hint: "\u53EA\u68C0\u7D22\u5DF2\u626B\u63CF\u7684\u6750\u6599\u5143\u6570\u636E\u548C\u6458\u8981\uFF1B\u7ED3\u679C\u662F\u672A\u6838\u9A8C\u4E0A\u4E0B\u6587\u5019\u9009\uFF0C\u4E0D\u662F\u8BBA\u6587\u8BC1\u636E\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u9879\u76EE\u6750\u6599\u5E93", hint: "\u901A\u8FC7\u5F53\u524D\u9879\u76EE\u8303\u56F4\u7684 Supermemory \u8BED\u4E49\u68C0\u7D22\uFF1B\u7ED3\u679C\u4FDD\u7559\u6765\u6E90\u548C\u5B9A\u4F4D\uFF0C\u53EA\u662F\u672A\u6838\u9A8C\u4E0A\u4E0B\u6587\u5019\u9009\uFF0C\u4E0D\u662F\u8BBA\u6587\u8BC1\u636E\u3002" }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
           "form",
           {
@@ -14131,7 +14161,7 @@
                 {
                   id: "materialSearchQuery",
                   maxLength: 200,
-                  placeholder: "\u68C0\u7D22\u6587\u4EF6\u540D\u3001\u6587\u672C\u6216 OCR \u5185\u5BB9",
+                  placeholder: "\u68C0\u7D22\u5DF2\u7D22\u5F15\u6750\u6599\u7684\u8BED\u4E49\u5185\u5BB9",
                   value: materialQuery,
                   onChange: (event) => setMaterialQuery(event.target.value)
                 }
@@ -14146,7 +14176,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "material-search-results", children: materialLoading ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u6B63\u5728\u68C0\u7D22\u6750\u6599\u2026" }) : materialRows.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { className: "muted", children: [
             materialTotal,
-            " \u4E2A\u5339\u914D \xB7 \u786E\u5B9A\u6027\u8BCD\u6CD5\u68C0\u7D22 \xB7 \u4E0D\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E"
+            " \u4E2A\u5019\u9009 \xB7 Supermemory \u9879\u76EE\u8303\u56F4 hybrid \u68C0\u7D22 \xB7 \u4E0D\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E"
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: materialRows.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
@@ -14157,17 +14187,69 @@
                 item.parse_status || "unknown",
                 " \xB7 SHA-256 ",
                 String(item.sha256 || "").slice(0, 12),
-                "\u2026"
+                "\u2026 \xB7 \u76F8\u4F3C\u5EA6 ",
+                String(item.similarity ?? "\u672A\u63D0\u4F9B")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: item.snippet || "\u65E0\u53EF\u5C55\u793A\u6458\u8981" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge pending", children: "\u8BCD\u6CD5\u5019\u9009 \xB7 \u672A\u6838\u9A8C" })
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge pending", children: "\u8BED\u4E49\u5019\u9009 \xB7 \u672A\u6838\u9A8C" })
           ] }, index)) }),
           nextOffset != null ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary material-search-more", type: "button", onClick: () => searchMaterials(nextOffset, true), children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ChevronsDown, { size: 15 }),
             "\u52A0\u8F7D\u66F4\u591A"
           ] }) : null
         ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u8F93\u5165\u5173\u952E\u8BCD\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u6750\u6599\u3002" }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section claim-review-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "Claim \u5230\u8BC1\u636E\u4EBA\u5DE5\u590D\u6838", hint: "\u53EA\u80FD\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684\u9875\u7801 quote\uFF1B\u63A5\u53D7\u590D\u6838\u4E0D\u7B49\u4E8E\u8BC1\u660E\u79D1\u5B66\u7ED3\u8BBA\u3002" }),
+        project.evidence?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "claim-review-input", children: [
+            "\u5F85\u590D\u6838 Claim",
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "textarea",
+              {
+                value: claimText,
+                maxLength: 4e3,
+                rows: 3,
+                placeholder: "\u5199\u51FA\u9700\u8981\u4EBA\u5DE5\u6838\u5BF9\u7684\u5177\u4F53\u7814\u7A76\u9648\u8FF0",
+                onChange: (event) => setClaimText(event.target.value)
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "claim-review-evidence-list", children: project.evidence.map((evidence) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "claim-review-evidence", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "checkbox",
+                checked: selectedEvidence.includes(evidence.id),
+                onChange: (event) => setSelectedEvidence((current) => event.target.checked ? [...current, evidence.id] : current.filter((id) => id !== evidence.id))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: evidence.locator || "\u672A\u63D0\u4F9B\u9875\u7801/\u7AE0\u8282" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: evidence.quote || "\u65E0 quote" })
+            ] })
+          ] }, evidence.id)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", disabled: !claimText.trim() || !selectedEvidence.length, onClick: () => void createClaimReview(), children: "\u63D0\u4EA4\u4EBA\u5DE5\u590D\u6838" })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u5148\u6444\u53D6\u5E26\u9875\u7801\u5B9A\u4F4D\u7684\u5168\u6587\u8BC1\u636E\uFF0C\u518D\u521B\u5EFA Claim \u590D\u6838\u3002" }),
+        project.claim_reviews?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list claim-review-list", children: project.claim_reviews.map((review) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: review.claim }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
+              review.evidence_ids.length,
+              " \u6761 quote \xB7 ",
+              review.evidence_status
+            ] }),
+            review.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: review.decision_comment }) : null
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: review.status }),
+            review.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "accepted"), children: "\u63A5\u53D7\u590D\u6838" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "rejected"), children: "\u62D2\u7EDD\u590D\u6838" })
+            ] }) : null
+          ] })
+        ] }, review.id)) }) : null
       ] }),
       searchCandidates.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section search-candidates", children: [
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u5916\u90E8\u8D44\u6E90\u5019\u9009", hint: "\u4EC5\u4F9B\u53D1\u73B0\uFF0C\u5C1A\u672A\u6838\u9A8C\u6765\u6E90\u3001\u8BB8\u53EF\u3001\u6240\u6709\u6743\u6216\u5168\u6587\u8BC1\u636E\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { children: `${searchCandidates.length} \u6761` }) }),
@@ -14543,11 +14625,25 @@
     );
     const [metric, setMetric] = (0, import_react9.useState)(metrics[0] || "loss");
     const [windowSize, setWindowSize] = (0, import_react9.useState)(Math.max(10, points.length));
+    const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react9.useState)(allSeeds);
+    const [hovered, setHovered] = (0, import_react9.useState)(null);
+    const seedKey = allSeeds.join("|");
+    (0, import_react9.useEffect)(() => {
+      setSelectedSeeds((current) => {
+        const next = current.filter((seed) => allSeeds.includes(seed));
+        return next.length ? next : allSeeds;
+      });
+    }, [seedKey]);
     if (!points.length || !metrics.length) {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-error", children: "\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\u3002" });
     }
     const visible = points.slice(-windowSize);
-    const numeric = visible.filter((point) => Number.isFinite(Number(point[metric])));
+    const numeric = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && Number.isFinite(Number(point[metric])));
+    const missingCount = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && !Number.isFinite(Number(point[metric]))).length;
+    if (!numeric.length) {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-error", children: "\u5F53\u524D\u9009\u62E9\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\uFF1B\u7F3A\u5931\u503C\u4E0D\u4F1A\u88AB\u8865\u5199\u6216\u63D2\u503C\u3002" });
+    }
     const steps = numeric.map((point) => Number(point.step));
     const minStep = Math.min(...steps);
     const stepSpan = Math.max(Math.max(...steps) - minStep, 1);
@@ -14576,6 +14672,19 @@
             }
           )
         ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-seeds", "aria-label": "\u9009\u62E9\u968F\u673A\u79CD\u5B50", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "muted", children: "seed" }),
+          allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            "button",
+            {
+              className: selectedSeeds.includes(seed) ? "seed-toggle active" : "seed-toggle",
+              type: "button",
+              onClick: () => setSelectedSeeds((current) => current.includes(seed) ? current.length === 1 ? current : current.filter((value) => value !== seed) : [...current, seed]),
+              children: seed
+            },
+            seed
+          ))
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "muted timeseries-count", children: [
           numeric.length,
           "/",
@@ -14583,35 +14692,87 @@
           " \u4E2A\u70B9"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("svg", { className: "timeseries-chart", viewBox: "0 0 720 300", role: "img", "aria-label": "\u6307\u6807\u66F2\u7EBF", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "#f7faf8", rx: "8" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "#cbd5d1" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "#cbd5d1" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("text", { x: "52", y: "18", fill: "#60706a", fontSize: "11", children: [
-          metric,
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-chart-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+          "svg",
+          {
+            className: "timeseries-chart",
+            viewBox: "0 0 720 300",
+            role: "img",
+            "aria-label": `${metric} \u6307\u6807\u66F2\u7EBF`,
+            onMouseLeave: () => setHovered(null),
+            onMouseMove: (event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              const x = Math.max(48, Math.min(704, (event.clientX - rect.left) / rect.width * 720));
+              const targetStep = minStep + (x - 48) / 656 * stepSpan;
+              const nearest = numeric.reduce((best, point) => Math.abs(Number(point.step) - targetStep) < Math.abs(Number(best.step) - targetStep) ? point : best, numeric[0]);
+              setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? "all") });
+            },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "#f7faf8", rx: "8" }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "#cbd5d1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "#cbd5d1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("text", { x: "52", y: "18", fill: "#60706a", fontSize: "11", children: [
+                metric,
+                " \xB7 ",
+                minValue.toPrecision(4),
+                "\u2013",
+                maxValue.toPrecision(4)
+              ] }),
+              groups.map((seed, groupIndex) => {
+                const group = numeric.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step));
+                const segments = [];
+                visible.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step)).forEach((point) => {
+                  if (!Number.isFinite(Number(point[metric]))) return;
+                  const segment = segments.at(-1);
+                  if (segment) segment.push(point);
+                  else segments.push([point]);
+                });
+                const color = colors[groupIndex % colors.length];
+                return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("g", { children: [
+                  segments.map((segment, segmentIndex) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                    "polyline",
+                    {
+                      points: segment.map((point) => `${48 + (Number(point.step) - minStep) / stepSpan * 656},${250 - (Number(point[metric]) - minValue) / span * 220}`).join(" "),
+                      fill: "none",
+                      stroke: color,
+                      strokeWidth: "2",
+                      strokeLinejoin: "round"
+                    },
+                    segmentIndex
+                  )),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
+                    "seed ",
+                    seed
+                  ] }),
+                  group.map((point, index) => {
+                    const x = 48 + (Number(point.step) - minStep) / stepSpan * 656;
+                    const y = 250 - (Number(point[metric]) - minValue) / span * 220;
+                    const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed;
+                    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "#17201d" : "none", strokeWidth: "2" }, index);
+                  })
+                ] }, seed);
+              })
+            ]
+          }
+        ),
+        hovered ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-tooltip", children: [
+          "step ",
+          hovered.step,
+          " \xB7 seed ",
+          hovered.seed,
           " \xB7 ",
-          minValue.toPrecision(4),
-          "\u2013",
-          maxValue.toPrecision(4)
-        ] }),
-        groups.map((seed, groupIndex) => {
-          const group = numeric.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step));
-          const coords = group.map((point) => `${48 + (Number(point.step) - minStep) / stepSpan * 656},${250 - (Number(point[metric]) - minValue) / span * 220}`).join(" ");
-          const color = colors[groupIndex % colors.length];
-          return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("g", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("polyline", { points: coords, fill: "none", stroke: color, strokeWidth: "2", strokeLinejoin: "round" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
-              "seed ",
-              seed
-            ] }),
-            group.map((point, index) => {
-              const x = 48 + (Number(point.step) - minStep) / stepSpan * 656;
-              const y = 250 - (Number(point[metric]) - minValue) / span * 220;
-              return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("circle", { cx: x, cy: y, r: "3", fill: color }, index);
-            })
-          ] }, seed);
-        })
-      ] })
+          metric,
+          " ",
+          hovered.value.toPrecision(6)
+        ] }) : null
+      ] }),
+      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "preview-footnote", children: [
+        missingCount,
+        " \u4E2A\u70B9\u7F3A\u5C11 ",
+        metric,
+        "\uFF0C\u5DF2\u6309\u7F3A\u5931\u503C\u4FDD\u7559\u5E76\u8DF3\u8FC7\u7ED8\u5236\u3002"
+      ] }) : null
     ] });
   }
   function PreviewBody({ preview }) {
@@ -14658,7 +14819,11 @@
       });
     }, [artifact.preview_url, artifact.mime_type]);
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("article", { className: "artifact-card", children: [
-      artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-loading", children: "\u52A0\u8F7D\u9884\u89C8\u2026" }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "preview-error", children: [
+      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview preview-error", children: "\u8BE5\u4EA7\u7269\u5DF2\u5931\u6548\uFF0C\u4E0D\u80FD\u9884\u89C8\u6216\u4E0B\u8F7D\u3002" }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "artifact-preview preview-error", children: [
+        "\u5173\u8054\u8FD0\u884C\u72B6\u6001\u4E3A ",
+        artifact.experiment_status,
+        "\uFF0C\u4E0D\u663E\u793A\u4E3A\u6210\u529F\u4EA7\u7269\u3002"
+      ] }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-loading", children: "\u52A0\u8F7D\u9884\u89C8\u2026" }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "preview-error", children: [
         "\u9884\u89C8\u5931\u8D25\uFF1A",
         error
       ] }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PreviewBody, { preview }) : null,
@@ -14667,9 +14832,11 @@
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
           artifact.kind,
           " \xB7 ",
-          artifact.valid ? "\u6709\u6548" : "\u5DF2\u5931\u6548"
+          artifact.valid ? "\u6709\u6548" : "\u5DF2\u5931\u6548",
+          artifact.experiment_status ? ` \xB7 \u8FD0\u884C ${artifact.experiment_status}` : ""
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: "\u4E0B\u8F7D\u4EA7\u7269" })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? `Run ${String(artifact.metadata.lineage.run_id || "\u672A\u7ED1\u5B9A")} \xB7 Idea v${String(artifact.metadata.lineage.idea_version || "\u672A\u77E5")} \xB7 \u6570\u636E ${String(artifact.metadata.lineage.data_version || "\u672A\u58F0\u660E")}` : "\u8C31\u7CFB\u4FE1\u606F\u672A\u58F0\u660E" }),
+        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: "\u4E0B\u8F7D\u4EA7\u7269" }) : null
       ] })
     ] });
   }

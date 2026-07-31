@@ -471,6 +471,23 @@ h1 { font-size: 20px; line-height: 1.25; }
 .memory-graph-canvas {
   display: block;
 }
+.timeseries-chart-wrap { position: relative; min-width: 0; }
+.timeseries-chart { display: block; width: 100%; min-height: 220px; cursor: crosshair; }
+.timeseries-seeds { display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.seed-toggle { border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 3px 7px; font-size: 11px; cursor: pointer; }
+.seed-toggle.active { color: var(--blue); border-color: #9ab5ed; background: var(--green-soft); }
+.timeseries-tooltip { position: absolute; top: 8px; right: 8px; pointer-events: none; border: 1px solid var(--line); border-radius: 6px; background: rgba(255,255,255,.95); padding: 6px 8px; color: var(--ink); font-size: 11px; box-shadow: 0 4px 14px rgba(20,36,29,.12); }
+.artifact-lineage { margin: 5px 0 8px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.claim-review-input { display: grid; gap: 6px; max-width: 760px; color: var(--muted); font-size: 12px; }
+.claim-review-input textarea { width: 100%; min-height: 84px; resize: vertical; }
+.claim-review-evidence-list { display: grid; gap: 8px; margin: 12px 0; max-width: 900px; }
+.claim-review-evidence { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; cursor: pointer; }
+.claim-review-evidence > span { display: grid; gap: 4px; min-width: 0; }
+.claim-review-evidence > span span { color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.claim-review-list { margin-top: 16px; }
+@media (pointer: coarse) {
+  .seed-toggle { min-height: 44px; padding: 8px 10px; }
+}
 @media (max-width: 760px) {
   .material-search-form,
   .inline-repo-form {
@@ -479,4 +496,7 @@ h1 { font-size: 20px; line-height: 1.25; }
   .inline-repo-form input {
     width: 100%;
   }
+  .timeseries-toolbar { align-items: flex-start; flex-direction: column; }
+  .timeseries-count { margin-left: 0; }
+  .timeseries-tooltip { font-size: 10px; }
 }

@@ -80,7 +80,7 @@ export interface ProjectDetail {
   session_id?: string | null
   spec?: ResearchSpec | null
   papers?: Paper[]
-  evidence?: unknown[]
+  evidence?: Evidence[]
   repositories?: Repository[]
   proposals?: Proposal[]
   experiments?: Experiment[]
@@ -88,12 +88,34 @@ export interface ProjectDetail {
   policies?: Policy[]
   reports?: Report[]
   checkpoints?: Checkpoint[]
+  claim_reviews?: ClaimReview[]
   counts?: {
     papers?: number
     experiments?: number
     artifacts?: number
   }
   policy_enforcement?: PolicyEnforcement
+}
+
+export interface Evidence {
+  id: string
+  claim?: string
+  quote?: string
+  locator?: string | null
+  source_url?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ClaimReview {
+  id: string
+  claim: string
+  evidence_ids: string[]
+  status: 'pending' | 'accepted' | 'rejected'
+  reviewer?: string | null
+  decision_comment?: string | null
+  evidence_status: 'page_quote_requires_claim_review'
+  created_at?: string
+  decided_at?: string | null
 }
 
 export interface Paper {
@@ -138,17 +160,27 @@ export interface Experiment {
   id: string
   experiment_type: string
   status: string
+  proposal_id?: string
+  config?: Record<string, unknown>
   metrics?: Record<string, number>
   run_id?: string
   error?: string | null
+  created_at?: string
+  finished_at?: string | null
 }
 
 export interface Artifact {
   id: string
   name: string
   kind?: string
+  experiment_id?: string | null
   mime_type?: string
+  sha256?: string
+  metadata?: Record<string, unknown>
   valid?: boolean
+  experiment_status?: string | null
+  run_id?: string | null
+  experiment_finished_at?: string | null
   preview_url?: string
   download_url?: string
   url?: string
@@ -245,6 +277,11 @@ export interface MaterialSearchResponse {
     parse_status?: string
     sha256?: string
     snippet?: string
+    similarity?: number | null
+    source_type?: string | null
+    source_id?: string | null
+    uploaded_file_id?: string | null
+    locator?: string | null
   }>
 }
 
@@ -309,7 +346,7 @@ export type ArtifactPreview =
       points: Array<
         Record<string, number | string | undefined> & {
           step: number
-          seed?: string
+          seed?: number | string | null
           loss?: number
           accuracy?: number
           validation_loss?: number
@@ -317,6 +354,11 @@ export type ArtifactPreview =
           learning_rate?: number
         }
       >
+      point_count?: number
+      sampled?: boolean
+      seeds?: number[]
+      units?: string[]
+      experiment_status?: string | null
     }
   | { type: 'video'; download_url: string }
   | { type: 'json'; value: unknown }

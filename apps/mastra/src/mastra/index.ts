@@ -1,20 +1,24 @@
 import './env.js'
 import { Mastra } from '@mastra/core'
+import { TripWire } from '@mastra/core/agent'
 import { RequestContext } from '@mastra/core/request-context'
 import { registerApiRoute } from '@mastra/core/server'
 import { LibSQLStore } from '@mastra/libsql'
+import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mastra/observability'
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, experimentPlanningAgent, ideaClarificationAgent, supervisionIntentAgent,
+  configuredModel, experimentPlanningAgent, ideaClarificationAgent, researchCoordinatorAgent, supervisionIntentAgent,
 } from './agents/research-agents.js'
 import {
   adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema,
-  approvalGateRequestSchema, approvalGateResumeRequestSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
+  approvalGateRequestSchema, approvalGateResumeRequestSchema, coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
   supervisionIntentSchema, supervisionRequestSchema, type ModelTier,
 } from './contracts.js'
 import { loadModelConfig, ModelConfigurationError } from './model-config.js'
 import { strictSupermemoryProcessors, SupermemoryConfigurationError } from './supermemory.js'
+import { strictResearchProcessors } from './guardrails.js'
+import { ensureIdeaDataset, ideaClarificationContractScorer, MastraEvalContractError } from './evals.js'
 import { inspectIdeaDraft, inspectIdeaDraftTool } from './tools/inspect-idea-draft.js'
 import { approvalGateWorkflow, projectChatWorkflow, researchBootstrapWorkflow, supervisionReportsWorkflow } from './workflows/research-workflows.js'
 import { researchRoot } from './env.js'
@@ -22,6 +26,23 @@ import { researchRoot } from './env.js'
 const storage = new LibSQLStore({
   id: 'research-os-mastra-storage', url: `file:${resolve(researchRoot, 'runtime', 'mastra.db')}`,
 })
+
+const observability = new Observability({
+  sensitiveDataFilter: true,
+  configs: {
+    default: {
+      serviceName: 'research-os-mastra',
+      sampling: { type: SamplingStrategyType.ALWAYS },
+      exporters: [new MastraStorageExporter({ maxRetries: 0, maxBatchSize: 20, maxBatchWaitMs: 500 })],
+      requestContextKeys: ['supermemoryProjectId', 'supermemoryConversationId', 'tier'],
+      serializationOptions: { maxStringLength: 2_000, maxDepth: 5, maxArrayLength: 30, maxObjectKeys: 40 },
+    },
+  },
+})
+
+function containsToolInvocation(content: unknown): boolean {
+  return Array.isArray(content) && content.some(part => typeof part === 'object' && part !== null && 'type' in part && (part as { type?: unknown }).type === 'tool-invocation')
+}
 
 function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'detailed', projectId?: string | null, conversationId?: string | null) {
   const context = new RequestContext<z.infer<typeof agentRequestContextSchema>>()
@@ -36,12 +57,15 @@ function generationOptions(context: RequestContext<z.infer<typeof agentRequestCo
   const config = context.get('modelConfig')
   const projectId = context.get('supermemoryProjectId')
   const conversationId = context.get('supermemoryConversationId')
+  const guardrails = strictResearchProcessors(context.get('tier'))
+  const memory = projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId) : {}
   return {
     requestContext: context,
     model: configuredModel(context.get('tier')),
     maxRetries: 0,
     providerOptions: { openai: { reasoningEffort: config.reasoningEffort } },
-    ...(projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId) : {}),
+    inputProcessors: [...guardrails.inputProcessors, ...(memory.inputProcessors || [])],
+    outputProcessors: [...guardrails.outputProcessors, ...(memory.outputProcessors || [])],
   }
 }
 function safeStatus(status: number): 400 | 401 | 403 | 404 | 409 | 422 | 500 | 502 | 503 {
@@ -54,6 +78,14 @@ function routeError(error: unknown, operation: string) {
   }
   if (error instanceof SupermemoryConfigurationError) return {
     status: 503,
+    body: { code: error.code, message: error.message },
+  }
+  if (error instanceof TripWire) return {
+    status: 422,
+    body: { code: 'mastra_guardrail_blocked', message: '请求或模型输出未通过安全处理器，已直接阻断。' },
+  }
+  if (error instanceof MastraEvalContractError) return {
+    status: 422,
     body: { code: error.code, message: error.message },
   }
   if (error instanceof z.ZodError) return {
@@ -153,6 +185,67 @@ const apiRoutes = [
       }
     },
   }),
+  registerApiRoute('/internal/agents/coordinator', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, coordinatorRequestSchema)
+        const context = requestContext(body.tier, undefined, body.project_id, body.memory_thread || `coordinator-${body.project_id}`)
+        const response = await researchCoordinatorAgent.generate(JSON.stringify({
+          project_id: body.project_id,
+          task: body.task,
+          planning_context: body.planning_context,
+        }), {
+          ...generationOptions(context),
+          maxSteps: 4,
+          disableBackgroundTasks: true,
+          memory: body.memory_resource && body.memory_thread ? { resource: body.memory_resource, thread: body.memory_thread } : undefined,
+          delegation: {
+            includeSubAgentToolResultsInModelContext: false,
+            messageFilter: ({ messages }) => messages.filter(message => !containsToolInvocation(message.content)).slice(-6),
+            onDelegationStart: ({ primitiveId, params }) => {
+              if (!['idea_clarification', 'project_supervision', 'experiment_planning'].includes(primitiveId)) return { proceed: false, rejectionReason: '未经允许的专业 Agent 委派。' }
+              if (typeof params.maxSteps === 'number' && params.maxSteps > 2) return { proceed: false, rejectionReason: '专业 Agent 单次最多执行 2 步。' }
+              return { modifiedInstructions: '只返回审查结果或提案，不执行任何外部操作，不生成未经证实的事实。' }
+            },
+          },
+          structuredOutput: { schema: coordinatorResultSchema, errorStrategy: 'strict' },
+        })
+        return c.json({ result: coordinatorResultSchema.parse(response.object), route: { tier: body.tier, model: context.get('modelConfig').model, reasoning_effort: context.get('modelConfig').reasoningEffort, max_steps: 4 } })
+      } catch (error) {
+        const failure = routeError(error, '研究协调 Agent')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/evals/idea-dataset', {
+    method: 'GET',
+    handler: async c => {
+      try {
+        return c.json(await ensureIdeaDataset(mastra))
+      } catch (error) {
+        const failure = routeError(error, 'Idea Dataset')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/evals/idea-contract', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, z.object({
+          input: z.unknown(),
+          output: z.unknown(),
+          ground_truth: z.unknown().optional(),
+        }).strict())
+        const result = await ideaClarificationContractScorer.run({ input: body.input, output: body.output, groundTruth: body.ground_truth })
+        return c.json({ scorer_id: ideaClarificationContractScorer.id, score: result.score, reason: result.reason, run_id: result.runId })
+      } catch (error) {
+        const failure = routeError(error, 'Idea 输出评估')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
   registerApiRoute('/internal/workflows/research-bootstrap', {
     method: 'POST',
     handler: async c => {
@@ -214,8 +307,10 @@ const apiRoutes = [
 
 export const mastra = new Mastra({
   storage,
+  observability,
   logger: false,
-  agents: { ideaClarificationAgent, supervisionIntentAgent, experimentPlanningAgent },
+  agents: { ideaClarificationAgent, supervisionIntentAgent, experimentPlanningAgent, researchCoordinatorAgent },
+  scorers: { ideaClarificationContractScorer },
   tools: { inspectIdeaDraftTool },
   workflows: { researchBootstrapWorkflow, projectChatWorkflow, supervisionReportsWorkflow, approvalGateWorkflow },
   server: {

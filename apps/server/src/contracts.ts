@@ -92,10 +92,25 @@ export const approvalDecision = z.object({
 export const projectStateRequest = z.object({ action: z.enum(['pause', 'resume', 'cancel']), reason: z.string().min(3).max(2000) }).strict()
 export const policyRequest = z.object({ project_id: uuid, rule: z.string().min(5).max(2000), rationale: z.string().max(2000).nullable().optional() }).strict()
 export const reportRequest = z.object({ project_id: uuid, period: z.enum(['daily', 'weekly', 'manual']).default('manual'), notify: z.boolean().default(false) }).strict()
+export const humanFeedbackRequest = z.object({
+  session_id: uuid.nullable().optional(),
+  category: z.enum(['idea', 'report', 'experiment', 'memory', 'general']),
+  instruction: z.string().trim().min(1).max(8_000),
+  reference_id: uuid.nullable().optional(),
+}).strict()
+export const claimReviewRequest = z.object({
+  claim: z.string().trim().min(5).max(4_000),
+  evidence_ids: z.array(uuid).min(1).max(30),
+}).strict()
+export const claimReviewDecisionRequest = z.object({
+  decision: z.enum(['accepted', 'rejected']),
+  actor: z.string().trim().min(1).max(200).default('local-user'),
+  comment: z.string().max(4_000).nullable().optional(),
+}).strict()
 export const repositoryCandidateRequest = z.object({ paper_id: uuid, source_url: z.string().url().max(500) }).strict()
 const flatMemoryMetadata = z.record(z.string(), z.union([z.string().max(4000), z.number().finite(), z.boolean(), z.array(z.string().max(4000)).max(20)])).default({})
 export const memoryIngestRequest = z.object({
-  source_type: z.enum(['idea_message', 'report', 'experiment_summary', 'experiment_plan', 'related_work', 'artifact', 'manual']),
+  source_type: z.enum(['idea_message', 'project_chat_message', 'report', 'experiment_summary', 'experiment_plan', 'related_work', 'artifact', 'manual']),
   source_id: uuid.nullable().optional(),
   artifact_id: uuid.nullable().optional(),
   uploaded_file_id: uuid.nullable().optional(),

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronsDown, Download, GitBranch, ScanText, Search, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../../api'
-import type { MaterialSearchResponse, NoveltyAnalysis, ProjectDetail, Repository, SearchCandidate, TabId } from '../../types'
+import type { ClaimReview, MaterialSearchResponse, NoveltyAnalysis, ProjectDetail, Repository, SearchCandidate, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
 
 export function LiteratureTab({
@@ -25,6 +25,8 @@ export function LiteratureTab({
   const [nextOffset, setNextOffset] = useState<number | null>(null)
   const [repoInputFor, setRepoInputFor] = useState<string | null>(null)
   const [repoUrl, setRepoUrl] = useState('')
+  const [claimText, setClaimText] = useState('')
+  const [selectedEvidence, setSelectedEvidence] = useState<string[]>([])
 
   useEffect(() => {
     setNovelty(null)
@@ -114,6 +116,36 @@ export function LiteratureTab({
       await onRefresh()
       onNavigate('approvals')
       showToast(`下载 Proposal ${result.proposal_id.slice(0, 8)} 已创建`)
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
+  const createClaimReview = async () => {
+    const claim = claimText.trim()
+    if (!claim || !selectedEvidence.length) return
+    try {
+      await api(`/api/projects/${project.id}/claim-reviews`, {
+        method: 'POST',
+        body: JSON.stringify({ claim, evidence_ids: selectedEvidence }),
+      })
+      setClaimText('')
+      setSelectedEvidence([])
+      await onRefresh()
+      showToast('Claim 已提交人工证据复核')
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
+  const decideClaimReview = async (review: ClaimReview, decision: 'accepted' | 'rejected') => {
+    try {
+      await api(`/api/projects/${project.id}/claim-reviews/${review.id}/decision`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, actor: 'local-user' }),
+      })
+      await onRefresh()
+      showToast(decision === 'accepted' ? '人工复核已记录' : 'Claim 已标记为未通过复核')
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -218,7 +250,7 @@ export function LiteratureTab({
       )}
 
       <div className="section material-search-panel">
-        <SectionHeading title="项目材料库" hint="只检索已扫描的材料元数据和摘要；结果是未核验上下文候选，不是论文证据。" />
+        <SectionHeading title="项目材料库" hint="通过当前项目范围的 Supermemory 语义检索；结果保留来源和定位，只是未核验上下文候选，不是论文证据。" />
         <form
           className="material-search-form"
           onSubmit={event => {
@@ -230,7 +262,7 @@ export function LiteratureTab({
           <input
             id="materialSearchQuery"
             maxLength={200}
-            placeholder="检索文件名、文本或 OCR 内容"
+            placeholder="检索已索引材料的语义内容"
             value={materialQuery}
             onChange={event => setMaterialQuery(event.target.value)}
           />
@@ -244,16 +276,16 @@ export function LiteratureTab({
             <EmptyState text="正在检索材料…" />
           ) : materialRows.length ? (
             <>
-              <p className="muted">{materialTotal} 个匹配 · 确定性词法检索 · 不升级为全文证据</p>
+              <p className="muted">{materialTotal} 个候选 · Supermemory 项目范围 hybrid 检索 · 不升级为全文证据</p>
               <div className="data-list">
                 {materialRows.map((item, index) => (
                   <div className="data-row" key={index}>
                     <div>
                       <h3>{item.name}</h3>
-                      <p>{item.kind || 'material'} · {item.parse_status || 'unknown'} · SHA-256 {String(item.sha256 || '').slice(0, 12)}…</p>
+                      <p>{item.kind || 'material'} · {item.parse_status || 'unknown'} · SHA-256 {String(item.sha256 || '').slice(0, 12)}… · 相似度 {String(item.similarity ?? '未提供')}</p>
                       <p className="muted">{item.snippet || '无可展示摘要'}</p>
                     </div>
-                    <span className="badge pending">词法候选 · 未核验</span>
+                    <span className="badge pending">语义候选 · 未核验</span>
                   </div>
                 ))}
               </div>
@@ -268,6 +300,66 @@ export function LiteratureTab({
             <EmptyState text="输入关键词检索当前项目的材料。" />
           )}
         </div>
+      </div>
+
+      <div className="section claim-review-panel">
+        <SectionHeading title="Claim 到证据人工复核" hint="只能关联当前项目的页码 quote；接受复核不等于证明科学结论。" />
+        {project.evidence?.length ? (
+          <>
+            <label className="claim-review-input">
+              待复核 Claim
+              <textarea
+                value={claimText}
+                maxLength={4_000}
+                rows={3}
+                placeholder="写出需要人工核对的具体研究陈述"
+                onChange={event => setClaimText(event.target.value)}
+              />
+            </label>
+            <div className="claim-review-evidence-list">
+              {project.evidence.map(evidence => (
+                <label className="claim-review-evidence" key={evidence.id}>
+                  <input
+                    type="checkbox"
+                    checked={selectedEvidence.includes(evidence.id)}
+                    onChange={event => setSelectedEvidence(current => event.target.checked
+                      ? [...current, evidence.id]
+                      : current.filter(id => id !== evidence.id))}
+                  />
+                  <span>
+                    <strong>{evidence.locator || '未提供页码/章节'}</strong>
+                    <span>{evidence.quote || '无 quote'}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <button className="secondary" type="button" disabled={!claimText.trim() || !selectedEvidence.length} onClick={() => void createClaimReview()}>
+              提交人工复核
+            </button>
+          </>
+        ) : <EmptyState text="先摄取带页码定位的全文证据，再创建 Claim 复核。" />}
+        {project.claim_reviews?.length ? (
+          <div className="data-list claim-review-list">
+            {project.claim_reviews.map(review => (
+              <div className="data-row" key={review.id}>
+                <div>
+                  <h3>{review.claim}</h3>
+                  <p>{review.evidence_ids.length} 条 quote · {review.evidence_status}</p>
+                  {review.decision_comment ? <p className="muted">{review.decision_comment}</p> : null}
+                </div>
+                <div className="button-row">
+                  <Badge status={review.status} />
+                  {review.status === 'pending' ? (
+                    <>
+                      <button className="secondary" type="button" onClick={() => void decideClaimReview(review, 'accepted')}>接受复核</button>
+                      <button className="secondary" type="button" onClick={() => void decideClaimReview(review, 'rejected')}>拒绝复核</button>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {searchCandidates.length ? (

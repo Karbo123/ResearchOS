@@ -17,7 +17,7 @@
     "hono": "^4.12.32",
     "pdfjs-dist": "5.1.91",
     "supermemory": "^4.24.2",
-    "tar": "7.5.9",
+    "tar": "7.5.22",
     "zod": "4.1.12"
   },
   "devDependencies": {

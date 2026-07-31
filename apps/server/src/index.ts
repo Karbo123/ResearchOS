@@ -10,7 +10,7 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest,
-  memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
+  claimReviewDecisionRequest, claimReviewRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
@@ -31,7 +31,7 @@ import { installRepositoryArchive } from './repository-install-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
 import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
 import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
-import { buildArtifactPreview } from './artifact-preview-service.js'
+import { buildArtifactPreview, verifyArtifactFile } from './artifact-preview-service.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
 type MessageRow = { role: string; content: string }
@@ -41,7 +41,12 @@ type RepositoryRow = { id: string; project_id: string; paper_id: string | null; 
 type PaperIdentity = { id: string; title: string; doi: string | null }
 
 const app = new Hono()
-app.onError(errorResponse)
+app.onError((error, context) => {
+  if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) {
+    return context.json({ code: error.code, message: error.message }, error.status)
+  }
+  return errorResponse(error, context)
+})
 app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
 
 async function sessionFor(input: z.infer<typeof chatRequest>): Promise<SessionRow> {
@@ -60,13 +65,20 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
   const session = await sessionFor(input)
   const transcript = await rows<MessageRow>('SELECT role,content FROM messages WHERE session_id=$1 ORDER BY created_at DESC LIMIT 12', [session.id])
   const tier = tierFor(input.message, input.clarification_mode, input.attachments.length)
-  await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), session.id, 'user', input.message, { clarification_mode: input.clarification_mode }])
+  const userMessageId = crypto.randomUUID()
+  await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [userMessageId, session.id, 'user', input.message, { clarification_mode: input.clarification_mode }])
   let reply: string
   let phase = session.phase
   let draft = session.draft
   let actionRequired: string | null = null
   if (session.project_id || input.project_id) {
     const projectId = session.project_id || input.project_id!
+    if (supermemoryEnabled()) await ingestProjectMemory(projectId, {
+      source_type: 'project_chat_message', source_id: userMessageId, artifact_id: null, uploaded_file_id: null,
+      content: `user: ${input.message}`, source_url: null, quote: null, locator: null,
+      metadata: { session_id: session.id, role: 'user', clarification_mode: input.clarification_mode, evidence_status: 'semantic_candidate' },
+      task_type: 'memory', idempotency_key: `project-chat-user:${userMessageId}`,
+    })
     const project = await projectDetail(projectId)
     const modelResult = await mastraJson<{ result: { intent: string; target_field: string | null; proposed_value: string | null; policy_rule: string | null; clarification_question: string | null; assistant_reply: string }; route: { tier: string; model: string; reasoning_effort: string } }>('/internal/agents/supervision-intent', {
       message: input.message,
@@ -77,6 +89,13 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
       memory_thread: `session:${session.id}`,
     })
     reply = modelResult.result.assistant_reply
+    const assistantMessageId = crypto.randomUUID()
+    if (supermemoryEnabled()) await ingestProjectMemory(projectId, {
+      source_type: 'project_chat_message', source_id: assistantMessageId, artifact_id: null, uploaded_file_id: null,
+      content: `assistant: ${reply}`, source_url: null, quote: null, locator: null,
+      metadata: { session_id: session.id, role: 'assistant', model_tier: tier, intent: modelResult.result.intent, evidence_status: 'semantic_candidate' },
+      task_type: 'memory', idempotency_key: `project-chat-assistant:${assistantMessageId}`,
+    })
     if (modelResult.result.intent === 'change_request' && modelResult.result.target_field && modelResult.result.proposed_value) {
       const proposalId = crypto.randomUUID()
       await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'idea_revision', input.message, `Revise ${modelResult.result.target_field}`, { field: modelResult.result.target_field, value: modelResult.result.proposed_value }])
@@ -86,7 +105,7 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
       await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'config_change', input.message, 'Add project policy', { rule: modelResult.result.policy_rule }])
       actionRequired = proposalId
     }
-    await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), session.id, 'assistant', reply, { model_tier: tier, intent: modelResult.result.intent }])
+    await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [assistantMessageId, session.id, 'assistant', reply, { model_tier: tier, intent: modelResult.result.intent }])
     return { session_id: session.id, project_id: projectId, phase: 'supervising', reply, spec: null, missing_fields: [], action_required: actionRequired, model_tier: tier, model: modelResult.route.model, reasoning_effort: modelResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
   }
   const modelResult = await mastraJson<{ result: { draft: Record<string, unknown>; assistant_reply: string; ready_for_confirmation: boolean; unresolved_items: string[] }; route: { tier: string; model: string; reasoning_effort: string } }>('/internal/agents/clarify', {
@@ -197,6 +216,7 @@ app.post('/api/projects', async context => {
     await transaction.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [id, slug, title])
     await transaction.query('INSERT INTO idea_versions(id,project_id,version,spec) VALUES ($1,$2,1,$3)', [crypto.randomUUID(), id, { schema_version: '1.0', idea: session.draft }])
     await transaction.query("UPDATE conversation_sessions SET project_id=$2,phase='supervising',updated_at=NOW() WHERE id=$1", [session.id, id])
+    await transaction.query('UPDATE uploaded_files SET project_id=$2 WHERE session_id=$1 AND project_id IS NULL', [session.id, id])
   })
   try { await createProjectWorkspace(id, slug, { schema_version: '1.0', idea: session.draft }) }
   catch (error) {
@@ -209,6 +229,8 @@ app.post('/api/projects', async context => {
       if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) throw new ApiError(error.status, error.code, error.message)
       throw error
     }
+    const uploadedFiles = await rows<{ id: string }>('SELECT id FROM uploaded_files WHERE session_id=$1 AND project_id IS NULL ORDER BY created_at,id', [session.id])
+    for (const uploadedFile of uploadedFiles) await enqueue(id, 'material_index', { uploaded_file_id: uploadedFile.id }, `material-index:${uploadedFile.id}`)
   }
   await enqueue(id, 'research_bootstrap', { project_id: id }, `research-bootstrap:${id}:v1`)
   return context.json({ project_id: id, project: { id, slug, title, status: 'active' } }, 201)
@@ -448,6 +470,58 @@ app.post('/api/reports', async context => {
   if (body.notify) throw new ApiError(501, 'notifications_not_implemented', '原生通知适配器尚未实现。')
   return context.json(await createOperationalReport(body.project_id, body.period))
 })
+app.post('/api/projects/:projectId/feedback', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, humanFeedbackRequest)
+  if (body.session_id) {
+    const session = await one<{ id: string; project_id: string | null }>('SELECT id,project_id FROM conversation_sessions WHERE id=$1', [body.session_id])
+    if (!session || session.project_id !== projectId) throw new ApiError(409, 'feedback_session_project_mismatch', 'feedback 会话不属于当前项目。')
+  }
+  const feedbackId = crypto.randomUUID()
+  if (supermemoryEnabled()) await ingestProjectMemory(projectId, {
+    source_type: 'manual', source_id: feedbackId, artifact_id: null, uploaded_file_id: null,
+    content: body.instruction, source_url: null, quote: null, locator: null,
+    metadata: {
+      category: body.category,
+      ...(body.session_id ? { session_id: body.session_id } : {}),
+      ...(body.reference_id ? { reference_id: body.reference_id } : {}),
+      evidence_status: 'semantic_feedback_requires_review',
+    },
+    task_type: 'memory', idempotency_key: `feedback:${feedbackId}`,
+  })
+  await database.query('INSERT INTO human_feedback(id,project_id,session_id,category,instruction) VALUES ($1,$2,$3,$4,$5)', [feedbackId, projectId, body.session_id ?? null, body.category, body.instruction])
+  await audit('human_feedback.created', projectId, { feedback_id: feedbackId, category: body.category, reference_id: body.reference_id ?? null }, 'local-user')
+  return context.json({ id: feedbackId, project_id: projectId, status: 'recorded', semantic_memory: supermemoryEnabled() ? 'active' : 'disabled' }, 201)
+})
+app.get('/api/projects/:projectId/claim-reviews', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json({ project_id: projectId, reviews: await rows('SELECT * FROM claim_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]) })
+})
+app.post('/api/projects/:projectId/claim-reviews', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, claimReviewRequest)
+  const evidence = await rows<{ id: string }>('SELECT id FROM evidence WHERE project_id=$1 AND id = ANY($2::uuid[])', [projectId, body.evidence_ids])
+  if (evidence.length !== body.evidence_ids.length) throw new ApiError(403, 'claim_review_evidence_scope', 'claim review 只能引用当前项目的 evidence。')
+  const id = crypto.randomUUID()
+  await database.query('INSERT INTO claim_reviews(id,project_id,claim,evidence_ids) VALUES ($1,$2,$3,$4)', [id, projectId, body.claim, body.evidence_ids])
+  await audit('claim_review.created', projectId, { claim_review_id: id, evidence_ids: body.evidence_ids, evidence_status: 'page_quote_requires_claim_review' }, 'local-user')
+  return context.json({ id, project_id: projectId, status: 'pending', evidence_status: 'page_quote_requires_claim_review' }, 201)
+})
+app.post('/api/projects/:projectId/claim-reviews/:reviewId/decision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const reviewId = uuid.parse(context.req.param('reviewId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, claimReviewDecisionRequest)
+  const review = await one<{ id: string; status: string }>('SELECT id,status FROM claim_reviews WHERE id=$1 AND project_id=$2', [reviewId, projectId])
+  if (!review) throw new ApiError(404, 'claim_review_not_found', 'claim review 不存在。')
+  if (review.status !== 'pending') throw new ApiError(409, 'claim_review_already_decided', 'claim review 已经完成决策。')
+  await database.query('UPDATE claim_reviews SET status=$2,reviewer=$3,decision_comment=$4,decided_at=NOW() WHERE id=$1 AND project_id=$5', [reviewId, body.decision, body.actor, body.comment ?? null, projectId])
+  await audit(`claim_review.${body.decision}`, projectId, { claim_review_id: reviewId, comment: body.comment ?? null, evidence_status: 'page_quote_requires_claim_review' }, body.actor)
+  return context.json({ id: reviewId, project_id: projectId, status: body.decision, evidence_status: 'page_quote_requires_claim_review' })
+})
 app.get('/api/projects/:projectId/audit', async context => context.json(await rows('SELECT * FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC', [uuid.parse(context.req.param('projectId'))])))
 app.post('/api/projects/:projectId/state', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
@@ -473,8 +547,31 @@ app.get('/api/projects/:projectId/materials/search', async context => {
   const limit = Math.min(50, Math.max(1, Number(context.req.query('limit') || 20)))
   const offset = Math.max(0, Number(context.req.query('offset') || 0))
   if (!query || query.length > 200) throw new ApiError(422, 'invalid_material_query', '材料查询不能为空且不能超过 200 字符。')
-  const matches = await rows<Record<string, unknown>>('SELECT id,name,mime_type,size_bytes,sha256,metadata,created_at FROM uploaded_files WHERE project_id=$1 AND (LOWER(name) LIKE $2 OR LOWER(metadata::text) LIKE $2) ORDER BY created_at DESC LIMIT $3 OFFSET $4', [projectId, `%${query.replaceAll('%', '\\%').replaceAll('_', '\\_')}%`, limit, offset])
-  return context.json({ items: matches, limit, offset, match_mode: 'deterministic_lexical_metadata_only', evidence_status: 'unverified_material_context' })
+  if (offset > 0) throw new ApiError(422, 'material_search_pagination_unsupported', 'Supermemory 语义检索当前不支持本地 offset 分页。')
+  const result = await searchProjectMemory(projectId, query, Math.min(20, limit), 'hybrid')
+  return context.json({
+    project_id: projectId,
+    total_matches: result.total,
+    next_offset: null,
+    match_mode: 'supermemory_project_scoped_hybrid',
+    evidence_status: 'semantic_candidates_not_scientific_evidence',
+    results: result.results.map(item => {
+      const metadata = (item.metadata || {}) as Record<string, unknown>
+      return {
+      id: item.id,
+      name: String(metadata.artifact_name || metadata.source_id || item.id || '语义候选'),
+      kind: item.source_type || 'material',
+      parse_status: metadata.parse_status || 'semantic_indexed',
+      sha256: metadata.artifact_sha256 || metadata.content_sha256 || null,
+      snippet: item.memory,
+      similarity: item.similarity,
+      source_type: item.source_type,
+      source_id: item.source_id,
+      uploaded_file_id: item.uploaded_file_id,
+      locator: metadata.locator || null,
+      }
+    }),
+  })
 })
 
 app.post('/api/uploads', async context => {
@@ -496,18 +593,22 @@ app.post('/api/uploads', async context => {
   const sha256 = createHash('sha256').update(bytes).digest('hex')
   const relativePath = target.slice(artifactsRoot.length + 1).replaceAll('\\', '/')
   await database.query('INSERT INTO uploaded_files(id,session_id,project_id,name,relative_path,mime_type,size_bytes,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, sessionId, session.project_id, safeName, relativePath, file.type || 'application/octet-stream', bytes.length, sha256, { scan: 'windows_defender_clean', evidence_status: 'untrusted_uploaded_material' }])
-  return context.json({ artifact_id: id, name: safeName, size_bytes: bytes.length, sha256, evidence_status: 'untrusted_uploaded_material' }, 201)
+  let indexTask: { id: string } | null = null
+  if (session.project_id && supermemoryEnabled()) indexTask = await enqueue(session.project_id, 'material_index', { uploaded_file_id: id }, `material-index:${id}`)
+  return context.json({ artifact_id: id, name: safeName, size_bytes: bytes.length, sha256, evidence_status: 'untrusted_uploaded_material', semantic_index_status: indexTask ? 'queued' : 'disabled', index_task_id: indexTask?.id ?? null }, 201)
 })
 
 app.get('/api/projects/:projectId/artifacts/:artifactId/preview', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const artifactId = uuid.parse(context.req.param('artifactId'))
   await requireProject(projectId)
-  const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND project_id=$2 AND valid=TRUE', [artifactId, projectId])
+  const artifact = await one<{ relative_path: string; mime_type: string; name: string; sha256: string; valid: boolean }>('SELECT relative_path,mime_type,name,sha256,valid FROM artifacts WHERE id=$1 AND project_id=$2', [artifactId, projectId])
   if (!artifact) throw new ApiError(404, 'artifact_not_found', '项目中不存在该产物或产物已经失效。')
+  if (!artifact.valid) throw new ApiError(409, 'artifact_invalidated', '该产物已经因上游依赖变化而失效，不能继续预览。')
   const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
   if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
   try {
+    await verifyArtifactFile(path, artifact.sha256)
     return context.json(buildArtifactPreview(path, artifact.name, artifact.mime_type, `/api/projects/${projectId}/artifacts/${artifactId}/download`))
   } catch (error) {
     const code = error instanceof Error ? error.message : 'artifact_preview_unavailable'
@@ -518,37 +619,16 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context
   const projectId = uuid.parse(context.req.param('projectId'))
   const artifactId = uuid.parse(context.req.param('artifactId'))
   await requireProject(projectId)
-  const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND project_id=$2 AND valid=TRUE', [artifactId, projectId])
+  const artifact = await one<{ relative_path: string; mime_type: string; name: string; sha256: string; valid: boolean }>('SELECT relative_path,mime_type,name,sha256,valid FROM artifacts WHERE id=$1 AND project_id=$2', [artifactId, projectId])
   if (!artifact) throw new ApiError(404, 'artifact_not_found', '项目中不存在该产物或产物已经失效。')
+  if (!artifact.valid) throw new ApiError(409, 'artifact_invalidated', '该产物已经因上游依赖变化而失效，不能下载。')
   const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
   if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
-  context.header('content-type', artifact.mime_type)
-  context.header('content-disposition', `attachment; filename="${artifact.name.replaceAll('"', '')}"`)
-  return context.body(readFileSync(path))
-})
-
-app.get('/api/artifacts/:artifactId', async context => {
-  const artifact = await one<Record<string, unknown>>('SELECT * FROM artifacts WHERE id=$1', [uuid.parse(context.req.param('artifactId'))])
-  if (!artifact) throw new ApiError(404, 'artifact_not_found', '产物不存在。')
-  return context.json(artifact)
-})
-app.get('/api/artifacts/:artifactId/preview', async context => {
-  const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND valid=TRUE', [uuid.parse(context.req.param('artifactId'))])
-  if (!artifact) throw new ApiError(404, 'artifact_not_found', '产物不存在或已经失效。')
-  const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
-  if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
-  try {
-    return context.json(buildArtifactPreview(path, artifact.name, artifact.mime_type, `/api/artifacts/${context.req.param('artifactId')}/download`))
-  } catch (error) {
-    const code = error instanceof Error ? error.message : 'artifact_preview_unavailable'
-    throw new ApiError(422, code, '产物预览不可用或不符合受控预览契约。')
+  try { await verifyArtifactFile(path, artifact.sha256) }
+  catch (error) {
+    const code = error instanceof Error ? error.message : 'artifact_integrity_failed'
+    throw new ApiError(code === 'artifact_hash_mismatch' ? 409 : 422, code, code === 'artifact_hash_mismatch' ? '产物内容已经变化，不能继续下载。' : '产物必须是完整的普通文件。')
   }
-})
-app.get('/api/artifacts/:artifactId/download', async context => {
-  const artifact = await one<{ relative_path: string; mime_type: string; name: string }>('SELECT relative_path,mime_type,name FROM artifacts WHERE id=$1 AND valid=TRUE', [uuid.parse(context.req.param('artifactId'))])
-  if (!artifact) throw new ApiError(404, 'artifact_not_found', '产物不存在或已经失效。')
-  const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
-  if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
   context.header('content-type', artifact.mime_type)
   context.header('content-disposition', `attachment; filename="${artifact.name.replaceAll('"', '')}"`)
   return context.body(readFileSync(path))

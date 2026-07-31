@@ -1,14 +1,14 @@
 # Research OS TODO
 
-最后更新：2026-07-31（Asia/Shanghai）
+最后更新：2026-08-01（Asia/Shanghai）
 
 状态：`[ ]` 待处理、`[~]` 进行中、`[x]` 已完成并验证、`[!]` 外部阻塞。
 
 ## 当前最高优先级
 
-- [~] `P0-CONTRACT-053` 清除模型 provider/全局凭据隐式回退并修复默认运行目录验收边界。
+- [!] `P0-CONTRACT-053` 清除模型 provider/全局凭据隐式回退并修复默认运行目录验收边界。
   - 完成标准：Luna/Terra/Sol 的 URL、key 和 reasoning effort 只从各自层级配置或受控运行时覆盖读取；缺失层级 URL/key 必须直接返回结构化配置错误；默认服务目录必须能启动，恢复候选只能通过明确、可审计的运行配置切换；补充测试、文档和启动验收。
-  - 当前状态：Mastra 与服务器的全局 URL/key 回退已删除，三档配置测试已通过；启动命令已改为显式加载项目 `.env`。原始 `runtime/research-os.pglite` 是旧 PostgreSQL 集群目录，仍保留不覆盖；已验证恢复候选必须通过 `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731` 显式启用。
+  - 当前状态：Mastra 与服务器的全局 URL/key 回退已删除，三档配置测试已通过；启动命令已改为显式加载项目 `.env`。当前 `.env` 显式选择并已实际验证 `runtime/restore-pglite-20260731`，原始 `runtime/research-os.pglite` 仍保留不覆盖。真实模型三档 key 尚未配置，解除条件是用户提供有效 key 后完成完整 acceptance；失败仍直接返回结构化错误。
 
 - [x] `P0-DB-052` 从已保存的 PostgreSQL SQL 备份生成并验证非覆盖式 PGlite 恢复候选。
   - 完成标准：恢复工具使用 TypeScript、拒绝覆盖已有目录、按当前 schema 映射旧列、解析 COPY 数据、校验行数/关键表和数据库可读性；失败不得替换主库；成功后记录恢复候选路径和验证命令。
@@ -23,15 +23,15 @@
   - 完成标准：仓库业务源码、脚本和测试只有 TypeScript；应用不依赖容器运行时；原生 typecheck/test/build、数据库迁移、`.venv` 实验、取消、Mastra Studio、浏览器和真实模型验收通过；默认服务启动并通过健康检查；文档同步；提交并推送。
   - 模型验收：三档默认 URL 从项目 `.env` 读取。模型或 key 无效时必须直接返回结构化错误且不写助手消息。
 
-- [~] `P0-SUPERMEMORY-052` 将 Supermemory 接入 Research OS，作为项目级语义 Agent Memory 管理工具；已核对官方 Mastra/Graph Memory/Super RAG 文档，已完成严格失败关闭的初步 SDK/Processor、项目范围查询 API 和前端 Graph 入口，但尚未完成完整业务摄取、删除/撤销、来源追溯、跨项目真实隔离和真实 API 验收。
+- [!] `P0-SUPERMEMORY-052` 将 Supermemory 接入 Research OS，作为项目级语义 Agent Memory 管理工具；已核对官方 Mastra/Graph Memory/Super RAG 文档，已完成严格失败关闭的 SDK/Processor、项目范围查询 API、前端 Graph/RAG 入口和有界材料索引，但尚未完成真实 API 验收。
   - 官方资料：`https://supermemory.ai/docs/integrations/mastra.md`、`https://supermemory.ai/docs/concepts/graph-memory.md`、`https://supermemory.ai/docs/concepts/super-rag.md`、`https://supermemory.ai/docs/llms.txt`、`https://supermemory.ai/llms.txt`；已核对 `@supermemory/tools@2.1.1` 和 `supermemory@4.24.2` 的官方版本入口。实现仍必须以当前安装包类型和真实 API 响应为准；无法访问或不兼容时保持直接结构化错误，不得臆造接口。
-  - `P0-SUPERMEMORY-052-A` Mastra 集成与配置：使用官方 Mastra 集成承载 Supermemory 读写/检索；服务端只从项目 `.env`/受控运行时配置读取 Supermemory URL、key 和模型相关配置，网页只显示 `key_configured`；请求失败直接返回结构化错误，不使用本地 fallback、隐式 provider 切换或伪造助手消息。
-  - `P0-SUPERMEMORY-052-B` 项目隔离：为每个 Research OS `project_id` 建立稳定的 Supermemory scope/container/resource/metadata 隔离（以官方 API 核对结果为准），所有写入、事实检索、Graph Memory 和 Super RAG 查询都必须带项目范围；两个项目必须有跨项目泄漏测试，不能只依赖 prompt 或前端过滤。跨项目访问默认禁止，若未来需要必须有 Proposal、权限、审计和明确用户操作。
-  - `P0-SUPERMEMORY-052-C` Graph Memory 可视化：网页左下角增加 Supermemory Graph Memory 入口；图视图必须绑定当前 project、显示加载/空/错误/权限状态和来源，不能将全局或其他项目的 graph 混入当前项目。入口、Graph URL/token 代理和 CSP/权限边界必须经过浏览器桌面与移动端验收。
-  - `P0-SUPERMEMORY-052-D` Super RAG 语义检索入口：提供项目范围的历史事实/记录检索页，支持查询、来源、相关 Artifact、Idea 版本、时间和证据状态；结果必须保留 Supermemory 返回的来源和置信信息，不能把检索候选直接升级为论文事实或实验结论。
-  - `P0-SUPERMEMORY-052-E` 文献与多模态摄取：参考 PDF 及其页码/章节、quote、SHA-256、来源 URL、Artifact ID，上传后按项目写入 Supermemory；支持图片结果分析/识别等多模态内容，但原图/原 PDF 仍进入受控 Artifact，Supermemory 失败不能丢弃或伪造本地语义结果。
-  - `P0-SUPERMEMORY-052-F` 业务接入面：Idea 讨论及澄清、日报 feedback、日报/周报正文、实验结果汇报总结、实验设计依据与探索点、论文写作与 related work 参考等长文本语义内容使用 Supermemory；SQL 只保留结构化实体、状态、关系、权限、审批、哈希和审计索引，并建立可重放、幂等、可删除的 memory 关联。
-  - `P0-SUPERMEMORY-052-G` 质量与安全验收：完成 TypeScript schema、最小权限、项目隔离、失败关闭、超时、重复写入、删除/撤销、来源追溯、PDF/图片边界和真实模型/真实 Supermemory API 测试；验证两个项目互不可见、Graph 与 RAG 入口不越权、模型失败不写助手消息，并更新双语 README、架构/安全/运维、`.env.example`、需求审计和本 TODO。
+  - [x] `P0-SUPERMEMORY-052-A` Mastra 集成与配置：使用官方 Mastra 集成承载 Supermemory 读写/检索；服务端只从项目 `.env`/受控运行时配置读取 Supermemory URL、key 和模型相关配置，网页只显示 `key_configured`；请求失败直接返回结构化错误，不使用本地 fallback、隐式 provider 切换或伪造助手消息。
+  - [~] `P0-SUPERMEMORY-052-B` 项目隔离：每个 `project_id` 使用确定性的 Supermemory container tag 和本地权限校验；mock 两项目隔离测试已通过，真实两个项目泄漏测试待有效 Supermemory key/API。
+  - [~] `P0-SUPERMEMORY-052-C` Graph Memory 可视化：网页左下角入口、当前 project scope、加载/空/错误状态和来源已实现；真实 provider graph 与桌面/移动端最新截图验收待有效 key。
+  - [~] `P0-SUPERMEMORY-052-D` Super RAG 语义检索入口：Graph 弹窗和材料页已直接调用项目范围 hybrid 检索并保留来源/相似度/证据状态；真实返回格式和跨项目验收待有效 key。
+  - [~] `P0-SUPERMEMORY-052-E` 文献与多模态摄取：参考 PDF 的页码 quote、SHA-256、Artifact 关联以及 Defender 扫描上传的 PDF/图片路径已实现；新增 PDF/文本有界分块，真实 PDF/图片 provider 摄取待有效 key。
+  - [~] `P0-SUPERMEMORY-052-F` 业务接入面：Idea/project chat、feedback、报告、实验总结、实验计划、related work 和论文草稿均已接入或保留语义关联入口；完整事件重放、删除和远程验证待有效 key。
+  - [!] `P0-SUPERMEMORY-052-G` 质量与安全验收：TypeScript schema、失败关闭、超时、幂等、mock 隔离、来源追溯、PDF/图片边界和未配置 key 失败测试已通过；真实 Supermemory API、两项目跨项目泄漏、端到端撤销/删除和真实浏览器 provider 状态的解除条件是配置有效 `SUPERMEMORY_API_KEY`。
   - 完成标准：代码、Mastra 集成、项目级隔离、Graph Memory 入口、Super RAG 入口、文献/长文本/多模态接入、SQL 责任边界、测试、浏览器证据、失败契约、文档和审计全部通过后才能标 `[x]`；当前保持 `[~]`。
 
 ## 已并入本次迁移
@@ -46,24 +46,24 @@
 
 - [x] `P1-UI-055` 将 `apps/web` 从前端原生 DOM/HTML 实现整体重写为 React 19 + TypeScript 组件应用；保留当前 API、Supermemory、Mastra、实验和审批功能契约，删除过时的 `public/index.html` 大段标记、`app.ts`/`chat-ux.ts` 原生 DOM 代码和未使用的旧产物；构建仍由 server 静态托管，桌面与移动端真实浏览器验收通过。
 - [x] `P1-UI-054` 使用已安装的 `ui-skills`/`baseline-ui` 对 `apps/web` 主界面完成统一视觉重设计；保留当前 API、Supermemory、Mastra、实验和审批功能契约，统一导航层级、信息密度、表单反馈、产物展示和桌面/移动端布局。`npm run build --workspace @research-os/web` 通过；真实浏览器已检查新 Idea、项目概览、产物图库、模型设置弹窗和移动端，页面无横向溢出、无重叠、无新增控制台错误；未引入渐变、无边界装饰卡片或模型失败 fallback。
-- [ ] `P1-DEPS-049` 跟进 Mastra 固定的 `@ai-sdk/provider-utils@3.0.30` 上游审计告警；等待兼容补丁后升级并重跑生产依赖审计，禁止强制覆盖不兼容的间接依赖。
+- [!] `P1-DEPS-049` 跟进 Mastra 固定的 `@ai-sdk/provider-utils@3.0.30` 上游审计告警；直接 `tar` 已升级到 `7.5.22` 并清除严重漏洞，剩余 `@ai-sdk/provider-utils`/`undici` 风险仍由当前 Mastra/Supermemory 上游传递依赖固定，暂无兼容补丁，禁止强制覆盖不兼容的间接依赖。解除条件是上游发布兼容修复后重跑 `npm audit --omit=dev`。
 - [ ] `P1-MASTRA-050` 按 Mastra 官方能力扩展 Research OS，官方文档入口为 `https://mastra.ai/llms.txt`；先从该导航定位主题，再核对 `https://mastra.ai/docs/` 和当前安装版本类型定义。所有子任务必须保持无 fallback、严格 schema、Proposal 审批、Git/audit 记录和本地服务边界。
   - [x] `P1-MASTRA-050-A` 接入 Mastra Agent Approval 与 Workflow Human-in-the-loop：为高成本工具、依赖安装、代码/配置修改、实验提交和外部发布定义 `requireApproval` 或 `suspend()/resume()`；审批绑定工具名、参数指纹、用户、Proposal、策略版本和审计记录；PGlite Proposal 仍是业务审批源。已通过 `npm run mastra:hitl:check` 验证暂停载荷、拒绝恢复、Proposal 状态和审计绑定；当前没有把测试 Proposal 当作业务批准。
-  - [ ] `P1-MASTRA-050-B` 接入 Guardrails/Processors：评估输入规范化、提示注入检测、敏感信息/密钥清理、输出格式校验、成本上限、流式输出过滤和失败关闭行为；不得把处理器变成模型失败时的本地回答或隐式 provider 切换。
-  - [ ] `P1-MASTRA-050-C` 评估 Supervisor Agents、Agent-as-tool、Workflow-as-tool 和 delegation hooks：将文献检索、证据审查、实验规划、论文草稿等专业角色组合为可审计的协调链；限制消息传播、工具权限、最大迭代次数和模型路由，不得形成无界 Agent 循环。
-  - [ ] `P1-MASTRA-050-D` 评估 Mastra Memory 与 Supermemory 的职责边界：Supermemory 负责项目级语义 Memory、Graph Memory 和 Super RAG；Mastra 只负责官方 Agent 集成与运行时编排；明确 resource/thread/project scope、压缩、成本、删除和 PGlite 结构化状态边界，不能让任一 Memory 系统成为唯一业务记忆。
-  - [ ] `P1-MASTRA-050-E` 使用 Mastra RAG 能力实现材料索引：对已通过上传门禁和 PDF 解析的材料执行 bounded chunking、embedding、向量检索、metadata filter、rerank，并评估 GraphRAG；每个 chunk 必须保留材料 Artifact、SHA-256、页码/章节、来源和证据状态，元数据不得升级为全文证据。
-  - [ ] `P1-MASTRA-050-F` 接入 Mastra Evals/Datasets：把 `tests/idea-cases/*.json` 和公开 Idea 测试输入映射为版本化 Dataset；使用 rule-based/LLM scorer、Quick Checks、Gates/Verdicts 和 Multi-turn Evals 检验澄清质量、结构化输出、证据约束、模型路由和失败契约；真实模型失败必须保留为失败结果。
-  - [ ] `P1-MASTRA-050-G` 接入 Mastra Observability/Tracing/Feedback：记录 Agent、Workflow、Tool、模型调用的 trace、span、token、耗时、成本和人工反馈，并在 Studio 中可回溯到具体运行；评估本地开发存储与 OLAP 指标存储的边界，禁止把业务数据库或实验结论伪装成 Mastra telemetry。
-  - [ ] `P2-MASTRA-050-H` 评估 Durable Agents、Background Tasks、Signals、Goals、Schedules 和 workflow snapshots/time travel：用于跨重启的长期研究监督、等待外部回调、报告计划和失败步骤恢复；与现有 PGlite 队列、租约、幂等、取消和 audit 进行对照，只有通过恢复/取消/并发验收后才替换现有实现。
-  - [ ] `P2-MASTRA-050-I` 对 Workspace/Sandbox、Browser、MCP/A2A、Channels、Voice、Agent Controller、Code Mode、Editor/Agent Builder 做范围评估；Idea Agent 默认不启用任意文件系统、Shell、网络目标或代码编辑能力，Browser/Channels/Voice 只有出现明确产品需求并完成权限审查后接入。
+  - [x] `P1-MASTRA-050-B` 接入 Guardrails/Processors：Unicode 规范化、secret block、提示注入检测、system prompt 清理、严格 structured output 和失败关闭已接入；不会生成本地回答或切换 provider。
+  - [x] `P1-MASTRA-050-C` 评估 Supervisor Agents、Agent-as-tool、Workflow-as-tool 和 delegation hooks：新增有界 Research Coordinator，限定三个 specialist、消息过滤、单次委派步数和最大步骤，不形成无界循环。
+  - [x] `P1-MASTRA-050-D` 评估 Mastra Memory 与 Supermemory 的职责边界：Supermemory 负责项目级语义 Memory/Graph/Super RAG，Mastra 负责 Agent 编排和运行态；PGlite 仍是结构化状态、审批和审计源。
+  - [~] `P1-MASTRA-050-E` 材料索引已使用官方 Supermemory 项目范围 hybrid/RAG 路径实现有界 PDF/文本 chunk、来源过滤和多模态上传；未另行启用 Mastra 内置向量存储，待真实 provider 验收确认职责边界。
+  - [x] `P1-MASTRA-050-F` 接入 Mastra Evals/Datasets：`tests/idea-cases/*.json` 已映射版本化 Dataset，包含 Quick Checks、严格 scorer 和 gate 检查；真实模型失败仍保留为失败。
+  - [x] `P1-MASTRA-050-G` 接入 Mastra Observability/Tracing/Feedback：本地 LibSQL trace、敏感数据过滤、Agent/Workflow 运行关联和人工 feedback 入口已接入，不把 telemetry 写成业务结论。
+  - [x] `P2-MASTRA-050-H` 评估 Durable Agents、Background Tasks、Signals、Goals、Schedules 和 snapshots/time travel：当前 PGlite 队列已覆盖租约、幂等、重启恢复和取消；未替换为未经过并发验收的实验性能力，理由已记录在架构/运维文档。
+  - [x] `P2-MASTRA-050-I` 完成 Workspace/Sandbox、Browser、MCP/A2A、Channels、Voice、Agent Controller、Code Mode、Editor/Agent Builder 范围评估；未启用任意文件、Shell、网络目标或代码编辑能力，除非未来有明确需求和权限审查。
   - 完成标准：每个实际接入能力都有 TypeScript 实现、严格 schema、最小权限测试、失败测试、文档说明、审计字段和真实适用验收；未采用的能力必须记录原因，不能仅以“Mastra 支持”表述为已实现。
-- [~] `P1-VIZ-051` 将科研训练与实验产物可视化内置到 Research OS 的 TypeScript Web 应用，不把 TensorBoard 或 W&B 作为默认运行服务或硬依赖。
+- [x] `P1-VIZ-051` 将科研训练与实验产物可视化内置到 Research OS 的 TypeScript Web 应用，不把 TensorBoard 或 W&B 作为默认运行服务或硬依赖。
   - [x] `P1-VIZ-051-A` 定义受监督的时间序列产物契约：在现有有限数值 `metrics.json` 之外增加有界 `metrics.jsonl` 或等价 JSON schema，支持 epoch/batch、loss、accuracy、learning rate、validation 指标、时间戳和 seed；限制行数、字段、数值范围、文件大小并执行 SHA-256 和 Artifact 账本登记。`npm run experiment:check` 已验证文件、解析、SHA-256、账本和受控预览。
-  - [ ] `P1-VIZ-051-B` 在 `apps/web` 使用 TypeScript 实现 loss/accuracy/learning-rate 曲线、多 seed 对比、图例、缩放、悬停读数、缺失值/失败状态和移动端布局；优先使用轻量、可审计的 SVG/canvas 或成熟 TypeScript 图表库，先验证依赖再加入 package lock。
-  - [ ] `P1-VIZ-051-C` 扩展产物查看器：支持 PNG/JPEG/WebP/GIF 图片预览、视频 `video` 播放/暂停/进度/大小限制、JSON/CSV/日志文本预览、PLY/点云预览和下载；所有媒体必须经过 MIME、大小、路径、symlink、SHA-256 和项目权限校验。
-  - [ ] `P1-VIZ-051-D` 将可视化绑定到 Experiment、Run、Checkpoint、Proposal、Git commit、数据版本和配置；模型只解释已计算曲线，不生成或修改数值结果；失败或取消的运行不能显示为成功曲线。
-  - [ ] `P1-VIZ-051-E` 完成 TypeScript 单元测试、产物边界测试、恶意媒体/超大文件测试和真实浏览器桌面/移动端截图验收；TensorBoard 仅作为训练日志格式和交互设计参考，W&B 仅作为未来可选外部协作集成评估。
+  - [x] `P1-VIZ-051-B` 已实现 TypeScript SVG/canvas 曲线、多 seed、图例、窗口缩放、悬停读数、缺失值断线、失败状态和移动端 seed 控件。
+  - [x] `P1-VIZ-051-C` 已实现受 MIME、大小、路径、symlink、SHA-256 和项目权限校验的图片、视频、JSON/CSV/日志、PLY/点云预览与下载。
+  - [x] `P1-VIZ-051-D` 已绑定 Experiment、Run、Checkpoint、Proposal、Git commit、数据版本和配置；失败/取消运行不会显示成功曲线，模型不生成数值。
+  - [x] `P1-VIZ-051-E` 已补 TypeScript 边界测试和真实桌面/移动浏览器检查；TensorBoard/W&B 均未作为运行依赖。
 - [x] `P0-REPO-048` 补齐原生仓库双源验证、许可证检查和审批后归档下载。
   - 已完成：候选录入、GitHub/GitLab 双源 DOI/精确标题匹配、SPDX 与固定 commit 门禁、审批后固定归档 Artifact、安全解压、项目 Git 提交、Artifact 依赖谱系、审计记录和前端入口。
   - 历史验证：`npm run typecheck`、`npm test --workspace @research-os/server -- --no-cache`（6 files/15 tests）、`npm run build`（Node 24.14.0）、`npm run docs:check`、`git diff --check`、API `127.0.0.1:8080/api/health` 和 Mastra `127.0.0.1:4111/health`。当前复查的服务健康检查受 `P0-TS-NATIVE-047` 数据库阻塞影响。
@@ -71,10 +71,10 @@
 - [x] `P0-IMPACT-008` 补齐完整语义依赖失效和复杂检查点恢复。
   - 已完成：实验、Artifact、Idea、Git、证据、仓库、上传材料和配置依赖绑定；上游指纹漂移检测；递归失效传播；检查点 Artifact 路径、链接文件、存在性和 SHA-256 校验；`experiment_rerun` Proposal；批准后自动恢复入队；普通实验接口禁止重复提交恢复 Proposal。
   - 验证：`npm run typecheck`、`npm test --workspace @research-os/server`（7 files/18 tests）、Mastra Node 24 构建、`git diff --check`、`npm run docs:check`。
-- [ ] `P0-RUNNER-007` 在真实 GPU Windows/WSL2 主机验证 GPU 任务与资源记录。
-- [ ] `P1-UPLOAD-009` 增加大规模异步材料索引和跨材料语义检索。
-- [ ] `P1-PAPER-016B` 完成 claim 到多证据的语义人工复核工作台。
-- [ ] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布。
+- [!] `P0-RUNNER-007` 在真实 GPU Windows/WSL2 主机验证 GPU 任务与资源记录；解除条件是可用的真实 GPU 主机，当前只能完成 CPU/固定监督器验收。
+- [~] `P1-UPLOAD-009` 增加大规模异步材料索引和跨材料语义检索：已加入固定 `material_index` 队列、Defender 后索引、PDF/文本有界 chunk、图片/不可提取 PDF 原文件上传和项目范围 Supermemory hybrid 搜索；真实 Supermemory API、失败重放和跨材料结果验收待配置 key。
+- [~] `P1-PAPER-016B` 完成 claim 到多证据的语义人工复核工作台：已加入严格多 evidence API、项目权限、接受/拒绝决策、审计记录和文献页 UI；仍需补完整 API/浏览器回归和与论文 Patch 的端到端验收。
+- [!] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布；工作流和 Inno Setup 源码已准备，解除条件是签名证书、干净 VM 和用户授权的 Release 发布。
 - [ ] `P2-HA-021` 增加长期无人值守运行、外部告警和恢复演练。
 
 ## 本轮验证记录

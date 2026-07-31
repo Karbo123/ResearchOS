@@ -44,6 +44,8 @@ Only fixed academic providers, approved repository providers, configured model e
 
 Supermemory is a remote, optional semantic-memory processor. The API sends only bounded, project-scoped content and metadata; the local Artifact remains the source of the original PDF/image bytes and SHA-256. Every request includes the deterministic project container tag and the local `memory_links` ledger records source IDs, Artifact IDs, hashes, evidence status, remote IDs, and failure state.
 
+Uploaded PDF/text indexing performs bounded extraction and overlapping chunks; each chunk carries the uploaded-file ID, source SHA-256, chunk hash, page or text locator, and untrusted-material evidence status. Images and PDFs without extractable text remain controlled file uploads. The material search API uses the same project-scoped remote search boundary and does not expose a local semantic substitute.
+
 The browser receives only `key_configured`, never the key or unrestricted remote URLs. Search and Graph responses are labeled semantic candidates and cannot be promoted to evidence or experiment conclusions. Missing configuration, timeout, authentication failure, invalid response, or remote mutation failure is a direct structured error. There is no local semantic fallback, provider switch, or silent SQL copy of the failed content. Forget/delete is an external side effect and requires a project Proposal approval.
 
 ## Dependency Risk

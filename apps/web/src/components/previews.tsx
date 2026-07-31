@@ -138,13 +138,28 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
   )
   const [metric, setMetric] = useState(metrics[0] || 'loss')
   const [windowSize, setWindowSize] = useState(Math.max(10, points.length))
+  const allSeeds = [...new Set(points.map(point => String(point.seed ?? 'all')))]
+  const [selectedSeeds, setSelectedSeeds] = useState<string[]>(allSeeds)
+  const [hovered, setHovered] = useState<{ step: number; value: number; seed: string } | null>(null)
+  const seedKey = allSeeds.join('|')
+
+  useEffect(() => {
+    setSelectedSeeds(current => {
+      const next = current.filter(seed => allSeeds.includes(seed))
+      return next.length ? next : allSeeds
+    })
+  }, [seedKey])
 
   if (!points.length || !metrics.length) {
     return <div className="preview-error">没有可绘制的有限数值指标。</div>
   }
 
   const visible = points.slice(-windowSize)
-  const numeric = visible.filter(point => Number.isFinite(Number(point[metric])))
+  const numeric = visible.filter(point => selectedSeeds.includes(String(point.seed ?? 'all')) && Number.isFinite(Number(point[metric])))
+  const missingCount = visible.filter(point => selectedSeeds.includes(String(point.seed ?? 'all')) && !Number.isFinite(Number(point[metric]))).length
+  if (!numeric.length) {
+    return <div className="preview-error">当前选择没有可绘制的有限数值指标；缺失值不会被补写或插值。</div>
+  }
   const steps = numeric.map(point => Number(point.step))
   const minStep = Math.min(...steps)
   const stepSpan = Math.max(Math.max(...steps) - minStep, 1)
@@ -174,9 +189,38 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
             onChange={event => setWindowSize(Number(event.target.value))}
           />
         </label>
+        <div className="timeseries-seeds" aria-label="选择随机种子">
+          <span className="muted">seed</span>
+          {allSeeds.map(seed => (
+            <button
+              key={seed}
+              className={selectedSeeds.includes(seed) ? 'seed-toggle active' : 'seed-toggle'}
+              type="button"
+              onClick={() => setSelectedSeeds(current => current.includes(seed)
+                ? current.length === 1 ? current : current.filter(value => value !== seed)
+                : [...current, seed])}
+            >
+              {seed}
+            </button>
+          ))}
+        </div>
         <span className="muted timeseries-count">{numeric.length}/{points.length} 个点</span>
       </div>
-      <svg className="timeseries-chart" viewBox="0 0 720 300" role="img" aria-label="指标曲线">
+      <div className="timeseries-chart-wrap">
+      <svg
+        className="timeseries-chart"
+        viewBox="0 0 720 300"
+        role="img"
+        aria-label={`${metric} 指标曲线`}
+        onMouseLeave={() => setHovered(null)}
+        onMouseMove={event => {
+          const rect = event.currentTarget.getBoundingClientRect()
+          const x = Math.max(48, Math.min(704, ((event.clientX - rect.left) / rect.width) * 720))
+          const targetStep = minStep + ((x - 48) / 656) * stepSpan
+          const nearest = numeric.reduce((best, point) => Math.abs(Number(point.step) - targetStep) < Math.abs(Number(best.step) - targetStep) ? point : best, numeric[0]!)
+          setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? 'all') })
+        }}
+      >
         <rect x="0" y="0" width="720" height="300" fill="#f7faf8" rx="8" />
         <line x1="48" y1="18" x2="48" y2="266" stroke="#cbd5d1" />
         <line x1="48" y1="266" x2="704" y2="266" stroke="#cbd5d1" />
@@ -187,23 +231,43 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
           const group = numeric
             .filter(point => String(point.seed ?? 'all') === seed)
             .sort((a, b) => Number(a.step) - Number(b.step))
-          const coords = group
-            .map(point => `${48 + ((Number(point.step) - minStep) / stepSpan) * 656},${250 - ((Number(point[metric]) - minValue) / span) * 220}`)
-            .join(' ')
+          const segments: typeof group[] = []
+          visible
+            .filter(point => String(point.seed ?? 'all') === seed)
+            .sort((a, b) => Number(a.step) - Number(b.step))
+            .forEach(point => {
+              if (!Number.isFinite(Number(point[metric]))) return
+              const segment = segments.at(-1)
+              if (segment) segment.push(point)
+              else segments.push([point])
+            })
           const color = colors[groupIndex % colors.length]
           return (
             <g key={seed}>
-              <polyline points={coords} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+              {segments.map((segment, segmentIndex) => (
+                <polyline
+                  key={segmentIndex}
+                  points={segment.map(point => `${48 + ((Number(point.step) - minStep) / stepSpan) * 656},${250 - ((Number(point[metric]) - minValue) / span) * 220}`).join(' ')}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+              ))}
               <text x={56 + groupIndex * 86} y={288} fill={color} fontSize="11">seed {seed}</text>
               {group.map((point, index) => {
                 const x = 48 + ((Number(point.step) - minStep) / stepSpan) * 656
                 const y = 250 - ((Number(point[metric]) - minValue) / span) * 220
-                return <circle key={index} cx={x} cy={y} r="3" fill={color} />
+                const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed
+                return <circle key={index} cx={x} cy={y} r={isHovered ? 6 : 3} fill={color} stroke={isHovered ? '#17201d' : 'none'} strokeWidth="2" />
               })}
             </g>
           )
         })}
       </svg>
+      {hovered ? <div className="timeseries-tooltip">step {hovered.step} · seed {hovered.seed} · {metric} {hovered.value.toPrecision(6)}</div> : null}
+      </div>
+      {missingCount ? <div className="preview-footnote">{missingCount} 个点缺少 {metric}，已按缺失值保留并跳过绘制。</div> : null}
     </div>
   )
 }
@@ -270,7 +334,11 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
 
   return (
     <article className="artifact-card">
-      {artifact.mime_type?.startsWith('image/') ? (
+      {!artifact.valid ? (
+        <div className="artifact-preview preview-error">该产物已失效，不能预览或下载。</div>
+      ) : artifact.experiment_status && artifact.experiment_status !== 'succeeded' ? (
+        <div className="artifact-preview preview-error">关联运行状态为 {artifact.experiment_status}，不显示为成功产物。</div>
+      ) : artifact.mime_type?.startsWith('image/') ? (
         <img className="artifact-image" src={artifact.download_url || artifact.url} alt={artifact.name} />
       ) : status === 'loading' ? (
         <div className="artifact-preview"><div className="preview-loading">加载预览…</div></div>
@@ -281,8 +349,11 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
       ) : null}
       <div className="artifact-body">
         <h3>{artifact.name}</h3>
-        <p className="muted">{artifact.kind} · {artifact.valid ? '有效' : '已失效'}</p>
-        <a href={artifact.download_url || artifact.url} download>下载产物</a>
+        <p className="muted">{artifact.kind} · {artifact.valid ? '有效' : '已失效'}{artifact.experiment_status ? ` · 运行 ${artifact.experiment_status}` : ''}</p>
+        <p className="artifact-lineage">{artifact.metadata?.lineage && typeof artifact.metadata.lineage === 'object'
+          ? `Run ${String((artifact.metadata.lineage as Record<string, unknown>).run_id || '未绑定')} · Idea v${String((artifact.metadata.lineage as Record<string, unknown>).idea_version || '未知')} · 数据 ${String((artifact.metadata.lineage as Record<string, unknown>).data_version || '未声明')}`
+          : '谱系信息未声明'}</p>
+        {artifact.valid && artifact.experiment_status !== 'failed' && artifact.experiment_status !== 'cancelled' ? <a href={artifact.download_url || artifact.url} download>下载产物</a> : null}
       </div>
     </article>
   )

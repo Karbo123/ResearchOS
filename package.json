@@ -3,8 +3,14 @@
   "version": "0.3.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.13" },
-  "workspaces": ["apps/server", "apps/mastra", "apps/web"],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "workspaces": [
+    "apps/server",
+    "apps/mastra",
+    "apps/web"
+  ],
   "scripts": {
     "build": "npm run build --workspace @research-os/web && npm run build --workspace @research-os/server && npm run build --workspace research-os-mastra",
     "typecheck": "tsc -p tsconfig.scripts.json --noEmit && npm run typecheck --workspace @research-os/web && npm run typecheck --workspace @research-os/server && npm run typecheck --workspace research-os-mastra",
@@ -19,6 +25,7 @@
     "ops:status": "tsx scripts/ops-guard.ts status",
     "acceptance": "tsx scripts/acceptance-test.ts",
     "mastra:hitl:check": "tsx scripts/verify-mastra-hitl.ts",
+    "mastra:evals:check": "tsx scripts/mastra-evals-check.ts",
     "model-failure:check": "tsx scripts/verify-model-failure.ts",
     "experiment:check": "tsx scripts/verify-experiment-runtime.ts"
   },
@@ -27,7 +34,7 @@
     "@babel/preset-typescript": "7.29.7",
     "@mastra/deployer": "1.50.0",
     "concurrently": "9.1.2",
-    "tar": "7.5.9",
+    "tar": "7.5.22",
     "tsx": "4.19.3",
     "typescript": "5.8.3"
   }

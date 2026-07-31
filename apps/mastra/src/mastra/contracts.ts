@@ -169,6 +169,26 @@ export const experimentPlanRequestSchema = z.object({
   planning_context: z.record(z.string(), z.unknown()),
 }).strict()
 
+export const coordinatorRequestSchema = z.object({
+  project_id: z.string().uuid(),
+  task: z.string().trim().min(10).max(12000),
+  planning_context: z.record(z.string(), z.unknown()),
+  tier: modelTierSchema.default('complex'),
+  memory_resource: z.string().min(1).max(200).optional(),
+  memory_thread: z.string().min(1).max(200).optional(),
+}).strict()
+
+export const coordinatorResultSchema = z.object({
+  summary: z.string().min(1).max(6000),
+  delegated_findings: z.array(z.object({
+    role: z.enum(['idea_clarification', 'project_supervision', 'experiment_planning']),
+    finding: z.string().min(1).max(4000),
+    unresolved: z.array(z.string()).max(12),
+  }).strict()).max(3),
+  blocked_questions: z.array(z.string()).max(12),
+  next_action: z.enum(['clarify', 'review_evidence', 'draft_plan', 'await_approval']),
+}).strict()
+
 export const researchWorkflowInputSchema = z.object({
   project_id: z.string().uuid(),
   task_id: z.string().uuid(),

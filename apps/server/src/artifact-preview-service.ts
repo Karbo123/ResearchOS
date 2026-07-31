@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { lstatSync, readFileSync } from 'node:fs'
+import { createReadStream, lstatSync, readFileSync } from 'node:fs'
 import { extname } from 'node:path'
 import { parseMetricsJsonl } from './metrics-service.js'
 
@@ -7,6 +7,22 @@ export const MAX_ARTIFACT_PREVIEW_BYTES = 20 * 1024 * 1024
 const MAX_TEXT_PREVIEW_BYTES = 1_000_000
 const MAX_TABLE_ROWS = 200
 const MAX_POINT_PREVIEW = 5_000
+
+export async function verifyArtifactFile(path: string, expectedSha256?: string) {
+  const stat = lstatSync(path)
+  if (stat.isSymbolicLink() || !stat.isFile()) throw new Error('artifact_not_regular_file')
+  if (!expectedSha256) return { stat, sha256: null }
+  const hash = createHash('sha256')
+  await new Promise<void>((resolve, reject) => {
+    const stream = createReadStream(path)
+    stream.on('data', chunk => hash.update(chunk))
+    stream.on('error', reject)
+    stream.on('end', () => resolve())
+  })
+  const sha256 = hash.digest('hex')
+  if (sha256 !== expectedSha256.toLowerCase()) throw new Error('artifact_hash_mismatch')
+  return { stat, sha256 }
+}
 
 function sampled<T>(items: T[], limit: number): { items: T[]; sampled: boolean } {
   if (items.length <= limit) return { items, sampled: false }
@@ -58,8 +74,14 @@ export function buildArtifactPreview(path: string, name: string, mimeType: strin
   const content = readFileSync(path)
   const base = { name, mime_type: mimeType, size_bytes: stat.size, sha256: previewHash(content), download_url: downloadUrl }
   const lower = name.toLowerCase()
-  if (mimeType.startsWith('image/')) return { ...base, type: 'image' }
-  if (mimeType.startsWith('video/')) return { ...base, type: 'video' }
+  if (mimeType.startsWith('image/')) {
+    if (!new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']).has(mimeType)) throw new Error('artifact_image_type_unsupported')
+    return { ...base, type: 'image' }
+  }
+  if (mimeType.startsWith('video/')) {
+    if (!new Set(['video/mp4', 'video/webm', 'video/quicktime']).has(mimeType)) throw new Error('artifact_video_type_unsupported')
+    return { ...base, type: 'video' }
+  }
   if (lower.endsWith('.ply')) return { ...base, ...parseAsciiPly(content.toString('utf8')) }
   if (lower.endsWith('.jsonl') || lower.endsWith('.ndjson')) {
     const series = parseMetricsJsonl(path)

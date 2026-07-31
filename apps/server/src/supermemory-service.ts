@@ -182,7 +182,7 @@ export async function ingestProjectMemory(projectId: string, input: MemoryIngest
   if (input.artifact_id && !artifact) throw new SupermemoryArtifactError('artifact_not_found', '当前项目中不存在可摄取的 Artifact。', 404)
   if (input.uploaded_file_id && !uploadedFile) throw new SupermemoryArtifactError('uploaded_file_not_found', '当前项目中不存在可摄取的上传文件。', 404)
   const sourceFile = artifact || uploadedFile
-  const contentSha256 = sourceFile ? String(sourceFile.sha256) : sha256(String(input.content))
+  const contentSha256 = input.content ? sha256(input.content) : sourceFile ? String(sourceFile.sha256) : sha256(String(input.content))
   const existing = await one<MemoryLink>('SELECT * FROM memory_links WHERE project_id=$1 AND source_type=$2 AND source_id IS NOT DISTINCT FROM $3 AND content_sha256=$4 ORDER BY created_at DESC LIMIT 1', [projectId, input.source_type, input.source_id ?? null, contentSha256])
   if (existing?.status === 'active' || existing?.status === 'revoked') return { link: existing, idempotent: true }
   if (existing?.status === 'pending') throw new SupermemoryArtifactError('memory_ingestion_in_progress', '相同语义内容正在摄取，请稍后重试。', 409)
@@ -197,7 +197,7 @@ export async function ingestProjectMemory(projectId: string, input: MemoryIngest
     await database.query('INSERT INTO memory_links(id,project_id,source_type,source_id,artifact_id,uploaded_file_id,content_sha256,custom_id,supermemory_id,container_tag,task_type,status,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,\'pending\',$12)', [linkId, projectId, input.source_type, input.source_id ?? null, input.artifact_id ?? null, input.uploaded_file_id ?? null, contentSha256, remoteCustomId, `pending-${linkId}`, tag, input.task_type, metadata])
   }
   try {
-    const remote = sourceFile
+    const remote = sourceFile && !input.content
       ? await api().documents.uploadFile({ file: createReadStream(artifactPath(sourceFile)), containerTag: tag, filepath: `research-os/artifacts/${sourceFile.id}/${sourceFile.name}`, fileType: String(sourceFile.mime_type), metadata: JSON.stringify(metadata) })
       : await api().add({ content: String(input.content), containerTag: tag, customId: remoteCustomId, entityContext: `Research OS project ${projectId} semantic memory; candidates require evidence review.`, metadata, taskType: input.task_type })
     const remoteId = String(remote.id)

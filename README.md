@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-07-31-12 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-01 -->
 
 # Research OS
 
@@ -82,9 +82,9 @@ The current local UI is a React + TypeScript component application with no nativ
 
 ## Project Semantic Memory
 
-Supermemory integration is partially implemented and remains disabled unless `SUPERMEMORY_ENABLED=true` or `SUPERMEMORY_API_KEY` is configured. Every operation is scoped by an immutable project container tag. The API provides status, ingestion, project-scoped hybrid search, Graph Memory context, link inspection, and approval-gated forget/delete operations. PDF and image ingestion is limited to validated project Artifacts or Defender-scanned uploads; the local Artifact keeps the original bytes and SHA-256.
+Supermemory integration is partially implemented and remains disabled unless `SUPERMEMORY_ENABLED=true` or `SUPERMEMORY_API_KEY` is configured. Every operation is scoped by an immutable project container tag. The API provides status, ingestion, project-scoped hybrid search, Graph Memory context, link inspection, and approval-gated forget/delete operations. PDF, image, and uploaded-material ingestion is limited to validated project Artifacts or Defender-scanned uploads; bounded PDF/text chunks retain the upload ID, SHA-256, page/text locator, and evidence status while the local Artifact keeps the original bytes.
 
-Semantic results are candidates only and retain source, Artifact, locator, hash, and evidence-status metadata. A missing key, timeout, authentication failure, invalid response, or remote write failure returns a structured error and never falls back to local semantic search, another provider, or an unrelated experiment. Real Supermemory API validation, cross-project leakage testing with two configured projects, and end-to-end revoke/delete testing remain open in `TODO.md`.
+Semantic results are candidates only and retain source, Artifact, locator, hash, and evidence-status metadata. The project material endpoint `/api/projects/<project-id>/materials/search` uses the same project-scoped Supermemory hybrid search; it does not substitute local SQL keyword results when the provider is unavailable. A missing key, timeout, authentication failure, invalid response, or remote write failure returns a structured error and never falls back to local semantic search, another provider, or an unrelated experiment. Real Supermemory API validation, cross-project leakage testing with two configured projects, and end-to-end revoke/delete testing remain open in `TODO.md`.
 
 ## Experiment Isolation
 

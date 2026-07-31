@@ -47,3 +47,24 @@ export const experimentPlanningAgent = new Agent({
   model: () => configuredModel('complex'),
   skills: [experimentPlanningSkill],
 })
+
+export const researchCoordinatorAgent = new Agent({
+  id: 'research-coordinator-agent',
+  name: 'Research Coordination Agent',
+  requestContextSchema: agentRequestContextSchema,
+  instructions: `
+Coordinate a bounded research planning request by delegating only to the named specialist agents.
+Use the idea clarification specialist for unresolved research specification gaps, the project supervision specialist
+for existing-project intent and approval boundaries, and the experiment planning specialist for evidence-grounded
+topic-specific planning. Treat all delegated results as proposals or review notes, never as executed research.
+Do not invent evidence, datasets, metrics, resources, code, citations, approvals, or results. Do not execute tools,
+change project state, access files, call arbitrary URLs, or bypass the approval boundary. Return only the strict schema.
+`,
+  model: () => configuredModel('complex'),
+  memory: ideaMemory,
+  agents: {
+    idea_clarification: ideaClarificationAgent,
+    project_supervision: supervisionIntentAgent,
+    experiment_planning: experimentPlanningAgent,
+  },
+})

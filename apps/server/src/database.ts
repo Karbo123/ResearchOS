@@ -27,6 +27,8 @@ ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS valid BOOLEAN NOT NULL DEFAULT 
 ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS invalidated_reason TEXT;
 ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS invalidated_at TIMESTAMPTZ;
 CREATE TABLE IF NOT EXISTS human_feedback (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), session_id UUID REFERENCES conversation_sessions(id), category VARCHAR(40) NOT NULL, instruction TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS claim_reviews (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), claim TEXT NOT NULL, evidence_ids JSONB NOT NULL, status VARCHAR(30) NOT NULL DEFAULT 'pending', reviewer VARCHAR(200), decision_comment TEXT, evidence_status VARCHAR(80) NOT NULL DEFAULT 'page_quote_requires_claim_review', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), decided_at TIMESTAMPTZ);
+CREATE INDEX IF NOT EXISTS ix_claim_reviews_project ON claim_reviews(project_id,status,created_at);
 CREATE TABLE IF NOT EXISTS repositories (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), paper_id UUID REFERENCES papers(id), source_url TEXT NOT NULL, license_spdx VARCHAR(100), commit_or_tag VARCHAR(255), verified_official BOOLEAN NOT NULL DEFAULT FALSE, metadata JSONB NOT NULL DEFAULT '{}', retrieved_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS artifact_dependencies (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), artifact_id UUID NOT NULL REFERENCES artifacts(id), upstream_type VARCHAR(40) NOT NULL, upstream_id VARCHAR(255) NOT NULL, relation VARCHAR(80) NOT NULL DEFAULT 'generated_from', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS lineage_dependencies (id UUID PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), downstream_type VARCHAR(40) NOT NULL, downstream_id VARCHAR(255) NOT NULL, upstream_type VARCHAR(40) NOT NULL, upstream_id VARCHAR(255) NOT NULL, upstream_fingerprint VARCHAR(64) NOT NULL, relation VARCHAR(120) NOT NULL, valid BOOLEAN NOT NULL DEFAULT TRUE, invalidated_reason TEXT, invalidated_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(project_id,downstream_type,downstream_id,upstream_type,upstream_id,relation));
@@ -43,6 +45,7 @@ export async function migrate(): Promise<void> {
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0001-native-typescript') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0002-lineage-checkpoint-integrity') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0003-supermemory-links') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0004-claim-reviews') ON CONFLICT DO NOTHING")
 }
 
 export async function rows<T extends object>(sql: string, params: unknown[] = []): Promise<T[]> {

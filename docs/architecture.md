@@ -14,6 +14,8 @@ flowchart LR
   Runner --> Project["Project Git workspace and .venv"]
   Runner --> Artifacts["Artifact and metric ledger"]
   API --> Defender["Windows Defender upload scan"]
+  API --> Memory["Project-scoped Supermemory"]
+  Memory --> Chunks["Bounded PDF/text chunks + source hashes"]
 ```
 
 ## Process Boundaries
@@ -30,7 +32,11 @@ Mastra can call only fixed high-level loopback endpoints. Agents do not receive 
 - `projects/<id>`: project Git repository, Idea, paper, experiment source, and per-project `.venv`.
 - `artifacts`: immutable or append-only evidence, uploads, experiment outputs, acceptance files, and backups.
 
-The database is the business state source. Mastra Memory improves conversation continuity but cannot approve actions or replace project state.
+The database is the business state source. Supermemory is the project-scoped semantic memory and RAG provider; its `memory_links` ledger keeps source IDs, upload/Artifact IDs, SHA-256 values, locators, evidence status, remote IDs, and revoke/delete state. Mastra Memory is used only where the official Mastra Agent runtime needs conversation continuity and cannot approve actions or replace project state.
+
+## Material Indexing
+
+After Defender-scanned upload, the durable queue dispatches a fixed `material_index` task. PDF text is extracted from a bounded page range and text-like files are normalized into bounded overlapping chunks. Images and PDFs with no extractable text are sent as controlled multimodal documents. Each semantic write includes the immutable project container tag and source metadata. `/materials/search` calls Supermemory directly with the current project scope; missing configuration or remote failure is returned as a structured error, never as a local keyword fallback.
 
 ## Experiment Boundary
 

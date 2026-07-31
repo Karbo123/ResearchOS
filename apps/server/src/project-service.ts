@@ -30,18 +30,22 @@ export async function createProjectWorkspace(projectId: string, slug: string, sp
 export async function projectDetail(projectId: string) {
   const project = await requireProject(projectId)
   const lineage = await reconcileProjectLineage(projectId)
-  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints] = await Promise.all([
+  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews] = await Promise.all([
     rows('SELECT * FROM idea_versions WHERE project_id=$1 ORDER BY version DESC', [projectId]),
     rows('SELECT * FROM papers WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM evidence WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM repositories WHERE project_id=$1 ORDER BY retrieved_at DESC', [projectId]),
     rows('SELECT * FROM proposals WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM experiments WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
-    rows('SELECT * FROM artifacts WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows(`SELECT a.*, e.status AS experiment_status, e.run_id AS experiment_run_id, e.finished_at AS experiment_finished_at,
+      e.config AS experiment_config, e.proposal_id AS experiment_proposal_id
+      FROM artifacts a LEFT JOIN experiments e ON e.id=a.experiment_id
+      WHERE a.project_id=$1 ORDER BY a.created_at DESC`, [projectId]),
     rows('SELECT * FROM policies WHERE project_id=$1 AND active=TRUE ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM reports WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM tasks WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM checkpoints WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM claim_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
   ])
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 ORDER BY updated_at DESC LIMIT 1', [projectId])
   const repositoryRows = repositories as Array<Record<string, unknown>>
@@ -54,6 +58,24 @@ export async function projectDetail(projectId: string) {
   }))
   const artifactRows = (artifacts as Array<Record<string, unknown>>).map(artifact => ({
     ...artifact,
+    experiment_status: artifact.experiment_status ?? null,
+    run_id: artifact.experiment_run_id ?? null,
+    experiment_finished_at: artifact.experiment_finished_at ?? null,
+    proposal_id: artifact.experiment_proposal_id ?? null,
+    experiment_config: artifact.experiment_config ?? null,
+    metadata: {
+      ...((artifact.metadata || {}) as Record<string, unknown>),
+      lineage: {
+        experiment_id: artifact.experiment_id ?? null,
+        run_id: artifact.experiment_run_id ?? null,
+        proposal_id: artifact.experiment_proposal_id ?? null,
+        experiment_status: artifact.experiment_status ?? null,
+        experiment_config: artifact.experiment_config ?? null,
+        idea_version: ((artifact.metadata || {}) as Record<string, unknown>).idea_version ?? null,
+        data_version: ((artifact.metadata || {}) as Record<string, unknown>).data_version ?? null,
+        git_commit: ((artifact.metadata || {}) as Record<string, unknown>).git_commit ?? null,
+      },
+    },
     preview_url: `/api/projects/${projectId}/artifacts/${artifact.id}/preview`,
     download_url: `/api/projects/${projectId}/artifacts/${artifact.id}/download`,
     url: `/api/projects/${projectId}/artifacts/${artifact.id}/download`,
@@ -73,6 +95,7 @@ export async function projectDetail(projectId: string) {
     reports,
     tasks,
     checkpoints,
+    claim_reviews: claimReviews,
     lineage,
   }
 }
