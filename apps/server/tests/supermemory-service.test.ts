@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { Supermemory } from 'supermemory'
 import { database, migrate, one } from '../src/database.js'
-import { ingestConversationMemory, ingestProjectMemory, memoryStatus, projectContainerTag, searchProjectMemory } from '../src/supermemory-service.js'
+import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, memoryStatus, projectContainerTag, searchProjectMemory } from '../src/supermemory-service.js'
 
 const projectId = crypto.randomUUID()
 const embeddingEnvKeys = [
@@ -166,6 +166,82 @@ describe('project-scoped Supermemory contract', () => {
       else process.env.SUPERMEMORY_API_KEY = previousKey
       if (previousEnabled === undefined) delete process.env.SUPERMEMORY_ENABLED
       else process.env.SUPERMEMORY_ENABLED = previousEnabled
+    }
+  })
+
+  it('forgets extracted memory entities resolved from the project container', async () => {
+    const previousKey = process.env.SUPERMEMORY_API_KEY
+    const previousEnabled = process.env.SUPERMEMORY_ENABLED
+    const previousBaseUrl = process.env.SUPERMEMORY_BASE_URL
+    process.env.SUPERMEMORY_API_KEY = 'test-only-key'
+    process.env.SUPERMEMORY_ENABLED = 'true'
+    process.env.SUPERMEMORY_BASE_URL = 'http://127.0.0.1:6767'
+    const linkId = crypto.randomUUID()
+    const list = vi.spyOn(Supermemory.prototype, 'post').mockResolvedValue({
+      memoryEntries: [
+        { id: 'memory-entity-1', isForgotten: false, documentIds: ['remote-document-id'] },
+        { id: 'memory-entity-2', isForgotten: false, documentIds: ['remote-document-id'] },
+        { id: 'memory-entity-3', isForgotten: true, documentIds: ['remote-document-id'] },
+        { id: 'memory-entity-other', isForgotten: false, documentIds: ['other-document-id'] },
+      ],
+      pagination: { currentPage: 1, totalPages: 1 },
+    } as never)
+    const remove = vi.spyOn(Supermemory.prototype, 'delete').mockResolvedValue({ id: 'memory-entity-1', forgotten: true } as never)
+    try {
+      await database.query(
+        `INSERT INTO memory_links(id,project_id,source_type,source_id,artifact_id,uploaded_file_id,content_sha256,custom_id,supermemory_id,container_tag,task_type,status,metadata) VALUES ($1,$2,'manual',NULL,NULL,NULL,$3,$4,$5,$6,'memory','active',$7)`,
+        [linkId, projectId, `sha-${linkId}`, `custom-${linkId}`, 'remote-document-id', projectContainerTag(projectId), JSON.stringify({ test: true })],
+      )
+      const result = await applyMemoryRevocation(projectId, linkId, 'forget', 'unit-test')
+      expect(result.link?.status).toBe('revoked')
+      expect(list).toHaveBeenCalledWith('/v4/memories/list', expect.objectContaining({ body: expect.objectContaining({ containerTags: [projectContainerTag(projectId)] }) }))
+      expect(remove).toHaveBeenCalledTimes(2)
+      expect(remove).toHaveBeenNthCalledWith(1, '/v4/memories', expect.objectContaining({ body: expect.objectContaining({ containerTag: projectContainerTag(projectId), id: 'memory-entity-1' }) }))
+      expect(remove).toHaveBeenNthCalledWith(2, '/v4/memories', expect.objectContaining({ body: expect.objectContaining({ containerTag: projectContainerTag(projectId), id: 'memory-entity-2' }) }))
+    } finally {
+      list.mockRestore()
+      remove.mockRestore()
+      await database.query('DELETE FROM memory_links WHERE id=$1', [linkId])
+      await database.query('DELETE FROM audit_events WHERE project_id=$1', [projectId])
+      if (previousKey === undefined) delete process.env.SUPERMEMORY_API_KEY
+      else process.env.SUPERMEMORY_API_KEY = previousKey
+      if (previousEnabled === undefined) delete process.env.SUPERMEMORY_ENABLED
+      else process.env.SUPERMEMORY_ENABLED = previousEnabled
+      if (previousBaseUrl === undefined) delete process.env.SUPERMEMORY_BASE_URL
+      else process.env.SUPERMEMORY_BASE_URL = previousBaseUrl
+    }
+  })
+
+  it('fails closed with a structured 404 when forget finds no extracted memory entity', async () => {
+    const previousKey = process.env.SUPERMEMORY_API_KEY
+    const previousEnabled = process.env.SUPERMEMORY_ENABLED
+    const previousBaseUrl = process.env.SUPERMEMORY_BASE_URL
+    process.env.SUPERMEMORY_API_KEY = 'test-only-key'
+    process.env.SUPERMEMORY_ENABLED = 'true'
+    process.env.SUPERMEMORY_BASE_URL = 'http://127.0.0.1:6767'
+    const linkId = crypto.randomUUID()
+    const list = vi.spyOn(Supermemory.prototype, 'post').mockResolvedValue({
+      memoryEntries: [],
+      pagination: { currentPage: 1, totalPages: 1 },
+    } as never)
+    try {
+      await database.query(
+        `INSERT INTO memory_links(id,project_id,source_type,source_id,artifact_id,uploaded_file_id,content_sha256,custom_id,supermemory_id,container_tag,task_type,status,metadata) VALUES ($1,$2,'manual',NULL,NULL,NULL,$3,$4,$5,$6,'memory','active',$7)`,
+        [linkId, projectId, `sha-${linkId}`, `custom-${linkId}`, 'remote-document-id', projectContainerTag(projectId), JSON.stringify({ test: true })],
+      )
+      await expect(applyMemoryRevocation(projectId, linkId, 'forget', 'unit-test')).rejects.toMatchObject({
+        code: 'supermemory_memory_entity_not_found',
+        status: 404,
+      })
+    } finally {
+      list.mockRestore()
+      await database.query('DELETE FROM memory_links WHERE id=$1', [linkId])
+      if (previousKey === undefined) delete process.env.SUPERMEMORY_API_KEY
+      else process.env.SUPERMEMORY_API_KEY = previousKey
+      if (previousEnabled === undefined) delete process.env.SUPERMEMORY_ENABLED
+      else process.env.SUPERMEMORY_ENABLED = previousEnabled
+      if (previousBaseUrl === undefined) delete process.env.SUPERMEMORY_BASE_URL
+      else process.env.SUPERMEMORY_BASE_URL = previousBaseUrl
     }
   })
 })

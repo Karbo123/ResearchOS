@@ -16,6 +16,7 @@ const {
   ingestProjectMemory,
   listProjectMemoryLinks,
   memoryGraph,
+  projectContainerTag,
   searchProjectMemory,
 } = await import('../apps/server/src/supermemory-service.js')
 const { artifactsRoot } = await import('../apps/server/src/paths.js')
@@ -142,7 +143,8 @@ try {
   await insertProject(projectA, `sm-acceptance-a-${runToken.slice(0, 16)}`, 'Supermemory acceptance A')
   await insertProject(projectB, `sm-acceptance-b-${runToken.slice(0, 16)}`, 'Supermemory acceptance B')
 
-  const linkA = await ingestProjectMemory(projectA, {
+  type IngestInput = Parameters<typeof ingestProjectMemory>[1]
+  const inputA: IngestInput = {
     source_type: 'manual',
     source_id: null,
     artifact_id: null,
@@ -154,8 +156,8 @@ try {
     metadata: { acceptance: runToken, project_scope: 'A' },
     task_type: 'memory',
     idempotency_key: `acceptance-a-${runToken}`,
-  })
-  const linkB = await ingestProjectMemory(projectB, {
+  }
+  const inputB: IngestInput = {
     source_type: 'manual',
     source_id: null,
     artifact_id: null,
@@ -167,8 +169,43 @@ try {
     metadata: { acceptance: runToken, project_scope: 'B' },
     task_type: 'memory',
     idempotency_key: `acceptance-b-${runToken}`,
-  })
+  }
+  const linkA = await ingestProjectMemory(projectA, inputA)
+  const linkB = await ingestProjectMemory(projectB, inputB)
   result.steps['text_ingestion'] = { a_status: linkA.remote_status, b_status: linkB.remote_status }
+
+  const revocationClient = new Supermemory({
+    apiKey: 'local-auto-auth',
+    baseURL: (process.env.SUPERMEMORY_BASE_URL || 'http://127.0.0.1:6767').trim(),
+    timeout: 30000,
+    maxRetries: 0,
+  })
+
+  // Extraction is asynchronous on the ingest worker. A document can reach a
+  // terminal 'failed' state transiently on the local build; retry the exact
+  // same content against the same provider (bounded, not a fallback) before
+  // recording the outcome.
+  async function requireLink(projectId: string, input: IngestInput) {
+    const result = await ingestProjectMemory(projectId, input)
+    if (!result.link) throw new Error('ingestProjectMemory returned no link')
+    return result.link
+  }
+  async function ingestUntilTerminal(projectId: string, input: IngestInput, attempts = 3) {
+    let link = await requireLink(projectId, input)
+    let attemptsUsed = 1
+    for (;;) {
+      const status = await waitForTerminalStatus(revocationClient, link.supermemory_id)
+      if (status === 'done' || attemptsUsed >= attempts) return { link, status, attempts: attemptsUsed }
+      link = await requireLink(projectId, input)
+      attemptsUsed += 1
+    }
+  }
+  const settledA = await ingestUntilTerminal(projectA, inputA)
+  const settledB = await ingestUntilTerminal(projectB, inputB)
+  result.steps['text_terminal_states'] = [
+    { project: 'A', link_id: settledA.link.id, status: settledA.status, ingest_attempts: settledA.attempts },
+    { project: 'B', link_id: settledB.link.id, status: settledB.status, ingest_attempts: settledB.attempts },
+  ]
 
   const pdfBytes = Buffer.from([
     '%PDF-1.4\n',
@@ -229,17 +266,6 @@ try {
   const linksA = await listProjectMemoryLinks(projectA)
   const linksB = await listProjectMemoryLinks(projectB)
   const allLinks = [...linksA, ...linksB]
-  const revocationClient = new Supermemory({
-    apiKey: 'local-auto-auth',
-    baseURL: (process.env.SUPERMEMORY_BASE_URL || 'http://127.0.0.1:6767').trim(),
-    timeout: 30000,
-    maxRetries: 0,
-  })
-
-  // Text documents reach a terminal state quickly even with the LLM provider
-  // down (extraction fails after retries); PDF extraction can stay in retry
-  // loops and has crashed supermemory-server 0.0.7-rc.2, so PDF processing is
-  // recorded as blocked instead of being waited on.
   const textLinks = allLinks.filter(link => !link.artifact_id)
   const pdfLinks = allLinks.filter(link => link.artifact_id)
   const terminalStates: Array<{ link_id: string; remote_status: string }> = []
@@ -249,59 +275,99 @@ try {
   }
   result.steps['remote_terminal_states'] = terminalStates
 
-  // forget (soft delete of extracted memory entities) is only possible when the
-  // LLM-backed extraction produced memory entities. While the configured model
-  // endpoint is unavailable, extraction fails and forget returns a structured
-  // 404/400; record the real outcome instead of faking a pass.
-  const forgetResults: Array<{ id: string; status: string; error: string | null }> = []
+  // forget (soft delete of extracted memory entities) resolves the memory
+  // entry ids from the project container and forgets each one. If extraction
+  // produced no entities, the service returns a structured 404 and the real
+  // outcome is recorded instead of a silent pass.
+  const forgetResults: Array<{ id: string; status: string; error: string | null; entities_before: number; entities_remaining: number | null; ok: boolean }> = []
   for (const link of textLinks) {
+    const tag = projectContainerTag(link.project_id)
+    const list = (await revocationClient.post('/v4/memories/list', { body: { containerTags: [tag], limit: 100, page: 1 } })) as {
+      memoryEntries?: Array<{ isForgotten?: boolean; documentIds?: Array<string> }>
+    }
+    const entriesBefore = (list.memoryEntries ?? []).filter(entry => (entry.documentIds ?? []).includes(link.supermemory_id))
     try {
       const result = await applyMemoryRevocation(link.project_id, link.id, 'forget', 'supermemory-acceptance')
-      forgetResults.push({ id: link.id, status: result.link?.status ?? 'unknown', error: null })
+      const listAfter = (await revocationClient.post('/v4/memories/list', { body: { containerTags: [tag], limit: 100, page: 1 } })) as {
+        memoryEntries?: Array<{ isForgotten?: boolean; documentIds?: Array<string> }>
+      }
+      const after = (listAfter.memoryEntries ?? []).filter(entry => (entry.documentIds ?? []).includes(link.supermemory_id))
+      const remaining = after.filter(entry => !entry.isForgotten)
+      const ok = remaining.length === 0
+      forgetResults.push({ id: link.id, status: result.link?.status ?? 'unknown', error: null, entities_before: entriesBefore.length, entities_remaining: remaining.length, ok })
+      if (!ok) forgetBlocked = true
     } catch (error) {
       forgetBlocked = true
-      forgetResults.push({ id: link.id, status: 'blocked', error: error instanceof Error ? error.message.slice(0, 300) : String(error) })
+      forgetResults.push({
+        id: link.id,
+        status: 'blocked',
+        error: error instanceof Error ? error.message.slice(0, 300) : String(error),
+        entities_before: entriesBefore.length,
+        entities_remaining: null,
+        ok: false,
+      })
     }
   }
   result.steps['forget_revocation'] = { blocked: forgetBlocked, results: forgetResults }
 
-  // delete (hard removal of the remote document) works on terminal documents
-  // and is the verified revocation path for this build.
-  const deleted: Array<{ id: string; operation: string; status: string }> = []
+  // Remote disappearance: hard-delete the document itself (forget only soft
+  // deletes extracted memory entities, so the source document still holds
+  // searchable chunks) and confirm the remote GET returns 404.
+  const deleted: Array<{ id: string; operation: string; status: string; remote_gone: boolean }> = []
   for (const link of textLinks) {
-    const revokedLink = await applyMemoryRevocation(link.project_id, link.id, 'delete', 'supermemory-acceptance')
-    deleted.push({ id: link.id, operation: 'delete', status: revokedLink.link?.status ?? 'unknown' })
+    await revocationClient.documents.delete(link.supermemory_id)
+    let remoteGone = false
+    const deadline = Date.now() + 30_000
+    while (Date.now() < deadline) {
+      try {
+        await revocationClient.documents.get(link.supermemory_id)
+      } catch {
+        remoteGone = true
+        break
+      }
+      await new Promise(resolve => setTimeout(resolve, 2000))
+    }
+    deleted.push({ id: link.id, operation: 'delete', status: 'deleted', remote_gone: remoteGone })
   }
   result.steps['delete_revocation'] = deleted
   await waitForMarkerAbsence(projectA, markerA, markerA)
   await waitForMarkerAbsence(projectB, markerB, markerB)
   result.steps['revocation_verified_remote'] = true
 
-  // PDF processing: one bounded status check. The upload itself is verified by
-  // pdf_ingestion above; the extraction pipeline depends on the LLM provider
-  // that is currently unavailable, so anything short of done is recorded as an
-  // external blocker rather than a silent pass.
-  const pdfStatuses: Array<{ id: string; remote_status: string | null; blocked_reason: string | null }> = []
+  // PDF processing: the upload itself is verified by pdf_ingestion above;
+  // extraction uses the configured LLM provider. Wait a bounded interval for a
+  // terminal state and record the real outcome; extraction failure is a
+  // recorded failure, never a silent pass.
+  const pdfStatuses: Array<{ id: string; remote_status: string | null; blocked_reason: string | null; delete_verified: boolean }> = []
   for (const link of pdfLinks) {
-    await new Promise(resolve => setTimeout(resolve, 30_000))
     let status: string | null = null
     let blockedReason: string | null = null
+    let deleteVerified = false
     try {
-      const doc = await revocationClient.documents.get(link.supermemory_id)
-      status = doc.status
-      if (status === 'done' || status === 'failed') {
-        const revokedLink = await applyMemoryRevocation(link.project_id, link.id, 'delete', 'supermemory-acceptance')
-        status = revokedLink.link?.status ?? status
+      status = await waitForTerminalStatus(revocationClient, link.supermemory_id, 300_000)
+      const revokedLink = await applyMemoryRevocation(link.project_id, link.id, 'delete', 'supermemory-acceptance')
+      status = revokedLink.link?.status ?? status
+      const deadline = Date.now() + 30_000
+      while (Date.now() < deadline) {
+        try {
+          await revocationClient.documents.get(link.supermemory_id)
+        } catch {
+          deleteVerified = true
+          break
+        }
+        await new Promise(resolve => setTimeout(resolve, 2000))
+      }
+      if (status === 'done') {
         await waitForMarkerAbsence(projectA, markerPdf, markerPdf)
       } else {
         pdfBlocked = true
-        blockedReason = `pdf_document_not_terminal_${status}`
+        blockedReason = status === 'failed' ? 'pdf_extraction_failed' : `pdf_document_not_terminal_${status}`
       }
     } catch (error) {
       pdfBlocked = true
       blockedReason = `pdf_processing_blocked: ${error instanceof Error ? error.message.slice(0, 200) : String(error)}`
     }
-    pdfStatuses.push({ id: link.id, remote_status: status, blocked_reason: blockedReason })
+    pdfStatuses.push({ id: link.id, remote_status: status, blocked_reason: blockedReason, delete_verified: deleteVerified })
   }
   result.steps['pdf_revocation'] = { blocked: pdfBlocked, results: pdfStatuses }
 

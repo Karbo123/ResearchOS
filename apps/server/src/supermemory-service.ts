@@ -353,7 +353,24 @@ export async function applyMemoryRevocation(projectId: string, linkId: string, o
   if (link.status === 'revoked' || link.status === 'deleted') return { link, idempotent: true }
   if (link.status !== 'active') throw new SupermemoryArtifactError('memory_link_not_active', '只有 active 语义记忆可以撤销或删除。', 409)
   if (operation === 'forget') {
-    await withProcessingRetry(() => api().memories.forget({ containerTag: projectContainerTag(projectId), id: link.supermemory_id, reason: 'Research OS approved memory revocation' }))
+    // The v4 forget endpoint operates on extracted memory entities, not on the
+    // source document id. Resolve the memory entry ids for this document from
+    // the project container, then forget each one; no entity means the
+    // LLM-backed extraction has not produced a revocable memory, so the
+    // operation fails closed with a structured 404 instead of silently passing.
+    const entries = await memoryEntriesForDocument(projectId, link.supermemory_id)
+    if (entries.length === 0) {
+      throw new SupermemoryArtifactError(
+        'supermemory_memory_entity_not_found',
+        '未找到该语义内容抽取出的 memory 实体，无法执行 forget 撤销。请确认文档已完成抽取，或改用 delete 撤销。',
+        404,
+      )
+    }
+    const client = api()
+    const tag = projectContainerTag(projectId)
+    for (const entry of entries) {
+      await withProcessingRetry(() => client.memories.forget({ containerTag: tag, id: entry.id, reason: 'Research OS approved memory revocation' }))
+    }
   } else {
     await withProcessingRetry(() => api().documents.delete(link.supermemory_id))
   }
@@ -361,4 +378,27 @@ export async function applyMemoryRevocation(projectId: string, linkId: string, o
   await database.query(`UPDATE memory_links SET status=$2,${operation === 'forget' ? 'revoked_at' : 'deleted_at'}=NOW() WHERE id=$1`, [linkId, status])
   await audit(`memory.${operation}`, projectId, { memory_link_id: linkId, supermemory_id: link.supermemory_id }, actor)
   return { link: await one<MemoryLink>('SELECT * FROM memory_links WHERE id=$1', [linkId]), idempotent: false }
+}
+
+async function memoryEntriesForDocument(projectId: string, documentId: string): Promise<Array<{ id: string }>> {
+  const client = api()
+  const tag = projectContainerTag(projectId)
+  const entries: Array<{ id: string }> = []
+  // Bounded pagination over the v4 memories/list endpoint; stop early once no
+  // further page can contain the document's memory entities.
+  for (let page = 1; page <= 10; page += 1) {
+    const response = (await client.post('/v4/memories/list', {
+      body: { containerTags: [tag], limit: 100, page },
+    })) as {
+      memoryEntries?: Array<{ id: string; isForgotten?: boolean; documentIds?: Array<string> }>
+      pagination?: { currentPage?: number; totalPages?: number }
+    }
+    const pageEntries = response.memoryEntries ?? []
+    for (const entry of pageEntries) {
+      if (!entry.isForgotten && (entry.documentIds ?? []).includes(documentId)) entries.push({ id: entry.id })
+    }
+    const totalPages = response.pagination?.totalPages ?? page
+    if (page >= totalPages || pageEntries.length === 0) break
+  }
+  return entries
 }

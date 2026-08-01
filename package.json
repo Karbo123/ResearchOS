@@ -26,6 +26,8 @@
     "ops:monitor": "tsx scripts/ops-monitor.ts",
     "ops:recovery-drill": "tsx scripts/ops-recovery-drill.ts",
     "acceptance": "tsx scripts/acceptance-test.ts",
+    "supermemory:start": "tsx scripts/start-supermemory.ts",
+    "supermemory:stop": "tsx scripts/start-supermemory.ts stop",
     "supermemory:acceptance": "tsx scripts/supermemory-acceptance.ts",
     "mastra:hitl:check": "tsx scripts/verify-mastra-hitl.ts",
     "mastra:evals:check": "tsx scripts/mastra-evals-check.ts",
