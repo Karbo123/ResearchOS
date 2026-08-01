@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-05 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-06 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS is a local, auditable research-automation MVP. The application is im
 
 ## Status
 
-The native Windows migration is implemented at the code level and its application tests and Node.js 26.5.1 build pass under NVM for Windows. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The original `runtime/research-os.pglite` is preserved as a legacy PostgreSQL cluster; the project `.env` now explicitly selects the verified non-overwriting recovery candidate `runtime/restore-pglite-20260731`, which serves the local API and Mastra Studio on `127.0.0.1:8080` and `127.0.0.1:4111`. Clean-machine installer signing/release and GPU-host validation remain separate open work.
+The native Windows migration is implemented at the code level and its application tests and Node.js 26.5.1 build pass under NVM for Windows. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The default `runtime/research-os.pglite` was rebuilt from a verified non-overwriting recovery candidate and is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. Clean-machine installer signing/release and GPU-host validation remain separate open work.
 
 Model failures are final structured errors. The application never substitutes a local reply, another provider, or an unrelated experiment.
 
@@ -45,9 +45,9 @@ npm start
 
 The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. The Windows installer source currently bundles its own Node.js runtime independently of the development shell.
 
-The currently selected and verified recovery candidate is available at [http://127.0.0.1:8080](http://127.0.0.1:8080). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and the legacy database directory remains untouched.
+The default runtime database (rebuilt from the verified recovery candidate) is available at [http://127.0.0.1:8080](http://127.0.0.1:8080). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and corrupted directories are preserved separately.
 
-The legacy primary directory is preserved. A non-overwriting recovery candidate can be generated and checked with `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731`. After inspection, select it explicitly in `.env` with `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731`; `npm start` loads that setting automatically.
+Corrupted database directories are preserved separately and never used automatically. A new non-overwriting recovery candidate can still be generated and checked with `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731`; after inspection it can be selected explicitly in `.env` with `RESEARCH_RUNTIME_DIR`, and `npm start` loads that setting automatically.
 
 For unattended operation, `npm run ops:monitor -- once` performs bounded API and Mastra health checks and appends structured events to `runtime/ops/health-events.jsonl`; `npm run ops:monitor -- watch 3600` runs a one-hour bounded watch. An explicitly configured `RESEARCH_ALERT_WEBHOOK_URL` can receive transition/failure events. `npm run ops:recovery-drill -- <backup-id>` verifies the backup hash, safely lists and extracts the archive into a temporary directory, rejects links and traversal, checks required roots, and removes the drill directory without touching live data.
 
@@ -127,7 +127,7 @@ npm run mastra:hitl:check
 npm run acceptance
 ```
 
-The code-level checks and real-model acceptance use the configured model and external academic APIs; model endpoint or key failures remain direct structured failures. Runtime checks pass against the verified recovery candidate; the original primary database still requires an explicit operator decision.
+The code-level checks and real-model acceptance use the configured model and external academic APIs; model endpoint or key failures remain direct structured failures. Runtime checks pass against the rebuilt default database (16 projects); corrupted directories are preserved separately and never used automatically.
 
 ## Limitations
 

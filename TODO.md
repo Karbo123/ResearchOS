@@ -6,20 +6,20 @@
 
 ## 当前最高优先级
 
-- [!] `P0-CONTRACT-053` 清除模型 provider/全局凭据隐式回退并修复默认运行目录验收边界。
+- [x] `P0-CONTRACT-053` 清除模型 provider/全局凭据隐式回退并修复默认运行目录验收边界。
   - 完成标准：Luna/Terra/Sol 的 URL、key 和 reasoning effort 只从各自层级配置或受控运行时覆盖读取；缺失层级 URL/key 必须直接返回结构化配置错误；默认服务目录必须能启动，恢复候选只能通过明确、可审计的运行配置切换；补充测试、文档和启动验收。
-  - 当前状态：Mastra 与服务器的全局 URL/key 回退已删除，三档配置测试已通过；启动命令已改为显式加载项目 `.env`。默认 `runtime/research-os.pglite` 已修复并验证可用（16 个项目），`.env` 使用 `RESEARCH_RUNTIME_DIR=runtime`；损坏目录已隔离为 `runtime/research-os.pglite.corrupt-20260801`。三档 key 已配置（`key_configured=true`）；真实模型端点 `http://10.31.107.77:3000/v1` 于 `2026-08-01 05:12 UTC` 恢复并真实通过主链 acceptance（`artifacts/acceptance/acceptance-20260801051243.json`：medium/复杂两档真实请求、三档 URL 与 `.env` 一致、key 不回显、项目状态门禁通过），但 `14:12` 复查时端点再次返回 `503`，重跑 acceptance 得到契约一致的 `502 llm_request_failed`（未降级、未伪造）；解除条件为端点恢复后重跑确认。失败始终直接返回结构化错误。
+  - 已完成：Mastra 与服务器的全局 URL/key 回退已删除，三档配置测试已通过；启动命令已改为显式加载项目 `.env`。默认 `runtime/research-os.pglite` 已修复并验证可用（16 个项目），`.env` 使用 `RESEARCH_RUNTIME_DIR=runtime`；损坏目录已隔离为 `runtime/research-os.pglite.corrupt-20260801`。三档 key 已配置（`key_configured=true`）。真实模型端点 `http://10.31.107.77:3000/v1` 恢复后，`2026-08-01 06:34 UTC` 主链 acceptance 真实通过（`artifacts/acceptance/acceptance-20260801063451.json`：medium `gpt-5.6-terra`/medium 与 complex `gpt-5.6-sol`/high 两档真实请求、三档 URL 与 `.env` 一致、key 不回显、项目暂停/恢复状态门禁通过）。期间端点短暂 `503` 时应用按契约返回 `502 llm_request_failed`（未降级、未伪造），`supermemory-server` 崩溃导致项目创建 500 时同样如实失败并已重启恢复。失败始终直接返回结构化错误。
 
 - [x] `P0-DB-052` 从已保存的 PostgreSQL SQL 备份生成并验证非覆盖式 PGlite 恢复候选。
   - 完成标准：恢复工具使用 TypeScript、拒绝覆盖已有目录、按当前 schema 映射旧列、解析 COPY 数据、校验行数/关键表和数据库可读性；失败不得替换主库；成功后记录恢复候选路径和验证命令。
   - 已完成：新增 `npm run db:restore-dump`；从 `artifacts/backups/20260730T200648Z/postgres.sql` 生成 `runtime/restore-pglite-20260731`，导入并校验 12 个项目、34 个实验、223 个 Artifact、518 条消息和 11 个任务；恢复候选在临时 `8081` 端口通过 API 健康、模型设置脱敏和项目列表读取验证。原损坏主库未覆盖。
 
-- [!] `P0-TS-NATIVE-047` 将应用迁移为原生 Windows TypeScript 系统。
+- [x] `P0-TS-NATIVE-047` 将应用迁移为原生 Windows TypeScript 系统。
   - 已完成：TypeScript 工作区；Hono API；PGlite 18 表迁移；Mastra Agents、Memory、Skills、Tools、Workflows 和 Studio 本机存储；三档独立模型配置；TypeScript Web 构建；持久工作流队列；审批/证据/论文草稿；Windows Defender 上传门禁；本机实验监督器；每项目 `.venv`；Windows `cmd.exe` 默认后端与 WSL2 可选后端；Node.js 运行时安装器源码。
   - 已完成清理：旧 `research-os` 容器、网络、命名卷和六个自建镜像已在最终备份校验后删除；仓库运行不再占用 Docker 资源。
   - 已验证代码能力：Luna/Terra/Sol 三档真实请求；模型失败直接返回结构化错误且不写助手消息；Mastra Studio 三个 Agent 与三个 Workflow graph；独立 `.venv`、数值指标/检查点/PLY/SHA-256 产物及进程树取消。
   - 已完成代码级验收：完整真实 Idea 验收、typecheck、测试、Mastra/Web 构建、文档检查、仓库零旧实现扫描和桌面 UI/Mastra graph 截图证据；README 双语版与需求审计已同步。
-  - 当前状态：默认 `runtime/research-os.pglite` 已修复并验证可用：损坏目录已隔离（`runtime/research-os.pglite.corrupt-20260801`），从已验证恢复候选复制为默认目录后直接打开成功（16 个项目）；API `127.0.0.1:8080` 与 Mastra `127.0.0.1:4111` 均在默认路径下通过健康检查。`npm run typecheck`、`npm test`（12 文件/36 测试）、`npm run build`、`docs:check`、`idea-cases:check`、`ops-guard status`、`mastra:hitl:check` 和完整真实模型 acceptance（`acceptance-20260801051243.json`，通过）全部通过；`14:12` 复查时模型端点再次 `503`，重跑 acceptance 按契约失败，等待端点恢复后最终确认。
+  - 当前状态：默认 `runtime/research-os.pglite` 已修复并验证可用：损坏目录已隔离（`runtime/research-os.pglite.corrupt-20260801`），从已验证恢复候选复制为默认目录后直接打开成功（16 个项目）；API `127.0.0.1:8080` 与 Mastra `127.0.0.1:4111` 均在默认路径下通过健康检查。`npm run typecheck`、`npm test`（12 文件/36 测试）、`npm run build`、`docs:check`、`idea-cases:check`、`ops-guard status`、`mastra:hitl:check`、恢复演练、`ops:monitor` 和完整真实模型 acceptance（`acceptance-20260801063451.json`，通过）全部通过；v0.3.0 安装器 CI 全量验证通过并产出 EXE draft Release。
   - 完成标准：仓库业务源码、脚本和测试只有 TypeScript；应用不依赖容器运行时；原生 typecheck/test/build、数据库迁移、`.venv` 实验、取消、Mastra Studio、浏览器和真实模型验收通过；默认服务启动并通过健康检查；文档同步；提交并推送。
   - 模型验收：三档默认 URL 从项目 `.env` 读取。模型或 key 无效时必须直接返回结构化错误且不写助手消息。
 
@@ -81,15 +81,18 @@
 - [!] `P0-RUNNER-007` 在真实 GPU Windows/WSL2 主机验证 GPU 任务与资源记录；解除条件是可用的真实 GPU 主机，当前只能完成 CPU/固定监督器验收。
 - [~] `P1-UPLOAD-009` 增加大规模异步材料索引和跨材料语义检索：已加入固定 `material_index` 队列、Defender 后索引、PDF/文本有界 chunk、图片/不可提取 PDF 原文件上传和项目范围 Supermemory hybrid 搜索；真实 Supermemory Local 下跨材料 `documents` 检索（similarity 非空）已在 `supermemory:acceptance` 中通过，失败重放与 PDF/图片跨材料端到端结果仍待 Gemini/Vertex key 解除后验收。
 - [x] `P1-PAPER-016B` 完成 claim 到多证据的语义人工复核工作台：严格多 evidence API、项目权限、接受/拒绝决策、审计记录、文献页 UI，以及 Claim Review 到 LaTeX Proposal/Patch 的端到端约束和验证均已完成。已通过隔离 API 测试、临时项目 Git Patch 测试和真实浏览器表单检查；接受复核仍只表示人工检查 quote，不等于科学结论。
-- [!] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布；工作流和 Inno Setup 源码已准备，本机已用 Inno Setup 6（`ISCC.exe`）验证构建 `installer/windows/dist/ResearchOS-Setup-0.3.0-x64.exe`（2.9 MB，SHA-256 已写入 `SHA256SUMS.txt`，产物目录已 gitignore）。`.github/workflows/installer-release.yml`：推送 `v*` tag 时在 CI 全量验证后产出 EXE 并创建 draft Release；显式 `workflow_dispatch publish=true` 需要 `INSTALLER_SIGNING_CERT_PFX_B64`/`INSTALLER_SIGNING_CERT_PASSWORD` secret 签名后才发布。解除条件：签名证书、干净 Windows VM 安装/升级/卸载验收，以及用户授权执行 Release 发布。
+- [!] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布；工作流和 Inno Setup 源码已准备，本机已用 Inno Setup 6（`ISCC.exe`）验证构建 `installer/windows/dist/ResearchOS-Setup-0.3.0-x64.exe`（2.9 MB，SHA-256 已写入 `SHA256SUMS.txt`，产物目录已 gitignore）。`2026-08-01` 已推送 `v0.3.0` tag，GitHub Actions `Windows installer` 工作流（run 30687599348）全量验证（typecheck、npm test、build、idea-cases、docs）通过，产出 EXE 并创建 **draft Release**（未签名、未发布；draft 对匿名 API 不可见，需仓库所有者确认）。显式 `workflow_dispatch publish=true` 需要 `INSTALLER_SIGNING_CERT_PFX_B64`/`INSTALLER_SIGNING_CERT_PASSWORD` secret 签名后才发布。解除条件：签名证书、干净 Windows VM 安装/升级/卸载验收，以及用户授权发布 draft Release。
 - [~] `P2-HA-021` 增加长期无人值守运行、外部告警和恢复演练。
   - 当前推进：增加有界健康监控、失败事件 JSONL、受限告警 webhook 配置和只读备份恢复演练；`2026-08-01` 对 `20260730T200648Z` 备份真实执行 `ops:recovery-drill` 通过（三份归档 SHA-256 与条目数校验、临时目录已移除），`ops:monitor once` 真实输出 API/Mastra 200 且事件已写入 `runtime/ops/health-events.jsonl`；真实长期部署、外部告警接收端和跨重启恢复演练仍需在目标 Windows 主机上执行。
 
 ## 本轮验证记录
 
+- `2026-08-01` 主链 acceptance 最终通过：模型端点 `http://10.31.107.77:3000/v1` 于约 `14:29` 恢复（直接探测 200），`npm run acceptance` 生成 `artifacts/acceptance/acceptance-20260801063451.json`，`status: passed`；真实模型调用 2 次（medium/complex）、三档 URL 与 `.env` 逐一比对一致、key 不回显、项目暂停/恢复门禁通过。`P0-CONTRACT-053` 与 `P0-TS-NATIVE-047` 据此标记 `[x]`。
+- `2026-08-01` v0.3.0 安装器发布：推送 `v0.3.0` tag 触发 GitHub Actions `Windows installer` 工作流，CI 全量验证通过并创建 draft Release（draft 对匿名 API 不可见；仓库 Releases 页面可确认）。`P2-INSTALLER-029` 剩余解除条件：签名证书、干净 Windows VM 安装/升级/卸载验收、发布授权。
+- `2026-08-01` supermemory-server 崩溃诊断与恢复：acceptance 项目创建 500 根因为 `supermemory-server 0.0.7-rc.2` 处理对话记忆抽取时崩溃（日志含 Gemini 403 后 Bun 崩溃栈），`ingestConversationMemory` 按失败关闭契约返回 500；用 `npm run supermemory:start` 重启（pid 34848）后重跑 acceptance 通过，期间服务未再崩溃。
 - `2026-08-01` Supermemory forget 修复与真实验收：`apps/server/src/supermemory-service.ts` 的 `applyMemoryRevocation` forget 分支改为按 container tag 分页解析 memory 实体 id（`/v4/memories/list`），过滤未遗忘且包含目标远端文档 id 的实体后逐个 `memories.forget`；无实体时返回结构化 404（`supermemory_memory_entity_not_found`）。`supermemory-service.test.ts` 新增 2 个用例（解析并 forget 两个实体、无实体 404），7/7 通过。`scripts/supermemory-acceptance.ts` 增加有界文本终态等待、forget 前后远端实体统计和 delete 后 GET 404 轮询。重跑 `npm run supermemory:acceptance`（`supermemory-local-20260801060007.json`）：文本摄取 A/B done、双项目隔离通过（无跨项目 marker）、Graph 4 节点、Super RAG similarity 非空、forget `blocked:false` 且 `entities_before: 3/5 → entities_remaining: 0`、delete 两个 `remote_gone: true`、`revocation_verified_remote: true`；PDF 300s 仍 extracting、图片连接错误，如实 `partial`（退出码 1）。PDF/图片阻塞均为 Supermemory 服务缺 Gemini/Vertex key（官方文档确认），不降级。
 - `2026-08-01` 正式运维脚本：删除 4 个临时探测/启动脚本（`_tmp_probe_memories.ts`、`_tmp_probe_forget.ts`、`_tmp_probe_forget_state.ts`、`_tmp_start_supermemory.ps1`），新增 TypeScript 运维脚本 `scripts/start-supermemory.ts`（`npm run supermemory:start|stop`）：从 `.env` 读取 `SUPERMEMORY_SERVER_BIN`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`，隐藏后台启动、日志写入 `runtime/supermemory.out.log|err.log`、pid 写入 `runtime/supermemory.pid`、以根路径健康探测等待就绪；`start`（已在运行时直接报告）、`stop`、再 `start` 全流程实测通过（pid 36256）。`.env.example` 新增 `SUPERMEMORY_SERVER_BIN=` 说明。
-- `2026-08-01` 主链 acceptance 状态：模型端点 `http://10.31.107.77:3000/v1` 在 `05:12 UTC` 恢复可用时 `npm run acceptance` 真实通过（`acceptance-20260801051243.json`：`model_keys_hidden`、三档 URL 与 `.env` 一致、真实模型调用 2 次、项目暂停/恢复门禁通过）；`14:12` 复查时端点再次返回 `503`，重跑返回契约一致的 `502 llm_request_failed`（未降级）。由于验收重跑被外部端点阻塞，`P0-CONTRACT-053` 与 `P0-TS-NATIVE-047` 保持 `[!]`，等待端点恢复后重跑确认（一次真实通过证据已记录，不伪造完成）。
+- `2026-08-01` 主链 acceptance 过程记录：`05:12 UTC` 曾真实通过（`acceptance-20260801051243.json`）；`14:12` 端点再次 `503` 时重跑返回契约一致的 `502 llm_request_failed`（未降级、未伪造），随后 `14:29` 端点恢复并在 `06:34 UTC` 重跑最终通过。
 - `2026-08-01` 测试隔离修复：`apps/server/src/env.ts` 在 vitest 环境下不再加载项目 `.env`，并显式把测试运行时目录固定为 `runtime/test-<pid>`，避免 `claim-review` 测试（导入 `index.ts`）把 `.env` 的 `RESEARCH_RUNTIME_DIR=runtime` 带进测试进程、与正在运行的 API 并发打开同一个 PGlite 目录导致 `Aborted()`。修复后在 API/Mastra 服务运行状态下 `npm test` 全量通过（12 文件/36 测试）。
 - `2026-08-01` `ops:monitor once` 真实输出：API `8080/api/health` 与 Mastra `4111/health` 均 200，`ok: true`，事件已写入 `runtime/ops/health-events.jsonl`；告警 webhook 未配置（`configured: false, ok: true`）。
 - `2026-08-01` 恢复演练真实输出：`npm run ops:recovery-drill` 对 `20260730T200648Z` 备份通过（`minio-data.tgz` 7,406,071 B/486 条目、`postgres.sql` 1,502,831 B、`postgres-data.tgz` 15,579,493 B/1985 条目，SHA-256 均匹配，临时目录已移除）。

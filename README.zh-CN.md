@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-05 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-06 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-原生 Windows 迁移已经完成代码级实现，应用测试和 NVM for Windows 管理的 Node.js 26.5.1 构建均已通过。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。原始 `runtime/research-os.pglite` 被保留为旧 PostgreSQL 集群目录；项目 `.env` 现在通过显式配置选择经过验证的非覆盖式恢复候选 `runtime/restore-pglite-20260731`，该候选为 `127.0.0.1:8080` 和 `127.0.0.1:4111` 提供本地 API 与 Mastra Studio。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
+原生 Windows 迁移已经完成代码级实现，应用测试和 NVM for Windows 管理的 Node.js 26.5.1 构建均已通过。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。默认 `runtime/research-os.pglite` 已从经过验证的非覆盖式恢复候选重建并投入使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -45,9 +45,9 @@ npm start
 
 仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。Windows 安装器源码目前单独携带自己的 Node.js 运行时，与开发 shell 的版本管理相互独立。
 
-当前已选择并验证的恢复候选可从 [http://127.0.0.1:8080](http://127.0.0.1:8080) 访问。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，旧数据库目录保持不动。
+默认运行数据库（从验证过的恢复候选重建）可从 [http://127.0.0.1:8080](http://127.0.0.1:8080) 访问。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，损坏目录单独保留。
 
-旧主数据库目录会保留不动。可以使用 `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731` 生成并检查非覆盖式恢复候选。检查完成后，在 `.env` 中显式设置 `RESEARCH_RUNTIME_DIR=runtime/restore-pglite-20260731`；`npm start` 会自动加载该配置。
+损坏的数据库目录单独保留，不会被自动使用。仍然可以使用 `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731` 生成并检查新的非覆盖式恢复候选；检查完成后，可以在 `.env` 中显式设置 `RESEARCH_RUNTIME_DIR`，`npm start` 会自动加载该配置。
 
 无人值守运行可以使用 `npm run ops:monitor -- once` 做一次有界的 API/Mastra 健康检查，也可以使用 `npm run ops:monitor -- watch 3600` 运行一小时监控；结构化事件会追加到 `runtime/ops/health-events.jsonl`。显式配置 `RESEARCH_ALERT_WEBHOOK_URL` 后，状态转移和失败事件可以发送到告警接收端。`npm run ops:recovery-drill -- <backup-id>` 会校验备份哈希，在临时目录安全列出并解压归档，拒绝链接和路径穿越，检查必要目录后删除演练目录，不接触在线数据。
 
@@ -127,7 +127,7 @@ npm run mastra:hitl:check
 npm run acceptance
 ```
 
-代码级检查和真实模型验收已经使用当前配置的模型与外部学术 API；模型端点或 key 无效时仍会直接返回结构化错误。针对经过验证的恢复候选的运行检查已经通过；原始主数据库仍需要操作员明确决定。
+代码级检查和真实模型验收已经使用当前配置的模型与外部学术 API；模型端点或 key 无效时仍会直接返回结构化错误。针对重建后的默认数据库（16 个项目）的运行检查已经通过；损坏目录单独保留，不会被自动使用。
 
 ## 限制
 
