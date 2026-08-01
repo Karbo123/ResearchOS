@@ -2,7 +2,7 @@
 
 ## Trust Model
 
-Research OS is a single-user local MVP. It listens only on loopback and assumes the Windows account controls access. It is not a multi-tenant service and does not claim virtual-machine isolation.
+Research OS is a single-user local MVP. It listens only on loopback inside WSL2 and assumes the WSL2 Linux account (with Windows account access to the host filesystem) controls access. It is not a multi-tenant service and does not claim virtual-machine isolation.
 
 ## Model Boundary
 
@@ -22,7 +22,7 @@ Experiment outputs are bound to the Idea version, Git commit, configuration fing
 
 ## Uploads and Evidence
 
-Uploads are size- and extension-limited and scanned with Windows Defender. Scanner absence, threat detection, timeout, or scan failure rejects the upload. Uploaded material remains untrusted context and is not executed.
+Uploads are size- and extension-limited and scanned with Windows Defender. On WSL2/Linux hosts the scanner is reached through the interop mount (`/mnt/c/ProgramData/.../MpCmdRun.exe`) with `wslpath -w` path conversion. Scanner absence, threat detection, timeout, or scan failure rejects the upload (fail closed). Uploaded material remains untrusted context and is not executed.
 
 PDF evidence is downloaded only from a fixed HTTPS host allowlist, limited to 25 MB, checked for a PDF signature, hashed, parsed without evaluation, and stored with page locators. Extracted passages are candidates for claim-level review, not automatic proof.
 

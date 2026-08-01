@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-08 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-09 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-原生 Windows 迁移已经完成代码级实现，应用测试和 NVM for Windows 管理的 Node.js 26.5.1 构建均已通过。TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、本机实验监督器、产物账本、Windows Defender 上传门禁和 Windows 安装器源码已经实现。默认 `runtime/research-os.pglite` 已从经过验证的非覆盖式恢复候选重建并投入使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
+完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本、Windows Defender 上传门禁（通过 WSL interop）和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理，全部测试、构建和真实验收都在 WSL2 内通过；Windows 侧浏览器通过 mirrored 网络以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -25,17 +25,16 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 
 ## 环境要求
 
-- Windows 10/11 x64
-- NVM for Windows，以及仓库默认的 Node.js `26.5.1`（`package.json` 仍兼容 Node.js `>=22.13`）
-- Git for Windows
-- Windows Defender，用于上传扫描
-- 可选：Python 3.11+，仅用于科研 Python 实验
-- 可选：WSL2，必须在实验中显式选择
-- 可选：提供 `latexmk.exe` 的 TeX 发行版
+- Windows 10/11 x64 + WSL2（Ubuntu 22.04），并在 `.wslconfig` 启用 `networkingMode=mirrored`
+- WSL2 内的 nvm，以及仓库默认的 Node.js `26.5.1`（`package.json` 仍兼容 Node.js `>=22.13`）
+- WSL2 内的 Git
+- Python 3（含 `python3-venv`），用于科研 Python 实验
+- Windows 主机上的 Windows Defender（WSL2 通过 interop 挂载调用）用于上传扫描
+- WSL2 内提供 `latexmk` 的 TeX 发行版，用于论文编译
 
 ## 快速启动
 
-```powershell
+```bash
 nvm install 26.5.1
 nvm use 26.5.1
 npm ci
@@ -43,9 +42,9 @@ npm run build
 npm start
 ```
 
-仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。Windows 安装器源码目前单独携带自己的 Node.js 运行时，与开发 shell 的版本管理相互独立。
+仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。请在 WSL2 shell 内的 ext4 仓库副本（`~/ResearchOS`）执行上述命令；Windows 安装器源码仍独立面向 Windows 主机，与开发 shell 的版本管理互不影响。
 
-默认运行数据库（从验证过的恢复候选重建）可从 [http://127.0.0.1:8080](http://127.0.0.1:8080) 访问。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，损坏目录单独保留。
+默认运行数据库可从 Windows 浏览器访问 [http://127.0.0.1:8080](http://127.0.0.1:8080)（服务在 WSL2 内仅监听回环地址）。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，损坏目录单独保留。
 
 损坏的数据库目录单独保留，不会被自动使用。仍然可以使用 `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731` 生成并检查新的非覆盖式恢复候选；检查完成后，可以在 `.env` 中显式设置 `RESEARCH_RUNTIME_DIR`，`npm start` 会自动加载该配置。
 
@@ -53,7 +52,7 @@ npm start
 
 开发命令：
 
-```powershell
+```bash
 npm run dev
 npm run typecheck
 npm test
@@ -63,7 +62,7 @@ npm test
 
 Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和 reasoning effort。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
-项目 `.env` 当前将三档默认 URL 都设为本地 OpenAI-compatible 端点 `http://10.31.107.77:3000/v1`。运行时设置仍可完全独立地覆盖每一档。
+项目 `.env` 当前将三档默认 URL 都设为本地 OpenAI-compatible 端点 `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。运行时设置仍可完全独立地覆盖每一档。
 
 - Luna（`gpt-5.6-luna`）：`RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_URL_SIMPLE`、`RESEARCH_MODEL_KEY_SIMPLE`、`RESEARCH_REASONING_SIMPLE`
 - Terra（`gpt-5.6-terra`）：`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM`
@@ -94,11 +93,11 @@ Embedding 通过 `.env` 中的 `SUPERMEMORY_EMBEDDING_PROVIDER`、`SUPERMEMORY_E
 
 语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。项目材料接口 `/api/projects/<project-id>/materials/search` 使用同一项目范围的 Supermemory hybrid 检索；本地服务不可用时不会用 SQL 词法结果、其他 provider 或无关实验代替。缺少本地服务、鉴权失败、返回数据无效或写入失败时，系统直接返回结构化错误，不会降级。
 
-真实 Supermemory Local 验收（`npm run supermemory:acceptance`，证据位于 `artifacts/acceptance/supermemory-local-*.json`）已验证文本摄取与可搜索 chunk、双项目隔离无跨项目泄漏、Graph Memory 节点、Super RAG 文档结果、依赖 LLM 的 `forget` 撤销（撤销后远端 memory 实体消失），以及通过远端消失验证的 delete 撤销。在两项外部阻塞解除前，验收会如实记录为 `partial` 而不是通过：PDF 终态处理需要 Gemini/Vertex key（PDF 提取会从 Mistral OCR 回退到 Gemini，缺 key 时卡在 `extracting`）；图片摄取同样需要 Gemini/Vertex key，当前捆绑的 `0.0.7-rc.2` Windows build 在无该 key 时处理图片会崩溃。2026-08-01 隔离实测确认：配置可用的 OpenAI-compatible LLM 端点不会改变 PDF 提取路径，提取器仍硬编码 Mistral OCR → Gemini 2.5 Flash。图片同理——即使后端是多模态 OpenAI-compatible 模型（`gpt-5.6` 实测可接受图片输入），二进制里的图片描述步骤仍硬编码 Gemini provider。这些阻塞记录在 `TODO.md` 中，不会降级为本地 fallback。
+真实 Supermemory Local 验收（`npm run supermemory:acceptance`，证据位于 `artifacts/acceptance/supermemory-local-*.json`）已验证文本摄取与可搜索 chunk、双项目隔离无跨项目泄漏、Graph Memory 节点、Super RAG 文档结果、依赖 LLM 的 `forget` 撤销（撤销后远端 memory 实体消失），以及通过远端消失验证的 delete 撤销。在两项外部阻塞解除前，验收会如实记录为 `partial` 而不是通过：PDF 终态处理需要 Gemini/Vertex key（PDF 提取会从 Mistral OCR 回退到 Gemini，缺 key 时卡在 `extracting`）；图片摄取同样需要 Gemini/Vertex key，`0.0.7-rc.2` 各平台 build（Windows 与 Linux）在无该 key 时处理图片都会崩溃。2026-08-01 隔离实测确认：配置可用的 OpenAI-compatible LLM 端点不会改变 PDF 提取路径，提取器仍硬编码 Mistral OCR → Gemini 2.5 Flash。图片同理——即使后端是多模态 OpenAI-compatible 模型（`gpt-5.6` 实测可接受图片输入），二进制里的图片描述步骤仍硬编码 Gemini provider。这些阻塞记录在 `TODO.md` 中，不会降级为本地 fallback。
 
 ## 实验隔离
 
-模型不能提供命令、可执行程序、路径、URL、环境变量或网络目标。批准后的 Run 只能选择固定实验类型和项目内入口。Windows 是默认后端，通过固定 `cmd.exe` 参数契约调用项目解释器；WSL2 是必须显式选择的可选后端。
+模型不能提供命令、可执行程序、路径、URL、环境变量或网络目标。批准后的 Run 只能选择固定实验类型和项目内入口。服务在 WSL2/Linux 内运行时，Linux 原生后端是默认执行路径（`python3 -m venv` + `.venv/bin/python`）；Windows 宿主仍可显式选择旧的 `windows`（`cmd.exe`）或 `wsl2` 启动器，跨宿主后端组合按失败关闭返回结构化 400。
 
 每个科研 Python 项目使用自己的 `.venv`，依赖不会安装到应用运行时。监督器强制固定项目根、超时、进程树取消、有界日志、有限数值 `metrics.json`、结构化 `checkpoint.json`、SHA-256 产物和审计事件。本机进程隔离弱于专用虚拟机，文档不会夸大这一边界。
 
@@ -116,7 +115,7 @@ Embedding 通过 `.env` 中的 `SUPERMEMORY_EMBEDDING_PROVIDER`、`SUPERMEMORY_E
 
 ## 验证
 
-```powershell
+```bash
 npm run typecheck
 npm test
 npm run build

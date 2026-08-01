@@ -10,7 +10,7 @@ npm run build
 npm start
 ```
 
-Use NVM for Windows for the workspace runtime. The repository default is recorded in `.nvmrc` as Node.js 26.5.1; `package.json` keeps a compatibility lower bound of Node.js 22.13. Verify `nvm current` and `node --version` before a build. The workspace start commands load the project `.env` with Node's `--env-file` option. Do not rely on a manually inherited shell environment for model or runtime settings.
+Use nvm inside WSL2 (Ubuntu 22.04) for the workspace runtime. The repository default is recorded in `.nvmrc` as Node.js 26.5.1; `package.json` keeps a compatibility lower bound of Node.js 22.13. Verify `nvm current` and `node --version` before a build. The workspace start commands load the project `.env` with Node's `--env-file` option. Do not rely on a manually inherited shell environment for model or runtime settings. Keep the repository on the WSL2 ext4 filesystem (`~/ResearchOS`); `/mnt/d` (drvfs) is slow and has no inotify support.
 
 The Windows installer uses `installer/windows/bootstrap.ps1`, stores the parent PID in `runtime/research-os.pid`, and writes stdout/stderr logs under `runtime/`. Its `-Stop` mode terminates only that recorded process tree.
 
@@ -60,7 +60,7 @@ For the retained PostgreSQL SQL dump, generate a separate PGlite candidate with 
 
 Use the lower-left settings button or edit project `.env`. Luna, Terra, and Sol are independent. A blank key in the Web form preserves the existing key. The settings API never returns key material.
 
-The checked configuration template uses `http://10.31.107.77:3000/v1` for all three default model URLs. Keep the `/v1` suffix; each tier can be overridden independently.
+The checked configuration template uses `http://127.0.0.1:3000/v1` for all three default model URLs (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Keep the `/v1` suffix; each tier can be overridden independently.
 
 Private HTTP endpoints are accepted; public remote endpoints require HTTPS. A failed request is not retried through another model or provider.
 
@@ -87,9 +87,9 @@ Run `npm run supermemory:acceptance` (with the Supermemory Local server running)
 
 ## Scientific Environments
 
-The first approved Python run creates `projects/<id>/.venv` with `RESEARCH_PYTHON_EXECUTABLE`. Dependency installation is a separate, approval-gated operator action; the model cannot provide package commands. WSL2 runs must be explicitly selected and should not reuse a Windows-created environment.
+The first approved Python run creates `projects/<id>/.venv` with `RESEARCH_PYTHON_EXECUTABLE` (default `python3` on Linux). Dependency installation is a separate, approval-gated operator action; the model cannot provide package commands. A Linux-created environment must not be reused by a Windows-created run and vice versa.
 
-WSL2 hosting evaluation (2026-08-01, verified): with `networkingMode=mirrored` in `.wslconfig`, Windows browsers reach WSL2 services through `http://127.0.0.1:<port>` even when the service binds only loopback inside WSL2, and WSL2 reaches Windows-host services through `127.0.0.1` (use `http://127.0.0.1:3000/v1`, not the shared LAN IP, for the model gateway). The official Supermemory `0.0.7-rc.2` binary ships a linux-x64 asset. Running the whole application stack inside WSL2 is possible but requires three adaptations before it is supported: the upload malware gate (`malware-scanner.ts`) fails closed on non-Windows platforms and needs a Windows-interop call; the experiment supervisor's `windows`/`wsl2` backends both assume the server itself runs on Windows, so a native Linux execution path is needed; and the repository on `/mnt/d` (drvfs) is slow for npm/PGlite and has no inotify file watching. The current supported architecture keeps the application stack on Windows native and uses WSL2 only as an explicitly selected experiment backend.
+WSL2 hosting (2026-08-01, fully implemented and verified): with `networkingMode=mirrored` in `.wslconfig`, Windows browsers reach WSL2 services through `http://127.0.0.1:<port>` even when the service binds only loopback inside WSL2, and WSL2 reaches Windows-host services through `127.0.0.1` (use `http://127.0.0.1:3000/v1`, not the shared LAN IP, for the model gateway). The official Supermemory `0.0.7-rc.2` binary ships a linux-x64 asset downloaded into the WSL2 home (`~/bin/supermemory-server-linux-x64`) and is started by `npm run supermemory:start`. The upload malware gate reaches Windows Defender through the interop mount, the experiment supervisor has a native Linux execution path (`python3 -m venv`, `.venv/bin/python`, `latexmk`, SIGKILL process-tree cancellation) as the default backend, and the repository lives on ext4 (`~/ResearchOS`). The full application stack — API `8080`, Mastra `4111`, Supermemory `6767` — runs inside WSL2 and is reachable from the Windows browser at `http://127.0.0.1:<port>`.
 
 Install a TeX distribution separately when `compile_latex` is needed. Missing `latexmk.exe` produces a structured experiment failure.
 

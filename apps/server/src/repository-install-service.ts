@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, renameSync, rmSync, writeFileSync } from 'node:f
 import { relative } from 'node:path'
 import { audit, database } from './database.js'
 import { ApiError } from './http.js'
-import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
+import { artifactsRoot, gitBinary, pathInside, projectsRoot } from './paths.js'
 import { archiveSha256, downloadArchive, projectRepositoryRoot, repositoryDirectoryName, safeExtractArchive, type RepositoryIdentity, parseRepositoryUrl } from './repository-service.js'
 import { registerLineageDependencies } from './impact-service.js'
 
@@ -31,7 +31,7 @@ function repositoryIdentity(sourceUrl: string): RepositoryIdentity { return pars
 
 function runGit(projectRoot: string, args: string[]): string {
   try {
-    return execFileSync('git.exe', args, { cwd: projectRoot, windowsHide: true, encoding: 'utf8' }).trim()
+    return execFileSync(gitBinary(), args, { cwd: projectRoot, windowsHide: true, encoding: 'utf8' }).trim()
   } catch {
     throw new ApiError(502, 'repository_git_operation_failed', '项目 Git 操作失败，仓库归档未完成。')
   }

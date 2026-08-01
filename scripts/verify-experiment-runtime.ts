@@ -39,6 +39,14 @@ async function waitFor<T>(probe: () => Promise<T | null>, timeoutMs = 120_000): 
 }
 
 async function processExists(pid: number): Promise<boolean> {
+  if (process.platform !== 'win32') {
+    try {
+      process.kill(pid, 0)
+      return true
+    } catch {
+      return false
+    }
+  }
   const child = spawn('tasklist.exe', ['/fi', `PID eq ${pid}`, '/fo', 'csv', '/nh'], {
     windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'],
   })
@@ -71,10 +79,10 @@ try {
   writeFileSync(resolve(projectDirectories[0]!, 'experiment', 'main.py'), `${successSource}\n`, 'utf8')
   const successRequest = experimentRequest.parse({
     project_id: projectIds[0], proposal_id: proposalIds[0], experiment_type: 'python_analysis',
-    execution_backend: 'windows', config: { entrypoint: 'experiment/main.py' }, random_seeds: [13],
+    execution_backend: process.platform === 'win32' ? 'windows' : 'linux', config: { entrypoint: 'experiment/main.py' }, random_seeds: [13],
   })
   await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runIds[0], projectIds[0], proposalIds[0], successRequest.experiment_type, successRequest.config, runIds[0]])
-  submitRun(runIds[0]!, successRequest)
+  const successCompletion = submitRun(runIds[0]!, successRequest)
   const success = await waitFor(async () => {
     const row = await runStatus(runIds[0]!)
     return ['succeeded', 'failed'].includes(row.status) ? row : null
@@ -107,10 +115,10 @@ try {
   writeFileSync(resolve(projectDirectories[1]!, 'experiment', 'cancel.py'), `${cancellationSource}\n`, 'utf8')
   const cancellationRequest = experimentRequest.parse({
     project_id: projectIds[1], proposal_id: proposalIds[1], experiment_type: 'python_analysis',
-    execution_backend: 'windows', config: { entrypoint: 'experiment/cancel.py' }, random_seeds: [13],
+    execution_backend: process.platform === 'win32' ? 'windows' : 'linux', config: { entrypoint: 'experiment/cancel.py' }, random_seeds: [13],
   })
   await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runIds[1], projectIds[1], proposalIds[1], cancellationRequest.experiment_type, cancellationRequest.config, runIds[1]])
-  submitRun(runIds[1]!, cancellationRequest)
+  const cancellationCompletion = submitRun(runIds[1]!, cancellationRequest)
   const childPid = await waitFor(async () => {
     const path = resolve(runDirectories[1]!, 'child.pid')
     if (!existsSync(path)) return null
@@ -121,9 +129,14 @@ try {
   const cancelled = await runStatus(runIds[1]!)
   if (cancelled.status !== 'cancelled') throw new Error(`cancelled experiment has status ${cancelled.status}`)
   await waitFor(async () => await processExists(childPid) ? null : true, 15_000)
+  await cancellationCompletion
+  await successCompletion
 
+  const venvInterpreter = (project: string) => process.platform === 'win32'
+    ? resolve(project, '.venv', 'Scripts', 'python.exe')
+    : resolve(project, '.venv', 'bin', 'python')
   console.log(JSON.stringify({
-    status: 'passed', per_project_venv: projectDirectories.every(path => existsSync(resolve(path, '.venv', 'Scripts', 'python.exe'))),
+    status: 'passed', per_project_venv: projectDirectories.every(project => existsSync(venvInterpreter(project))),
     successful_metrics: success.metrics, artifact_sha256_records: artifactRows.rows.length, metrics_preview: { type: metricsPreview.type, point_count: metricsPreview.point_count },
     process_tree_cancelled: true, generated_python_removed_after_check: true,
   }, null, 2))

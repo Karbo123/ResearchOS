@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, extname } from 'node:path'
 import { mkdirSync } from 'node:fs'
-import { pathInside, projectsRoot } from './paths.js'
+import { gitBinary, pathInside, projectsRoot } from './paths.js'
 import { ApiError } from './http.js'
 
 type Operation = { action: 'create' | 'replace' | 'delete'; path: string; content?: string; expected_sha256?: string }
@@ -18,7 +18,7 @@ function validateOperation(operation: Operation): void {
 
 export function gitCommit(projectId: string): string {
   const root = pathInside(projectsRoot, projectId)
-  return execFileSync('git.exe', ['rev-parse', 'HEAD'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim()
+  return execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim()
 }
 
 export function applyApprovedPatch(projectId: string, payload: Record<string, unknown>, actor: string): string {
@@ -43,15 +43,15 @@ export function applyApprovedPatch(projectId: string, payload: Record<string, un
         writeFileSync(target, operation.content || '', { encoding: 'utf8', flag: operation.action === 'create' ? 'wx' : 'w' })
       }
     }
-    execFileSync('git.exe', ['add', '--all'], { cwd: root, windowsHide: true, stdio: 'ignore' })
-    execFileSync('git.exe', ['-c', `user.name=${actor}`, '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: apply approved research change'], { cwd: root, windowsHide: true, stdio: 'ignore' })
+    execFileSync(gitBinary(), ['add', '--all'], { cwd: root, windowsHide: true, stdio: 'ignore' })
+    execFileSync(gitBinary(), ['-c', `user.name=${actor}`, '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: apply approved research change'], { cwd: root, windowsHide: true, stdio: 'ignore' })
     return gitCommit(projectId)
   } catch (error) {
     for (const [path, content] of backups) {
       if (content === null) { if (existsSync(path)) rmSync(path) }
       else writeFileSync(path, content)
     }
-    try { execFileSync('git.exe', ['reset', '--mixed', 'HEAD'], { cwd: root, windowsHide: true, stdio: 'ignore' }) } catch { /* Preserve the original structured failure. */ }
+    try { execFileSync(gitBinary(), ['reset', '--mixed', 'HEAD'], { cwd: root, windowsHide: true, stdio: 'ignore' }) } catch { /* Preserve the original structured failure. */ }
     throw error
   }
 }

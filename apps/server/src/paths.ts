@@ -21,3 +21,7 @@ export function pathInside(root: string, ...parts: string[]): string {
   }
   return candidate
 }
+
+export function gitBinary(): string {
+  return process.platform === 'win32' ? 'git.exe' : 'git'
+}

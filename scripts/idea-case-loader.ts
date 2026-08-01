@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs'
-import { basename, resolve } from 'node:path'
+import { basename, relative, resolve } from 'node:path'
 import { z } from 'zod'
 
 export const repositoryRoot = resolve(import.meta.dirname, '..')
@@ -35,7 +35,8 @@ export function ideaCaseIds(): string[] {
 export function loadIdeaCase(id: string): IdeaCase {
   caseId.parse(id)
   const sourcePath = resolve(ideaCasesRoot, `${id}.json`)
-  if (!sourcePath.startsWith(`${ideaCasesRoot}\\`)) throw new Error('idea_case_path_escape')
+  const relativePath = relative(ideaCasesRoot, sourcePath)
+  if (relativePath.startsWith('..') || resolve(ideaCasesRoot, relativePath) !== sourcePath) throw new Error('idea_case_path_escape')
   const parsed = ideaCaseSchema.parse(JSON.parse(readFileSync(sourcePath, 'utf8')))
   if (parsed.id !== id) throw new Error(`${id}: filename and case id differ`)
   return { ...parsed, sourcePath }

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-08 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-09 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS is a local, auditable research-automation MVP. The application is im
 
 ## Status
 
-The native Windows migration is implemented at the code level and its application tests and Node.js 26.5.1 build pass under NVM for Windows. The TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, local experiment supervisor, artifact ledger, Windows Defender upload gate, and Windows installer source are implemented. The default `runtime/research-os.pglite` was rebuilt from a verified non-overwriting recovery candidate and is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. Clean-machine installer signing/release and GPU-host validation remain separate open work.
+The full application stack now runs inside WSL2 (Ubuntu 22.04): the TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, native Linux experiment supervisor, artifact ledger, Windows Defender upload gate (through WSL interop), and Supermemory Local. Node.js 26.5.1 is managed by nvm inside WSL2 and all tests, builds, and real acceptance runs pass there; Windows browsers reach the services at `http://127.0.0.1:<port>` through mirrored networking. The default `runtime/research-os.pglite` is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. Clean-machine installer signing/release and GPU-host validation remain separate open work.
 
 Model failures are final structured errors. The application never substitutes a local reply, another provider, or an unrelated experiment.
 
@@ -25,17 +25,16 @@ PGlite is the durable business state source. Mastra Memory is local and does not
 
 ## Requirements
 
-- Windows 10/11 x64
-- NVM for Windows with Node.js `26.5.1` (the repository default; `package.json` accepts Node.js `>=22.13`)
-- Git for Windows
-- Windows Defender for uploads
-- Optional: Python 3.11+ for scientific Python experiments
-- Optional: WSL2 as an explicitly selected experiment backend
-- Optional: a TeX distribution providing `latexmk.exe`
+- Windows 10/11 x64 with WSL2 (Ubuntu 22.04) and `networkingMode=mirrored` in `.wslconfig`
+- nvm with Node.js `26.5.1` inside WSL2 (the repository default; `package.json` accepts Node.js `>=22.13`)
+- Git inside WSL2
+- Python 3 (with `python3-venv`) for scientific Python experiments
+- Windows Defender on the Windows host (reached from WSL2 through the interop mount) for uploads
+- A TeX distribution providing `latexmk` inside WSL2 for paper compilation
 
 ## Quick Start
 
-```powershell
+```bash
 nvm install 26.5.1
 nvm use 26.5.1
 npm ci
@@ -43,9 +42,9 @@ npm run build
 npm start
 ```
 
-The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. The Windows installer source currently bundles its own Node.js runtime independently of the development shell.
+The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. Run the commands inside the WSL2 shell from the ext4 repository copy (`~/ResearchOS`); the Windows installer source still targets a Windows host independently of the development shell.
 
-The default runtime database (rebuilt from the verified recovery candidate) is available at [http://127.0.0.1:8080](http://127.0.0.1:8080). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and corrupted directories are preserved separately.
+The default runtime database is available from the Windows browser at [http://127.0.0.1:8080](http://127.0.0.1:8080) (the service listens only on loopback inside WSL2). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and corrupted directories are preserved separately.
 
 Corrupted database directories are preserved separately and never used automatically. A new non-overwriting recovery candidate can still be generated and checked with `npm run db:restore-dump -- artifacts/backups/20260730T200648Z/postgres.sql runtime/restore-pglite-20260731`; after inspection it can be selected explicitly in `.env` with `RESEARCH_RUNTIME_DIR`, and `npm start` loads that setting automatically.
 
@@ -53,7 +52,7 @@ For unattended operation, `npm run ops:monitor -- once` performs bounded API and
 
 Development:
 
-```powershell
+```bash
 npm run dev
 npm run typecheck
 npm test
@@ -63,7 +62,7 @@ npm test
 
 Luna, Terra, and Sol are fully independent. Each tier has its own model, URL, key, and reasoning effort. The settings API returns only `key_configured`; it never returns a key. Runtime code reads project `.env` and `runtime/model-settings.json`, never Codex configuration or authentication files.
 
-The project `.env` currently defaults all three tiers to the local OpenAI-compatible endpoint `http://10.31.107.77:3000/v1`. Runtime settings may override each tier independently.
+The project `.env` currently defaults all three tiers to the local OpenAI-compatible endpoint `http://127.0.0.1:3000/v1` (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Runtime settings may override each tier independently.
 
 - Luna (`gpt-5.6-luna`): `RESEARCH_MODEL_SIMPLE`, `RESEARCH_MODEL_URL_SIMPLE`, `RESEARCH_MODEL_KEY_SIMPLE`, `RESEARCH_REASONING_SIMPLE`
 - Terra (`gpt-5.6-terra`): `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM`
@@ -94,11 +93,11 @@ Embeddings are configured through `SUPERMEMORY_EMBEDDING_PROVIDER`, `SUPERMEMORY
 
 Semantic results are candidates only and retain source, Artifact, locator, hash, and evidence-status metadata. The project material endpoint `/api/projects/<project-id>/materials/search` uses the same project-scoped Supermemory hybrid search; it does not substitute SQL keyword results, another provider, or an unrelated experiment when the local provider is unavailable. A missing local server, authentication failure, invalid response, or write failure returns a structured error.
 
-A real Supermemory Local acceptance run (`npm run supermemory:acceptance`, evidence under `artifacts/acceptance/supermemory-local-*.json`) has verified text ingestion with searchable chunks, two-project isolation without cross-scope leakage, Graph Memory nodes, Super RAG document results, LLM-backed `forget` revocation (remote memory entities disappear after revocation), and delete revocation verified by remote absence. The run honestly records `partial` while two external blockers remain: PDF terminal processing requires a Gemini/Vertex key (PDF extraction falls back from Mistral OCR to Gemini and stays at `extracting` without one), and image ingestion requires the same Gemini/Vertex key, which the bundled `0.0.7-rc.2` Windows build does not handle without crashing. An isolated retest on 2026-08-01 confirmed that configuring a working OpenAI-compatible LLM endpoint does not change PDF extraction: the extractor still hardcodes Mistral OCR → Gemini 2.5 Flash. The same applies to images even with a multimodal OpenAI-compatible backend (`gpt-5.6` verified to accept image input), because the binary's image-description step is hardcoded to the Gemini provider. These blockers are tracked in `TODO.md` and never downgraded to local fallbacks.
+A real Supermemory Local acceptance run (`npm run supermemory:acceptance`, evidence under `artifacts/acceptance/supermemory-local-*.json`) has verified text ingestion with searchable chunks, two-project isolation without cross-scope leakage, Graph Memory nodes, Super RAG document results, LLM-backed `forget` revocation (remote memory entities disappear after revocation), and delete revocation verified by remote absence. The run honestly records `partial` while two external blockers remain: PDF terminal processing requires a Gemini/Vertex key (PDF extraction falls back from Mistral OCR to Gemini and stays at `extracting` without one), and image ingestion requires the same Gemini/Vertex key, which the bundled `0.0.7-rc.2` builds (Windows and Linux) do not handle without crashing. An isolated retest on 2026-08-01 confirmed that configuring a working OpenAI-compatible LLM endpoint does not change PDF extraction: the extractor still hardcodes Mistral OCR → Gemini 2.5 Flash. The same applies to images even with a multimodal OpenAI-compatible backend (`gpt-5.6` verified to accept image input), because the binary's image-description step is hardcoded to the Gemini provider. These blockers are tracked in `TODO.md` and never downgraded to local fallbacks.
 
 ## Experiment Isolation
 
-The model never supplies a command, executable, path, URL, environment, or network target. An approved run selects a fixed experiment type and a project-owned entry point. Windows is the default backend and invokes the project interpreter through a fixed `cmd.exe` argument contract. WSL2 is optional and must be selected explicitly.
+The model never supplies a command, executable, path, URL, environment, or network target. An approved run selects a fixed experiment type and a project-owned entry point. When the service runs in WSL2/Linux, the native Linux backend is the default and invokes the project interpreter through `python3 -m venv` plus `.venv/bin/python`; a Windows host may explicitly select the legacy `windows` (`cmd.exe`) or `wsl2` launchers, and cross-host backend combinations fail closed with a structured 400.
 
 Each scientific Python project uses its own `.venv`; dependencies are never installed into the application runtime. The supervisor enforces a fixed project root, timeout, process-tree cancellation, bounded logs, finite numeric `metrics.json`, structured `checkpoint.json`, SHA-256 artifacts, and audit events. Native process isolation is weaker than a dedicated virtual machine and is documented as such.
 
@@ -116,7 +115,7 @@ Checkpoint recovery is never a direct rerun. The API verifies the Checkpoint, so
 
 ## Validation
 
-```powershell
+```bash
 npm run typecheck
 npm test
 npm run build

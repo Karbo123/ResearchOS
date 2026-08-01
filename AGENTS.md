@@ -6,7 +6,7 @@
 
 Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。不得把元数据候选表述为全文证据，不得把系统集成结果表述为研究结论，不得把未执行契约表述为已实现能力。
 
-业务应用、数据库迁移、运维脚本、验收和测试只使用 TypeScript。科研实验允许任意语言；Python 只允许出现在 `projects/<project-id>/experiment/`，并使用该项目自己的 `projects/<project-id>/.venv`。应用运行不得依赖容器引擎。
+业务应用、数据库迁移、运维脚本、验收和测试只使用 TypeScript。科研实验允许任意语言；Python 只允许出现在 `projects/<project-id>/experiment/`，并使用该项目自己的 `projects/<project-id>/.venv`。应用运行不得依赖容器引擎。默认开发与运行环境是 WSL2（Ubuntu 22.04，Node.js 26.5.1，仓库副本位于 ext4 而非 `/mnt/d`）；Windows 侧仅通过浏览器以 `127.0.0.1:<port>` 访问 WSL2 内服务。
 
 主要组件：`apps/server/` 原生 API 与实验监督器，`apps/mastra/` Agents/Memory/Skills/Tools/Workflows/Studio，`apps/web/` React + TypeScript 组件前端，`projects/` 项目 Git 工作区，`artifacts/` 受控产物，`runtime/` 本机状态。
 
@@ -47,10 +47,10 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - 所有 API 输入使用严格 Zod schema；新增字段同步更新 JSON Schema、前端和测试。
 - 禁止把模型输出传给任意命令、SQL、路径、依赖安装或网络目标。
 - 高成本实验、代码/配置/LaTeX 修改、依赖安装、删除和发布必须经过 Proposal、diff、明确审批、复核、Git commit 和审计。
-- 原生实验监督器只接受固定实验类型、项目 UUID、固定入口和结构化计划。Windows `cmd.exe` 是默认后端；WSL2 必须显式选择。
+- 原生实验监督器只接受固定实验类型、项目 UUID、固定入口和结构化计划。服务在 WSL2/Linux 宿主时，Linux 原生后端是默认执行路径（`python3 -m venv` + `.venv/bin/python` + SIGKILL 进程树取消）；Windows 宿主仍可使用显式的 `windows`（`cmd.exe`）或 `wsl2` 后端，跨宿主组合直接返回结构化 400。
 - 每个科研 Python 项目使用独立 `.venv`。监督器保留固定工作根、超时、进程树取消、有界日志、产物大小/格式校验和 SHA-256。
 - 本机进程控制不能被表述为虚拟机级隔离。高风险不可信代码应使用用户明确配置的专用虚拟机。
-- 上传必须经过 Windows Defender 固定扫描，扫描不可用或失败时按失败关闭。
+- 上传必须经过 Windows Defender 固定扫描，扫描不可用或失败时按失败关闭。WSL2/Linux 宿主通过 interop（`/mnt/c` 下定位 `MpCmdRun.exe` + `wslpath -w` 路径转换）调用 Windows 侧 Defender；不可用时同样失败关闭。
 - 所有服务只监听 `127.0.0.1`。不得把无感登录控制面暴露到局域网或公网。
 - 不得打印、提交或外发 `.env`、key、Cookie、数据库文件、备份内容或认证材料。
 
@@ -78,7 +78,7 @@ npx tsx scripts/ops-guard.ts status
 ```
 
 主链、模型、Mastra、实验、数据库或产物谱系变化还必须运行 `npx tsx scripts/acceptance-test.ts`；Mastra Approval/HITL 变化还必须运行 `npm run mastra:hitl:check`。真实模型无效时记录结构化失败，不得伪造通过。
-`npm run supermemory:acceptance` 需要本机 Supermemory Local 服务在 `127.0.0.1:6767` 运行，且使用隔离的临时数据库；脚本只删除带 `acceptance` 标记的远端容器，不会触碰真实项目记忆。核心验证通过而外部阻塞未解除时，脚本如实返回 `partial`（退出码 1）：配置的模型端点返回 `503` 时 `forget` 撤销与 PDF 终态处理无法验证；图片摄取需要 Gemini/Vertex key，当前 `0.0.7-rc.2` Windows build 在无 key 时处理图片会崩溃。任何阻塞步骤都不得降级为本地 fallback 或伪造成通过。
+`npm run supermemory:acceptance` 需要本机 Supermemory Local 服务在 `127.0.0.1:6767` 运行（WSL2 内启动 linux-x64 二进制），且使用隔离的临时数据库；脚本只删除带 `acceptance` 标记的远端容器，不会触碰真实项目记忆。核心验证通过而外部阻塞未解除时，脚本如实返回 `partial`（退出码 1）：配置的模型端点返回 `503` 时 `forget` 撤销与 PDF 终态处理无法验证；图片摄取需要 Gemini/Vertex key，`0.0.7-rc.2` 各平台 build 在无 key 时处理图片都会崩溃。任何阻塞步骤都不得降级为本地 fallback 或伪造成通过。
 
 README.md 保持英文，README.zh-CN.md 保持中文，章节顺序、命令、端口、环境变量、能力和限制同步；更新时同步 `DOCS_SYNC_VERSION`。重大更新同步 `.env.example`、架构、运维、安全、需求审计和 TODO。UI 变化需要真实浏览器检查和无重叠截图。
 

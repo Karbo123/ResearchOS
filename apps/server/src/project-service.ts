@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
-import { pathInside, projectsRoot } from './paths.js'
+import { gitBinary, pathInside, projectsRoot } from './paths.js'
 import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { reconcileProjectLineage } from './impact-service.js'
@@ -20,9 +20,9 @@ export async function createProjectWorkspace(projectId: string, slug: string, sp
   for (const directory of ['experiment', 'paper', 'literature', 'data', 'artifacts']) mkdirSync(pathInside(root, directory), { recursive: true })
   writeFileSync(pathInside(root, 'idea.json'), `${JSON.stringify(spec, null, 2)}\n`, 'utf8')
   writeFileSync(pathInside(root, 'README.md'), `# ${slug}\n\nResearch OS project workspace.\n`, 'utf8')
-  execFileSync('git.exe', ['init', '--initial-branch=main'], { cwd: root, windowsHide: true, stdio: 'ignore' })
-  execFileSync('git.exe', ['add', 'idea.json', 'README.md'], { cwd: root, windowsHide: true, stdio: 'ignore' })
-  execFileSync('git.exe', ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: initialize research project'], { cwd: root, windowsHide: true, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['init', '--initial-branch=main'], { cwd: root, windowsHide: true, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md'], { cwd: root, windowsHide: true, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: initialize research project'], { cwd: root, windowsHide: true, stdio: 'ignore' })
   await audit('project.workspace_created', projectId, { slug })
   return root
 }

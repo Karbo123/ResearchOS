@@ -1,6 +1,6 @@
 # Architecture
 
-Research OS runs as native Windows processes and keeps every externally reachable listener on `127.0.0.1`.
+Research OS runs inside WSL2 (Ubuntu 22.04) as Linux processes and keeps every externally reachable listener on `127.0.0.1`. Windows browsers reach the same loopback addresses through WSL's mirrored networking (`networkingMode=mirrored`); the shared LAN IP belongs to WSL2 itself and must not be used to reach Windows-host services from inside WSL2.
 
 ```mermaid
 flowchart LR
@@ -13,7 +13,7 @@ flowchart LR
   API --> Runner["Native experiment supervisor"]
   Runner --> Project["Project Git workspace and .venv"]
   Runner --> Artifacts["Artifact and metric ledger"]
-  API --> Defender["Windows Defender upload scan"]
+  API --> Defender["Windows Defender upload scan (WSL interop)"]
   API --> Memory["Project-scoped Supermemory"]
   Memory --> Chunks["Bounded PDF/text chunks + source hashes"]
 ```
@@ -40,7 +40,7 @@ After Defender-scanned upload, the durable queue dispatches a fixed `material_in
 
 ## Experiment Boundary
 
-An approved request selects an allowlisted type and project UUID. The supervisor derives all paths. Scientific Python executes with the project `.venv`; Windows `cmd.exe` is the default fixed launcher and WSL2 is an explicit alternative. The child receives a minimal environment without application model keys.
+An approved request selects an allowlisted type and project UUID. The supervisor derives all paths. Scientific Python executes with the project `.venv`; the Linux backend (`python3 -m venv` + `.venv/bin/python`) is the default when the service runs on WSL2/Linux, while a Windows host may explicitly select the legacy `windows` (`cmd.exe`) or `wsl2` launchers. Cross-host backend combinations are rejected with a structured 400. The child receives a minimal environment without application model keys.
 
 The supervisor enforces timeout, process-tree cancellation, bounded logs, required finite `metrics.json`, structured `checkpoint.json`, path containment, SHA-256 artifact registration, and terminal audit state. This is native process control, not a virtual-machine security boundary.
 

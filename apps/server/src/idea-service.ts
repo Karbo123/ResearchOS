@@ -3,7 +3,7 @@ import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { database, one } from './database.js'
 import { ApiError } from './http.js'
 import { invalidateFromNodes } from './impact-service.js'
-import { pathInside, projectsRoot } from './paths.js'
+import { gitBinary, pathInside, projectsRoot } from './paths.js'
 
 const revisionFields = new Set(['title', 'research_question', 'domain', 'available_data', 'ethics_and_compliance'])
 
@@ -28,9 +28,9 @@ export async function applyApprovedIdeaRevision(projectId: string, payload: Reco
       await transaction.query('UPDATE projects SET current_idea_version=$2,updated_at=NOW() WHERE id=$1', [projectId, nextVersion])
     })
     writeFileSync(ideaPath, `${JSON.stringify(nextSpec, null, 2)}\n`, 'utf8')
-    execFileSync('git.exe', ['add', '--', 'idea.json'], { cwd: workspace, windowsHide: true, stdio: 'ignore' })
-    execFileSync('git.exe', ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '--only', '-m', `chore: revise approved idea ${nextVersion}`, '--', 'idea.json'], { cwd: workspace, windowsHide: true, stdio: 'ignore' })
-    const gitAfter = execFileSync('git.exe', ['rev-parse', 'HEAD'], { cwd: workspace, windowsHide: true, encoding: 'utf8' }).trim()
+    execFileSync(gitBinary(), ['add', '--', 'idea.json'], { cwd: workspace, windowsHide: true, stdio: 'ignore' })
+    execFileSync(gitBinary(), ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '--only', '-m', `chore: revise approved idea ${nextVersion}`, '--', 'idea.json'], { cwd: workspace, windowsHide: true, stdio: 'ignore' })
+    const gitAfter = execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: workspace, windowsHide: true, encoding: 'utf8' }).trim()
     const invalidation = await invalidateFromNodes(projectId, [{ type: 'idea_version', id: current.id }], `idea_version_superseded:${nextVersion}`, actor)
     return { idea_version: nextVersion, idea_version_id: newVersionId, previous_idea_version: current.version, git_commit: gitAfter, invalidation }
   } catch (error) {
