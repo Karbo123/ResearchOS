@@ -89,6 +89,8 @@ Run `npm run supermemory:acceptance` (with the Supermemory Local server running)
 
 The first approved Python run creates `projects/<id>/.venv` with `RESEARCH_PYTHON_EXECUTABLE`. Dependency installation is a separate, approval-gated operator action; the model cannot provide package commands. WSL2 runs must be explicitly selected and should not reuse a Windows-created environment.
 
+WSL2 hosting evaluation (2026-08-01, verified): with `networkingMode=mirrored` in `.wslconfig`, Windows browsers reach WSL2 services through `http://127.0.0.1:<port>` even when the service binds only loopback inside WSL2, and WSL2 reaches Windows-host services through `127.0.0.1` (use `http://127.0.0.1:3000/v1`, not the shared LAN IP, for the model gateway). The official Supermemory `0.0.7-rc.2` binary ships a linux-x64 asset. Running the whole application stack inside WSL2 is possible but requires three adaptations before it is supported: the upload malware gate (`malware-scanner.ts`) fails closed on non-Windows platforms and needs a Windows-interop call; the experiment supervisor's `windows`/`wsl2` backends both assume the server itself runs on Windows, so a native Linux execution path is needed; and the repository on `/mnt/d` (drvfs) is slow for npm/PGlite and has no inotify file watching. The current supported architecture keeps the application stack on Windows native and uses WSL2 only as an explicitly selected experiment backend.
+
 Install a TeX distribution separately when `compile_latex` is needed. Missing `latexmk.exe` produces a structured experiment failure.
 
 ## Repository Verification and Acquisition
