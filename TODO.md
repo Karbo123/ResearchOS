@@ -1,6 +1,6 @@
 # Research OS TODO
 
-最后更新：2026-08-01（Asia/Shanghai）
+最后更新：2026-08-02（Asia/Shanghai）
 
 状态：`[ ]` 待处理、`[~]` 进行中、`[!]` 外部阻塞。已完成并验证的任务不再保留在 TODO，已归档到 Git 历史。
 
