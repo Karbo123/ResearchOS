@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-09 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-10 -->
 
 # Research OS
 
@@ -42,7 +42,7 @@ npm run build
 npm start
 ```
 
-仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。请在 WSL2 shell 内的 ext4 仓库副本（`~/ResearchOS`）执行上述命令；Windows 安装器源码仍独立面向 Windows 主机，与开发 shell 的版本管理互不影响。
+仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。新开的非登录 WSL shell 仍可能回退到 Ubuntu 系统自带的 Node 12.x，请在执行任何命令前先运行 `source ~/.nvm/nvm.sh` 或 `nvm use 26.5.1`。请在 WSL2 shell 内的 ext4 仓库副本（`~/ResearchOS`）执行上述命令；Windows 安装器源码仍独立面向 Windows 主机，与开发 shell 的版本管理互不影响。该 ext4 副本是服务实际使用的运行副本；开发提交在 Windows 侧主仓库执行，然后同步到运行副本。
 
 默认运行数据库可从 Windows 浏览器访问 [http://127.0.0.1:8080](http://127.0.0.1:8080)（服务在 WSL2 内仅监听回环地址）。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，损坏目录单独保留。
 

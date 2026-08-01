@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-09 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-10 -->
 
 # Research OS
 
@@ -42,7 +42,7 @@ npm run build
 npm start
 ```
 
-The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. Run the commands inside the WSL2 shell from the ext4 repository copy (`~/ResearchOS`); the Windows installer source still targets a Windows host independently of the development shell.
+The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. A fresh non-login WSL shell may still fall back to Ubuntu's system Node (12.x), so run `source ~/.nvm/nvm.sh` or `nvm use 26.5.1` before any command. Run the commands inside the WSL2 shell from the ext4 repository copy (`~/ResearchOS`); the Windows installer source still targets a Windows host independently of the development shell. That ext4 copy is the runtime used by the services; development commits are made on the Windows-side main repository and then synced to the runtime copy.
 
 The default runtime database is available from the Windows browser at [http://127.0.0.1:8080](http://127.0.0.1:8080) (the service listens only on loopback inside WSL2). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and corrupted directories are preserved separately.
 

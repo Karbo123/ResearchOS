@@ -10,6 +10,12 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 
 主要组件：`apps/server/` 原生 API 与实验监督器，`apps/mastra/` Agents/Memory/Skills/Tools/Workflows/Studio，`apps/web/` React + TypeScript 组件前端，`projects/` 项目 Git 工作区，`artifacts/` 受控产物，`runtime/` 本机状态。
 
+## 开发与运行环境
+
+- 开发主仓库位于 Windows 侧 `D:\ResearchOS`，提交与推送只在这里执行；WSL2 内 `~/ResearchOS`（ext4）是运行/验证副本，API `8080`、Mastra `4111`、Supermemory `6767` 三服务都从该副本启动。修改 `apps/*`、`scripts/`、`package.json` 或根配置文件后，必须同步到运行副本并重建/重启对应服务，否则 Windows 浏览器访问的仍是旧代码（见 TODO `P2-WSL2-060`）。
+- WSL2 默认非登录 shell 的 `node` 是 Ubuntu 系统自带的 v12.22.9，不满足仓库 `engines`；执行任何命令前先 `source ~/.nvm/nvm.sh` 并 `nvm use 26.5.1`（对齐 `.nvmrc`）。运行副本已安装该版本。
+- Web 构建使用平台无关的 esbuild API（`apps/web/build.mjs` 定义 `process.env.NODE_ENV`）；不要在 package.json 里用 shell 内联 `--define` 传值，避免 Linux/bash 引号差异破坏构建产物。
+
 ## TODO 实时契约
 
 1. 非微小工作必须先在 `TODO.md` 使用稳定任务 ID 登记并标为 `[~]`。
@@ -67,7 +73,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 
 适用验证至少包括：
 
-```powershell
+```bash
 npm run typecheck
 npm test
 npm run build
