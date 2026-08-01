@@ -46,7 +46,7 @@ describe('project-scoped Supermemory contract', () => {
         auth_mode: 'required',
         base_url: 'https://api.supermemory.ai',
         scope: 'project_container_tag',
-        instance: { mode: 'global', port: null, running: false },
+        instance: { mode: 'global', port: null, running: false, shared_projects: 0 },
         embedding: {
           provider: 'local',
           model: 'Xenova/bge-m3',

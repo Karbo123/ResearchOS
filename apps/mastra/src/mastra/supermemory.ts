@@ -45,7 +45,16 @@ interface MastraProjectEmbeddingSettings {
   dimensions: number
   base_url: string
   key: string
-  instance_port: number | null
+  pool_key: string
+}
+
+interface MastraEmbeddingPool {
+  provider: 'local' | 'openai' | 'gemini'
+  model: string
+  dimensions: number
+  base_url: string
+  key: string
+  port: number
 }
 
 function mastraProjectEmbeddingSettings(): Record<string, MastraProjectEmbeddingSettings> {
@@ -53,6 +62,16 @@ function mastraProjectEmbeddingSettings(): Record<string, MastraProjectEmbedding
   if (!existsSync(settingsPath)) return {}
   try {
     return JSON.parse(readFileSync(settingsPath, 'utf8')) as Record<string, MastraProjectEmbeddingSettings>
+  } catch {
+    return {}
+  }
+}
+
+function mastraEmbeddingPools(): Record<string, MastraEmbeddingPool> {
+  const poolsPath = resolve(researchRoot, 'runtime', 'embedding-pools.json')
+  if (!existsSync(poolsPath)) return {}
+  try {
+    return JSON.parse(readFileSync(poolsPath, 'utf8')) as Record<string, MastraEmbeddingPool>
   } catch {
     return {}
   }
@@ -130,8 +149,9 @@ function unauthenticatedLocalFetch(input: RequestInfo | URL, init?: RequestInit)
 function options(projectId: string, conversationId: string): SupermemoryMastraOptions {
   requireSupportedEmbedding(projectId)
   const override = mastraProjectEmbeddingSettings()[projectId]
-  const baseUrl = override?.instance_port != null
-    ? `http://127.0.0.1:${override.instance_port}`
+  const poolPort = override?.pool_key ? mastraEmbeddingPools()[override.pool_key]?.port : null
+  const baseUrl = poolPort != null
+    ? `http://127.0.0.1:${poolPort}`
     : (process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL)
   const apiKey = override?.key?.trim() || process.env.SUPERMEMORY_API_KEY?.trim() || (localAutoAuthAllowed(baseUrl) ? 'local-auto-auth' : undefined)
   if (!apiKey) throw new SupermemoryConfigurationError()

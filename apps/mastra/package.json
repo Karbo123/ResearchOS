@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "mastra build --studio",
-    "dev": "node --env-file=../../.env ../../node_modules/mastra/dist/index.js dev",
+    "dev": "cross-env MASTRA_HOST=127.0.0.1 PORT=4111 node --env-file=../../.env node_modules/mastra/dist/index.js dev",
     "start": "cross-env MASTRA_HOST=127.0.0.1 PORT=4111 MASTRA_STUDIO_PATH=.mastra/output/studio node --env-file=../../.env .mastra/output/index.mjs",
     "typecheck": "tsc --noEmit"
   },

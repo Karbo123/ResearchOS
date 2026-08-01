@@ -15279,7 +15279,8 @@
             instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "tier-default", children: [
               "\u5B9E\u4F8B :",
               instance.port,
-              instance.running ? " \xB7 \u8FD0\u884C\u4E2D" : " \xB7 \u672A\u8FD0\u884C"
+              instance.running ? " \xB7 \u8FD0\u884C\u4E2D" : " \xB7 \u672A\u8FD0\u884C",
+              instance.shared_projects > 1 ? ` \xB7 \u5171\u4EAB ${instance.shared_projects} \u4E2A\u9879\u76EE` : ""
             ] }) : null
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "model-tier-grid", children: [
@@ -15371,11 +15372,11 @@
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "settings-note", children: [
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Database, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u6BCF\u4E2A\u81EA\u5B9A\u4E49\u9879\u76EE\u4F7F\u7528\u72EC\u7ACB Supermemory \u5B9E\u4F8B\u4E0E\u6570\u636E\u76EE\u5F55\uFF08\u7AEF\u53E3 6770\u20136869\uFF09\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u76F8\u4E92\u9694\u79BB\u3002\u9ED8\u8BA4\u63A8\u8350\u672C\u5730 Xenova/bge-m3\uFF08\u5B9E\u6D4B\u5355\u6761 30\u201372ms\uFF0C\u6BD4\u8FDC\u7A0B gitee \u5FEB\u7EA6 10 \u500D\uFF09\u3002" })
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u76F8\u540C\u914D\u7F6E\u7684\u9879\u76EE\u5171\u4EAB\u540C\u4E00\u4E2A Supermemory \u5B9E\u4F8B\u4E0E\u6570\u636E\u76EE\u5F55\uFF08\u6309\u914D\u7F6E\u6C60\u590D\u7528\uFF0C\u7AEF\u53E3 6770\u20136869\uFF09\uFF0C\u9879\u76EE\u4E4B\u95F4\u4ECD\u7528 container tag \u9694\u79BB\u8BED\u4E49\u8BB0\u5FC6\uFF1B\u914D\u7F6E\u4E0D\u540C\u624D\u542F\u7528\u65B0\u7684\u914D\u7F6E\u6C60\u3002\u9ED8\u8BA4\u63A8\u8350\u672C\u5730 Xenova/bge-m3\uFF08\u5B9E\u6D4B\u6BD4\u8FDC\u7A0B gitee \u5FEB\u7EA6 10 \u500D\uFF09\u3002" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "settings-note", children: [
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ShieldCheck, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\uFF1B\u5207\u6362\u6A21\u578B\u6216\u7EF4\u5EA6\u4F1A\u91CD\u5EFA\u8BE5\u9879\u76EE\u7684\u6570\u636E\u76EE\u5F55\uFF08\u65E7\u6570\u636E\u81EA\u52A8\u5907\u4EFD\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u9700\u91CD\u65B0\u6444\u5165\uFF09\u3002" })
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\uFF1B\u5207\u6362\u6A21\u578B\u6216\u7EF4\u5EA6\u4F1A\u4E3A\u9879\u76EE\u5206\u914D\u65B0\u7684\u914D\u7F6E\u6C60\uFF08\u65E7\u6C60\u6570\u636E\u4FDD\u7559\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u9700\u91CD\u65B0\u6444\u5165\uFF09\u3002" })
           ] })
         ] }),
         error ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,

@@ -34,6 +34,7 @@ projects/*/*.bak
 projects/*/*.log
 runtime/*
 !runtime/.gitkeep
+runtime.windows-*/
 installer/windows/build/
 installer/windows/dist/
 installer/windows/*.exe

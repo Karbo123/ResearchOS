@@ -120,7 +120,9 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
               </div>
             </div>
             {instance?.mode === 'custom' && instance.port ? (
-              <span className="tier-default">实例 :{instance.port}{instance.running ? ' · 运行中' : ' · 未运行'}</span>
+              <span className="tier-default">实例 :{instance.port}{instance.running ? ' · 运行中' : ' · 未运行'}
+                {instance.shared_projects > 1 ? ` · 共享 ${instance.shared_projects} 个项目` : ''}
+              </span>
             ) : null}
           </div>
           <div className="model-tier-grid">
@@ -195,13 +197,13 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
           <p className="settings-note">
             <Database size={16} />
             <span>
-              每个自定义项目使用独立 Supermemory 实例与数据目录（端口 6770–6869），语义记忆相互隔离。默认推荐本地
-              Xenova/bge-m3（实测单条 30–72ms，比远程 gitee 快约 10 倍）。
+              相同配置的项目共享同一个 Supermemory 实例与数据目录（按配置池复用，端口 6770–6869），项目之间仍用
+              container tag 隔离语义记忆；配置不同才启用新的配置池。默认推荐本地 Xenova/bge-m3（实测比远程 gitee 快约 10 倍）。
             </span>
           </p>
           <p className="settings-note">
             <ShieldCheck size={16} />
-            <span>密钥只写入本机 runtime 文件，读取接口不会返回密钥；切换模型或维度会重建该项目的数据目录（旧数据自动备份，语义记忆需重新摄入）。</span>
+            <span>密钥只写入本机 runtime 文件，读取接口不会返回密钥；切换模型或维度会为项目分配新的配置池（旧池数据保留，语义记忆需重新摄入）。</span>
           </p>
         </section>
         {error ? <div className="form-error" role="alert">{error}</div> : null}

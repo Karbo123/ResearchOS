@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } 
 import { spawn, spawnSync } from 'node:child_process'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { supermemoryChildEnv } from '../apps/server/src/supermemory-env.js'
 
 const sourceDirectory = dirname(fileURLToPath(import.meta.url))
 const repositoryRoot = resolve(sourceDirectory, '..')
@@ -80,13 +81,12 @@ const child = spawn(bin, [], {
   detached: true,
   windowsHide: true,
   stdio: ['ignore', outFd, errFd],
-  env: {
-    ...process.env,
+  env: supermemoryChildEnv({
     OPENAI_BASE_URL: process.env.RESEARCH_MODEL_URL_MEDIUM || 'http://127.0.0.1:3000/v1',
     OPENAI_MODEL: process.env.RESEARCH_MODEL_MEDIUM || 'gpt-5.6-luna',
     OPENAI_API_KEY: modelKey,
     SUPERMEMORY_DISABLE_TELEMETRY: '1',
-  },
+  }),
 })
 writeFileSync(pidPath, String(child.pid ?? ''))
 child.unref()

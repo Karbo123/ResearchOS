@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { audit, database, one, rows } from './database.js'
 import { memoryIngestRequest } from './contracts.js'
 import { artifactsRoot, pathInside } from './paths.js'
-import { projectEmbeddingSettings } from './project-embedding-settings.js'
+import { GLOBAL_POOL_KEY, poolForKey, projectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, resolveProjectBaseUrl } from './supermemory-instance.js'
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
@@ -165,8 +165,9 @@ export function projectContainerTag(projectId: string): string {
 
 export async function memoryStatus(projectId: string) {
   const override = projectEmbeddingSettings(projectId)
-  const baseURL = override.instance_port !== null
-    ? `http://127.0.0.1:${override.instance_port}`
+  const poolPort = override.pool_key !== GLOBAL_POOL_KEY ? (poolForKey(override.pool_key)?.port ?? null) : null
+  const baseURL = poolPort !== null
+    ? `http://127.0.0.1:${poolPort}`
     : (process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL)
   const keyConfigured = Boolean(override.key?.trim() || process.env.SUPERMEMORY_API_KEY?.trim())
   const instance = await projectInstanceStatus(projectId)

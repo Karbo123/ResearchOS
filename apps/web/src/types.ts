@@ -87,6 +87,7 @@ export interface ProjectEmbeddingInstanceStatus {
   mode: 'global' | 'custom'
   port: number | null
   running: boolean
+  shared_projects: number
 }
 
 export interface ProjectEmbeddingSettingsResponse {
