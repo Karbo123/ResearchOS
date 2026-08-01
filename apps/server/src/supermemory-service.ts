@@ -5,17 +5,24 @@ import { z } from 'zod'
 import { audit, database, one, rows } from './database.js'
 import { memoryIngestRequest } from './contracts.js'
 import { artifactsRoot, pathInside } from './paths.js'
+import { projectEmbeddingSettings } from './project-embedding-settings.js'
+import { projectInstanceStatus, resolveProjectBaseUrl } from './supermemory-instance.js'
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
 const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'
 const DEFAULT_EMBEDDING_PROVIDER = 'local'
-const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-base-en-v1.5'
-const DEFAULT_EMBEDDING_DIMENSIONS = 768
-// Supermemory Local 0.0.7-rc.2 ships only the local ONNX embedding worker. The
-// official docs list SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL,
-// but neither the installed binary nor the server-v0.0.7-rc.2 source reads them.
-// Remote embedding must fail closed instead of silently using local vectors.
-const REMOTE_EMBEDDING_SUPPORTED = false
+const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-m3'
+// Local ONNX default (Xenova/bge-m3, multilingual, 1024 dims). Remote
+// embedding default is also 1024 (verified working up to the server's ~1024d
+// pgvector HNSW upsert ceiling; see TODO 053-C).
+const DEFAULT_EMBEDDING_DIMENSIONS = 1024
+const DEFAULT_REMOTE_EMBEDDING_DIMENSIONS = 1024
+// Remote embedding (OpenAI / OpenAI-compatible / Gemini) is implemented by the
+// official server-v0.0.5 build only. server-v0.0.6 and 0.0.7-rc.2 regressed it
+// to the local ONNX worker, so scripts/start-supermemory.ts refuses to start a
+// non-v0.0.5 binary when SUPERMEMORY_EMBEDDING_PROVIDER is remote; the API
+// guard below also fails closed instead of silently using local vectors.
+const REMOTE_EMBEDDING_SUPPORTED = true
 const MAX_ARTIFACT_BYTES = 100 * 1024 * 1024
 const allowedArtifactTypes = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/webp', 'image/gif'])
 export type MemoryIngestRequest = z.infer<typeof memoryIngestRequest>
@@ -92,28 +99,31 @@ function localAutoAuthAllowed(baseURL: string): boolean {
   return process.env.SUPERMEMORY_ENABLED !== 'false' && isLoopbackBaseUrl(baseURL) && process.env.SUPERMEMORY_LOCAL_AUTO_AUTH !== 'false'
 }
 
-export function embeddingProfile() {
-  const provider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER
-  const model = process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : '')
+export function embeddingProfile(projectId?: string) {
+  const override = projectId ? projectEmbeddingSettings(projectId) : null
+  const provider = override?.provider ?? (process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER)
+  const model = override ? override.model : (process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : ''))
   const parsedDimensions = Number(process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS)
-  const dimensions = Number.isInteger(parsedDimensions) && parsedDimensions > 0 ? parsedDimensions : DEFAULT_EMBEDDING_DIMENSIONS
-  const baseUrl = process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || null
+  const defaultDimensions = provider === 'local' ? DEFAULT_EMBEDDING_DIMENSIONS : DEFAULT_REMOTE_EMBEDDING_DIMENSIONS
+  const dimensions = override ? override.dimensions : (Number.isInteger(parsedDimensions) && parsedDimensions > 0 ? parsedDimensions : defaultDimensions)
+  const baseUrl = override ? (override.base_url || null) : (process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || null)
+  const keyConfigured = provider !== 'local' && Boolean((override?.key || process.env.SUPERMEMORY_EMBEDDING_API_KEY)?.trim())
   return {
     provider,
     model,
     dimensions,
     base_url: baseUrl,
-    key_configured: provider !== 'local' && Boolean(process.env.SUPERMEMORY_EMBEDDING_API_KEY?.trim()),
+    key_configured: keyConfigured,
     remote_embedding_supported: REMOTE_EMBEDDING_SUPPORTED,
-    current_build_behavior: 'local_onnx',
+    current_build_behavior: provider === 'local' ? 'local_onnx' : 'remote_openai_compatible',
   }
 }
 
-function requireSupportedEmbedding() {
-  const profile = embeddingProfile()
+function requireSupportedEmbedding(projectId?: string) {
+  const profile = embeddingProfile(projectId)
   if (profile.provider !== 'local' && !profile.remote_embedding_supported) {
     throw new SupermemoryEmbeddingUnsupportedError(
-      `已配置 ${profile.provider} embedding，但当前 Supermemory Local 0.0.7-rc.2 仅实现本地 embedding；不会静默降级。请使用 SUPERMEMORY_EMBEDDING_PROVIDER=local，或安装支持远程 embedding 的服务端 build。`,
+      `已配置 ${profile.provider} embedding，但当前服务端 build 未实现远程 embedding；不会静默降级。请安装 server-v0.0.5（唯一实现 SUPERMEMORY_EMBEDDING_* 的官方 build），或改用 SUPERMEMORY_EMBEDDING_PROVIDER=local。`,
     )
   }
   return profile
@@ -125,17 +135,18 @@ function unauthenticatedLocalFetch(input: RequestInfo | URL, init?: RequestInit)
   return fetch(input, { ...init, headers })
 }
 
-function config() {
-  requireSupportedEmbedding()
-  const apiKey = process.env.SUPERMEMORY_API_KEY?.trim()
-  const baseURL = process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL
+async function config(projectId?: string) {
+  requireSupportedEmbedding(projectId)
+  const override = projectId ? projectEmbeddingSettings(projectId) : null
+  const apiKey = override?.key?.trim() || process.env.SUPERMEMORY_API_KEY?.trim()
+  const baseURL = projectId ? await resolveProjectBaseUrl(projectId) : (process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL)
   const localAutoAuth = localAutoAuthAllowed(baseURL)
   if (!apiKey && !localAutoAuth) throw new SupermemoryConfigurationError()
   return { apiKey: apiKey || 'local-auto-auth', baseURL, localAutoAuth }
 }
 
-function api(): Supermemory {
-  const settings = config()
+async function api(projectId?: string): Promise<Supermemory> {
+  const settings = await config(projectId)
   const timeout = Number(process.env.SUPERMEMORY_TIMEOUT_MS || process.env.SUPERMEMORY_TIMEOUT_SECONDS || 30000)
   return new Supermemory({ apiKey: settings.apiKey, baseURL: settings.baseURL, timeout, maxRetries: 0, fetch: settings.localAutoAuth ? unauthenticatedLocalFetch : undefined })
 }
@@ -152,16 +163,21 @@ export function projectContainerTag(projectId: string): string {
   return `${PROJECT_TAG_PREFIX}${projectId}`
 }
 
-export function memoryStatus() {
-  const baseURL = process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL
-  const keyConfigured = Boolean(process.env.SUPERMEMORY_API_KEY?.trim())
+export async function memoryStatus(projectId: string) {
+  const override = projectEmbeddingSettings(projectId)
+  const baseURL = override.instance_port !== null
+    ? `http://127.0.0.1:${override.instance_port}`
+    : (process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL)
+  const keyConfigured = Boolean(override.key?.trim() || process.env.SUPERMEMORY_API_KEY?.trim())
+  const instance = await projectInstanceStatus(projectId)
   return {
     enabled: enabled(),
     key_configured: keyConfigured,
     auth_mode: keyConfigured ? 'explicit_key' : localAutoAuthAllowed(baseURL) ? 'localhost_auto_auth' : 'required',
     base_url: baseURL,
     scope: 'project_container_tag',
-    embedding: embeddingProfile(),
+    embedding: embeddingProfile(projectId),
+    instance,
   }
 }
 
@@ -193,7 +209,8 @@ function sanitizeResult(item: Record<string, unknown>, link?: MemoryLink | null)
 }
 
 export async function searchProjectMemory(projectId: string, query: string, limit: number, searchMode: 'memories' | 'hybrid' | 'documents' = 'hybrid') {
-  const response = await api().search({ q: query, containerTag: projectContainerTag(projectId), searchMode, include: { relatedMemories: true, documents: true, summaries: true }, limit: Math.min(20, Math.max(1, limit)) })
+  const client = await api(projectId)
+  const response = await client.search({ q: query, containerTag: projectContainerTag(projectId), searchMode, include: { relatedMemories: true, documents: true, summaries: true }, limit: Math.min(20, Math.max(1, limit)) })
   const links = await rows<MemoryLink>('SELECT * FROM memory_links WHERE project_id=$1 AND status IN (\'active\',\'revoked\')', [projectId])
   const byRemoteId = new Map(links.map(link => [link.supermemory_id, link]))
   return { project_id: projectId, query, search_mode: searchMode, total: response.total, results: response.results.map(item => sanitizeResult(item as unknown as Record<string, unknown>, byRemoteId.get(String(item.id)))) }
@@ -281,15 +298,16 @@ export async function ingestProjectMemory(projectId: string, input: MemoryIngest
     await database.query('INSERT INTO memory_links(id,project_id,source_type,source_id,artifact_id,uploaded_file_id,content_sha256,custom_id,supermemory_id,container_tag,task_type,status,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,\'pending\',$12)', [linkId, projectId, input.source_type, input.source_id ?? null, input.artifact_id ?? null, input.uploaded_file_id ?? null, contentSha256, remoteCustomId, `pending-${linkId}`, tag, input.task_type, metadata])
   }
   try {
+    const client = await api(projectId)
     const remote = sourceFile && !input.content
-      ? await api().documents.uploadFile({
+      ? await client.documents.uploadFile({
           file: createReadStream(artifactPath(sourceFile)),
           containerTag: tag,
           filepath: `/research-os/artifacts/${sourceFile.id}/${sourceFile.name}`,
           ...remoteFileType(String(sourceFile.mime_type)),
           metadata: JSON.stringify(metadata),
         })
-      : await api().add({ content: String(input.content), containerTag: tag, customId: remoteCustomId, entityContext: `Research OS project ${projectId} semantic memory; candidates require evidence review.`, metadata, taskType: input.task_type })
+      : await client.add({ content: String(input.content), containerTag: tag, customId: remoteCustomId, entityContext: `Research OS project ${projectId} semantic memory; candidates require evidence review.`, metadata, taskType: input.task_type })
     const remoteId = String(remote.id)
     await database.query('UPDATE memory_links SET supermemory_id=$2,status=\'active\' WHERE id=$1', [linkId, remoteId])
     await audit('memory.ingested', projectId, { memory_link_id: linkId, supermemory_id: remoteId, source_type: input.source_type, artifact_id: input.artifact_id ?? null })
@@ -366,13 +384,14 @@ export async function applyMemoryRevocation(projectId: string, linkId: string, o
         404,
       )
     }
-    const client = api()
+    const client = await api(projectId)
     const tag = projectContainerTag(projectId)
     for (const entry of entries) {
       await withProcessingRetry(() => client.memories.forget({ containerTag: tag, id: entry.id, reason: 'Research OS approved memory revocation' }))
     }
   } else {
-    await withProcessingRetry(() => api().documents.delete(link.supermemory_id))
+    const client = await api(projectId)
+    await withProcessingRetry(() => client.documents.delete(link.supermemory_id))
   }
   const status = operation === 'forget' ? 'revoked' : 'deleted'
   await database.query(`UPDATE memory_links SET status=$2,${operation === 'forget' ? 'revoked_at' : 'deleted_at'}=NOW() WHERE id=$1`, [linkId, status])
@@ -381,7 +400,7 @@ export async function applyMemoryRevocation(projectId: string, linkId: string, o
 }
 
 async function memoryEntriesForDocument(projectId: string, documentId: string): Promise<Array<{ id: string }>> {
-  const client = api()
+  const client = await api(projectId)
   const tag = projectContainerTag(projectId)
   const entries: Array<{ id: string }> = []
   // Bounded pagination over the v4 memories/list endpoint; stop early once no

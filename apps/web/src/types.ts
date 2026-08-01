@@ -80,6 +80,25 @@ export interface MemoryStatusResponse {
   base_url: string
   scope: string
   embedding?: SupermemoryEmbeddingStatus
+  instance?: ProjectEmbeddingInstanceStatus
+}
+
+export interface ProjectEmbeddingInstanceStatus {
+  mode: 'global' | 'custom'
+  port: number | null
+  running: boolean
+}
+
+export interface ProjectEmbeddingSettingsResponse {
+  project_id: string
+  mode: 'global' | 'custom'
+  provider: 'local' | 'openai' | 'gemini'
+  model: string
+  dimensions: number
+  base_url: string
+  key_configured: boolean
+  source: string
+  instance: ProjectEmbeddingInstanceStatus
 }
 
 export interface ModelSettingsFormValues {

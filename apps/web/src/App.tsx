@@ -409,7 +409,7 @@ export function App() {
           <div className="loading-view"><div className="empty">正在加载项目…</div></div>
         )}
       </main>
-      <ModelSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <ModelSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} projectId={projectId} />
       <MemoryGraphModal
         open={memoryOpen}
         projectId={projectId}

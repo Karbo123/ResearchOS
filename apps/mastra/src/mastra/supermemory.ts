@@ -1,5 +1,8 @@
 import { Supermemory } from 'supermemory'
 import type { InputProcessor, OutputProcessor, Processor, ProcessInputArgs, ProcessOutputResultArgs } from '@mastra/core/processors'
+import { existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { researchRoot } from './env.js'
 
 // Local, minimal type contracts matching the official Supermemory Mastra
 // integration surface used by Research OS. Keeping these inline avoids pulling
@@ -23,13 +26,37 @@ interface MemoryPromptData {
 const PROJECT_TAG_PREFIX = 'research-os-project-'
 const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'
 const DEFAULT_EMBEDDING_PROVIDER = 'local'
-const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-base-en-v1.5'
-const DEFAULT_EMBEDDING_DIMENSIONS = 768
-// Supermemory Local 0.0.7-rc.2 ships only the local ONNX embedding worker. The
-// official docs list SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL,
-// but neither the installed binary nor the server-v0.0.7-rc.2 source reads them.
-// Remote embedding must fail closed instead of silently using local vectors.
-const REMOTE_EMBEDDING_SUPPORTED = false
+const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-m3'
+// Local ONNX default (Xenova/bge-m3, multilingual, 1024 dims). Remote
+// embedding default is also 1024 (verified working up to the server's ~1024d
+// pgvector HNSW upsert ceiling; see TODO 053-C).
+const DEFAULT_EMBEDDING_DIMENSIONS = 1024
+const DEFAULT_REMOTE_EMBEDDING_DIMENSIONS = 1024
+// Remote embedding (OpenAI / OpenAI-compatible / Gemini) is implemented by the
+// official server-v0.0.5 build only. server-v0.0.6 and 0.0.7-rc.2 regressed it
+// to the local ONNX worker, so scripts/start-supermemory.ts refuses to start a
+// non-v0.0.5 binary when SUPERMEMORY_EMBEDDING_PROVIDER is remote; the API
+// guard below also fails closed instead of silently using local vectors.
+const REMOTE_EMBEDDING_SUPPORTED = true
+
+interface MastraProjectEmbeddingSettings {
+  provider: 'local' | 'openai' | 'gemini'
+  model: string
+  dimensions: number
+  base_url: string
+  key: string
+  instance_port: number | null
+}
+
+function mastraProjectEmbeddingSettings(): Record<string, MastraProjectEmbeddingSettings> {
+  const settingsPath = resolve(researchRoot, 'runtime', 'project-embedding-settings.json')
+  if (!existsSync(settingsPath)) return {}
+  try {
+    return JSON.parse(readFileSync(settingsPath, 'utf8')) as Record<string, MastraProjectEmbeddingSettings>
+  } catch {
+    return {}
+  }
+}
 
 export class SupermemoryConfigurationError extends Error {
   readonly code = 'supermemory_not_configured'
@@ -64,28 +91,31 @@ function localAutoAuthAllowed(baseURL: string): boolean {
   return process.env.SUPERMEMORY_ENABLED !== 'false' && isLoopbackBaseUrl(baseURL) && process.env.SUPERMEMORY_LOCAL_AUTO_AUTH !== 'false'
 }
 
-function embeddingProfile() {
-  const provider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER
-  const model = process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : '')
+function embeddingProfile(projectId?: string) {
+  const override = projectId ? mastraProjectEmbeddingSettings()[projectId] : null
+  const provider = override?.provider ?? (process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER)
+  const model = override ? override.model : (process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : ''))
   const parsedDimensions = Number(process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS)
-  const dimensions = Number.isInteger(parsedDimensions) && parsedDimensions > 0 ? parsedDimensions : DEFAULT_EMBEDDING_DIMENSIONS
-  const baseUrl = process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || null
+  const defaultDimensions = provider === 'local' ? DEFAULT_EMBEDDING_DIMENSIONS : DEFAULT_REMOTE_EMBEDDING_DIMENSIONS
+  const dimensions = override ? override.dimensions : (Number.isInteger(parsedDimensions) && parsedDimensions > 0 ? parsedDimensions : defaultDimensions)
+  const baseUrl = override ? (override.base_url || null) : (process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || null)
+  const keyConfigured = provider !== 'local' && Boolean((override?.key || process.env.SUPERMEMORY_EMBEDDING_API_KEY)?.trim())
   return {
     provider,
     model,
     dimensions,
     base_url: baseUrl,
-    key_configured: provider !== 'local' && Boolean(process.env.SUPERMEMORY_EMBEDDING_API_KEY?.trim()),
+    key_configured: keyConfigured,
     remote_embedding_supported: REMOTE_EMBEDDING_SUPPORTED,
-    current_build_behavior: 'local_onnx',
+    current_build_behavior: provider === 'local' ? 'local_onnx' : 'remote_openai_compatible',
   }
 }
 
-function requireSupportedEmbedding() {
-  const profile = embeddingProfile()
+function requireSupportedEmbedding(projectId?: string) {
+  const profile = embeddingProfile(projectId)
   if (profile.provider !== 'local' && !profile.remote_embedding_supported) {
     throw new SupermemoryEmbeddingUnsupportedError(
-      `已配置 ${profile.provider} embedding，但当前 Supermemory Local 0.0.7-rc.2 仅实现本地 embedding；不会静默降级。请使用 SUPERMEMORY_EMBEDDING_PROVIDER=local，或安装支持远程 embedding 的服务端 build。`,
+      `已配置 ${profile.provider} embedding，但当前服务端 build 未实现远程 embedding；不会静默降级。请安装 server-v0.0.5（唯一实现 SUPERMEMORY_EMBEDDING_* 的官方 build），或改用 SUPERMEMORY_EMBEDDING_PROVIDER=local。`,
     )
   }
   return profile
@@ -98,9 +128,12 @@ function unauthenticatedLocalFetch(input: RequestInfo | URL, init?: RequestInit)
 }
 
 function options(projectId: string, conversationId: string): SupermemoryMastraOptions {
-  requireSupportedEmbedding()
-  const baseUrl = process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL
-  const apiKey = process.env.SUPERMEMORY_API_KEY?.trim() || (localAutoAuthAllowed(baseUrl) ? 'local-auto-auth' : undefined)
+  requireSupportedEmbedding(projectId)
+  const override = mastraProjectEmbeddingSettings()[projectId]
+  const baseUrl = override?.instance_port != null
+    ? `http://127.0.0.1:${override.instance_port}`
+    : (process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL)
+  const apiKey = override?.key?.trim() || process.env.SUPERMEMORY_API_KEY?.trim() || (localAutoAuthAllowed(baseUrl) ? 'local-auto-auth' : undefined)
   if (!apiKey) throw new SupermemoryConfigurationError()
   return {
     apiKey,

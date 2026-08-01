@@ -9,7 +9,7 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest,
+  approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
@@ -31,6 +31,8 @@ import { installRepositoryArchive } from './repository-install-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
 import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
 import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
+import { computedEmbeddingSettings, projectEmbeddingSettings, publicProjectEmbeddingSettings, saveProjectEmbeddingSettings } from './project-embedding-settings.js'
+import { projectInstanceStatus, resetProjectInstanceData, stopProjectInstance } from './supermemory-instance.js'
 import { buildArtifactPreview, verifyArtifactFile } from './artifact-preview-service.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
@@ -137,8 +139,41 @@ app.put('/api/settings/models', async context => {
 app.get('/api/mastra/open', context => context.redirect(process.env.MASTRA_STUDIO_URL || 'http://127.0.0.1:4111'))
 
 app.get('/api/projects/:projectId/memory/status', async context => {
-  await requireProject(uuid.parse(context.req.param('projectId')))
-  return context.json(memoryStatus())
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(await memoryStatus(projectId))
+})
+app.get('/api/projects/:projectId/embedding-settings', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const instance = await projectInstanceStatus(projectId)
+  return context.json({ ...publicProjectEmbeddingSettings(projectId), instance })
+})
+app.put('/api/projects/:projectId/embedding-settings', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, projectEmbeddingSettingsRequest)
+  const previous = projectEmbeddingSettings(projectId)
+  const computed = computedEmbeddingSettings(projectId, body, previous)
+  if (computed.settings === null) {
+    await stopProjectInstance(projectId)
+  } else if (computed.reset_required && !body.reset_data) {
+    throw new ApiError(409, 'embedding_requires_reset', '切换 embedding 模型或维度必须使用全新的数据目录，现有语义记忆需要重新摄入（旧数据目录会保留为备份）。请勾选确认后重试。')
+  } else if (computed.reset_required && body.reset_data) {
+    await resetProjectInstanceData(projectId)
+  } else if (computed.restart_needed) {
+    await stopProjectInstance(projectId)
+  }
+  saveProjectEmbeddingSettings(projectId, body)
+  await audit('embedding.settings_updated', projectId, {
+    mode: body.mode,
+    provider: body.mode === 'custom' ? body.provider : 'global_default',
+    model: body.mode === 'custom' ? body.model || undefined : 'global_default',
+    dimensions: body.mode === 'custom' ? body.dimensions : undefined,
+    reset_data: body.reset_data,
+  })
+  const instance = await projectInstanceStatus(projectId)
+  return context.json({ ...publicProjectEmbeddingSettings(projectId), instance })
 })
 app.get('/api/projects/:projectId/memory/links', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))

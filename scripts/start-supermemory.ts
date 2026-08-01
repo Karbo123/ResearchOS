@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -50,6 +50,20 @@ const bin = process.env.SUPERMEMORY_SERVER_BIN
 if (!bin || !existsSync(bin)) {
   console.error('SUPERMEMORY_SERVER_BIN must point to the supermemory-server executable (see .env.example)')
   process.exit(1)
+}
+
+const embeddingProvider = (process.env.SUPERMEMORY_EMBEDDING_PROVIDER || 'local').trim().toLowerCase()
+if (embeddingProvider !== 'local') {
+  const versionProbe = spawnSync(bin, ['--version'], { encoding: 'utf8', timeout: 15_000, windowsHide: true })
+  const versionText = String(versionProbe.stdout || versionProbe.stderr || '').trim()
+  if (versionText !== '0.0.5') {
+    console.error(
+      `remote embedding (SUPERMEMORY_EMBEDDING_PROVIDER=${embeddingProvider}) requires supermemory-server build v0.0.5; ` +
+        `${bin} reports "${versionText || 'unknown version'}". server-v0.0.6 and 0.0.7-rc.2 do not implement ` +
+        `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL; refusing to start (no fallback).`,
+    )
+    process.exit(1)
+  }
 }
 
 const modelKey = process.env.RESEARCH_MODEL_KEY_MEDIUM

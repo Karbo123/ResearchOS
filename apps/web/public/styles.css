@@ -185,6 +185,10 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .modal-heading h2 { margin-bottom: 3px; }
 .modal-heading p { margin-bottom: 0; }
 .model-settings-form { display: grid; gap: 14px; }
+.settings-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border, #e7e5e4); padding-bottom: 12px; margin-bottom: 4px; }
+.settings-tabs button { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--muted, #78716c); font-size: 13px; cursor: pointer; }
+.settings-tabs button:hover { background: var(--surface, #f5f5f4); }
+.settings-tabs button.active { background: var(--surface, #f5f5f4); border-color: var(--border, #e7e5e4); color: var(--text, #1c1917); font-weight: 600; }
 .model-tier { border: 1px solid var(--line); border-radius: 8px; padding: 15px; display: grid; gap: 12px; background: #fff; box-shadow: 0 4px 14px #1d24330a; }
 .model-tier-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .model-tier h3 { margin: 0 0 5px; display: flex; align-items: center; gap: 8px; }

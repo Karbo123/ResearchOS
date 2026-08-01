@@ -49,6 +49,20 @@ export const modelSettingsRequest = z.object({
   complex: modelTierSettings,
 }).strict()
 
+export const embeddingProvider = z.enum(['local', 'openai', 'gemini'])
+export type EmbeddingProvider = z.infer<typeof embeddingProvider>
+
+export const projectEmbeddingSettingsRequest = z.object({
+  mode: z.enum(['global', 'custom']),
+  provider: embeddingProvider.default('local'),
+  model: z.string().trim().max(300).default(''),
+  dimensions: z.number().int().min(1).max(4096).default(1024),
+  base_url: z.string().trim().max(500).default(''),
+  key: z.string().max(2000).default(''),
+  reset_data: z.boolean().default(false),
+}).strict()
+export type ProjectEmbeddingSettingsRequest = z.infer<typeof projectEmbeddingSettingsRequest>
+
 export const proposalCreateRequest = z.object({
   project_id: uuid,
   kind: z.enum(['experiment_plan', 'experiment_rerun', 'code_patch', 'config_change', 'idea_revision', 'data_change', 'dependency_install', 'delete_artifact', 'memory_revoke', 'external_publish', 'diagnostic_suggestion']),

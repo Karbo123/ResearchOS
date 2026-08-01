@@ -3,6 +3,7 @@ import { Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
 import { ConfirmDialog, Modal, StatusDot } from './ui'
+import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
 
 const TIERS: Array<{ id: TierId; label: string; defaultEffort: ReasoningEffort }> = [
   { id: 'simple', label: 'Luna', defaultEffort: 'low' },
@@ -18,7 +19,8 @@ function sourceLabel(value?: string) {
   return value === 'runtime_override' ? '运行时覆盖' : '项目 .env 默认'
 }
 
-export function ModelSettingsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean; onClose: () => void; projectId: string | null }) {
+  const [tab, setTab] = useState<'models' | 'embedding'>('models')
   const [values, setValues] = useState<Record<TierId, TierFormValues> | null>(null)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -28,6 +30,7 @@ export function ModelSettingsModal({ open, onClose }: { open: boolean; onClose: 
 
   useEffect(() => {
     if (!open) return
+    setTab('models')
     setLoading(true)
     setError('')
     setDirty(false)
@@ -67,6 +70,15 @@ export function ModelSettingsModal({ open, onClose }: { open: boolean; onClose: 
       return
     }
     onClose()
+  }
+
+  const switchTab = (next: 'models' | 'embedding') => {
+    if (dirty) {
+      setConfirmClose(true)
+      return
+    }
+    setError('')
+    setTab(next)
   }
 
   const save = async (event: React.FormEvent) => {
@@ -115,11 +127,26 @@ export function ModelSettingsModal({ open, onClose }: { open: boolean; onClose: 
     <>
       <Modal
         eyebrow="运行时设置"
-        title="模型配置"
-        description="Luna、Terra、Sol 三档分别生效。未单独覆盖时，默认使用项目 .env 中的 URL 和 key，保存后立即用于下一次请求。"
+        title="配置"
+        description={tab === 'models'
+          ? 'Luna、Terra、Sol 三档分别生效。未单独覆盖时，默认使用项目 .env 中的 URL 和 key，保存后立即用于下一次请求。'
+          : '每个科研项目可以独立配置语义记忆 Embedding；不覆盖时使用全局默认（实测本地 bge-m3 比远程快约 10 倍）。'}
         onClose={requestClose}
       >
-        {loading ? (
+        <div className="settings-tabs" role="tablist">
+          <button className={tab === 'models' ? 'active' : ''} type="button" onClick={() => switchTab('models')}>模型 · Luna/Terra/Sol</button>
+          <button className={tab === 'embedding' ? 'active' : ''} type="button" onClick={() => switchTab('embedding')}>Embedding · 语义记忆</button>
+        </div>
+        {tab === 'embedding' ? (
+          projectId ? (
+            <ProjectEmbeddingSettingsForm
+              projectId={projectId}
+              onChanged={() => setDirty(false)}
+            />
+          ) : (
+            <div className="empty">请先打开一个研究项目，再配置项目级 Embedding。</div>
+          )
+        ) : loading ? (
           <div className="empty">正在读取模型配置…</div>
         ) : values ? (
           <form className="model-settings-form" onSubmit={save}>

@@ -32,7 +32,7 @@ describe('project-scoped Supermemory contract', () => {
     }
   })
 
-  it('does not expose the API key and reports configuration state', () => {
+  it('does not expose the API key and reports configuration state', async () => {
     const previousKey = process.env.SUPERMEMORY_API_KEY
     const previousEnabled = process.env.SUPERMEMORY_ENABLED
     const previousBaseUrl = process.env.SUPERMEMORY_BASE_URL
@@ -40,19 +40,20 @@ describe('project-scoped Supermemory contract', () => {
     process.env.SUPERMEMORY_ENABLED = 'false'
     process.env.SUPERMEMORY_BASE_URL = 'https://api.supermemory.ai'
     try {
-      expect(memoryStatus()).toEqual({
+      expect(await memoryStatus(projectId)).toEqual({
         enabled: false,
         key_configured: false,
         auth_mode: 'required',
         base_url: 'https://api.supermemory.ai',
         scope: 'project_container_tag',
+        instance: { mode: 'global', port: null, running: false },
         embedding: {
           provider: 'local',
-          model: 'Xenova/bge-base-en-v1.5',
-          dimensions: 768,
+          model: 'Xenova/bge-m3',
+          dimensions: 1024,
           base_url: null,
           key_configured: false,
-          remote_embedding_supported: false,
+          remote_embedding_supported: true,
           current_build_behavior: 'local_onnx',
         },
       })
@@ -66,7 +67,8 @@ describe('project-scoped Supermemory contract', () => {
     }
   })
 
-  it('fails closed when remote embedding is requested but unsupported by the installed build', async () => {
+  it('accepts remote embedding configuration when the installed build implements it', async () => {
+    const searchProjectId = crypto.randomUUID()
     const previousApiKey = process.env.SUPERMEMORY_API_KEY
     const previousEnabled = process.env.SUPERMEMORY_ENABLED
     const previousBaseUrl = process.env.SUPERMEMORY_BASE_URL
@@ -79,17 +81,21 @@ describe('project-scoped Supermemory contract', () => {
     process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS = '1024'
     process.env.SUPERMEMORY_EMBEDDING_BASE_URL = 'https://ai.gitee.com/v1'
     process.env.SUPERMEMORY_EMBEDDING_API_KEY = 'test-embedding-key'
+    const post = vi.spyOn(Supermemory.prototype, 'post').mockResolvedValue({ results: [], total: 0 } as never)
     try {
-      await expect(searchProjectMemory(crypto.randomUUID(), 'test query', 5)).rejects.toMatchObject({ code: 'supermemory_embedding_unsupported', status: 503 })
-      expect(memoryStatus().embedding).toMatchObject({
+      await expect(searchProjectMemory(searchProjectId, 'test query', 5)).resolves.toMatchObject({ total: 0 })
+      expect(post).toHaveBeenCalledWith('/v4/search', expect.objectContaining({ body: expect.objectContaining({ q: 'test query' }) }))
+      expect((await memoryStatus(searchProjectId)).embedding).toMatchObject({
         provider: 'openai',
         model: 'Qwen3-Embedding-8B',
         dimensions: 1024,
         base_url: 'https://ai.gitee.com/v1',
         key_configured: true,
-        remote_embedding_supported: false,
+        remote_embedding_supported: true,
+        current_build_behavior: 'remote_openai_compatible',
       })
     } finally {
+      post.mockRestore()
       for (const [key, value] of previousEmbedding) {
         if (value === undefined) delete process.env[key]
         else process.env[key] = value

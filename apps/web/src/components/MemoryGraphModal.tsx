@@ -77,8 +77,8 @@ export function MemoryGraphModal({
           setStatus(`已配置 ${embedding.provider} embedding，但当前服务端仅支持本地 embedding；记忆请求会失败关闭，不会静默降级。`)
           return
         }
-        const model = embedding?.model || 'Xenova/bge-base-en-v1.5'
-        const dimensions = embedding?.dimensions || 768
+        const model = embedding?.model || 'Xenova/bge-m3'
+        const dimensions = embedding?.dimensions || 1024
         setStatus(result.key_configured
           ? `Supermemory 已配置 · ${model}（${dimensions} 维），输入查询后加载项目范围图。`
           : 'Supermemory 尚未配置 API key；不会使用本地或无关数据替代。')

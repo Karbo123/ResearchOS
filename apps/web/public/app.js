@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react14 = __toESM(require_react(), 1);
+  var import_react15 = __toESM(require_react(), 1);
 
   // src/api.ts
   var CHAT_REQUEST_TIMEOUT_MS = 3e5;
@@ -12966,16 +12966,24 @@
   ];
   var ChevronsDown = createLucideIcon("chevrons-down", __iconNode4);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/download.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/database.mjs
   var __iconNode5 = [
+    ["ellipse", { cx: "12", cy: "5", rx: "9", ry: "3", key: "msslwz" }],
+    ["path", { d: "M3 5V19A9 3 0 0 0 21 19V5", key: "1wlel7" }],
+    ["path", { d: "M3 12A9 3 0 0 0 21 12", key: "mv7ke4" }]
+  ];
+  var Database = createLucideIcon("database", __iconNode5);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/download.mjs
+  var __iconNode6 = [
     ["path", { d: "M12 15V3", key: "m9g1x1" }],
     ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
     ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
   ];
-  var Download = createLucideIcon("download", __iconNode5);
+  var Download = createLucideIcon("download", __iconNode6);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-check.mjs
-  var __iconNode6 = [
+  var __iconNode7 = [
     [
       "path",
       {
@@ -12986,10 +12994,10 @@
     ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
     ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
   ];
-  var FileCheck = createLucideIcon("file-check", __iconNode6);
+  var FileCheck = createLucideIcon("file-check", __iconNode7);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-pen-line.mjs
-  var __iconNode7 = [
+  var __iconNode8 = [
     [
       "path",
       {
@@ -13007,10 +13015,10 @@
     ],
     ["path", { d: "M8 18h1", key: "13wk12" }]
   ];
-  var FilePenLine = createLucideIcon("file-pen-line", __iconNode7);
+  var FilePenLine = createLucideIcon("file-pen-line", __iconNode8);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-text.mjs
-  var __iconNode8 = [
+  var __iconNode9 = [
     [
       "path",
       {
@@ -13023,10 +13031,10 @@
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode8);
+  var FileText = createLucideIcon("file-text", __iconNode9);
 
   // ../../node_modules/lucide-react/dist/esm/icons/flask-conical.mjs
-  var __iconNode9 = [
+  var __iconNode10 = [
     [
       "path",
       {
@@ -13037,54 +13045,54 @@
     ["path", { d: "M6.453 15h11.094", key: "3shlmq" }],
     ["path", { d: "M8.5 2h7", key: "csnxdl" }]
   ];
-  var FlaskConical = createLucideIcon("flask-conical", __iconNode9);
+  var FlaskConical = createLucideIcon("flask-conical", __iconNode10);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-branch.mjs
-  var __iconNode10 = [
+  var __iconNode11 = [
     ["path", { d: "M15 6a9 9 0 0 0-9 9V3", key: "1cii5b" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }]
   ];
-  var GitBranch = createLucideIcon("git-branch", __iconNode10);
+  var GitBranch = createLucideIcon("git-branch", __iconNode11);
 
   // ../../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode11 = [
+  var __iconNode12 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image = createLucideIcon("image", __iconNode11);
+  var Image = createLucideIcon("image", __iconNode12);
 
   // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
-  var __iconNode12 = [
+  var __iconNode13 = [
     ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
     ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
     ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
     ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
   ];
-  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode12);
+  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode13);
 
   // ../../node_modules/lucide-react/dist/esm/icons/library.mjs
-  var __iconNode13 = [
+  var __iconNode14 = [
     ["path", { d: "m16 6 4 14", key: "ji33uf" }],
     ["path", { d: "M12 6v14", key: "1n7gus" }],
     ["path", { d: "M8 8v12", key: "1gg7y9" }],
     ["path", { d: "M4 4v16", key: "6qkkli" }]
   ];
-  var Library = createLucideIcon("library", __iconNode13);
+  var Library = createLucideIcon("library", __iconNode14);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode14 = [
+  var __iconNode15 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode14);
+  var ListChecks = createLucideIcon("list-checks", __iconNode15);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode15 = [
+  var __iconNode16 = [
     [
       "path",
       {
@@ -13093,10 +13101,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode15);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode16);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode16 = [
+  var __iconNode17 = [
     [
       "path",
       {
@@ -13105,17 +13113,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode16);
+  var Paperclip = createLucideIcon("paperclip", __iconNode17);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode17 = [
+  var __iconNode18 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode17);
+  var Pause = createLucideIcon("pause", __iconNode18);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode18 = [
+  var __iconNode19 = [
     [
       "path",
       {
@@ -13124,33 +13132,33 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode18);
+  var Play = createLucideIcon("play", __iconNode19);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode19 = [
+  var __iconNode20 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode19);
+  var Plus = createLucideIcon("plus", __iconNode20);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode20 = [
+  var __iconNode21 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode20);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode21);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode21 = [
+  var __iconNode22 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode21);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode22);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode22 = [
+  var __iconNode23 = [
     [
       "path",
       {
@@ -13161,10 +13169,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode22);
+  var Save = createLucideIcon("save", __iconNode23);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode23 = [
+  var __iconNode24 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -13173,17 +13181,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode23);
+  var ScanText = createLucideIcon("scan-text", __iconNode24);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode24 = [
+  var __iconNode25 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode24);
+  var Search = createLucideIcon("search", __iconNode25);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode25 = [
+  var __iconNode26 = [
     [
       "path",
       {
@@ -13193,10 +13201,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode25);
+  var Send = createLucideIcon("send", __iconNode26);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode26 = [
+  var __iconNode27 = [
     [
       "path",
       {
@@ -13206,20 +13214,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode26);
+  var Settings = createLucideIcon("settings", __iconNode27);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode27 = [
+  var __iconNode28 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode27);
+  var Share2 = createLucideIcon("share-2", __iconNode28);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode28 = [
+  var __iconNode29 = [
     [
       "path",
       {
@@ -13229,16 +13237,16 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode28);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode29);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode29 = [
+  var __iconNode30 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode29);
+  var Square = createLucideIcon("square", __iconNode30);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode30 = [
+  var __iconNode31 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -13249,22 +13257,22 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode30);
+  var Stamp = createLucideIcon("stamp", __iconNode31);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode31 = [
+  var __iconNode32 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode31);
+  var Workflow = createLucideIcon("workflow", __iconNode32);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode32 = [
+  var __iconNode33 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode32);
+  var X = createLucideIcon("x", __iconNode33);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -15174,8 +15182,226 @@
   }
 
   // src/components/ModelSettingsModal.tsx
+  var import_react13 = __toESM(require_react(), 1);
+
+  // src/components/ProjectEmbeddingSettingsForm.tsx
   var import_react12 = __toESM(require_react(), 1);
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
+    const [values, setValues] = (0, import_react12.useState)(null);
+    const [instance, setInstance] = (0, import_react12.useState)(null);
+    const [loading, setLoading] = (0, import_react12.useState)(false);
+    const [saving, setSaving] = (0, import_react12.useState)(false);
+    const [error, setError] = (0, import_react12.useState)("");
+    const [dirty, setDirty] = (0, import_react12.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react12.useState)(false);
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const result = await api(`/api/projects/${projectId}/embedding-settings`);
+        setValues({
+          mode: result.mode,
+          provider: result.provider,
+          model: result.model,
+          dimensions: result.dimensions,
+          base_url: result.base_url,
+          key: "",
+          key_configured: result.key_configured
+        });
+        setInstance(result.instance);
+        setDirty(false);
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    (0, import_react12.useEffect)(() => {
+      if (projectId) void load();
+    }, [projectId]);
+    const update = (field, value) => {
+      setValues((previous) => previous ? { ...previous, [field]: value } : previous);
+      setDirty(true);
+    };
+    const save = async (resetData) => {
+      if (!values || saving) return;
+      setSaving(true);
+      setError("");
+      try {
+        const result = await api(`/api/projects/${projectId}/embedding-settings`, {
+          method: "PUT",
+          body: JSON.stringify({
+            mode: values.mode,
+            provider: values.provider,
+            model: values.model.trim(),
+            dimensions: Number(values.dimensions) || 1024,
+            base_url: values.base_url.trim(),
+            key: values.key,
+            reset_data: resetData
+          })
+        });
+        setValues((previous) => previous ? { ...previous, key: "", key_configured: result.key_configured } : previous);
+        setInstance(result.instance);
+        setDirty(false);
+        setConfirmReset(false);
+        onChanged();
+      } catch (err) {
+        const message = errorMessage(err);
+        if (!resetData && message.includes("embedding_requires_reset") || !resetData && message.includes("\u5168\u65B0\u6570\u636E\u76EE\u5F55")) {
+          setConfirmReset(true);
+        } else {
+          setError(`\u4FDD\u5B58\u5931\u8D25\uFF1A${message}`);
+        }
+      } finally {
+        setSaving(false);
+      }
+    };
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "empty", children: "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE Embedding \u914D\u7F6E\u2026" });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "form-error", role: "alert", children: error || "\u65E0\u6CD5\u52A0\u8F7D Embedding \u914D\u7F6E\u3002" });
+    const custom = values.mode === "custom";
+    const remote = custom && values.provider !== "local";
+    const ready = custom && (values.provider === "local" || Boolean(values.base_url && (values.key || values.key_configured)));
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("form", { className: "model-settings-form", onSubmit: (event) => {
+        event.preventDefault();
+        void save(false);
+      }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "model-tier", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "model-tier-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: "Embedding \u63D0\u4F9B\u65B9\u5F0F" }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "tier-status", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(StatusDot, { ready }),
+                values.mode === "global" ? "\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4" : values.provider === "local" ? "\u672C\u5730 ONNX \u6A21\u578B" : "\u8FDC\u7A0B OpenAI-compatible API"
+              ] })
+            ] }),
+            instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "tier-default", children: [
+              "\u5B9E\u4F8B :",
+              instance.port,
+              instance.running ? " \xB7 \u8FD0\u884C\u4E2D" : " \xB7 \u672A\u8FD0\u884C"
+            ] }) : null
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "model-tier-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
+              "\u914D\u7F6E\u6A21\u5F0F",
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+                "select",
+                {
+                  value: values.mode,
+                  onChange: (event) => update("mode", event.target.value),
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "global", children: "\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08.env\uFF09" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "custom", children: "\u672C\u9879\u76EE\u72EC\u7ACB\u914D\u7F6E" })
+                  ]
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
+              "Provider",
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+                "select",
+                {
+                  value: values.provider,
+                  disabled: !custom,
+                  onChange: (event) => update("provider", event.target.value),
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "local", children: "local\uFF08\u672C\u673A ONNX\uFF09" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "openai", children: "openai\uFF08OpenAI-compatible\uFF09" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "gemini", children: "gemini" })
+                  ]
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
+              "\u6A21\u578B",
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                "input",
+                {
+                  value: values.model,
+                  disabled: !custom,
+                  maxLength: 300,
+                  placeholder: values.provider === "local" ? "Xenova/bge-m3" : "\u4F8B\u5982 Qwen3-Embedding-8B",
+                  onChange: (event) => update("model", event.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
+              "\u7EF4\u5EA6",
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                "input",
+                {
+                  type: "number",
+                  value: values.dimensions,
+                  disabled: !custom,
+                  min: 1,
+                  max: 4096,
+                  onChange: (event) => update("dimensions", Number(event.target.value))
+                }
+              )
+            ] }),
+            remote ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
+                "\u57FA\u7840 URL",
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                  "input",
+                  {
+                    value: values.base_url,
+                    maxLength: 500,
+                    placeholder: "https://.../v1",
+                    onChange: (event) => update("base_url", event.target.value)
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
+                "API key",
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                  "input",
+                  {
+                    type: "password",
+                    value: values.key,
+                    placeholder: values.key_configured ? "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8" : "\u8F93\u5165 API key",
+                    autoComplete: "new-password",
+                    maxLength: 2e3,
+                    onChange: (event) => update("key", event.target.value)
+                  }
+                )
+              ] })
+            ] }) : null
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Database, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u6BCF\u4E2A\u81EA\u5B9A\u4E49\u9879\u76EE\u4F7F\u7528\u72EC\u7ACB Supermemory \u5B9E\u4F8B\u4E0E\u6570\u636E\u76EE\u5F55\uFF08\u7AEF\u53E3 6770\u20136869\uFF09\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u76F8\u4E92\u9694\u79BB\u3002\u9ED8\u8BA4\u63A8\u8350\u672C\u5730 Xenova/bge-m3\uFF08\u5B9E\u6D4B\u5355\u6761 30\u201372ms\uFF0C\u6BD4\u8FDC\u7A0B gitee \u5FEB\u7EA6 10 \u500D\uFF09\u3002" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ShieldCheck, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\uFF1B\u5207\u6362\u6A21\u578B\u6216\u7EF4\u5EA6\u4F1A\u91CD\u5EFA\u8BE5\u9879\u76EE\u7684\u6570\u636E\u76EE\u5F55\uFF08\u65E7\u6570\u636E\u81EA\u52A8\u5907\u4EFD\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u9700\u91CD\u65B0\u6444\u5165\uFF09\u3002" })
+          ] })
+        ] }),
+        error ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "modal-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: "\u5237\u65B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Save, { size: 16 }),
+            "\u4FDD\u5B58\u914D\u7F6E"
+          ] })
+        ] })
+      ] }),
+      confirmReset ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        ConfirmDialog,
+        {
+          title: "\u5207\u6362\u6A21\u578B\u9700\u8981\u91CD\u5EFA\u6570\u636E\u76EE\u5F55",
+          description: "\u5207\u6362 embedding \u6A21\u578B\u6216\u7EF4\u5EA6\u540E\uFF0C\u8BE5\u9879\u76EE\u5DF2\u6709\u7684\u8BED\u4E49\u8BB0\u5FC6\u65E0\u6CD5\u4E0E\u65B0\u7684\u5411\u91CF\u7A7A\u95F4\u6DF7\u7528\uFF0C\u9700\u8981\u5168\u65B0\u6570\u636E\u76EE\u5F55\u5E76\u91CD\u65B0\u6444\u5165\uFF08\u65E7\u6570\u636E\u76EE\u5F55\u4F1A\u4FDD\u7559\u4E3A\u5907\u4EFD\uFF09\u3002\u786E\u8BA4\u7EE7\u7EED\u5417\uFF1F",
+          confirmLabel: "\u786E\u8BA4\u91CD\u5EFA\u5E76\u4FDD\u5B58",
+          onConfirm: () => void save(true),
+          onCancel: () => setConfirmReset(false)
+        }
+      ) : null
+    ] });
+  }
+
+  // src/components/ModelSettingsModal.tsx
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   var TIERS = [
     { id: "simple", label: "Luna", defaultEffort: "low" },
     { id: "medium", label: "Terra", defaultEffort: "medium" },
@@ -15184,15 +15410,17 @@
   function sourceLabel(value) {
     return value === "runtime_override" ? "\u8FD0\u884C\u65F6\u8986\u76D6" : "\u9879\u76EE .env \u9ED8\u8BA4";
   }
-  function ModelSettingsModal({ open, onClose }) {
-    const [values, setValues] = (0, import_react12.useState)(null);
-    const [loading, setLoading] = (0, import_react12.useState)(false);
-    const [saving, setSaving] = (0, import_react12.useState)(false);
-    const [error, setError] = (0, import_react12.useState)("");
-    const [dirty, setDirty] = (0, import_react12.useState)(false);
-    const [confirmClose, setConfirmClose] = (0, import_react12.useState)(false);
-    (0, import_react12.useEffect)(() => {
+  function ModelSettingsModal({ open, onClose, projectId }) {
+    const [tab, setTab] = (0, import_react13.useState)("models");
+    const [values, setValues] = (0, import_react13.useState)(null);
+    const [loading, setLoading] = (0, import_react13.useState)(false);
+    const [saving, setSaving] = (0, import_react13.useState)(false);
+    const [error, setError] = (0, import_react13.useState)("");
+    const [dirty, setDirty] = (0, import_react13.useState)(false);
+    const [confirmClose, setConfirmClose] = (0, import_react13.useState)(false);
+    (0, import_react13.useEffect)(() => {
       if (!open) return;
+      setTab("models");
       setLoading(true);
       setError("");
       setDirty(false);
@@ -15226,6 +15454,14 @@
         return;
       }
       onClose();
+    };
+    const switchTab = (next) => {
+      if (dirty) {
+        setConfirmClose(true);
+        return;
+      }
+      setError("");
+      setTab(next);
     };
     const save = async (event) => {
       event.preventDefault();
@@ -15268,121 +15504,133 @@
         setSaving(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
         Modal,
         {
           eyebrow: "\u8FD0\u884C\u65F6\u8BBE\u7F6E",
-          title: "\u6A21\u578B\u914D\u7F6E",
-          description: "Luna\u3001Terra\u3001Sol \u4E09\u6863\u5206\u522B\u751F\u6548\u3002\u672A\u5355\u72EC\u8986\u76D6\u65F6\uFF0C\u9ED8\u8BA4\u4F7F\u7528\u9879\u76EE .env \u4E2D\u7684 URL \u548C key\uFF0C\u4FDD\u5B58\u540E\u7ACB\u5373\u7528\u4E8E\u4E0B\u4E00\u6B21\u8BF7\u6C42\u3002",
+          title: "\u914D\u7F6E",
+          description: tab === "models" ? "Luna\u3001Terra\u3001Sol \u4E09\u6863\u5206\u522B\u751F\u6548\u3002\u672A\u5355\u72EC\u8986\u76D6\u65F6\uFF0C\u9ED8\u8BA4\u4F7F\u7528\u9879\u76EE .env \u4E2D\u7684 URL \u548C key\uFF0C\u4FDD\u5B58\u540E\u7ACB\u5373\u7528\u4E8E\u4E0B\u4E00\u6B21\u8BF7\u6C42\u3002" : "\u6BCF\u4E2A\u79D1\u7814\u9879\u76EE\u53EF\u4EE5\u72EC\u7ACB\u914D\u7F6E\u8BED\u4E49\u8BB0\u5FC6 Embedding\uFF1B\u4E0D\u8986\u76D6\u65F6\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08\u5B9E\u6D4B\u672C\u5730 bge-m3 \u6BD4\u8FDC\u7A0B\u5FEB\u7EA6 10 \u500D\uFF09\u3002",
           onClose: requestClose,
-          children: loading ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "empty", children: "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026" }) : values ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
-            TIERS.map((tier) => {
-              const item = values[tier.id];
-              return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "model-tier", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "model-tier-heading", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("h3", { children: [
-                      tier.label,
-                      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "badge neutral", children: tier.id })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "tier-status", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
-                      item.key_configured ? "\u5DF2\u914D\u7F6E key" : "\u5F85\u914D\u7F6E key",
-                      " \xB7 ",
-                      item.url ? "URL \u5DF2\u5C31\u7EEA" : "\u5F85\u914D\u7F6E URL"
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "tier-sources", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { children: [
-                        "URL\uFF1A",
-                        sourceLabel(item.sources?.url)
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "settings-tabs", role: "tablist", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: "\u6A21\u578B \xB7 Luna/Terra/Sol" }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: "Embedding \xB7 \u8BED\u4E49\u8BB0\u5FC6" })
+            ] }),
+            tab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              ProjectEmbeddingSettingsForm,
+              {
+                projectId,
+                onChanged: () => setDirty(false)
+              }
+            ) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty", children: "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF0C\u518D\u914D\u7F6E\u9879\u76EE\u7EA7 Embedding\u3002" }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty", children: "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026" }) : values ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+              TIERS.map((tier) => {
+                const item = values[tier.id];
+                return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "model-tier", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "model-tier-heading", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
+                        tier.label,
+                        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "badge neutral", children: tier.id })
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { children: [
-                        "key\uFF1A",
-                        sourceLabel(item.sources?.key)
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "tier-status", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
+                        item.key_configured ? "\u5DF2\u914D\u7F6E key" : "\u5F85\u914D\u7F6E key",
+                        " \xB7 ",
+                        item.url ? "URL \u5DF2\u5C31\u7EEA" : "\u5F85\u914D\u7F6E URL"
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "tier-sources", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+                          "URL\uFF1A",
+                          sourceLabel(item.sources?.url)
+                        ] }),
+                        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+                          "key\uFF1A",
+                          sourceLabel(item.sources?.key)
+                        ] })
                       ] })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "tier-default", children: [
+                      "\u9ED8\u8BA4 ",
+                      tier.defaultEffort
                     ] })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "tier-default", children: [
-                    "\u9ED8\u8BA4 ",
-                    tier.defaultEffort
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "model-tier-grid", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+                      "\u6A21\u578B\u540D\u79F0",
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+                        "input",
+                        {
+                          value: item.model,
+                          required: true,
+                          maxLength: 200,
+                          onChange: (event) => update(tier.id, "model", event.target.value)
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+                      "\u63A8\u7406\u5F3A\u5EA6",
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+                        "select",
+                        {
+                          value: item.reasoning_effort,
+                          onChange: (event) => update(tier.id, "reasoning_effort", event.target.value),
+                          children: [
+                            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "low", children: "low" }),
+                            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "medium", children: "medium" }),
+                            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "high", children: "high" })
+                          ]
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+                      "\u6A21\u578B URL",
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+                        "input",
+                        {
+                          type: "url",
+                          value: item.url,
+                          required: true,
+                          maxLength: 500,
+                          placeholder: "https://.../v1",
+                          onChange: (event) => update(tier.id, "url", event.target.value)
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+                      "API key",
+                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+                        "input",
+                        {
+                          type: "password",
+                          value: item.key,
+                          placeholder: item.key_configured ? "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8" : "\u8F93\u5165 API key",
+                          autoComplete: "new-password",
+                          maxLength: 1e3,
+                          onChange: (event) => update(tier.id, "key", event.target.value)
+                        }
+                      )
+                    ] })
                   ] })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "model-tier-grid", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
-                    "\u6A21\u578B\u540D\u79F0",
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-                      "input",
-                      {
-                        value: item.model,
-                        required: true,
-                        maxLength: 200,
-                        onChange: (event) => update(tier.id, "model", event.target.value)
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
-                    "\u63A8\u7406\u5F3A\u5EA6",
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
-                      "select",
-                      {
-                        value: item.reasoning_effort,
-                        onChange: (event) => update(tier.id, "reasoning_effort", event.target.value),
-                        children: [
-                          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "low", children: "low" }),
-                          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "medium", children: "medium" }),
-                          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "high", children: "high" })
-                        ]
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
-                    "\u6A21\u578B URL",
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-                      "input",
-                      {
-                        type: "url",
-                        value: item.url,
-                        required: true,
-                        maxLength: 500,
-                        placeholder: "https://.../v1",
-                        onChange: (event) => update(tier.id, "url", event.target.value)
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
-                    "API key",
-                    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-                      "input",
-                      {
-                        type: "password",
-                        value: item.key,
-                        placeholder: item.key_configured ? "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8" : "\u8F93\u5165 API key",
-                        autoComplete: "new-password",
-                        maxLength: 1e3,
-                        onChange: (event) => update(tier.id, "key", event.target.value)
-                      }
-                    )
-                  ] })
+                ] }, tier.id);
+              }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "settings-note", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ShieldCheck, { size: 16 }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\u3002\u7559\u7A7A\u5DF2\u914D\u7F6E\u7684 key \u4F1A\u4FDD\u6301\u4E0D\u53D8\u3002" })
+              ] }),
+              error ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "modal-actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: "\u53D6\u6D88" }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Save, { size: 16 }),
+                  "\u4FDD\u5B58\u914D\u7F6E"
                 ] })
-              ] }, tier.id);
-            }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "settings-note", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ShieldCheck, { size: 16 }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\u3002\u7559\u7A7A\u5DF2\u914D\u7F6E\u7684 key \u4F1A\u4FDD\u6301\u4E0D\u53D8\u3002" })
-            ] }),
-            error ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "modal-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: "\u53D6\u6D88" }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Save, { size: 16 }),
-                "\u4FDD\u5B58\u914D\u7F6E"
               ] })
-            ] })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "form-error", role: "alert", children: error || "\u65E0\u6CD5\u52A0\u8F7D\u6A21\u578B\u914D\u7F6E\u3002" })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "form-error", role: "alert", children: error || "\u65E0\u6CD5\u52A0\u8F7D\u6A21\u578B\u914D\u7F6E\u3002" })
+          ]
         }
       ),
-      confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         ConfirmDialog,
         {
           title: "\u653E\u5F03\u672A\u4FDD\u5B58\u7684\u914D\u7F6E\uFF1F",
@@ -15400,8 +15648,8 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react13 = __toESM(require_react(), 1);
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var import_react14 = __toESM(require_react(), 1);
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     if (!graph) return null;
     const nodes = graph.nodes || [];
@@ -15410,27 +15658,27 @@
       x: 80 + index % 5 * 150,
       y: 70 + Math.floor(index / 5) * 120
     }]));
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": "\u9879\u76EE\u8BED\u4E49\u8BB0\u5FC6\u5173\u7CFB\u56FE", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": "\u9879\u76EE\u8BED\u4E49\u8BB0\u5FC6\u5173\u7CFB\u56FE", children: [
       edges.map((edge) => {
         const source = positions.get(edge.source);
         const target = positions.get(edge.target);
-        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
+        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
       }),
       nodes.map((node) => {
         const position = positions.get(node.id);
         if (!position) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("g", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("g", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
             "circle",
             {
               className: `memory-graph-node ${node.kind !== "memory" ? "related" : ""}`,
               cx: position.x,
               cy: position.y,
               r: "18",
-              children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("title", { children: node.label })
+              children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("title", { children: node.label })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
         ] }, node.id);
       })
     ] });
@@ -15441,13 +15689,13 @@
     onClose,
     showToast
   }) {
-    const [view, setView] = (0, import_react13.useState)("graph");
-    const [query, setQuery] = (0, import_react13.useState)("");
-    const [status, setStatus] = (0, import_react13.useState)("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
-    const [graph, setGraph] = (0, import_react13.useState)(null);
-    const [search, setSearch] = (0, import_react13.useState)(null);
-    const [loading, setLoading] = (0, import_react13.useState)(false);
-    (0, import_react13.useEffect)(() => {
+    const [view, setView] = (0, import_react14.useState)("graph");
+    const [query, setQuery] = (0, import_react14.useState)("");
+    const [status, setStatus] = (0, import_react14.useState)("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
+    const [graph, setGraph] = (0, import_react14.useState)(null);
+    const [search, setSearch] = (0, import_react14.useState)(null);
+    const [loading, setLoading] = (0, import_react14.useState)(false);
+    (0, import_react14.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -15459,8 +15707,8 @@
           setStatus(`\u5DF2\u914D\u7F6E ${embedding.provider} embedding\uFF0C\u4F46\u5F53\u524D\u670D\u52A1\u7AEF\u4EC5\u652F\u6301\u672C\u5730 embedding\uFF1B\u8BB0\u5FC6\u8BF7\u6C42\u4F1A\u5931\u8D25\u5173\u95ED\uFF0C\u4E0D\u4F1A\u9759\u9ED8\u964D\u7EA7\u3002`);
           return;
         }
-        const model = embedding?.model || "Xenova/bge-base-en-v1.5";
-        const dimensions = embedding?.dimensions || 768;
+        const model = embedding?.model || "Xenova/bge-m3";
+        const dimensions = embedding?.dimensions || 1024;
         setStatus(result.key_configured ? `Supermemory \u5DF2\u914D\u7F6E \xB7 ${model}\uFF08${dimensions} \u7EF4\uFF09\uFF0C\u8F93\u5165\u67E5\u8BE2\u540E\u52A0\u8F7D\u9879\u76EE\u8303\u56F4\u56FE\u3002` : "Supermemory \u5C1A\u672A\u914D\u7F6E API key\uFF1B\u4E0D\u4F1A\u4F7F\u7528\u672C\u5730\u6216\u65E0\u5173\u6570\u636E\u66FF\u4EE3\u3002");
       }).catch((error) => setStatus(`\u72B6\u6001\u8BFB\u53D6\u5931\u8D25\uFF1A${errorMessage(error)}`));
     }, [open, projectId]);
@@ -15495,7 +15743,7 @@
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
       Modal,
       {
         eyebrow: "\u9879\u76EE\u7EA7\u8BED\u4E49\u4E0A\u4E0B\u6587",
@@ -15504,8 +15752,8 @@
         onClose,
         wide: true,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": "\u8BED\u4E49\u8BB0\u5FC6\u89C6\u56FE", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": "\u8BED\u4E49\u8BB0\u5FC6\u89C6\u56FE", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
               "button",
               {
                 className: view === "graph" ? "active" : "",
@@ -15517,12 +15765,12 @@
                   setStatus("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Share2, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Share2, { size: 16 }),
                   "\u5173\u7CFB\u56FE"
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
               "button",
               {
                 className: view === "search" ? "active" : "",
@@ -15534,16 +15782,16 @@
                   setStatus("\u8F93\u5165\u67E5\u8BE2\u4EE5\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u8BED\u4E49\u5019\u9009\u3002");
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 16 }),
                   "\u8BED\u4E49\u68C0\u7D22"
                 ]
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { htmlFor: "memoryGraphQuery", children: "\u67E5\u8BE2\u5F53\u524D\u9879\u76EE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "memory-graph-query", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("label", { htmlFor: "memoryGraphQuery", children: "\u67E5\u8BE2\u5F53\u524D\u9879\u76EE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "memory-graph-query", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 "input",
                 {
                   id: "memoryGraphQuery",
@@ -15554,34 +15802,34 @@
                   onChange: (event) => setQuery(event.target.value)
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 16 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 16 }),
                 "\u68C0\u7D22"
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty", children: loading ? "\u6B63\u5728\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u8303\u56F4\u2026" : status }),
-          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(GraphCanvas, { graph }),
-            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "memory-graph-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: node.label }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty", children: loading ? "\u6B63\u5728\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u8303\u56F4\u2026" : status }),
+          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(GraphCanvas, { graph }),
+            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "memory-graph-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: node.label }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
                 "\u9879\u76EE\u8303\u56F4\uFF1A",
                 graph.project_id,
                 " \xB7 \u8BED\u4E49\u5019\u9009\uFF0C\u9700\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838"
               ] })
             ] }, node.id)) }) : null
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
             const source = item.source_type ? `${item.source_type}${item.source_id ? ` \xB7 ${item.source_id}` : ""}` : "Supermemory semantic result";
-            return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "memory-search-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: String(item.memory || "\u672A\u547D\u540D\u5019\u9009") }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "memory-search-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { children: String(item.memory || "\u672A\u547D\u540D\u5019\u9009") }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
                 "\u76F8\u4F3C\u5EA6\uFF1A",
                 String(item.similarity ?? "\u672A\u63D0\u4F9B"),
                 " \xB7 \u6765\u6E90\uFF1A",
                 source
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
                 "Artifact\uFF1A",
                 String(item.artifact_id || item.metadata?.artifact_id || "\u65E0"),
                 " \xB7 \u8BC1\u636E\u72B6\u6001\uFF1A",
@@ -15595,7 +15843,7 @@
   }
 
   // src/App.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   var INITIAL_MESSAGE = {
     id: "initial-assistant",
     role: "assistant",
@@ -15611,32 +15859,32 @@
     return `m-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
   function App() {
-    const [projects, setProjects] = (0, import_react14.useState)([]);
-    const [projectId, setProjectId] = (0, import_react14.useState)(null);
-    const [project, setProject] = (0, import_react14.useState)(null);
-    const [view, setView] = (0, import_react14.useState)("idea");
-    const [activeTab, setActiveTab] = (0, import_react14.useState)("overview");
-    const [health, setHealth] = (0, import_react14.useState)("connecting");
-    const [toast, setToast] = (0, import_react14.useState)(null);
-    const [messages, setMessages] = (0, import_react14.useState)([INITIAL_MESSAGE]);
-    const [projectMessages, setProjectMessages] = (0, import_react14.useState)([]);
-    const [spec, setSpec] = (0, import_react14.useState)(null);
-    const [specStatus, setSpecStatus] = (0, import_react14.useState)("\u5F85\u6F84\u6E05");
-    const [chatBusy, setChatBusy] = (0, import_react14.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react14.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react14.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react14.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react14.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react14.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react14.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react14.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react14.useState)(false);
-    const [confirm, setConfirm] = (0, import_react14.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react14.useState)(false);
-    const chatBusyRef = (0, import_react14.useRef)(false);
-    const projectChatBusyRef = (0, import_react14.useRef)(false);
-    const sessionIdRef = (0, import_react14.useRef)(null);
-    const toastTimerRef = (0, import_react14.useRef)(null);
+    const [projects, setProjects] = (0, import_react15.useState)([]);
+    const [projectId, setProjectId] = (0, import_react15.useState)(null);
+    const [project, setProject] = (0, import_react15.useState)(null);
+    const [view, setView] = (0, import_react15.useState)("idea");
+    const [activeTab, setActiveTab] = (0, import_react15.useState)("overview");
+    const [health, setHealth] = (0, import_react15.useState)("connecting");
+    const [toast, setToast] = (0, import_react15.useState)(null);
+    const [messages, setMessages] = (0, import_react15.useState)([INITIAL_MESSAGE]);
+    const [projectMessages, setProjectMessages] = (0, import_react15.useState)([]);
+    const [spec, setSpec] = (0, import_react15.useState)(null);
+    const [specStatus, setSpecStatus] = (0, import_react15.useState)("\u5F85\u6F84\u6E05");
+    const [chatBusy, setChatBusy] = (0, import_react15.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react15.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react15.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react15.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react15.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react15.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react15.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react15.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react15.useState)(false);
+    const [confirm, setConfirm] = (0, import_react15.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react15.useState)(false);
+    const chatBusyRef = (0, import_react15.useRef)(false);
+    const projectChatBusyRef = (0, import_react15.useRef)(false);
+    const sessionIdRef = (0, import_react15.useRef)(null);
+    const toastTimerRef = (0, import_react15.useRef)(null);
     const showToast = (message) => {
       setToast(message);
       if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
@@ -15686,7 +15934,7 @@
       setMobileChatOpen(false);
       void loadProjects();
     };
-    (0, import_react14.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
     }, []);
@@ -15897,8 +16145,8 @@
       }
     };
     const requestConfirm = (request) => setConfirm(request);
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         Sidebar,
         {
           projects,
@@ -15912,8 +16160,8 @@
           onOpenSettings: () => setSettingsOpen(true)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("main", { className: "workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
           Topbar,
           {
             title: view === "idea" ? "\u65B0\u7814\u7A76\u9879\u76EE" : project?.title || "\u7814\u7A76\u9879\u76EE",
@@ -15922,7 +16170,7 @@
             onRefresh: () => void refreshProject()
           }
         ),
-        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
           IdeaView,
           {
             messages,
@@ -15938,7 +16186,7 @@
             thinkingSessions,
             onToggleThinking: toggleThinkingSession
           }
-        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
           ProjectView,
           {
             project,
@@ -15954,10 +16202,10 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty", children: "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026" }) })
+        ) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "empty", children: "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026" }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false) }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         MemoryGraphModal,
         {
           open: memoryOpen,
@@ -15966,7 +16214,7 @@
           showToast
         }
       ),
-      confirm ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      confirm ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         ConfirmDialog,
         {
           title: confirm.title,
@@ -15980,15 +16228,15 @@
           onCancel: () => setConfirm(null)
         }
       ) : null,
-      toast ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Toast, { message: toast }) : null
+      toast ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Toast, { message: toast }) : null
     ] });
   }
 
   // src/main.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   var rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Missing #root mount element");
-  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime20.jsx)(App, {}));
+  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime21.jsx)(App, {}));
 })();
 /*! Bundled license information:
 
@@ -16060,6 +16308,7 @@ lucide-react/dist/esm/icons/activity.mjs:
 lucide-react/dist/esm/icons/check.mjs:
 lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevrons-down.mjs:
+lucide-react/dist/esm/icons/database.mjs:
 lucide-react/dist/esm/icons/download.mjs:
 lucide-react/dist/esm/icons/file-check.mjs:
 lucide-react/dist/esm/icons/file-pen-line.mjs:
