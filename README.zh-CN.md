@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-07 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-08 -->
 
 # Research OS
 
@@ -94,7 +94,7 @@ Embedding 通过 `.env` 中的 `SUPERMEMORY_EMBEDDING_PROVIDER`、`SUPERMEMORY_E
 
 语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。项目材料接口 `/api/projects/<project-id>/materials/search` 使用同一项目范围的 Supermemory hybrid 检索；本地服务不可用时不会用 SQL 词法结果、其他 provider 或无关实验代替。缺少本地服务、鉴权失败、返回数据无效或写入失败时，系统直接返回结构化错误，不会降级。
 
-真实 Supermemory Local 验收（`npm run supermemory:acceptance`，证据位于 `artifacts/acceptance/supermemory-local-*.json`）已验证文本摄取与可搜索 chunk、双项目隔离无跨项目泄漏、Graph Memory 节点、Super RAG 文档结果、依赖 LLM 的 `forget` 撤销（撤销后远端 memory 实体消失），以及通过远端消失验证的 delete 撤销。在两项外部阻塞解除前，验收会如实记录为 `partial` 而不是通过：PDF 终态处理需要 Gemini/Vertex key（PDF 提取会从 Mistral OCR 回退到 Gemini，缺 key 时卡在 `extracting`）；图片摄取同样需要 Gemini/Vertex key，当前捆绑的 `0.0.7-rc.2` Windows build 在无该 key 时处理图片会崩溃。2026-08-01 隔离实测确认：配置可用的 OpenAI-compatible LLM 端点不会改变 PDF 提取路径，提取器仍硬编码 Mistral OCR → Gemini 2.5 Flash。这些阻塞记录在 `TODO.md` 中，不会降级为本地 fallback。
+真实 Supermemory Local 验收（`npm run supermemory:acceptance`，证据位于 `artifacts/acceptance/supermemory-local-*.json`）已验证文本摄取与可搜索 chunk、双项目隔离无跨项目泄漏、Graph Memory 节点、Super RAG 文档结果、依赖 LLM 的 `forget` 撤销（撤销后远端 memory 实体消失），以及通过远端消失验证的 delete 撤销。在两项外部阻塞解除前，验收会如实记录为 `partial` 而不是通过：PDF 终态处理需要 Gemini/Vertex key（PDF 提取会从 Mistral OCR 回退到 Gemini，缺 key 时卡在 `extracting`）；图片摄取同样需要 Gemini/Vertex key，当前捆绑的 `0.0.7-rc.2` Windows build 在无该 key 时处理图片会崩溃。2026-08-01 隔离实测确认：配置可用的 OpenAI-compatible LLM 端点不会改变 PDF 提取路径，提取器仍硬编码 Mistral OCR → Gemini 2.5 Flash。图片同理——即使后端是多模态 OpenAI-compatible 模型（`gpt-5.6` 实测可接受图片输入），二进制里的图片描述步骤仍硬编码 Gemini provider。这些阻塞记录在 `TODO.md` 中，不会降级为本地 fallback。
 
 ## 实验隔离
 
