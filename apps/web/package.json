@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/main.tsx --bundle --outdir=public --entry-names=app --format=iife --target=es2022 --jsx=automatic --define:process.env.NODE_ENV='production' --log-level=warning",
+    "build": "node build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

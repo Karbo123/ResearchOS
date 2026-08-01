@@ -44,6 +44,9 @@
 
 ## 后续任务
 
+- [x] `P1-WEB-059` 修复 Web 构建产物在 Linux/bash 下出现裸标识符 `production` 导致 8080 白屏：原 `apps/web/package.json` 的 build 命令用 shell 内联 `--define:process.env.NODE_ENV='production'`，Windows PowerShell 保留单引号正常，但 Linux bash 吞掉单引号，产物变成 `if (production === "production")`，react-dom/client.js 抛 `ReferenceError: production is not defined`。已改为 `apps/web/build.mjs`（esbuild API 定义 `'process.env.NODE_ENV': '"production"'`，与平台 shell 无关）。已在 WSL2 运行副本 `~/ResearchOS` 同步并重建，8080 伺服产物 785,186 字节且不含 `production ===`；Windows Chrome 真实渲染 DOM 含完整侧边栏与项目列表；`apps/web/public/index.html` 资源版本号已同步为 `20260801-wsl-fix`；Windows 侧 `npm run build --workspace @research-os/web` 与 WSL 产物逐字节一致。
+- [~] `P2-WSL2-060` 明确 WSL2 运行副本同步流程：`D:\ResearchOS` 是开发主仓库（提交/推送在 D 侧），`~/ResearchOS`（ext4）是 WSL2 运行副本，三服务（API 8080 / Mastra 4111 / Supermemory 6767）从运行副本启动；修改 `apps/web`、`apps/server`、`apps/mastra` 后需要同步到运行副本并重建/重启对应服务。建议增加 `scripts/sync-wsl.sh`（rsync 排除 `.git`、`node_modules`、`runtime`、`artifacts` 等）并写入 README/AGENTS，避免再次出现 D 侧改完但运行副本仍是旧代码的情况。
+
 - [~] `P0-SUPERMEMORY-LOCAL-053` 切换到 Supermemory Local 自托管：默认使用本机 `127.0.0.1:6767`，支持官方 Local 的 localhost 自动认证和显式本地 key；云端/非回环地址仍强制鉴权。同步配置、Mastra、双语文档、运维说明、真实本地服务验收和失败契约；不得使用云端或静默替代 provider。
   - [x] `P0-SUPERMEMORY-LOCAL-053-A` 本地回环自动认证、显式 key、Mastra 同步、配置状态与失败关闭测试已补齐；云端/非回环仍强制鉴权。
   - [x] `P0-SUPERMEMORY-LOCAL-053-B` 官方 embedding 配置面（provider/model/dimensions/base_url/项目保留 key）已加入 `.env`/示例、状态接口、前端提示和双语文档；远程 embedding 在当前 build 不支持时失败关闭。
