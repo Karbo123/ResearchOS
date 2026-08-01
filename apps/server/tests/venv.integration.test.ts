@@ -11,10 +11,9 @@ describe('per-project scientific environment', () => {
   it('creates an interpreter under the project .venv', async () => {
     const project = mkdtempSync(resolve(projectsRoot, 'venv-test-'))
     created.push(project)
-    const backend = process.platform === 'win32' ? 'windows' : 'linux'
-    const venv = await ensureVenv(project, backend)
+    const venv = await ensureVenv(project)
     expect(venv).toBe(resolve(project, '.venv'))
-    const interpreter = process.platform === 'win32' ? resolve(venv, 'Scripts', 'python.exe') : resolve(venv, 'bin', 'python')
+    const interpreter = resolve(venv, 'bin', 'python')
     expect(existsSync(interpreter)).toBe(true)
   }, 120_000)
 })

@@ -31,7 +31,7 @@ function repositoryIdentity(sourceUrl: string): RepositoryIdentity { return pars
 
 function runGit(projectRoot: string, args: string[]): string {
   try {
-    return execFileSync(gitBinary(), args, { cwd: projectRoot, windowsHide: true, encoding: 'utf8' }).trim()
+    return execFileSync(gitBinary(), args, { cwd: projectRoot, encoding: 'utf8' }).trim()
   } catch {
     throw new ApiError(502, 'repository_git_operation_failed', '项目 Git 操作失败，仓库归档未完成。')
   }

@@ -40,7 +40,7 @@ After Defender-scanned upload, the durable queue dispatches a fixed `material_in
 
 ## Experiment Boundary
 
-An approved request selects an allowlisted type and project UUID. The supervisor derives all paths. Scientific Python executes with the project `.venv`; the Linux backend (`python3 -m venv` + `.venv/bin/python`) is the default when the service runs on WSL2/Linux, while a Windows host may explicitly select the legacy `windows` (`cmd.exe`) or `wsl2` launchers. Cross-host backend combinations are rejected with a structured 400. The child receives a minimal environment without application model keys.
+An approved request selects an allowlisted type and project UUID. The supervisor derives all paths. Scientific Python executes with the project `.venv` on the fixed Linux backend (`python3 -m venv` + `.venv/bin/python`). Native Windows hosting is not supported; the legacy `windows`/`wsl2` launchers were removed. The child receives a minimal environment without application model keys.
 
 The supervisor enforces timeout, process-tree cancellation, bounded logs, required finite `metrics.json`, structured `checkpoint.json`, path containment, SHA-256 artifact registration, and terminal audit state. This is native process control, not a virtual-machine security boundary.
 

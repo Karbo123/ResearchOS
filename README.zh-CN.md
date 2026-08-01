@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-18 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-19 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本、Windows Defender 上传门禁（通过 WSL interop）和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理，全部测试、构建和真实验收都在 WSL2 内通过；Windows 侧浏览器通过 mirrored 网络以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。干净机器上的安装器签名/发布和 GPU 主机验证仍是独立的后续工作。
+完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本、Windows Defender 上传门禁（通过 WSL interop）和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理，全部测试、构建和真实验收都在 WSL2 内通过；Windows 侧浏览器通过 mirrored 网络以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。GPU 主机验证仍是独立的后续工作。**原生 Windows 宿主不再受支持**：完整应用栈在 WSL2 内运行，Windows 只作为浏览器客户端。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -42,7 +42,7 @@ npm run build
 npm start
 ```
 
-仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。新开的非登录 WSL shell 仍可能回退到 Ubuntu 系统自带的 Node 12.x，请在执行任何命令前先运行 `source ~/.nvm/nvm.sh` 或 `nvm use 26.5.1`。仓库**只有一份**：`D:\ResearchOS` 就是 WSL2 里的 `/mnt/d/ResearchOS`（同一份文件，无需同步），所有服务都从 `/mnt/d/ResearchOS` 启动。注意 `/mnt/d`（drvfs）没有 inotify 支持，Windows 侧编辑代码后 `tsx watch` 不会自动重启，请手动重启受影响的服务。Windows 安装器源码仍独立面向 Windows 主机，与开发 shell 的版本管理互不影响；旧的 ext4 运行副本 `~/ResearchOS` 仅作备份。
+仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。新开的非登录 WSL shell 仍可能回退到 Ubuntu 系统自带的 Node 12.x，请在执行任何命令前先运行 `source ~/.nvm/nvm.sh` 或 `nvm use 26.5.1`。仓库**只有一份**：`D:\ResearchOS` 就是 WSL2 里的 `/mnt/d/ResearchOS`（同一份文件，无需同步），所有服务都从 `/mnt/d/ResearchOS` 启动。注意 `/mnt/d`（drvfs）没有 inotify 支持，Windows 侧编辑代码后 `tsx watch` 不会自动重启，请手动重启受影响的服务。原生 Windows 宿主不再受支持，不存在 Windows 安装器；旧的 ext4 运行副本 `~/ResearchOS` 仅作备份。
 
 默认运行数据库可从 Windows 浏览器访问 [http://127.0.0.1:8080](http://127.0.0.1:8080)（服务在 WSL2 内仅监听回环地址）。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，损坏目录单独保留。
 
@@ -99,7 +99,7 @@ Embedding 配置是**项目级且完全隔离**的。没有覆盖的项目使用
 
 ## 实验隔离
 
-模型不能提供命令、可执行程序、路径、URL、环境变量或网络目标。批准后的 Run 只能选择固定实验类型和项目内入口。服务在 WSL2/Linux 内运行时，Linux 原生后端是默认执行路径（`python3 -m venv` + `.venv/bin/python`）；Windows 宿主仍可显式选择旧的 `windows`（`cmd.exe`）或 `wsl2` 启动器，跨宿主后端组合按失败关闭返回结构化 400。
+模型不能提供命令、可执行程序、路径、URL、环境变量或网络目标。批准后的 Run 只能选择固定实验类型和项目内入口，并固定使用 Linux 后端执行（`python3 -m venv` + `.venv/bin/python`）。旧的 `windows`（`cmd.exe`）与 `wsl2` 启动器已随原生 Windows 支持一并移除。
 
 每个科研 Python 项目使用自己的 `.venv`，依赖不会安装到应用运行时。监督器强制固定项目根、超时、进程树取消、有界日志、有限数值 `metrics.json`、结构化 `checkpoint.json`、SHA-256 产物和审计事件。本机进程隔离弱于专用虚拟机，文档不会夸大这一边界。
 
@@ -132,4 +132,4 @@ npm run acceptance
 
 ## 限制
 
-这是本地 MVP，不是生产级安全边界，也不是科学结论生成器。元数据候选不是全文证据；页码 quote 仍需 claim 级人工复核；实验产物只说明实验测量结果，不能自动证明研究假设。本机进程控制不等于虚拟机隔离。真实 GPU 主机验证、语义 claim 映射和干净机器安装验收仍是未完成工作。仓库获取仅限于上面描述的已验证、审批门禁归档流程。
+这是本地 MVP，不是生产级安全边界，也不是科学结论生成器。元数据候选不是全文证据；页码 quote 仍需 claim 级人工复核；实验产物只说明实验测量结果，不能自动证明研究假设。本机进程控制不等于虚拟机隔离。真实 GPU 主机验证和语义 claim 映射仍是未完成工作。仓库获取仅限于上面描述的已验证、审批门禁归档流程。

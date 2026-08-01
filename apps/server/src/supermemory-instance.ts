@@ -52,7 +52,7 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
     throw new Error('SUPERMEMORY_SERVER_BIN must be configured to start a Supermemory embedding pool instance')
   }
   if (pool.provider !== 'local') {
-    const probe = spawnSync(bin, ['--version'], { encoding: 'utf8', timeout: 15_000, windowsHide: true })
+    const probe = spawnSync(bin, ['--version'], { encoding: 'utf8', timeout: 15_000 })
     const versionText = String(probe.stdout || probe.stderr || '').trim()
     if (versionText !== '0.0.5') {
       throw new Error(
@@ -66,7 +66,6 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
   const child = spawn(bin, [], {
     cwd: dirname(bin),
     detached: true,
-    windowsHide: true,
     stdio: ['ignore', outFd, errFd],
     env: supermemoryChildEnv({
       SUPERMEMORY_PORT: String(pool.port),

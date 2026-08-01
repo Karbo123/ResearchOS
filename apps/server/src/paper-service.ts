@@ -84,6 +84,6 @@ export async function createCompileProposal(projectId: string) {
   if (!existsSync(path)) throw new ApiError(422, 'paper_source_missing', '项目尚无 paper/main.tex。')
   const proposalId = crypto.randomUUID()
   const sourceSha = createHash('sha256').update(readFileSync(path)).digest('hex')
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', 'Compile the reviewed LaTeX source', 'Compile paper/main.tex', { experiment_type: 'compile_latex', execution_backend: 'windows', config: {}, random_seeds: [0], source_sha256: sourceSha, base_git_commit: gitCommit(projectId) }])
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', 'Compile the reviewed LaTeX source', 'Compile paper/main.tex', { experiment_type: 'compile_latex', execution_backend: 'linux', config: {}, random_seeds: [0], source_sha256: sourceSha, base_git_commit: gitCommit(projectId) }])
   return { proposal_id: proposalId, status: 'pending' }
 }

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-18 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-19 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS is a local, auditable research-automation MVP. The application is im
 
 ## Status
 
-The full application stack now runs inside WSL2 (Ubuntu 22.04): the TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, native Linux experiment supervisor, artifact ledger, Windows Defender upload gate (through WSL interop), and Supermemory Local. Node.js 26.5.1 is managed by nvm inside WSL2 and all tests, builds, and real acceptance runs pass there; Windows browsers reach the services at `http://127.0.0.1:<port>` through mirrored networking. The default `runtime/research-os.pglite` is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. Clean-machine installer signing/release and GPU-host validation remain separate open work.
+The full application stack now runs inside WSL2 (Ubuntu 22.04): the TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, native Linux experiment supervisor, artifact ledger, Windows Defender upload gate (through WSL interop), and Supermemory Local. Node.js 26.5.1 is managed by nvm inside WSL2 and all tests, builds, and real acceptance runs pass there; Windows browsers reach the services at `http://127.0.0.1:<port>` through mirrored networking. The default `runtime/research-os.pglite` is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. GPU-host validation remains separate open work. Native Windows hosting is not supported: the whole stack runs inside WSL2 and Windows acts only as a browser client.
 
 Model failures are final structured errors. The application never substitutes a local reply, another provider, or an unrelated experiment.
 
@@ -42,7 +42,7 @@ npm run build
 npm start
 ```
 
-The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. A fresh non-login WSL shell may still fall back to Ubuntu's system Node (12.x), so run `source ~/.nvm/nvm.sh` or `nvm use 26.5.1` before any command. There is exactly **one** repository copy: `D:\ResearchOS` is the same filesystem as `/mnt/d/ResearchOS` inside WSL2, so no sync step is needed. All services run from `/mnt/d/ResearchOS`. Note that `/mnt/d` (drvfs) has no inotify support, so edits made on the Windows side do not trigger `tsx watch` restarts; restart the affected service manually after code changes. The Windows installer source still targets a Windows host independently of the development shell. The former ext4 runtime copy (`~/ResearchOS`) is kept only as a backup.
+The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. A fresh non-login WSL shell may still fall back to Ubuntu's system Node (12.x), so run `source ~/.nvm/nvm.sh` or `nvm use 26.5.1` before any command. There is exactly **one** repository copy: `D:\ResearchOS` is the same filesystem as `/mnt/d/ResearchOS` inside WSL2, so no sync step is needed. All services run from `/mnt/d/ResearchOS`. Note that `/mnt/d` (drvfs) has no inotify support, so edits made on the Windows side do not trigger `tsx watch` restarts; restart the affected service manually after code changes. Native Windows hosting is not supported and there is no Windows installer. The former ext4 runtime copy (`~/ResearchOS`) is kept only as a backup.
 
 The default runtime database is available from the Windows browser at [http://127.0.0.1:8080](http://127.0.0.1:8080) (the service listens only on loopback inside WSL2). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and corrupted directories are preserved separately.
 
@@ -99,7 +99,7 @@ A real Supermemory Local acceptance run (`npm run supermemory:acceptance`, evide
 
 ## Experiment Isolation
 
-The model never supplies a command, executable, path, URL, environment, or network target. An approved run selects a fixed experiment type and a project-owned entry point. When the service runs in WSL2/Linux, the native Linux backend is the default and invokes the project interpreter through `python3 -m venv` plus `.venv/bin/python`; a Windows host may explicitly select the legacy `windows` (`cmd.exe`) or `wsl2` launchers, and cross-host backend combinations fail closed with a structured 400.
+The model never supplies a command, executable, path, URL, environment, or network target. An approved run selects a fixed experiment type and a project-owned entry point and executes on the fixed Linux backend, which invokes the project interpreter through `python3 -m venv` plus `.venv/bin/python`. The legacy `windows` (`cmd.exe`) and `wsl2` launchers were removed together with native Windows hosting.
 
 Each scientific Python project uses its own `.venv`; dependencies are never installed into the application runtime. The supervisor enforces a fixed project root, timeout, process-tree cancellation, bounded logs, finite numeric `metrics.json`, structured `checkpoint.json`, SHA-256 artifacts, and audit events. Native process isolation is weaker than a dedicated virtual machine and is documented as such.
 
@@ -132,4 +132,4 @@ The code-level checks and real-model acceptance use the configured model and ext
 
 ## Limitations
 
-This is a local MVP, not a production security boundary or a scientific oracle. Metadata candidates are not full-text evidence. Page quotes still require claim-level review. Experiment outputs establish only what the experiment measured, not the truth of a research hypothesis. Native process controls do not provide virtual-machine isolation. GPU host validation, semantic claim mapping, and clean-machine installer acceptance remain open work. Repository acquisition is limited to the verified, approval-gated archive path described above.
+This is a local MVP, not a production security boundary or a scientific oracle. Metadata candidates are not full-text evidence. Page quotes still require claim-level review. Experiment outputs establish only what the experiment measured, not the truth of a research hypothesis. Native process controls do not provide virtual-machine isolation. GPU host validation and semantic claim mapping remain open work. Repository acquisition is limited to the verified, approval-gated archive path described above.

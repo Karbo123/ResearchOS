@@ -83,7 +83,7 @@ export const experimentRequest = z.object({
   project_id: uuid,
   proposal_id: uuid,
   experiment_type: experimentTypes,
-  execution_backend: z.enum(['linux', 'windows', 'wsl2']).default('linux'),
+  execution_backend: z.literal('linux').default('linux'),
   config: z.record(z.string(), z.unknown()).default({}),
   random_seeds: z.array(z.number().int()).min(1).max(10).default([13, 37, 73]),
   topic_plan: z.record(z.string(), z.unknown()).nullable().optional(),

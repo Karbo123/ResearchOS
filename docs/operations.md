@@ -12,7 +12,7 @@ npm start
 
 Use nvm inside WSL2 (Ubuntu 22.04) for the workspace runtime. The repository default is recorded in `.nvmrc` as Node.js 26.5.1; `package.json` keeps a compatibility lower bound of Node.js 22.13. Verify `nvm current` and `node --version` before a build. The workspace start commands load the project `.env` with Node's `--env-file` option. Do not rely on a manually inherited shell environment for model or runtime settings. There is exactly **one** repository copy: `D:\ResearchOS` on Windows is the same filesystem as `/mnt/d/ResearchOS` inside WSL2, and all services run from that copy — no sync step exists. Because `/mnt/d` (drvfs) has no inotify support, `tsx watch` will not notice edits made on the Windows side; after changing `apps/*`, `scripts/`, or root config files, restart the affected service manually (kill the `npm run dev` tree and relaunch, see below). The old ext4 copy `~/ResearchOS` is kept only as a backup.
 
-The Windows installer uses `installer/windows/bootstrap.ps1`, stores the parent PID in `runtime/research-os.pid`, and writes stdout/stderr logs under `runtime/`. Its `-Stop` mode terminates only that recorded process tree.
+Native Windows hosting is not supported. The stack runs only inside WSL2; Windows is a browser client at `http://127.0.0.1:<port>`.
 
 ## Health and Capacity
 
@@ -91,11 +91,11 @@ Run `npm run supermemory:acceptance` (with the Supermemory Local server running)
 
 ## Scientific Environments
 
-The first approved Python run creates `projects/<id>/.venv` with `RESEARCH_PYTHON_EXECUTABLE` (default `python3` on Linux). Dependency installation is a separate, approval-gated operator action; the model cannot provide package commands. A Linux-created environment must not be reused by a Windows-created run and vice versa.
+The first approved Python run creates `projects/<id>/.venv` with `RESEARCH_PYTHON_EXECUTABLE` (default `python3`). Dependency installation is a separate, approval-gated operator action; the model cannot provide package commands. A project `.venv` is created and used only by the Linux runtime.
 
 WSL2 hosting (2026-08-01, fully implemented and verified): with `networkingMode=mirrored` in `.wslconfig`, Windows browsers reach WSL2 services through `http://127.0.0.1:<port>` even when the service binds only loopback inside WSL2, and WSL2 reaches Windows-host services through `127.0.0.1` (use `http://127.0.0.1:3000/v1`, not the shared LAN IP, for the model gateway). The runtime pins the official Supermemory `server-v0.0.5` linux-x64 binary (patched; downloaded into the WSL2 home as `~/bin/supermemory-server-linux-x64`); the global instance runs with a local bge-m3 data directory (`SUPERMEMORY_DATA_DIR=/home/karbo/bin/.supermemory.bge-m3-1024`, remote-vector directory from before the switch is preserved as `.supermemory.remote-qwen3-1024.bak-20260801`). The upload malware gate reaches Windows Defender through the interop mount, the experiment supervisor has a native Linux execution path (`python3 -m venv`, `.venv/bin/python`, `latexmk`, SIGKILL process-tree cancellation) as the default backend, and the repository is the single shared copy at `/mnt/d/ResearchOS` (= `D:\ResearchOS`). The full application stack — API `8080`, Mastra `4111`, Supermemory `6767` (plus embedding configuration-pool instances on 6770–6869) — runs inside WSL2 and is reachable from the Windows browser at `http://127.0.0.1:<port>`.
 
-Install a TeX distribution separately when `compile_latex` is needed. Missing `latexmk.exe` produces a structured experiment failure.
+Install a TeX distribution separately when `compile_latex` is needed. Missing `latexmk` produces a structured experiment failure.
 
 ## Repository Verification and Acquisition
 

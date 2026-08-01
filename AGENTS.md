@@ -6,7 +6,7 @@
 
 Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。不得把元数据候选表述为全文证据，不得把系统集成结果表述为研究结论，不得把未执行契约表述为已实现能力。
 
-业务应用、数据库迁移、运维脚本、验收和测试只使用 TypeScript。科研实验允许任意语言；Python 只允许出现在 `projects/<project-id>/experiment/`，并使用该项目自己的 `projects/<project-id>/.venv`。应用运行不得依赖容器引擎。默认开发与运行环境是 WSL2（Ubuntu 22.04，Node.js 26.5.1，仓库副本位于 ext4 而非 `/mnt/d`）；Windows 侧仅通过浏览器以 `127.0.0.1:<port>` 访问 WSL2 内服务。
+业务应用、数据库迁移、运维脚本、验收和测试只使用 TypeScript。科研实验允许任意语言；Python 只允许出现在 `projects/<project-id>/experiment/`，并使用该项目自己的 `projects/<project-id>/.venv`。应用运行不得依赖容器引擎。**原生 Windows 宿主不再受支持**（2026-08-01 决定）：服务只运行在 WSL2/Linux（Ubuntu 22.04，Node.js 26.5.1，仓库单副本 `/mnt/d/ResearchOS`，旧 ext4 副本 `~/ResearchOS` 仅作备份），Windows 侧仅通过浏览器以 `127.0.0.1:<port>` 访问 WSL2 内服务；Windows 安装器、`cmd.exe` 启动器等原生路径已移除。
 
 主要组件：`apps/server/` 原生 API 与实验监督器，`apps/mastra/` Agents/Memory/Skills/Tools/Workflows/Studio，`apps/web/` React + TypeScript 组件前端，`projects/` 项目 Git 工作区，`artifacts/` 受控产物，`runtime/` 本机状态。
 
@@ -54,7 +54,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - 所有 API 输入使用严格 Zod schema；新增字段同步更新 JSON Schema、前端和测试。
 - 禁止把模型输出传给任意命令、SQL、路径、依赖安装或网络目标。
 - 高成本实验、代码/配置/LaTeX 修改、依赖安装、删除和发布必须经过 Proposal、diff、明确审批、复核、Git commit 和审计。
-- 原生实验监督器只接受固定实验类型、项目 UUID、固定入口和结构化计划。服务在 WSL2/Linux 宿主时，Linux 原生后端是默认执行路径（`python3 -m venv` + `.venv/bin/python` + SIGKILL 进程树取消）；Windows 宿主仍可使用显式的 `windows`（`cmd.exe`）或 `wsl2` 后端，跨宿主组合直接返回结构化 400。
+- 原生实验监督器只接受固定实验类型、项目 UUID、固定入口和结构化计划，执行后端固定为 `linux`（`python3 -m venv` + `.venv/bin/python` + `latexmk` + SIGKILL 进程树取消）；旧的 `windows`/`wsl2` 后端已随原生 Windows 支持一并移除。
 - 每个科研 Python 项目使用独立 `.venv`。监督器保留固定工作根、超时、进程树取消、有界日志、产物大小/格式校验和 SHA-256。
 - 本机进程控制不能被表述为虚拟机级隔离。高风险不可信代码应使用用户明确配置的专用虚拟机。
 - 上传必须经过 Windows Defender 固定扫描，扫描不可用或失败时按失败关闭。WSL2/Linux 宿主通过 interop（`/mnt/c` 下定位 `MpCmdRun.exe` + `wslpath -w` 路径转换）调用 Windows 侧 Defender；不可用时同样失败关闭。

@@ -18,7 +18,7 @@ function validateOperation(operation: Operation): void {
 
 export function gitCommit(projectId: string): string {
   const root = pathInside(projectsRoot, projectId)
-  return execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim()
+  return execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()
 }
 
 export function applyApprovedPatch(projectId: string, payload: Record<string, unknown>, actor: string): string {
@@ -43,15 +43,15 @@ export function applyApprovedPatch(projectId: string, payload: Record<string, un
         writeFileSync(target, operation.content || '', { encoding: 'utf8', flag: operation.action === 'create' ? 'wx' : 'w' })
       }
     }
-    execFileSync(gitBinary(), ['add', '--all'], { cwd: root, windowsHide: true, stdio: 'ignore' })
-    execFileSync(gitBinary(), ['-c', `user.name=${actor}`, '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: apply approved research change'], { cwd: root, windowsHide: true, stdio: 'ignore' })
+    execFileSync(gitBinary(), ['add', '--all'], { cwd: root, stdio: 'ignore' })
+    execFileSync(gitBinary(), ['-c', `user.name=${actor}`, '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: apply approved research change'], { cwd: root, stdio: 'ignore' })
     return gitCommit(projectId)
   } catch (error) {
     for (const [path, content] of backups) {
       if (content === null) { if (existsSync(path)) rmSync(path) }
       else writeFileSync(path, content)
     }
-    try { execFileSync(gitBinary(), ['reset', '--mixed', 'HEAD'], { cwd: root, windowsHide: true, stdio: 'ignore' }) } catch { /* Preserve the original structured failure. */ }
+    try { execFileSync(gitBinary(), ['reset', '--mixed', 'HEAD'], { cwd: root, stdio: 'ignore' }) } catch { /* Preserve the original structured failure. */ }
     throw error
   }
 }

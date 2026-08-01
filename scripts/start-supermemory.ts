@@ -55,7 +55,7 @@ if (!bin || !existsSync(bin)) {
 
 const embeddingProvider = (process.env.SUPERMEMORY_EMBEDDING_PROVIDER || 'local').trim().toLowerCase()
 if (embeddingProvider !== 'local') {
-  const versionProbe = spawnSync(bin, ['--version'], { encoding: 'utf8', timeout: 15_000, windowsHide: true })
+  const versionProbe = spawnSync(bin, ['--version'], { encoding: 'utf8', timeout: 15_000 })
   const versionText = String(versionProbe.stdout || versionProbe.stderr || '').trim()
   if (versionText !== '0.0.5') {
     console.error(
@@ -79,7 +79,6 @@ const errFd = openSync(resolve(runtimeDir, 'supermemory.err.log'), 'a')
 const child = spawn(bin, [], {
   cwd: dirname(bin),
   detached: true,
-  windowsHide: true,
   stdio: ['ignore', outFd, errFd],
   env: supermemoryChildEnv({
     OPENAI_BASE_URL: process.env.RESEARCH_MODEL_URL_MEDIUM || 'http://127.0.0.1:3000/v1',

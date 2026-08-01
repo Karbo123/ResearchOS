@@ -5,7 +5,7 @@
 3. Bounded academic search stores metadata candidates. Open PDF ingestion separately records SHA-256 files and page-level quote candidates.
 4. Mastra proposes a topic-specific plan from the current Idea, verified evidence, policies, and resource constraints. It cannot submit a run.
 5. The user reviews and approves the Proposal. The API revalidates project state and the fixed execution contract.
-6. The native supervisor creates or reuses the project `.venv`, launches the fixed entry through Windows `cmd.exe` by default, and validates `metrics.json` and `checkpoint.json`.
+6. The native supervisor creates or reuses the project `.venv`, launches the fixed entry through the Linux backend (`.venv/bin/python`), and validates `metrics.json` and `checkpoint.json`.
 7. The API registers artifacts, metrics, checkpoints, SHA-256 values, and audit events. A later Idea change creates a new version rather than replacing history.
 8. Evidence-grounded paper generation creates a LaTeX Patch Proposal. Approval checks the Git baseline and file hash before writing and committing it.
 

@@ -1,6 +1,4 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { spawn } from 'node:child_process'
-import { once } from 'node:events'
 import { resolve } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
 import { repositoryRoot } from './idea-case-loader.js'
@@ -39,21 +37,12 @@ async function waitFor<T>(probe: () => Promise<T | null>, timeoutMs = 120_000): 
 }
 
 async function processExists(pid: number): Promise<boolean> {
-  if (process.platform !== 'win32') {
-    try {
-      process.kill(pid, 0)
-      return true
-    } catch {
-      return false
-    }
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
   }
-  const child = spawn('tasklist.exe', ['/fi', `PID eq ${pid}`, '/fo', 'csv', '/nh'], {
-    windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'],
-  })
-  let output = ''
-  child.stdout.on('data', chunk => { output += String(chunk) })
-  await once(child, 'exit')
-  return output.split(/\r?\n/).some(line => line.includes(`,"${pid}",`))
 }
 
 try {
@@ -79,7 +68,7 @@ try {
   writeFileSync(resolve(projectDirectories[0]!, 'experiment', 'main.py'), `${successSource}\n`, 'utf8')
   const successRequest = experimentRequest.parse({
     project_id: projectIds[0], proposal_id: proposalIds[0], experiment_type: 'python_analysis',
-    execution_backend: process.platform === 'win32' ? 'windows' : 'linux', config: { entrypoint: 'experiment/main.py' }, random_seeds: [13],
+    execution_backend: 'linux', config: { entrypoint: 'experiment/main.py' }, random_seeds: [13],
   })
   await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runIds[0], projectIds[0], proposalIds[0], successRequest.experiment_type, successRequest.config, runIds[0]])
   const successCompletion = submitRun(runIds[0]!, successRequest)
@@ -115,7 +104,7 @@ try {
   writeFileSync(resolve(projectDirectories[1]!, 'experiment', 'cancel.py'), `${cancellationSource}\n`, 'utf8')
   const cancellationRequest = experimentRequest.parse({
     project_id: projectIds[1], proposal_id: proposalIds[1], experiment_type: 'python_analysis',
-    execution_backend: process.platform === 'win32' ? 'windows' : 'linux', config: { entrypoint: 'experiment/cancel.py' }, random_seeds: [13],
+    execution_backend: 'linux', config: { entrypoint: 'experiment/cancel.py' }, random_seeds: [13],
   })
   await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runIds[1], projectIds[1], proposalIds[1], cancellationRequest.experiment_type, cancellationRequest.config, runIds[1]])
   const cancellationCompletion = submitRun(runIds[1]!, cancellationRequest)
@@ -132,9 +121,7 @@ try {
   await cancellationCompletion
   await successCompletion
 
-  const venvInterpreter = (project: string) => process.platform === 'win32'
-    ? resolve(project, '.venv', 'Scripts', 'python.exe')
-    : resolve(project, '.venv', 'bin', 'python')
+  const venvInterpreter = (project: string) => resolve(project, '.venv', 'bin', 'python')
   console.log(JSON.stringify({
     status: 'passed', per_project_venv: projectDirectories.every(project => existsSync(venvInterpreter(project))),
     successful_metrics: success.metrics, artifact_sha256_records: artifactRows.rows.length, metrics_preview: { type: metricsPreview.type, point_count: metricsPreview.point_count },
