@@ -13299,6 +13299,8 @@
         {
           type: "button",
           className: project.id === activeProjectId ? "active" : "",
+          "aria-current": project.id === activeProjectId ? "page" : void 0,
+          title: project.title,
           onClick: () => onOpenProject(project.id),
           children: project.title
         },

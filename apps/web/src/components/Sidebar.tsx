@@ -34,6 +34,8 @@ export function Sidebar({
               key={project.id}
               type="button"
               className={project.id === activeProjectId ? 'active' : ''}
+              aria-current={project.id === activeProjectId ? 'page' : undefined}
+              title={project.title}
               onClick={() => onOpenProject(project.id)}
             >
               {project.title}
