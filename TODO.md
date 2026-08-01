@@ -81,7 +81,7 @@
 - [!] `P0-RUNNER-007` 在真实 GPU Windows/WSL2 主机验证 GPU 任务与资源记录；解除条件是可用的真实 GPU 主机，当前只能完成 CPU/固定监督器验收。
 - [~] `P1-UPLOAD-009` 增加大规模异步材料索引和跨材料语义检索：已加入固定 `material_index` 队列、Defender 后索引、PDF/文本有界 chunk、图片/不可提取 PDF 原文件上传和项目范围 Supermemory hybrid 搜索；真实 Supermemory API、失败重放和跨材料结果验收待配置 key。
 - [x] `P1-PAPER-016B` 完成 claim 到多证据的语义人工复核工作台：严格多 evidence API、项目权限、接受/拒绝决策、审计记录、文献页 UI，以及 Claim Review 到 LaTeX Proposal/Patch 的端到端约束和验证均已完成。已通过隔离 API 测试、临时项目 Git Patch 测试和真实浏览器表单检查；接受复核仍只表示人工检查 quote，不等于科学结论。
-- [!] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布；工作流和 Inno Setup 源码已准备，解除条件是签名证书、干净 VM 和用户授权的 Release 发布。
+- [!] `P2-INSTALLER-029` 完成签名 EXE、干净 Windows VM 安装/升级/卸载验收和 GitHub Release 发布；工作流和 Inno Setup 源码已准备，本机已用 Inno Setup 6（`ISCC.exe`）验证构建 `installer/windows/dist/ResearchOS-Setup-0.3.0-x64.exe`（2.9 MB，SHA-256 已写入 `SHA256SUMS.txt`，产物目录已 gitignore）。`.github/workflows/installer-release.yml`：推送 `v*` tag 时在 CI 全量验证后产出 EXE 并创建 draft Release；显式 `workflow_dispatch publish=true` 需要 `INSTALLER_SIGNING_CERT_PFX_B64`/`INSTALLER_SIGNING_CERT_PASSWORD` secret 签名后才发布。解除条件：签名证书、干净 Windows VM 安装/升级/卸载验收，以及用户授权执行 Release 发布。
 - [~] `P2-HA-021` 增加长期无人值守运行、外部告警和恢复演练。
   - 当前推进：增加有界健康监控、失败事件 JSONL、受限告警 webhook 配置和只读备份恢复演练；真实长期部署、外部告警接收端和跨重启恢复演练仍需在目标 Windows 主机上执行。
 
