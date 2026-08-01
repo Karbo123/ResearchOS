@@ -8,7 +8,7 @@
 
 - [!] `P0-CONTRACT-053` 清除模型 provider/全局凭据隐式回退并修复默认运行目录验收边界。
   - 完成标准：Luna/Terra/Sol 的 URL、key 和 reasoning effort 只从各自层级配置或受控运行时覆盖读取；缺失层级 URL/key 必须直接返回结构化配置错误；默认服务目录必须能启动，恢复候选只能通过明确、可审计的运行配置切换；补充测试、文档和启动验收。
-  - 当前状态：Mastra 与服务器的全局 URL/key 回退已删除，三档配置测试已通过；启动命令已改为显式加载项目 `.env`。当前 `.env` 显式选择并已实际验证 `runtime/restore-pglite-20260731`，原始 `runtime/research-os.pglite` 仍保留不覆盖。真实模型三档 key 尚未配置，解除条件是用户提供有效 key 后完成完整 acceptance；失败仍直接返回结构化错误。
+  - 当前状态：Mastra 与服务器的全局 URL/key 回退已删除，三档配置测试已通过；启动命令已改为显式加载项目 `.env`。默认 `runtime/research-os.pglite` 已修复并验证可用（16 个项目），`.env` 使用 `RESEARCH_RUNTIME_DIR=runtime`；损坏目录已隔离为 `runtime/research-os.pglite.corrupt-20260801`。三档 key 已配置（`key_configured=true`），但真实模型端点 `http://10.31.107.77:3000/v1` 当前返回 `503`，完整 acceptance 仍为外部阻塞；失败始终直接返回结构化错误。
 
 - [x] `P0-DB-052` 从已保存的 PostgreSQL SQL 备份生成并验证非覆盖式 PGlite 恢复候选。
   - 完成标准：恢复工具使用 TypeScript、拒绝覆盖已有目录、按当前 schema 映射旧列、解析 COPY 数据、校验行数/关键表和数据库可读性；失败不得替换主库；成功后记录恢复候选路径和验证命令。
@@ -19,19 +19,19 @@
   - 已完成清理：旧 `research-os` 容器、网络、命名卷和六个自建镜像已在最终备份校验后删除；仓库运行不再占用 Docker 资源。
   - 已验证代码能力：Luna/Terra/Sol 三档真实请求；模型失败直接返回结构化错误且不写助手消息；Mastra Studio 三个 Agent 与三个 Workflow graph；独立 `.venv`、数值指标/检查点/PLY/SHA-256 产物及进程树取消。
   - 已完成代码级验收：完整真实 Idea 验收、typecheck、测试、Mastra/Web 构建、文档检查、仓库零旧实现扫描和桌面 UI/Mastra graph 截图证据；README 双语版与需求审计已同步。
-  - 当前状态：默认 `runtime/research-os.pglite` 启动时仍抛出 `PGlite RuntimeError: Aborted()`，但已生成并验证的 `runtime/restore-pglite-20260731` 恢复候选当前正在为 `127.0.0.1:8080` 和 `127.0.0.1:4111` 提供服务；API 健康、12 个项目读取、三档模型设置脱敏和 Mastra 工作流 graph 均已通过实际 HTTP 检查。原始目录和备份未覆盖；是否切换默认运行目录仍需用户明确批准。
+  - 当前状态：默认 `runtime/research-os.pglite` 已修复并验证可用：损坏目录已隔离（`runtime/research-os.pglite.corrupt-20260801`），从已验证恢复候选复制为默认目录后直接打开成功（16 个项目）；API `127.0.0.1:8080` 与 Mastra `127.0.0.1:4111` 均在默认路径下通过健康检查。`npm run typecheck`、`npm test`（12 文件/34 测试）、`npm run build`、`docs:check`、`idea-cases:check` 和 `ops-guard status` 通过；完整真实模型 acceptance 仍受模型端点 `503` 外部阻塞。
   - 完成标准：仓库业务源码、脚本和测试只有 TypeScript；应用不依赖容器运行时；原生 typecheck/test/build、数据库迁移、`.venv` 实验、取消、Mastra Studio、浏览器和真实模型验收通过；默认服务启动并通过健康检查；文档同步；提交并推送。
   - 模型验收：三档默认 URL 从项目 `.env` 读取。模型或 key 无效时必须直接返回结构化错误且不写助手消息。
 
-- [!] `P0-SUPERMEMORY-052` 将 Supermemory 接入 Research OS，作为项目级语义 Agent Memory 管理工具；已核对官方 Mastra/Graph Memory/Super RAG 文档，已完成严格失败关闭的 SDK/Processor、项目范围查询 API、前端 Graph/RAG 入口和有界材料索引，但尚未完成真实 API 验收。
+- [!] `P0-SUPERMEMORY-052` 将 Supermemory 接入 Research OS，作为项目级语义 Agent Memory 管理工具；已核对官方 Mastra/Graph Memory/Super RAG 文档，已完成严格失败关闭的 SDK/Processor、项目范围查询 API、前端 Graph/RAG 入口和有界材料索引。真实 Supermemory Local 验收已部分通过（文本摄取/搜索、双项目隔离、Graph、Super RAG、delete 撤销），剩余项受外部阻塞。
   - 官方资料：`https://supermemory.ai/docs/integrations/mastra.md`、`https://supermemory.ai/docs/concepts/graph-memory.md`、`https://supermemory.ai/docs/concepts/super-rag.md`、`https://supermemory.ai/docs/llms.txt`、`https://supermemory.ai/llms.txt`；已核对 `@supermemory/tools@2.1.1` 和 `supermemory@4.24.2` 的官方版本入口。实现仍必须以当前安装包类型和真实 API 响应为准；无法访问或不兼容时保持直接结构化错误，不得臆造接口。
   - [x] `P0-SUPERMEMORY-052-A` Mastra 集成与配置：使用官方 Mastra 集成承载 Supermemory 读写/检索；服务端只从项目 `.env`/受控运行时配置读取 Supermemory URL、key 和模型相关配置，网页只显示 `key_configured`；请求失败直接返回结构化错误，不使用本地 fallback、隐式 provider 切换或伪造助手消息。
-  - [~] `P0-SUPERMEMORY-052-B` 项目隔离：每个 `project_id` 使用确定性的 Supermemory container tag 和本地权限校验；mock 两项目隔离测试已通过，真实两个项目泄漏测试待有效 Supermemory key/API。
-  - [~] `P0-SUPERMEMORY-052-C` Graph Memory 可视化：网页左下角入口、当前 project scope、加载/空/错误状态和来源已实现；真实 provider graph 与桌面/移动端最新截图验收待有效 key。
-  - [~] `P0-SUPERMEMORY-052-D` Super RAG 语义检索入口：Graph 弹窗和材料页已直接调用项目范围 hybrid 检索并保留来源/相似度/证据状态；真实返回格式和跨项目验收待有效 key。
-  - [~] `P0-SUPERMEMORY-052-E` 文献与多模态摄取：参考 PDF 的页码 quote、SHA-256、Artifact 关联以及 Defender 扫描上传的 PDF/图片路径已实现；新增 PDF/文本有界分块，真实 PDF/图片 provider 摄取待有效 key。
-  - [~] `P0-SUPERMEMORY-052-F` 业务接入面：Idea/project chat、feedback、报告、实验总结、实验计划、related work 和论文草稿均已接入或保留语义关联入口；完整事件重放、删除和远程验证待有效 key。
-  - [!] `P0-SUPERMEMORY-052-G` 质量与安全验收：TypeScript schema、失败关闭、超时、幂等、mock 隔离、来源追溯、PDF/图片边界和未配置 key 失败测试已通过；真实 Supermemory API、两项目跨项目泄漏、端到端撤销/删除和真实浏览器 provider 状态的解除条件是配置有效 `SUPERMEMORY_API_KEY`。
+  - [x] `P0-SUPERMEMORY-052-B` 项目隔离：每个 `project_id` 使用确定性的 Supermemory container tag 和本地权限校验；真实 Supermemory Local 双项目泄漏测试已通过（项目 A 检索不到 B 的 marker，反之亦然），mock 测试保持通过。
+  - [x] `P0-SUPERMEMORY-052-C` Graph Memory 可视化：网页左下角入口、当前 project scope、加载/空/错误状态和来源已实现；真实 provider graph 已返回节点（本地 build 不返回 related memories，边数为 0 的限制记录在 053-D），桌面/移动端截图验收已通过。
+  - [x] `P0-SUPERMEMORY-052-D` Super RAG 语义检索入口：Graph 弹窗和材料页已直接调用项目范围 hybrid 检索并保留来源/相似度/证据状态；真实 `documents` 模式检索返回结果且 similarity 非空。
+  - [~] `P0-SUPERMEMORY-052-E` 文献与多模态摄取：参考 PDF 的页码 quote、SHA-256、Artifact 关联以及 Defender 扫描上传的 PDF/图片路径已实现；PDF 上传已真实通过（`filepath` 必须使用 `/` 开头绝对路径），但 PDF 终态处理和图片摄取分别受模型端点 `503` 与缺少 Gemini key 外部阻塞（见 `P0-SUPERMEMORY-LOCAL-053-D`）。
+  - [~] `P0-SUPERMEMORY-052-F` 业务接入面：Idea/project chat、feedback、报告、实验总结、实验计划、related work 和论文草稿均已接入或保留语义关联入口；delete 撤销与远端消失已真实验证，forget 撤销受模型端点 `503` 外部阻塞。
+  - [!] `P0-SUPERMEMORY-052-G` 质量与安全验收：TypeScript schema、失败关闭、超时、幂等、mock 隔离、来源追溯、PDF/图片边界和未配置 key 失败测试已通过；真实 API 文本摄取/搜索、双项目隔离、Graph、Super RAG 与 delete 撤销已通过；forget 撤销、PDF 终态和图片摄取的解除条件是模型端点恢复可用并为图片摄取配置 Gemini/Vertex key（见 053-D）。
   - 完成标准：代码、Mastra 集成、项目级隔离、Graph Memory 入口、Super RAG 入口、文献/长文本/多模态接入、SQL 责任边界、测试、浏览器证据、失败契约、文档和审计全部通过后才能标 `[x]`；当前保持 `[~]`。
 
 ## 已并入本次迁移
@@ -48,6 +48,7 @@
   - [x] `P0-SUPERMEMORY-LOCAL-053-A` 本地回环自动认证、显式 key、Mastra 同步、配置状态与失败关闭测试已补齐；云端/非回环仍强制鉴权。
   - [x] `P0-SUPERMEMORY-LOCAL-053-B` 官方 embedding 配置面（provider/model/dimensions/base_url/项目保留 key）已加入 `.env`/示例、状态接口、前端提示和双语文档；远程 embedding 在当前 build 不支持时失败关闭。
   - [!] `P0-SUPERMEMORY-LOCAL-053-C` Supermemory Local `0.0.7-rc.2` 二进制只实现本地 ONNX embedding（`Xenova/bge-base-en-v1.5`，768 维，仅英语）；官方文档中的 `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL` 在该 build 中未实现。解除条件：安装实现远程 embedding 环境变量的服务端 build，并在真实服务上完成 1024 维 API 摄取/检索验收；切换维度前必须使用全新数据目录或完整重索引。
+  - [!] `P0-SUPERMEMORY-LOCAL-053-D` 真实 Supermemory Local 验收：`scripts/supermemory-acceptance.ts` 已通过文本摄取/可搜索、双项目隔离、Graph 节点、Super RAG 和 delete 撤销+远端消失验证（证据 `artifacts/acceptance/supermemory-local-*.json`，`npm run supermemory:acceptance`）。剩余三项外部阻塞：`forget` 撤销依赖 LLM 抽取出的 memory 实体，配置的模型端点返回 `503` 时抽取失败（404 Memory not found）；PDF 上传已通过但终态处理同样依赖 LLM 抽取；图片摄取需要 Gemini/Vertex key，当前 `0.0.7-rc.2` Windows build 无 key 时处理图片会崩溃。解除条件：模型端点恢复可用；图片摄取配置 Gemini/Vertex key 或安装稳定支持图片的 build。阻塞期间脚本如实返回 `partial`（退出码 1），不得伪造通过或降级。
 
 - [x] `P1-UI-055` 将 `apps/web` 从前端原生 DOM/HTML 实现整体重写为 React 19 + TypeScript 组件应用；保留当前 API、Supermemory、Mastra、实验和审批功能契约，删除过时的 `public/index.html` 大段标记、`app.ts`/`chat-ux.ts` 原生 DOM 代码和未使用的旧产物；构建仍由 server 静态托管，桌面与移动端真实浏览器验收通过。
 - [x] `P1-UI-054` 使用已安装的 `ui-skills`/`baseline-ui` 对 `apps/web` 主界面完成统一视觉重设计；保留当前 API、Supermemory、Mastra、实验和审批功能契约，统一导航层级、信息密度、表单反馈、产物展示和桌面/移动端布局。`npm run build --workspace @research-os/web` 通过；真实浏览器已检查新 Idea、项目概览、产物图库、模型设置弹窗和移动端，页面无横向溢出、无重叠、无新增控制台错误；未引入渐变、无边界装饰卡片或模型失败 fallback。
@@ -86,7 +87,7 @@
 ## 本轮验证记录
 
 - `2026-07-31` `P1-UI-055` 复查：`apps/web` 已从原生 DOM 脚本重写为 React 19 + TypeScript 组件应用；`index.html` 只剩挂载点，旧 `app.ts`/`chat-ux.ts`/`chat-ux.js` 已删除，新增 `favicon.svg`。根目录 `npm run typecheck`、`npm test -- --no-cache`（9 个测试文件、27 个测试）、`npm run docs:check`、`npm run idea-cases:check`、完整 `npm run build` 和 `ops-guard status` 均通过；真实浏览器桌面/移动端检查无横向溢出、无控制台错误，项目、文献、实验、报告、模型设置和项目记忆图弹窗均可打开。
-- `P0-SUPERMEMORY-052` 复查：已加入 `supermemory` 官方 SDK、严格输入/输出 Processor、项目 `containerTag` 隔离、`/memory/status|search|graph` API 和左下角 Graph Memory UI；未配置 Supermemory key 时直接返回 `supermemory_not_configured`，不显示本地伪造结果。真实 Supermemory API、两个项目跨项目泄漏测试、长文本/PDF/图片摄取、幂等删除/撤销、来源链和浏览器运行态验收仍未完成，任务保持 `[~]`。
+- `P0-SUPERMEMORY-052` 复查：已加入 `supermemory` 官方 SDK、严格输入/输出 Processor、项目 `containerTag` 隔离、`/memory/status|search|graph` API 和左下角 Graph Memory UI；未配置 Supermemory key 时直接返回 `supermemory_not_configured`，不显示本地伪造结果。真实 Supermemory Local 验收已于 `2026-08-01` 部分通过（文本摄取/搜索、双项目隔离、Graph、Super RAG、delete 撤销），剩余 `forget`/PDF 终态/图片摄取为外部阻塞（见 `P0-SUPERMEMORY-LOCAL-053-D`），任务保持 `[!]` 而非 `[x]`。
 - `2026-07-31` 复查：修复 `apps/web/src/app.ts` Graph 响应的 TypeScript 类型错误；`npm run typecheck`、提升权限后的 `npm run build` 和 `npm test -- --no-cache` 均通过（8 个测试文件、20 个测试）。API/Mastra 旧进程重启时发现当前系统 `node` 为 `20.13.1`，不满足仓库 `>=22.13`，服务因 `pdfjs-dist` 的 `DOMMatrix` 依赖退出；因此不能记录为运行时启动通过，需使用 Node 22.13+ 后重新验收。
 - `2026-07-31` 运行态复查：使用官方 Node `22.22.0` 便携运行时和未覆盖主库的 `runtime/restore-pglite-20260731` 启动 API/Mastra；健康检查、项目读取、三档模型设置、`/memory/status` 和未配置 key 时的 `503 supermemory_not_configured` 均通过。浏览器确认项目详情页契约归一化、项目统计、Graph Memory 弹窗和直接失败状态正常；修复 `apps/web/src/app.ts` 的扁平/嵌套项目响应兼容，重建 Web 并确认无新增控制台错误。默认损坏数据库仍未切换，真实 Supermemory key/API 仍未配置。
 - `2026-07-31` Supermemory 代码复查：Node 24.14.0 下 `npm run typecheck`、`npm test --workspace @research-os/server -- --no-cache`（8 个测试文件、21 个测试）、服务端 build 和 Web build 均通过。同步双语 README、运维、安全和需求审计，明确项目 container tag、memory_links 账本、PDF/图片边界、审批撤销和失败关闭契约；真实 Supermemory key/API、两项目隔离和端到端撤销仍未验证，因此 `P0-SUPERMEMORY-052` 保持 `[~]`。
@@ -115,3 +116,4 @@
 - 交付边界：本地 MVP 迁移已完成；签名 EXE、干净 Windows VM 安装/升级/卸载、GitHub Release 发布、真实 GPU 主机验证和后续研究能力仍由后续任务保留。
 - 提交审计：`d02f649`（`feat:migrate-research-os-to-native-typescript`）。
 - `2026-08-01` Supermemory Local embedding 复查：官方文档列出 `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL`，但 `server-v0.0.7-rc.2` 源码与二进制均未实现远程 embedding，只实现本地 ONNX（`Xenova/bge-base-en-v1.5`，768 维，仅英语）。项目已加入双模式配置、状态字段、前端提示与失败关闭测试；配置远程 embedding 而当前 build 不支持时直接返回 `supermemory_embedding_unsupported`。`npm run typecheck`、`npm test`（12 文件、34 测试）、`npm run build`、`npm run docs:check`、`npm run idea-cases:check` 和 `ops-guard status` 通过；真实模型 acceptance 因本地模型端点 `503 Service temporarily unavailable` 失败，未伪造通过。补齐了 `.env` 中三档 `RESEARCH_MODEL_KEY_*`，API 设置接口已显示三档 `key_configured=true`。
+- `2026-08-01` Supermemory Local 真实验收：新增 `scripts/supermemory-acceptance.ts`（`npm run supermemory:acceptance`，隔离临时数据库 + 预清理只删除带 `acceptance` 标记的远端容器）。真实通过：文本摄取/可搜索 chunk、双项目隔离无泄漏、Graph 节点、Super RAG（documents 模式、similarity 非空）、delete 撤销并经远端消失验证；PDF 上传通过（修复 `filepath` 必须 `/` 开头、图片 `fileType:'image'`+`mimeType`）。外部阻塞记录为 `partial`（退出码 1）：`forget` 撤销在模型端点 `503` 下 404（无 memory 实体）、PDF 终态处理卡在 extracting、图片摄取导致 `0.0.7-rc.2` Windows build 崩溃（需 Gemini key）。已修复默认 `runtime/research-os.pglite`（损坏目录隔离为 `.corrupt-20260801`，从已验证恢复候选复制后直接打开 16 个项目，`.env` 回切 `RESEARCH_RUNTIME_DIR=runtime`）；API/Mastra 默认路径健康检查通过。`npm run typecheck`、`npm test`（12 文件、34 测试）、`npm run build`、`npm run docs:check`、`npm run idea-cases:check`、`ops-guard status` 均通过；主链 `acceptance-test.ts` 因 `/api/chat` 模型端点 `502/503` 如实失败（未伪造）。

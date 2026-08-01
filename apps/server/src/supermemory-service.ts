@@ -20,6 +20,16 @@ const MAX_ARTIFACT_BYTES = 100 * 1024 * 1024
 const allowedArtifactTypes = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/webp', 'image/gif'])
 export type MemoryIngestRequest = z.infer<typeof memoryIngestRequest>
 
+// Supermemory's upload endpoint expects the SDK fileType vocabulary
+// (text, pdf, tweet, google_doc, google_slide, google_sheet, image, video,
+// notion_doc, webpage, onedrive), not raw MIME values. Image uploads also
+// require the original MIME type in mimeType.
+function remoteFileType(mimeType: string): { fileType: string; mimeType?: string } {
+  if (mimeType === 'application/pdf') return { fileType: 'pdf' }
+  if (mimeType.startsWith('image/')) return { fileType: 'image', mimeType }
+  return { fileType: 'text' }
+}
+
 export class SupermemoryConfigurationError extends Error {
   readonly code = 'supermemory_not_configured'
   readonly status = 503
@@ -190,7 +200,10 @@ export async function searchProjectMemory(projectId: string, query: string, limi
 }
 
 export async function memoryGraph(projectId: string, query: string, limit: number) {
-  const result = await searchProjectMemory(projectId, query, limit, 'memories')
+  // supermemory-server 0.0.7-rc.2 returns no results for the 'memories'
+  // search mode (hosted-platform behavior); hybrid search is the supported
+  // path and still exposes context relations when the build provides them.
+  const result = await searchProjectMemory(projectId, query, limit, 'hybrid')
   const nodes = new Map<string, { id: string; label: string; kind: string; metadata: Record<string, unknown> }>()
   const edges: Array<{ id: string; source: string; target: string; relation: string }> = []
   for (const item of result.results) {
@@ -269,7 +282,13 @@ export async function ingestProjectMemory(projectId: string, input: MemoryIngest
   }
   try {
     const remote = sourceFile && !input.content
-      ? await api().documents.uploadFile({ file: createReadStream(artifactPath(sourceFile)), containerTag: tag, filepath: `research-os/artifacts/${sourceFile.id}/${sourceFile.name}`, fileType: String(sourceFile.mime_type), metadata: JSON.stringify(metadata) })
+      ? await api().documents.uploadFile({
+          file: createReadStream(artifactPath(sourceFile)),
+          containerTag: tag,
+          filepath: `/research-os/artifacts/${sourceFile.id}/${sourceFile.name}`,
+          ...remoteFileType(String(sourceFile.mime_type)),
+          metadata: JSON.stringify(metadata),
+        })
       : await api().add({ content: String(input.content), containerTag: tag, customId: remoteCustomId, entityContext: `Research OS project ${projectId} semantic memory; candidates require evidence review.`, metadata, taskType: input.task_type })
     const remoteId = String(remote.id)
     await database.query('UPDATE memory_links SET supermemory_id=$2,status=\'active\' WHERE id=$1', [linkId, remoteId])
@@ -310,13 +329,34 @@ export async function ingestConversationMemory(projectId: string, sessionId: str
   return { project_id: projectId, session_id: sessionId, ingested: links.length, links }
 }
 
+// Retry transient 409 "still processing" responses with a bounded wait. This is
+// not a provider fallback: the same Supermemory endpoint is retried until its
+// ingest worker settles, then the failure is surfaced unchanged.
+async function withProcessingRetry<T>(operation: () => Promise<T>, attempts = 20, delayMs = 2000): Promise<T> {
+  let lastError: unknown
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await operation()
+    } catch (error) {
+      lastError = error
+      const status = (error as { status?: number })?.status
+      if (status !== 409) throw error
+      await new Promise(resolve => setTimeout(resolve, delayMs))
+    }
+  }
+  throw lastError
+}
+
 export async function applyMemoryRevocation(projectId: string, linkId: string, operation: 'forget' | 'delete', actor: string) {
   const link = await one<MemoryLink>('SELECT * FROM memory_links WHERE id=$1 AND project_id=$2', [linkId, projectId])
   if (!link) throw new SupermemoryArtifactError('memory_link_not_found', '项目语义记忆关联不存在。', 404)
   if (link.status === 'revoked' || link.status === 'deleted') return { link, idempotent: true }
   if (link.status !== 'active') throw new SupermemoryArtifactError('memory_link_not_active', '只有 active 语义记忆可以撤销或删除。', 409)
-  if (operation === 'forget') await api().memories.forget({ containerTag: projectContainerTag(projectId), id: link.supermemory_id, reason: 'Research OS approved memory revocation' })
-  else await api().documents.delete(link.supermemory_id)
+  if (operation === 'forget') {
+    await withProcessingRetry(() => api().memories.forget({ containerTag: projectContainerTag(projectId), id: link.supermemory_id, reason: 'Research OS approved memory revocation' }))
+  } else {
+    await withProcessingRetry(() => api().documents.delete(link.supermemory_id))
+  }
   const status = operation === 'forget' ? 'revoked' : 'deleted'
   await database.query(`UPDATE memory_links SET status=$2,${operation === 'forget' ? 'revoked_at' : 'deleted_at'}=NOW() WHERE id=$1`, [linkId, status])
   await audit(`memory.${operation}`, projectId, { memory_link_id: linkId, supermemory_id: link.supermemory_id }, actor)

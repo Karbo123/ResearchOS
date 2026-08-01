@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-03 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-04 -->
 
 # Research OS
 
@@ -92,7 +92,9 @@ Supermemory runs through the self-hosted Supermemory Local server at `http://127
 
 Embeddings are configured through `SUPERMEMORY_EMBEDDING_PROVIDER`, `SUPERMEMORY_EMBEDDING_MODEL`, `SUPERMEMORY_EMBEDDING_DIMENSIONS`, `SUPERMEMORY_EMBEDDING_BASE_URL`, and the project-reserved `SUPERMEMORY_EMBEDDING_API_KEY` in `.env`. The bundled Supermemory Local `0.0.7-rc.2` binary only implements the local ONNX worker (`Xenova/bge-base-en-v1.5`, 768 dimensions, English-only). Requesting a remote provider (`openai`/`gemini`) while the installed build lacks that support fails closed with `supermemory_embedding_unsupported` instead of silently using local vectors. Switching to another model or dimension requires a fresh Supermemory data directory or full re-ingestion.
 
-Semantic results are candidates only and retain source, Artifact, locator, hash, and evidence-status metadata. The project material endpoint `/api/projects/<project-id>/materials/search` uses the same project-scoped Supermemory hybrid search; it does not substitute SQL keyword results, another provider, or an unrelated experiment when the local provider is unavailable. A missing local server, authentication failure, invalid response, or write failure returns a structured error. Local Supermemory validation, cross-project leakage testing with two project scopes, and end-to-end revoke/delete testing remain tracked in `TODO.md`.
+Semantic results are candidates only and retain source, Artifact, locator, hash, and evidence-status metadata. The project material endpoint `/api/projects/<project-id>/materials/search` uses the same project-scoped Supermemory hybrid search; it does not substitute SQL keyword results, another provider, or an unrelated experiment when the local provider is unavailable. A missing local server, authentication failure, invalid response, or write failure returns a structured error.
+
+A real Supermemory Local acceptance run (`npm run supermemory:acceptance`, evidence under `artifacts/acceptance/supermemory-local-*.json`) has verified text ingestion with searchable chunks, two-project isolation without cross-scope leakage, Graph Memory nodes, Super RAG document results, and delete revocation verified by remote absence. The run records `partial` instead of passing while two external blockers remain: the LLM-backed memory-extraction steps (including `forget` revocation and PDF terminal processing) stay unverifiable while the configured model endpoint returns `503`, and image ingestion requires a Gemini/Vertex key that the bundled `0.0.7-rc.2` Windows build does not handle without crashing. These blockers are tracked in `TODO.md` and never downgraded to local fallbacks.
 
 ## Experiment Isolation
 

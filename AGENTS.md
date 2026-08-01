@@ -32,6 +32,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - Supermemory embedding 配置遵循官方 `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL` 和项目保留的 `SUPERMEMORY_EMBEDDING_API_KEY`；当前 `0.0.7-rc.2` 二进制只实现本地 ONNX（`Xenova/bge-base-en-v1.5`，768 维，仅英语）。请求远程 embedding 而当前 build 不支持时直接返回 `supermemory_embedding_unsupported`，不得静默使用本地向量；切换模型/维度必须使用全新数据目录或完整重索引。
 - 所有 Supermemory memory 必须绑定一个不可变的 Research OS `project_id` 隔离域。读、写、检索、Graph Memory 可视化和 Super RAG 查询都必须带项目范围；禁止使用无项目的全局 memory、仅靠 prompt 约束隔离或把一个项目的 memory 作为另一个项目的上下文。跨项目查询必须是显式、经过审批且有审计记录的功能，目前默认禁止。
 - 项目隔离必须同时落在 Supermemory 的官方 scope/container/resource/metadata 机制（以核对后的 API 为准）和本地权限校验中；每条语义 memory 还要保留项目、来源 Artifact、SHA-256、文献页码/章节、Idea 版本、实验/报告 ID 和证据状态等可审计关联。Supermemory 失败、超时、鉴权失败或返回无效数据时直接返回结构化错误，不得本地降级、换 provider、静默写入 SQL 或继续生成助手内容。
+- Supermemory 真实验收以 `scripts/supermemory-acceptance.ts` 为准：文本摄取/搜索、双项目隔离、Graph 节点、Super RAG 和 delete 撤销（远端消失验证）已通过；`forget` 撤销依赖 LLM 抽取出的 memory 实体，PDF 终态处理依赖 LLM 抽取，配置的模型端点不可用（503）时两者都必须在 TODO 中标记外部阻塞 `[!]`，不得把 delete 验证冒充为 forget 验证。上传文件路径必须使用以 `/` 开头的 POSIX 绝对路径（本地 build 校验），图片上传需 `fileType:'image'` 加原始 `mimeType`。
 - 参考 PDF、Idea 讨论、日报/周报 feedback、日报/周报正文、实验结果总结、实验设计依据和探索点、论文/related work 参考，以及图片分析/识别等多模态内容，按项目范围写入 Supermemory；原始文件和哈希仍由受控 Artifact 管理，Supermemory 不改变 PDF 证据、页码 quote 和人工复核约束。
 - 网页左下角应提供项目范围内的 Supermemory Graph Memory 与语义检索入口。Graph 图和 Super RAG 结果必须显示当前 project scope、来源和权限状态，不得暴露其他项目的节点、事实或文献内容；功能未完成前不得在文档中表述为已实现。
 - Luna、Terra、Sol 三档的 model、URL、key 和 reasoning effort 完全独立。读取接口只返回 `key_configured`。
@@ -72,10 +73,12 @@ npm test
 npm run build
 npm run idea-cases:check
 npm run docs:check
+npm run supermemory:acceptance
 npx tsx scripts/ops-guard.ts status
 ```
 
 主链、模型、Mastra、实验、数据库或产物谱系变化还必须运行 `npx tsx scripts/acceptance-test.ts`；Mastra Approval/HITL 变化还必须运行 `npm run mastra:hitl:check`。真实模型无效时记录结构化失败，不得伪造通过。
+`npm run supermemory:acceptance` 需要本机 Supermemory Local 服务在 `127.0.0.1:6767` 运行，且使用隔离的临时数据库；脚本只删除带 `acceptance` 标记的远端容器，不会触碰真实项目记忆。核心验证通过而外部阻塞未解除时，脚本如实返回 `partial`（退出码 1）：配置的模型端点返回 `503` 时 `forget` 撤销与 PDF 终态处理无法验证；图片摄取需要 Gemini/Vertex key，当前 `0.0.7-rc.2` Windows build 在无 key 时处理图片会崩溃。任何阻塞步骤都不得降级为本地 fallback 或伪造成通过。
 
 README.md 保持英文，README.zh-CN.md 保持中文，章节顺序、命令、端口、环境变量、能力和限制同步；更新时同步 `DOCS_SYNC_VERSION`。重大更新同步 `.env.example`、架构、运维、安全、需求审计和 TODO。UI 变化需要真实浏览器检查和无重叠截图。
 
