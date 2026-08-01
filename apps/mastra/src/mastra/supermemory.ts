@@ -1,6 +1,24 @@
 import { Supermemory } from 'supermemory'
-import type { MemoryPromptData, SupermemoryMastraOptions } from '@supermemory/tools/mastra'
 import type { InputProcessor, OutputProcessor, Processor, ProcessInputArgs, ProcessOutputResultArgs } from '@mastra/core/processors'
+
+// Local, minimal type contracts matching the official Supermemory Mastra
+// integration surface used by Research OS. Keeping these inline avoids pulling
+// the heavy `@supermemory/tools` dependency tree (and its vulnerable AI SDK
+// transitives) into the runtime just for two type-only imports.
+interface SupermemoryMastraOptions {
+  apiKey: string
+  baseUrl: string
+  containerTag: string
+  customId: string
+  mode: string
+  addMemory: string
+}
+
+interface MemoryPromptData {
+  userMemories?: string
+  generalSearchMemories?: string
+  searchResults?: Array<{ memory?: string; chunk?: string; metadata?: unknown }>
+}
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
 const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'

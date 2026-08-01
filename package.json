@@ -40,5 +40,8 @@
     "tar": "7.5.22",
     "tsx": "4.19.3",
     "typescript": "5.8.3"
+  },
+  "overrides": {
+    "@ai-sdk/provider-utils-v5": "npm:@ai-sdk/provider-utils@4.0.40"
   }
 }
