@@ -18,6 +18,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .full { width: 100%; }
 .side-label { color: var(--sidebar-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 24px 8px 8px; }
 .project-list { display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; overflow-y: auto; min-height: 0; overscroll-behavior: contain; padding-right: 2px; }
+.project-list { scrollbar-width: thin; scrollbar-color: #c9d1dc transparent; }
+.project-list::-webkit-scrollbar { width: 8px; }
+.project-list::-webkit-scrollbar-track { background: transparent; }
+.project-list::-webkit-scrollbar-thumb { background: #d3dae3; border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+.project-list::-webkit-scrollbar-thumb:hover { background-color: #aeb8c4; }
 .project-list button { border: 0; background: transparent; color: var(--sidebar-muted); text-align: left; padding: 9px 10px; border-radius: 8px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .project-list button:hover, .project-list button.active { background: var(--green-soft); color: var(--green-dark); }
 .service-links { margin-top: auto; border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 2px; }
@@ -284,7 +289,9 @@ body { overflow: hidden; }
 .primary { min-height: 38px; border-radius: 6px; background: var(--blue); font-weight: 700; }
 .primary:hover { background: var(--green-dark); }
 .side-label { color: var(--sidebar-muted); font-size: 10px; letter-spacing: .08em; margin: 28px 8px 9px; }
-.project-list { gap: 3px; }
+.project-list { gap: 3px; scrollbar-color: #3a574b transparent; }
+.project-list::-webkit-scrollbar-thumb { background: #3a574b; }
+.project-list::-webkit-scrollbar-thumb:hover { background-color: #4c6b5d; }
 .project-list button { color: var(--sidebar-muted); border: 1px solid transparent; padding: 10px 11px; border-radius: 6px; font-size: 12px; }
 .project-list button:hover { color: #f4f8f5; background: #1d2d27; }
 .project-list button:hover, .project-list button.active { background: #294039; color: #f4f8f5; border-color: #3a574b; }

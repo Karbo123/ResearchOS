@@ -664,6 +664,12 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context
   return context.body(readFileSync(path))
 })
 
+// HTML must always revalidate so UI/CSS fixes reach browsers immediately;
+// versioned assets (app.js/styles.css?v=...) remain cacheable by default.
+app.use('/*', async (context, next) => {
+  if (context.req.path === '/' || context.req.path === '/index.html') context.header('Cache-Control', 'no-cache')
+  await next()
+})
 app.use('/*', serveStatic({ root: publicRoot, rewriteRequestPath: path => path === '/' ? '/index.html' : path }))
 
 const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
