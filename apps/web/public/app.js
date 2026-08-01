@@ -15454,7 +15454,14 @@
       setGraph(null);
       setSearch(null);
       api(`/api/projects/${projectId}/memory/status`).then((result) => {
-        setStatus(result.key_configured ? "Supermemory \u5DF2\u914D\u7F6E\uFF0C\u8F93\u5165\u67E5\u8BE2\u540E\u52A0\u8F7D\u9879\u76EE\u8303\u56F4\u56FE\u3002" : "Supermemory \u5C1A\u672A\u914D\u7F6E API key\uFF1B\u4E0D\u4F1A\u4F7F\u7528\u672C\u5730\u6216\u65E0\u5173\u6570\u636E\u66FF\u4EE3\u3002");
+        const embedding = result.embedding;
+        if (embedding && embedding.provider !== "local" && !embedding.remote_embedding_supported) {
+          setStatus(`\u5DF2\u914D\u7F6E ${embedding.provider} embedding\uFF0C\u4F46\u5F53\u524D\u670D\u52A1\u7AEF\u4EC5\u652F\u6301\u672C\u5730 embedding\uFF1B\u8BB0\u5FC6\u8BF7\u6C42\u4F1A\u5931\u8D25\u5173\u95ED\uFF0C\u4E0D\u4F1A\u9759\u9ED8\u964D\u7EA7\u3002`);
+          return;
+        }
+        const model = embedding?.model || "Xenova/bge-base-en-v1.5";
+        const dimensions = embedding?.dimensions || 768;
+        setStatus(result.key_configured ? `Supermemory \u5DF2\u914D\u7F6E \xB7 ${model}\uFF08${dimensions} \u7EF4\uFF09\uFF0C\u8F93\u5165\u67E5\u8BE2\u540E\u52A0\u8F7D\u9879\u76EE\u8303\u56F4\u56FE\u3002` : "Supermemory \u5C1A\u672A\u914D\u7F6E API key\uFF1B\u4E0D\u4F1A\u4F7F\u7528\u672C\u5730\u6216\u65E0\u5173\u6570\u636E\u66FF\u4EE3\u3002");
       }).catch((error) => setStatus(`\u72B6\u6001\u8BFB\u53D6\u5931\u8D25\uFF1A${errorMessage(error)}`));
     }, [open, projectId]);
     if (!open) return null;

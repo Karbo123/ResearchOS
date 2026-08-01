@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-02 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-01-03 -->
 
 # Research OS
 
@@ -88,9 +88,11 @@ PDF 页码原文在人工创建并决定 Claim Review 前都只是证据候选�
 
 ## 项目语义记忆
 
-Supermemory 集成目前是部分实现，只有设置 `SUPERMEMORY_ENABLED=true` 或配置 `SUPERMEMORY_API_KEY` 后才启用。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
+Supermemory 默认通过本机自托管的 Supermemory Local 服务 `http://127.0.0.1:6767` 运行。Supermemory Local 将加密数据库保存在本机，并提供 Memory API、hybrid 语义检索、Graph 上下文和文档摄取，不依赖 Supermemory 云端服务。本机回环请求可以使用 Supermemory Local 的自动认证；如果使用非回环地址，则必须配置显式 `SUPERMEMORY_API_KEY`。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
 
-语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。项目材料接口 `/api/projects/<project-id>/materials/search` 使用同一项目范围的 Supermemory hybrid 检索；服务不可用时不会用本地 SQL 词法结果代替。缺少 key、超时、鉴权失败、返回数据无效或远程写入失败时，系统直接返回结构化错误，不会降级到本地语义检索、其他 provider 或无关实验。真实 Supermemory API 验收、两个已配置项目的跨项目泄漏测试，以及端到端撤销/删除验收仍记录在 `TODO.md` 中。
+Embedding 通过 `.env` 中的 `SUPERMEMORY_EMBEDDING_PROVIDER`、`SUPERMEMORY_EMBEDDING_MODEL`、`SUPERMEMORY_EMBEDDING_DIMENSIONS`、`SUPERMEMORY_EMBEDDING_BASE_URL` 和项目保留的 `SUPERMEMORY_EMBEDDING_API_KEY` 配置。当前捆绑的 Supermemory Local `0.0.7-rc.2` 二进制只实现本地 ONNX worker（`Xenova/bge-base-en-v1.5`，768 维，仅英语）。当已安装 build 不支持远程 provider（`openai`/`gemini`）却请求远程 embedding 时，系统直接返回 `supermemory_embedding_unsupported`，不会静默改用本地向量。切换模型或维度必须使用全新的 Supermemory 数据目录或完整重索引。
+
+语义结果只能作为候选，并保留来源、Artifact、页码/定位、哈希和证据状态元数据。项目材料接口 `/api/projects/<project-id>/materials/search` 使用同一项目范围的 Supermemory hybrid 检索；本地服务不可用时不会用 SQL 词法结果、其他 provider 或无关实验代替。缺少本地服务、鉴权失败、返回数据无效或写入失败时，系统直接返回结构化错误，不会降级。Supermemory Local 验收、两个项目的跨项目隔离测试，以及端到端撤销/删除验收仍记录在 `TODO.md` 中。
 
 ## 实验隔离
 

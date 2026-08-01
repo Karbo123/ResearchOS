@@ -44,6 +44,11 @@
 
 ## 后续任务
 
+- [~] `P0-SUPERMEMORY-LOCAL-053` 切换到 Supermemory Local 自托管：默认使用本机 `127.0.0.1:6767`，支持官方 Local 的 localhost 自动认证和显式本地 key；云端/非回环地址仍强制鉴权。同步配置、Mastra、双语文档、运维说明、真实本地服务验收和失败契约；不得使用云端或静默替代 provider。
+  - [x] `P0-SUPERMEMORY-LOCAL-053-A` 本地回环自动认证、显式 key、Mastra 同步、配置状态与失败关闭测试已补齐；云端/非回环仍强制鉴权。
+  - [x] `P0-SUPERMEMORY-LOCAL-053-B` 官方 embedding 配置面（provider/model/dimensions/base_url/项目保留 key）已加入 `.env`/示例、状态接口、前端提示和双语文档；远程 embedding 在当前 build 不支持时失败关闭。
+  - [!] `P0-SUPERMEMORY-LOCAL-053-C` Supermemory Local `0.0.7-rc.2` 二进制只实现本地 ONNX embedding（`Xenova/bge-base-en-v1.5`，768 维，仅英语）；官方文档中的 `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL` 在该 build 中未实现。解除条件：安装实现远程 embedding 环境变量的服务端 build，并在真实服务上完成 1024 维 API 摄取/检索验收；切换维度前必须使用全新数据目录或完整重索引。
+
 - [x] `P1-UI-055` 将 `apps/web` 从前端原生 DOM/HTML 实现整体重写为 React 19 + TypeScript 组件应用；保留当前 API、Supermemory、Mastra、实验和审批功能契约，删除过时的 `public/index.html` 大段标记、`app.ts`/`chat-ux.ts` 原生 DOM 代码和未使用的旧产物；构建仍由 server 静态托管，桌面与移动端真实浏览器验收通过。
 - [x] `P1-UI-054` 使用已安装的 `ui-skills`/`baseline-ui` 对 `apps/web` 主界面完成统一视觉重设计；保留当前 API、Supermemory、Mastra、实验和审批功能契约，统一导航层级、信息密度、表单反馈、产物展示和桌面/移动端布局。`npm run build --workspace @research-os/web` 通过；真实浏览器已检查新 Idea、项目概览、产物图库、模型设置弹窗和移动端，页面无横向溢出、无重叠、无新增控制台错误；未引入渐变、无边界装饰卡片或模型失败 fallback。
 - [!] `P1-DEPS-049` 跟进 Mastra 固定的 `@ai-sdk/provider-utils@3.0.30` 上游审计告警；直接 `tar` 已升级到 `7.5.22` 并清除严重漏洞，剩余 `@ai-sdk/provider-utils`/`undici` 风险仍由当前 Mastra/Supermemory 上游传递依赖固定，暂无兼容补丁，禁止强制覆盖不兼容的间接依赖。解除条件是上游发布兼容修复后重跑 `npm audit --omit=dev`。
@@ -109,3 +114,4 @@
 - 最终仓库扫描：业务源码、脚本和测试没有 `.py`；没有旧编排、容器文件、旧 Python 服务路径或旧模型服务路径；`.env`、运行时数据库、备份和密钥未进入变更范围。
 - 交付边界：本地 MVP 迁移已完成；签名 EXE、干净 Windows VM 安装/升级/卸载、GitHub Release 发布、真实 GPU 主机验证和后续研究能力仍由后续任务保留。
 - 提交审计：`d02f649`（`feat:migrate-research-os-to-native-typescript`）。
+- `2026-08-01` Supermemory Local embedding 复查：官方文档列出 `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL`，但 `server-v0.0.7-rc.2` 源码与二进制均未实现远程 embedding，只实现本地 ONNX（`Xenova/bge-base-en-v1.5`，768 维，仅英语）。项目已加入双模式配置、状态字段、前端提示与失败关闭测试；配置远程 embedding 而当前 build 不支持时直接返回 `supermemory_embedding_unsupported`。`npm run typecheck`、`npm test`（12 文件、34 测试）、`npm run build`、`npm run docs:check`、`npm run idea-cases:check` 和 `ops-guard status` 通过；真实模型 acceptance 因本地模型端点 `503 Service temporarily unavailable` 失败，未伪造通过。补齐了 `.env` 中三档 `RESEARCH_MODEL_KEY_*`，API 设置接口已显示三档 `key_configured=true`。

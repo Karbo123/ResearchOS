@@ -28,6 +28,8 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - Idea Agent 使用 Mastra Agent、Skills 和 Tools；语义 Agent Memory 统一由 Supermemory 管理，并通过 Supermemory 官方 Mastra 集成接入。Mastra 自带 Memory 不能作为 Research OS 的唯一或默认语义事实源。Agent 不得获得任意 Shell、SQL、文件路径、可执行程序或网络工具。
 - Supermemory 是长文本、事实、记录、文献知识和多模态内容的语义记忆系统；PGlite 只保存结构化业务状态、实体 ID、状态、审批、哈希、权限和审计，不把句子级语义内容硬编码为 SQL 查询。
 - Supermemory 官方资料入口：`https://supermemory.ai/docs/integrations/mastra.md`、`https://supermemory.ai/docs/concepts/graph-memory.md`、`https://supermemory.ai/docs/concepts/super-rag.md`、`https://supermemory.ai/docs/llms.txt`、`https://supermemory.ai/llms.txt`。接入前必须按官方文档和当前安装版本类型定义核对 API，不能依据摘要或臆造字段。
+- Supermemory 默认使用官方 Supermemory Local 自托管服务（本机 `127.0.0.1:6767`），不依赖 Supermemory 云端；其本地自动认证只允许回环地址。使用云端或其他非回环地址时必须显式配置 key，并保持同样的失败关闭约束。
+- Supermemory embedding 配置遵循官方 `SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL` 和项目保留的 `SUPERMEMORY_EMBEDDING_API_KEY`；当前 `0.0.7-rc.2` 二进制只实现本地 ONNX（`Xenova/bge-base-en-v1.5`，768 维，仅英语）。请求远程 embedding 而当前 build 不支持时直接返回 `supermemory_embedding_unsupported`，不得静默使用本地向量；切换模型/维度必须使用全新数据目录或完整重索引。
 - 所有 Supermemory memory 必须绑定一个不可变的 Research OS `project_id` 隔离域。读、写、检索、Graph Memory 可视化和 Super RAG 查询都必须带项目范围；禁止使用无项目的全局 memory、仅靠 prompt 约束隔离或把一个项目的 memory 作为另一个项目的上下文。跨项目查询必须是显式、经过审批且有审计记录的功能，目前默认禁止。
 - 项目隔离必须同时落在 Supermemory 的官方 scope/container/resource/metadata 机制（以核对后的 API 为准）和本地权限校验中；每条语义 memory 还要保留项目、来源 Artifact、SHA-256、文献页码/章节、Idea 版本、实验/报告 ID 和证据状态等可审计关联。Supermemory 失败、超时、鉴权失败或返回无效数据时直接返回结构化错误，不得本地降级、换 provider、静默写入 SQL 或继续生成助手内容。
 - 参考 PDF、Idea 讨论、日报/周报 feedback、日报/周报正文、实验结果总结、实验设计依据和探索点、论文/related work 参考，以及图片分析/识别等多模态内容，按项目范围写入 Supermemory；原始文件和哈希仍由受控 Artifact 管理，Supermemory 不改变 PDF 证据、页码 quote 和人工复核约束。

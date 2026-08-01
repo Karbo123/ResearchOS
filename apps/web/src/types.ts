@@ -63,6 +63,25 @@ export interface ModelSettingsResponse {
   tiers: Record<TierId, ModelTierSettings>
 }
 
+export interface SupermemoryEmbeddingStatus {
+  provider: string
+  model: string
+  dimensions: number
+  base_url: string | null
+  key_configured: boolean
+  remote_embedding_supported: boolean
+  current_build_behavior: string
+}
+
+export interface MemoryStatusResponse {
+  enabled: boolean
+  key_configured: boolean
+  auth_mode: 'explicit_key' | 'localhost_auto_auth' | 'required'
+  base_url: string
+  scope: string
+  embedding?: SupermemoryEmbeddingStatus
+}
+
 export interface ModelSettingsFormValues {
   model: string
   url: string

@@ -7,6 +7,15 @@ import { memoryIngestRequest } from './contracts.js'
 import { artifactsRoot, pathInside } from './paths.js'
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
+const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'
+const DEFAULT_EMBEDDING_PROVIDER = 'local'
+const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-base-en-v1.5'
+const DEFAULT_EMBEDDING_DIMENSIONS = 768
+// Supermemory Local 0.0.7-rc.2 ships only the local ONNX embedding worker. The
+// official docs list SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL,
+// but neither the installed binary nor the server-v0.0.7-rc.2 source reads them.
+// Remote embedding must fail closed instead of silently using local vectors.
+const REMOTE_EMBEDDING_SUPPORTED = false
 const MAX_ARTIFACT_BYTES = 100 * 1024 * 1024
 const allowedArtifactTypes = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/webp', 'image/gif'])
 export type MemoryIngestRequest = z.infer<typeof memoryIngestRequest>
@@ -17,6 +26,15 @@ export class SupermemoryConfigurationError extends Error {
   constructor(message = 'Supermemory 未配置 API key，无法执行项目语义记忆操作。') {
     super(message)
     this.name = 'SupermemoryConfigurationError'
+  }
+}
+
+export class SupermemoryEmbeddingUnsupportedError extends Error {
+  readonly code = 'supermemory_embedding_unsupported'
+  readonly status = 503
+  constructor(message = '当前 Supermemory Local 版本不支持远程 embedding，且禁止静默降级。') {
+    super(message)
+    this.name = 'SupermemoryEmbeddingUnsupportedError'
   }
 }
 
@@ -51,16 +69,65 @@ export type MemoryLink = {
   deleted_at: string | null
 }
 
+function isLoopbackBaseUrl(baseURL: string): boolean {
+  try {
+    const hostname = new URL(baseURL).hostname.toLowerCase()
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1'
+  } catch {
+    return false
+  }
+}
+
+function localAutoAuthAllowed(baseURL: string): boolean {
+  return process.env.SUPERMEMORY_ENABLED !== 'false' && isLoopbackBaseUrl(baseURL) && process.env.SUPERMEMORY_LOCAL_AUTO_AUTH !== 'false'
+}
+
+export function embeddingProfile() {
+  const provider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER
+  const model = process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : '')
+  const parsedDimensions = Number(process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS)
+  const dimensions = Number.isInteger(parsedDimensions) && parsedDimensions > 0 ? parsedDimensions : DEFAULT_EMBEDDING_DIMENSIONS
+  const baseUrl = process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || null
+  return {
+    provider,
+    model,
+    dimensions,
+    base_url: baseUrl,
+    key_configured: provider !== 'local' && Boolean(process.env.SUPERMEMORY_EMBEDDING_API_KEY?.trim()),
+    remote_embedding_supported: REMOTE_EMBEDDING_SUPPORTED,
+    current_build_behavior: 'local_onnx',
+  }
+}
+
+function requireSupportedEmbedding() {
+  const profile = embeddingProfile()
+  if (profile.provider !== 'local' && !profile.remote_embedding_supported) {
+    throw new SupermemoryEmbeddingUnsupportedError(
+      `已配置 ${profile.provider} embedding，但当前 Supermemory Local 0.0.7-rc.2 仅实现本地 embedding；不会静默降级。请使用 SUPERMEMORY_EMBEDDING_PROVIDER=local，或安装支持远程 embedding 的服务端 build。`,
+    )
+  }
+  return profile
+}
+
+function unauthenticatedLocalFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const headers = new Headers(init?.headers)
+  headers.delete('authorization')
+  return fetch(input, { ...init, headers })
+}
+
 function config() {
+  requireSupportedEmbedding()
   const apiKey = process.env.SUPERMEMORY_API_KEY?.trim()
-  if (!apiKey) throw new SupermemoryConfigurationError()
-  return { apiKey, baseURL: process.env.SUPERMEMORY_BASE_URL || undefined }
+  const baseURL = process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL
+  const localAutoAuth = localAutoAuthAllowed(baseURL)
+  if (!apiKey && !localAutoAuth) throw new SupermemoryConfigurationError()
+  return { apiKey: apiKey || 'local-auto-auth', baseURL, localAutoAuth }
 }
 
 function api(): Supermemory {
   const settings = config()
   const timeout = Number(process.env.SUPERMEMORY_TIMEOUT_MS || process.env.SUPERMEMORY_TIMEOUT_SECONDS || 30000)
-  return new Supermemory({ apiKey: settings.apiKey, baseURL: settings.baseURL, timeout, maxRetries: 0 })
+  return new Supermemory({ apiKey: settings.apiKey, baseURL: settings.baseURL, timeout, maxRetries: 0, fetch: settings.localAutoAuth ? unauthenticatedLocalFetch : undefined })
 }
 
 function enabled(): boolean {
@@ -76,11 +143,15 @@ export function projectContainerTag(projectId: string): string {
 }
 
 export function memoryStatus() {
+  const baseURL = process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL
+  const keyConfigured = Boolean(process.env.SUPERMEMORY_API_KEY?.trim())
   return {
     enabled: enabled(),
-    key_configured: Boolean(process.env.SUPERMEMORY_API_KEY?.trim()),
-    base_url: process.env.SUPERMEMORY_BASE_URL || 'https://api.supermemory.ai',
+    key_configured: keyConfigured,
+    auth_mode: keyConfigured ? 'explicit_key' : localAutoAuthAllowed(baseURL) ? 'localhost_auto_auth' : 'required',
+    base_url: baseURL,
     scope: 'project_container_tag',
+    embedding: embeddingProfile(),
   }
 }
 

@@ -3,6 +3,15 @@ import type { MemoryPromptData, SupermemoryMastraOptions } from '@supermemory/to
 import type { InputProcessor, OutputProcessor, Processor, ProcessInputArgs, ProcessOutputResultArgs } from '@mastra/core/processors'
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
+const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'
+const DEFAULT_EMBEDDING_PROVIDER = 'local'
+const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-base-en-v1.5'
+const DEFAULT_EMBEDDING_DIMENSIONS = 768
+// Supermemory Local 0.0.7-rc.2 ships only the local ONNX embedding worker. The
+// official docs list SUPERMEMORY_EMBEDDING_PROVIDER/MODEL/DIMENSIONS/BASE_URL,
+// but neither the installed binary nor the server-v0.0.7-rc.2 source reads them.
+// Remote embedding must fail closed instead of silently using local vectors.
+const REMOTE_EMBEDDING_SUPPORTED = false
 
 export class SupermemoryConfigurationError extends Error {
   readonly code = 'supermemory_not_configured'
@@ -12,16 +21,72 @@ export class SupermemoryConfigurationError extends Error {
   }
 }
 
+export class SupermemoryEmbeddingUnsupportedError extends Error {
+  readonly code = 'supermemory_embedding_unsupported'
+  constructor(message = '当前 Supermemory Local 版本不支持远程 embedding，且禁止静默降级。') {
+    super(message)
+    this.name = 'SupermemoryEmbeddingUnsupportedError'
+  }
+}
+
 function enabled(): boolean {
   return process.env.SUPERMEMORY_ENABLED === 'true' || Boolean(process.env.SUPERMEMORY_API_KEY?.trim())
 }
 
+function isLoopbackBaseUrl(baseURL: string): boolean {
+  try {
+    const hostname = new URL(baseURL).hostname.toLowerCase()
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1'
+  } catch {
+    return false
+  }
+}
+
+function localAutoAuthAllowed(baseURL: string): boolean {
+  return process.env.SUPERMEMORY_ENABLED !== 'false' && isLoopbackBaseUrl(baseURL) && process.env.SUPERMEMORY_LOCAL_AUTO_AUTH !== 'false'
+}
+
+function embeddingProfile() {
+  const provider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER
+  const model = process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : '')
+  const parsedDimensions = Number(process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS)
+  const dimensions = Number.isInteger(parsedDimensions) && parsedDimensions > 0 ? parsedDimensions : DEFAULT_EMBEDDING_DIMENSIONS
+  const baseUrl = process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || null
+  return {
+    provider,
+    model,
+    dimensions,
+    base_url: baseUrl,
+    key_configured: provider !== 'local' && Boolean(process.env.SUPERMEMORY_EMBEDDING_API_KEY?.trim()),
+    remote_embedding_supported: REMOTE_EMBEDDING_SUPPORTED,
+    current_build_behavior: 'local_onnx',
+  }
+}
+
+function requireSupportedEmbedding() {
+  const profile = embeddingProfile()
+  if (profile.provider !== 'local' && !profile.remote_embedding_supported) {
+    throw new SupermemoryEmbeddingUnsupportedError(
+      `已配置 ${profile.provider} embedding，但当前 Supermemory Local 0.0.7-rc.2 仅实现本地 embedding；不会静默降级。请使用 SUPERMEMORY_EMBEDDING_PROVIDER=local，或安装支持远程 embedding 的服务端 build。`,
+    )
+  }
+  return profile
+}
+
+function unauthenticatedLocalFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const headers = new Headers(init?.headers)
+  headers.delete('authorization')
+  return fetch(input, { ...init, headers })
+}
+
 function options(projectId: string, conversationId: string): SupermemoryMastraOptions {
-  const apiKey = process.env.SUPERMEMORY_API_KEY?.trim()
+  requireSupportedEmbedding()
+  const baseUrl = process.env.SUPERMEMORY_BASE_URL?.trim() || DEFAULT_LOCAL_BASE_URL
+  const apiKey = process.env.SUPERMEMORY_API_KEY?.trim() || (localAutoAuthAllowed(baseUrl) ? 'local-auto-auth' : undefined)
   if (!apiKey) throw new SupermemoryConfigurationError()
   return {
     apiKey,
-    baseUrl: process.env.SUPERMEMORY_BASE_URL || undefined,
+    baseUrl,
     containerTag: `${PROJECT_TAG_PREFIX}${projectId}`,
     customId: `research-os-session-${conversationId}`,
     mode: 'full',
@@ -35,6 +100,7 @@ function client(config: SupermemoryMastraOptions): Supermemory {
     baseURL: config.baseUrl,
     timeout: Number(process.env.SUPERMEMORY_TIMEOUT_SECONDS || 30000),
     maxRetries: 0,
+    fetch: !process.env.SUPERMEMORY_API_KEY?.trim() && localAutoAuthAllowed(config.baseUrl || DEFAULT_LOCAL_BASE_URL) ? unauthenticatedLocalFetch : undefined,
   })
 }
 

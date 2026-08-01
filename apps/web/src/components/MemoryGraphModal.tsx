@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Search, Share2 } from 'lucide-react'
 import { api, errorMessage } from '../api'
-import type { MemoryGraphResponse, MemorySearchResponse } from '../types'
+import type { MemoryGraphResponse, MemorySearchResponse, MemoryStatusResponse } from '../types'
 import { Modal } from './ui'
 
 type MemoryView = 'graph' | 'search'
@@ -70,10 +70,17 @@ export function MemoryGraphModal({
     setQuery('')
     setGraph(null)
     setSearch(null)
-    api<{ key_configured: boolean }>(`/api/projects/${projectId}/memory/status`)
+    api<MemoryStatusResponse>(`/api/projects/${projectId}/memory/status`)
       .then(result => {
+        const embedding = result.embedding
+        if (embedding && embedding.provider !== 'local' && !embedding.remote_embedding_supported) {
+          setStatus(`已配置 ${embedding.provider} embedding，但当前服务端仅支持本地 embedding；记忆请求会失败关闭，不会静默降级。`)
+          return
+        }
+        const model = embedding?.model || 'Xenova/bge-base-en-v1.5'
+        const dimensions = embedding?.dimensions || 768
         setStatus(result.key_configured
-          ? 'Supermemory 已配置，输入查询后加载项目范围图。'
+          ? `Supermemory 已配置 · ${model}（${dimensions} 维），输入查询后加载项目范围图。`
           : 'Supermemory 尚未配置 API key；不会使用本地或无关数据替代。')
       })
       .catch(error => setStatus(`状态读取失败：${errorMessage(error)}`))

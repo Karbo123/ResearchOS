@@ -35,6 +35,7 @@ describe('claim review API', () => {
   })
 
   afterAll(async () => {
+    await database.query('DELETE FROM memory_links WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM audit_events WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM proposals WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM claim_reviews WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
