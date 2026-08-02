@@ -428,6 +428,10 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `091a` 仅对 `:focus-visible` 键盘焦点立即展开操作层，鼠标点击焦点继续使用悬停连续动画。
   - [~] `091b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
 
+- [~] `P0-PROJECT-UX-092` 用逐帧 DOM 动画替代项目操作图标的 CSS 关键帧，确保悬停时真实连续过渡。
+  - [x] `092a` 使用 `requestAnimationFrame` 驱动置顶/删除图标从右侧逐帧滑入、渐显和缩放，离开时逐帧收回；键盘焦点继续立即展开。
+  - [~] `092b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

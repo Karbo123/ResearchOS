@@ -142,18 +142,6 @@ button { -webkit-font-smoothing: inherit; }
   opacity: 0;
   pointer-events: none;
   transform: translate(48px, -50%) scale(.92);
-  transition: opacity .34s var(--ease), transform .62s var(--spring);
-}
-@keyframes project-actions-reveal {
-  0%, 30% { opacity: 0; transform: translate(48px, -50%) scale(.92); }
-  34% { opacity: .24; transform: translate(38px, -50%) scale(.94); }
-  48% { opacity: .52; transform: translate(24px, -50%) scale(.97); }
-  100% { opacity: 1; transform: translate(0, -50%) scale(1); }
-}
-.project-row.project-actions-partial .project-actions {
-  opacity: 1;
-  transform: translate(0, -50%) scale(1);
-  animation: project-actions-reveal 3s var(--ease) both;
   will-change: opacity, transform;
 }
 .project-row.project-actions-full .project-actions { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Pin, PinOff, Plus, Settings, Share2, Trash2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
@@ -36,8 +36,74 @@ export function Sidebar({
   const { t } = useTranslation()
   const [actionReveal, setActionReveal] = useState<Map<string, 'hidden' | 'partial' | 'full'>>(new Map())
   const timers = useRef(new Map<string, { full?: number }>())
+  const actionElements = useRef(new Map<string, HTMLDivElement>())
+  const actionFrames = useRef(new Map<string, number>())
+  const actionProgress = useRef(new Map<string, number>())
   const [resizing, setResizing] = useState(false)
   const resizeFrame = useRef<number | null>(null)
+
+  const setActionVisual = (projectId: string, progress: number) => {
+    const value = Math.min(1, Math.max(0, progress))
+    const element = actionElements.current.get(projectId)
+    if (element) {
+      element.style.opacity = String(value)
+      element.style.transform = `translate(${48 * (1 - value)}px, -50%) scale(${0.92 + value * 0.08})`
+    }
+    actionProgress.current.set(projectId, value)
+  }
+
+  const cancelActionFrame = (projectId: string) => {
+    const frame = actionFrames.current.get(projectId)
+    if (frame !== undefined) window.cancelAnimationFrame(frame)
+    actionFrames.current.delete(projectId)
+  }
+
+  const animateProjectActionsIn = (projectId: string) => {
+    cancelActionFrame(projectId)
+    setActionVisual(projectId, 0)
+    const startedAt = performance.now()
+    const tick = (now: number) => {
+      const elapsed = Math.min(1, (now - startedAt) / 3000)
+      const progress = elapsed < 0.3
+        ? elapsed / 0.3 * 0.03
+        : 0.03 + (1 - Math.pow(1 - (elapsed - 0.3) / 0.7, 3)) * 0.97
+      setActionVisual(projectId, progress)
+      if (elapsed < 1) actionFrames.current.set(projectId, window.requestAnimationFrame(tick))
+      else {
+        actionFrames.current.delete(projectId)
+        setActionReveal(current => {
+          const next = new Map(current)
+          next.set(projectId, 'full')
+          return next
+        })
+      }
+    }
+    actionFrames.current.set(projectId, window.requestAnimationFrame(tick))
+  }
+
+  const animateProjectActionsOut = (projectId: string) => {
+    cancelActionFrame(projectId)
+    const initial = actionProgress.current.get(projectId) || 0
+    const startedAt = performance.now()
+    const tick = (now: number) => {
+      const elapsed = Math.min(1, (now - startedAt) / 360)
+      const eased = 1 - Math.pow(1 - elapsed, 3)
+      setActionVisual(projectId, initial * (1 - eased))
+      if (elapsed < 1) actionFrames.current.set(projectId, window.requestAnimationFrame(tick))
+      else {
+        actionFrames.current.delete(projectId)
+        setActionVisual(projectId, 0)
+      }
+    }
+    actionFrames.current.set(projectId, window.requestAnimationFrame(tick))
+  }
+
+  useEffect(() => () => {
+    actionFrames.current.forEach(frame => window.cancelAnimationFrame(frame))
+    timers.current.forEach(timer => {
+      if (timer.full !== undefined) window.clearTimeout(timer.full)
+    })
+  }, [])
 
   const startProjectHover = (projectId: string) => {
     const currentTimers = timers.current.get(projectId)
@@ -47,6 +113,7 @@ export function Sidebar({
       next.set(projectId, 'partial')
       return next
     })
+    animateProjectActionsIn(projectId)
     const full = window.setTimeout(() => {
       setActionReveal(current => {
         const next = new Map(current)
@@ -62,6 +129,7 @@ export function Sidebar({
     const currentTimers = timers.current.get(projectId)
     if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
     timers.current.delete(projectId)
+    animateProjectActionsOut(projectId)
     setActionReveal(current => {
       if (!current.has(projectId)) return current
       const next = new Map(current)
@@ -74,6 +142,8 @@ export function Sidebar({
     const currentTimers = timers.current.get(projectId)
     if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
     timers.current.delete(projectId)
+    cancelActionFrame(projectId)
+    setActionVisual(projectId, 1)
     setActionReveal(current => {
       const next = new Map(current)
       next.set(projectId, 'full')
@@ -187,7 +257,14 @@ export function Sidebar({
                   <span className="project-title-text">{project.title}</span>
                   {project.pinned ? <Pin className="project-pinned-indicator" size={13} strokeWidth={2.2} aria-hidden="true" /> : null}
                 </button>
-                <div className={`project-actions${actionsVisible ? ' visible' : ''}`} aria-hidden={!actionsVisible}>
+                <div
+                  ref={element => {
+                    if (element) actionElements.current.set(project.id, element)
+                    else actionElements.current.delete(project.id)
+                  }}
+                  className={`project-actions${actionsVisible ? ' visible' : ''}`}
+                  aria-hidden={!actionsVisible}
+                >
                   <button
                     type="button"
                     className={`project-action project-pin${project.pinned ? ' pinned' : ''}`}
