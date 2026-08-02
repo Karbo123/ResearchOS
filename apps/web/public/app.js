@@ -17896,15 +17896,12 @@
     const resizeFrame = (0, import_react5.useRef)(null);
     const startProjectHover = (projectId) => {
       const currentTimers = timers.current.get(projectId);
-      if (currentTimers?.partial !== void 0) window.clearTimeout(currentTimers.partial);
       if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
-      const partial = window.setTimeout(() => {
-        setActionReveal((current) => {
-          const next = new Map(current);
-          next.set(projectId, "partial");
-          return next;
-        });
-      }, 1e3);
+      setActionReveal((current) => {
+        const next = new Map(current);
+        next.set(projectId, "partial");
+        return next;
+      });
       const full = window.setTimeout(() => {
         setActionReveal((current) => {
           const next = new Map(current);
@@ -17913,11 +17910,10 @@
         });
         timers.current.delete(projectId);
       }, 3e3);
-      timers.current.set(projectId, { partial, full });
+      timers.current.set(projectId, { full });
     };
     const stopProjectHover = (projectId) => {
       const currentTimers = timers.current.get(projectId);
-      if (currentTimers?.partial !== void 0) window.clearTimeout(currentTimers.partial);
       if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
       timers.current.delete(projectId);
       setActionReveal((current) => {
@@ -17929,7 +17925,6 @@
     };
     const revealProjectActions = (projectId) => {
       const currentTimers = timers.current.get(projectId);
-      if (currentTimers?.partial !== void 0) window.clearTimeout(currentTimers.partial);
       if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
       timers.current.delete(projectId);
       setActionReveal((current) => {

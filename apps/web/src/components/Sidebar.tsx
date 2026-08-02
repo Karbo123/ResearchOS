@@ -35,21 +35,18 @@ export function Sidebar({
 }) {
   const { t } = useTranslation()
   const [actionReveal, setActionReveal] = useState<Map<string, 'hidden' | 'partial' | 'full'>>(new Map())
-  const timers = useRef(new Map<string, { partial?: number; full?: number }>())
+  const timers = useRef(new Map<string, { full?: number }>())
   const [resizing, setResizing] = useState(false)
   const resizeFrame = useRef<number | null>(null)
 
   const startProjectHover = (projectId: string) => {
     const currentTimers = timers.current.get(projectId)
-    if (currentTimers?.partial !== undefined) window.clearTimeout(currentTimers.partial)
     if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
-    const partial = window.setTimeout(() => {
-      setActionReveal(current => {
-        const next = new Map(current)
-        next.set(projectId, 'partial')
-        return next
-      })
-    }, 1000)
+    setActionReveal(current => {
+      const next = new Map(current)
+      next.set(projectId, 'partial')
+      return next
+    })
     const full = window.setTimeout(() => {
       setActionReveal(current => {
         const next = new Map(current)
@@ -58,12 +55,11 @@ export function Sidebar({
       })
       timers.current.delete(projectId)
     }, 3000)
-    timers.current.set(projectId, { partial, full })
+    timers.current.set(projectId, { full })
   }
 
   const stopProjectHover = (projectId: string) => {
     const currentTimers = timers.current.get(projectId)
-    if (currentTimers?.partial !== undefined) window.clearTimeout(currentTimers.partial)
     if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
     timers.current.delete(projectId)
     setActionReveal(current => {
@@ -76,7 +72,6 @@ export function Sidebar({
 
   const revealProjectActions = (projectId: string) => {
     const currentTimers = timers.current.get(projectId)
-    if (currentTimers?.partial !== undefined) window.clearTimeout(currentTimers.partial)
     if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
     timers.current.delete(projectId)
     setActionReveal(current => {
