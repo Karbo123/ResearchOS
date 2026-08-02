@@ -146,10 +146,11 @@ export function Modal({
   wide?: boolean
 }) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
   useEffect(() => {
-    closeRef.current?.focus()
+    if (!panelRef.current?.contains(document.activeElement)) closeRef.current?.focus()
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
     }
@@ -159,7 +160,7 @@ export function Modal({
 
   return (
     <div className="modal" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
-      <div className={`modal-panel ${wide ? 'memory-graph-panel' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
+      <div ref={panelRef} className={`modal-panel ${wide ? 'memory-graph-panel' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
         <div className="modal-heading">
           <div>
             <div className="eyebrow">{eyebrow}</div>

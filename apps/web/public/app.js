@@ -12835,11 +12835,9 @@
     "deleteProject.title": "\u5220\u9664\u8FD9\u4E2A\u9879\u76EE\uFF1F",
     "deleteProject.description": "\u5220\u9664\u4F1A\u79FB\u9664\u9879\u76EE\u76EE\u5F55\u3001\u6587\u4EF6\u3001\u4EA7\u7269\u3001\u8BB0\u5F55\u548C\u9879\u76EE\u7EA7\u8BED\u4E49\u8BB0\u5FC6\u3002\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
     "deleteProject.projectLabel": "\u5C06\u8981\u5220\u9664\u7684\u9879\u76EE",
-    "deleteProject.nameLabel": "\u8F93\u5165\u5B8C\u6574\u9879\u76EE\u540D\u79F0",
-    "deleteProject.namePlaceholder": "\u8F93\u5165\u9879\u76EE\u540D\u79F0",
-    "deleteProject.confirmationLabel": "\u8F93\u5165\u786E\u8BA4\u8BCD",
+    "deleteProject.confirmationLabel": "\u8F93\u5165 DELETE \u4EE5\u786E\u8BA4",
     "deleteProject.confirmationPlaceholder": "\u8F93\u5165 DELETE",
-    "deleteProject.warning": "\u53EA\u6709\u9879\u76EE\u540D\u79F0\u5B8C\u5168\u5339\u914D\uFF0C\u5E76\u8F93\u5165 DELETE \u540E\u624D\u80FD\u7EE7\u7EED\u3002",
+    "deleteProject.warning": "\u53EA\u6709\u624B\u52A8\u8F93\u5165 DELETE \u540E\u624D\u80FD\u7EE7\u7EED\u3002",
     "deleteProject.confirm": "\u6C38\u4E45\u5220\u9664\u9879\u76EE",
     "deleteProject.deleting": "\u6B63\u5728\u5220\u9664\u2026",
     "theme.light": "\u6D45\u8272",
@@ -13849,11 +13847,9 @@
     "deleteProject.title": "\u8981\u522A\u9664\u9019\u500B\u5C08\u6848\u55CE\uFF1F",
     "deleteProject.description": "\u522A\u9664\u6703\u79FB\u9664\u5C08\u6848\u8CC7\u6599\u593E\u3001\u6A94\u6848\u3001\u7522\u7269\u3001\u8A18\u9304\u8207\u5C08\u6848\u7D1A\u8A9E\u610F\u8A18\u61B6\u3002\u6B64\u64CD\u4F5C\u7121\u6CD5\u5FA9\u539F\u3002",
     "deleteProject.projectLabel": "\u5373\u5C07\u522A\u9664\u7684\u5C08\u6848",
-    "deleteProject.nameLabel": "\u8F38\u5165\u5B8C\u6574\u5C08\u6848\u540D\u7A31",
-    "deleteProject.namePlaceholder": "\u8F38\u5165\u5C08\u6848\u540D\u7A31",
-    "deleteProject.confirmationLabel": "\u8F38\u5165\u78BA\u8A8D\u8A5E",
+    "deleteProject.confirmationLabel": "\u8F38\u5165 DELETE \u4EE5\u78BA\u8A8D",
     "deleteProject.confirmationPlaceholder": "\u8F38\u5165 DELETE",
-    "deleteProject.warning": "\u53EA\u6709\u5C08\u6848\u540D\u7A31\u5B8C\u5168\u76F8\u7B26\uFF0C\u4E26\u8F38\u5165 DELETE \u5F8C\u624D\u80FD\u7E7C\u7E8C\u3002",
+    "deleteProject.warning": "\u53EA\u6709\u624B\u52D5\u8F38\u5165 DELETE \u5F8C\u624D\u80FD\u7E7C\u7E8C\u3002",
     "deleteProject.confirm": "\u6C38\u4E45\u522A\u9664\u5C08\u6848",
     "deleteProject.deleting": "\u6B63\u5728\u522A\u9664\u2026",
     "theme.light": "\u6DFA\u8272",
@@ -14863,11 +14859,9 @@
     "deleteProject.title": "Delete this project?",
     "deleteProject.description": "This removes the project folder, files, artifacts, records, and project-scoped semantic memory. This cannot be undone.",
     "deleteProject.projectLabel": "Project to delete",
-    "deleteProject.nameLabel": "Enter the full project name",
-    "deleteProject.namePlaceholder": "Enter project name",
-    "deleteProject.confirmationLabel": "Enter the confirmation phrase",
+    "deleteProject.confirmationLabel": "Enter DELETE to confirm",
     "deleteProject.confirmationPlaceholder": "Enter DELETE",
-    "deleteProject.warning": "The project name must match exactly and DELETE must be entered before continuing.",
+    "deleteProject.warning": "You must type DELETE manually before continuing.",
     "deleteProject.confirm": "Delete project permanently",
     "deleteProject.deleting": "Deleting\u2026",
     "theme.light": "Light",
@@ -15877,11 +15871,9 @@
     "deleteProject.title": "\xBFEliminar este proyecto?",
     "deleteProject.description": "Esto elimina la carpeta, los archivos, los artefactos, los registros y la memoria sem\xE1ntica del proyecto. No se puede deshacer.",
     "deleteProject.projectLabel": "Proyecto que se eliminar\xE1",
-    "deleteProject.nameLabel": "Escribe el nombre completo del proyecto",
-    "deleteProject.namePlaceholder": "Escribe el nombre del proyecto",
-    "deleteProject.confirmationLabel": "Escribe la palabra de confirmaci\xF3n",
+    "deleteProject.confirmationLabel": "Escribe DELETE para confirmar",
     "deleteProject.confirmationPlaceholder": "Escribe DELETE",
-    "deleteProject.warning": "El nombre debe coincidir exactamente y debes escribir DELETE para continuar.",
+    "deleteProject.warning": "Debes escribir DELETE manualmente para continuar.",
     "deleteProject.confirm": "Eliminar proyecto permanentemente",
     "deleteProject.deleting": "Eliminando\u2026",
     "theme.light": "Claro",
@@ -18883,9 +18875,10 @@
     wide = false
   }) {
     const closeRef = (0, import_react11.useRef)(null);
+    const panelRef = (0, import_react11.useRef)(null);
     const { t } = useTranslation();
     (0, import_react11.useEffect)(() => {
-      closeRef.current?.focus();
+      if (!panelRef.current?.contains(document.activeElement)) closeRef.current?.focus();
       const onKeyDown = (event) => {
         if (event.key === "Escape") onClose();
       };
@@ -18894,7 +18887,7 @@
     }, [onClose]);
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "modal", role: "presentation", onMouseDown: (event) => {
       if (event.target === event.currentTarget) onClose();
-    }, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: `modal-panel ${wide ? "memory-graph-panel" : ""}`, role: "dialog", "aria-modal": "true", "aria-label": title, children: [
+    }, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { ref: panelRef, className: `modal-panel ${wide ? "memory-graph-panel" : ""}`, role: "dialog", "aria-modal": "true", "aria-label": title, children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "modal-heading", children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "eyebrow", children: eyebrow }),
@@ -23693,9 +23686,8 @@
     onConfirm
   }) {
     const { t } = useTranslation();
-    const [title, setTitle] = (0, import_react26.useState)("");
     const [confirmation, setConfirmation] = (0, import_react26.useState)("");
-    const canDelete = title === project.title && confirmation === "DELETE" && !busy;
+    const canDelete = confirmation === "DELETE" && !busy;
     return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
       Modal,
       {
@@ -23708,21 +23700,6 @@
             /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { children: t("deleteProject.projectLabel") }),
             /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("strong", { title: project.title, children: project.title })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("label", { className: "field-label", htmlFor: "delete-project-name", children: t("deleteProject.nameLabel") }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
-            "input",
-            {
-              id: "delete-project-name",
-              className: "text-input",
-              value: title,
-              disabled: busy,
-              placeholder: t("deleteProject.namePlaceholder"),
-              onChange: (event) => setTitle(event.target.value),
-              onPaste: (event) => event.preventDefault(),
-              onDrop: (event) => event.preventDefault(),
-              autoComplete: "off"
-            }
-          ),
           /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
           /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
             "input",
@@ -23732,17 +23709,20 @@
               value: confirmation,
               disabled: busy,
               placeholder: t("deleteProject.confirmationPlaceholder"),
-              onChange: (event) => setConfirmation(event.target.value),
+              onChange: (event) => setConfirmation(event.target.value.toUpperCase()),
               onPaste: (event) => event.preventDefault(),
               onDrop: (event) => event.preventDefault(),
               autoComplete: "off",
-              spellCheck: false
+              autoCapitalize: "characters",
+              maxLength: 6,
+              spellCheck: false,
+              autoFocus: true
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
           /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "modal-actions", children: [
             /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(title, confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
           ] })
         ] })
       }
@@ -24093,14 +24073,14 @@
         showToast(errorMessage(error));
       }
     };
-    const deleteProject = async (title, confirmation) => {
+    const deleteProject = async (confirmation) => {
       const target = deleteProjectTarget;
       if (!target || deleteBusy) return;
       setDeleteBusy(true);
       try {
         await api(`/api/projects/${target.id}`, {
           method: "DELETE",
-          body: JSON.stringify({ project_title: title, confirmation })
+          body: JSON.stringify({ project_title: target.title, confirmation })
         });
         setDeleteProjectTarget(null);
         if (target.id === projectId) newProject({ replace: true });
@@ -24269,7 +24249,7 @@
           project: deleteProjectTarget,
           busy: deleteBusy,
           onClose: () => setDeleteProjectTarget(null),
-          onConfirm: (title, confirmation) => void deleteProject(title, confirmation)
+          onConfirm: (confirmation) => void deleteProject(confirmation)
         }
       ) : null,
       toast ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Toast, { message: toast }) : null

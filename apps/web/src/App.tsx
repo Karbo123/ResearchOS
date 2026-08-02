@@ -400,14 +400,14 @@ export function App() {
     }
   }
 
-  const deleteProject = async (title: string, confirmation: string) => {
+  const deleteProject = async (confirmation: string) => {
     const target = deleteProjectTarget
     if (!target || deleteBusy) return
     setDeleteBusy(true)
     try {
       await api(`/api/projects/${target.id}`, {
         method: 'DELETE',
-        body: JSON.stringify({ project_title: title, confirmation }),
+        body: JSON.stringify({ project_title: target.title, confirmation }),
       })
       setDeleteProjectTarget(null)
       if (target.id === projectId) newProject({ replace: true })
@@ -579,7 +579,7 @@ export function App() {
           project={deleteProjectTarget}
           busy={deleteBusy}
           onClose={() => setDeleteProjectTarget(null)}
-          onConfirm={(title, confirmation) => void deleteProject(title, confirmation)}
+          onConfirm={confirmation => void deleteProject(confirmation)}
         />
       ) : null}
       {toast ? <Toast message={toast} /> : null}

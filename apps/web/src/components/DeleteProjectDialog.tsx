@@ -12,12 +12,11 @@ export function DeleteProjectDialog({
   project: ProjectSummary
   busy: boolean
   onClose: () => void
-  onConfirm: (title: string, confirmation: string) => void
+  onConfirm: (confirmation: string) => void
 }) {
   const { t } = useTranslation()
-  const [title, setTitle] = useState('')
   const [confirmation, setConfirmation] = useState('')
-  const canDelete = title === project.title && confirmation === 'DELETE' && !busy
+  const canDelete = confirmation === 'DELETE' && !busy
 
   return (
     <Modal
@@ -31,18 +30,6 @@ export function DeleteProjectDialog({
           <span>{t('deleteProject.projectLabel')}</span>
           <strong title={project.title}>{project.title}</strong>
         </div>
-        <label className="field-label" htmlFor="delete-project-name">{t('deleteProject.nameLabel')}</label>
-        <input
-          id="delete-project-name"
-          className="text-input"
-          value={title}
-          disabled={busy}
-          placeholder={t('deleteProject.namePlaceholder')}
-          onChange={event => setTitle(event.target.value)}
-          onPaste={event => event.preventDefault()}
-          onDrop={event => event.preventDefault()}
-          autoComplete="off"
-        />
         <label className="field-label" htmlFor="delete-project-confirmation">{t('deleteProject.confirmationLabel')}</label>
         <input
           id="delete-project-confirmation"
@@ -50,16 +37,19 @@ export function DeleteProjectDialog({
           value={confirmation}
           disabled={busy}
           placeholder={t('deleteProject.confirmationPlaceholder')}
-          onChange={event => setConfirmation(event.target.value)}
+          onChange={event => setConfirmation(event.target.value.toUpperCase())}
           onPaste={event => event.preventDefault()}
           onDrop={event => event.preventDefault()}
           autoComplete="off"
+          autoCapitalize="characters"
+          maxLength={6}
           spellCheck={false}
+          autoFocus
         />
         <p className="delete-project-warning">{t('deleteProject.warning')}</p>
         <div className="modal-actions">
           <button className="secondary" type="button" disabled={busy} onClick={onClose}>{t('common.cancel')}</button>
-          <button className="reject" type="button" disabled={!canDelete} onClick={() => onConfirm(title, confirmation)}>
+          <button className="reject" type="button" disabled={!canDelete} onClick={() => onConfirm(confirmation)}>
             {busy ? t('deleteProject.deleting') : t('deleteProject.confirm')}
           </button>
         </div>

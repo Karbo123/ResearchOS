@@ -153,7 +153,7 @@ button { -webkit-font-smoothing: inherit; }
 }
 .project-row:hover .project-main-button {
   padding-right: 66px;
-  transition-duration: 1s;
+  transition-duration: .5s;
   transition-timing-function: cubic-bezier(.25, .1, .25, 1);
 }
 .project-title-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -189,7 +189,7 @@ button { -webkit-font-smoothing: inherit; }
 }
 .project-row:hover .project-actions-track {
   transform: translate3d(0, 0, 0);
-  transition-duration: 1s;
+  transition-duration: .5s;
   transition-timing-function: cubic-bezier(.25, .1, .25, 1);
 }
 .project-actions .project-action {
@@ -1270,7 +1270,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   }
   .project-row:hover .project-main-button,
   .project-row:hover .project-actions-track {
-    transition-duration: 1s !important;
+    transition-duration: .5s !important;
     transition-timing-function: cubic-bezier(.25, .1, .25, 1) !important;
   }
 }
