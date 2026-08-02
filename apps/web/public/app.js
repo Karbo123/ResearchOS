@@ -18494,14 +18494,53 @@
 
   // src/components/tabs/OverviewTab.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  function SpecificationField({ label, value, emptyLabel }) {
+    const values = Array.isArray(value) ? value.filter((item) => item.trim()) : value?.trim() ? [value.trim()] : [];
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "spec-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("label", { children: label }),
+      values.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("ul", { children: values.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("li", { children: item }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: values[0] || emptyLabel })
+    ] });
+  }
+  function ProjectSpecificationTab({ project }) {
+    const { t } = useTranslation();
+    const spec = project.spec;
+    const idea = spec?.idea;
+    const emptyLabel = t("common.notConfirmed");
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "pane-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h2", { children: t("tab.overviewSpec") }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("overview.descriptionHint") })
+        ] }),
+        spec?.feasibility ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: spec.feasibility }) : null
+      ] }),
+      spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "project-spec-details", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.titleField"), value: idea.title, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.researchQuestion"), value: idea.research_question, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.domain"), value: idea.domain, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.hypotheses"), value: idea.hypotheses, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.contributions"), value: idea.expected_contributions, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.successCriteria"), value: idea.success_criteria, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.targetVenues"), value: idea.target_venues, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.risks"), value: idea.risks, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.openQuestions"), value: idea.open_questions, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.feasibility"), value: spec.feasibility, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.feasibilityNotes"), value: spec.feasibility_notes, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.candidateModifications"), value: spec.candidate_modifications, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpecificationField, { label: t("spec.approvals"), value: spec.required_approvals, emptyLabel })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "empty", children: t("spec.empty") })
+    ] });
+  }
   function OverviewTab({
     project,
     onRefresh,
     showToast,
     onNavigate,
-    onRequestConfirm
+    onRequestConfirm,
+    tab = "overview"
   }) {
     const { t, locale } = useTranslation();
+    if (tab === "overview_spec") return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ProjectSpecificationTab, { project });
     const counts = project.counts || {
       papers: project.papers?.length || 0,
       experiments: project.experiments?.length || 0,
@@ -22271,27 +22310,24 @@
         },
         group.id
       )) }),
-      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("nav", { className: "workflow-local-nav", "aria-label": `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "workflow-local-label", children: t(activeGroup.labelKey) }),
-        activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
-          "button",
-          {
-            type: "button",
-            className: activeTab === tab.id ? "active" : "",
-            "aria-current": activeTab === tab.id ? "page" : void 0,
-            onClick: () => onTabChange(tab.id),
-            children: [
-              tab.icon,
-              t(tab.labelKey)
-            ]
-          },
-          tab.id
-        ))
-      ] }) : null,
+      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "workflow-local-nav", "aria-label": `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, children: activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+        "button",
+        {
+          type: "button",
+          className: activeTab === tab.id ? "active" : "",
+          "aria-current": activeTab === tab.id ? "page" : void 0,
+          onClick: () => onTabChange(tab.id),
+          children: [
+            tab.icon,
+            t(tab.labelKey)
+          ]
+        },
+        tab.id
+      )) }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "project-layout", children: [
         /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "tab-content", children: [
           /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(WorkspaceContextBar, { project }),
-          activeTab === "overview" || activeTab === "overview_spec" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(OverviewTab, { ...tabProps }) : null,
+          activeTab === "overview" || activeTab === "overview_spec" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(OverviewTab, { ...tabProps, tab: activeTab }) : null,
           activeTab === "overview_innovation" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ResearchStatusTab, { project, showToast }) : null,
           activeTab === "overview_progress" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
           activeTab === "literature" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(LiteratureTab, { ...tabProps, searchCandidates }) : null,

@@ -47,6 +47,14 @@ assert.equal(workspacePath('mnist-cnn-example', 'overview', 'overview'), '/proje
 assert.deepEqual(resolveWorkspacePath('/project/mnist-cnn-example/overview/idea'), {
   projectRef: 'mnist-cnn-example', area: 'overview', tab: 'overview', legacyHash: false,
 })
+assert.deepEqual(resolveWorkspacePath('/project/claim-review-other-c766ef6f/overview/overview_spec'), {
+  projectRef: 'claim-review-other-c766ef6f', area: 'overview', tab: 'overview_spec', legacyHash: false,
+})
+assert.notEqual(
+  resolveWorkspacePath('/project/claim-review-other-c766ef6f/overview/idea')?.tab,
+  resolveWorkspacePath('/project/claim-review-other-c766ef6f/overview/overview_spec')?.tab,
+  'overview and overview_spec must remain distinct tabs',
+)
 assert.deepEqual(resolveWorkspaceLocation('/project/mnist-cnn-example/overview/idea', ''), {
   projectRef: 'mnist-cnn-example', area: 'overview', tab: 'overview', legacyHash: false,
 })

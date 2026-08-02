@@ -4,20 +4,68 @@ import type { ConfirmRequest, ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, SectionHeading } from '../ui'
 import { formatDateTime, useTranslation } from '../../i18n'
 
+function SpecificationField({ label, value, emptyLabel }: { label: string; value?: string | string[]; emptyLabel: string }) {
+  const values = Array.isArray(value) ? value.filter(item => item.trim()) : value?.trim() ? [value.trim()] : []
+  return (
+    <div className="spec-group">
+      <label>{label}</label>
+      {values.length > 1 ? <ul>{values.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul> : <div>{values[0] || emptyLabel}</div>}
+    </div>
+  )
+}
+
+function ProjectSpecificationTab({ project }: { project: ProjectDetail }) {
+  const { t } = useTranslation()
+  const spec = project.spec
+  const idea = spec?.idea
+  const emptyLabel = t('common.notConfirmed')
+  return (
+    <>
+      <div className="pane-heading">
+        <div>
+          <h2>{t('tab.overviewSpec')}</h2>
+          <p className="muted">{t('overview.descriptionHint')}</p>
+        </div>
+        {spec?.feasibility ? <Badge status={spec.feasibility} /> : null}
+      </div>
+      {spec && idea ? (
+        <div className="project-spec-details">
+          <SpecificationField label={t('spec.titleField')} value={idea.title} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.researchQuestion')} value={idea.research_question} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.domain')} value={idea.domain} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.hypotheses')} value={idea.hypotheses} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.contributions')} value={idea.expected_contributions} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.successCriteria')} value={idea.success_criteria} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.targetVenues')} value={idea.target_venues} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.risks')} value={idea.risks} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.openQuestions')} value={idea.open_questions} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.feasibility')} value={spec.feasibility} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.feasibilityNotes')} value={spec.feasibility_notes} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.candidateModifications')} value={spec.candidate_modifications} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.approvals')} value={spec.required_approvals} emptyLabel={emptyLabel} />
+        </div>
+      ) : <div className="empty">{t('spec.empty')}</div>}
+    </>
+  )
+}
+
 export function OverviewTab({
   project,
   onRefresh,
   showToast,
   onNavigate,
   onRequestConfirm,
+  tab = 'overview',
 }: {
   project: ProjectDetail
   onRefresh: () => Promise<void>
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
   onRequestConfirm: (request: ConfirmRequest) => void
+  tab?: 'overview' | 'overview_spec'
 }) {
   const { t, locale } = useTranslation()
+  if (tab === 'overview_spec') return <ProjectSpecificationTab project={project} />
   const counts = project.counts || {
     papers: project.papers?.length || 0,
     experiments: project.experiments?.length || 0,

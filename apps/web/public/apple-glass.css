@@ -517,14 +517,6 @@ a.secondary { text-decoration: none; color: var(--ink); }
   border-radius: 12px;
   background: var(--surface-2);
 }
-.workflow-local-label {
-  flex: 0 0 auto;
-  padding: 0 8px 0 7px;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 720;
-  white-space: nowrap;
-}
 .workflow-local-nav button {
   display: inline-flex;
   align-items: center;
@@ -645,7 +637,6 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .related-work-seed-row { grid-template-columns: auto minmax(0, 1fr); }
   .related-work-seed-row > .badge { grid-column: 2; justify-self: start; }
   .workflow-local-nav { margin: 5px 10px 0; }
-  .workflow-local-label { width: 100%; padding: 3px 7px 1px; }
   .workspace-context { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 10px; padding: 9px 10px; }
   .workspace-context-actions { justify-content: flex-start; }
   .workspace-context-title code { max-width: 72vw; }

@@ -165,7 +165,6 @@ export function ProjectView({
       </nav>
       {activeGroup.tabs.length > 1 ? (
         <nav className="workflow-local-nav" aria-label={`${t(activeGroup.labelKey)} · ${t('common.innerPages')}`}>
-          <span className="workflow-local-label">{t(activeGroup.labelKey)}</span>
           {activeGroup.tabs.map(tab => (
             <button
               key={tab.id}
@@ -183,7 +182,7 @@ export function ProjectView({
       <div className="project-layout">
         <div className="tab-content">
           <WorkspaceContextBar project={project} />
-          {activeTab === 'overview' || activeTab === 'overview_spec' ? <OverviewTab {...tabProps} /> : null}
+          {activeTab === 'overview' || activeTab === 'overview_spec' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
           {activeTab === 'overview_innovation' ? <ResearchStatusTab project={project} showToast={showToast} /> : null}
           {activeTab === 'overview_progress' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}
           {activeTab === 'literature' ? <LiteratureTab {...tabProps} searchCandidates={searchCandidates} /> : null}
