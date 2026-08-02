@@ -14,7 +14,6 @@ import { ApprovalsTab } from './tabs/ApprovalsTab'
 import { PoliciesTab } from './tabs/PoliciesTab'
 import { ReportsTab } from './tabs/ReportsTab'
 import { WorkflowStageTab } from './tabs/WorkflowStageTab'
-import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { ResizableDivider } from './ResizableDivider'
 import { useTranslation, type TranslationKey } from '../i18n'
 
@@ -249,7 +248,6 @@ export function ProjectView({
         style={{ '--project-chat-width': `${projectChatWidth}px` } as React.CSSProperties}
       >
         <div className="tab-content">
-          <WorkspaceContextBar project={project} />
           {activeTab === 'overview' || activeTab === 'overview_spec' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
           {activeTab === 'overview_innovation' ? <ResearchStatusTab project={project} showToast={showToast} /> : null}
           {activeTab === 'overview_progress' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}

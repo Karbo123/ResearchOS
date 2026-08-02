@@ -2,6 +2,8 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode 
 import { Check, ChevronDown, Languages, Palette, RefreshCw } from 'lucide-react'
 import { LOCALE_OPTIONS, useTranslation, type Locale } from '../i18n'
 import { THEME_OPTIONS, setTheme, useTheme, type Theme } from '../theme'
+import type { ProjectDetail } from '../types'
+import { WorkspaceContextBar } from './WorkspaceContextBar'
 
 type MenuOption = { value: string; label: string }
 
@@ -146,44 +148,49 @@ export function Topbar({
   meta,
   health,
   onRefresh,
+  project,
 }: {
   title: string
   meta: string
   health: 'connecting' | 'online' | 'offline'
   onRefresh: () => void
+  project?: ProjectDetail | null
 }) {
   const { locale, t, setLocale } = useTranslation()
   const theme = useTheme()
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   return (
-    <header className="topbar">
-      <div className="topbar-title">
-        <h1 title={title}>{title}</h1>
-        <div className="muted">{meta}</div>
+    <header className={`topbar${project ? ' has-project-context' : ''}`}>
+      <div className="topbar-main">
+        <div className="topbar-title">
+          <h1 title={title}>{title}</h1>
+          <div className="muted">{meta}</div>
+        </div>
+        <div className="top-actions">
+          <TopbarMenu
+            icon={<Languages size={15} />}
+            label={t('topbar.language')}
+            value={locale}
+            options={LOCALE_OPTIONS.map(option => ({ value: option.value, label: option.label }))}
+            onChange={value => setLocale(value as Locale)}
+          />
+          <TopbarMenu
+            icon={<Palette size={15} />}
+            label={t('topbar.theme')}
+            value={theme}
+            options={THEME_OPTIONS.map(option => ({ value: option, label: t(option === 'light' ? 'theme.light' : 'theme.dark') }))}
+            onChange={value => setTheme(value as Theme)}
+          />
+          <span className={`health ${health === 'online' ? 'ok' : ''}`}>
+            <span />
+            {healthLabel}
+          </span>
+          <button className="icon-btn" type="button" onClick={onRefresh} title={t('topbar.refresh')} aria-label={t('topbar.refresh')}>
+            <RefreshCw size={17} />
+          </button>
+        </div>
       </div>
-      <div className="top-actions">
-        <TopbarMenu
-          icon={<Languages size={15} />}
-          label={t('topbar.language')}
-          value={locale}
-          options={LOCALE_OPTIONS.map(option => ({ value: option.value, label: option.label }))}
-          onChange={value => setLocale(value as Locale)}
-        />
-        <TopbarMenu
-          icon={<Palette size={15} />}
-          label={t('topbar.theme')}
-          value={theme}
-          options={THEME_OPTIONS.map(option => ({ value: option, label: t(option === 'light' ? 'theme.light' : 'theme.dark') }))}
-          onChange={value => setTheme(value as Theme)}
-        />
-        <span className={`health ${health === 'online' ? 'ok' : ''}`}>
-          <span />
-          {healthLabel}
-        </span>
-        <button className="icon-btn" type="button" onClick={onRefresh} title={t('topbar.refresh')} aria-label={t('topbar.refresh')}>
-          <RefreshCw size={17} />
-        </button>
-      </div>
+      {project ? <WorkspaceContextBar project={project} /> : null}
     </header>
   )
 }

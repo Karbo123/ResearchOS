@@ -433,6 +433,20 @@ export function App() {
     }
   }
 
+  const reorderProjects = async (projectIds: string[]) => {
+    try {
+      await api('/api/projects/order', {
+        method: 'PATCH',
+        body: JSON.stringify({ project_ids: projectIds }),
+      })
+      await loadProjects()
+      showToast(t('app.projectOrderUpdated'))
+    } catch (error) {
+      await loadProjects()
+      showToast(errorMessage(error))
+    }
+  }
+
   const sendProjectChat = async (message: string) => {
     if (projectChatBusyRef.current || !project) return
     projectChatBusyRef.current = true
@@ -498,6 +512,7 @@ export function App() {
         onOpenSettings={() => setSettingsOpen(true)}
         onDeleteProject={setDeleteProjectTarget}
         onPinProject={project => void pinProject(project)}
+        onReorderProjects={reorderProjects}
         sidebarWidth={sidebarWidth}
         onSidebarWidthChange={updateSidebarWidth}
       />
@@ -515,6 +530,7 @@ export function App() {
               })}
           health={health}
           onRefresh={() => void refreshProject()}
+          project={view === 'project' ? project : null}
         />
         {view === 'idea' ? (
           <IdeaView

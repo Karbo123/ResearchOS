@@ -51,6 +51,7 @@ export interface ProjectSummary {
   title: string
   status?: string
   pinned?: boolean
+  sidebar_order?: number
 }
 
 export interface IdeaSpec {
@@ -145,6 +146,7 @@ export interface ProjectDetail {
   current_idea_version?: number
   created_at?: string
   updated_at?: string
+  sidebar_order?: number
   session_id?: string | null
   spec?: ResearchSpec | null
   idea_versions?: IdeaVersion[]

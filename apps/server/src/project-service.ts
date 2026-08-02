@@ -18,7 +18,24 @@ export async function moveSessionUploadsIntoProject(projectId: string, sessionId
   }
 }
 
-export type ProjectRow = { id: string; slug: string; title: string; status: string; pinned: boolean; current_idea_version: number; current_stage: string; created_at: string; updated_at: string }
+export type ProjectRow = { id: string; slug: string; title: string; status: string; pinned: boolean; sidebar_order: number; current_idea_version: number; current_stage: string; created_at: string; updated_at: string }
+
+export async function reorderProjectGroup(projectIds: string[]): Promise<ProjectRow[]> {
+  return database.transaction(async transaction => {
+    const found = (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE id=ANY($1::uuid[])', [projectIds])).rows
+    if (found.length !== projectIds.length) throw new ApiError(422, 'project_order_scope_invalid', '项目排序列表必须只包含现有项目，且不能重复。')
+    const pinnedGroups = new Set(found.map(project => project.pinned))
+    if (pinnedGroups.size !== 1) throw new ApiError(422, 'project_order_group_mismatch', '项目排序只能调整同一置顶分组内的项目。')
+    const byId = new Map(found.map(project => [project.id, project]))
+    const pinned = found[0]?.pinned || false
+    const existingGroup = (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE pinned=$1 ORDER BY sidebar_order ASC,updated_at DESC,created_at DESC,id', [pinned])).rows
+    const orderedIds = [...projectIds, ...existingGroup.filter(project => !byId.has(project.id)).map(project => project.id)]
+    for (const [index, projectId] of orderedIds.entries()) {
+      await transaction.query('UPDATE projects SET sidebar_order=$2 WHERE id=$1', [projectId, index])
+    }
+    return (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE pinned=$1 ORDER BY sidebar_order ASC,updated_at DESC,created_at DESC,id', [pinned])).rows
+  })
+}
 
 type ReportSourceSnapshot = {
   project_id?: unknown

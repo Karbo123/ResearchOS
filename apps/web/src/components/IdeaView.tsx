@@ -130,7 +130,7 @@ export function IdeaView({
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+    if (event.key === 'Enter' && !event.nativeEvent.isComposing && (event.ctrlKey || event.metaKey)) {
       event.preventDefault()
       event.currentTarget.form?.requestSubmit()
     }
@@ -195,6 +195,7 @@ export function IdeaView({
             <Send size={17} />
           </button>
         </form>
+        {input.length === 0 ? <div className="composer-hint" aria-live="polite">{t('common.sendShortcutHint')}</div> : null}
         {queuedFiles.length ? (
           <div className="file-queue">{queuedFiles.map(file => file.name).join(' · ')}</div>
         ) : null}

@@ -48,6 +48,13 @@ export const projectDeleteRequest = z.object({
 export const projectPinRequest = z.object({
   pinned: z.boolean(),
 }).strict()
+export const projectOrderRequest = z.object({
+  project_ids: z.array(uuid).min(1).max(500),
+}).strict().superRefine((value, context) => {
+  if (new Set(value.project_ids).size !== value.project_ids.length) {
+    context.addIssue({ code: 'custom', path: ['project_ids'], message: 'project_ids cannot contain duplicates' })
+  }
+})
 export const modelTierSettings = z.object({
   model: z.string().trim().min(1).max(200),
   url: z.string().url().max(500),

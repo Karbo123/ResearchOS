@@ -10,7 +10,7 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
-  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid,
+  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
@@ -19,7 +19,7 @@ import { mastraJson } from './mastra-client.js'
 import { privateModelSettings, publicModelSettings, saveModelSettings } from './model-settings.js'
 import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
-import { createProjectWorkspace, enqueue, moveSessionUploadsIntoProject, projectDetail, requireProject, type ProjectRow } from './project-service.js'
+import { createProjectWorkspace, enqueue, moveSessionUploadsIntoProject, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
 import { nextAvailableProjectSlug, normalizeProjectSlug, normalizeProjectSlugKeywords } from './project-slug.js'
 import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
@@ -276,7 +276,8 @@ app.post('/api/projects', async context => {
     }
   }
   await database.transaction(async transaction => {
-    await transaction.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [id, slug, title])
+    const nextOrder = (await transaction.query<{ next_order: number }>('SELECT COALESCE(MAX(sidebar_order),-1)+1 AS next_order FROM projects WHERE pinned=FALSE')).rows[0]?.next_order || 0
+    await transaction.query('INSERT INTO projects(id,slug,title,sidebar_order) VALUES ($1,$2,$3,$4)', [id, slug, title, nextOrder])
     await transaction.query('INSERT INTO idea_versions(id,project_id,version,spec) VALUES ($1,$2,1,$3)', [crypto.randomUUID(), id, { schema_version: '1.0', idea: session.draft }])
     await transaction.query("UPDATE conversation_sessions SET project_id=$2,phase='supervising',updated_at=NOW() WHERE id=$1", [session.id, id])
     await transaction.query('UPDATE uploaded_files SET project_id=$2 WHERE session_id=$1 AND project_id IS NULL', [session.id, id])
@@ -306,14 +307,26 @@ app.post('/api/projects', async context => {
 app.get('/api/projects', async context => {
   const status = context.req.query('status')
   if (status && !['active', 'paused', 'cancelled'].includes(status)) throw new ApiError(422, 'invalid_project_status', '项目状态筛选无效。')
-  return context.json(await rows<ProjectRow>(`SELECT * FROM projects${status ? ' WHERE status=$1' : ''} ORDER BY pinned DESC, updated_at DESC`, status ? [status] : []))
+  return context.json(await rows<ProjectRow>(`SELECT * FROM projects${status ? ' WHERE status=$1' : ''} ORDER BY pinned DESC,sidebar_order ASC,updated_at DESC,created_at DESC,id`, status ? [status] : []))
+})
+app.patch('/api/projects/order', async context => {
+  const body = await jsonBody(context, projectOrderRequest)
+  const ordered = await reorderProjectGroup(body.project_ids)
+  await audit('project.reordered', body.project_ids[0] || null, { project_ids: body.project_ids, pinned: ordered.find(project => project.id === body.project_ids[0])?.pinned || false })
+  return context.json(ordered)
 })
 app.get('/api/projects/:projectRef', async context => context.json(await projectDetail(await projectIdForReference(context.req.param('projectRef')))))
 app.patch('/api/projects/:projectId/pin', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const body = await jsonBody(context, projectPinRequest)
   await requireProject(projectId)
-  const project = await one<ProjectRow>('UPDATE projects SET pinned=$2,updated_at=NOW() WHERE id=$1 RETURNING *', [projectId, body.pinned])
+  const project = await database.transaction(async transaction => {
+    const current = (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE id=$1 FOR UPDATE', [projectId])).rows[0]
+    if (!current) return null
+    if (current.pinned === body.pinned) return current
+    const nextOrder = (await transaction.query<{ next_order: number }>('SELECT COALESCE(MAX(sidebar_order),-1)+1 AS next_order FROM projects WHERE pinned=$1', [body.pinned])).rows[0]?.next_order || 0
+    return (await transaction.query<ProjectRow>('UPDATE projects SET pinned=$2,sidebar_order=$3,updated_at=NOW() WHERE id=$1 RETURNING *', [projectId, body.pinned, nextOrder])).rows[0] || null
+  })
   if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')
   await audit(body.pinned ? 'project.pinned' : 'project.unpinned', projectId, { pinned: body.pinned })
   return context.json(project)

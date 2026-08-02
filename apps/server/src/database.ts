@@ -6,8 +6,9 @@ export const database = new PGlite(resolve(runtimeRoot, 'research-os.pglite'))
 
 const migrationSql = `
 CREATE TABLE IF NOT EXISTS schema_migrations (version TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
-CREATE TABLE IF NOT EXISTS projects (id UUID PRIMARY KEY, slug VARCHAR(120) UNIQUE NOT NULL, title VARCHAR(240) NOT NULL, status VARCHAR(40) NOT NULL DEFAULT 'active', pinned BOOLEAN NOT NULL DEFAULT FALSE, current_idea_version INTEGER NOT NULL DEFAULT 1, current_stage VARCHAR(80) NOT NULL DEFAULT 'initialized', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS projects (id UUID PRIMARY KEY, slug VARCHAR(120) UNIQUE NOT NULL, title VARCHAR(240) NOT NULL, status VARCHAR(40) NOT NULL DEFAULT 'active', pinned BOOLEAN NOT NULL DEFAULT FALSE, sidebar_order INTEGER NOT NULL DEFAULT 0, current_idea_version INTEGER NOT NULL DEFAULT 1, current_stage VARCHAR(80) NOT NULL DEFAULT 'initialized', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS pinned BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS sidebar_order INTEGER NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS conversation_sessions (id UUID PRIMARY KEY, project_id UUID REFERENCES projects(id), phase VARCHAR(40) NOT NULL DEFAULT 'clarifying', draft JSONB NOT NULL DEFAULT '{}', pending_field VARCHAR(80), created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS messages (id UUID PRIMARY KEY, session_id UUID NOT NULL REFERENCES conversation_sessions(id), role VARCHAR(20) NOT NULL, content TEXT NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS uploaded_files (id UUID PRIMARY KEY, session_id UUID NOT NULL REFERENCES conversation_sessions(id), project_id UUID REFERENCES projects(id), name VARCHAR(255) NOT NULL, relative_path TEXT NOT NULL, mime_type VARCHAR(120) NOT NULL, size_bytes INTEGER NOT NULL, sha256 VARCHAR(64) NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
@@ -360,6 +361,19 @@ export async function migrate(): Promise<void> {
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0010-related-work-request-cache') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0011-research-comparisons') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0012-project-pinning') ON CONFLICT DO NOTHING")
+  const sidebarOrderMigration = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0013-project-sidebar-order'")
+  if (!sidebarOrderMigration.rows.length) {
+    await database.transaction(async transaction => {
+      const projects = (await transaction.query<{ id: string; pinned: boolean }>('SELECT id,pinned FROM projects ORDER BY pinned DESC,updated_at DESC,created_at DESC,id')).rows
+      const nextOrder = new Map<boolean, number>([[true, 0], [false, 0]])
+      for (const project of projects) {
+        const order = nextOrder.get(project.pinned) || 0
+        await transaction.query('UPDATE projects SET sidebar_order=$2 WHERE id=$1', [project.id, order])
+        nextOrder.set(project.pinned, order + 1)
+      }
+    })
+    await database.query("INSERT INTO schema_migrations(version) VALUES ('0013-project-sidebar-order') ON CONFLICT DO NOTHING")
+  }
 }
 
 export async function rows<T extends object>(sql: string, params: unknown[] = []): Promise<T[]> {

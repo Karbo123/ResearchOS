@@ -103,7 +103,7 @@ export function ProjectChat({
           aria-keyshortcuts="Control+Enter Meta+Enter"
           onChange={event => setInput(event.target.value)}
           onKeyDown={event => {
-            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+            if (event.key === 'Enter' && !event.nativeEvent.isComposing && (event.ctrlKey || event.metaKey)) {
               event.preventDefault()
               event.currentTarget.form?.requestSubmit()
             }
@@ -113,6 +113,7 @@ export function ProjectChat({
           <Send size={17} />
         </button>
       </form>
+      {input.length === 0 ? <div className="composer-hint" aria-live="polite">{t('common.sendShortcutHint')}</div> : null}
     </aside>
   )
 }
