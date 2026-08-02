@@ -57,8 +57,9 @@ export const projectSlugRequestSchema = z.object({
   tier: modelTierSchema,
 }).strict()
 
+const projectSlugWordSchema = z.string().regex(/^[a-z]{2,32}$/)
 export const projectSlugResultSchema = z.object({
-  keywords: z.array(z.string().trim().min(2).max(32)).length(3),
+  keywords: z.array(projectSlugWordSchema).length(2).refine(([first, second]) => first !== second, 'keywords must be distinct'),
 }).strict()
 
 export const supervisionIntentSchema = z.object({

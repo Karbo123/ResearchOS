@@ -11,13 +11,14 @@ const { experimentRequest } = await import('../apps/server/src/contracts.js')
 const { database, migrate } = await import('../apps/server/src/database.js')
 const { cancelRun, submitRun } = await import('../apps/server/src/experiment-runner.js')
 const { buildArtifactPreview } = await import('../apps/server/src/artifact-preview-service.js')
-const { artifactsRoot, projectsRoot } = await import('../apps/server/src/paths.js')
+const { projectsRoot } = await import('../apps/server/src/paths.js')
+const { projectArtifactPath } = await import('../apps/server/src/project-storage.js')
 
 const projectIds = [crypto.randomUUID(), crypto.randomUUID()]
 const runIds = [crypto.randomUUID(), crypto.randomUUID()]
 const proposalIds = [crypto.randomUUID(), crypto.randomUUID()]
 const projectDirectories = projectIds.map(id => resolve(projectsRoot, id))
-const runDirectories = runIds.map(id => resolve(artifactsRoot, 'runs', id))
+const runDirectories = projectIds.map((projectId, index) => projectArtifactPath(projectId, `runs/${runIds[index]}`))
 
 async function runStatus(runId: string): Promise<{ status: string; metrics: Record<string, number>; error: string | null }> {
   const result = await database.query<{ status: string; metrics: Record<string, number>; error: string | null }>('SELECT status,metrics,error FROM experiments WHERE id=$1', [runId])

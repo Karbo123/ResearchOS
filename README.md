@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-02-20 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-03-01 -->
 
 # Research OS
 
@@ -17,8 +17,8 @@ Model failures are final structured errors. The application never substitutes a 
 - `apps/server`: Hono API, PGlite state, queue, evidence, approvals, reports, repository verification/acquisition, artifact ledger, and native experiment supervisor.
 - `apps/mastra`: Mastra Agents, Memory, Skills, bounded Tools, Workflows, schedules, and Studio graph.
 - `apps/web`: React 19 + TypeScript component source and esbuild-generated static assets served by the API.
-- `projects/<project-id>`: isolated Git workspaces. Scientific Python uses `projects/<project-id>/.venv`.
-- `artifacts`: controlled uploads, evidence PDFs, experiment outputs, acceptance results, and backups.
+- `projects/<project-id>`: isolated Git workspaces. Scientific Python uses `projects/<project-id>/.venv`, and every new project-owned file is stored below this directory, including `projects/<project-id>/artifacts/`.
+- `artifacts`: shared operator-managed material only: backups, acceptance evidence, test/operations fixtures, and legacy files awaiting or retained for migration. New project uploads, PDFs, experiment outputs, and reproduction archives do not use this root.
 - `runtime`: ignored local application state, model overrides, Mastra memory, logs, and PID data.
 
 PGlite is the durable business state source. Mastra Memory is local and does not replace project, approval, artifact, or audit state.
@@ -33,7 +33,13 @@ These four stages group six independent workflows: Idea clarification, related-w
 
 The visible navigation is grouped into three rows when a workspace has concrete pages: Project Overview shows Idea, specification, innovation/boundary, progress, and reports/feedback; Related Work shows search/evidence and research status/citation graph; Experiment Implementation shows `Our Method Implementation` first and `Related Work Implementation` second, with the selected group's concrete pages in a third row above the content; Academic Paper Writing shows its writing pages directly. Fine-grained views remain inside the third row of their owning workflow and never become an unrelated navigation system. Legacy hashes are accepted for compatibility and rewritten to clean History API paths; `method/*` redirects to the matching `implementation` page, old paper-experiment hashes redirect to Experiment Implementation, old paper-report/feedback hashes redirect to Project Overview, and the old `overview/overview` segment becomes `overview/idea`.
 
-Project workspaces use readable clean URLs such as `/project/mnist-cnn-example/overview/idea`. The internal UUID remains the immutable project identity for API ownership and data isolation, but it is not exposed in the normal browser path. When a confirmed Idea is created, Mastra generates three distinct semantic URL keywords by default and the user may provide three lowercase English words manually; the server normalizes them, rejects manual collisions, and adds a numeric suffix only when an automatically generated slug collides. Older UUID and hash links remain resolvable and are canonicalized after the project is loaded.
+Project workspaces use readable clean URLs such as `/project/cnn-minimal-2q95/overview/idea`. The internal UUID remains the immutable project identity for API ownership and data isolation, but it is not exposed in the normal browser path. When a confirmed Idea is created, Mastra must return exactly two semantic lowercase English words; the server adds a random four-character lowercase alphanumeric suffix and checks the complete identifier for uniqueness. Manual identifiers must use the same `word-word-xxxx` format. Older three-word, UUID, and hash links remain resolvable for compatibility and are not rewritten in the database.
+
+## Project Storage Boundary
+
+Project-specific files are isolated by project directory: uploads, evidence PDFs, experiment runs, reproduction archives, paper outputs, and controlled Artifacts resolve below `projects/<project-id>/artifacts/` or another explicit subdirectory of that same project workspace. PGlite keeps shared indexes, IDs, hashes, status, permissions, and audit rows; it does not make project files global. Deleting a project removes its database rows, semantic memory, project configuration, and entire `projects/<project-id>/` directory.
+
+The root `artifacts/` directory is not a second live project store. `artifacts/backups/`, `artifacts/acceptance/`, `artifacts/acceptance-supermemory/`, `artifacts/ops/`, `artifacts/idea-tests/`, and `artifacts/test-materials/` hold global operator, acceptance, or test material. UUID-named directories and older project-shaped paths can remain there as legacy migration sources; startup migration copies indexed project files into the owning project directory, while a read-only fallback preserves old records until they are migrated or explicitly cleaned up. New application writes do not target those legacy paths.
 
 ## Interface Language and Theme
 

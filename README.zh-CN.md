@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-02-20 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-03-01 -->
 
 # Research OS
 
@@ -17,8 +17,8 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 - `apps/server`：Hono API、PGlite 状态、队列、证据、审批、报告、仓库验证/获取、产物账本和本机实验监控器。
 - `apps/mastra`：Mastra Agents、Memory、Skills、受限 Tools、Workflows、定时任务和 Studio 工作流图。
 - `apps/web`：React 19 + TypeScript 组件源码，以及由 esbuild 生成、API 直接托管的静态资源。
-- `projects/<project-id>`：独立 Git 工作区。科研 Python 使用 `projects/<project-id>/.venv`。
-- `artifacts`：受控上传、证据 PDF、实验产物、验收结果和备份。
+- `projects/<project-id>`：独立 Git 工作区。科研 Python 使用 `projects/<project-id>/.venv`；每个项目新产生的文件也都放在这个目录下面，包括 `projects/<project-id>/artifacts/`。
+- `artifacts`：只保存共享的运维材料：备份、验收证据、测试/运维夹具和等待迁移或保留兼容的历史文件。新的项目上传文件、PDF、实验输出和复现归档不会写入这个根目录。
 - `runtime`：被 Git 忽略的应用状态、模型覆盖、Mastra Memory、日志和 PID 数据。
 
 PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、产物或审计状态。
@@ -33,7 +33,13 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 
 第二栏采用可读的工作区分组，而不是把技术页面全部挤成一条长标签：项目概述显示 Idea、项目规格、创新/边界、进度和报告/反馈；相关工作显示检索/证据和研究现状/引用图；实验实现固定显示 `本方法实现`，然后是 `相关工作实现`，当前二级视图的具体页面会在其下方单独显示第三行导航，不再放在正文内部；学术论文撰写直接显示各个写作页面。旧 hash 只作为兼容入口，并会改写为无井号的 History API 地址：`method/*` 重定向到 `implementation` 对应页面，旧论文页下的实验 hash 重定向到 `实验实现`，旧论文页下的日报/周报/反馈 hash 重定向到 `项目概述`，旧的 `overview/overview` 会改成 `overview/idea`。相关工作引擎也遵守同一边界：用户的 `D:\auto-related-work` 只作为算法、字段语义、边界案例和测试意图的只读参考，应用行为全部重写为 TypeScript，不导入或执行旧 Python 运行时。
 
-项目工作区使用可读的无井号地址，例如 `/project/mnist-cnn-example/overview/idea`。内部 UUID 仍是项目不可变的身份标识，用于 API 权限和数据隔离，但正常浏览器地址不再显示它。确认 Idea 创建项目时，默认由 Mastra 生成三个不同的语义关键词；用户也可以手动填写三个英文小写单词。服务器会统一规范化，手动重复时拒绝创建，自动生成冲突时追加数字后缀。旧 UUID 地址和旧 hash 地址仍可访问，项目加载后会自动改写为规范地址。
+项目工作区使用可读的无井号地址，例如 `/project/cnn-minimal-2q95/overview/idea`。内部 UUID 仍是项目不可变的身份标识，用于 API 权限和数据隔离，但正常浏览器地址不再显示它。确认 Idea 创建项目时，Mastra 必须严格返回两个语义英文小写单词；服务器再生成四位小写字母/数字随机后缀，并检查完整标识是否唯一。用户手动填写时也必须遵守 `word-word-xxxx` 格式。历史三词地址、UUID 地址和旧 hash 地址仍可兼容访问，不会把数据库中的历史 slug 强行改名。
+
+## 项目文件存储边界
+
+项目自己的文件按项目目录隔离：上传材料、证据 PDF、实验运行目录、复现归档、论文输出和受控 Artifact 都解析到 `projects/<project-id>/artifacts/` 或该项目工作区下的其他明确子目录。PGlite 只保存共享索引、ID、哈希、状态、权限和审计记录，不会把项目文件变成全局文件。删除项目时，会同时删除数据库记录、语义记忆、项目配置以及完整的 `projects/<project-id>/` 目录。
+
+根目录 `artifacts/` 不是第二个仍在使用的项目文件仓库。`artifacts/backups/`、`artifacts/acceptance/`、`artifacts/acceptance-supermemory/`、`artifacts/ops/`、`artifacts/idea-tests/` 和 `artifacts/test-materials/` 保存全局运维、验收或测试材料。按 UUID 命名的目录和旧项目路径可能作为历史迁移来源继续存在；服务启动时会把有数据库索引的项目文件复制到所属项目目录，读取侧暂时保留只读兼容回退，直到迁移或明确清理。新的应用写入不会再指向这些旧路径。
 
 ## 界面语言与主题
 

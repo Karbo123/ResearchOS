@@ -12,7 +12,7 @@ Luna, Terra, and Sol credentials are independent. Public settings expose only `k
 
 ## Experiment Boundary
 
-Only approved, allowlisted experiment types run. Project paths are derived from UUIDs and validated beneath `projects/`; artifact paths remain beneath `artifacts/`. Python runs use a per-project `.venv`. Children receive a minimal environment without application credentials.
+Only approved, allowlisted experiment types run. Project paths are derived from UUIDs and validated beneath `projects/`; project artifact paths resolve beneath `projects/<project-id>/artifacts/`. The root `artifacts/` directory is reserved for shared backups, acceptance/test/operations material, and legacy migration sources. Python runs use a per-project `.venv`. Children receive a minimal environment without application credentials.
 
 The supervisor provides fixed launch arguments, timeout, process-tree termination, bounded logs, required structured outputs, SHA-256 registration, and audit records. Untrusted high-risk code requires a separately managed virtual machine because native process controls cannot guarantee kernel isolation or resource hard limits.
 

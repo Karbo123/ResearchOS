@@ -44,6 +44,7 @@ import { comparisonCandidateCreateRequest, comparisonCandidateDecisionRequest, r
 import { createResearchComparison, createResearchComparisonCandidate, decideResearchComparisonCandidate, getResearchComparison, listResearchComparisons } from './research-comparison/service.js'
 import { deleteProject } from './project-delete-service.js'
 import { migrateProjectArtifactFiles } from './project-artifact-migration.js'
+import { migrateProjectSlugs } from './project-slug-migration.js'
 import { projectArtifactPath, projectArtifactRelativePath, projectFilePath } from './project-storage.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
@@ -58,7 +59,7 @@ async function projectIdForReference(reference: string): Promise<string> {
   try { decoded = decodeURIComponent(reference) } catch { throw new ApiError(404, 'project_not_found', '项目不存在。') }
   const parsed = uuid.safeParse(decoded)
   if (parsed.success) return parsed.data
-  const project = await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1', [decoded])
+  const project = await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [decoded])
   if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')
   return project.id
 }
@@ -265,13 +266,13 @@ app.post('/api/projects', async context => {
   let slug: string
   if (body.slug?.trim()) {
     try { slug = normalizeProjectSlug(body.slug) }
-    catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由三个不同的英文小写单词组成，并用连字符连接。') }
-    if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换三个词。')
+    catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由两个英文小写单词和四位小写字母或数字组成，并用连字符连接。') }
+    if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换两个词和四位后缀。')
   } else {
     const slugResult = await mastraJson<{ result: { keywords: string[] } }>('/internal/agents/project-slug', { idea: session.draft, tier: 'medium' })
     try { slug = await nextAvailableProjectSlug(normalizeProjectSlugKeywords(slugResult.result.keywords)) }
     catch (error) {
-      if (error instanceof Error && error.message === 'project_slug_invalid') throw new ApiError(422, 'project_slug_generation_failed', '模型生成的项目地址标识不符合三个语义词的格式。')
+      if (error instanceof Error && error.message === 'project_slug_invalid') throw new ApiError(422, 'project_slug_generation_failed', '模型生成的项目地址标识未提供严格的两个语义词格式。')
       throw new ApiError(503, 'project_slug_unavailable', '暂时无法生成唯一的项目地址标识，请稍后重试。')
     }
   }
@@ -959,6 +960,7 @@ app.notFound(context => {
 const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
 if (!isTestRuntime) {
   await migrate()
+  await migrateProjectSlugs()
   await migrateProjectArtifactFiles()
   await recoverInterruptedWork()
   await resumeQueuedRelatedWorkRuns()

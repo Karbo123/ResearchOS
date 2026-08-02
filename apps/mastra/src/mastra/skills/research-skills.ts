@@ -17,12 +17,12 @@ Return only the requested strict structured object.
 
 export const projectSlugSkill = createSkill({
   name: 'semantic-project-slug',
-  description: 'Summarize a confirmed research Idea into three distinct URL-safe English keywords.',
+  description: 'Summarize a confirmed research Idea into two distinct URL-safe English keywords.',
   instructions: `
-Read the complete confirmed research Idea. Return exactly three distinct, concise, lowercase ASCII keywords.
+Read the complete confirmed research Idea. Return exactly two distinct, concise, lowercase ASCII English words.
 The keywords must describe the actual research topic, method, or dataset rather than generic words such as research,
 project, study, example, test, or work. Prefer recognizable technical terms (for example mnist, cnn, classification).
-Do not return punctuation, spaces, explanations, translations, claims of novelty, or invented details.
+Do not return a third word, punctuation, spaces, explanations, translations, claims of novelty, or invented details.
 Return only the requested strict structured object.
 `,
 })

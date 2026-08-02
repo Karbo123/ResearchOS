@@ -29,8 +29,10 @@ Mastra can call only fixed high-level loopback endpoints. Agents do not receive 
 - `runtime/research-os.pglite`: embedded PostgreSQL-compatible business database.
 - `runtime/mastra.db`: Mastra workflow and memory state.
 - `runtime/model-settings.json`: ignored runtime overrides; keys are never returned by the API.
-- `projects/<id>`: project Git repository, Idea, paper, experiment source, and per-project `.venv`.
-- `artifacts`: immutable or append-only evidence, uploads, experiment outputs, acceptance files, and backups.
+- `projects/<id>`: project Git repository, Idea, paper, experiment source, per-project `.venv`, and project-owned files under `projects/<id>/artifacts/`.
+- `artifacts`: shared immutable or append-only acceptance files, test/operations material, backups, and legacy migration sources; it is not the live home of new project files.
+
+Project URLs use two lowercase English words and a four-character lowercase alphanumeric suffix. `project_slug_aliases` keeps pre-migration slugs resolvable while the canonical `projects.slug` value is normalized, so URL cleanup does not break historical links.
 
 The database is the business state source. Supermemory is the project-scoped semantic memory and RAG provider; its `memory_links` ledger keeps source IDs, upload/Artifact IDs, SHA-256 values, locators, evidence status, remote IDs, and revoke/delete state. Mastra Memory is used only where the official Mastra Agent runtime needs conversation continuity and cannot approve actions or replace project state.
 
