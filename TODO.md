@@ -436,6 +436,10 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `093a` 移除 JavaScript 逐帧动画，悬停立即设置 CSS 过渡目标，持续 1 秒从右侧滑入，离开时快速平滑收回。
   - [~] `093b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
 
+- [~] `P0-PROJECT-UX-094` 将项目操作图标显示完全交给 CSS `:hover`/`:focus-visible`，移除 React 显示状态对过渡的干扰。
+  - [x] `094a` 使用 `.project-row:hover` 直接触发 1 秒滑入，使用 `:has(:focus-visible)` 支持键盘立即显示，按钮保持可访问且不依赖计时器。
+  - [~] `094b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

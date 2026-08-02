@@ -34,52 +34,8 @@ export function Sidebar({
   onSidebarWidthChange: (width: number) => void
 }) {
   const { t } = useTranslation()
-  const [actionReveal, setActionReveal] = useState<Map<string, 'hidden' | 'partial' | 'full'>>(new Map())
-  const timers = useRef(new Map<string, { full?: number }>())
   const [resizing, setResizing] = useState(false)
   const resizeFrame = useRef<number | null>(null)
-
-  const startProjectHover = (projectId: string) => {
-    const currentTimers = timers.current.get(projectId)
-    if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
-    setActionReveal(current => {
-      const next = new Map(current)
-      next.set(projectId, 'partial')
-      return next
-    })
-    const full = window.setTimeout(() => {
-      setActionReveal(current => {
-        const next = new Map(current)
-        next.set(projectId, 'full')
-        return next
-      })
-      timers.current.delete(projectId)
-    }, 1000)
-    timers.current.set(projectId, { full })
-  }
-
-  const stopProjectHover = (projectId: string) => {
-    const currentTimers = timers.current.get(projectId)
-    if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
-    timers.current.delete(projectId)
-    setActionReveal(current => {
-      if (!current.has(projectId)) return current
-      const next = new Map(current)
-      next.set(projectId, 'hidden')
-      return next
-    })
-  }
-
-  const revealProjectActions = (projectId: string) => {
-    const currentTimers = timers.current.get(projectId)
-    if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
-    timers.current.delete(projectId)
-    setActionReveal(current => {
-      const next = new Map(current)
-      next.set(projectId, 'full')
-      return next
-    })
-  }
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -162,20 +118,10 @@ export function Sidebar({
       <nav className="project-list" aria-label={t('sidebar.projects')}>
         {projects.length ? (
           projects.map(project => {
-            const reveal = actionReveal.get(project.id) || 'hidden'
-            const actionsVisible = reveal !== 'hidden'
             return (
               <div
                 key={project.id}
-                className={`project-row project-actions-${reveal}`}
-                onMouseEnter={() => startProjectHover(project.id)}
-                onMouseLeave={() => stopProjectHover(project.id)}
-                onFocus={event => {
-                  if ((event.target as HTMLElement).matches(':focus-visible')) revealProjectActions(project.id)
-                }}
-                onBlur={event => {
-                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) stopProjectHover(project.id)
-                }}
+                className="project-row"
               >
                 <button
                   type="button"
@@ -187,14 +133,14 @@ export function Sidebar({
                   <span className="project-title-text">{project.title}</span>
                   {project.pinned ? <Pin className="project-pinned-indicator" size={13} strokeWidth={2.2} aria-hidden="true" /> : null}
                 </button>
-                <div className={`project-actions${actionsVisible ? ' visible' : ''}`} aria-hidden={!actionsVisible}>
+                <div className="project-actions">
                   <button
                     type="button"
                     className={`project-action project-pin${project.pinned ? ' pinned' : ''}`}
                     aria-label={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
                     title={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
                     aria-pressed={project.pinned === true}
-                    tabIndex={reveal === 'full' ? 0 : -1}
+                    tabIndex={0}
                     onClick={event => {
                       event.stopPropagation()
                       onPinProject(project)
@@ -207,7 +153,7 @@ export function Sidebar({
                     className="project-action project-delete"
                     aria-label={t('sidebar.deleteProjectAction', { title: project.title })}
                     title={t('sidebar.deleteProjectAction', { title: project.title })}
-                    tabIndex={reveal === 'full' ? 0 : -1}
+                    tabIndex={0}
                     onClick={event => {
                       event.stopPropagation()
                       onDeleteProject(project)

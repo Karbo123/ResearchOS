@@ -17890,49 +17890,8 @@
     onSidebarWidthChange
   }) {
     const { t } = useTranslation();
-    const [actionReveal, setActionReveal] = (0, import_react5.useState)(/* @__PURE__ */ new Map());
-    const timers = (0, import_react5.useRef)(/* @__PURE__ */ new Map());
     const [resizing, setResizing] = (0, import_react5.useState)(false);
     const resizeFrame = (0, import_react5.useRef)(null);
-    const startProjectHover = (projectId) => {
-      const currentTimers = timers.current.get(projectId);
-      if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
-      setActionReveal((current) => {
-        const next = new Map(current);
-        next.set(projectId, "partial");
-        return next;
-      });
-      const full = window.setTimeout(() => {
-        setActionReveal((current) => {
-          const next = new Map(current);
-          next.set(projectId, "full");
-          return next;
-        });
-        timers.current.delete(projectId);
-      }, 1e3);
-      timers.current.set(projectId, { full });
-    };
-    const stopProjectHover = (projectId) => {
-      const currentTimers = timers.current.get(projectId);
-      if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
-      timers.current.delete(projectId);
-      setActionReveal((current) => {
-        if (!current.has(projectId)) return current;
-        const next = new Map(current);
-        next.set(projectId, "hidden");
-        return next;
-      });
-    };
-    const revealProjectActions = (projectId) => {
-      const currentTimers = timers.current.get(projectId);
-      if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
-      timers.current.delete(projectId);
-      setActionReveal((current) => {
-        const next = new Map(current);
-        next.set(projectId, "full");
-        return next;
-      });
-    };
     const startResize = (event) => {
       if (window.matchMedia("(max-width: 760px)").matches) return;
       event.preventDefault();
@@ -18012,20 +17971,10 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: t("sidebar.projects") }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: projects.length ? projects.map((project) => {
-        const reveal = actionReveal.get(project.id) || "hidden";
-        const actionsVisible = reveal !== "hidden";
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `project-row project-actions-${reveal}`,
-            onMouseEnter: () => startProjectHover(project.id),
-            onMouseLeave: () => stopProjectHover(project.id),
-            onFocus: (event) => {
-              if (event.target.matches(":focus-visible")) revealProjectActions(project.id);
-            },
-            onBlur: (event) => {
-              if (!event.currentTarget.contains(event.relatedTarget)) stopProjectHover(project.id);
-            },
+            className: "project-row",
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                 "button",
@@ -18041,7 +17990,7 @@
                   ]
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `project-actions${actionsVisible ? " visible" : ""}`, "aria-hidden": !actionsVisible, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "button",
                   {
@@ -18050,7 +17999,7 @@
                     "aria-label": t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
                     title: t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
                     "aria-pressed": project.pinned === true,
-                    tabIndex: reveal === "full" ? 0 : -1,
+                    tabIndex: 0,
                     onClick: (event) => {
                       event.stopPropagation();
                       onPinProject(project);
@@ -18065,7 +18014,7 @@
                     className: "project-action project-delete",
                     "aria-label": t("sidebar.deleteProjectAction", { title: project.title }),
                     title: t("sidebar.deleteProjectAction", { title: project.title }),
-                    tabIndex: reveal === "full" ? 0 : -1,
+                    tabIndex: 0,
                     onClick: (event) => {
                       event.stopPropagation();
                       onDeleteProject(project);
