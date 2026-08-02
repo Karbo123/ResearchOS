@@ -40,6 +40,8 @@
   --shadow-soft: 0 10px 30px rgba(25, 25, 35, .06), 0 2px 8px rgba(25, 25, 35, .04);
   --shadow-md: 0 16px 44px rgba(25, 25, 35, .12), 0 4px 12px rgba(25, 25, 35, .06);
   --shadow-lg: 0 30px 80px rgba(20, 20, 30, .22), 0 8px 24px rgba(20, 20, 30, .10);
+  --scrollbar-thumb: rgba(60, 60, 67, .22);
+  --scrollbar-thumb-hover: rgba(60, 60, 67, .36);
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
@@ -445,13 +447,13 @@ a.secondary { text-decoration: none; color: var(--ink); }
 /* Keep every scrollable surface quiet and consistent across Windows browsers. */
 .project-list, .messages, .spec-pane, .tab-content, .modal-panel, .memory-graph-results, .memory-search-results {
   scrollbar-width: thin;
-  scrollbar-color: rgba(60, 60, 67, .18) transparent;
-  scrollbar-gutter: auto;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-gutter: stable;
 }
 .project-list::-webkit-scrollbar, .messages::-webkit-scrollbar, .spec-pane::-webkit-scrollbar, .tab-content::-webkit-scrollbar, .modal-panel::-webkit-scrollbar, .memory-graph-results::-webkit-scrollbar, .memory-search-results::-webkit-scrollbar { width: 6px; height: 6px; }
 .project-list::-webkit-scrollbar-track, .messages::-webkit-scrollbar-track, .spec-pane::-webkit-scrollbar-track, .tab-content::-webkit-scrollbar-track, .modal-panel::-webkit-scrollbar-track, .memory-graph-results::-webkit-scrollbar-track, .memory-search-results::-webkit-scrollbar-track { background: transparent; }
-.project-list::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb, .spec-pane::-webkit-scrollbar-thumb, .tab-content::-webkit-scrollbar-thumb, .modal-panel::-webkit-scrollbar-thumb, .memory-graph-results::-webkit-scrollbar-thumb, .memory-search-results::-webkit-scrollbar-thumb { background: rgba(60, 60, 67, .18); border: 1px solid transparent; border-radius: 999px; background-clip: content-box; }
-.project-list::-webkit-scrollbar-thumb:hover, .messages::-webkit-scrollbar-thumb:hover, .spec-pane::-webkit-scrollbar-thumb:hover, .tab-content::-webkit-scrollbar-thumb:hover, .modal-panel::-webkit-scrollbar-thumb:hover, .memory-graph-results::-webkit-scrollbar-thumb:hover, .memory-search-results::-webkit-scrollbar-thumb:hover { background-color: rgba(60, 60, 67, .32); }
+.project-list::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb, .spec-pane::-webkit-scrollbar-thumb, .tab-content::-webkit-scrollbar-thumb, .modal-panel::-webkit-scrollbar-thumb, .memory-graph-results::-webkit-scrollbar-thumb, .memory-search-results::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border: 1px solid transparent; border-radius: 999px; background-clip: content-box; }
+.project-list::-webkit-scrollbar-thumb:hover, .messages::-webkit-scrollbar-thumb:hover, .spec-pane::-webkit-scrollbar-thumb:hover, .tab-content::-webkit-scrollbar-thumb:hover, .modal-panel::-webkit-scrollbar-thumb:hover, .memory-graph-results::-webkit-scrollbar-thumb:hover, .memory-search-results::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
 
 .modal-panel { max-height: min(760px, 88dvh); padding: 22px; border-radius: 20px; }
 .modal-heading { margin-bottom: 16px; }
@@ -767,6 +769,8 @@ a.secondary { text-decoration: none; color: var(--ink); }
   --shadow-soft: 0 12px 34px rgba(0, 0, 0, .42), 0 2px 8px rgba(0, 0, 0, .26);
   --shadow-md: 0 18px 48px rgba(0, 0, 0, .48), 0 4px 12px rgba(0, 0, 0, .26);
   --shadow-lg: 0 32px 88px rgba(0, 0, 0, .60), 0 8px 24px rgba(0, 0, 0, .34);
+  --scrollbar-thumb: rgba(235, 235, 245, .28);
+  --scrollbar-thumb-hover: rgba(235, 235, 245, .44);
   color-scheme: dark;
 }
 
@@ -1190,5 +1194,53 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .modal-panel {
     background: var(--surface-solid);
     border-color: var(--line-strong);
+  }
+}
+
+/* Keep long project pages inside the workspace instead of growing the document. */
+.app-shell {
+  height: 100dvh;
+  min-height: 0;
+}
+.workspace {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.project-view {
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+}
+.project-view > .tabs,
+.project-view > .workflow-local-nav {
+  flex: 0 0 auto;
+}
+.project-layout {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.tab-content {
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    height: calc(100dvh - 58px);
+  }
+  .project-layout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+  .tab-content {
+    flex: 1 1 auto;
+    width: 100%;
   }
 }
