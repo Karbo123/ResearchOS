@@ -144,7 +144,17 @@ button { -webkit-font-smoothing: inherit; }
   transform: translate(48px, -50%) scale(.92);
   transition: opacity .34s var(--ease), transform .62s var(--spring);
 }
-.project-row.project-actions-partial .project-actions { opacity: .5; transform: translate(37px, -50%) scale(.96); }
+@keyframes project-actions-reveal {
+  0% { opacity: 0; transform: translate(48px, -50%) scale(.92); }
+  14% { opacity: .38; transform: translate(34px, -50%) scale(.95); }
+  100% { opacity: 1; transform: translate(0, -50%) scale(1); }
+}
+.project-row.project-actions-partial .project-actions {
+  opacity: 1;
+  transform: translate(0, -50%) scale(1);
+  animation: project-actions-reveal 2s var(--ease) both;
+  will-change: opacity, transform;
+}
 .project-row.project-actions-full .project-actions,
 .project-row:focus-within .project-actions { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); }
 .project-action { display: inline-flex !important; align-items: center; justify-content: center; width: 28px; min-width: 28px; height: 28px; min-height: 28px !important; padding: 5px !important; border: 1px solid transparent !important; border-radius: 9px !important; background: transparent !important; transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring); }

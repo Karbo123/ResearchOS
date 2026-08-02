@@ -411,6 +411,10 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `087b` 调整浅色/暗色和窄屏样式，使品牌整体在侧栏中保持协调居中且不破坏移动端布局。
   - [~] `087c` 类型检查、UI/i18n/主题检查、构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
 
+- [~] `P0-PROJECT-UX-088` 修复项目列表操作按钮从右侧出现时的离散跳变。
+  - [x] `088a` 将 1 秒后的部分露出改为持续 2 秒的连续滑入与透明度过渡，3 秒时自然停稳。
+  - [~] `088b` UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。
