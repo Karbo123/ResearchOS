@@ -3,6 +3,7 @@ import { CircleUserRound, Paperclip, Send, Sparkles } from 'lucide-react'
 import type { ChatMessage, ResearchSpec, ThinkingSession } from '../types'
 import { SpecPane } from './SpecPane'
 import { ThinkingSessions } from './ThinkingSessions'
+import { ResizableDivider } from './ResizableDivider'
 import { useTranslation } from '../i18n'
 
 const IDEA_PROGRESS_STAGE_KEYS = [
@@ -12,6 +13,9 @@ const IDEA_PROGRESS_STAGE_KEYS = [
   'idea.stage.checkRisks',
   'idea.stage.stillWorking',
 ]
+const IDEA_SPEC_MIN_WIDTH = 300
+const IDEA_SPEC_MAX_WIDTH = 520
+const IDEA_SPEC_DEFAULT_WIDTH = 360
 
 function MessageItem({ message }: { message: ChatMessage }) {
   const { t } = useTranslation()
@@ -103,6 +107,15 @@ export function IdeaView({
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const newViewRef = useRef<HTMLElement>(null)
+  const [specWidth, setSpecWidth] = useState(() => {
+    const stored = Number(window.localStorage.getItem('researchos.specWidth'))
+    return Number.isFinite(stored) ? Math.min(IDEA_SPEC_MAX_WIDTH, Math.max(IDEA_SPEC_MIN_WIDTH, stored)) : IDEA_SPEC_DEFAULT_WIDTH
+  })
+
+  useEffect(() => {
+    window.localStorage.setItem('researchos.specWidth', String(specWidth))
+  }, [specWidth])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -126,7 +139,11 @@ export function IdeaView({
   const automatic = clarificationMode === 'automatic'
 
   return (
-    <section className="new-view">
+    <section
+      ref={newViewRef}
+      className="new-view"
+      style={{ '--spec-width': `${specWidth}px` } as React.CSSProperties}
+    >
       <div className="chat-pane">
         <div className="messages">
           {messages.map(message => <MessageItem key={message.id} message={message} />)}
@@ -182,6 +199,17 @@ export function IdeaView({
           <div className="file-queue">{queuedFiles.map(file => file.name).join(' · ')}</div>
         ) : null}
       </div>
+      <ResizableDivider
+        value={specWidth}
+        min={IDEA_SPEC_MIN_WIDTH}
+        max={IDEA_SPEC_MAX_WIDTH}
+        ariaLabel={t('layout.resizeSpecPane')}
+        increaseDirection="right"
+        disabledMediaQuery="(max-width: 1050px)"
+        className="idea-spec-resizer"
+        onPreview={width => newViewRef.current?.style.setProperty('--spec-width', `${width}px`)}
+        onCommit={setSpecWidth}
+      />
       <div className="spec-pane">
         <SpecPane
           spec={spec}

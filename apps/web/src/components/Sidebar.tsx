@@ -3,6 +3,13 @@ import { Plus, Settings, Share2, Trash2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 
+const SIDEBAR_MIN_WIDTH = 220
+const SIDEBAR_MAX_WIDTH = 380
+
+function clampSidebarWidth(width: number) {
+  return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
+}
+
 export function Sidebar({
   projects,
   activeProjectId,
@@ -28,6 +35,7 @@ export function Sidebar({
   const [visibleActions, setVisibleActions] = useState<Set<string>>(new Set())
   const timers = useRef(new Map<string, number>())
   const [resizing, setResizing] = useState(false)
+  const resizeFrame = useRef<number | null>(null)
 
   const startProjectHover = (projectId: string) => {
     const currentTimer = timers.current.get(projectId)
@@ -54,31 +62,55 @@ export function Sidebar({
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
     event.preventDefault()
+    const handle = event.currentTarget
+    const shell = handle.closest<HTMLElement>('.app-shell')
+    if (!shell) return
     const startX = event.clientX
     const startWidth = sidebarWidth
+    let pendingWidth = startWidth
     setResizing(true)
-    const move = (moveEvent: PointerEvent) => onSidebarWidthChange(startWidth + moveEvent.clientX - startX)
+    shell.classList.add('is-resizing')
+    handle.setPointerCapture?.(event.pointerId)
+    const move = (moveEvent: globalThis.PointerEvent) => {
+      moveEvent.preventDefault()
+      pendingWidth = clampSidebarWidth(startWidth + moveEvent.clientX - startX)
+      if (resizeFrame.current !== null) return
+      resizeFrame.current = window.requestAnimationFrame(() => {
+        shell.style.setProperty('--sidebar-width', `${pendingWidth}px`)
+        resizeFrame.current = null
+      })
+    }
     const stop = () => {
+      if (resizeFrame.current !== null) {
+        window.cancelAnimationFrame(resizeFrame.current)
+        resizeFrame.current = null
+      }
+      shell.style.setProperty('--sidebar-width', `${pendingWidth}px`)
+      onSidebarWidthChange(pendingWidth)
+      shell.classList.remove('is-resizing')
       setResizing(false)
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', stop)
+      window.removeEventListener('pointercancel', stop)
+      handle.releasePointerCapture?.(event.pointerId)
     }
-    window.addEventListener('pointermove', move)
+    window.addEventListener('pointermove', move, { passive: false })
     window.addEventListener('pointerup', stop, { once: true })
+    window.addEventListener('pointercancel', stop, { once: true })
   }
 
   const resizeByKeyboard = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault()
-      onSidebarWidthChange(sidebarWidth + (event.key === 'ArrowRight' ? 10 : -10))
+      onSidebarWidthChange(clampSidebarWidth(sidebarWidth + (event.key === 'ArrowRight' ? 10 : -10)))
     }
     if (event.key === 'Home') {
       event.preventDefault()
-      onSidebarWidthChange(220)
+      onSidebarWidthChange(SIDEBAR_MIN_WIDTH)
     }
     if (event.key === 'End') {
       event.preventDefault()
-      onSidebarWidthChange(380)
+      onSidebarWidthChange(SIDEBAR_MAX_WIDTH)
     }
   }
 
@@ -90,8 +122,8 @@ export function Sidebar({
         tabIndex={0}
         aria-label={t('sidebar.resize')}
         aria-orientation="vertical"
-        aria-valuemin={220}
-        aria-valuemax={380}
+        aria-valuemin={SIDEBAR_MIN_WIDTH}
+        aria-valuemax={SIDEBAR_MAX_WIDTH}
         aria-valuenow={sidebarWidth}
         onPointerDown={startResize}
         onKeyDown={resizeByKeyboard}

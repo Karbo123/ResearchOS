@@ -1248,3 +1248,82 @@ a.secondary { text-decoration: none; color: var(--ink); }
     width: 100%;
   }
 }
+
+/* Resizable split panes: preview with CSS variables, commit to React on release. */
+.resizable-divider {
+  position: relative;
+  z-index: 2;
+  min-width: 16px;
+  min-height: 44px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+.resizable-divider::before {
+  content: '';
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: 50%;
+  width: 2px;
+  border-radius: 999px;
+  background: transparent;
+  transform: translateX(-50%);
+  transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring);
+}
+.resizable-divider:hover::before,
+.resizable-divider:focus-visible::before,
+.resizable-divider.is-resizing::before {
+  background: var(--blue);
+  box-shadow: 0 0 0 4px var(--blue-soft);
+  transform: translateX(-50%) scaleY(1.05);
+}
+.resizable-divider:focus-visible { outline: none; }
+.app-shell.is-resizing,
+.app-shell.is-resizing * { cursor: col-resize !important; user-select: none !important; }
+
+@media (min-width: 1051px) {
+  .new-view {
+    grid-template-columns: minmax(0, 1fr) 16px minmax(300px, var(--spec-width, 360px));
+    column-gap: 0;
+  }
+  .new-view > .idea-spec-resizer { grid-column: 2; grid-row: 1; }
+  .new-view > .spec-pane { grid-column: 3; grid-row: 1; }
+  .project-layout {
+    grid-template-columns: minmax(0, 1fr) 16px minmax(280px, var(--project-chat-width, 360px));
+    column-gap: 0;
+  }
+  .project-layout > .project-chat-resizer { grid-column: 2; grid-row: 1; }
+  .project-layout > .project-chat { grid-column: 3; grid-row: 1; }
+}
+
+@media (max-width: 1050px) {
+  .project-chat-resizer,
+  .idea-spec-resizer { display: none; }
+  .project-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Compact desktop density: preserve readable text while reducing oversized chrome. */
+@media (min-width: 761px) {
+  .sidebar { padding: 13px 10px 10px; }
+  .brand { height: 33px; margin-bottom: 12px; font-size: 13px; }
+  .brand-mark { width: 25px; height: 25px; border-radius: 8px; }
+  .primary { min-height: 35px; font-size: 12px; }
+  .side-label { margin-top: 18px; margin-bottom: 6px; }
+  .topbar { min-height: 64px; padding: 10px 20px; }
+  .topbar h1 { font-size: 18px; }
+  .new-view { padding-top: 10px; padding-bottom: 12px; }
+  .chat-pane, .spec-pane, .project-chat, .tab-content { border-radius: 16px; }
+  .tab-content { padding: 18px 20px 24px; }
+  .project-chat { padding-top: 14px; }
+  .project-chat .pane-heading { padding: 0 14px; }
+  .project-chat .messages.compact { padding: 10px 14px; }
+  .project-chat .composer.compact { margin: 0 10px 10px; }
+  .tabs button { min-height: 31px; padding-top: 7px; padding-bottom: 7px; }
+  .section { margin-bottom: 22px; }
+  .section-head h2 { font-size: 16px; }
+  .metric { padding: 13px; }
+  .metric strong { font-size: 19px; }
+  .data-row { padding: 12px 14px; }
+  .modal-panel { padding: 22px; }
+}

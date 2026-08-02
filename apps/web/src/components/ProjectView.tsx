@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { BarChart3, BookOpen, CalendarDays, CheckSquare, FileCheck2, FilePenLine, FileText, FlaskConical, GitBranch, GitCompare, History, Image, Inbox, LayoutDashboard, Library, LineChart, ListChecks, ListTree, MessageCircle, Network, Quote, Search, Stamp, Terminal, Waypoints } from 'lucide-react'
 import type { ChatMessage, ConfirmRequest, ProjectDetail, ResearchArea, TabId } from '../types'
 import { ProjectChat } from './ProjectChat'
@@ -15,6 +15,7 @@ import { PoliciesTab } from './tabs/PoliciesTab'
 import { ReportsTab } from './tabs/ReportsTab'
 import { WorkflowStageTab } from './tabs/WorkflowStageTab'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
+import { ResizableDivider } from './ResizableDivider'
 import { useTranslation, type TranslationKey } from '../i18n'
 
 type ProjectTab = { id: TabId; labelKey: TranslationKey; icon: React.ReactNode }
@@ -71,6 +72,9 @@ function SlidingNav({
 
 const REPORT_TABS: TabId[] = ['daily_reports', 'weekly_reports', 'feedback_inbox', 'feedback_audit', 'reports']
 const PAPER_TABS: TabId[] = ['paper', 'paper_outline', 'paper_citations', 'paper_figures', 'paper_data', 'paper_compile', 'paper_review']
+const PROJECT_CHAT_MIN_WIDTH = 280
+const PROJECT_CHAT_MAX_WIDTH = 520
+const PROJECT_CHAT_DEFAULT_WIDTH = 360
 
 const AREAS: ProjectArea[] = [
   {
@@ -172,6 +176,14 @@ export function ProjectView({
   onToggleMobileChat: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const [projectChatWidth, setProjectChatWidth] = useState(() => {
+    const stored = Number(window.localStorage.getItem('researchos.projectChatWidth'))
+    return Number.isFinite(stored) ? Math.min(PROJECT_CHAT_MAX_WIDTH, Math.max(PROJECT_CHAT_MIN_WIDTH, stored)) : PROJECT_CHAT_DEFAULT_WIDTH
+  })
+  const projectLayoutRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    window.localStorage.setItem('researchos.projectChatWidth', String(projectChatWidth))
+  }, [projectChatWidth])
   const tabProps = {
     project,
     onRefresh,
@@ -231,7 +243,11 @@ export function ProjectView({
           ))}
         </SlidingNav>
       ) : null}
-      <div className="project-layout">
+      <div
+        ref={projectLayoutRef}
+        className="project-layout"
+        style={{ '--project-chat-width': `${projectChatWidth}px` } as React.CSSProperties}
+      >
         <div className="tab-content">
           <WorkspaceContextBar project={project} />
           {activeTab === 'overview' || activeTab === 'overview_spec' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
@@ -259,6 +275,17 @@ export function ProjectView({
           <MessageCircle size={16} />
           {t('projectChat')}
         </button>
+        <ResizableDivider
+          value={projectChatWidth}
+          min={PROJECT_CHAT_MIN_WIDTH}
+          max={PROJECT_CHAT_MAX_WIDTH}
+          ariaLabel={t('layout.resizeProjectChat')}
+          increaseDirection="left"
+          disabledMediaQuery="(max-width: 1050px)"
+          className="project-chat-resizer"
+          onPreview={width => projectLayoutRef.current?.style.setProperty('--project-chat-width', `${width}px`)}
+          onCommit={setProjectChatWidth}
+        />
         <ProjectChat
           messages={chatMessages}
           busy={chatBusy}
