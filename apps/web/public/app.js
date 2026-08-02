@@ -12783,7 +12783,6 @@
     "group.relatedStatus": "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE",
     "group.implRelated": "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0",
     "group.implMethod": "\u672C\u65B9\u6CD5\u5B9E\u73B0",
-    "group.paperWriting": "\u8BBA\u6587\u5199\u4F5C\u4E0E\u7F16\u8BD1",
     "tab.overview": "Idea \u8BA8\u8BBA",
     "tab.overviewSpec": "\u9879\u76EE\u63CF\u8FF0\u4E0E\u7814\u7A76\u95EE\u9898",
     "tab.overviewInnovation": "\u521B\u65B0\u70B9\u4E0E\u8FB9\u754C",
@@ -13764,7 +13763,6 @@
     "group.relatedStatus": "\u7814\u7A76\u73FE\u6CC1\u8207\u5F15\u7528\u5716",
     "group.implRelated": "\u76F8\u95DC\u5DE5\u4F5C\u5BE6\u4F5C",
     "group.implMethod": "\u672C\u65B9\u6CD5\u5BE6\u4F5C",
-    "group.paperWriting": "\u8AD6\u6587\u5BEB\u4F5C\u8207\u7DE8\u8B6F",
     "tab.overview": "Idea \u8A0E\u8AD6",
     "tab.overviewSpec": "\u5C08\u6848\u63CF\u8FF0\u8207\u7814\u7A76\u554F\u984C",
     "tab.overviewInnovation": "\u5275\u65B0\u9EDE\u8207\u908A\u754C",
@@ -14745,7 +14743,6 @@
     "group.relatedStatus": "Research Status and Citation Graph",
     "group.implRelated": "Related Work Implementation",
     "group.implMethod": "Our Method Implementation",
-    "group.paperWriting": "Writing and Compilation",
     "tab.overview": "Idea Discussion",
     "tab.overviewSpec": "Description and Research Question",
     "tab.overviewInnovation": "Innovation and Boundaries",
@@ -15726,7 +15723,6 @@
     "group.relatedStatus": "Estado de la investigaci\xF3n y grafo de citas",
     "group.implRelated": "Implementaci\xF3n de trabajos relacionados",
     "group.implMethod": "Implementaci\xF3n de nuestro m\xE9todo",
-    "group.paperWriting": "Escritura y compilaci\xF3n",
     "tab.overview": "Discusi\xF3n de la idea",
     "tab.overviewSpec": "Descripci\xF3n y pregunta de investigaci\xF3n",
     "tab.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
@@ -22131,15 +22127,13 @@
       labelKey: "nav.paper",
       icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 16 }),
       groups: [
-        { id: "paper_writing", labelKey: "group.paperWriting", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }), tabs: [
-          { id: "paper", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }) },
-          { id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }) },
-          { id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Quote, { size: 15 }) },
-          { id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartLine, { size: 15 }) },
-          { id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) },
-          { id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileCheckCorner, { size: 15 }) },
-          { id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) }
-        ] }
+        { id: "paper_project", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }), tabs: [{ id: "paper", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }) }] },
+        { id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }), tabs: [{ id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }) }] },
+        { id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Quote, { size: 15 }), tabs: [{ id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Quote, { size: 15 }) }] },
+        { id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartLine, { size: 15 }), tabs: [{ id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartLine, { size: 15 }) }] },
+        { id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }), tabs: [{ id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) }] },
+        { id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileCheckCorner, { size: 15 }), tabs: [{ id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileCheckCorner, { size: 15 }) }] },
+        { id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }), tabs: [{ id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) }] }
       ]
     }
   ];

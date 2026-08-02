@@ -80,15 +80,13 @@ const AREAS: ProjectArea[] = [
     labelKey: 'nav.paper',
     icon: <FilePenLine size={16} />,
     groups: [
-      { id: 'paper_writing', labelKey: 'group.paperWriting', icon: <FilePenLine size={15} />, tabs: [
-        { id: 'paper', labelKey: 'tab.paperProject', icon: <FilePenLine size={15} /> },
-        { id: 'paper_outline', labelKey: 'tab.paperOutline', icon: <ListTree size={15} /> },
-        { id: 'paper_citations', labelKey: 'tab.paperCitations', icon: <Quote size={15} /> },
-        { id: 'paper_figures', labelKey: 'tab.paperFigures', icon: <LineChart size={15} /> },
-        { id: 'paper_data', labelKey: 'tab.paperData', icon: <BarChart3 size={15} /> },
-        { id: 'paper_compile', labelKey: 'tab.paperCompile', icon: <FileCheck2 size={15} /> },
-        { id: 'paper_review', labelKey: 'tab.paperReview', icon: <FileText size={15} /> },
-      ] },
+      { id: 'paper_project', labelKey: 'tab.paperProject', icon: <FilePenLine size={15} />, tabs: [{ id: 'paper', labelKey: 'tab.paperProject', icon: <FilePenLine size={15} /> }] },
+      { id: 'paper_outline', labelKey: 'tab.paperOutline', icon: <ListTree size={15} />, tabs: [{ id: 'paper_outline', labelKey: 'tab.paperOutline', icon: <ListTree size={15} /> }] },
+      { id: 'paper_citations', labelKey: 'tab.paperCitations', icon: <Quote size={15} />, tabs: [{ id: 'paper_citations', labelKey: 'tab.paperCitations', icon: <Quote size={15} /> }] },
+      { id: 'paper_figures', labelKey: 'tab.paperFigures', icon: <LineChart size={15} />, tabs: [{ id: 'paper_figures', labelKey: 'tab.paperFigures', icon: <LineChart size={15} /> }] },
+      { id: 'paper_data', labelKey: 'tab.paperData', icon: <BarChart3 size={15} />, tabs: [{ id: 'paper_data', labelKey: 'tab.paperData', icon: <BarChart3 size={15} /> }] },
+      { id: 'paper_compile', labelKey: 'tab.paperCompile', icon: <FileCheck2 size={15} />, tabs: [{ id: 'paper_compile', labelKey: 'tab.paperCompile', icon: <FileCheck2 size={15} /> }] },
+      { id: 'paper_review', labelKey: 'tab.paperReview', icon: <FileText size={15} />, tabs: [{ id: 'paper_review', labelKey: 'tab.paperReview', icon: <FileText size={15} /> }] },
     ],
   },
 ]
