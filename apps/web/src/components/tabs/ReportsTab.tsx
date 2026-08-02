@@ -4,15 +4,10 @@ import { api, errorMessage } from '../../api'
 import type { AuditEvent, HumanFeedback, ProjectDetail, Report, TabId } from '../../types'
 import { MarkdownPreview } from '../MarkdownPreview'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
+import { formatDateTime, useTranslation } from '../../i18n'
 
 function displayable(report: Report | undefined): boolean {
   return report?.status === 'valid'
-}
-
-function formatTime(value?: string) {
-  if (!value) return '时间待记录'
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' })
 }
 
 function periodForTab(tab: TabId): 'daily' | 'weekly' {
@@ -30,6 +25,7 @@ export function ReportsTab({
   onRefresh: () => Promise<void>
   showToast: (message: string) => void
 }) {
+  const { t, locale } = useTranslation()
   const isFeedback = tab === 'feedback_inbox'
   const isAudit = tab === 'feedback_audit'
   const period = periodForTab(tab)
@@ -75,7 +71,7 @@ export function ReportsTab({
       setActiveReportStatus('valid')
       setActiveReportReason('')
       await onRefresh()
-      showToast(`${period === 'daily' ? '日报' : '周报'}已生成；来源快照已记录`)
+      showToast(t('reports.generated', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') }))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -98,7 +94,7 @@ export function ReportsTab({
       })
       setFeedback('')
       await onRefresh()
-      showToast('导师反馈已记录；后续方向仍需 Proposal 才会执行')
+      showToast(t('reports.feedbackRecorded'))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -124,13 +120,13 @@ export function ReportsTab({
         method: 'POST',
         body: JSON.stringify({
           kind: 'diagnostic_suggestion',
-          summary: '根据导师反馈生成待审阅下一步提案',
+          summary: t('reports.feedbackProposalSummary'),
           reason: row.instruction,
           payload: { category: row.category, reference_id: row.reference_id || null },
         }),
       })
       await onRefresh()
-      showToast('反馈提案已创建，请在“决策与审计”中审批')
+      showToast(t('reports.proposalCreated'))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -139,35 +135,35 @@ export function ReportsTab({
   if (isFeedback) {
     return (
       <>
-        <SectionHeading title="导师反馈收件箱" hint="反馈只能产生反馈决策、Proposal 和审计记录；不会直接改代码、装依赖、运行实验或推送 Git。" extra={<Badge status="project-scoped">{project.id.slice(0, 8)}</Badge>} />
-        {loading ? <EmptyState text="正在读取当前项目的反馈…" /> : feedbackRows.length ? (
+        <SectionHeading title={t('reports.feedbackInbox')} hint={t('reports.feedbackHint')} extra={<Badge status="project-scoped">{project.id.slice(0, 8)}</Badge>} />
+        {loading ? <EmptyState text={t('reports.loadingFeedback')} /> : feedbackRows.length ? (
           <div className="data-list">
             {feedbackRows.map(row => (
               <article className="data-row feedback-row" key={row.id}>
                 <div>
                   <h3>{row.instruction}</h3>
-                  <p>{row.category} · {formatTime(row.created_at)}{row.reference_id ? ` · 关联 ${row.reference_id.slice(0, 8)}` : ''}</p>
-                  {row.decision_comment ? <p className="muted">决策说明：{row.decision_comment}</p> : null}
+                  <p>{row.category} · {formatDateTime(row.created_at, locale)}{row.reference_id ? ` · ${t('reports.reference')} ${row.reference_id.slice(0, 8)}` : ''}</p>
+                  {row.decision_comment ? <p className="muted">{t('reports.decisionComment')}{row.decision_comment}</p> : null}
                 </div>
                 <div className="button-row">
                   <Badge status={row.status} />
                   {row.status === 'open' ? <>
-                    <button className="approve" type="button" onClick={() => { void decideFeedback(row.id, 'acknowledged') }}><Check size={14} />确认</button>
-                    <button className="secondary" type="button" onClick={() => { void decideFeedback(row.id, 'revision_requested') }}><MessageSquare size={14} />要求修订</button>
-                    <button className="reject" type="button" onClick={() => { void decideFeedback(row.id, 'rejected') }}><X size={14} />拒绝</button>
+                    <button className="approve" type="button" onClick={() => { void decideFeedback(row.id, 'acknowledged') }}><Check size={14} />{t('reports.acknowledge')}</button>
+                    <button className="secondary" type="button" onClick={() => { void decideFeedback(row.id, 'revision_requested') }}><MessageSquare size={14} />{t('reports.requestRevision')}</button>
+                    <button className="reject" type="button" onClick={() => { void decideFeedback(row.id, 'rejected') }}><X size={14} />{t('common.reject')}</button>
                   </> : null}
-                  {row.status !== 'rejected' && row.status !== 'proposal_created' ? <button className="secondary" type="button" onClick={() => { void createFeedbackProposal(row) }}><Gavel size={14} />生成 Proposal</button> : null}
+                  {row.status !== 'rejected' && row.status !== 'proposal_created' ? <button className="secondary" type="button" onClick={() => { void createFeedbackProposal(row) }}><Gavel size={14} />{t('reports.createProposal')}</button> : null}
                 </div>
               </article>
             ))}
           </div>
-        ) : <EmptyState text="当前项目没有导师反馈。没有事件时保持 empty，不生成模板化报告。" />}
+        ) : <EmptyState text={t('reports.noFeedback')} />}
         <div className="section report-feedback">
-          <SectionHeading title="记录新反馈" hint="反馈文本会保存到当前项目；语义记忆写入失败时直接显示结构化错误。" />
+          <SectionHeading title={t('reports.recordFeedback')} hint={t('reports.recordFeedbackHint')} />
           <div className="feedback-form">
-            <label>反馈类型<select value={feedbackCategory} onChange={event => setFeedbackCategory(event.target.value as 'report' | 'general')}><option value="report">针对报告</option><option value="general">下一步方向</option></select></label>
-            <label>给 AI 学生的反馈<textarea maxLength={8000} value={feedback} placeholder="指出需要修正的结果、下一步方向或需要补充的证据" onChange={event => setFeedback(event.target.value)} /></label>
-            <button className="secondary" type="button" disabled={!feedback.trim()} onClick={() => { void submitFeedback() }}><Send size={15} />记录反馈</button>
+            <label>{t('reports.feedbackType')}<select value={feedbackCategory} onChange={event => setFeedbackCategory(event.target.value as 'report' | 'general')}><option value="report">{t('reports.forReport')}</option><option value="general">{t('reports.nextDirection')}</option></select></label>
+            <label>{t('reports.feedbackToAi')}<textarea maxLength={8000} value={feedback} placeholder={t('reports.feedbackPlaceholder')} onChange={event => setFeedback(event.target.value)} /></label>
+            <button className="secondary" type="button" disabled={!feedback.trim()} onClick={() => { void submitFeedback() }}><Send size={15} />{t('reports.recordFeedbackAction')}</button>
           </div>
         </div>
       </>
@@ -178,19 +174,19 @@ export function ReportsTab({
     const relevant = auditRows.filter(row => row.action.startsWith('human_feedback') || row.action.startsWith('proposal.'))
     return (
       <>
-        <SectionHeading title="反馈与 Proposal 审计" hint={`只显示当前 project_id ${project.id} 下的决策、Proposal 和失败事件。`} extra={<Badge status="project-scoped">project_scoped</Badge>} />
-        {loading ? <EmptyState text="正在读取项目审计…" /> : relevant.length ? <div className="data-list">{relevant.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatTime(row.created_at)} · {JSON.stringify(row.details || {})}</p></div><Badge status="recorded" /></div>)}</div> : <EmptyState text="当前项目还没有反馈或 Proposal 审计事件。" />}
+        <SectionHeading title={t('reports.auditTitle')} hint={t('reports.auditHint', { projectId: project.id })} extra={<Badge status="project-scoped">project_scoped</Badge>} />
+        {loading ? <EmptyState text={t('reports.loadingAudit')} /> : relevant.length ? <div className="data-list">{relevant.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatDateTime(row.created_at, locale)} · {JSON.stringify(row.details || {})}</p></div><Badge status="recorded" /></div>)}</div> : <EmptyState text={t('reports.noAudit')} />}
       </>
     )
   }
 
   return (
     <>
-      <SectionHeading title={period === 'daily' ? '日报' : '周报'} hint="报告只读取真实事件并保存 source_snapshot；没有事件时显示 empty。" extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void generateReport() }}><FileText size={15} />生成{period === 'daily' ? '日报' : '周报'}</button></ButtonRow>} />
+      <SectionHeading title={period === 'daily' ? t('reports.daily') : t('reports.weekly')} hint={t('reports.periodHint')} extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void generateReport() }}><FileText size={15} />{t('reports.generate', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}</button></ButtonRow>} />
       <div className={`${content ? 'report' : activeReportStatus && activeReportStatus !== 'valid' ? 'empty report-blocked' : 'empty'}`}>
-        {content ? <MarkdownPreview content={content} /> : activeReportStatus && activeReportStatus !== 'valid' ? `当前报告未显示：${activeReportReason || '来源谱系无法复核'}。请重新生成当前时间窗口的报告。` : `当前项目还没有${period === 'daily' ? '日报' : '周报'}。`}
+        {content ? <MarkdownPreview content={content} /> : activeReportStatus && activeReportStatus !== 'valid' ? t('reports.blocked', { reason: activeReportReason || t('reports.lineageUnverifiable') }) : t('reports.noneForPeriod', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}
       </div>
-      {reports.length > 1 ? <div className="section"><h3>历史版本</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatTime(report.created_at)}</h3><p>{report.id} · source snapshot {report.source_snapshot ? '已记录' : '缺失'}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? '查看' : '查看状态'}</button></ButtonRow></div>)}</div></div> : null}
+      {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatDateTime(report.created_at, locale)}</h3><p>{report.id} · source snapshot {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
     </>
   )
 }

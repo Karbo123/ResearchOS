@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { RotateCcw } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { Artifact, ArtifactPreview } from '../types'
+import { useTranslation } from '../i18n'
 
 function PointCloudPreview({ preview }: { preview: Extract<ArtifactPreview, { type: 'point_cloud' }> }) {
+  const { t } = useTranslation()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const points = preview.points || []
   const [resetKey, setResetKey] = useState(0)
@@ -26,7 +28,7 @@ function PointCloudPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
         context.fillStyle = '#aab6b1'
         context.font = '14px sans-serif'
         context.textAlign = 'center'
-        context.fillText('没有可显示的有效点', width / 2, height / 2)
+        context.fillText(t('preview.noPoints'), width / 2, height / 2)
         return
       }
       const mins = [Infinity, Infinity, Infinity]
@@ -118,20 +120,21 @@ function PointCloudPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
     <div className="artifact-preview">
       <div className="point-cloud-tools">
         <span className="muted">
-          {String(preview.format || 'ply').toUpperCase()} · {points.length}/{Number(preview.source_point_count || points.length)} 点
-          {preview.sampled ? ' · 已降采样' : ''}
+          {String(preview.format || 'ply').toUpperCase()} · {points.length}/{Number(preview.source_point_count || points.length)} {t('preview.pointCount', { count: '' })}
+          {preview.sampled ? t('preview.sampled') : ''}
         </span>
-        <button className="icon-btn point-reset" type="button" title="重置视图" aria-label="重置视图" onClick={reset}>
+        <button className="icon-btn point-reset" type="button" title={t('preview.resetView')} aria-label={t('preview.resetView')} onClick={reset}>
           <RotateCcw size={15} />
         </button>
       </div>
-      <canvas ref={canvasRef} className="point-cloud-canvas" width="640" height="420" aria-label="点云预览" />
-      {preview.faces?.length ? <div className="preview-footnote">已加载 {preview.faces.length} 个面片，使用线框显示。</div> : null}
+      <canvas ref={canvasRef} className="point-cloud-canvas" width="640" height="420" aria-label={t('preview.pointCloud')} />
+      {preview.faces?.length ? <div className="preview-footnote">{t('preview.loadedFaces', { count: preview.faces.length })}</div> : null}
     </div>
   )
 }
 
 function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { type: 'timeseries' }> }) {
+  const { t } = useTranslation()
   const points = (preview.points || []).filter(point => point && Number.isFinite(Number(point.step)))
   const metrics = ['loss', 'accuracy', 'validation_loss', 'validation_accuracy', 'learning_rate'].filter(metric =>
     points.some(point => Number.isFinite(Number(point[metric]))),
@@ -151,14 +154,14 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
   }, [seedKey])
 
   if (!points.length || !metrics.length) {
-    return <div className="preview-error">没有可绘制的有限数值指标。</div>
+    return <div className="preview-error">{t('preview.noFiniteMetrics')}</div>
   }
 
   const visible = points.slice(-windowSize)
   const numeric = visible.filter(point => selectedSeeds.includes(String(point.seed ?? 'all')) && Number.isFinite(Number(point[metric])))
   const missingCount = visible.filter(point => selectedSeeds.includes(String(point.seed ?? 'all')) && !Number.isFinite(Number(point[metric]))).length
   if (!numeric.length) {
-    return <div className="preview-error">当前选择没有可绘制的有限数值指标；缺失值不会被补写或插值。</div>
+    return <div className="preview-error">{t('preview.selectionNoFinite')}</div>
   }
   const steps = numeric.map(point => Number(point.step))
   const minStep = Math.min(...steps)
@@ -174,13 +177,13 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
     <div className="artifact-preview">
       <div className="timeseries-toolbar">
         <label>
-          指标
+          {t('preview.metric')}
           <select value={metric} onChange={event => setMetric(event.target.value)}>
             {metrics.map(name => <option key={name} value={name}>{name}</option>)}
           </select>
         </label>
         <label>
-          点数
+          {t('preview.points')}
           <input
             type="range"
             min={10}
@@ -189,7 +192,7 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
             onChange={event => setWindowSize(Number(event.target.value))}
           />
         </label>
-        <div className="timeseries-seeds" aria-label="选择随机种子">
+        <div className="timeseries-seeds" aria-label={t('preview.selectSeeds')}>
           <span className="muted">seed</span>
           {allSeeds.map(seed => (
             <button
@@ -204,14 +207,14 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
             </button>
           ))}
         </div>
-        <span className="muted timeseries-count">{numeric.length}/{points.length} 个点</span>
+        <span className="muted timeseries-count">{numeric.length}/{points.length} {t('preview.pointsCount', { count: '' })}</span>
       </div>
       <div className="timeseries-chart-wrap">
       <svg
         className="timeseries-chart"
         viewBox="0 0 720 300"
         role="img"
-        aria-label={`${metric} 指标曲线`}
+        aria-label={t('preview.metricCurve', { metric })}
         onMouseLeave={() => setHovered(null)}
         onMouseMove={event => {
           const rect = event.currentTarget.getBoundingClientRect()
@@ -267,12 +270,13 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
       </svg>
       {hovered ? <div className="timeseries-tooltip">step {hovered.step} · seed {hovered.seed} · {metric} {hovered.value.toPrecision(6)}</div> : null}
       </div>
-      {missingCount ? <div className="preview-footnote">{missingCount} 个点缺少 {metric}，已按缺失值保留并跳过绘制。</div> : null}
+      {missingCount ? <div className="preview-footnote">{t('preview.missingPoints', { count: missingCount, metric })}</div> : null}
     </div>
   )
 }
 
 function PreviewBody({ preview }: { preview: ArtifactPreview }) {
+  const { t } = useTranslation()
   switch (preview.type) {
     case 'point_cloud':
       return <PointCloudPreview preview={preview} />
@@ -281,13 +285,12 @@ function PreviewBody({ preview }: { preview: ArtifactPreview }) {
     case 'video':
       return <video className="artifact-video" controls preload="metadata" src={preview.download_url} />
     case 'image':
-      return <div className="preview-footnote">图片直接使用下载接口展示。</div>
+      return <div className="preview-footnote">{t('preview.imageNote')}</div>
     case 'json': {
       const value = typeof preview.value === 'string' ? preview.value : JSON.stringify(preview.value, null, 2)
       return <pre className="preview-text">{value}</pre>
     }
     case 'pdf': {
-      const label = `PDF · ${Number(preview.page_count || 0)} 页，仅展示前 3 页可提取文本`
       return <pre className="preview-text">{preview.text || ''}</pre>
     }
     case 'table':
@@ -313,6 +316,7 @@ function PreviewBody({ preview }: { preview: ArtifactPreview }) {
 }
 
 export function ArtifactCard({ artifact }: { artifact: Artifact }) {
+  const { t } = useTranslation()
   const [preview, setPreview] = useState<ArtifactPreview | null>(null)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'ready'>('idle')
   const [error, setError] = useState('')
@@ -335,25 +339,29 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   return (
     <article className="artifact-card">
       {!artifact.valid ? (
-        <div className="artifact-preview preview-error">该产物已失效，不能预览或下载。</div>
+        <div className="artifact-preview preview-error">{t('preview.invalidArtifact')}</div>
       ) : artifact.experiment_status && artifact.experiment_status !== 'succeeded' ? (
-        <div className="artifact-preview preview-error">关联运行状态为 {artifact.experiment_status}，不显示为成功产物。</div>
+        <div className="artifact-preview preview-error">{t('preview.experimentNotSucceeded', { status: artifact.experiment_status })}</div>
       ) : artifact.mime_type?.startsWith('image/') ? (
         <img className="artifact-image" src={artifact.download_url || artifact.url} alt={artifact.name} />
       ) : status === 'loading' ? (
-        <div className="artifact-preview"><div className="preview-loading">加载预览…</div></div>
+        <div className="artifact-preview"><div className="preview-loading">{t('preview.loading')}</div></div>
       ) : status === 'error' ? (
-        <div className="artifact-preview"><div className="preview-error">预览失败：{error}</div></div>
+        <div className="artifact-preview"><div className="preview-error">{t('preview.error', { error })}</div></div>
       ) : status === 'ready' && preview ? (
         <PreviewBody preview={preview} />
       ) : null}
       <div className="artifact-body">
         <h3>{artifact.name}</h3>
-        <p className="muted">{artifact.kind} · {artifact.valid ? '有效' : '已失效'}{artifact.experiment_status ? ` · 运行 ${artifact.experiment_status}` : ''}</p>
+        <p className="muted">{artifact.kind} · {artifact.valid ? t('common.valid') : t('common.invalid')}{artifact.experiment_status ? ` · ${t('preview.runStatus', { status: artifact.experiment_status })}` : ''}</p>
         <p className="artifact-lineage">{artifact.metadata?.lineage && typeof artifact.metadata.lineage === 'object'
-          ? `Run ${String((artifact.metadata.lineage as Record<string, unknown>).run_id || '未绑定')} · Idea v${String((artifact.metadata.lineage as Record<string, unknown>).idea_version || '未知')} · 数据 ${String((artifact.metadata.lineage as Record<string, unknown>).data_version || '未声明')}`
-          : '谱系信息未声明'}</p>
-        {artifact.valid && artifact.experiment_status !== 'failed' && artifact.experiment_status !== 'cancelled' ? <a href={artifact.download_url || artifact.url} download>下载产物</a> : null}
+          ? t('preview.lineage', {
+            run: String((artifact.metadata.lineage as Record<string, unknown>).run_id || t('preview.lineageUnbound')),
+            idea: String((artifact.metadata.lineage as Record<string, unknown>).idea_version || t('preview.lineageUnknown')),
+            data: String((artifact.metadata.lineage as Record<string, unknown>).data_version || t('preview.lineageNotDeclared')),
+          })
+          : t('preview.lineageMissing')}</p>
+        {artifact.valid && artifact.experiment_status !== 'failed' && artifact.experiment_status !== 'cancelled' ? <a href={artifact.download_url || artifact.url} download>{t('preview.download')}</a> : null}
       </div>
     </article>
   )

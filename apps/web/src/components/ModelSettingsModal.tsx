@@ -4,6 +4,7 @@ import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
 import { ConfirmDialog, Modal, StatusDot } from './ui'
 import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
+import { useTranslation } from '../i18n'
 
 const TIERS: Array<{ id: TierId; label: string; defaultEffort: ReasoningEffort }> = [
   { id: 'simple', label: 'Luna', defaultEffort: 'low' },
@@ -15,11 +16,12 @@ interface TierFormValues extends ModelTierSettings {
   key: string
 }
 
-function sourceLabel(value?: string) {
-  return value === 'runtime_override' ? '运行时覆盖' : '项目 .env 默认'
+function sourceLabelKey(value?: string) {
+  return value === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv'
 }
 
 export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean; onClose: () => void; projectId: string | null }) {
+  const { t } = useTranslation()
   const [tab, setTab] = useState<'models' | 'embedding'>('models')
   const [values, setValues] = useState<Record<TierId, TierFormValues> | null>(null)
   const [loading, setLoading] = useState(false)
@@ -117,7 +119,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
       setDirty(false)
       onClose()
     } catch (err) {
-      setError(`保存失败：${errorMessage(err)}。已配置的 key 留空即可保留；模型调用失败不会切换或降级。`)
+      setError(`${t('settings.saveFailed', { error: errorMessage(err) })}${t('settings.keyHint')}`)
     } finally {
       setSaving(false)
     }
@@ -126,16 +128,16 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
   return (
     <>
       <Modal
-        eyebrow="运行时设置"
-        title="配置"
+        eyebrow={t('settings.eyebrow')}
+        title={t('settings.title')}
         description={tab === 'models'
-          ? 'Luna、Terra、Sol 三档分别生效。未单独覆盖时，默认使用项目 .env 中的 URL 和 key，保存后立即用于下一次请求。'
-          : '每个科研项目可以独立配置语义记忆 Embedding；不覆盖时使用全局默认（实测本地 bge-m3 比远程快约 10 倍）。'}
+          ? t('settings.modelsDescription')
+          : t('settings.embeddingDescription')}
         onClose={requestClose}
       >
         <div className="settings-tabs" role="tablist">
-          <button className={tab === 'models' ? 'active' : ''} type="button" onClick={() => switchTab('models')}>模型 · Luna/Terra/Sol</button>
-          <button className={tab === 'embedding' ? 'active' : ''} type="button" onClick={() => switchTab('embedding')}>Embedding · 语义记忆</button>
+          <button className={tab === 'models' ? 'active' : ''} type="button" onClick={() => switchTab('models')}>{t('settings.modelsTab')}</button>
+          <button className={tab === 'embedding' ? 'active' : ''} type="button" onClick={() => switchTab('embedding')}>{t('settings.embeddingTab')}</button>
         </div>
         {tab === 'embedding' ? (
           projectId ? (
@@ -144,10 +146,10 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
               onChanged={() => setDirty(false)}
             />
           ) : (
-            <div className="empty">请先打开一个研究项目，再配置项目级 Embedding。</div>
+            <div className="empty">{t('settings.openProjectFirst')}</div>
           )
         ) : loading ? (
-          <div className="empty">正在读取模型配置…</div>
+          <div className="empty">{t('settings.loadingModels')}</div>
         ) : values ? (
           <form className="model-settings-form" onSubmit={save}>
             {TIERS.map(tier => {
@@ -159,18 +161,18 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
                       <h3>{tier.label}<span className="badge neutral">{tier.id}</span></h3>
                       <div className="tier-status">
                         <StatusDot ready={Boolean(item.key_configured && item.url)} />
-                        {item.key_configured ? '已配置 key' : '待配置 key'} · {item.url ? 'URL 已就绪' : '待配置 URL'}
+                        {item.key_configured ? t('settings.keyConfigured') : t('settings.keyPending')} · {item.url ? t('settings.urlReady') : t('settings.urlPending')}
                       </div>
                       <div className="tier-sources">
-                        <span>URL：{sourceLabel(item.sources?.url)}</span>
-                        <span>key：{sourceLabel(item.sources?.key)}</span>
+                        <span>URL：{t(sourceLabelKey(item.sources?.url) as any)}</span>
+                        <span>key：{t(sourceLabelKey(item.sources?.key) as any)}</span>
                       </div>
                     </div>
-                    <span className="tier-default">默认 {tier.defaultEffort}</span>
+                    <span className="tier-default">{t('settings.default')} {tier.defaultEffort}</span>
                   </div>
                   <div className="model-tier-grid">
                     <label>
-                      模型名称
+                      {t('settings.modelName')}
                       <input
                         value={item.model}
                         required
@@ -179,7 +181,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
                       />
                     </label>
                     <label>
-                      推理强度
+                      {t('settings.reasoningEffort')}
                       <select
                         value={item.reasoning_effort}
                         onChange={event => update(tier.id, 'reasoning_effort', event.target.value as ReasoningEffort)}
@@ -190,7 +192,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
                       </select>
                     </label>
                     <label>
-                      模型 URL
+                      {t('settings.modelUrl')}
                       <input
                         type="url"
                         value={item.url}
@@ -201,11 +203,11 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
                       />
                     </label>
                     <label>
-                      API key
+                      {t('settings.apiKey')}
                       <input
                         type="password"
                         value={item.key}
-                        placeholder={item.key_configured ? '已配置，留空保持不变' : '输入 API key'}
+                        placeholder={item.key_configured ? t('settings.keyKeep') : t('settings.keyPlaceholder')}
                         autoComplete="new-password"
                         maxLength={1000}
                         onChange={event => update(tier.id, 'key', event.target.value)}
@@ -217,26 +219,26 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
             })}
             <p className="settings-note">
               <ShieldCheck size={16} />
-              <span>密钥只写入本机 runtime 文件，读取接口不会返回密钥。留空已配置的 key 会保持不变。</span>
+              <span>{t('settings.securityNote')}</span>
             </p>
             {error ? <div className="form-error" role="alert">{error}</div> : null}
             <div className="modal-actions">
-              <button className="secondary" type="button" onClick={requestClose}>取消</button>
+              <button className="secondary" type="button" onClick={requestClose}>{t('common.cancel')}</button>
               <button className="primary" type="submit" disabled={saving}>
                 <Save size={16} />
-                保存配置
+                {t('settings.save')}
               </button>
             </div>
           </form>
         ) : (
-          <div className="form-error" role="alert">{error || '无法加载模型配置。'}</div>
+          <div className="form-error" role="alert">{error || t('settings.loadFailed')}</div>
         )}
       </Modal>
       {confirmClose ? (
         <ConfirmDialog
-          title="放弃未保存的配置？"
-          description="配置尚未保存，确定关闭吗？"
-          confirmLabel="放弃修改"
+          title={t('settings.discardTitle')}
+          description={t('settings.discardDescription')}
+          confirmLabel={t('settings.discardConfirm')}
           onConfirm={() => {
             setConfirmClose(false)
             setDirty(false)

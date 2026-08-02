@@ -3,6 +3,7 @@ import { Activity, ListChecks, RefreshCw, RotateCcw, Square } from 'lucide-react
 import { api, errorMessage } from '../../api'
 import type { Checkpoint, DiagnosticsReport, Experiment, ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
+import { useTranslation } from '../../i18n'
 
 export function ExperimentsTab({
   project,
@@ -15,6 +16,7 @@ export function ExperimentsTab({
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
 }) {
+  const { t } = useTranslation()
   const [diagnostics, setDiagnostics] = useState<DiagnosticsReport | null>(null)
   const [diagnosticsLoading, setDiagnosticsLoading] = useState(false)
 
@@ -23,7 +25,7 @@ export function ExperimentsTab({
       const result = await api<{ proposal_id: string }>(`/api/projects/${project.id}/experiment-plan`, { method: 'POST' })
       await onRefresh()
       onNavigate('approvals')
-      showToast(`主题专属计划 ${result.proposal_id.slice(0, 8)} 待审批`)
+      showToast(t('experiment.toastPlan', { id: result.proposal_id.slice(0, 8) }))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -34,7 +36,7 @@ export function ExperimentsTab({
     try {
       const report = await api<DiagnosticsReport>(`/api/projects/${project.id}/diagnostics`, { method: 'POST' })
       setDiagnostics(report)
-      showToast('诊断完成，建议需审批后才能执行')
+      showToast(t('experiment.diagDone'))
     } catch (error) {
       showToast(errorMessage(error))
     } finally {
@@ -55,7 +57,7 @@ export function ExperimentsTab({
     try {
       await api(`/api/experiments/${runId}/cancel`, { method: 'POST' })
       await onRefresh()
-      showToast('运行已取消')
+      showToast(t('experiment.cancelled'))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -72,7 +74,7 @@ export function ExperimentsTab({
   }
 
   const proposeCheckpointRerun = async (checkpointId: string) => {
-    const reason = window.prompt('请说明局部重跑原因', '复核该实验在当前项目快照下的结果')
+    const reason = window.prompt(t('experiment.rerunPrompt'), t('experiment.rerunDefault'))
     if (!reason || reason.trim().length < 5) return
     try {
       const result = await api<{ proposal_id: string }>(`/api/projects/${project.id}/checkpoints/${checkpointId}/rerun`, {
@@ -81,7 +83,7 @@ export function ExperimentsTab({
       })
       await onRefresh()
       onNavigate('approvals')
-      showToast(`局部重跑 Proposal ${result.proposal_id.slice(0, 8)} 已创建，等待审批`)
+      showToast(t('experiment.rerunToast', { id: result.proposal_id.slice(0, 8) }))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -97,7 +99,7 @@ export function ExperimentsTab({
               range {Number(value.min).toPrecision(6)}–{Number(value.max).toPrecision(6)}
             </p>
           </div>
-          <Badge status="已计算" />
+          <Badge status="calculated" />
         </div>
       ))
     : []
@@ -105,16 +107,16 @@ export function ExperimentsTab({
   return (
     <>
       <SectionHeading
-        title="实验规划与运行"
+        title={t('experiment.title')}
         extra={
           <ButtonRow>
             <button className="secondary" type="button" onClick={createExperimentPlan}>
               <ListChecks size={15} />
-              生成主题专属计划
+              {t('experiment.plan')}
             </button>
             <button className="secondary" type="button" disabled={diagnosticsLoading} onClick={runDiagnostics}>
               <Activity size={15} />
-              数值诊断
+              {t('experiment.diagnostics')}
             </button>
           </ButtonRow>
         }
@@ -133,18 +135,18 @@ export function ExperimentsTab({
                   <Badge status={experiment.status} />
                   <button className="secondary" type="button" onClick={() => syncRun(experiment.id)}>
                     <RefreshCw size={15} />
-                    同步
+                    {t('experiment.sync')}
                   </button>
                   {['queued', 'running'].includes(experiment.status) ? (
                     <button className="reject" type="button" onClick={() => cancelRun(experiment.id)}>
                       <Square size={15} />
-                      取消
+                      {t('common.cancel')}
                     </button>
                   ) : null}
                   {checkpoint ? (
                     <button className="secondary" type="button" onClick={() => proposeCheckpointRerun(checkpoint.id)}>
                       <RotateCcw size={15} />
-                      提出局部重跑
+                      {t('experiment.rerun')}
                     </button>
                   ) : null}
                 </div>
@@ -153,24 +155,24 @@ export function ExperimentsTab({
           })}
         </div>
       ) : (
-        <EmptyState text="生成计划后会先进入审批；系统不会自动创建无关实验。" />
+        <EmptyState text={t('experiment.empty')} />
       )}
       <div className="section">
-        <SectionHeading title="数值诊断" />
+        <SectionHeading title={t('experiment.diagnosticsTitle')} />
         {diagnosticsLoading ? (
-          <EmptyState text="正在计算数值摘要与失败诊断…" />
+          <EmptyState text={t('experiment.loadingDiagnostics')} />
         ) : diagnostics ? (
           <>
             <div className="section-head">
-              <h3>数值摘要</h3>
-              <span className="muted">{diagnostics.run_count ?? 0} 次运行 · TypeScript 确定性计算</span>
+              <h3>{t('experiment.numericSummary')}</h3>
+              <span className="muted">{t('experiment.runCount', { count: diagnostics.run_count ?? 0 })}</span>
             </div>
             <div className="data-list">
-              {metricRows.length ? metricRows : <EmptyState text="没有可比较的数值指标。" />}
+              {metricRows.length ? metricRows : <EmptyState text={t('experiment.noMetrics')} />}
             </div>
             {diagnostics.failures?.length ? (
               <>
-                <div className="section-head"><h3>失败诊断</h3></div>
+                <div className="section-head"><h3>{t('experiment.failureDiagnostics')}</h3></div>
                 <div className="data-list">
                   {diagnostics.failures.map((failure, index) => (
                     <div className="data-row" key={index}>
@@ -187,7 +189,7 @@ export function ExperimentsTab({
             {diagnostics.suggestions?.length ? (
               <>
                 <div className="section-head">
-                  <h3>后续建议</h3>
+                  <h3>{t('experiment.suggestions')}</h3>
                   <span className="badge pending">Proposal {String(diagnostics.proposal_id || '').slice(0, 8)}</span>
                 </div>
                 <div className="data-list">
@@ -196,9 +198,9 @@ export function ExperimentsTab({
                       <div>
                         <h3>{suggestion.title}</h3>
                         <p>{suggestion.reason}</p>
-                        <p className="muted">证据运行: {(suggestion.evidence_experiment_ids || []).map(id => id.slice(0, 8)).join(', ')}</p>
+                        <p className="muted">{t('experiment.evidenceRuns')} {(suggestion.evidence_experiment_ids || []).map(id => id.slice(0, 8)).join(', ')}</p>
                       </div>
-                      <span className="badge pending">待审批</span>
+                      <span className="badge pending">{t('common.pendingApproval')}</span>
                     </div>
                   ))}
                 </div>
@@ -206,7 +208,7 @@ export function ExperimentsTab({
             ) : null}
           </>
         ) : (
-          <EmptyState text="运行数值诊断以计算指标并检查失败日志。" />
+          <EmptyState text={t('experiment.diagnosticsEmpty')} />
         )}
       </div>
     </>

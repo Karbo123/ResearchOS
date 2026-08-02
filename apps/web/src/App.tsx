@@ -20,18 +20,13 @@ import { AREA_DEFAULT_TAB, TAB_AREA, normalizeTab, resolveWorkspaceHash, workspa
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
 import { ConfirmDialog, Toast } from './components/ui'
+import { useTranslation } from './i18n'
 
-const INITIAL_MESSAGE: ChatMessage = {
-  id: 'initial-assistant',
-  role: 'assistant',
-  text: '请直接描述你的研究 Idea。我会自适应分析目标与已有线索，说明推断和风险，只追问真正影响方案的未知信息。',
-}
-
-const EMPTY_STAGES: ThinkingStage[] = [
-  { key: 'analyzing_input', label: '读取对话', detail: '等待中…', state: 'pending' },
-  { key: 'selecting_route', label: '选择模型', detail: '等待中…', state: 'pending' },
-  { key: 'calling_llm', label: '调用模型', detail: '等待中…', state: 'pending' },
-  { key: 'parsing', label: '保存结果', detail: '等待中…', state: 'pending' },
+const EMPTY_STAGES: Array<{ key: ThinkingStage['key']; labelKey: 'app.thinking.readingConversation' | 'app.thinking.selectingModel' | 'app.thinking.callingModel' | 'app.thinking.savingResult' }> = [
+  { key: 'analyzing_input', labelKey: 'app.thinking.readingConversation' },
+  { key: 'selecting_route', labelKey: 'app.thinking.selectingModel' },
+  { key: 'calling_llm', labelKey: 'app.thinking.callingModel' },
+  { key: 'parsing', labelKey: 'app.thinking.savingResult' },
 ]
 
 function nextMessageId() {
@@ -39,6 +34,17 @@ function nextMessageId() {
 }
 
 export function App() {
+  const { t, locale } = useTranslation()
+  const initialMessage: ChatMessage = {
+    id: 'initial-assistant',
+    role: 'assistant',
+    text: t('app.initialMessage'),
+  }
+  useEffect(() => {
+    setMessages(current => current.map(message => (
+      message.id === 'initial-assistant' ? { ...message, text: t('app.initialMessage') } : message
+    )))
+  }, [locale])
   const [projects, setProjects] = useState<ProjectSummary[]>([])
   const [projectId, setProjectId] = useState<string | null>(null)
   const [project, setProject] = useState<ProjectDetail | null>(null)
@@ -47,10 +53,10 @@ export function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const [health, setHealth] = useState<'connecting' | 'online' | 'offline'>('connecting')
   const [toast, setToast] = useState<string | null>(null)
-  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE])
+  const [messages, setMessages] = useState<ChatMessage[]>([initialMessage])
   const [projectMessages, setProjectMessages] = useState<ChatMessage[]>([])
   const [spec, setSpec] = useState<ResearchSpec | null>(null)
-  const [specStatus, setSpecStatus] = useState('待澄清')
+  const [specStatus, setSpecStatus] = useState('pending_clarification')
   const [chatBusy, setChatBusy] = useState(false)
   const [projectChatBusy, setProjectChatBusy] = useState(false)
   const [queuedFiles, setQueuedFiles] = useState<File[]>([])
@@ -128,8 +134,8 @@ export function App() {
     setView('idea')
     setActiveArea('overview')
     setSpec(null)
-    setSpecStatus('待澄清')
-    setMessages([INITIAL_MESSAGE])
+    setSpecStatus('pending_clarification')
+    setMessages([initialMessage])
     setProjectMessages([])
     setQueuedFiles([])
     setThinkingSessions([])
@@ -181,16 +187,16 @@ export function App() {
 
   const startThinkingSession = (): string => {
     const id = `ts-${Date.now()}`
-    const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    const time = new Date().toLocaleTimeString(locale === 'zh-CN' || locale === 'zh-TW' ? 'zh-CN' : locale, { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     setThinkingSessions(previous => [
       ...previous.map(item => ({ ...item, collapsed: true })),
       {
         id,
         time,
-        modelLabel: '模型路由',
+        modelLabel: t('app.thinking.modelRouting'),
         status: 'running',
         collapsed: false,
-        stages: EMPTY_STAGES.map(stage => ({ ...stage })),
+        stages: EMPTY_STAGES.map(stage => ({ key: stage.key, label: t(stage.labelKey), detail: t('common.waiting'), state: 'pending' as const })),
       },
     ])
     return id
@@ -206,9 +212,9 @@ export function App() {
       if (event === 'stage') {
         if (data.stage === 'model_request') {
           patchStage('analyzing_input', 'done')
-          patchStage('calling_llm', 'active', '调用模型', '等待模型响应…')
+          patchStage('calling_llm', 'active', t('app.thinking.callingModel'), t('app.thinking.waitingResponse'))
         } else {
-          patchStage('parsing', 'active', '保存结果', data.detail || data.stage || '')
+          patchStage('parsing', 'active', t('app.thinking.savingResult'), data.detail || data.stage || '')
         }
       } else if (event === 'model_route') {
         next = {
@@ -216,22 +222,22 @@ export function App() {
           modelLabel: `${data.tier} · ${data.model} · reasoning ${data.reasoning_effort}`,
         }
         patchStage('analyzing_input', 'done')
-        patchStage('selecting_route', 'done', '选择模型', `${data.tier} → ${data.model}`)
-        patchStage('calling_llm', 'active', '调用模型', '等待模型响应…')
+        patchStage('selecting_route', 'done', t('app.thinking.selectingModel'), `${data.tier} → ${data.model}`)
+        patchStage('calling_llm', 'active', t('app.thinking.callingModel'), t('app.thinking.waitingResponse'))
       } else if (event === 'progress') {
-        const map: Record<string, { key: ThinkingStage['key']; label: string }> = {
-          preparing_request: { key: 'analyzing_input', label: '准备请求' },
-          calling_model: { key: 'calling_llm', label: '调用模型' },
-          saving_result: { key: 'parsing', label: '保存结果' },
+        const map: Record<string, { key: ThinkingStage['key']; labelKey: 'app.thinking.preparingRequest' | 'app.thinking.callingModel' | 'app.thinking.savingResult' }> = {
+          preparing_request: { key: 'analyzing_input', labelKey: 'app.thinking.preparingRequest' },
+          calling_model: { key: 'calling_llm', labelKey: 'app.thinking.callingModel' },
+          saving_result: { key: 'parsing', labelKey: 'app.thinking.savingResult' },
         }
-        const target = map[data.stage] || { key: 'parsing' as const, label: data.stage || '保存结果' }
-        patchStage(target.key, 'active', target.label, data.detail || '')
+        const target = map[data.stage] || { key: 'parsing' as const, labelKey: 'app.thinking.savingResult' as const }
+        patchStage(target.key, 'active', t(target.labelKey), data.detail || '')
       } else if (event === 'result') {
         patchStage('calling_llm', 'done')
-        patchStage('parsing', 'done', '保存完成', `${(data.assumptions || []).length} 个已记录假设`)
+        patchStage('parsing', 'done', t('app.thinking.saveComplete'), t('app.thinking.assumptionsRecorded', { count: (data.assumptions || []).length }))
         next = { ...next, status: 'done' }
       } else if (event === 'error') {
-        patchStage('calling_llm', 'done', '请求失败', data.message || '')
+        patchStage('calling_llm', 'done', t('app.thinking.requestFailed'), data.message || '')
         next = { ...next, status: 'failed' }
       }
       return next
@@ -253,7 +259,7 @@ export function App() {
     setChatBusy(true)
     setMessages(previous => addMessage(previous, 'user', message))
     const thinkingId = startThinkingSession()
-    applyThinkingEvent(thinkingId, 'stage', { stage: 'preparing_request', detail: `消息长度 ${message.length} 字符` })
+    applyThinkingEvent(thinkingId, 'stage', { stage: 'preparing_request', detail: t('app.thinking.messageLength', { count: message.length }) })
 
     try {
       let currentSessionId = sessionIdRef.current
@@ -262,7 +268,7 @@ export function App() {
           currentSessionId = crypto.randomUUID()
           setActiveSession(currentSessionId)
         }
-        applyThinkingEvent(thinkingId, 'stage', { stage: 'uploading', detail: `${queuedFiles.length} 个文件` })
+        applyThinkingEvent(thinkingId, 'stage', { stage: 'uploading', detail: t('app.thinking.uploadingFiles', { count: queuedFiles.length }) })
         for (const file of queuedFiles) await uploadFile(currentSessionId, file)
         setQueuedFiles([])
       }
@@ -318,7 +324,7 @@ export function App() {
         }
       }
 
-      if (streamError) throw new Error(streamError.message || '模型请求失败')
+      if (streamError) throw new Error(streamError.message || t('app.thinking.requestFailed'))
       if (result) {
         setActiveSession(result.session_id || currentSessionId)
         const routeMeta = result.model
@@ -328,11 +334,11 @@ export function App() {
           previous,
           'assistant',
           result.reply || '',
-          `${clarificationMode === 'automatic' ? '全自动模式' : '详细模式'}${routeMeta ? ` · ${routeMeta}` : ''}`,
+          `${clarificationMode === 'automatic' ? t('app.mode.automatic') : t('app.mode.detailed')}${routeMeta ? ` · ${routeMeta}` : ''}`,
         ))
         if (result.spec) {
           setSpec(result.spec)
-          setSpecStatus('待确认')
+          setSpecStatus('pending_confirmation')
         }
       }
     } catch (error) {
@@ -352,7 +358,7 @@ export function App() {
         method: 'POST',
         body: JSON.stringify({ session_id: sessionIdRef.current, confirmed: true }),
       })
-      showToast('项目已创建')
+      showToast(t('app.projectCreated'))
       await openProject(result.project.id)
     } catch (error) {
       showToast(errorMessage(error))
@@ -412,17 +418,23 @@ export function App() {
         onNewProject={newProject}
         onOpenProject={id => void openProject(id)}
         onOpenMemory={() => {
-          if (!projectId) showToast('请先打开一个研究项目。')
+          if (!projectId) showToast(t('app.openProjectFirst'))
           else setMemoryOpen(true)
         }}
         onOpenSettings={() => setSettingsOpen(true)}
       />
       <main className="workspace">
         <Topbar
-          title={view === 'idea' ? '新研究项目' : project?.title || '研究项目'}
+          title={view === 'idea' ? t('app.newProject') : project?.title || t('app.researchProject')}
           meta={view === 'idea'
-            ? 'Idea clarification'
-            : `${project?.current_stage || 'research'} · v${project?.current_idea_version ?? 1} · ${String(projectId || '').slice(0, 8)}`}
+            ? t('app.ideaMeta')
+            : t('app.projectMeta', {
+                stage: project?.current_stage === 'initialized'
+                  ? t('overview.stageInitialized')
+                  : project?.current_stage || t('overview.stageUnknown'),
+                version: project?.current_idea_version ?? 1,
+                id: String(projectId || '').slice(0, 8),
+              })}
           health={health}
           onRefresh={() => void refreshProject()}
         />
@@ -459,7 +471,7 @@ export function App() {
             onToggleMobileChat={setMobileChatOpen}
           />
         ) : (
-          <div className="loading-view"><div className="empty">正在加载项目…</div></div>
+          <div className="loading-view"><div className="empty">{t('common.loadingProject')}</div></div>
         )}
       </main>
       <ModelSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} projectId={projectId} />

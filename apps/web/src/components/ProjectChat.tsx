@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Send, X } from 'lucide-react'
 import type { ChatMessage } from '../types'
+import { useTranslation } from '../i18n'
 
 function ProjectProgress() {
+  const { t } = useTranslation()
   const [elapsed, setElapsed] = useState(0)
   const [stageIndex, setStageIndex] = useState(0)
-  const stages = [
-    '正在识别解释、建议或变更意图…',
-    '正在检查项目状态与审批边界…',
-    '正在组织可审阅的回复…',
-    '模型仍在处理，请稍候…',
-  ]
+  const stages = [t('idea.stage.identifyIntent'), t('idea.stage.checkBoundaries'), t('idea.stage.organizeReply'), t('idea.stage.stillWorking')]
 
   useEffect(() => {
     const started = Date.now()
@@ -26,8 +23,8 @@ function ProjectProgress() {
     <div className="ai-progress compact" role="status" aria-live="polite">
       <div className="ai-progress-head">
         <span className="thinking-dot" />
-        <strong>AI 正在分析</strong>
-        <span>{elapsed} 秒</span>
+        <strong>{t('idea.progressTitle')}</strong>
+        <span>{elapsed} {t('common.seconds')}</span>
       </div>
       <div className="ai-progress-track"><span /></div>
       <div className="ai-progress-stage">{stages[stageIndex]}</div>
@@ -48,6 +45,7 @@ export function ProjectChat({
   onClose: () => void
   mobileOpen: boolean
 }) {
+  const { t } = useTranslation()
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -66,10 +64,10 @@ export function ProjectChat({
   return (
     <aside className={`project-chat ${mobileOpen ? 'mobile-open' : ''}`}>
       <div className="pane-heading">
-        <h2>项目对话</h2>
+        <h2>{t('chat.title')}</h2>
         <div className="chat-heading-actions">
-          <span className="badge live">监督中</span>
-          <button className="icon-btn mobile-chat-close" type="button" onClick={onClose} title="关闭项目对话" aria-label="关闭项目对话">
+          <span className="badge live">{t('chat.monitoring')}</span>
+          <button className="icon-btn mobile-chat-close" type="button" onClick={onClose} title={t('chat.closeTitle')} aria-label={t('chat.closeTitle')}>
             <X size={17} />
           </button>
         </div>
@@ -79,7 +77,7 @@ export function ProjectChat({
           if (message.role === 'error') {
             return (
               <div className="request-error" role="alert" key={message.id}>
-                <strong>请求失败</strong>
+                <strong>{t('idea.errorTitle')}</strong>
                 <span>{message.text}</span>
               </div>
             )
@@ -101,7 +99,7 @@ export function ProjectChat({
         <textarea
           value={input}
           rows={2}
-          placeholder="解释、建议或明确提出变更"
+          placeholder={t('chat.placeholder')}
           aria-keyshortcuts="Control+Enter Meta+Enter"
           onChange={event => setInput(event.target.value)}
           onKeyDown={event => {
@@ -111,7 +109,7 @@ export function ProjectChat({
             }
           }}
         />
-        <button className="send-btn" type="submit" title="发送" aria-label="发送" disabled={busy || !input.trim()}>
+        <button className="send-btn" type="submit" title={t('common.send')} aria-label={t('common.send')} disabled={busy || !input.trim()}>
           <Send size={17} />
         </button>
       </form>

@@ -3,6 +3,7 @@ import { ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, SectionHeading } from '../ui'
+import { useTranslation } from '../../i18n'
 
 export function PoliciesTab({
   project,
@@ -15,6 +16,7 @@ export function PoliciesTab({
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
 }) {
+  const { t } = useTranslation()
   const [rule, setRule] = useState('')
 
   const addPolicy = async (event: React.FormEvent) => {
@@ -28,7 +30,7 @@ export function PoliciesTab({
       setRule('')
       await onRefresh()
       onNavigate('approvals')
-      showToast(`策略提案 ${result.proposal_id.slice(0, 8)} 待审批`)
+      showToast(t('policies.toast', { id: result.proposal_id.slice(0, 8) }))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -48,42 +50,42 @@ export function PoliciesTab({
       <form className="policy-form" onSubmit={addPolicy}>
         <input
           value={rule}
-          placeholder="新增长期项目策略"
+          placeholder={t('policies.placeholder')}
           required
           onChange={event => setRule(event.target.value)}
         />
         <button className="primary" type="submit">
           <ShieldCheck size={16} />
-          提出策略
+          {t('policies.propose')}
         </button>
       </form>
 
       <div className="section">
-        <SectionHeading title="执行状态" extra={<Badge status={enforcement.status || 'unknown'} />} />
+        <SectionHeading title={t('policies.executionStatus')} extra={<Badge status={enforcement.status || 'unknown'} />} />
         <div className="data-list">
           <div className="data-row">
             <div>
-              <h3>随机种子下限</h3>
-              <p>随机实验至少 {Number(enforcement.minimum_random_seed_count || 1)} 个不同种子；计划生成和 Runner 提交双重校验</p>
+              <h3>{t('policies.seedTitle')}</h3>
+              <p>{t('policies.seedText', { count: Number(enforcement.minimum_random_seed_count || 1) })}</p>
             </div>
             <Badge status={enforcement.runner_compatible === false ? 'unsupported' : 'enforced'} />
           </div>
           <div className="data-row">
             <div>
-              <h3>引用来源与原文证据</h3>
+              <h3>{t('policies.citationTitle')}</h3>
               <p>
-                DOI/来源 {Number(citation.records_with_doi_or_source_url || 0)}/{Number(citation.paper_records || 0)} ·
-                页码/章节原文证据 {Number(citation.page_or_section_quoted_evidence || 0)} · 元数据标题不计为全文证据
+                {t('policies.citationCount', { value: Number(citation.records_with_doi_or_source_url || 0), total: Number(citation.paper_records || 0) })} ·
+                {t('policies.quotedCount', { count: Number(citation.page_or_section_quoted_evidence || 0) })} · {t('policies.metadataNotFulltext')}
               </p>
             </div>
             <Badge status={citation.quoted_evidence_requirement_satisfied ? 'ready' : 'evidence-required'} />
           </div>
           <div className="data-row">
             <div>
-              <h3>人工审批</h3>
+              <h3>{t('policies.approvalTitle')}</h3>
               <p>
-                高成本操作 {enforcement.approval?.high_cost_actions ? '强制' : '未配置'} ·
-                对外操作 {enforcement.approval?.external_actions ? '强制' : '未配置'}
+                {t('policies.highCost')} {enforcement.approval?.high_cost_actions ? t('policies.forced') : t('policies.notConfigured')} ·
+                {t('policies.externalActions')} {enforcement.approval?.external_actions ? t('policies.forced') : t('policies.notConfigured')}
               </p>
             </div>
             <Badge status="enforced" />
@@ -92,7 +94,7 @@ export function PoliciesTab({
       </div>
 
       <div className="section">
-        <SectionHeading title="生效策略" />
+        <SectionHeading title={t('policies.activeTitle')} />
         {project.policies?.length ? (
           <div className="data-list">
             {project.policies.map(policy => (
@@ -100,8 +102,8 @@ export function PoliciesTab({
                 <div>
                   <h3>{policy.rule}</h3>
                   <p>
-                    {(policy.enforced_requirements || []).join(' · ') || '未识别为可执行约束；保留为人工规则'} ·
-                    {policy.rationale || '项目级持久策略'}
+                    {(policy.enforced_requirements || []).join(' · ') || t('policies.notRecognized')} ·
+                    {policy.rationale || t('policies.projectPolicy')}
                   </p>
                 </div>
                 <Badge status={policy.recognized ? 'enforced' : 'manual'} />
@@ -109,7 +111,7 @@ export function PoliciesTab({
             ))}
           </div>
         ) : (
-          <div className="empty">尚未配置项目策略。</div>
+          <div className="empty">{t('policies.empty')}</div>
         )}
       </div>
     </>

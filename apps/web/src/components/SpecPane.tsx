@@ -1,7 +1,9 @@
 import { Check } from 'lucide-react'
 import type { ResearchSpec } from '../types'
+import { useTranslation } from '../i18n'
 
 function FieldList({ label, values }: { label: string; values?: string[] }) {
+  const { t } = useTranslation()
   return (
     <div className="spec-group">
       <label>{label}</label>
@@ -10,17 +12,18 @@ function FieldList({ label, values }: { label: string; values?: string[] }) {
           {values.map((value, index) => <li key={index}>{value}</li>)}
         </ul>
       ) : (
-        <div>未指定</div>
+        <div>{t('spec.unset')}</div>
       )}
     </div>
   )
 }
 
 function FieldText({ label, value }: { label: string; value?: string }) {
+  const { t } = useTranslation()
   return (
     <div className="spec-group">
       <label>{label}</label>
-      <div>{value || '未指定'}</div>
+      <div>{value || t('spec.unset')}</div>
     </div>
   )
 }
@@ -34,12 +37,14 @@ export function SpecPane({
   status: string
   onConfirm: () => void
 }) {
+  const { t } = useTranslation()
   const idea = spec?.idea
+  const statusLabel = status === 'pending_clarification' ? t('common.pendingClarify') : status === 'pending_confirmation' ? t('common.pendingConfirm') : status
   return (
     <div className="spec-pane-content">
       <div className="pane-heading">
         <h2>ResearchIdea / ProjectSpec</h2>
-        <span className={`badge ${status === '待确认' ? 'pending' : 'neutral'}`}>{status}</span>
+        <span className={`badge ${status === 'pending_confirmation' ? 'pending' : 'neutral'}`}>{statusLabel}</span>
       </div>
       {spec && idea ? (
         <>
@@ -58,11 +63,11 @@ export function SpecPane({
           <FieldList label="Approvals" values={spec.required_approvals} />
           <button className="primary full" type="button" onClick={onConfirm}>
             <Check size={17} />
-            确认并创建项目
+            {t('spec.confirmCreate')}
           </button>
         </>
       ) : (
-        <div className="spec-empty">规格将在澄清完成后生成。</div>
+        <div className="spec-empty">{t('spec.empty')}</div>
       )}
     </div>
   )

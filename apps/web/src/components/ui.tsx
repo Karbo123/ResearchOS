@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
+import { useTranslation } from '../i18n'
 
 export type BadgeKind = 'neutral' | 'live' | 'pending' | 'failed'
 
@@ -60,6 +61,7 @@ export function Modal({
   wide?: boolean
 }) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     closeRef.current?.focus()
@@ -79,7 +81,7 @@ export function Modal({
             <h2>{title}</h2>
             {description ? <p className="muted">{description}</p> : null}
           </div>
-          <button className="icon-btn" ref={closeRef} type="button" onClick={onClose} aria-label="关闭">
+          <button className="icon-btn" ref={closeRef} type="button" onClick={onClose} aria-label={t('common.close')}>
             <X size={17} />
           </button>
         </div>
@@ -93,7 +95,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel,
-  cancelLabel = '取消',
+  cancelLabel,
   onConfirm,
   onCancel,
 }: {
@@ -104,6 +106,7 @@ export function ConfirmDialog({
   onConfirm: () => void
   onCancel: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="modal" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onCancel() }}>
       <div className="modal-panel confirm-panel" role="alertdialog" aria-modal="true" aria-label={title}>
@@ -112,7 +115,7 @@ export function ConfirmDialog({
         </div>
         <p className="muted confirm-description">{description}</p>
         <div className="modal-actions">
-          <button className="secondary" type="button" onClick={onCancel}>{cancelLabel}</button>
+          <button className="secondary" type="button" onClick={onCancel}>{cancelLabel || t('common.cancel')}</button>
           <button className="reject" type="button" onClick={onConfirm}>{confirmLabel}</button>
         </div>
       </div>

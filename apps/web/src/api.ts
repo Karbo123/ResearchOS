@@ -1,4 +1,15 @@
+import { dictionaries, getLocale, type TranslationKey } from './i18n'
+
 const CHAT_REQUEST_TIMEOUT_MS = 300_000
+
+function localize(key: TranslationKey): string {
+  return dictionaries[getLocale()][key]
+}
+
+const CHAT_ERROR_KEYS: Record<string, TranslationKey> = {
+  timeout: 'errors.timeout',
+  offline: 'errors.offline',
+}
 
 export class ChatRequestError extends Error {
   readonly code: string
@@ -25,10 +36,10 @@ export async function fetchWithTimeout(
     return await fetchImpl(input, { ...init, signal: controller.signal })
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      throw new ChatRequestError('timeout', '请求超时，请检查服务状态后重试。', error)
+      throw new ChatRequestError('timeout', '', error)
     }
     if (error instanceof TypeError) {
-      throw new ChatRequestError('offline', '无法连接 Research OS API，请确认本地服务仍在运行。', error)
+      throw new ChatRequestError('offline', '', error)
     }
     throw error
   } finally {
@@ -88,5 +99,9 @@ export async function uploadFile(sessionId: string, file: File): Promise<void> {
 }
 
 export function errorMessage(error: unknown): string {
-  return error instanceof Error && error.message ? error.message : '请求失败，请稍后重试。'
+  if (error instanceof ChatRequestError) {
+    const key = CHAT_ERROR_KEYS[error.code]
+    if (key) return localize(key)
+  }
+  return error instanceof Error && error.message ? error.message : localize('errors.requestFailed')
 }

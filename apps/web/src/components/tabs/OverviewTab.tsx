@@ -2,6 +2,7 @@ import { FileCheck, FilePenLine, Pause, Play, Search, ShieldAlert, Square } from
 import { api, errorMessage } from '../../api'
 import type { ConfirmRequest, ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, SectionHeading } from '../ui'
+import { formatDateTime, useTranslation } from '../../i18n'
 
 export function OverviewTab({
   project,
@@ -16,6 +17,7 @@ export function OverviewTab({
   onNavigate: (tab: TabId) => void
   onRequestConfirm: (request: ConfirmRequest) => void
 }) {
+  const { t, locale } = useTranslation()
   const counts = project.counts || {
     papers: project.papers?.length || 0,
     experiments: project.experiments?.length || 0,
@@ -27,18 +29,17 @@ export function OverviewTab({
   const proposals = project.proposals || []
   const experiments = project.experiments || []
   const timeline = [
-    ...checkpoints.map(item => ({ id: `checkpoint-${item.id}`, label: item.stage, detail: `Idea v${item.idea_version ?? project.current_idea_version ?? 1}`, status: item.valid === false ? 'invalidated' : 'recorded', created_at: item.created_at })),
+    ...checkpoints.map(item => ({ id: `checkpoint-${item.id}`, label: item.stage, detail: t('overview.checkpointVersion', { version: item.idea_version ?? project.current_idea_version ?? 1 }), status: item.valid === false ? 'invalidated' : 'recorded', created_at: item.created_at })),
     ...proposals.map(item => ({ id: `proposal-${item.id}`, label: item.summary, detail: item.reason || item.kind, status: item.status, created_at: item.created_at })),
-    ...experiments.map(item => ({ id: `experiment-${item.id}`, label: item.experiment_type, detail: item.run_id ? `Run ${item.run_id}` : '尚未分配 Run', status: item.status, created_at: item.created_at })),
+    ...experiments.map(item => ({ id: `experiment-${item.id}`, label: item.experiment_type, detail: item.run_id ? t('overview.runDetail', { run: item.run_id }) : t('overview.runPending'), status: item.status, created_at: item.created_at })),
   ].sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || ''))).slice(0, 8)
-  const formatTime = (value?: string) => value ? new Date(value).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' }) : '时间待记录'
 
   const runSearch = async () => {
     try {
-      showToast('正在并行检索多个学术来源与资源注册表…')
+      showToast(t('overview.toastSearching'))
       await api('/api/search', { method: 'POST', body: JSON.stringify({ project_id: project.id, limit: 8 }) })
       await onRefresh()
-      showToast('检索完成，候选资源已刷新')
+      showToast(t('overview.toastSearchDone'))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -49,7 +50,7 @@ export function OverviewTab({
       const result = await api<{ proposal_id: string }>(`/api/projects/${project.id}/paper-draft`, { method: 'POST' })
       await onRefresh()
       onNavigate('approvals')
-      showToast(`证据论文草稿 Proposal ${result.proposal_id.slice(0, 8)} 待审批`)
+      showToast(t('overview.toastDraftProposal', { id: result.proposal_id.slice(0, 8) }))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -60,7 +61,7 @@ export function OverviewTab({
       const result = await api<{ proposal_id: string }>(`/api/projects/${project.id}/compile-plan`, { method: 'POST' })
       await onRefresh()
       onNavigate('approvals')
-      showToast(`编译计划 ${result.proposal_id.slice(0, 8)} 待审批`)
+      showToast(t('overview.toastCompileProposal', { id: result.proposal_id.slice(0, 8) }))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -75,7 +76,7 @@ export function OverviewTab({
     try {
       await api(`/api/projects/${project.id}/state`, { method: 'POST', body: JSON.stringify({ action, reason }) })
       await onRefresh()
-      showToast(action === 'pause' ? '项目已暂停' : action === 'resume' ? '项目已恢复' : '项目已取消')
+      showToast(action === 'pause' ? t('overview.toastPaused') : action === 'resume' ? t('overview.toastResumed') : t('overview.toastCancelled'))
     } catch (error) {
       showToast(errorMessage(error))
     }
@@ -87,28 +88,28 @@ export function OverviewTab({
   return (
     <>
       <div className="metric-grid">
-        <div className="metric"><span>论文</span><strong>{counts.papers ?? 0}</strong></div>
-        <div className="metric"><span>实验</span><strong>{counts.experiments ?? 0}</strong></div>
-        <div className="metric"><span>产物</span><strong>{counts.artifacts ?? 0}</strong></div>
-        <div className="metric"><span>待审批</span><strong>{pendingCount}</strong></div>
+        <div className="metric"><span>{t('overview.papers')}</span><strong>{counts.papers ?? 0}</strong></div>
+        <div className="metric"><span>{t('overview.experiments')}</span><strong>{counts.experiments ?? 0}</strong></div>
+        <div className="metric"><span>{t('overview.artifacts')}</span><strong>{counts.artifacts ?? 0}</strong></div>
+        <div className="metric"><span>{t('common.pendingApproval')}</span><strong>{pendingCount}</strong></div>
       </div>
 
       <div className="section">
         <SectionHeading
-          title="研究规格"
+          title={t('overview.spec')}
           extra={
             <ButtonRow>
               <button className="secondary" type="button" disabled={executionDisabled} onClick={runSearch}>
                 <Search size={15} />
-                检索文献
+                {t('overview.searchLiterature')}
               </button>
               <button className="secondary" type="button" disabled={executionDisabled} onClick={createPaperDraft}>
                 <FilePenLine size={15} />
-                生成证据论文草稿
+                {t('overview.paperDraft')}
               </button>
               <button className="secondary" type="button" disabled={executionDisabled} onClick={createCompilePlan}>
                 <FileCheck size={15} />
-                编译论文
+                {t('overview.compilePaper')}
               </button>
             </ButtonRow>
           }
@@ -116,7 +117,7 @@ export function OverviewTab({
         <div className="data-list">
           <div className="data-row">
             <div>
-              <h3>{spec?.research_question || '尚未生成研究规格'}</h3>
+              <h3>{spec?.research_question || t('overview.noSpec')}</h3>
               <p>{spec?.domain} · {(spec?.keywords || []).join(', ')}</p>
             </div>
             <Badge status={project.spec?.feasibility} />
@@ -126,73 +127,73 @@ export function OverviewTab({
 
       <div className="section overview-grid">
         <div className="data-list overview-card">
-          <SectionHeading title="项目描述" hint="当前项目规格的可审阅摘要。" />
+          <SectionHeading title={t('overview.projectDescription')} hint={t('overview.descriptionHint')} />
           <div className="overview-fields">
-            <div><span>研究领域</span><strong>{spec?.domain || '尚未确认'}</strong></div>
-            <div><span>研究问题</span><strong>{spec?.research_question || '尚未确认'}</strong></div>
-            <div><span>假设</span><strong>{spec?.hypotheses?.join('；') || '尚未生成'}</strong></div>
-            <div><span>成功标准</span><strong>{spec?.success_criteria?.join('；') || '尚未生成'}</strong></div>
+            <div><span>{t('overview.domain')}</span><strong>{spec?.domain || t('common.notConfirmed')}</strong></div>
+            <div><span>{t('overview.question')}</span><strong>{spec?.research_question || t('common.notConfirmed')}</strong></div>
+            <div><span>{t('overview.hypotheses')}</span><strong>{spec?.hypotheses?.join('；') || t('overview.notGenerated')}</strong></div>
+            <div><span>{t('overview.successCriteria')}</span><strong>{spec?.success_criteria?.join('；') || t('overview.notGenerated')}</strong></div>
           </div>
         </div>
         <div className="data-list overview-card">
-          <SectionHeading title="创新点候选" hint="候选建议需要相关工作证据和导师确认。" />
+          <SectionHeading title={t('overview.innovationCandidates')} hint={t('overview.innovationHint')} />
           {spec?.expected_contributions?.length ? (
             <ul className="candidate-list">
               {spec.expected_contributions.map((item, index) => <li key={`${item}-${index}`}><ShieldAlert size={15} /><span>{item}</span><Badge status="candidate-only" /></li>)}
             </ul>
-          ) : <p className="empty-inline">尚未生成创新点候选。</p>}
+          ) : <p className="empty-inline">{t('overview.noInnovation')}</p>}
         </div>
       </div>
 
       <div className="section">
-        <SectionHeading title="研究进度" hint="时间线只汇总已记录的 Proposal、Checkpoint 和实验状态，不代表科学结论。" />
+        <SectionHeading title={t('overview.progress')} hint={t('overview.progressHint')} />
         {timeline.length ? (
           <div className="timeline" role="list">
             {timeline.map(item => (
               <div className="timeline-item" role="listitem" key={item.id}>
                 <span className="timeline-dot" />
-                <div><strong>{item.label}</strong><p>{item.detail} · {formatTime(item.created_at)}</p></div>
+                <div><strong>{item.label}</strong><p>{item.detail} · {formatDateTime(item.created_at, locale)}</p></div>
                 <Badge status={item.status} />
               </div>
             ))}
           </div>
-        ) : <div className="empty">尚无可展示的进度事件。</div>}
+        ) : <div className="empty">{t('overview.noTimeline')}</div>}
       </div>
 
       <div className="section">
         <SectionHeading
-          title="项目状态"
+          title={t('overview.projectStatus')}
           extra={
             project.status === 'active' ? (
               <ButtonRow>
                 <button className="secondary" type="button" onClick={() => changeState('pause')}>
                   <Pause size={15} />
-                  暂停
+                  {t('overview.pause')}
                 </button>
                 <button className="reject" type="button" onClick={() => onRequestConfirm({
-                  title: '取消项目',
-                  description: '取消项目后不能恢复，确定继续吗？',
-                  confirmLabel: '确认取消',
+                  title: t('overview.cancelProject'),
+                  description: t('overview.cancelConfirmDescription'),
+                  confirmLabel: t('overview.confirmCancel'),
                   onConfirm: () => changeState('cancel'),
                 })}>
                   <Square size={15} />
-                  取消项目
+                  {t('overview.cancelProject')}
                 </button>
               </ButtonRow>
             ) : project.status === 'paused' ? (
               <ButtonRow>
                 <button className="approve" type="button" onClick={() => changeState('resume')}>
                   <Play size={15} />
-                  恢复
+                  {t('overview.resume')}
                 </button>
                 <button className="reject" type="button" onClick={() => onRequestConfirm({
-                  title: '取消项目',
-                  description: '取消项目后不能恢复，确定继续吗？',
-                  confirmLabel: '确认取消',
+                  title: t('overview.cancelProject'),
+                  description: t('overview.cancelConfirmDescription'),
+                  confirmLabel: t('overview.confirmCancel'),
                   onConfirm: () => changeState('cancel'),
                 })}>
                   <Square size={15} />
-                  取消项目
+                  {t('overview.cancelProject')}
                 </button>
               </ButtonRow>
             ) : null
@@ -201,10 +202,19 @@ export function OverviewTab({
         <div className="data-list">
           <div className="data-row">
             <div>
-              <h3>{project.current_stage || 'research'}</h3>
-              <p>Idea version {project.current_idea_version ?? 1} · {project.status}</p>
+              <h3>{project.current_stage === 'initialized' ? t('overview.stageInitialized') : project.current_stage || t('overview.stageUnknown')}</h3>
+              <p>{t('overview.ideaVersion', {
+                version: project.current_idea_version ?? 1,
+                status: project.status === 'active'
+                  ? t('overview.statusActive')
+                  : project.status === 'paused'
+                    ? t('overview.statusPaused')
+                    : project.status === 'cancelled'
+                      ? t('overview.statusCancelled')
+                      : project.status,
+              })}</p>
             </div>
-            <Badge status={project.status} />
+            <Badge status={project.status}>{project.status === 'active' ? t('overview.statusActive') : project.status === 'paused' ? t('overview.statusPaused') : project.status === 'cancelled' ? t('overview.statusCancelled') : project.status}</Badge>
           </div>
         </div>
       </div>

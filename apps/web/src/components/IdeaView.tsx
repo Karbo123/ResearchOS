@@ -3,20 +3,22 @@ import { Paperclip, Send } from 'lucide-react'
 import type { ChatMessage, ResearchSpec, ThinkingSession } from '../types'
 import { SpecPane } from './SpecPane'
 import { ThinkingSessions } from './ThinkingSessions'
+import { useTranslation } from '../i18n'
 
-const IDEA_PROGRESS_STAGES = [
-  '正在理解研究目标与已有线索…',
-  '正在选择成本合适的模型层级…',
-  '正在更新 ResearchIdea 草稿…',
-  '正在检查风险、假设与待确认事项…',
-  '模型仍在处理，请稍候…',
+const IDEA_PROGRESS_STAGE_KEYS = [
+  'idea.stage.understand',
+  'idea.stage.selectModel',
+  'idea.stage.updateDraft',
+  'idea.stage.checkRisks',
+  'idea.stage.stillWorking',
 ]
 
 function MessageItem({ message }: { message: ChatMessage }) {
+  const { t } = useTranslation()
   if (message.role === 'error') {
     return (
       <div className="request-error" role="alert">
-        <strong>请求失败</strong>
+        <strong>{t('idea.errorTitle')}</strong>
         <span>{message.text}</span>
       </div>
     )
@@ -33,10 +35,12 @@ function MessageItem({ message }: { message: ChatMessage }) {
 }
 
 function AiProgress({ project = false }: { project?: boolean }) {
+  const { t } = useTranslation()
   const [elapsed, setElapsed] = useState(0)
-  const stages = project
-    ? ['正在识别解释、建议或变更意图…', '正在检查项目状态与审批边界…', '正在组织可审阅的回复…', '模型仍在处理，请稍候…']
-    : IDEA_PROGRESS_STAGES
+  const stageKeys = project
+    ? ['idea.stage.identifyIntent', 'idea.stage.checkBoundaries', 'idea.stage.organizeReply', 'idea.stage.stillWorking']
+    : IDEA_PROGRESS_STAGE_KEYS
+  const stages = stageKeys.map(key => t(key as Parameters<typeof t>[0]))
   const [stageIndex, setStageIndex] = useState(0)
 
   useEffect(() => {
@@ -53,8 +57,8 @@ function AiProgress({ project = false }: { project?: boolean }) {
     <div className="ai-progress" role="status" aria-live="polite">
       <div className="ai-progress-head">
         <span className="thinking-dot" />
-        <strong>AI 正在分析</strong>
-        <span>{elapsed} 秒</span>
+        <strong>{t('idea.progressTitle')}</strong>
+        <span>{elapsed} {t('common.seconds')}</span>
       </div>
       <div className="ai-progress-track">
         <span />
@@ -91,6 +95,7 @@ export function IdeaView({
   thinkingSessions: ThinkingSession[]
   onToggleThinking: (id: string) => void
 }) {
+  const { t } = useTranslation()
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -125,7 +130,7 @@ export function IdeaView({
         </div>
         {chatBusy ? <AiProgress /> : null}
         <div className="clarification-mode-bar">
-          <label className="mode-switch" htmlFor="clarificationMode" title="切换 Idea 澄清深度">
+          <label className="mode-switch" htmlFor="clarificationMode" title={t('idea.toggleDepthTitle')}>
             <input
               id="clarificationMode"
               type="checkbox"
@@ -137,13 +142,13 @@ export function IdeaView({
             />
             <span className="switch-track" aria-hidden="true"><span /></span>
             <span className="mode-copy">
-              <strong>{automatic ? '全自动模式' : '详细模式'}</strong>
-              <small id="clarificationModeHint">{automatic ? '少量关键追问' : '全面了解需求'}</small>
+              <strong>{automatic ? t('app.mode.automatic') : t('app.mode.detailed')}</strong>
+              <small id="clarificationModeHint">{automatic ? t('idea.modeHint.automatic') : t('idea.modeHint.detailed')}</small>
             </span>
           </label>
         </div>
         <form className="composer" onSubmit={handleSubmit} aria-busy={chatBusy}>
-          <label className="attach-btn" title="添加材料">
+          <label className="attach-btn" title={t('idea.attachTitle')}>
             <Paperclip size={17} />
             <input
               ref={fileInputRef}
@@ -160,12 +165,12 @@ export function IdeaView({
           <textarea
             value={input}
             rows={2}
-            placeholder="输入研究 Idea 或回答澄清问题"
+            placeholder={t('idea.placeholder')}
             aria-keyshortcuts="Control+Enter Meta+Enter"
             onChange={event => setInput(event.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <button className="send-btn" type="submit" title="发送" aria-label="发送" disabled={chatBusy || !input.trim()}>
+          <button className="send-btn" type="submit" title={t('common.send')} aria-label={t('common.send')} disabled={chatBusy || !input.trim()}>
             <Send size={17} />
           </button>
         </form>

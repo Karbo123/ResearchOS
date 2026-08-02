@@ -12757,8 +12757,3429 @@
   // src/App.tsx
   var import_react21 = __toESM(require_react(), 1);
 
+  // src/i18n.ts
+  var import_react = __toESM(require_react(), 1);
+  var DEFAULT_LOCALE = "zh-CN";
+  var LOCALE_OPTIONS = [
+    { value: "zh-CN", label: "\u7B80\u4F53\u4E2D\u6587" },
+    { value: "zh-TW", label: "\u7E41\u9AD4\u4E2D\u6587" },
+    { value: "en", label: "English" },
+    { value: "es", label: "Espa\xF1ol" }
+  ];
+  var STORAGE_KEY = "researchos.locale";
+  var zhCN = {
+    "nav.overview": "\u9879\u76EE\u6982\u8FF0",
+    "nav.relatedWork": "\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814",
+    "nav.implementation": "\u5B9E\u9A8C\u5B9E\u73B0",
+    "nav.paper": "\u5B66\u672F\u8BBA\u6587\u64B0\u5199",
+    "nav.workspaceArea": "\u79D1\u7814\u5DE5\u4F5C\u533A",
+    "nav.currentWorkspace": "\u5F53\u524D\u5DE5\u4F5C\u533A\u9875\u9762",
+    "group.overviewIdea": "Idea \u8BA8\u8BBA",
+    "group.overviewSpec": "\u9879\u76EE\u89C4\u683C",
+    "group.overviewInnovation": "\u521B\u65B0\u4E0E\u8FB9\u754C",
+    "group.overviewProgress": "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
+    "group.overviewReports": "\u65E5\u62A5/\u5468\u62A5\u4E0E\u5BFC\u5E08\u53CD\u9988",
+    "group.relatedSearch": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
+    "group.relatedStatus": "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE",
+    "group.implRelated": "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0",
+    "group.implMethod": "\u672C\u65B9\u6CD5\u5B9E\u73B0",
+    "group.paperWriting": "\u8BBA\u6587\u5199\u4F5C\u4E0E\u7F16\u8BD1",
+    "tab.overview": "Idea \u8BA8\u8BBA",
+    "tab.overviewSpec": "\u9879\u76EE\u63CF\u8FF0\u4E0E\u7814\u7A76\u95EE\u9898",
+    "tab.overviewInnovation": "\u521B\u65B0\u70B9\u4E0E\u8FB9\u754C",
+    "tab.overviewProgress": "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
+    "tab.dailyReports": "\u65E5\u62A5",
+    "tab.weeklyReports": "\u5468\u62A5",
+    "tab.feedbackInbox": "\u5BFC\u5E08\u53CD\u9988",
+    "tab.feedbackAudit": "\u51B3\u7B56\u4E0E\u5BA1\u8BA1",
+    "tab.literature": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
+    "tab.researchStatus": "\u7814\u7A76\u73B0\u72B6",
+    "tab.citationGraph": "\u5F15\u7528\u56FE",
+    "tab.reproduction": "\u4EE3\u7801\u590D\u73B0",
+    "tab.comparison": "\u6548\u679C\u6BD4\u8F83",
+    "tab.methodDesign": "\u65B9\u6CD5\u8BBE\u8BA1",
+    "tab.codeWorkspace": "\u4EE3\u7801\u5DE5\u4F5C\u533A",
+    "tab.policies": "\u53D8\u66F4\u4E0E\u5BA1\u6279",
+    "tab.approvals": "Git \u4E0E\u5907\u4EFD",
+    "tab.experiments": "\u5B9E\u9A8C\u8BA1\u5212\u4E0E\u7ED3\u679C",
+    "tab.experimentQueue": "\u8FD0\u884C\u961F\u5217",
+    "tab.experimentMetrics": "\u6307\u6807\u7EDF\u8BA1",
+    "tab.artifacts": "\u7ED3\u679C\u4E0E\u53EF\u89C6\u5316",
+    "tab.lineage": "\u5B9E\u9A8C\u8C31\u7CFB",
+    "tab.paperProject": "\u8BBA\u6587\u9879\u76EE",
+    "tab.paperOutline": "\u5927\u7EB2\u4E0E\u7AE0\u8282",
+    "tab.paperCitations": "\u5F15\u7528\u4E0E BibTeX",
+    "tab.paperFigures": "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165",
+    "tab.paperData": "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528",
+    "tab.paperCompile": "LaTeX \u7F16\u8BD1",
+    "tab.paperReview": "PDF \u5448\u73B0\u4E0E\u5BA1\u9605",
+    "topbar.connected": "\u5DF2\u8FDE\u63A5",
+    "topbar.offline": "\u79BB\u7EBF",
+    "topbar.connecting": "\u8FDE\u63A5\u4E2D",
+    "topbar.refresh": "\u5237\u65B0",
+    "topbar.language": "\u754C\u9762\u8BED\u8A00",
+    "topbar.theme": "\u754C\u9762\u4E3B\u9898",
+    "sidebar.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
+    "sidebar.projects": "\u9879\u76EE",
+    "sidebar.noProjects": "\u6682\u65E0\u9879\u76EE",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "\u9879\u76EE\u8BB0\u5FC6\u56FE",
+    "sidebar.modelSettings": "\u6A21\u578B\u914D\u7F6E",
+    "theme.light": "\u6D45\u8272",
+    "theme.dark": "\u6697\u8272",
+    "theme.colorful": "\u5F69\u8272",
+    "projectChat": "\u9879\u76EE\u5BF9\u8BDD",
+    "common.innerPages": "\u5185\u90E8\u9875\u9762",
+    "common.cancel": "\u53D6\u6D88",
+    "common.unrecorded": "\u672A\u8BB0\u5F55",
+    "common.notProvided": "\u672A\u63D0\u4F9B",
+    "common.none": "\u65E0",
+    "common.notConfirmed": "\u5C1A\u672A\u786E\u8BA4",
+    "common.waiting": "\u7B49\u5F85\u4E2D\u2026",
+    "common.timePending": "\u65F6\u95F4\u5F85\u8BB0\u5F55",
+    "common.pendingConfirm": "\u5F85\u786E\u8BA4",
+    "common.pendingClarify": "\u5F85\u6F84\u6E05",
+    "common.confirm": "\u786E\u8BA4",
+    "common.reject": "\u62D2\u7EDD",
+    "common.send": "\u53D1\u9001",
+    "common.loadingProject": "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026",
+    "common.seconds": "\u79D2",
+    "common.close": "\u5173\u95ED",
+    "common.pendingApproval": "\u5F85\u5BA1\u6279",
+    "common.recorded": "\u5DF2\u8BB0\u5F55",
+    "common.missing": "\u7F3A\u5931",
+    "common.unknown": "\u672A\u77E5",
+    "common.pending": "\u5F85\u5904\u7406",
+    "common.approved": "\u5DF2\u6279\u51C6",
+    "common.rejected": "\u5DF2\u62D2\u7EDD",
+    "common.failed": "\u5931\u8D25",
+    "common.running": "\u5904\u7406\u4E2D",
+    "common.done": "\u5DF2\u5B8C\u6210",
+    "common.succeeded": "\u6210\u529F",
+    "common.cancelled": "\u5DF2\u53D6\u6D88",
+    "common.valid": "\u6709\u6548",
+    "common.invalid": "\u5DF2\u5931\u6548",
+    "common.noEvents": "\u6682\u65E0",
+    "common.back": "\u8FD4\u56DE",
+    "app.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
+    "app.researchProject": "\u7814\u7A76\u9879\u76EE",
+    "app.projectCreated": "\u9879\u76EE\u5DF2\u521B\u5EFA",
+    "app.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\u3002",
+    "app.ideaMeta": "Idea \u6F84\u6E05",
+    "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
+    "app.initialMessage": "\u8BF7\u76F4\u63A5\u63CF\u8FF0\u4F60\u7684\u7814\u7A76 Idea\u3002\u6211\u4F1A\u81EA\u9002\u5E94\u5206\u6790\u76EE\u6807\u4E0E\u5DF2\u6709\u7EBF\u7D22\uFF0C\u8BF4\u660E\u63A8\u65AD\u548C\u98CE\u9669\uFF0C\u53EA\u8FFD\u95EE\u771F\u6B63\u5F71\u54CD\u65B9\u6848\u7684\u672A\u77E5\u4FE1\u606F\u3002",
+    "app.thinking.modelRouting": "\u6A21\u578B\u8DEF\u7531",
+    "app.thinking.readingConversation": "\u8BFB\u53D6\u5BF9\u8BDD",
+    "app.thinking.selectingModel": "\u9009\u62E9\u6A21\u578B",
+    "app.thinking.callingModel": "\u8C03\u7528\u6A21\u578B",
+    "app.thinking.savingResult": "\u4FDD\u5B58\u7ED3\u679C",
+    "app.thinking.waitingResponse": "\u7B49\u5F85\u6A21\u578B\u54CD\u5E94\u2026",
+    "app.thinking.preparingRequest": "\u51C6\u5907\u8BF7\u6C42",
+    "app.thinking.saveComplete": "\u4FDD\u5B58\u5B8C\u6210",
+    "app.thinking.requestFailed": "\u8BF7\u6C42\u5931\u8D25",
+    "app.thinking.assumptionsRecorded": "{count} \u4E2A\u5DF2\u8BB0\u5F55\u5047\u8BBE",
+    "app.thinking.uploadingFiles": "{count} \u4E2A\u6587\u4EF6",
+    "app.thinking.messageLength": "\u6D88\u606F\u957F\u5EA6 {count} \u5B57\u7B26",
+    "app.mode.automatic": "\u5168\u81EA\u52A8\u6A21\u5F0F",
+    "app.mode.detailed": "\u8BE6\u7EC6\u6A21\u5F0F",
+    "idea.errorTitle": "\u8BF7\u6C42\u5931\u8D25",
+    "idea.progressTitle": "AI \u6B63\u5728\u5206\u6790",
+    "idea.stage.understand": "\u6B63\u5728\u7406\u89E3\u7814\u7A76\u76EE\u6807\u4E0E\u5DF2\u6709\u7EBF\u7D22\u2026",
+    "idea.stage.selectModel": "\u6B63\u5728\u9009\u62E9\u6210\u672C\u5408\u9002\u7684\u6A21\u578B\u5C42\u7EA7\u2026",
+    "idea.stage.updateDraft": "\u6B63\u5728\u66F4\u65B0 ResearchIdea \u8349\u7A3F\u2026",
+    "idea.stage.checkRisks": "\u6B63\u5728\u68C0\u67E5\u98CE\u9669\u3001\u5047\u8BBE\u4E0E\u5F85\u786E\u8BA4\u4E8B\u9879\u2026",
+    "idea.stage.stillWorking": "\u6A21\u578B\u4ECD\u5728\u5904\u7406\uFF0C\u8BF7\u7A0D\u5019\u2026",
+    "idea.stage.identifyIntent": "\u6B63\u5728\u8BC6\u522B\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u53D8\u66F4\u610F\u56FE\u2026",
+    "idea.stage.checkBoundaries": "\u6B63\u5728\u68C0\u67E5\u9879\u76EE\u72B6\u6001\u4E0E\u5BA1\u6279\u8FB9\u754C\u2026",
+    "idea.stage.organizeReply": "\u6B63\u5728\u7EC4\u7EC7\u53EF\u5BA1\u9605\u7684\u56DE\u590D\u2026",
+    "idea.toggleDepthTitle": "\u5207\u6362 Idea \u6F84\u6E05\u6DF1\u5EA6",
+    "idea.modeHint.automatic": "\u5C11\u91CF\u5173\u952E\u8FFD\u95EE",
+    "idea.modeHint.detailed": "\u5168\u9762\u4E86\u89E3\u9700\u6C42",
+    "idea.attachTitle": "\u6DFB\u52A0\u6750\u6599",
+    "idea.placeholder": "\u8F93\u5165\u7814\u7A76 Idea \u6216\u56DE\u7B54\u6F84\u6E05\u95EE\u9898",
+    "spec.unset": "\u672A\u6307\u5B9A",
+    "spec.confirmCreate": "\u786E\u8BA4\u5E76\u521B\u5EFA\u9879\u76EE",
+    "spec.empty": "\u89C4\u683C\u5C06\u5728\u6F84\u6E05\u5B8C\u6210\u540E\u751F\u6210\u3002",
+    "thinking.title": "AI \u8BF7\u6C42\u72B6\u6001",
+    "chat.title": "\u9879\u76EE\u5BF9\u8BDD",
+    "chat.monitoring": "\u76D1\u7763\u4E2D",
+    "chat.closeTitle": "\u5173\u95ED\u9879\u76EE\u5BF9\u8BDD",
+    "chat.placeholder": "\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u660E\u786E\u63D0\u51FA\u53D8\u66F4",
+    "context.currentScope": "\u5F53\u524D\u9879\u76EE\u8303\u56F4",
+    "context.updatedAt": "\u66F4\u65B0\u4E8E",
+    "context.pendingCount": "{count} \u4E2A\u5F85\u5BA1\u6279",
+    "context.noPending": "\u65E0\u5F85\u5BA1\u6279",
+    "context.recentFailure": "\u6700\u8FD1\u5931\u8D25\uFF1A{code}",
+    "context.noRecentFailure": "\u6700\u8FD1\u5931\u8D25\uFF1A\u65E0",
+    "context.ariaLabel": "\u5F53\u524D\u9879\u76EE\u4E0A\u4E0B\u6587",
+    "context.taskFailed": "\u4EFB\u52A1\u5931\u8D25",
+    "context.sourceRequestFailed": "\u6765\u6E90\u8BF7\u6C42\u5931\u8D25",
+    "context.experimentFailed": "\u5B9E\u9A8C\u8FD0\u884C\u5931\u8D25",
+    "context.reproductionFailed": "\u590D\u73B0\u6D41\u7A0B\u5931\u8D25",
+    "context.reportLineageFailed": "\u62A5\u544A\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u9A8C\u8BC1",
+    "md.noPreview": "\u6682\u65E0\u53EF\u9884\u89C8\u5185\u5BB9\u3002",
+    "preview.noPoints": "\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6709\u6548\u70B9",
+    "preview.resetView": "\u91CD\u7F6E\u89C6\u56FE",
+    "preview.pointCloud": "\u70B9\u4E91\u9884\u89C8",
+    "preview.loadedFaces": "\u5DF2\u52A0\u8F7D {count} \u4E2A\u9762\u7247\uFF0C\u4F7F\u7528\u7EBF\u6846\u663E\u793A\u3002",
+    "preview.sampled": " \xB7 \u5DF2\u964D\u91C7\u6837",
+    "preview.pointCount": "{count} \u70B9",
+    "preview.noFiniteMetrics": "\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\u3002",
+    "preview.selectionNoFinite": "\u5F53\u524D\u9009\u62E9\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\uFF1B\u7F3A\u5931\u503C\u4E0D\u4F1A\u88AB\u8865\u5199\u6216\u63D2\u503C\u3002",
+    "preview.metric": "\u6307\u6807",
+    "preview.points": "\u70B9\u6570",
+    "preview.selectSeeds": "\u9009\u62E9\u968F\u673A\u79CD\u5B50",
+    "preview.pointsCount": "{count} \u4E2A\u70B9",
+    "preview.missingPoints": "{count} \u4E2A\u70B9\u7F3A\u5C11 {metric}\uFF0C\u5DF2\u6309\u7F3A\u5931\u503C\u4FDD\u7559\u5E76\u8DF3\u8FC7\u7ED8\u5236\u3002",
+    "preview.imageNote": "\u56FE\u7247\u76F4\u63A5\u4F7F\u7528\u4E0B\u8F7D\u63A5\u53E3\u5C55\u793A\u3002",
+    "preview.pdfLabel": "PDF \xB7 {count} \u9875\uFF0C\u4EC5\u5C55\u793A\u524D 3 \u9875\u53EF\u63D0\u53D6\u6587\u672C",
+    "preview.invalidArtifact": "\u8BE5\u4EA7\u7269\u5DF2\u5931\u6548\uFF0C\u4E0D\u80FD\u9884\u89C8\u6216\u4E0B\u8F7D\u3002",
+    "preview.experimentNotSucceeded": "\u5173\u8054\u8FD0\u884C\u72B6\u6001\u4E3A {status}\uFF0C\u4E0D\u663E\u793A\u4E3A\u6210\u529F\u4EA7\u7269\u3002",
+    "preview.loading": "\u52A0\u8F7D\u9884\u89C8\u2026",
+    "preview.error": "\u9884\u89C8\u5931\u8D25\uFF1A{error}",
+    "preview.download": "\u4E0B\u8F7D\u4EA7\u7269",
+    "preview.lineageUnbound": "\u672A\u7ED1\u5B9A",
+    "preview.lineageUnknown": "\u672A\u77E5",
+    "preview.lineageNotDeclared": "\u672A\u58F0\u660E",
+    "preview.lineageMissing": "\u8C31\u7CFB\u4FE1\u606F\u672A\u58F0\u660E",
+    "preview.lineage": "Run {run} \xB7 Idea v{idea} \xB7 \u6570\u636E {data}",
+    "preview.metricCurve": "{metric} \u6307\u6807\u66F2\u7EBF",
+    "preview.runStatus": "\u8FD0\u884C {status}",
+    "md.previewLabel": "Markdown \u62A5\u544A\u9884\u89C8",
+    "settings.sourceRuntime": "\u8FD0\u884C\u65F6\u8986\u76D6",
+    "settings.sourceEnv": "\u9879\u76EE .env \u9ED8\u8BA4",
+    "settings.saveFailed": "\u4FDD\u5B58\u5931\u8D25\uFF1A{error}\u3002",
+    "settings.keyHint": "\u5DF2\u914D\u7F6E\u7684 key \u7559\u7A7A\u5373\u53EF\u4FDD\u7559\uFF1B\u6A21\u578B\u8C03\u7528\u5931\u8D25\u4E0D\u4F1A\u5207\u6362\u6216\u964D\u7EA7\u3002",
+    "settings.eyebrow": "\u8FD0\u884C\u65F6\u8BBE\u7F6E",
+    "settings.title": "\u914D\u7F6E",
+    "settings.modelsDescription": "Luna\u3001Terra\u3001Sol \u4E09\u6863\u5206\u522B\u751F\u6548\u3002\u672A\u5355\u72EC\u8986\u76D6\u65F6\uFF0C\u9ED8\u8BA4\u4F7F\u7528\u9879\u76EE .env \u4E2D\u7684 URL \u548C key\uFF0C\u4FDD\u5B58\u540E\u7ACB\u5373\u7528\u4E8E\u4E0B\u4E00\u6B21\u8BF7\u6C42\u3002",
+    "settings.embeddingDescription": "\u6BCF\u4E2A\u79D1\u7814\u9879\u76EE\u53EF\u4EE5\u72EC\u7ACB\u914D\u7F6E\u8BED\u4E49\u8BB0\u5FC6 Embedding\uFF1B\u4E0D\u8986\u76D6\u65F6\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08\u5B9E\u6D4B\u672C\u5730 bge-m3 \u6BD4\u8FDC\u7A0B\u5FEB\u7EA6 10 \u500D\uFF09\u3002",
+    "settings.modelsTab": "\u6A21\u578B \xB7 Luna/Terra/Sol",
+    "settings.embeddingTab": "Embedding \xB7 \u8BED\u4E49\u8BB0\u5FC6",
+    "settings.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF0C\u518D\u914D\u7F6E\u9879\u76EE\u7EA7 Embedding\u3002",
+    "settings.loadingModels": "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026",
+    "settings.keyConfigured": "\u5DF2\u914D\u7F6E key",
+    "settings.keyPending": "\u5F85\u914D\u7F6E key",
+    "settings.urlReady": "URL \u5DF2\u5C31\u7EEA",
+    "settings.urlPending": "\u5F85\u914D\u7F6E URL",
+    "settings.default": "\u9ED8\u8BA4",
+    "settings.modelName": "\u6A21\u578B\u540D\u79F0",
+    "settings.reasoningEffort": "\u63A8\u7406\u5F3A\u5EA6",
+    "settings.modelUrl": "\u6A21\u578B URL",
+    "settings.apiKey": "API key",
+    "settings.keyKeep": "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8",
+    "settings.keyPlaceholder": "\u8F93\u5165 API key",
+    "settings.securityNote": "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\u3002\u7559\u7A7A\u5DF2\u914D\u7F6E\u7684 key \u4F1A\u4FDD\u6301\u4E0D\u53D8\u3002",
+    "settings.save": "\u4FDD\u5B58\u914D\u7F6E",
+    "settings.loadFailed": "\u65E0\u6CD5\u52A0\u8F7D\u6A21\u578B\u914D\u7F6E\u3002",
+    "settings.discardTitle": "\u653E\u5F03\u672A\u4FDD\u5B58\u7684\u914D\u7F6E\uFF1F",
+    "settings.discardDescription": "\u914D\u7F6E\u5C1A\u672A\u4FDD\u5B58\uFF0C\u786E\u5B9A\u5173\u95ED\u5417\uFF1F",
+    "settings.discardConfirm": "\u653E\u5F03\u4FEE\u6539",
+    "embedding.loading": "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE Embedding \u914D\u7F6E\u2026",
+    "embedding.providerTitle": "Embedding \u63D0\u4F9B\u65B9\u5F0F",
+    "embedding.globalDefault": "\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4",
+    "embedding.localOnnx": "\u672C\u5730 ONNX \u6A21\u578B",
+    "embedding.remoteApi": "\u8FDC\u7A0B OpenAI-compatible API",
+    "embedding.instance": "\u5B9E\u4F8B",
+    "embedding.running": " \xB7 \u8FD0\u884C\u4E2D",
+    "embedding.notRunning": " \xB7 \u672A\u8FD0\u884C",
+    "embedding.sharedProjects": " \xB7 \u5171\u4EAB {count} \u4E2A\u9879\u76EE",
+    "embedding.mode": "\u914D\u7F6E\u6A21\u5F0F",
+    "embedding.modeGlobal": "\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08.env\uFF09",
+    "embedding.modeCustom": "\u672C\u9879\u76EE\u72EC\u7ACB\u914D\u7F6E",
+    "embedding.provider": "Provider",
+    "embedding.openaiCompatible": "OpenAI-compatible",
+    "embedding.model": "\u6A21\u578B",
+    "embedding.modelPlaceholder": "\u4F8B\u5982 Qwen3-Embedding-8B",
+    "embedding.dimensions": "\u7EF4\u5EA6",
+    "embedding.baseUrl": "\u57FA\u7840 URL",
+    "embedding.poolNote": "\u76F8\u540C\u914D\u7F6E\u7684\u9879\u76EE\u5171\u4EAB\u540C\u4E00\u4E2A Supermemory \u5B9E\u4F8B\u4E0E\u6570\u636E\u76EE\u5F55\uFF08\u6309\u914D\u7F6E\u6C60\u590D\u7528\uFF0C\u7AEF\u53E3 6770\u20136869\uFF09\uFF0C\u9879\u76EE\u4E4B\u95F4\u4ECD\u7528 container tag \u9694\u79BB\u8BED\u4E49\u8BB0\u5FC6\uFF1B\u914D\u7F6E\u4E0D\u540C\u624D\u542F\u7528\u65B0\u7684\u914D\u7F6E\u6C60\u3002\u9ED8\u8BA4\u63A8\u8350\u672C\u5730 Xenova/bge-m3\uFF08\u5B9E\u6D4B\u6BD4\u8FDC\u7A0B gitee \u5FEB\u7EA6 10 \u500D\uFF09\u3002",
+    "embedding.securityNote": "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\uFF1B\u5207\u6362\u6A21\u578B\u6216\u7EF4\u5EA6\u4F1A\u4E3A\u9879\u76EE\u5206\u914D\u65B0\u7684\u914D\u7F6E\u6C60\uFF08\u65E7\u6C60\u6570\u636E\u4FDD\u7559\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u9700\u91CD\u65B0\u6444\u5165\uFF09\u3002",
+    "embedding.resetTitle": "\u5207\u6362\u6A21\u578B\u9700\u8981\u91CD\u5EFA\u6570\u636E\u76EE\u5F55",
+    "embedding.resetDescription": "\u5207\u6362 embedding \u6A21\u578B\u6216\u7EF4\u5EA6\u540E\uFF0C\u8BE5\u9879\u76EE\u5DF2\u6709\u7684\u8BED\u4E49\u8BB0\u5FC6\u65E0\u6CD5\u4E0E\u65B0\u7684\u5411\u91CF\u7A7A\u95F4\u6DF7\u7528\uFF0C\u9700\u8981\u5168\u65B0\u6570\u636E\u76EE\u5F55\u5E76\u91CD\u65B0\u6444\u5165\uFF08\u65E7\u6570\u636E\u76EE\u5F55\u4F1A\u4FDD\u7559\u4E3A\u5907\u4EFD\uFF09\u3002\u786E\u8BA4\u7EE7\u7EED\u5417\uFF1F",
+    "embedding.resetConfirm": "\u786E\u8BA4\u91CD\u5EFA\u5E76\u4FDD\u5B58",
+    "memory.graphAria": "\u9879\u76EE\u8BED\u4E49\u8BB0\u5FC6\u5173\u7CFB\u56FE",
+    "memory.graphPrompt": "\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002",
+    "memory.searchPrompt": "\u8F93\u5165\u67E5\u8BE2\u4EE5\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u8BED\u4E49\u5019\u9009\u3002",
+    "memory.remoteUnsupported": "\u5DF2\u914D\u7F6E {provider} embedding\uFF0C\u4F46\u5F53\u524D\u670D\u52A1\u7AEF\u4EC5\u652F\u6301\u672C\u5730 embedding\uFF1B\u8BB0\u5FC6\u8BF7\u6C42\u4F1A\u5931\u8D25\u5173\u95ED\uFF0C\u4E0D\u4F1A\u9759\u9ED8\u964D\u7EA7\u3002",
+    "memory.configured": "Supermemory \u5DF2\u914D\u7F6E \xB7 {model}\uFF08{dimensions} \u7EF4\uFF09\uFF0C\u8F93\u5165\u67E5\u8BE2\u540E\u52A0\u8F7D\u9879\u76EE\u8303\u56F4\u56FE\u3002",
+    "memory.notConfigured": "Supermemory \u5C1A\u672A\u914D\u7F6E API key\uFF1B\u4E0D\u4F1A\u4F7F\u7528\u672C\u5730\u6216\u65E0\u5173\u6570\u636E\u66FF\u4EE3\u3002",
+    "memory.statusFailed": "\u72B6\u6001\u8BFB\u53D6\u5931\u8D25\uFF1A{error}",
+    "memory.searching": "\u6B63\u5728\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u8303\u56F4\u2026",
+    "memory.searchResults": "{total} \u6761\u5019\u9009 \xB7 \u6765\u6E90\uFF1ASupermemory \xB7 \u5F53\u524D\u9879\u76EE\u8303\u56F4",
+    "memory.graphResults": "{nodes} \u4E2A\u8282\u70B9 \xB7 {edges} \u6761\u5173\u7CFB \xB7 \u6765\u6E90\uFF1ASupermemory",
+    "memory.requestFailed": "\u8BF7\u6C42\u5931\u8D25\uFF1A{error}",
+    "memory.eyebrow": "\u9879\u76EE\u7EA7\u8BED\u4E49\u4E0A\u4E0B\u6587",
+    "memory.description": "\u53EA\u663E\u793A\u5F53\u524D\u9879\u76EE\u8303\u56F4\u7684\u8BED\u4E49\u5019\u9009\u53CA\u5176\u5173\u7CFB\uFF1B\u5019\u9009\u4E0D\u7B49\u4E8E\u8BBA\u6587\u8BC1\u636E\u3002",
+    "memory.viewAria": "\u8BED\u4E49\u8BB0\u5FC6\u89C6\u56FE",
+    "memory.graphView": "\u5173\u7CFB\u56FE",
+    "memory.searchView": "\u8BED\u4E49\u68C0\u7D22",
+    "memory.queryLabel": "\u67E5\u8BE2\u5F53\u524D\u9879\u76EE",
+    "memory.queryPlaceholder": "\u8F93\u5165\u7814\u7A76\u76EE\u6807\u3001\u4E8B\u5B9E\u6216\u6750\u6599\u7EBF\u7D22",
+    "memory.search": "\u68C0\u7D22",
+    "memory.projectScope": "\u9879\u76EE\u8303\u56F4\uFF1A{projectId} \xB7 \u8BED\u4E49\u5019\u9009\uFF0C\u9700\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838",
+    "memory.unnamedCandidate": "\u672A\u547D\u540D\u5019\u9009",
+    "memory.similarity": "\u76F8\u4F3C\u5EA6\uFF1A{value}",
+    "memory.source": "\u6765\u6E90\uFF1A{source}",
+    "memory.artifact": "Artifact\uFF1A{value}",
+    "memory.evidenceStatus": "\u8BC1\u636E\u72B6\u6001\uFF1A{value}",
+    "overview.runPending": "\u5C1A\u672A\u5206\u914D Run",
+    "overview.toastSearching": "\u6B63\u5728\u5E76\u884C\u68C0\u7D22\u591A\u4E2A\u5B66\u672F\u6765\u6E90\u4E0E\u8D44\u6E90\u6CE8\u518C\u8868\u2026",
+    "overview.toastSearchDone": "\u68C0\u7D22\u5B8C\u6210\uFF0C\u5019\u9009\u8D44\u6E90\u5DF2\u5237\u65B0",
+    "overview.toastDraftProposal": "\u8BC1\u636E\u8BBA\u6587\u8349\u7A3F Proposal {id} \u5F85\u5BA1\u6279",
+    "overview.toastCompileProposal": "\u7F16\u8BD1\u8BA1\u5212 {id} \u5F85\u5BA1\u6279",
+    "overview.toastPaused": "\u9879\u76EE\u5DF2\u6682\u505C",
+    "overview.toastResumed": "\u9879\u76EE\u5DF2\u6062\u590D",
+    "overview.toastCancelled": "\u9879\u76EE\u5DF2\u53D6\u6D88",
+    "overview.papers": "\u8BBA\u6587",
+    "overview.experiments": "\u5B9E\u9A8C",
+    "overview.artifacts": "\u4EA7\u7269",
+    "overview.spec": "\u7814\u7A76\u89C4\u683C",
+    "overview.searchLiterature": "\u68C0\u7D22\u6587\u732E",
+    "overview.paperDraft": "\u751F\u6210\u8BC1\u636E\u8BBA\u6587\u8349\u7A3F",
+    "overview.compilePaper": "\u7F16\u8BD1\u8BBA\u6587",
+    "overview.noSpec": "\u5C1A\u672A\u751F\u6210\u7814\u7A76\u89C4\u683C",
+    "overview.projectDescription": "\u9879\u76EE\u63CF\u8FF0",
+    "overview.descriptionHint": "\u5F53\u524D\u9879\u76EE\u89C4\u683C\u7684\u53EF\u5BA1\u9605\u6458\u8981\u3002",
+    "overview.domain": "\u7814\u7A76\u9886\u57DF",
+    "overview.question": "\u7814\u7A76\u95EE\u9898",
+    "overview.hypotheses": "\u5047\u8BBE",
+    "overview.successCriteria": "\u6210\u529F\u6807\u51C6",
+    "overview.notGenerated": "\u5C1A\u672A\u751F\u6210",
+    "overview.innovationCandidates": "\u521B\u65B0\u70B9\u5019\u9009",
+    "overview.innovationHint": "\u5019\u9009\u5EFA\u8BAE\u9700\u8981\u76F8\u5173\u5DE5\u4F5C\u8BC1\u636E\u548C\u5BFC\u5E08\u786E\u8BA4\u3002",
+    "overview.noInnovation": "\u5C1A\u672A\u751F\u6210\u521B\u65B0\u70B9\u5019\u9009\u3002",
+    "overview.progress": "\u7814\u7A76\u8FDB\u5EA6",
+    "overview.progressHint": "\u65F6\u95F4\u7EBF\u53EA\u6C47\u603B\u5DF2\u8BB0\u5F55\u7684 Proposal\u3001Checkpoint \u548C\u5B9E\u9A8C\u72B6\u6001\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B66\u7ED3\u8BBA\u3002",
+    "overview.noTimeline": "\u5C1A\u65E0\u53EF\u5C55\u793A\u7684\u8FDB\u5EA6\u4E8B\u4EF6\u3002",
+    "overview.projectStatus": "\u9879\u76EE\u72B6\u6001",
+    "overview.stageInitialized": "\u5DF2\u521D\u59CB\u5316",
+    "overview.stageUnknown": "\u672A\u77E5\u9636\u6BB5",
+    "overview.ideaVersion": "Idea \u7248\u672C {version} \xB7 {status}",
+    "overview.checkpointVersion": "Idea v{version}",
+    "overview.runDetail": "Run {run}",
+    "overview.statusActive": "\u8FDB\u884C\u4E2D",
+    "overview.statusPaused": "\u5DF2\u6682\u505C",
+    "overview.statusCancelled": "\u5DF2\u53D6\u6D88",
+    "overview.pause": "\u6682\u505C",
+    "overview.resume": "\u6062\u590D",
+    "overview.cancelProject": "\u53D6\u6D88\u9879\u76EE",
+    "overview.cancelConfirmDescription": "\u53D6\u6D88\u9879\u76EE\u540E\u4E0D\u80FD\u6062\u590D\uFF0C\u786E\u5B9A\u7EE7\u7EED\u5417\uFF1F",
+    "overview.confirmCancel": "\u786E\u8BA4\u53D6\u6D88",
+    "reports.daily": "\u65E5\u62A5",
+    "reports.weekly": "\u5468\u62A5",
+    "reports.generated": "{period}\u5DF2\u751F\u6210\uFF1B\u6765\u6E90\u5FEB\u7167\u5DF2\u8BB0\u5F55",
+    "reports.feedbackRecorded": "\u5BFC\u5E08\u53CD\u9988\u5DF2\u8BB0\u5F55\uFF1B\u540E\u7EED\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u4F1A\u6267\u884C",
+    "reports.feedbackProposalSummary": "\u6839\u636E\u5BFC\u5E08\u53CD\u9988\u751F\u6210\u5F85\u5BA1\u9605\u4E0B\u4E00\u6B65\u63D0\u6848",
+    "reports.proposalCreated": "\u53CD\u9988\u63D0\u6848\u5DF2\u521B\u5EFA\uFF0C\u8BF7\u5728\u201C\u51B3\u7B56\u4E0E\u5BA1\u8BA1\u201D\u4E2D\u5BA1\u6279",
+    "reports.feedbackInbox": "\u5BFC\u5E08\u53CD\u9988\u6536\u4EF6\u7BB1",
+    "reports.feedbackHint": "\u53CD\u9988\u53EA\u80FD\u4EA7\u751F\u53CD\u9988\u51B3\u7B56\u3001Proposal \u548C\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u4E0D\u4F1A\u76F4\u63A5\u6539\u4EE3\u7801\u3001\u88C5\u4F9D\u8D56\u3001\u8FD0\u884C\u5B9E\u9A8C\u6216\u63A8\u9001 Git\u3002",
+    "reports.loadingFeedback": "\u6B63\u5728\u8BFB\u53D6\u5F53\u524D\u9879\u76EE\u7684\u53CD\u9988\u2026",
+    "reports.reference": "\u5173\u8054",
+    "reports.decisionComment": "\u51B3\u7B56\u8BF4\u660E\uFF1A",
+    "reports.acknowledge": "\u786E\u8BA4",
+    "reports.requestRevision": "\u8981\u6C42\u4FEE\u8BA2",
+    "reports.createProposal": "\u751F\u6210 Proposal",
+    "reports.noFeedback": "\u5F53\u524D\u9879\u76EE\u6CA1\u6709\u5BFC\u5E08\u53CD\u9988\u3002\u6CA1\u6709\u4E8B\u4EF6\u65F6\u4FDD\u6301 empty\uFF0C\u4E0D\u751F\u6210\u6A21\u677F\u5316\u62A5\u544A\u3002",
+    "reports.recordFeedback": "\u8BB0\u5F55\u65B0\u53CD\u9988",
+    "reports.recordFeedbackHint": "\u53CD\u9988\u6587\u672C\u4F1A\u4FDD\u5B58\u5230\u5F53\u524D\u9879\u76EE\uFF1B\u8BED\u4E49\u8BB0\u5FC6\u5199\u5165\u5931\u8D25\u65F6\u76F4\u63A5\u663E\u793A\u7ED3\u6784\u5316\u9519\u8BEF\u3002",
+    "reports.feedbackType": "\u53CD\u9988\u7C7B\u578B",
+    "reports.forReport": "\u9488\u5BF9\u62A5\u544A",
+    "reports.nextDirection": "\u4E0B\u4E00\u6B65\u65B9\u5411",
+    "reports.feedbackToAi": "\u7ED9 AI \u5B66\u751F\u7684\u53CD\u9988",
+    "reports.feedbackPlaceholder": "\u6307\u51FA\u9700\u8981\u4FEE\u6B63\u7684\u7ED3\u679C\u3001\u4E0B\u4E00\u6B65\u65B9\u5411\u6216\u9700\u8981\u8865\u5145\u7684\u8BC1\u636E",
+    "reports.recordFeedbackAction": "\u8BB0\u5F55\u53CD\u9988",
+    "reports.auditTitle": "\u53CD\u9988\u4E0E Proposal \u5BA1\u8BA1",
+    "reports.auditHint": "\u53EA\u663E\u793A\u5F53\u524D project_id {projectId} \u4E0B\u7684\u51B3\u7B56\u3001Proposal \u548C\u5931\u8D25\u4E8B\u4EF6\u3002",
+    "reports.loadingAudit": "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE\u5BA1\u8BA1\u2026",
+    "reports.noAudit": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u53CD\u9988\u6216 Proposal \u5BA1\u8BA1\u4E8B\u4EF6\u3002",
+    "reports.periodHint": "\u62A5\u544A\u53EA\u8BFB\u53D6\u771F\u5B9E\u4E8B\u4EF6\u5E76\u4FDD\u5B58 source_snapshot\uFF1B\u6CA1\u6709\u4E8B\u4EF6\u65F6\u663E\u793A empty\u3002",
+    "reports.generate": "\u751F\u6210{period}",
+    "reports.blocked": "\u5F53\u524D\u62A5\u544A\u672A\u663E\u793A\uFF1A{reason}\u3002\u8BF7\u91CD\u65B0\u751F\u6210\u5F53\u524D\u65F6\u95F4\u7A97\u53E3\u7684\u62A5\u544A\u3002",
+    "reports.lineageUnverifiable": "\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u590D\u6838",
+    "reports.noneForPeriod": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709{period}\u3002",
+    "reports.history": "\u5386\u53F2\u7248\u672C",
+    "reports.view": "\u67E5\u770B",
+    "reports.viewStatus": "\u67E5\u770B\u72B6\u6001",
+    "approvals.launchToast": "\u8FD0\u884C {id} \u5DF2\u63D0\u4EA4",
+    "approvals.title": "\u53D8\u66F4\u4E0E\u6267\u884C\u5BA1\u6279",
+    "approvals.hint": "\u6279\u51C6\u524D\u4F1A\u751F\u6210 Proposal\u3001diff\u3001\u660E\u786E\u5BA1\u6279\u3001\u590D\u6838\u3001Git commit \u548C\u5BA1\u8BA1\u8BB0\u5F55\u3002",
+    "approvals.rerunFailed": "\u81EA\u52A8\u5C40\u90E8\u91CD\u8DD1\u5931\u8D25\uFF0C\u8BF7\u67E5\u770B\u5BA1\u8BA1\u8BB0\u5F55",
+    "approvals.rerunSubmitted": "\u5DF2\u81EA\u52A8\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1 {id}",
+    "approvals.rerunPending": "\u5DF2\u6279\u51C6\uFF0C\u6B63\u5728\u81EA\u52A8\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1",
+    "approvals.estimatedCost": "\u9884\u8BA1",
+    "approvals.impact": "\u5F71\u54CD:",
+    "approvals.approve": "\u6279\u51C6",
+    "approvals.reject": "\u9A73\u56DE",
+    "approvals.runTopicPlan": "\u6267\u884C\u4E3B\u9898\u8BA1\u5212",
+    "approvals.execute": "\u6267\u884C",
+    "approvals.empty": "\u6CA1\u6709\u5F85\u5904\u7406\u63D0\u6848\u3002",
+    "artifacts.title": "\u53EF\u89C6\u5316\u4E0E\u5927\u6587\u4EF6\u4EA7\u7269",
+    "artifacts.hint": "\u4EA7\u7269\u8BB0\u5F55 SHA-256\u3001\u5B9E\u9A8C\u3001Idea \u7248\u672C\u3001\u6570\u636E\u7248\u672C\u3001\u914D\u7F6E\u3001Run ID \u548C\u6709\u6548\u6027\u3002",
+    "artifacts.empty": "\u5B9E\u9A8C\u5B8C\u6210\u5E76\u540C\u6B65\u540E\u663E\u793A PNG\u3001PLY\u3001JSON \u548C PDF\u3002",
+    "policies.placeholder": "\u65B0\u589E\u957F\u671F\u9879\u76EE\u7B56\u7565",
+    "policies.propose": "\u63D0\u51FA\u7B56\u7565",
+    "policies.toast": "\u7B56\u7565\u63D0\u6848 {id} \u5F85\u5BA1\u6279",
+    "policies.executionStatus": "\u6267\u884C\u72B6\u6001",
+    "policies.seedTitle": "\u968F\u673A\u79CD\u5B50\u4E0B\u9650",
+    "policies.seedText": "\u968F\u673A\u5B9E\u9A8C\u81F3\u5C11 {count} \u4E2A\u4E0D\u540C\u79CD\u5B50\uFF1B\u8BA1\u5212\u751F\u6210\u548C Runner \u63D0\u4EA4\u53CC\u91CD\u6821\u9A8C",
+    "policies.citationTitle": "\u5F15\u7528\u6765\u6E90\u4E0E\u539F\u6587\u8BC1\u636E",
+    "policies.citationCount": "DOI/\u6765\u6E90 {value}/{total}",
+    "policies.quotedCount": "\u9875\u7801/\u7AE0\u8282\u539F\u6587\u8BC1\u636E {count}",
+    "policies.metadataNotFulltext": "\u5143\u6570\u636E\u6807\u9898\u4E0D\u8BA1\u4E3A\u5168\u6587\u8BC1\u636E",
+    "policies.approvalTitle": "\u4EBA\u5DE5\u5BA1\u6279",
+    "policies.highCost": "\u9AD8\u6210\u672C\u64CD\u4F5C",
+    "policies.externalActions": "\u5BF9\u5916\u64CD\u4F5C",
+    "policies.forced": "\u5F3A\u5236",
+    "policies.notConfigured": "\u672A\u914D\u7F6E",
+    "policies.activeTitle": "\u751F\u6548\u7B56\u7565",
+    "policies.notRecognized": "\u672A\u8BC6\u522B\u4E3A\u53EF\u6267\u884C\u7EA6\u675F\uFF1B\u4FDD\u7559\u4E3A\u4EBA\u5DE5\u89C4\u5219",
+    "policies.projectPolicy": "\u9879\u76EE\u7EA7\u6301\u4E45\u7B56\u7565",
+    "policies.empty": "\u5C1A\u672A\u914D\u7F6E\u9879\u76EE\u7B56\u7565\u3002",
+    "reproduction.sourceDownloaded": "\u6E90\u7801\u5DF2\u4E0B\u8F7D",
+    "reproduction.dependencyPending": "\u7B49\u5F85\u4F9D\u8D56\u8BA1\u5212",
+    "reproduction.dependencyInstalling": "\u6B63\u5728\u5B89\u88C5\u4F9D\u8D56",
+    "reproduction.dependencyFailed": "\u4F9D\u8D56\u5B89\u88C5\u5931\u8D25",
+    "reproduction.ready": "\u53EF\u8FD0\u884C",
+    "reproduction.queued": "\u7B49\u5F85\u8FD0\u884C",
+    "reproduction.running": "\u6B63\u5728\u8FD0\u884C",
+    "reproduction.awaitingArtifact": "\u7B49\u5F85\u4EA7\u7269\u5BA1\u6279",
+    "reproduction.completed": "\u4EA7\u7269\u5DF2\u767B\u8BB0",
+    "reproduction.artifactRejected": "\u4EA7\u7269\u767B\u8BB0\u88AB\u62D2\u7EDD",
+    "reproduction.runFailed": "\u8FD0\u884C\u5931\u8D25",
+    "reproduction.invalidated": "\u4E0A\u6E38\u5DF2\u5931\u6548",
+    "reproduction.verifyDone": "\u4EE3\u7801\u4ED3\u5E93\u9A8C\u8BC1\u5B8C\u6210",
+    "reproduction.downloadProposalCreated": "\u4E0B\u8F7D Proposal \u5DF2\u521B\u5EFA\uFF0C\u8BF7\u5728\u5BA1\u6279\u9875\u6279\u51C6\u540E\u7EE7\u7EED",
+    "reproduction.dependencyReason": "\u4E3A\u5DF2\u56FA\u5B9A commit \u7684\u4EE3\u7801\u590D\u73B0\u521B\u5EFA\u72EC\u7ACB\u4F9D\u8D56\u73AF\u5883",
+    "reproduction.dependencyProposalCreated": "\u4F9D\u8D56\u5B89\u88C5 Proposal \u5DF2\u521B\u5EFA",
+    "reproduction.configJsonInvalid": "\u8FD0\u884C\u914D\u7F6E\u5FC5\u987B\u662F\u6709\u6548 JSON",
+    "reproduction.formInvalid": "\u8BF7\u586B\u5199 Python \u5165\u53E3\u3001\u81F3\u5C11\u4E00\u4E2A\u6574\u6570 seed \u548C JSON \u5BF9\u8C61\u914D\u7F6E",
+    "reproduction.runReason": "\u8FD0\u884C\u5DF2\u5B89\u88C5\u4F9D\u8D56\u7684\u56FA\u5B9A\u4EE3\u7801\u590D\u73B0\u5165\u53E3",
+    "reproduction.runProposalCreated": "\u590D\u73B0\u8FD0\u884C Proposal \u5DF2\u521B\u5EFA",
+    "reproduction.title": "\u4EE3\u7801\u590D\u73B0\u5019\u9009",
+    "reproduction.hint": "\u590D\u73B0\u6E90\u7801\u53EA\u8FDB\u5165\u5F53\u524D\u9879\u76EE\u7684 experiment/reproductions \u533A\u57DF\uFF1B\u4E0B\u8F7D\u3001\u4F9D\u8D56\u5B89\u88C5\u3001\u8FD0\u884C\u548C\u4EA7\u7269\u767B\u8BB0\u5206\u522B\u5BA1\u6279\u3002",
+    "reproduction.addFromLiterature": "\u4ECE\u6587\u732E\u6DFB\u52A0\u4ED3\u5E93",
+    "reproduction.commitUnlocked": "\u63D0\u4EA4\u672A\u9501\u5B9A",
+    "reproduction.licensePending": "\u8BB8\u53EF\u8BC1\u5F85\u6838\u9A8C",
+    "reproduction.entered": "\u5DF2\u8FDB\u5165",
+    "reproduction.notDownloaded": "\u5C1A\u672A\u4E0B\u8F7D",
+    "reproduction.verified": "\u5DF2\u9A8C\u8BC1",
+    "reproduction.pendingVerification": "\u5F85\u9A8C\u8BC1",
+    "reproduction.reverify": "\u91CD\u65B0\u9A8C\u8BC1",
+    "reproduction.createDownloadApproval": "\u521B\u5EFA\u4E0B\u8F7D\u5BA1\u6279",
+    "reproduction.environment": "\u590D\u73B0\u73AF\u5883",
+    "reproduction.dependencyManifest": "\u4F9D\u8D56\u6E05\u5355",
+    "reproduction.createDependencyApproval": "\u521B\u5EFA\u4F9D\u8D56\u5B89\u88C5\u5BA1\u6279",
+    "reproduction.pythonEntry": "Python \u5165\u53E3",
+    "reproduction.pythonEntryPlaceholder": "\u4F8B\u5982 scripts/evaluate.py",
+    "reproduction.structuredConfig": "\u7ED3\u6784\u5316\u914D\u7F6E",
+    "reproduction.createRunApproval": "\u521B\u5EFA\u8FD0\u884C\u5BA1\u6279",
+    "reproduction.empty": "\u5C1A\u65E0\u4EE3\u7801\u590D\u73B0\u5019\u9009\u3002\u8BF7\u5148\u5728\u76F8\u5173\u6587\u732E\u9875\u9762\u6DFB\u52A0\u8BBA\u6587\u4EE3\u7801\u4ED3\u5E93\u3002",
+    "reproduction.openLiterature": "\u6253\u5F00\u76F8\u5173\u6587\u732E",
+    "reproduction.boundaryTitle": "\u590D\u73B0\u8FB9\u754C",
+    "reproduction.boundaryHint": "\u7CFB\u7EDF\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5BF9\u5165\u53E3\u548C\u7ED3\u6784\u5316\u8BA1\u5212\uFF1B\u4E0D\u4F1A\u6267\u884C\u6A21\u578B\u4F20\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F84\u6216\u7F51\u7EDC\u547D\u4EE4\u3002\u590D\u73B0\u8FDB\u7A0B\u662F\u53D7\u76D1\u7763\u7684\u672C\u673A Linux \u8FDB\u7A0B\uFF0C\u4E0D\u7B49\u540C\u4E8E\u865A\u62DF\u673A\u9694\u79BB\u3002",
+    "experiment.toastPlan": "\u4E3B\u9898\u4E13\u5C5E\u8BA1\u5212 {id} \u5F85\u5BA1\u6279",
+    "experiment.diagDone": "\u8BCA\u65AD\u5B8C\u6210\uFF0C\u5EFA\u8BAE\u9700\u5BA1\u6279\u540E\u624D\u80FD\u6267\u884C",
+    "experiment.cancelled": "\u8FD0\u884C\u5DF2\u53D6\u6D88",
+    "experiment.rerunPrompt": "\u8BF7\u8BF4\u660E\u5C40\u90E8\u91CD\u8DD1\u539F\u56E0",
+    "experiment.rerunDefault": "\u590D\u6838\u8BE5\u5B9E\u9A8C\u5728\u5F53\u524D\u9879\u76EE\u5FEB\u7167\u4E0B\u7684\u7ED3\u679C",
+    "experiment.rerunToast": "\u5C40\u90E8\u91CD\u8DD1 Proposal {id} \u5DF2\u521B\u5EFA\uFF0C\u7B49\u5F85\u5BA1\u6279",
+    "experiment.title": "\u5B9E\u9A8C\u89C4\u5212\u4E0E\u8FD0\u884C",
+    "experiment.plan": "\u751F\u6210\u4E3B\u9898\u4E13\u5C5E\u8BA1\u5212",
+    "experiment.diagnostics": "\u6570\u503C\u8BCA\u65AD",
+    "experiment.sync": "\u540C\u6B65",
+    "experiment.rerun": "\u63D0\u51FA\u5C40\u90E8\u91CD\u8DD1",
+    "experiment.empty": "\u751F\u6210\u8BA1\u5212\u540E\u4F1A\u5148\u8FDB\u5165\u5BA1\u6279\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u81EA\u52A8\u521B\u5EFA\u65E0\u5173\u5B9E\u9A8C\u3002",
+    "experiment.diagnosticsTitle": "\u6570\u503C\u8BCA\u65AD",
+    "experiment.loadingDiagnostics": "\u6B63\u5728\u8BA1\u7B97\u6570\u503C\u6458\u8981\u4E0E\u5931\u8D25\u8BCA\u65AD\u2026",
+    "experiment.numericSummary": "\u6570\u503C\u6458\u8981",
+    "experiment.runCount": "{count} \u6B21\u8FD0\u884C \xB7 TypeScript \u786E\u5B9A\u6027\u8BA1\u7B97",
+    "experiment.noMetrics": "\u6CA1\u6709\u53EF\u6BD4\u8F83\u7684\u6570\u503C\u6307\u6807\u3002",
+    "experiment.failureDiagnostics": "\u5931\u8D25\u8BCA\u65AD",
+    "experiment.suggestions": "\u540E\u7EED\u5EFA\u8BAE",
+    "experiment.evidenceRuns": "\u8BC1\u636E\u8FD0\u884C:",
+    "experiment.diagnosticsEmpty": "\u8FD0\u884C\u6570\u503C\u8BCA\u65AD\u4EE5\u8BA1\u7B97\u6307\u6807\u5E76\u68C0\u67E5\u5931\u8D25\u65E5\u5FD7\u3002",
+    "common.select": "\u8BF7\u9009\u62E9",
+    "errors.timeout": "\u8BF7\u6C42\u8D85\u65F6\uFF0C\u8BF7\u68C0\u67E5\u672C\u5730\u670D\u52A1\u72B6\u6001\u540E\u91CD\u8BD5\u3002",
+    "errors.offline": "\u65E0\u6CD5\u8FDE\u63A5 Research OS API\uFF0C\u8BF7\u786E\u8BA4\u672C\u5730\u670D\u52A1\u4ECD\u5728\u8FD0\u884C\u3002",
+    "errors.requestFailed": "\u8BF7\u6C42\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
+    "comparison.innovation": "\u6F5C\u5728\u521B\u65B0\u4FE1\u53F7",
+    "comparison.potentialImprovement": "\u6F5C\u5728\u6539\u5584\u4FE1\u53F7",
+    "comparison.potentialRegression": "\u6F5C\u5728\u56DE\u5F52\u4FE1\u53F7",
+    "comparison.counterexample": "\u53CD\u4F8B\u4FE1\u53F7",
+    "comparison.difference": "\u6570\u503C\u5DEE\u5F02",
+    "comparison.comparabilityGap": "\u53EF\u6BD4\u6027\u7F3A\u53E3",
+    "comparison.researchGap": "\u5F85\u6838\u9A8C\u7814\u7A76\u7A7A\u767D",
+    "comparison.comparable": "\u53EF\u6BD4",
+    "comparison.partial": "\u90E8\u5206\u53EF\u6BD4",
+    "comparison.blocked": "\u4E0D\u53EF\u6BD4/\u963B\u585E",
+    "comparison.candidate": "\u5F85\u6838\u9A8C\u5019\u9009",
+    "comparison.accepted": "\u5DF2\u4FDD\u7559\u5019\u9009",
+    "comparison.rejected": "\u5DF2\u62D2\u7EDD",
+    "comparison.metricUnrecorded": "\u672A\u8BB0\u5F55",
+    "comparison.selectRequired": "\u8BF7\u9009\u62E9\u5DF2\u786E\u8BA4 Paper\u3001\u5DF2\u5B8C\u6210\u590D\u73B0 Run \u548C\u81F3\u5C11\u4E00\u6761\u5B9A\u4F4D Evidence",
+    "comparison.paperMetricsLabel": "\u8BBA\u6587\u6307\u6807",
+    "comparison.datasetsLabel": "\u6570\u636E\u96C6",
+    "comparison.definitionsLabel": "\u6307\u6807\u5B9A\u4E49",
+    "comparison.seedsInvalid": "\u8BBA\u6587 seeds \u5FC5\u987B\u662F\u9017\u53F7\u5206\u9694\u7684\u6574\u6570",
+    "comparison.saved": "\u6BD4\u8F83\u8BB0\u5F55\u5DF2\u4FDD\u5B58\uFF1B\u5019\u9009\u4ECD\u9700\u4EBA\u5DE5\u6838\u9A8C\uFF0C\u4E0D\u662F\u79D1\u5B66\u7ED3\u8BBA",
+    "comparison.acceptReason": "\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\uFF0C\u540E\u7EED\u9700\u8981\u72EC\u7ACB\u9A8C\u8BC1\u3002",
+    "comparison.rejectReason": "\u5F53\u524D\u8BC1\u636E\u4E0D\u8DB3\uFF0C\u62D2\u7EDD\u8BE5\u5019\u9009\u3002",
+    "comparison.acceptedToast": "\u5019\u9009\u5DF2\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u7814\u7A76\u7ED3\u8BBA",
+    "comparison.rejectedToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55",
+    "comparison.title": "\u590D\u73B0\u6548\u679C\u6BD4\u8F83",
+    "comparison.hint": "\u53EA\u6BD4\u8F83\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4 Paper\u3001\u5E26\u5B9A\u4F4D\u548C\u54C8\u5E0C\u7684 Evidence\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8BB0 Artifact \u7684\u771F\u5B9E\u590D\u73B0 Run\u3002\u7ED3\u679C\u662F integration result\uFF1B\u6F5C\u5728\u6539\u5584\u3001\u53CD\u4F8B\u548C\u521B\u65B0\u4FE1\u53F7\u90FD\u5FC5\u987B\u4EBA\u5DE5\u6838\u9A8C\u3002",
+    "comparison.projectScope": "\u9879\u76EE\u8303\u56F4",
+    "comparison.scopeCounts": "\u53EF\u6BD4\u8F83 Paper\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709 Artifact \u7684\u590D\u73B0\uFF1A{runs} \xB7 \u5DF2\u4FDD\u5B58\u6BD4\u8F83\uFF1A{comparisons}",
+    "comparison.empty": "\u521B\u5EFA\u6BD4\u8F83\u524D\uFF0C\u9700\u8981\u5DF2\u786E\u8BA4 Paper\uFF0C\u4EE5\u53CA completed \u4E14\u5DF2\u767B\u8BB0\u8F93\u51FA Artifact \u7684\u590D\u73B0 Run\u3002",
+    "comparison.createTitle": "\u521B\u5EFA\u7ED3\u6784\u5316\u6BD4\u8F83",
+    "comparison.createHint": "\u8BBA\u6587\u6307\u6807\u5FC5\u987B\u7531\u7528\u6237\u4ECE\u6709\u5B9A\u4F4D\u7684 Evidence \u4E2D\u5F55\u5165\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u4ECE\u6A21\u578B\u6216\u6807\u9898\u731C\u6D4B\u6307\u6807\u3002",
+    "comparison.confirmedPaper": "\u786E\u8BA4\u7684 Paper",
+    "comparison.reproductionRun": "\u590D\u73B0 Run",
+    "comparison.paperEvidence": "\u8BBA\u6587 Evidence",
+    "comparison.unnamedClaim": "\u672A\u547D\u540D claim",
+    "comparison.missingPdfHash": "\u7F3A\u5C11 PDF hash",
+    "comparison.noLocatedEvidence": "\u5F53\u524D Paper \u6CA1\u6709\u5E26\u5B9A\u4F4D\u7684 Evidence\u3002",
+    "comparison.paperMetricsJson": "\u8BBA\u6587\u6307\u6807 JSON",
+    "comparison.dataVersion": "\u8BBA\u6587\u6570\u636E\u7248\u672C",
+    "comparison.dataVersionPlaceholder": "\u6CA1\u6709\u62AB\u9732\u5219\u7559\u7A7A\uFF0C\u6BD4\u8F83\u4F1A\u6807\u8BB0 partial",
+    "comparison.configFingerprint": "\u8BBA\u6587\u914D\u7F6E SHA-256",
+    "comparison.configPlaceholder": "\u6CA1\u6709\u56FA\u5B9A\u914D\u7F6E\u5219\u7559\u7A7A",
+    "comparison.datasetsJson": "\u8BBA\u6587 datasets JSON",
+    "comparison.seedsLabel": "\u8BBA\u6587 seeds",
+    "comparison.seedsPlaceholder": "13,37,73\uFF1B\u6CA1\u6709\u62AB\u9732\u5219\u7559\u7A7A",
+    "comparison.definitionsJson": "\u6307\u6807\u5B9A\u4E49 JSON",
+    "comparison.save": "\u4FDD\u5B58\u6BD4\u8F83",
+    "comparison.savedTitle": "\u5DF2\u4FDD\u5B58\u6BD4\u8F83\u4E0E\u5F85\u6838\u9A8C\u5019\u9009",
+    "comparison.savedHint": "\u6BCF\u4E2A\u6570\u503C\u90FD\u663E\u793A\u8BBA\u6587 Evidence\u3001\u590D\u73B0 commit\u3001seed\u3001\u914D\u7F6E\u548C Artifact \u7ED1\u5B9A\uFF1B\u63A5\u53D7\u5019\u9009\u53EA\u8868\u793A\u4FDD\u7559\u5BA1\u9605\u4EFB\u52A1\u3002",
+    "comparison.savedEmpty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u6548\u679C\u6BD4\u8F83\u8BB0\u5F55\u3002",
+    "comparison.inputHash": "\u8F93\u5165 hash",
+    "comparison.artifactsCount": "Artifacts {count} \u4E2A",
+    "comparison.metric": "\u6307\u6807",
+    "comparison.paper": "\u8BBA\u6587",
+    "comparison.reproductionMean": "\u590D\u73B0 mean",
+    "comparison.status": "\u72B6\u6001",
+    "comparison.evidenceStatus": "Evidence \u72B6\u6001\uFF1A",
+    "comparison.candidateId": "\u5019\u9009 ID",
+    "comparison.keep": "\u4FDD\u7559",
+    "comparison.noCandidates": "\u6CA1\u6709\u81EA\u52A8\u751F\u6210\u7684\u5DEE\u5F02\u4FE1\u53F7\u3002",
+    "research.claimReviewed": "\u5DF2\u5BA1\u9605 Claim",
+    "research.pageQuote": "\u5B9A\u4F4D quote",
+    "research.metadataOnly": "\u4EC5 metadata",
+    "research.eligibleRequired": "\u5F53\u524D\u6CA1\u6709\u540C\u65F6\u6EE1\u8DB3\u786E\u8BA4 Paper\u3001\u5B9A\u4F4D Evidence \u548C accepted ClaimReview \u7684\u6750\u6599\u3002",
+    "research.matrixCreated": "\u7814\u7A76\u73B0\u72B6\u77E9\u9635\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8BB0\u5F55\u7684\u5B57\u6BB5\u4FDD\u6301 unresolved\u3002",
+    "research.candidateRecorded": "\u5019\u9009\u5DF2\u8BB0\u5F55\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65AD\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7ED3\u8BBA\u3002",
+    "research.acceptGapReason": "\u7528\u6237\u786E\u8BA4\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\u3002",
+    "research.rejectGapReason": "\u7528\u6237\u62D2\u7EDD\u8BE5\u5F85\u6838\u9A8C\u5019\u9009\u3002",
+    "research.acceptedGapToast": "\u5019\u9009\u5DF2\u786E\u8BA4\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u79D1\u5B66\u7ED3\u8BBA\u3002",
+    "research.rejectedGapToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55\u3002",
+    "research.title": "\u7814\u7A76\u73B0\u72B6\u77E9\u9635",
+    "research.hint": "\u77E9\u9635\u53EA\u63A5\u53D7\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4\u7684 Paper\u3001\u5E26\u9875\u7801/\u7AE0\u8282\u5B9A\u4F4D\u7684 Evidence \u548C\u5DF2\u63A5\u53D7 ClaimReview\uFF1B\u672A\u77E5\u5B57\u6BB5\u4E0D\u4F1A\u7531\u6A21\u578B\u6216 metadata \u731C\u6D4B\u3002",
+    "research.refreshing": "\u6B63\u5728\u5237\u65B0\u9879\u76EE\u8303\u56F4\u7814\u7A76\u73B0\u72B6\u2026",
+    "research.matrixReady": "\u77E9\u9635\u5DF2\u5EFA\u7ACB",
+    "research.createMatrix": "\u5EFA\u7ACB\u77E9\u9635",
+    "research.scopeCounts": "\u53EF\u5EFA\u7ACB\u884C\uFF1A{eligible} \xB7 \u5F53\u524D\u77E9\u9635\u884C\uFF1A{rows} \xB7 \u5F53\u524D Idea v{idea}",
+    "research.filtersTitle": "\u7B5B\u9009\u77E9\u9635",
+    "research.filtersHint": "\u7B5B\u9009\u53EA\u5F71\u54CD\u5F53\u524D\u9879\u76EE\u8FD4\u56DE\u7684\u6570\u636E\uFF0C\u4E0D\u4F1A\u6539\u53D8\u8BC1\u636E\u6216\u5019\u9009\u72B6\u6001\u3002",
+    "research.theme": "\u4E3B\u9898",
+    "research.method": "\u65B9\u6CD5",
+    "research.year": "\u5E74\u4EFD",
+    "research.filtersApplied": "\u5DF2\u5E94\u7528\u77E9\u9635\u7B5B\u9009\u3002",
+    "research.applyFilters": "\u5E94\u7528\u7B5B\u9009",
+    "research.loading": "\u6B63\u5728\u8BFB\u53D6\u5F53\u524D\u9879\u76EE\u7684\u7814\u7A76\u73B0\u72B6\u6570\u636E\u2026",
+    "research.requestFailed": "\u7814\u7A76\u73B0\u72B6\u8BF7\u6C42\u5931\u8D25\uFF1A{error}",
+    "research.noMatrix": "\u5C1A\u672A\u521B\u5EFA\u7814\u7A76\u73B0\u72B6\u77E9\u9635\u3002",
+    "research.createFromReviewed": "\u4ECE\u5DF2\u5BA1\u9605\u6750\u6599\u5EFA\u7ACB",
+    "research.matrixVersion": "\u77E9\u9635 v{version}",
+    "research.matrixMeta": "\u521B\u5EFA\u8005\uFF1A{creator} \xB7 {time}",
+    "research.doiUnrecorded": "DOI \u672A\u8BB0\u5F55",
+    "research.datasets": "\u6570\u636E\u96C6",
+    "research.metrics": "\u6307\u6807",
+    "research.code": "\u4EE3\u7801",
+    "research.evidence": "\u8BC1\u636E",
+    "research.source": "\u6765\u6E90",
+    "research.noFilteredRows": "\u7B5B\u9009\u540E\u6CA1\u6709\u77E9\u9635\u884C\u3002",
+    "research.gapTitle": "\u7814\u7A76\u7A7A\u767D\u4E0E\u76F8\u4F3C\u4E3B\u9898\u5019\u9009",
+    "research.gapHint": "\u8FD9\u91CC\u7684\u8BB0\u5F55\u53EA\u662F\u5F85\u6838\u9A8C\u5019\u9009\uFF1B\u63A5\u53D7\u5019\u9009\u8868\u793A\u4FDD\u7559\u8DDF\u8FDB\uFF0C\u4E0D\u8868\u793A\u5DF2\u7ECF\u8BC1\u660E\u5B58\u5728\u7814\u7A76\u7A7A\u767D\u6216\u91CD\u590D\u3002",
+    "research.candidateType": "\u5019\u9009\u7C7B\u578B",
+    "research.gap": "\u7814\u7A76\u7A7A\u767D",
+    "research.cluster": "\u4E3B\u9898\u805A\u7C7B",
+    "research.duplicateRisk": "\u91CD\u590D\u98CE\u9669",
+    "research.candidateStatement": "\u5019\u9009\u9648\u8FF0",
+    "research.candidatePlaceholder": "\u5199\u4E0B\u9700\u8981\u6838\u9A8C\u7684\u5019\u9009\uFF0C\u4E0D\u8981\u5199\u6210\u5DF2\u7ECF\u8BC1\u660E\u7684\u7ED3\u8BBA\u3002",
+    "research.recordCandidate": "\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009",
+    "research.rowsCount": "{count} \u4E2A\u77E9\u9635\u884C",
+    "research.keepCandidate": "\u4FDD\u7559\u5019\u9009",
+    "research.noCandidates": "\u5C1A\u672A\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009\u3002",
+    "graph.kind.candidate": "\u5019\u9009",
+    "graph.kind.paper": "Paper",
+    "graph.kind.evidence": "Evidence",
+    "graph.kind.claimReview": "ClaimReview",
+    "graph.status.candidate": "\u5F85\u786E\u8BA4",
+    "graph.status.confirmed": "\u5DF2\u786E\u8BA4",
+    "graph.status.unconfirmed": "\u672A\u786E\u8BA4",
+    "graph.status.located": "\u5DF2\u6709\u5B9A\u4F4D",
+    "graph.status.unlocated": "\u65E0\u5B9A\u4F4D",
+    "graph.status.pending": "\u5F85\u5BA1\u9605",
+    "graph.status.accepted": "\u5DF2\u63A5\u53D7",
+    "graph.status.rejected": "\u5DF2\u62D2\u7EDD",
+    "graph.evidence.metadataOnly": "\u4EC5 metadata",
+    "graph.evidence.pageQuote": "\u9875\u7801/\u7AE0\u8282 quote",
+    "graph.evidence.claimReviewed": "ClaimReview \u5DF2\u63A5\u53D7",
+    "graph.edgeCount": "{count} \u6761\u8FB9",
+    "graph.title": "\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE",
+    "graph.hint": "\u56FE\u53EA\u6295\u5F71\u5F53\u524D project_id \u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5F15\u7528\u3001Paper-Evidence \u548C ClaimReview-Evidence \u5173\u7CFB\uFF1Bprovider \u5F15\u7528\u8FB9\u4ECD\u7136\u662F metadata \u5173\u7CFB\uFF0C\u4E0D\u662F\u7814\u7A76\u7ED3\u8BBA\u3002",
+    "graph.requestFailed": "\u5F15\u7528\u56FE\u8BF7\u6C42\u5931\u8D25\uFF1A{error}",
+    "graph.loading": "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE\u2026",
+    "graph.permissionScope": "\u6743\u9650\u8303\u56F4",
+    "graph.state": "\u56FE\u72B6\u6001",
+    "graph.partial": "\u90E8\u5206\u6570\u636E\u53EF\u7528\uFF1B\u672A\u8FD4\u56DE\u7684\u6765\u6E90\u5173\u7CFB\u4E0D\u4F1A\u88AB\u731C\u6D4B\u8865\u9F50\u3002",
+    "graph.empty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u5DF2\u4FDD\u5B58\u7684\u56FE\u8282\u70B9\u6216\u5173\u7CFB\u3002",
+    "graph.onlySaved": "\u53EA\u663E\u793A\u6570\u636E\u5E93\u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5173\u7CFB\u3002",
+    "graph.scale": "\u56FE\u89C4\u6A21",
+    "graph.scaleText": "{nodes} \u4E2A\u8282\u70B9 \xB7 {edges} \u6761\u8FB9\uFF1B\u6309\u5019\u9009\u3001Paper\u3001Evidence\u3001ClaimReview \u5206\u5C42\u3002",
+    "graph.alert": "\u5F53\u524D\u54CD\u5E94\u4E3A partial\u3002\u56FE\u4E2D\u53EA\u5448\u73B0\u6210\u529F\u8FD4\u56DE\u4E14\u5DF2\u901A\u8FC7\u9879\u76EE\u8303\u56F4\u6821\u9A8C\u7684\u8282\u70B9\u548C\u8FB9\u3002",
+    "graph.legendAria": "\u56FE\u4F8B",
+    "graph.legendNote": "\u7BAD\u5934\u8868\u793A\u6570\u636E\u5E93\u4E2D\u660E\u786E\u4FDD\u5B58\u7684\u5173\u7CFB",
+    "graph.aria": "\u9879\u76EE {projectId} \u7684\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE",
+    "graph.titleShort": "\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE",
+    "graph.edgesAria": "\u5173\u7CFB\u8FB9",
+    "graph.nodesAria": "\u56FE\u8282\u70B9",
+    "graph.nodeAria": "{kind}\uFF1A{label}\uFF1B\u72B6\u6001\uFF1A{status}\uFF1B\u8BC1\u636E\uFF1A{evidence}",
+    "graph.selectedNode": "\u5DF2\u9009\u8282\u70B9",
+    "graph.type": "\u7C7B\u578B",
+    "graph.stableId": "\u7A33\u5B9A ID",
+    "graph.source": "\u6765\u6E90",
+    "graph.evidenceStatus": "\u8BC1\u636E\u72B6\u6001",
+    "graph.permission": "\u6743\u9650",
+    "graph.locator": "\u5B9A\u4F4D",
+    "graph.openSource": "\u6253\u5F00\u6765\u6E90",
+    "graph.selectHint": "\u9009\u62E9\u4E00\u4E2A\u8282\u70B9\u67E5\u770B\u6765\u6E90\u3001\u7A33\u5B9A ID\u3001\u5B9A\u4F4D\u3001\u8BC1\u636E\u548C\u6743\u9650\u72B6\u6001\u3002",
+    "progress.relatedRun": "\u76F8\u5173\u5DE5\u4F5C\u9012\u5F52 {id}",
+    "progress.candidateCount": "{count} \u4E2A\u5019\u9009 \xB7 {edges} \u6761\u8FB9",
+    "progress.runPending": "\u672A\u5165\u961F",
+    "progress.title": "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
+    "progress.hint": "\u8FDB\u5EA6\u6765\u81EA\u5DF2\u53D1\u751F\u7684\u8FD0\u884C\u3001Proposal \u548C\u5BA1\u6279\u4E8B\u4EF6\uFF0C\u4E0D\u7531\u6A21\u578B\u81EA\u884C\u4F30\u8BA1\u3002",
+    "progress.count": "{count} \u6761\u8BB0\u5F55",
+    "progress.empty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u8FD0\u884C\u6216\u5F85\u5BA1\u6279\u52A8\u4F5C\u3002",
+    "method.title": "\u65B9\u6CD5\u8BBE\u8BA1",
+    "method.hint": "\u65B9\u6CD5\u8BBE\u8BA1\u53EA\u6D88\u8D39\u5DF2\u786E\u8BA4\u7684\u9879\u76EE\u89C4\u683C\u548C\u5DF2\u8BB0\u5F55\u6587\u732E\uFF1B\u6A21\u578B\u8F93\u51FA\u4ECD\u7136\u662F\u5019\u9009\uFF0C\u5199\u5165\u9700\u8981 Proposal\u3002",
+    "method.question": "\u7814\u7A76\u95EE\u9898",
+    "method.hypotheses": "\u5047\u8BBE",
+    "method.contributions": "\u9884\u671F\u8D21\u732E",
+    "method.relatedEvidence": "\u76F8\u5173\u5DE5\u4F5C\u4F9D\u636E",
+    "method.verifiedCount": "{verified} \u6761\u5DF2\u9A8C\u8BC1\u8BB0\u5F55\uFF0C{total} \u6761\u9879\u76EE Paper",
+    "code.title": "\u4EE3\u7801\u5DE5\u4F5C\u533A",
+    "code.hint": "\u8FD9\u91CC\u5C5E\u4E8E\u5F53\u524D\u9879\u76EE\u81EA\u5DF1\u7684\u4EE3\u7801\uFF1B\u590D\u73B0\u4ED3\u5E93\u548C\u9879\u76EE\u4EE3\u7801\u4E25\u683C\u5206\u5F00\uFF0C\u6240\u6709\u4FEE\u6539\u3001\u4F9D\u8D56\u548C Git \u64CD\u4F5C\u90FD\u9700\u8981 Proposal\u3002",
+    "code.error": "\u4EE3\u7801\u5DE5\u4F5C\u533A\u8BFB\u53D6\u5931\u8D25\uFF1A{error}",
+    "code.workspace": "\u9879\u76EE\u5DE5\u4F5C\u533A",
+    "code.gitBaseline": "Git \u57FA\u7EBF",
+    "code.noCommit": "\u5C1A\u65E0 commit",
+    "code.pendingTitle": "\u5F85\u5BA1\u6279\u4EE3\u7801/\u914D\u7F6E/\u590D\u73B0\u52A8\u4F5C",
+    "code.pendingCount": "{count} \u4E2A",
+    "code.fileTree": "\u53D7\u9650\u6587\u4EF6\u6811",
+    "code.fileTreeHint": "\u6700\u591A\u663E\u793A {max} \u4E2A\u6761\u76EE\uFF1B\u4E0D\u8BFB\u53D6 .git\u3001.venv\u3001node_modules\u3002",
+    "code.emptyDir": "\u4EE3\u7801\u76EE\u5F55\u4E3A\u7A7A\uFF0C\u5C1A\u672A\u6709\u9879\u76EE\u4EE3\u7801\u6587\u4EF6\u3002",
+    "code.currentDiff": "\u5F53\u524D diff",
+    "code.diffTruncated": "diff \u5DF2\u622A\u65AD\uFF0C\u5B8C\u6574\u53D8\u66F4\u4ECD\u9700\u901A\u8FC7 Proposal \u67E5\u770B\u3002",
+    "code.diffReadonly": "\u53EA\u8BFB\u5C55\u793A\u5F53\u524D\u4EE3\u7801\u76EE\u5F55\u7684 Git diff\u3002",
+    "code.loading": "\u6B63\u5728\u8BFB\u53D6\u53D7\u9650 Git \u5DE5\u4F5C\u533A\u2026",
+    "queue.title": "\u8FD0\u884C\u961F\u5217",
+    "queue.hint": "\u8FD0\u884C\u72B6\u6001\u548C\u6570\u503C\u5747\u6765\u81EA\u771F\u5B9E Experiment Run\uFF1B\u672A\u6267\u884C\u7684\u8BA1\u5212\u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002",
+    "queue.count": "{count} \u6761",
+    "queue.runUnassigned": "\u672A\u5206\u914D",
+    "queue.empty": "\u5F53\u524D\u6CA1\u6709\u6392\u961F\u6216\u6267\u884C\u4E2D\u7684\u5B9E\u9A8C\u3002",
+    "metrics.title": "\u6307\u6807\u7EDF\u8BA1",
+    "metrics.empty": "\u8FD8\u6CA1\u6709\u5E26\u6570\u503C\u6307\u6807\u7684\u5B9E\u9A8C\u7ED3\u679C\u3002",
+    "lineage.title": "\u7ED3\u679C\u8C31\u7CFB",
+    "lineage.hint": "\u6BCF\u4E2A Artifact \u5FC5\u987B\u80FD\u56DE\u94FE Experiment\u3001Run\u3001Idea \u7248\u672C\u3001\u4EE3\u7801 commit\u3001\u6570\u636E\u7248\u672C\u548C\u914D\u7F6E\u3002",
+    "lineage.missingMeta": "\u7F3A\u5C11\u8C31\u7CFB\u5143\u6570\u636E",
+    "lineage.empty": "\u5F53\u524D\u6CA1\u6709\u53EF\u8FFD\u6EAF\u7684 Artifact\u3002",
+    "workflow.empty": "\u5F53\u524D\u5B50\u9875\u9762\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6570\u636E\u3002",
+    "literature.recursiveDefaultReason": "\u6269\u5C55\u5F53\u524D\u9879\u76EE\u7684\u76F8\u5173\u5DE5\u4F5C\u5F15\u7528\u7F51\u7EDC",
+    "literature.approveReason": "\u7528\u6237\u786E\u8BA4\u8BE5 metadata candidate \u53EF\u8FDB\u5165\u9879\u76EE Paper",
+    "literature.rejectReason": "\u7528\u6237\u62D2\u7EDD\u8BE5 metadata candidate",
+    "literature.reopenReason": "\u7528\u6237\u8981\u6C42\u91CD\u65B0\u5BA1\u9605\u8BE5 candidate",
+    "literature.approvedToast": "\u5019\u9009\u5DF2\u8F6C\u6362\u4E3A\u9879\u76EE Paper",
+    "literature.rejectedToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55",
+    "literature.reopenedToast": "\u5019\u9009\u5DF2\u91CD\u65B0\u6253\u5F00",
+    "literature.confirmPaper": "\u786E\u8BA4 Paper",
+    "literature.rejectCandidate": "\u62D2\u7EDD\u5019\u9009",
+    "literature.reopen": "\u91CD\u65B0\u6253\u5F00",
+    "literature.approveDescription": "\u786E\u8BA4\u540E\u4F1A\u521B\u5EFA\u5F53\u524D\u9879\u76EE\u8303\u56F4\u5185\u7684 Paper\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8BC1\u636E\u3002",
+    "literature.rejectDescription": "\u5019\u9009\u4E0D\u4F1A\u88AB\u7269\u7406\u5220\u9664\uFF0C\u51B3\u5B9A\u548C\u539F\u56E0\u4F1A\u4FDD\u7559\u5728\u9879\u76EE\u5BA1\u8BA1\u4E2D\u3002",
+    "literature.fieldSelected": "\u5DF2\u9009\u62E9 {field} \u7684 {provider} \u6765\u6E90",
+    "literature.enrichReason": "\u8865\u5168\u5F53\u524D\u5019\u9009\u7F3A\u5931\u5B57\u6BB5\u5E76\u8BB0\u5F55\u591A\u6E90 provenance",
+    "literature.enrichProposal": "\u5B57\u6BB5\u8865\u5168 Proposal {id} \u5F85\u5BA1\u6279",
+    "literature.seedRecorded": "\u79CD\u5B50\u5DF2\u8BB0\u5F55\uFF1A{status}\uFF0C{candidates} \u4E2A\u5019\u9009\uFF1Bprovider \u5931\u8D25 {failures}",
+    "literature.recursiveProposal": "\u9012\u5F52\u68C0\u7D22 Proposal {id} \u5DF2\u521B\u5EFA\uFF0C\u7B49\u5F85\u5BA1\u6279",
+    "literature.cancelRecursiveReason": "\u7528\u6237\u5728\u76F8\u5173\u5DE5\u4F5C\u9875\u9762\u53D6\u6D88\u9012\u5F52\u68C0\u7D22",
+    "literature.cancelRequested": "\u9012\u5F52\u68C0\u7D22\u5DF2\u53D1\u51FA\u53D6\u6D88\u8BF7\u6C42",
+    "literature.searchingSources": "\u6B63\u5728\u5E76\u884C\u68C0\u7D22\u591A\u4E2A\u5B66\u672F\u6765\u6E90\u4E0E\u8D44\u6E90\u6CE8\u518C\u8868\u2026",
+    "literature.searchDone": "\u68C0\u7D22\u5B8C\u6210\uFF1B{failures} \u4E2A\u6765\u6E90\u6682\u65F6\u5931\u8D25\uFF0C{candidates} \u6761\u5019\u9009\u5F85\u6838\u9A8C",
+    "literature.ingestingEvidence": "\u6B63\u5728\u4E0B\u8F7D\u5F00\u653E PDF \u5E76\u63D0\u53D6\u9875\u7801\u539F\u6587\u8BC1\u636E\u2026",
+    "literature.evidenceSaved": "\u5DF2\u4FDD\u5B58 {count} \u6761\u5168\u6587\u8BC1\u636E\uFF1B{failures} \u6761\u5931\u8D25",
+    "literature.repoAdded": "\u4EE3\u7801\u4ED3\u5E93\u5019\u9009\u5DF2\u6DFB\u52A0\uFF0C\u8BF7\u6267\u884C\u4EA4\u53C9\u9A8C\u8BC1",
+    "literature.noRepoLinks": "\u8BBA\u6587\u5DF2\u4FDD\u5B58\u7684\u6765\u6E90\u4E2D\u6CA1\u6709\u660E\u786E\u7684 GitHub/GitLab \u94FE\u63A5\uFF1B\u4E0D\u4F1A\u6839\u636E\u6807\u9898\u731C\u4ED3\u5E93",
+    "literature.repoVerified": "\u4ED3\u5E93\u53CC\u6E90\u9A8C\u8BC1\u5B8C\u6210",
+    "literature.downloadProposal": "\u4E0B\u8F7D Proposal {id} \u5DF2\u521B\u5EFA",
+    "literature.claimSubmitted": "Claim \u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838",
+    "literature.reviewRecorded": "\u4EBA\u5DE5\u590D\u6838\u5DF2\u8BB0\u5F55",
+    "literature.reviewRejected": "Claim \u5DF2\u6807\u8BB0\u4E3A\u672A\u901A\u8FC7\u590D\u6838",
+    "literature.downloadedTo": "\u5DF2\u4E0B\u8F7D\u5230 {path}",
+    "literature.projectCodeDir": "\u9879\u76EE\u4EE3\u7801\u76EE\u5F55",
+    "literature.proposeDownload": "\u63D0\u51FA\u4E0B\u8F7D",
+    "literature.crossVerify": "\u4EA4\u53C9\u9A8C\u8BC1",
+    "literature.title": "\u53EF\u9A8C\u8BC1\u6587\u732E\u8BB0\u5F55",
+    "literature.updateSearch": "\u66F4\u65B0\u68C0\u7D22",
+    "literature.extractEvidence": "\u63D0\u53D6\u5168\u6587\u8BC1\u636E",
+    "literature.seedTitle": "\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u4E0E\u5F15\u7528\u7F51\u7EDC",
+    "literature.seedHint": "\u79CD\u5B50\u53EA\u4F1A\u8FDB\u5165\u5F53\u524D\u9879\u76EE\u7684\u5019\u9009\u6C60\uFF1B\u9012\u5F52\u6269\u5C55\u5FC5\u987B\u5148\u751F\u6210 Proposal \u5E76\u83B7\u5F97\u6279\u51C6\u3002metadata candidate\u3001\u5168\u6587\u8BC1\u636E\u548C\u5DF2\u786E\u8BA4 Paper \u59CB\u7EC8\u5206\u5F00\u3002",
+    "literature.seedType": "\u79CD\u5B50\u7C7B\u578B",
+    "literature.titleOption": "\u6807\u9898",
+    "literature.urlOption": "\u6765\u6E90 URL",
+    "literature.pdfOption": "\u53D7\u63A7 PDF Artifact",
+    "literature.existingPaperOption": "\u5F53\u524D\u9879\u76EE\u5DF2\u6709 Paper",
+    "literature.selectPdf": "\u9009\u62E9\u53D7\u63A7 PDF",
+    "literature.selectPaper": "\u9009\u62E9\u5F53\u524D\u9879\u76EE Paper",
+    "literature.paperTitle": "\u8BBA\u6587\u6807\u9898",
+    "literature.httpsUrl": "HTTPS \u6765\u6E90 URL",
+    "literature.bibtexEntry": "BibTeX \u6761\u76EE",
+    "literature.enterTitle": "\u8F93\u5165\u8BBA\u6587\u6807\u9898",
+    "literature.optionalTitle": "\u53EF\u9009\u6807\u9898",
+    "literature.optionalTitlePlaceholder": "\u7528\u4E8E\u8865\u5145\u5143\u6570\u636E\u89E3\u6790",
+    "literature.parsing": "\u6B63\u5728\u89E3\u6790\u2026",
+    "literature.addSeed": "\u6DFB\u52A0\u5E76\u89E3\u6790\u79CD\u5B50",
+    "literature.timeUnknown": "\u65F6\u95F4\u672A\u77E5",
+    "literature.depth": "\u5C42\u6570",
+    "literature.width": "\u6BCF\u5C42\u5BBD\u5EA6",
+    "literature.maxTotal": "\u5019\u9009\u4E0A\u9650",
+    "literature.proposalReason": "Proposal \u539F\u56E0",
+    "literature.recursiveProviders": "\u9012\u5F52\u6765\u6E90",
+    "literature.creating": "\u6B63\u5728\u521B\u5EFA\u2026",
+    "literature.createRecursiveProposal": "\u4E3A {count} \u4E2A\u79CD\u5B50\u521B\u5EFA\u9012\u5F52 Proposal",
+    "literature.noSeeds": "\u8FD8\u6CA1\u6709\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u3002\u5148\u6DFB\u52A0 DOI\u3001\u6807\u9898\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709 Paper\u3002",
+    "literature.runsTitle": "\u5F15\u7528\u7F51\u7EDC\u8FD0\u884C",
+    "literature.runsHint": "\u8FD0\u884C\u72B6\u6001\u548C provider attempt \u6765\u81EA\u771F\u5B9E\u8BF7\u6C42\uFF1B\u5931\u8D25\u3001\u53D6\u6D88\u548C\u4E0A\u9650\u622A\u65AD\u4E0D\u4F1A\u88AB\u6807\u8BB0\u4E3A\u6210\u529F\u3002",
+    "literature.runCandidates": "{count} \u4E2A\u5019\u9009 \xB7 {edges} \u6761\u5F15\u7528\u8FB9",
+    "literature.providerFailures": "Provider \u5931\u8D25\u4E0E\u90E8\u5206\u5931\u8D25",
+    "literature.noFailureDetail": "\u672A\u63D0\u4F9B\u5931\u8D25\u8BE6\u60C5",
+    "literature.edgeTitle": "\u5F15\u7528\u56FE\u8FB9\uFF08\u5F53\u524D\u9879\u76EE\u8303\u56F4\uFF09",
+    "literature.noRankingSignal": "\u65E0\u6392\u5E8F\u4FE1\u53F7",
+    "literature.candidatesTitle": "\u5F85\u786E\u8BA4 metadata candidate",
+    "literature.candidatesHint": "\u8FD9\u4E9B\u8BB0\u5F55\u6765\u81EA provider \u5143\u6570\u636E\u548C\u5F15\u7528\u7F51\u7EDC\uFF0C\u5C1A\u672A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5DF2\u786E\u8BA4 Paper\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9875\u7801 quote\u3002",
+    "literature.yearUnknown": "\u5E74\u4EFD\u672A\u77E5",
+    "literature.providerEvidenceCount": "{count} \u4E2A provider \u8BC1\u636E",
+    "literature.fieldProvenanceCount": "\u5B57\u6BB5\u6765\u6E90 {count} \u6761",
+    "literature.conflicts": "\u51B2\u7A81\uFF1A{fields}",
+    "literature.noConflicts": "\u6682\u65E0\u5B57\u6BB5\u51B2\u7A81",
+    "literature.viewFieldProvenance": "\u67E5\u770B\u5B57\u6BB5\u6765\u6E90",
+    "literature.enrichFields": "\u8865\u5168\u5B57\u6BB5",
+    "literature.provenanceDescription": "\u9009\u62E9\u6765\u6E90\u53EA\u4F1A\u66F4\u65B0\u5F53\u524D\u9879\u76EE\u5019\u9009\u7684\u5B57\u6BB5\u5FEB\u7167\uFF0C\u5E76\u7559\u4E0B\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u5B83\u4E0D\u4F1A\u628A metadata candidate \u81EA\u52A8\u53D8\u6210\u5168\u6587\u8BC1\u636E\u3002",
+    "literature.field": "\u5B57\u6BB5",
+    "literature.sourceUnrecorded": "\u6765\u6E90\u672A\u8BB0\u5F55",
+    "literature.selected": " \xB7 \u5DF2\u9009",
+    "literature.selectSource": "\u9009\u62E9\u6B64\u6765\u6E90",
+    "literature.metadataVerified": "\u5143\u6570\u636E\u5DF2\u9A8C\u8BC1",
+    "literature.pendingVerification": "\u5F85\u9A8C\u8BC1",
+    "literature.fulltextCount": "\u9875\u7801\u539F\u6587\u8BC1\u636E {count}",
+    "literature.codeCandidateCount": "\u4EE3\u7801\u5019\u9009 {count}",
+    "literature.openPdf": "\u6253\u5F00\u6765\u6E90 PDF",
+    "literature.loadingRepos": "\u8BFB\u53D6\u4E2D\u2026",
+    "literature.findRepoLinks": "\u67E5\u627E\u8BBA\u6587\u4E2D\u7684\u4EE3\u7801\u94FE\u63A5",
+    "literature.repoPlaceholder": "GitHub \u6216 GitLab HTTPS \u5730\u5740",
+    "literature.add": "\u6DFB\u52A0",
+    "literature.addRepository": "\u6DFB\u52A0\u4EE3\u7801\u4ED3\u5E93",
+    "literature.discoveryHint": "\u4EE5\u4E0B\u94FE\u63A5\u6765\u81EA\u8BE5 Paper \u5DF2\u4FDD\u5B58\u7684 metadata/\u6765\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9009\uFF0C\u4ECD\u9700\u53CC\u6E90\u9A8C\u8BC1\uFF1A",
+    "literature.addCandidate": "\u6DFB\u52A0\u5019\u9009",
+    "literature.noPapers": "\u5C1A\u65E0\u6587\u732E\u8BB0\u5F55\u3002",
+    "literature.materialsTitle": "\u9879\u76EE\u6750\u6599\u5E93",
+    "literature.materialsHint": "\u901A\u8FC7\u5F53\u524D\u9879\u76EE\u8303\u56F4\u7684 Supermemory \u8BED\u4E49\u68C0\u7D22\uFF1B\u7ED3\u679C\u4FDD\u7559\u6765\u6E90\u548C\u5B9A\u4F4D\uFF0C\u53EA\u662F\u672A\u6838\u9A8C\u4E0A\u4E0B\u6587\u5019\u9009\uFF0C\u4E0D\u662F\u8BBA\u6587\u8BC1\u636E\u3002",
+    "literature.searchMaterials": "\u68C0\u7D22\u6750\u6599",
+    "literature.materialPlaceholder": "\u68C0\u7D22\u5DF2\u7D22\u5F15\u6750\u6599\u7684\u8BED\u4E49\u5185\u5BB9",
+    "literature.searchingMaterials": "\u6B63\u5728\u68C0\u7D22\u6750\u6599\u2026",
+    "literature.materialTotal": "{count} \u4E2A\u5019\u9009 \xB7 Supermemory \u9879\u76EE\u8303\u56F4 hybrid \u68C0\u7D22 \xB7 \u4E0D\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E",
+    "literature.similarity": "\u76F8\u4F3C\u5EA6 {value}",
+    "literature.noSnippet": "\u65E0\u53EF\u5C55\u793A\u6458\u8981",
+    "literature.semanticCandidate": "\u8BED\u4E49\u5019\u9009 \xB7 \u672A\u6838\u9A8C",
+    "literature.loadMore": "\u52A0\u8F7D\u66F4\u591A",
+    "literature.materialsEmpty": "\u8F93\u5165\u5173\u952E\u8BCD\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u6750\u6599\u3002",
+    "literature.claimTitle": "Claim \u5230\u8BC1\u636E\u4EBA\u5DE5\u590D\u6838",
+    "literature.claimHint": "\u53EA\u80FD\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684\u9875\u7801 quote\uFF1B\u63A5\u53D7\u590D\u6838\u4E0D\u7B49\u4E8E\u8BC1\u660E\u79D1\u5B66\u7ED3\u8BBA\u3002",
+    "literature.claimToReview": "\u5F85\u590D\u6838 Claim",
+    "literature.claimPlaceholder": "\u5199\u51FA\u9700\u8981\u4EBA\u5DE5\u6838\u5BF9\u7684\u5177\u4F53\u7814\u7A76\u9648\u8FF0",
+    "literature.noLocator": "\u672A\u63D0\u4F9B\u9875\u7801/\u7AE0\u8282",
+    "literature.noQuote": "\u65E0 quote",
+    "literature.submitReview": "\u63D0\u4EA4\u4EBA\u5DE5\u590D\u6838",
+    "literature.evidenceFirst": "\u5148\u6444\u53D6\u5E26\u9875\u7801\u5B9A\u4F4D\u7684\u5168\u6587\u8BC1\u636E\uFF0C\u518D\u521B\u5EFA Claim \u590D\u6838\u3002",
+    "literature.quoteCount": "{count} \u6761 quote",
+    "literature.acceptReview": "\u63A5\u53D7\u590D\u6838",
+    "literature.rejectReview": "\u62D2\u7EDD\u590D\u6838",
+    "literature.externalCandidates": "\u5916\u90E8\u8D44\u6E90\u5019\u9009",
+    "literature.externalHint": "\u4EC5\u4F9B\u53D1\u73B0\uFF0C\u5C1A\u672A\u6838\u9A8C\u6765\u6E90\u3001\u8BB8\u53EF\u3001\u6240\u6709\u6743\u6216\u5168\u6587\u8BC1\u636E\u3002",
+    "literature.count": "{count} \u6761",
+    "literature.candidateResource": "\u5019\u9009\u8D44\u6E90",
+    "literature.viewTerms": "\u67E5\u770B\u6761\u6B3E",
+    "literature.toVerify": "\u5F85\u6838\u9A8C",
+    "literature.repositoriesTitle": "\u4EE3\u7801\u4ED3\u5E93\u5019\u9009",
+    "literature.repositoriesHint": "\u53EA\u6709\u8BBA\u6587\u8BB0\u5F55\u4E0E\u4ED3\u5E93\u5F15\u7528\u5F62\u6210\u53CC\u6E90\u5339\u914D\u3001\u8BB8\u53EF\u8BC1\u53EF\u8BC6\u522B\u4E14 commit \u5DF2\u56FA\u5B9A\u540E\uFF0C\u624D\u53EF\u63D0\u51FA\u4E0B\u8F7D\u3002",
+    "literature.unknownLicense": "\u672A\u77E5\u8BB8\u53EF\u8BC1",
+    "literature.notPinned": "\u672A\u56FA\u5B9A",
+    "literature.notVerified": "\u672A\u9A8C\u8BC1",
+    "paper.draftProposal": "\u8BBA\u6587\u8349\u7A3F Proposal {id} \u5F85\u5BA1\u6279",
+    "paper.compileProposal": "LaTeX \u7F16\u8BD1 Proposal {id} \u5F85\u5BA1\u6279",
+    "paper.sectionAbstract": "\u6458\u8981",
+    "paper.sectionIntroduction": "\u5F15\u8A00\u4E0E\u7814\u7A76\u95EE\u9898",
+    "paper.sectionRelatedWork": "\u76F8\u5173\u5DE5\u4F5C",
+    "paper.sectionMethod": "\u65B9\u6CD5",
+    "paper.sectionSetup": "\u5B9E\u9A8C\u8BBE\u7F6E",
+    "paper.sectionResults": "\u7ED3\u679C\u4E0E\u8BA8\u8BBA",
+    "paper.sectionLimitations": "\u5C40\u9650\u4E0E\u7ED3\u8BBA",
+    "paper.outlineTitle": "\u5927\u7EB2\u4E0E\u7AE0\u8282",
+    "paper.outlineHint": "\u7AE0\u8282\u72B6\u6001\u6765\u81EA\u5F53\u524D\u9879\u76EE\u7684\u7ED3\u6784\u5316\u6765\u6E90\uFF1B\u672A\u786E\u8BA4\u5B57\u6BB5\u4E0D\u4F1A\u88AB\u4F2A\u88C5\u6210\u5DF2\u5B8C\u6210\u7AE0\u8282\u3002",
+    "paper.outlineReady": "\u5DF2\u6709\u9879\u76EE\u6765\u6E90\uFF0C\u53EF\u8FDB\u5165 Proposal \u5BA1\u9605",
+    "paper.outlineMissing": "\u7F3A\u5C11\u4E0A\u6E38\u89C4\u683C\u3001\u8BC1\u636E\u6216\u771F\u5B9E\u5B9E\u9A8C\u6765\u6E90",
+    "paper.candidate": "\u5019\u9009",
+    "paper.versionRules": "\u7248\u672C\u89C4\u5219",
+    "paper.versionRulesText": "\u5F53\u524D\u9875\u9762\u53EA\u5C55\u793A\u7AE0\u8282\u51C6\u5907\u5EA6\u3002\u4EFB\u4F55\u5199\u5165 paper/main.tex \u7684\u4FEE\u6539\u90FD\u5FC5\u987B\u901A\u8FC7\u72EC\u7ACB Proposal\uFF0C\u6279\u51C6\u540E\u5F62\u6210 Git diff\uFF1B\u5931\u8D25\u6216\u88AB\u62D2\u7EDD\u7684\u5199\u5165\u4E0D\u4F1A\u751F\u6210\u6210\u529F\u7AE0\u8282\u3002",
+    "paper.citationsTitle": "\u5F15\u7528\u4E0E BibTeX",
+    "paper.citationsHint": "\u53EA\u663E\u793A\u9879\u76EE\u8303\u56F4 Paper\u3001\u9875\u7801/\u7AE0\u8282 Evidence \u548C ClaimReview \u72B6\u6001\uFF1Bmetadata-only \u4E0D\u80FD\u8FDB\u5165\u8BBA\u8BC1\u3002",
+    "paper.sourcePending": "\u6765\u6E90\u5F85\u8BB0\u5F55",
+    "paper.bibtexRecorded": "BibTeX \u5DF2\u8BB0\u5F55",
+    "paper.bibtexMissing": "BibTeX \u672A\u8BB0\u5F55",
+    "paper.citationReadiness": "\u5F15\u7528\u51C6\u5907\u5EA6\uFF1A{status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.open": "\u6253\u5F00",
+    "paper.noPapers": "\u5C1A\u65E0\u9879\u76EE\u8303\u56F4 Paper\uFF1B\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
+    "paper.openLiterature": "\u6253\u5F00\u6587\u732E\u68C0\u7D22",
+    "paper.evidenceGate": "\u8BC1\u636E\u95E8\u7981",
+    "paper.claimReviewsTitle": "\u53EF\u7528\u4E8E\u8BBA\u8BC1\u7684 ClaimReview",
+    "paper.acceptedReviewCount": "{count} \u6761 accepted review\uFF1B\u6BCF\u6761\u5FC5\u987B\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684 Evidence\u3002",
+    "paper.fulltextLocated": "\u5168\u6587\u5B9A\u4F4D",
+    "paper.locatedCount": "{located}/{total} \u6761 Evidence \u6709\u9875\u7801\u6216\u7AE0\u8282 locator\u3002",
+    "paper.figuresTitle": "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165",
+    "paper.figuresHint": "\u8FD9\u91CC\u53EA\u9009\u62E9 lineage \u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5B9E\u9A8C Artifact \u63D2\u5165\u8BBA\u6587\uFF1B\u5B9E\u9A8C\u8FD0\u884C\u3001\u961F\u5217\u548C\u53EF\u89C6\u5316\u7BA1\u7406\u5728\u300A\u5B9E\u9A8C\u5B9E\u73B0\u300B\u4E2D\u5B8C\u6210\u3002",
+    "paper.figureCount": "{count} \u4E2A\u53EF\u9009\u56FE\u8868",
+    "paper.noFigures": "\u5C1A\u65E0\u53EF\u63D2\u5165\u8BBA\u6587\u7684\u6709\u6548\u56FE\u8868\u6216\u5B9E\u9A8C\u4EA7\u7269\u3002\u65E0\u5173 baseline\u3001\u7A7A\u6570\u7EC4\u548C\u5931\u6548 Artifact \u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002",
+    "paper.viewArtifacts": "\u67E5\u770B\u5B9E\u9A8C\u4EA7\u7269",
+    "paper.dataTitle": "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528",
+    "paper.dataHint": "\u53EA\u5217\u51FA lineage \u5B8C\u6574\u4E14\u6709\u6548\u7684 Artifact \u4F9B\u8BBA\u6587\u5F15\u7528\u6570\u5B57\u548C\u8868\u683C\uFF1B\u6570\u503C\u6765\u81EA\u771F\u5B9E Run\uFF0C\u8BBA\u6587\u9875\u4E0D\u8FD0\u884C\u6216\u7BA1\u7406\u5B9E\u9A8C\u3002",
+    "paper.dataCount": "{count} \u4E2A\u53EF\u9009\u6570\u636E",
+    "paper.typePending": "\u7C7B\u578B\u5F85\u8BB0\u5F55",
+    "paper.dataLineage": "Run {run} \xB7 Idea v{idea} \xB7 \u6570\u636E\u7248\u672C {data}",
+    "paper.noData": "\u5F53\u524D\u6CA1\u6709\u53EF\u5F15\u7528\u7684\u5B9E\u9A8C\u6570\u636E\u4EA7\u7269\u3002\u8BF7\u5148\u5B8C\u6210\u5B9E\u9A8C\u5B9E\u73B0\u5E76\u751F\u6210\u6709\u6548 Artifact\u3002",
+    "paper.compileTitle": "LaTeX \u7F16\u8BD1",
+    "paper.compileHint": "Linux latexmk \u662F\u72EC\u7ACB\u5BA1\u6279\u52A8\u4F5C\uFF1B\u7F16\u8BD1\u5931\u8D25\u53EA\u7559\u4E0B\u5931\u8D25\u65E5\u5FD7\uFF0C\u4E0D\u751F\u6210\u6210\u529F PDF\u3002",
+    "paper.createCompileProposal": "\u521B\u5EFA\u7F16\u8BD1 Proposal",
+    "paper.sourceFile": "\u8BBA\u6587\u6E90\u6587\u4EF6",
+    "paper.compileProposalExists": "\u5DF2\u6709\u7F16\u8BD1 Proposal",
+    "paper.notProposed": "\u5C1A\u672A\u63D0\u51FA",
+    "paper.compileRuns": "\u7F16\u8BD1\u8FD0\u884C",
+    "paper.compileRunCount": "{count} \u6B21 compile_latex \u8FD0\u884C",
+    "paper.noCompileRuns": "\u5C1A\u65E0\u771F\u5B9E\u7F16\u8BD1\u8FD0\u884C",
+    "paper.compileRunRecords": "\u7F16\u8BD1\u8FD0\u884C\u8BB0\u5F55",
+    "paper.compileApprovals": "\u7F16\u8BD1\u5BA1\u6279",
+    "paper.noReason": "\u65E0\u8BF4\u660E",
+    "paper.pdfTitle": "PDF \u5448\u73B0\u4E0E\u5BA1\u9605",
+    "paper.pdfHint": "\u53EA\u5448\u73B0\u6210\u529F\u7F16\u8BD1\u4E14\u4ECD\u6709\u6548\u7684 PDF Artifact\uFF1B\u7F16\u8BD1\u5931\u8D25\u4E0D\u4F1A\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u663E\u793A\u4E3A\u5DF2\u5B8C\u6210\u3002",
+    "paper.pdfCount": "{count} \u4E2A PDF",
+    "paper.openPdf": "\u6253\u5F00 PDF",
+    "paper.noPdf": "\u8FD8\u6CA1\u6709\u6210\u529F\u7F16\u8BD1\u7684 PDF\u3002\u8BF7\u5148\u5728 LaTeX \u7F16\u8BD1\u9875\u63D0\u51FA Proposal \u5E76\u5B8C\u6210\u771F\u5B9E\u7F16\u8BD1\u3002",
+    "paper.goCompile": "\u524D\u5F80 LaTeX \u7F16\u8BD1",
+    "paper.projectTitle": "\u8BBA\u6587\u9879\u76EE",
+    "paper.projectHint": "\u8BBA\u6587\u8349\u7A3F\u53EA\u4F7F\u7528\u9879\u76EE\u8303\u56F4\u5185\u5DF2\u8BB0\u5F55\u6750\u6599\u548C\u4EBA\u5DE5\u590D\u6838\u72B6\u6001\uFF1B\u4FEE\u6539\u4E0E\u7F16\u8BD1\u90FD\u5FC5\u987B\u5148\u8FDB\u5165\u5BA1\u6279\u3002",
+    "paper.createDraftProposal": "\u751F\u6210\u8BBA\u6587\u8349\u7A3F\u63D0\u6848",
+    "paper.proposeCompile": "\u63D0\u51FA LaTeX \u7F16\u8BD1",
+    "paper.literatureCount": "\u6587\u732E\u8BB0\u5F55",
+    "paper.evidenceCandidates": "\u539F\u6587\u8BC1\u636E\u5019\u9009",
+    "paper.acceptedClaims": "\u5DF2\u63A5\u53D7 Claim \u590D\u6838",
+    "paper.validArtifacts": "\u6709\u6548\u4EA7\u7269",
+    "paper.claimPageEvidence": "Claim \u4E0E\u9875\u7801\u8BC1\u636E",
+    "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u590D\u6838\u7684 Claim \u624D\u80FD\u4F5C\u4E3A\u8BBA\u6587\u8BBA\u8BC1\u8F93\u5165\uFF1B\u5143\u6570\u636E\u8BB0\u5F55\u4E0D\u4F1A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E\u3002",
+    "paper.proposalCompile": "Proposal \u4E0E\u7F16\u8BD1",
+    "paper.proposalCompileText": "\u6279\u51C6\u540E\u624D\u4F1A\u4FEE\u6539\u9879\u76EE\u4E2D\u7684 paper/main.tex\uFF0C\u5E76\u7531 Linux latexmk \u76D1\u7763\u5668\u751F\u6210\u7F16\u8BD1\u4EA7\u7269\u3002",
+    "paper.referenceRecords": "\u8BBA\u6587\u53C2\u8003\u8BB0\u5F55",
+    "paper.noReferences": "\u5C1A\u65E0\u53EF\u5F15\u7528\u7684\u6587\u732E\u8BB0\u5F55\u3002\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
+    "comparison.reason": "\u7528\u6237\u8BF7\u6C42\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A commit \u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
+    "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
+    "literature.projectPaper": "\u9879\u76EE Paper",
+    "research.themePlaceholder": "\u4F8B\u5982 efficient adaptation",
+    "research.methodPlaceholder": "\u4F8B\u5982 parameter-efficient tuning"
+  };
+  var zhTW = {
+    "nav.overview": "\u5C08\u6848\u6982\u89BD",
+    "nav.relatedWork": "\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814",
+    "nav.implementation": "\u5BE6\u9A57\u5BE6\u4F5C",
+    "nav.paper": "\u5B78\u8853\u8AD6\u6587\u64B0\u5BEB",
+    "nav.workspaceArea": "\u79D1\u7814\u5DE5\u4F5C\u5340",
+    "nav.currentWorkspace": "\u76EE\u524D\u5DE5\u4F5C\u5340\u9801\u9762",
+    "group.overviewIdea": "Idea \u8A0E\u8AD6",
+    "group.overviewSpec": "\u5C08\u6848\u898F\u683C",
+    "group.overviewInnovation": "\u5275\u65B0\u8207\u908A\u754C",
+    "group.overviewProgress": "\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
+    "group.overviewReports": "\u65E5\u5831/\u9031\u5831\u8207\u5C0E\u5E2B\u56DE\u994B",
+    "group.relatedSearch": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
+    "group.relatedStatus": "\u7814\u7A76\u73FE\u6CC1\u8207\u5F15\u7528\u5716",
+    "group.implRelated": "\u76F8\u95DC\u5DE5\u4F5C\u5BE6\u4F5C",
+    "group.implMethod": "\u672C\u65B9\u6CD5\u5BE6\u4F5C",
+    "group.paperWriting": "\u8AD6\u6587\u5BEB\u4F5C\u8207\u7DE8\u8B6F",
+    "tab.overview": "Idea \u8A0E\u8AD6",
+    "tab.overviewSpec": "\u5C08\u6848\u63CF\u8FF0\u8207\u7814\u7A76\u554F\u984C",
+    "tab.overviewInnovation": "\u5275\u65B0\u9EDE\u8207\u908A\u754C",
+    "tab.overviewProgress": "\u5C08\u6848\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
+    "tab.dailyReports": "\u65E5\u5831",
+    "tab.weeklyReports": "\u9031\u5831",
+    "tab.feedbackInbox": "\u5C0E\u5E2B\u56DE\u994B",
+    "tab.feedbackAudit": "\u6C7A\u7B56\u8207\u7A3D\u6838",
+    "tab.literature": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
+    "tab.researchStatus": "\u7814\u7A76\u73FE\u6CC1",
+    "tab.citationGraph": "\u5F15\u7528\u5716",
+    "tab.reproduction": "\u7A0B\u5F0F\u78BC\u91CD\u73FE",
+    "tab.comparison": "\u6548\u679C\u6BD4\u8F03",
+    "tab.methodDesign": "\u65B9\u6CD5\u8A2D\u8A08",
+    "tab.codeWorkspace": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340",
+    "tab.policies": "\u8B8A\u66F4\u8207\u5BE9\u6279",
+    "tab.approvals": "Git \u8207\u5099\u4EFD",
+    "tab.experiments": "\u5BE6\u9A57\u8A08\u756B\u8207\u7D50\u679C",
+    "tab.experimentQueue": "\u57F7\u884C\u4F47\u5217",
+    "tab.experimentMetrics": "\u6307\u6A19\u7D71\u8A08",
+    "tab.artifacts": "\u7D50\u679C\u8207\u8996\u89BA\u5316",
+    "tab.lineage": "\u5BE6\u9A57\u8B5C\u7CFB",
+    "tab.paperProject": "\u8AD6\u6587\u5C08\u6848",
+    "tab.paperOutline": "\u5927\u7DB1\u8207\u7AE0\u7BC0",
+    "tab.paperCitations": "\u5F15\u7528\u8207 BibTeX",
+    "tab.paperFigures": "\u5716\u8868\u9078\u64C7\u8207\u63D2\u5165",
+    "tab.paperData": "\u5BE6\u9A57\u8CC7\u6599\u9078\u64C7\u8207\u5F15\u7528",
+    "tab.paperCompile": "LaTeX \u7DE8\u8B6F",
+    "tab.paperReview": "PDF \u5448\u73FE\u8207\u5BE9\u95B1",
+    "topbar.connected": "\u5DF2\u9023\u7DDA",
+    "topbar.offline": "\u96E2\u7DDA",
+    "topbar.connecting": "\u9023\u7DDA\u4E2D",
+    "topbar.refresh": "\u91CD\u65B0\u6574\u7406",
+    "topbar.language": "\u4ECB\u9762\u8A9E\u8A00",
+    "topbar.theme": "\u4ECB\u9762\u4E3B\u984C",
+    "sidebar.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
+    "sidebar.projects": "\u5C08\u6848",
+    "sidebar.noProjects": "\u5C1A\u7121\u5C08\u6848",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "\u5C08\u6848\u8A18\u61B6\u5716",
+    "sidebar.modelSettings": "\u6A21\u578B\u8A2D\u5B9A",
+    "theme.light": "\u6DFA\u8272",
+    "theme.dark": "\u6697\u8272",
+    "theme.colorful": "\u5F69\u8272",
+    "projectChat": "\u5C08\u6848\u5C0D\u8A71",
+    "common.innerPages": "\u5167\u90E8\u9801\u9762",
+    "common.cancel": "\u53D6\u6D88",
+    "common.unrecorded": "\u672A\u8A18\u9304",
+    "common.notProvided": "\u672A\u63D0\u4F9B",
+    "common.none": "\u7121",
+    "common.notConfirmed": "\u5C1A\u672A\u78BA\u8A8D",
+    "common.waiting": "\u7B49\u5F85\u4E2D\u2026",
+    "common.timePending": "\u6642\u9593\u5F85\u8A18\u9304",
+    "common.pendingConfirm": "\u5F85\u78BA\u8A8D",
+    "common.pendingClarify": "\u5F85\u6F84\u6E05",
+    "common.confirm": "\u78BA\u8A8D",
+    "common.reject": "\u62D2\u7D55",
+    "common.send": "\u50B3\u9001",
+    "common.loadingProject": "\u6B63\u5728\u8F09\u5165\u5C08\u6848\u2026",
+    "common.seconds": "\u79D2",
+    "common.close": "\u95DC\u9589",
+    "common.pendingApproval": "\u5F85\u5BE9\u6279",
+    "common.recorded": "\u5DF2\u8A18\u9304",
+    "common.missing": "\u7F3A\u5C11",
+    "common.unknown": "\u672A\u77E5",
+    "common.pending": "\u5F85\u8655\u7406",
+    "common.approved": "\u5DF2\u6838\u51C6",
+    "common.rejected": "\u5DF2\u62D2\u7D55",
+    "common.failed": "\u5931\u6557",
+    "common.running": "\u8655\u7406\u4E2D",
+    "common.done": "\u5DF2\u5B8C\u6210",
+    "common.succeeded": "\u6210\u529F",
+    "common.cancelled": "\u5DF2\u53D6\u6D88",
+    "common.valid": "\u6709\u6548",
+    "common.invalid": "\u5DF2\u5931\u6548",
+    "common.noEvents": "\u66AB\u7121",
+    "common.back": "\u8FD4\u56DE",
+    "common.select": "\u8ACB\u9078\u64C7",
+    "errors.timeout": "\u8ACB\u6C42\u903E\u6642\uFF0C\u8ACB\u6AA2\u67E5\u672C\u6A5F\u670D\u52D9\u72C0\u614B\u5F8C\u91CD\u8A66\u3002",
+    "errors.offline": "\u7121\u6CD5\u9023\u63A5 Research OS API\uFF0C\u8ACB\u78BA\u8A8D\u672C\u6A5F\u670D\u52D9\u4ECD\u5728\u57F7\u884C\u3002",
+    "errors.requestFailed": "\u8ACB\u6C42\u5931\u6557\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
+    "app.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
+    "app.researchProject": "\u7814\u7A76\u5C08\u6848",
+    "app.projectCreated": "\u5C08\u6848\u5DF2\u5EFA\u7ACB",
+    "app.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\u3002",
+    "app.ideaMeta": "Idea \u6F84\u6E05",
+    "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
+    "app.initialMessage": "\u8ACB\u76F4\u63A5\u63CF\u8FF0\u4F60\u7684\u7814\u7A76 Idea\u3002\u6211\u6703\u81EA\u9069\u61C9\u5206\u6790\u76EE\u6A19\u8207\u65E2\u6709\u7DDA\u7D22\uFF0C\u8AAA\u660E\u63A8\u8AD6\u8207\u98A8\u96AA\uFF0C\u53EA\u8FFD\u554F\u771F\u6B63\u5F71\u97FF\u65B9\u6848\u7684\u672A\u77E5\u8CC7\u8A0A\u3002",
+    "app.thinking.modelRouting": "\u6A21\u578B\u8DEF\u7531",
+    "app.thinking.readingConversation": "\u8B80\u53D6\u5C0D\u8A71",
+    "app.thinking.selectingModel": "\u9078\u64C7\u6A21\u578B",
+    "app.thinking.callingModel": "\u547C\u53EB\u6A21\u578B",
+    "app.thinking.savingResult": "\u5132\u5B58\u7D50\u679C",
+    "app.thinking.waitingResponse": "\u7B49\u5F85\u6A21\u578B\u56DE\u61C9\u2026",
+    "app.thinking.preparingRequest": "\u6E96\u5099\u8ACB\u6C42",
+    "app.thinking.saveComplete": "\u5132\u5B58\u5B8C\u6210",
+    "app.thinking.requestFailed": "\u8ACB\u6C42\u5931\u6557",
+    "app.thinking.assumptionsRecorded": "{count} \u500B\u5DF2\u8A18\u9304\u5047\u8A2D",
+    "app.thinking.uploadingFiles": "{count} \u500B\u6A94\u6848",
+    "app.thinking.messageLength": "\u8A0A\u606F\u9577\u5EA6 {count} \u5B57\u5143",
+    "app.mode.automatic": "\u5168\u81EA\u52D5\u6A21\u5F0F",
+    "app.mode.detailed": "\u8A73\u7D30\u6A21\u5F0F",
+    "idea.errorTitle": "\u8ACB\u6C42\u5931\u6557",
+    "idea.progressTitle": "AI \u6B63\u5728\u5206\u6790",
+    "idea.stage.understand": "\u6B63\u5728\u7406\u89E3\u7814\u7A76\u76EE\u6A19\u8207\u65E2\u6709\u7DDA\u7D22\u2026",
+    "idea.stage.selectModel": "\u6B63\u5728\u9078\u64C7\u6210\u672C\u5408\u9069\u7684\u6A21\u578B\u5C64\u7D1A\u2026",
+    "idea.stage.updateDraft": "\u6B63\u5728\u66F4\u65B0 ResearchIdea \u8349\u7A3F\u2026",
+    "idea.stage.checkRisks": "\u6B63\u5728\u6AA2\u67E5\u98A8\u96AA\u3001\u5047\u8A2D\u8207\u5F85\u78BA\u8A8D\u4E8B\u9805\u2026",
+    "idea.stage.stillWorking": "\u6A21\u578B\u4ECD\u5728\u8655\u7406\uFF0C\u8ACB\u7A0D\u5019\u2026",
+    "idea.stage.identifyIntent": "\u6B63\u5728\u8B58\u5225\u89E3\u91CB\u3001\u5EFA\u8B70\u6216\u8B8A\u66F4\u610F\u5716\u2026",
+    "idea.stage.checkBoundaries": "\u6B63\u5728\u6AA2\u67E5\u5C08\u6848\u72C0\u614B\u8207\u5BE9\u6279\u908A\u754C\u2026",
+    "idea.stage.organizeReply": "\u6B63\u5728\u7D44\u7E54\u53EF\u5BE9\u95B1\u7684\u56DE\u8986\u2026",
+    "idea.toggleDepthTitle": "\u5207\u63DB Idea \u6F84\u6E05\u6DF1\u5EA6",
+    "idea.modeHint.automatic": "\u5C11\u91CF\u95DC\u9375\u8FFD\u554F",
+    "idea.modeHint.detailed": "\u5168\u9762\u4E86\u89E3\u9700\u6C42",
+    "idea.attachTitle": "\u65B0\u589E\u6750\u6599",
+    "idea.placeholder": "\u8F38\u5165\u7814\u7A76 Idea \u6216\u56DE\u7B54\u6F84\u6E05\u554F\u984C",
+    "spec.unset": "\u672A\u6307\u5B9A",
+    "spec.confirmCreate": "\u78BA\u8A8D\u4E26\u5EFA\u7ACB\u5C08\u6848",
+    "spec.empty": "\u898F\u683C\u5C07\u5728\u6F84\u6E05\u5B8C\u6210\u5F8C\u7522\u751F\u3002",
+    "thinking.title": "AI \u8ACB\u6C42\u72C0\u614B",
+    "chat.title": "\u5C08\u6848\u5C0D\u8A71",
+    "chat.monitoring": "\u76E3\u7763\u4E2D",
+    "chat.closeTitle": "\u95DC\u9589\u5C08\u6848\u5C0D\u8A71",
+    "chat.placeholder": "\u89E3\u91CB\u3001\u5EFA\u8B70\u6216\u660E\u78BA\u63D0\u51FA\u8B8A\u66F4",
+    "context.currentScope": "\u76EE\u524D\u5C08\u6848\u7BC4\u570D",
+    "context.updatedAt": "\u66F4\u65B0\u65BC",
+    "context.pendingCount": "{count} \u500B\u5F85\u5BE9\u6279",
+    "context.noPending": "\u7121\u5F85\u5BE9\u6279",
+    "context.recentFailure": "\u6700\u8FD1\u5931\u6557\uFF1A{code}",
+    "context.noRecentFailure": "\u6700\u8FD1\u5931\u6557\uFF1A\u7121",
+    "context.ariaLabel": "\u76EE\u524D\u5C08\u6848\u4E0A\u4E0B\u6587",
+    "context.taskFailed": "\u4EFB\u52D9\u5931\u6557",
+    "context.sourceRequestFailed": "\u4F86\u6E90\u8ACB\u6C42\u5931\u6557",
+    "context.experimentFailed": "\u5BE6\u9A57\u57F7\u884C\u5931\u6557",
+    "context.reproductionFailed": "\u91CD\u73FE\u6D41\u7A0B\u5931\u6557",
+    "context.reportLineageFailed": "\u5831\u544A\u4F86\u6E90\u8B5C\u7CFB\u7121\u6CD5\u9A57\u8B49",
+    "md.noPreview": "\u66AB\u7121\u53EF\u9810\u89BD\u5167\u5BB9\u3002",
+    "preview.noPoints": "\u6C92\u6709\u53EF\u986F\u793A\u7684\u6709\u6548\u9EDE",
+    "preview.resetView": "\u91CD\u8A2D\u6AA2\u8996",
+    "preview.pointCloud": "\u9EDE\u96F2\u9810\u89BD",
+    "preview.loadedFaces": "\u5DF2\u8F09\u5165 {count} \u500B\u9762\u7247\uFF0C\u4F7F\u7528\u7DDA\u6846\u986F\u793A\u3002",
+    "preview.sampled": " \xB7 \u5DF2\u964D\u53D6\u6A23",
+    "preview.pointCount": "{count} \u9EDE",
+    "preview.noFiniteMetrics": "\u6C92\u6709\u53EF\u7E6A\u88FD\u7684\u6709\u9650\u6578\u503C\u6307\u6A19\u3002",
+    "preview.selectionNoFinite": "\u76EE\u524D\u9078\u64C7\u6C92\u6709\u53EF\u7E6A\u88FD\u7684\u6709\u9650\u6578\u503C\u6307\u6A19\uFF1B\u7F3A\u5931\u503C\u4E0D\u6703\u88AB\u88DC\u5BEB\u6216\u63D2\u503C\u3002",
+    "preview.metric": "\u6307\u6A19",
+    "preview.points": "\u9EDE\u6578",
+    "preview.selectSeeds": "\u9078\u64C7\u96A8\u6A5F\u7A2E\u5B50",
+    "preview.pointsCount": "{count} \u500B\u9EDE",
+    "preview.missingPoints": "{count} \u500B\u9EDE\u7F3A\u5C11 {metric}\uFF0C\u5DF2\u6309\u7F3A\u5931\u503C\u4FDD\u7559\u4E26\u8DF3\u904E\u7E6A\u88FD\u3002",
+    "preview.imageNote": "\u5716\u7247\u76F4\u63A5\u4F7F\u7528\u4E0B\u8F09\u4ECB\u9762\u5C55\u793A\u3002",
+    "preview.pdfLabel": "PDF \xB7 {count} \u9801\uFF0C\u50C5\u5C55\u793A\u524D 3 \u9801\u53EF\u64F7\u53D6\u6587\u5B57",
+    "preview.invalidArtifact": "\u8A72\u7522\u7269\u5DF2\u5931\u6548\uFF0C\u4E0D\u80FD\u9810\u89BD\u6216\u4E0B\u8F09\u3002",
+    "preview.experimentNotSucceeded": "\u95DC\u806F\u57F7\u884C\u72C0\u614B\u70BA {status}\uFF0C\u4E0D\u986F\u793A\u70BA\u6210\u529F\u7522\u7269\u3002",
+    "preview.loading": "\u8F09\u5165\u9810\u89BD\u2026",
+    "preview.error": "\u9810\u89BD\u5931\u6557\uFF1A{error}",
+    "preview.download": "\u4E0B\u8F09\u7522\u7269",
+    "preview.lineageUnbound": "\u672A\u7D81\u5B9A",
+    "preview.lineageUnknown": "\u672A\u77E5",
+    "preview.lineageNotDeclared": "\u672A\u5BA3\u544A",
+    "preview.lineageMissing": "\u8B5C\u7CFB\u8CC7\u8A0A\u672A\u5BA3\u544A",
+    "preview.lineage": "Run {run} \xB7 Idea v{idea} \xB7 \u8CC7\u6599 {data}",
+    "preview.metricCurve": "{metric} \u6307\u6A19\u66F2\u7DDA",
+    "preview.runStatus": "\u57F7\u884C {status}",
+    "md.previewLabel": "Markdown \u5831\u544A\u9810\u89BD",
+    "settings.sourceRuntime": "\u57F7\u884C\u968E\u6BB5\u8986\u84CB",
+    "settings.sourceEnv": "\u5C08\u6848 .env \u9810\u8A2D",
+    "settings.saveFailed": "\u5132\u5B58\u5931\u6557\uFF1A{error}\u3002",
+    "settings.keyHint": "\u5DF2\u8A2D\u5B9A\u7684 key \u7559\u7A7A\u5373\u53EF\u4FDD\u7559\uFF1B\u6A21\u578B\u547C\u53EB\u5931\u6557\u4E0D\u6703\u5207\u63DB\u6216\u964D\u7D1A\u3002",
+    "settings.eyebrow": "\u57F7\u884C\u968E\u6BB5\u8A2D\u5B9A",
+    "settings.title": "\u8A2D\u5B9A",
+    "settings.modelsDescription": "Luna\u3001Terra\u3001Sol \u4E09\u6A94\u5206\u5225\u751F\u6548\u3002\u672A\u55AE\u7368\u8986\u84CB\u6642\uFF0C\u9810\u8A2D\u4F7F\u7528\u5C08\u6848 .env \u4E2D\u7684 URL \u548C key\uFF0C\u5132\u5B58\u5F8C\u7ACB\u5373\u7528\u65BC\u4E0B\u4E00\u6B21\u8ACB\u6C42\u3002",
+    "settings.embeddingDescription": "\u6BCF\u500B\u79D1\u7814\u5C08\u6848\u53EF\u4EE5\u7368\u7ACB\u8A2D\u5B9A\u8A9E\u610F\u8A18\u61B6 Embedding\uFF1B\u4E0D\u8986\u84CB\u6642\u4F7F\u7528\u5168\u57DF\u9810\u8A2D\uFF08\u5BE6\u6E2C\u672C\u6A5F bge-m3 \u6BD4\u9060\u7AEF\u5FEB\u7D04 10 \u500D\uFF09\u3002",
+    "settings.modelsTab": "\u6A21\u578B \xB7 Luna/Terra/Sol",
+    "settings.embeddingTab": "Embedding \xB7 \u8A9E\u610F\u8A18\u61B6",
+    "settings.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\uFF0C\u518D\u8A2D\u5B9A\u5C08\u6848\u7D1A Embedding\u3002",
+    "settings.loadingModels": "\u6B63\u5728\u8B80\u53D6\u6A21\u578B\u8A2D\u5B9A\u2026",
+    "settings.keyConfigured": "\u5DF2\u8A2D\u5B9A key",
+    "settings.keyPending": "\u5F85\u8A2D\u5B9A key",
+    "settings.urlReady": "URL \u5DF2\u5C31\u7DD2",
+    "settings.urlPending": "\u5F85\u8A2D\u5B9A URL",
+    "settings.default": "\u9810\u8A2D",
+    "settings.modelName": "\u6A21\u578B\u540D\u7A31",
+    "settings.reasoningEffort": "\u63A8\u7406\u5F37\u5EA6",
+    "settings.modelUrl": "\u6A21\u578B URL",
+    "settings.apiKey": "API key",
+    "settings.keyKeep": "\u5DF2\u8A2D\u5B9A\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u8B8A",
+    "settings.keyPlaceholder": "\u8F38\u5165 API key",
+    "settings.securityNote": "\u91D1\u9470\u53EA\u5BEB\u5165\u672C\u6A5F runtime \u6A94\u6848\uFF0C\u8B80\u53D6\u4ECB\u9762\u4E0D\u6703\u56DE\u50B3\u91D1\u9470\u3002\u7559\u7A7A\u5DF2\u8A2D\u5B9A\u7684 key \u6703\u4FDD\u6301\u4E0D\u8B8A\u3002",
+    "settings.save": "\u5132\u5B58\u8A2D\u5B9A",
+    "settings.loadFailed": "\u7121\u6CD5\u8F09\u5165\u6A21\u578B\u8A2D\u5B9A\u3002",
+    "settings.discardTitle": "\u653E\u68C4\u672A\u5132\u5B58\u7684\u8A2D\u5B9A\uFF1F",
+    "settings.discardDescription": "\u8A2D\u5B9A\u5C1A\u672A\u5132\u5B58\uFF0C\u78BA\u5B9A\u95DC\u9589\u55CE\uFF1F",
+    "settings.discardConfirm": "\u653E\u68C4\u4FEE\u6539",
+    "embedding.loading": "\u6B63\u5728\u8B80\u53D6\u5C08\u6848 Embedding \u8A2D\u5B9A\u2026",
+    "embedding.providerTitle": "Embedding \u63D0\u4F9B\u65B9\u5F0F",
+    "embedding.globalDefault": "\u4F7F\u7528\u5168\u57DF\u9810\u8A2D",
+    "embedding.localOnnx": "\u672C\u6A5F ONNX \u6A21\u578B",
+    "embedding.remoteApi": "\u9060\u7AEF OpenAI-compatible API",
+    "embedding.instance": "\u5BE6\u4F8B",
+    "embedding.running": " \xB7 \u57F7\u884C\u4E2D",
+    "embedding.notRunning": " \xB7 \u672A\u57F7\u884C",
+    "embedding.sharedProjects": " \xB7 \u5171\u4EAB {count} \u500B\u5C08\u6848",
+    "embedding.mode": "\u8A2D\u5B9A\u6A21\u5F0F",
+    "embedding.modeGlobal": "\u4F7F\u7528\u5168\u57DF\u9810\u8A2D\uFF08.env\uFF09",
+    "embedding.modeCustom": "\u672C\u5C08\u6848\u7368\u7ACB\u8A2D\u5B9A",
+    "embedding.provider": "Provider",
+    "embedding.openaiCompatible": "OpenAI-compatible",
+    "embedding.model": "\u6A21\u578B",
+    "embedding.modelPlaceholder": "\u4F8B\u5982 Qwen3-Embedding-8B",
+    "embedding.dimensions": "\u7DAD\u5EA6",
+    "embedding.baseUrl": "\u57FA\u790E URL",
+    "embedding.poolNote": "\u76F8\u540C\u8A2D\u5B9A\u7684\u5C08\u6848\u5171\u4EAB\u540C\u4E00\u500B Supermemory \u5BE6\u4F8B\u8207\u8CC7\u6599\u76EE\u9304\uFF08\u6309\u8A2D\u5B9A\u6C60\u8907\u7528\uFF0C\u9023\u63A5\u57E0 6770\u20136869\uFF09\uFF0C\u5C08\u6848\u4E4B\u9593\u4ECD\u7528 container tag \u9694\u96E2\u8A9E\u610F\u8A18\u61B6\uFF1B\u8A2D\u5B9A\u4E0D\u540C\u624D\u555F\u7528\u65B0\u7684\u8A2D\u5B9A\u6C60\u3002\u9810\u8A2D\u63A8\u85A6\u672C\u6A5F Xenova/bge-m3\uFF08\u5BE6\u6E2C\u6BD4\u9060\u7AEF gitee \u5FEB\u7D04 10 \u500D\uFF09\u3002",
+    "embedding.securityNote": "\u91D1\u9470\u53EA\u5BEB\u5165\u672C\u6A5F runtime \u6A94\u6848\uFF0C\u8B80\u53D6\u4ECB\u9762\u4E0D\u6703\u56DE\u50B3\u91D1\u9470\uFF1B\u5207\u63DB\u6A21\u578B\u6216\u7DAD\u5EA6\u6703\u70BA\u5C08\u6848\u5206\u914D\u65B0\u7684\u8A2D\u5B9A\u6C60\uFF08\u820A\u6C60\u8CC7\u6599\u4FDD\u7559\uFF0C\u8A9E\u610F\u8A18\u61B6\u9700\u91CD\u65B0\u651D\u5165\uFF09\u3002",
+    "embedding.resetTitle": "\u5207\u63DB\u6A21\u578B\u9700\u8981\u91CD\u5EFA\u8CC7\u6599\u76EE\u9304",
+    "embedding.resetDescription": "\u5207\u63DB embedding \u6A21\u578B\u6216\u7DAD\u5EA6\u5F8C\uFF0C\u8A72\u5C08\u6848\u5DF2\u6709\u7684\u8A9E\u610F\u8A18\u61B6\u7121\u6CD5\u8207\u65B0\u7684\u5411\u91CF\u7A7A\u9593\u6DF7\u7528\uFF0C\u9700\u8981\u5168\u65B0\u8CC7\u6599\u76EE\u9304\u4E26\u91CD\u65B0\u651D\u5165\uFF08\u820A\u8CC7\u6599\u76EE\u9304\u6703\u4FDD\u7559\u70BA\u5099\u4EFD\uFF09\u3002\u78BA\u8A8D\u7E7C\u7E8C\u55CE\uFF1F",
+    "embedding.resetConfirm": "\u78BA\u8A8D\u91CD\u5EFA\u4E26\u5132\u5B58",
+    "memory.graphAria": "\u5C08\u6848\u8A9E\u610F\u8A18\u61B6\u95DC\u4FC2\u5716",
+    "memory.graphPrompt": "\u8F38\u5165\u67E5\u8A62\u4EE5\u8F09\u5165\u76EE\u524D\u5C08\u6848\u7684 Graph Memory\u3002",
+    "memory.searchPrompt": "\u8F38\u5165\u67E5\u8A62\u4EE5\u6AA2\u7D22\u76EE\u524D\u5C08\u6848\u7684\u8A9E\u610F\u5019\u9078\u3002",
+    "memory.remoteUnsupported": "\u5DF2\u8A2D\u5B9A {provider} embedding\uFF0C\u4F46\u76EE\u524D\u670D\u52D9\u7AEF\u50C5\u652F\u63F4\u672C\u6A5F embedding\uFF1B\u8A18\u61B6\u8ACB\u6C42\u6703\u5931\u6557\u95DC\u9589\uFF0C\u4E0D\u6703\u975C\u9ED8\u964D\u7D1A\u3002",
+    "memory.configured": "Supermemory \u5DF2\u8A2D\u5B9A \xB7 {model}\uFF08{dimensions} \u7DAD\uFF09\uFF0C\u8F38\u5165\u67E5\u8A62\u5F8C\u8F09\u5165\u5C08\u6848\u7BC4\u570D\u5716\u3002",
+    "memory.notConfigured": "Supermemory \u5C1A\u672A\u8A2D\u5B9A API key\uFF1B\u4E0D\u6703\u4F7F\u7528\u672C\u6A5F\u6216\u7121\u95DC\u8CC7\u6599\u66FF\u4EE3\u3002",
+    "memory.statusFailed": "\u72C0\u614B\u8B80\u53D6\u5931\u6557\uFF1A{error}",
+    "memory.searching": "\u6B63\u5728\u6AA2\u7D22\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u2026",
+    "memory.searchResults": "{total} \u689D\u5019\u9078 \xB7 \u4F86\u6E90\uFF1ASupermemory \xB7 \u76EE\u524D\u5C08\u6848\u7BC4\u570D",
+    "memory.graphResults": "{nodes} \u500B\u7BC0\u9EDE \xB7 {edges} \u689D\u95DC\u4FC2 \xB7 \u4F86\u6E90\uFF1ASupermemory",
+    "memory.requestFailed": "\u8ACB\u6C42\u5931\u6557\uFF1A{error}",
+    "memory.eyebrow": "\u5C08\u6848\u7D1A\u8A9E\u610F\u4E0A\u4E0B\u6587",
+    "memory.description": "\u53EA\u986F\u793A\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u7684\u8A9E\u610F\u5019\u9078\u53CA\u5176\u95DC\u4FC2\uFF1B\u5019\u9078\u4E0D\u7B49\u65BC\u8AD6\u6587\u8B49\u64DA\u3002",
+    "memory.viewAria": "\u8A9E\u610F\u8A18\u61B6\u6AA2\u8996",
+    "memory.graphView": "\u95DC\u4FC2\u5716",
+    "memory.searchView": "\u8A9E\u610F\u6AA2\u7D22",
+    "memory.queryLabel": "\u67E5\u8A62\u76EE\u524D\u5C08\u6848",
+    "memory.queryPlaceholder": "\u8F38\u5165\u7814\u7A76\u76EE\u6A19\u3001\u4E8B\u5BE6\u6216\u6750\u6599\u7DDA\u7D22",
+    "memory.search": "\u6AA2\u7D22",
+    "memory.projectScope": "\u5C08\u6848\u7BC4\u570D\uFF1A{projectId} \xB7 \u8A9E\u610F\u5019\u9078\uFF0C\u9700\u4EBA\u5DE5\u8B49\u64DA\u8907\u6838",
+    "memory.unnamedCandidate": "\u672A\u547D\u540D\u5019\u9078",
+    "memory.similarity": "\u76F8\u4F3C\u5EA6\uFF1A{value}",
+    "memory.source": "\u4F86\u6E90\uFF1A{source}",
+    "memory.artifact": "Artifact\uFF1A{value}",
+    "memory.evidenceStatus": "\u8B49\u64DA\u72C0\u614B\uFF1A{value}",
+    "overview.runPending": "\u5C1A\u672A\u5206\u914D Run",
+    "overview.toastSearching": "\u6B63\u5728\u4E26\u884C\u6AA2\u7D22\u591A\u500B\u5B78\u8853\u4F86\u6E90\u8207\u8CC7\u6E90\u8A3B\u518A\u8868\u2026",
+    "overview.toastSearchDone": "\u6AA2\u7D22\u5B8C\u6210\uFF0C\u5019\u9078\u8CC7\u6E90\u5DF2\u91CD\u65B0\u6574\u7406",
+    "overview.toastDraftProposal": "\u8B49\u64DA\u8AD6\u6587\u8349\u7A3F Proposal {id} \u5F85\u5BE9\u6279",
+    "overview.toastCompileProposal": "\u7DE8\u8B6F\u8A08\u756B {id} \u5F85\u5BE9\u6279",
+    "overview.toastPaused": "\u5C08\u6848\u5DF2\u66AB\u505C",
+    "overview.toastResumed": "\u5C08\u6848\u5DF2\u6062\u5FA9",
+    "overview.toastCancelled": "\u5C08\u6848\u5DF2\u53D6\u6D88",
+    "overview.papers": "\u8AD6\u6587",
+    "overview.experiments": "\u5BE6\u9A57",
+    "overview.artifacts": "\u7522\u7269",
+    "overview.spec": "\u7814\u7A76\u898F\u683C",
+    "overview.searchLiterature": "\u6AA2\u7D22\u6587\u737B",
+    "overview.paperDraft": "\u7522\u751F\u8B49\u64DA\u8AD6\u6587\u8349\u7A3F",
+    "overview.compilePaper": "\u7DE8\u8B6F\u8AD6\u6587",
+    "overview.noSpec": "\u5C1A\u672A\u7522\u751F\u7814\u7A76\u898F\u683C",
+    "overview.projectDescription": "\u5C08\u6848\u63CF\u8FF0",
+    "overview.descriptionHint": "\u76EE\u524D\u5C08\u6848\u898F\u683C\u7684\u53EF\u5BE9\u95B1\u6458\u8981\u3002",
+    "overview.domain": "\u7814\u7A76\u9818\u57DF",
+    "overview.question": "\u7814\u7A76\u554F\u984C",
+    "overview.hypotheses": "\u5047\u8A2D",
+    "overview.successCriteria": "\u6210\u529F\u6A19\u6E96",
+    "overview.notGenerated": "\u5C1A\u672A\u7522\u751F",
+    "overview.innovationCandidates": "\u5275\u65B0\u9EDE\u5019\u9078",
+    "overview.innovationHint": "\u5019\u9078\u5EFA\u8B70\u9700\u8981\u76F8\u95DC\u5DE5\u4F5C\u8B49\u64DA\u8207\u5C0E\u5E2B\u78BA\u8A8D\u3002",
+    "overview.noInnovation": "\u5C1A\u672A\u7522\u751F\u5275\u65B0\u9EDE\u5019\u9078\u3002",
+    "overview.progress": "\u7814\u7A76\u9032\u5EA6",
+    "overview.progressHint": "\u6642\u9593\u8EF8\u53EA\u5F59\u6574\u5DF2\u8A18\u9304\u7684 Proposal\u3001Checkpoint \u8207\u5BE6\u9A57\u72C0\u614B\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B78\u7D50\u8AD6\u3002",
+    "overview.noTimeline": "\u5C1A\u7121\u53EF\u5C55\u793A\u7684\u9032\u5EA6\u4E8B\u4EF6\u3002",
+    "overview.projectStatus": "\u5C08\u6848\u72C0\u614B",
+    "overview.stageInitialized": "\u5DF2\u521D\u59CB\u5316",
+    "overview.stageUnknown": "\u672A\u77E5\u968E\u6BB5",
+    "overview.ideaVersion": "Idea \u7248\u672C {version} \xB7 {status}",
+    "overview.checkpointVersion": "Idea v{version}",
+    "overview.runDetail": "Run {run}",
+    "overview.statusActive": "\u9032\u884C\u4E2D",
+    "overview.statusPaused": "\u5DF2\u66AB\u505C",
+    "overview.statusCancelled": "\u5DF2\u53D6\u6D88",
+    "overview.pause": "\u66AB\u505C",
+    "overview.resume": "\u6062\u5FA9",
+    "overview.cancelProject": "\u53D6\u6D88\u5C08\u6848",
+    "overview.cancelConfirmDescription": "\u53D6\u6D88\u5C08\u6848\u5F8C\u4E0D\u80FD\u6062\u5FA9\uFF0C\u78BA\u5B9A\u7E7C\u7E8C\u55CE\uFF1F",
+    "overview.confirmCancel": "\u78BA\u8A8D\u53D6\u6D88",
+    "reports.daily": "\u65E5\u5831",
+    "reports.weekly": "\u9031\u5831",
+    "reports.generated": "{period}\u5DF2\u7522\u751F\uFF1B\u4F86\u6E90\u5FEB\u7167\u5DF2\u8A18\u9304",
+    "reports.feedbackRecorded": "\u5C0E\u5E2B\u56DE\u994B\u5DF2\u8A18\u9304\uFF1B\u5F8C\u7E8C\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u6703\u57F7\u884C",
+    "reports.feedbackProposalSummary": "\u6839\u64DA\u5C0E\u5E2B\u56DE\u994B\u7522\u751F\u5F85\u5BE9\u95B1\u4E0B\u4E00\u6B65\u63D0\u6848",
+    "reports.proposalCreated": "\u56DE\u994B\u63D0\u6848\u5DF2\u5EFA\u7ACB\uFF0C\u8ACB\u5728\u300C\u6C7A\u7B56\u8207\u7A3D\u6838\u300D\u4E2D\u5BE9\u6279",
+    "reports.feedbackInbox": "\u5C0E\u5E2B\u56DE\u994B\u6536\u4EF6\u5323",
+    "reports.feedbackHint": "\u56DE\u994B\u53EA\u80FD\u7522\u751F\u56DE\u994B\u6C7A\u7B56\u3001Proposal \u8207\u7A3D\u6838\u8A18\u9304\uFF1B\u4E0D\u6703\u76F4\u63A5\u6539\u7A0B\u5F0F\u78BC\u3001\u5B89\u88DD\u4F9D\u8CF4\u3001\u57F7\u884C\u5BE6\u9A57\u6216\u63A8\u9001 Git\u3002",
+    "reports.loadingFeedback": "\u6B63\u5728\u8B80\u53D6\u76EE\u524D\u5C08\u6848\u7684\u56DE\u994B\u2026",
+    "reports.reference": "\u95DC\u806F",
+    "reports.decisionComment": "\u6C7A\u7B56\u8AAA\u660E\uFF1A",
+    "reports.acknowledge": "\u78BA\u8A8D",
+    "reports.requestRevision": "\u8981\u6C42\u4FEE\u8A02",
+    "reports.createProposal": "\u7522\u751F Proposal",
+    "reports.noFeedback": "\u76EE\u524D\u5C08\u6848\u6C92\u6709\u5C0E\u5E2B\u56DE\u994B\u3002\u6C92\u6709\u4E8B\u4EF6\u6642\u4FDD\u6301 empty\uFF0C\u4E0D\u7522\u751F\u6A23\u677F\u5316\u5831\u544A\u3002",
+    "reports.recordFeedback": "\u8A18\u9304\u65B0\u56DE\u994B",
+    "reports.recordFeedbackHint": "\u56DE\u994B\u6587\u5B57\u6703\u5132\u5B58\u5230\u76EE\u524D\u5C08\u6848\uFF1B\u8A9E\u610F\u8A18\u61B6\u5BEB\u5165\u5931\u6557\u6642\u76F4\u63A5\u986F\u793A\u7D50\u69CB\u5316\u932F\u8AA4\u3002",
+    "reports.feedbackType": "\u56DE\u994B\u985E\u578B",
+    "reports.forReport": "\u91DD\u5C0D\u5831\u544A",
+    "reports.nextDirection": "\u4E0B\u4E00\u6B65\u65B9\u5411",
+    "reports.feedbackToAi": "\u7D66 AI \u5B78\u751F\u7684\u56DE\u994B",
+    "reports.feedbackPlaceholder": "\u6307\u51FA\u9700\u8981\u4FEE\u6B63\u7684\u7D50\u679C\u3001\u4E0B\u4E00\u6B65\u65B9\u5411\u6216\u9700\u8981\u88DC\u5145\u7684\u8B49\u64DA",
+    "reports.recordFeedbackAction": "\u8A18\u9304\u56DE\u994B",
+    "reports.auditTitle": "\u56DE\u994B\u8207 Proposal \u7A3D\u6838",
+    "reports.auditHint": "\u53EA\u986F\u793A\u76EE\u524D project_id {projectId} \u4E0B\u7684\u6C7A\u7B56\u3001Proposal \u8207\u5931\u6557\u4E8B\u4EF6\u3002",
+    "reports.loadingAudit": "\u6B63\u5728\u8B80\u53D6\u5C08\u6848\u7A3D\u6838\u2026",
+    "reports.noAudit": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u56DE\u994B\u6216 Proposal \u7A3D\u6838\u4E8B\u4EF6\u3002",
+    "reports.periodHint": "\u5831\u544A\u53EA\u8B80\u53D6\u771F\u5BE6\u4E8B\u4EF6\u4E26\u5132\u5B58 source_snapshot\uFF1B\u6C92\u6709\u4E8B\u4EF6\u6642\u986F\u793A empty\u3002",
+    "reports.generate": "\u7522\u751F{period}",
+    "reports.blocked": "\u76EE\u524D\u5831\u544A\u672A\u986F\u793A\uFF1A{reason}\u3002\u8ACB\u91CD\u65B0\u7522\u751F\u76EE\u524D\u6642\u9593\u8996\u7A97\u7684\u5831\u544A\u3002",
+    "reports.lineageUnverifiable": "\u4F86\u6E90\u8B5C\u7CFB\u7121\u6CD5\u8907\u6838",
+    "reports.noneForPeriod": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709{period}\u3002",
+    "reports.history": "\u6B77\u53F2\u7248\u672C",
+    "reports.view": "\u6AA2\u8996",
+    "reports.viewStatus": "\u6AA2\u8996\u72C0\u614B",
+    "approvals.launchToast": "\u57F7\u884C {id} \u5DF2\u63D0\u4EA4",
+    "approvals.title": "\u8B8A\u66F4\u8207\u57F7\u884C\u5BE9\u6279",
+    "approvals.hint": "\u6838\u51C6\u524D\u6703\u7522\u751F Proposal\u3001diff\u3001\u660E\u78BA\u5BE9\u6279\u3001\u8907\u6838\u3001Git commit \u8207\u7A3D\u6838\u8A18\u9304\u3002",
+    "approvals.rerunFailed": "\u81EA\u52D5\u5C40\u90E8\u91CD\u8DD1\u5931\u6557\uFF0C\u8ACB\u67E5\u770B\u7A3D\u6838\u8A18\u9304",
+    "approvals.rerunSubmitted": "\u5DF2\u81EA\u52D5\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1 {id}",
+    "approvals.rerunPending": "\u5DF2\u6838\u51C6\uFF0C\u6B63\u5728\u81EA\u52D5\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1",
+    "approvals.estimatedCost": "\u9810\u8A08",
+    "approvals.impact": "\u5F71\u97FF:",
+    "approvals.approve": "\u6838\u51C6",
+    "approvals.reject": "\u99C1\u56DE",
+    "approvals.runTopicPlan": "\u57F7\u884C\u4E3B\u984C\u8A08\u756B",
+    "approvals.execute": "\u57F7\u884C",
+    "approvals.empty": "\u6C92\u6709\u5F85\u8655\u7406\u63D0\u6848\u3002",
+    "artifacts.title": "\u8996\u89BA\u5316\u8207\u5927\u6A94\u6848\u7522\u7269",
+    "artifacts.hint": "\u7522\u7269\u8A18\u9304 SHA-256\u3001\u5BE6\u9A57\u3001Idea \u7248\u672C\u3001\u8CC7\u6599\u7248\u672C\u3001\u8A2D\u5B9A\u3001Run ID \u8207\u6709\u6548\u6027\u3002",
+    "artifacts.empty": "\u5BE6\u9A57\u5B8C\u6210\u4E26\u540C\u6B65\u5F8C\u986F\u793A PNG\u3001PLY\u3001JSON \u8207 PDF\u3002",
+    "policies.placeholder": "\u65B0\u589E\u9577\u671F\u5C08\u6848\u7B56\u7565",
+    "policies.propose": "\u63D0\u51FA\u7B56\u7565",
+    "policies.toast": "\u7B56\u7565\u63D0\u6848 {id} \u5F85\u5BE9\u6279",
+    "policies.executionStatus": "\u57F7\u884C\u72C0\u614B",
+    "policies.seedTitle": "\u96A8\u6A5F\u7A2E\u5B50\u4E0B\u9650",
+    "policies.seedText": "\u96A8\u6A5F\u5BE6\u9A57\u81F3\u5C11 {count} \u500B\u4E0D\u540C\u7A2E\u5B50\uFF1B\u8A08\u756B\u7522\u751F\u8207 Runner \u63D0\u4EA4\u96D9\u91CD\u6821\u9A57",
+    "policies.citationTitle": "\u5F15\u7528\u4F86\u6E90\u8207\u539F\u6587\u8B49\u64DA",
+    "policies.citationCount": "DOI/\u4F86\u6E90 {value}/{total}",
+    "policies.quotedCount": "\u9801\u78BC/\u7AE0\u7BC0\u539F\u6587\u8B49\u64DA {count}",
+    "policies.metadataNotFulltext": "\u5143\u8CC7\u6599\u6A19\u984C\u4E0D\u8A08\u70BA\u5168\u6587\u8B49\u64DA",
+    "policies.approvalTitle": "\u4EBA\u5DE5\u5BE9\u6279",
+    "policies.highCost": "\u9AD8\u6210\u672C\u64CD\u4F5C",
+    "policies.externalActions": "\u5C0D\u5916\u64CD\u4F5C",
+    "policies.forced": "\u5F37\u5236",
+    "policies.notConfigured": "\u672A\u8A2D\u5B9A",
+    "policies.activeTitle": "\u751F\u6548\u7B56\u7565",
+    "policies.notRecognized": "\u672A\u8B58\u5225\u70BA\u53EF\u57F7\u884C\u7D04\u675F\uFF1B\u4FDD\u7559\u70BA\u4EBA\u5DE5\u898F\u5247",
+    "policies.projectPolicy": "\u5C08\u6848\u7D1A\u6301\u4E45\u7B56\u7565",
+    "policies.empty": "\u5C1A\u672A\u8A2D\u5B9A\u5C08\u6848\u7B56\u7565\u3002",
+    "reproduction.sourceDownloaded": "\u539F\u59CB\u78BC\u5DF2\u4E0B\u8F09",
+    "reproduction.dependencyPending": "\u7B49\u5F85\u4F9D\u8CF4\u8A08\u756B",
+    "reproduction.dependencyInstalling": "\u6B63\u5728\u5B89\u88DD\u4F9D\u8CF4",
+    "reproduction.dependencyFailed": "\u4F9D\u8CF4\u5B89\u88DD\u5931\u6557",
+    "reproduction.ready": "\u53EF\u57F7\u884C",
+    "reproduction.queued": "\u7B49\u5F85\u57F7\u884C",
+    "reproduction.running": "\u6B63\u5728\u57F7\u884C",
+    "reproduction.awaitingArtifact": "\u7B49\u5F85\u7522\u7269\u5BE9\u6279",
+    "reproduction.completed": "\u7522\u7269\u5DF2\u767B\u8A18",
+    "reproduction.artifactRejected": "\u7522\u7269\u767B\u8A18\u88AB\u62D2\u7D55",
+    "reproduction.runFailed": "\u57F7\u884C\u5931\u6557",
+    "reproduction.invalidated": "\u4E0A\u6E38\u5DF2\u5931\u6548",
+    "reproduction.verifyDone": "\u7A0B\u5F0F\u78BC\u5009\u5EAB\u9A57\u8B49\u5B8C\u6210",
+    "reproduction.downloadProposalCreated": "\u4E0B\u8F09 Proposal \u5DF2\u5EFA\u7ACB\uFF0C\u8ACB\u5728\u5BE9\u6279\u9801\u6838\u51C6\u5F8C\u7E7C\u7E8C",
+    "reproduction.dependencyReason": "\u70BA\u5DF2\u56FA\u5B9A commit \u7684\u7A0B\u5F0F\u78BC\u91CD\u73FE\u5EFA\u7ACB\u7368\u7ACB\u4F9D\u8CF4\u74B0\u5883",
+    "reproduction.dependencyProposalCreated": "\u4F9D\u8CF4\u5B89\u88DD Proposal \u5DF2\u5EFA\u7ACB",
+    "reproduction.configJsonInvalid": "\u57F7\u884C\u8A2D\u5B9A\u5FC5\u9808\u662F\u6709\u6548 JSON",
+    "reproduction.formInvalid": "\u8ACB\u586B\u5BEB Python \u5165\u53E3\u3001\u81F3\u5C11\u4E00\u500B\u6574\u6578 seed \u8207 JSON \u7269\u4EF6\u8A2D\u5B9A",
+    "reproduction.runReason": "\u57F7\u884C\u5DF2\u5B89\u88DD\u4F9D\u8CF4\u7684\u56FA\u5B9A\u7A0B\u5F0F\u78BC\u91CD\u73FE\u5165\u53E3",
+    "reproduction.runProposalCreated": "\u91CD\u73FE\u57F7\u884C Proposal \u5DF2\u5EFA\u7ACB",
+    "reproduction.title": "\u7A0B\u5F0F\u78BC\u91CD\u73FE\u5019\u9078",
+    "reproduction.hint": "\u91CD\u73FE\u539F\u59CB\u78BC\u53EA\u9032\u5165\u76EE\u524D\u5C08\u6848\u7684 experiment/reproductions \u5340\u57DF\uFF1B\u4E0B\u8F09\u3001\u4F9D\u8CF4\u5B89\u88DD\u3001\u57F7\u884C\u8207\u7522\u7269\u767B\u8A18\u5206\u5225\u5BE9\u6279\u3002",
+    "reproduction.addFromLiterature": "\u5F9E\u6587\u737B\u65B0\u589E\u5009\u5EAB",
+    "reproduction.commitUnlocked": "\u63D0\u4EA4\u672A\u9396\u5B9A",
+    "reproduction.licensePending": "\u6388\u6B0A\u5F85\u6838\u9A57",
+    "reproduction.entered": "\u5DF2\u9032\u5165",
+    "reproduction.notDownloaded": "\u5C1A\u672A\u4E0B\u8F09",
+    "reproduction.verified": "\u5DF2\u9A57\u8B49",
+    "reproduction.pendingVerification": "\u5F85\u9A57\u8B49",
+    "reproduction.reverify": "\u91CD\u65B0\u9A57\u8B49",
+    "reproduction.createDownloadApproval": "\u5EFA\u7ACB\u4E0B\u8F09\u5BE9\u6279",
+    "reproduction.environment": "\u91CD\u73FE\u74B0\u5883",
+    "reproduction.dependencyManifest": "\u4F9D\u8CF4\u6E05\u55AE",
+    "reproduction.createDependencyApproval": "\u5EFA\u7ACB\u4F9D\u8CF4\u5B89\u88DD\u5BE9\u6279",
+    "reproduction.pythonEntry": "Python \u5165\u53E3",
+    "reproduction.pythonEntryPlaceholder": "\u4F8B\u5982 scripts/evaluate.py",
+    "reproduction.structuredConfig": "\u7D50\u69CB\u5316\u8A2D\u5B9A",
+    "reproduction.createRunApproval": "\u5EFA\u7ACB\u57F7\u884C\u5BE9\u6279",
+    "reproduction.empty": "\u5C1A\u7121\u7A0B\u5F0F\u78BC\u91CD\u73FE\u5019\u9078\u3002\u8ACB\u5148\u5728\u76F8\u95DC\u6587\u737B\u9801\u9762\u65B0\u589E\u8AD6\u6587\u7A0B\u5F0F\u78BC\u5009\u5EAB\u3002",
+    "reproduction.openLiterature": "\u958B\u555F\u76F8\u95DC\u6587\u737B",
+    "reproduction.boundaryTitle": "\u91CD\u73FE\u908A\u754C",
+    "reproduction.boundaryHint": "\u7CFB\u7D71\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5C0D\u5165\u53E3\u8207\u7D50\u69CB\u5316\u8A08\u756B\uFF1B\u4E0D\u6703\u57F7\u884C\u6A21\u578B\u50B3\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F91\u6216\u7DB2\u8DEF\u547D\u4EE4\u3002\u91CD\u73FE\u7A0B\u5E8F\u662F\u53D7\u76E3\u7763\u7684\u672C\u6A5F Linux \u7A0B\u5E8F\uFF0C\u4E0D\u7B49\u540C\u65BC\u865B\u64EC\u6A5F\u5668\u9694\u96E2\u3002",
+    "experiment.toastPlan": "\u4E3B\u984C\u5C08\u5C6C\u8A08\u756B {id} \u5F85\u5BE9\u6279",
+    "experiment.diagDone": "\u8A3A\u65B7\u5B8C\u6210\uFF0C\u5EFA\u8B70\u9700\u5BE9\u6279\u5F8C\u624D\u80FD\u57F7\u884C",
+    "experiment.cancelled": "\u57F7\u884C\u5DF2\u53D6\u6D88",
+    "experiment.rerunPrompt": "\u8ACB\u8AAA\u660E\u5C40\u90E8\u91CD\u8DD1\u539F\u56E0",
+    "experiment.rerunDefault": "\u8907\u6838\u8A72\u5BE6\u9A57\u5728\u76EE\u524D\u5C08\u6848\u5FEB\u7167\u4E0B\u7684\u7D50\u679C",
+    "experiment.rerunToast": "\u5C40\u90E8\u91CD\u8DD1 Proposal {id} \u5DF2\u5EFA\u7ACB\uFF0C\u7B49\u5F85\u5BE9\u6279",
+    "experiment.title": "\u5BE6\u9A57\u898F\u5283\u8207\u57F7\u884C",
+    "experiment.plan": "\u7522\u751F\u4E3B\u984C\u5C08\u5C6C\u8A08\u756B",
+    "experiment.diagnostics": "\u6578\u503C\u8A3A\u65B7",
+    "experiment.sync": "\u540C\u6B65",
+    "experiment.rerun": "\u63D0\u51FA\u5C40\u90E8\u91CD\u8DD1",
+    "experiment.empty": "\u7522\u751F\u8A08\u756B\u5F8C\u6703\u5148\u9032\u5165\u5BE9\u6279\uFF1B\u7CFB\u7D71\u4E0D\u6703\u81EA\u52D5\u5EFA\u7ACB\u7121\u95DC\u5BE6\u9A57\u3002",
+    "experiment.diagnosticsTitle": "\u6578\u503C\u8A3A\u65B7",
+    "experiment.loadingDiagnostics": "\u6B63\u5728\u8A08\u7B97\u6578\u503C\u6458\u8981\u8207\u5931\u6557\u8A3A\u65B7\u2026",
+    "experiment.numericSummary": "\u6578\u503C\u6458\u8981",
+    "experiment.runCount": "{count} \u6B21\u57F7\u884C \xB7 TypeScript \u78BA\u5B9A\u6027\u8A08\u7B97",
+    "experiment.noMetrics": "\u6C92\u6709\u53EF\u6BD4\u8F03\u7684\u6578\u503C\u6307\u6A19\u3002",
+    "experiment.failureDiagnostics": "\u5931\u6557\u8A3A\u65B7",
+    "experiment.suggestions": "\u5F8C\u7E8C\u5EFA\u8B70",
+    "experiment.evidenceRuns": "\u8B49\u64DA\u57F7\u884C:",
+    "experiment.diagnosticsEmpty": "\u57F7\u884C\u6578\u503C\u8A3A\u65B7\u4EE5\u8A08\u7B97\u6307\u6A19\u4E26\u6AA2\u67E5\u5931\u6557\u65E5\u8A8C\u3002",
+    "comparison.innovation": "\u6F5B\u5728\u5275\u65B0\u8A0A\u865F",
+    "comparison.potentialImprovement": "\u6F5B\u5728\u6539\u5584\u8A0A\u865F",
+    "comparison.potentialRegression": "\u6F5B\u5728\u8FF4\u6B78\u8A0A\u865F",
+    "comparison.counterexample": "\u53CD\u4F8B\u8A0A\u865F",
+    "comparison.difference": "\u6578\u503C\u5DEE\u7570",
+    "comparison.comparabilityGap": "\u53EF\u6BD4\u6027\u7F3A\u53E3",
+    "comparison.researchGap": "\u5F85\u6838\u9A57\u7814\u7A76\u7A7A\u767D",
+    "comparison.comparable": "\u53EF\u6BD4",
+    "comparison.partial": "\u90E8\u5206\u53EF\u6BD4",
+    "comparison.blocked": "\u4E0D\u53EF\u6BD4/\u963B\u585E",
+    "comparison.candidate": "\u5F85\u6838\u9A57\u5019\u9078",
+    "comparison.accepted": "\u5DF2\u4FDD\u7559\u5019\u9078",
+    "comparison.rejected": "\u5DF2\u62D2\u7D55",
+    "comparison.metricUnrecorded": "\u672A\u8A18\u9304",
+    "comparison.selectRequired": "\u8ACB\u9078\u64C7\u5DF2\u78BA\u8A8D Paper\u3001\u5DF2\u5B8C\u6210\u91CD\u73FE Run \u548C\u81F3\u5C11\u4E00\u689D\u5B9A\u4F4D Evidence",
+    "comparison.paperMetricsLabel": "\u8AD6\u6587\u6307\u6A19",
+    "comparison.datasetsLabel": "\u8CC7\u6599\u96C6",
+    "comparison.definitionsLabel": "\u6307\u6A19\u5B9A\u7FA9",
+    "comparison.seedsInvalid": "\u8AD6\u6587 seeds \u5FC5\u9808\u662F\u9017\u865F\u5206\u9694\u7684\u6574\u6578",
+    "comparison.saved": "\u6BD4\u8F03\u8A18\u9304\u5DF2\u5132\u5B58\uFF1B\u5019\u9078\u4ECD\u9700\u4EBA\u5DE5\u6838\u9A57\uFF0C\u4E0D\u662F\u79D1\u5B78\u7D50\u8AD6",
+    "comparison.acceptReason": "\u4FDD\u7559\u70BA\u5F85\u6838\u9A57\u5019\u9078\uFF0C\u5F8C\u7E8C\u9700\u8981\u7368\u7ACB\u9A57\u8B49\u3002",
+    "comparison.rejectReason": "\u76EE\u524D\u8B49\u64DA\u4E0D\u8DB3\uFF0C\u62D2\u7D55\u8A72\u5019\u9078\u3002",
+    "comparison.acceptedToast": "\u5019\u9078\u5DF2\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7D1A\u70BA\u7814\u7A76\u7D50\u8AD6",
+    "comparison.rejectedToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304",
+    "comparison.title": "\u91CD\u73FE\u6548\u679C\u6BD4\u8F03",
+    "comparison.hint": "\u53EA\u6BD4\u8F03\u76EE\u524D\u5C08\u6848\u5DF2\u78BA\u8A8D Paper\u3001\u5E36\u5B9A\u4F4D\u548C\u96DC\u6E4A\u7684 Evidence\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8A18 Artifact \u7684\u771F\u5BE6\u91CD\u73FE Run\u3002\u7D50\u679C\u662F integration result\uFF1B\u6F5B\u5728\u6539\u5584\u3001\u53CD\u4F8B\u8207\u5275\u65B0\u8A0A\u865F\u90FD\u5FC5\u9808\u4EBA\u5DE5\u6838\u9A57\u3002",
+    "comparison.projectScope": "\u5C08\u6848\u7BC4\u570D",
+    "comparison.scopeCounts": "\u53EF\u6BD4\u8F03 Paper\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709 Artifact \u7684\u91CD\u73FE\uFF1A{runs} \xB7 \u5DF2\u5132\u5B58\u6BD4\u8F03\uFF1A{comparisons}",
+    "comparison.empty": "\u5EFA\u7ACB\u6BD4\u8F03\u524D\uFF0C\u9700\u8981\u5DF2\u78BA\u8A8D Paper\uFF0C\u4EE5\u53CA completed \u4E14\u5DF2\u767B\u8A18\u8F38\u51FA Artifact \u7684\u91CD\u73FE Run\u3002",
+    "comparison.createTitle": "\u5EFA\u7ACB\u7D50\u69CB\u5316\u6BD4\u8F03",
+    "comparison.createHint": "\u8AD6\u6587\u6307\u6A19\u5FC5\u9808\u7531\u4F7F\u7528\u8005\u5F9E\u6709\u5B9A\u4F4D\u7684 Evidence \u4E2D\u8F38\u5165\uFF1B\u7CFB\u7D71\u4E0D\u6703\u5F9E\u6A21\u578B\u6216\u6A19\u984C\u731C\u6E2C\u6307\u6A19\u3002",
+    "comparison.confirmedPaper": "\u78BA\u8A8D\u7684 Paper",
+    "comparison.reproductionRun": "\u91CD\u73FE Run",
+    "comparison.paperEvidence": "\u8AD6\u6587 Evidence",
+    "comparison.unnamedClaim": "\u672A\u547D\u540D claim",
+    "comparison.missingPdfHash": "\u7F3A\u5C11 PDF hash",
+    "comparison.noLocatedEvidence": "\u76EE\u524D Paper \u6C92\u6709\u5E36\u5B9A\u4F4D\u7684 Evidence\u3002",
+    "comparison.paperMetricsJson": "\u8AD6\u6587\u6307\u6A19 JSON",
+    "comparison.dataVersion": "\u8AD6\u6587\u8CC7\u6599\u7248\u672C",
+    "comparison.dataVersionPlaceholder": "\u6C92\u6709\u63ED\u9732\u5247\u7559\u7A7A\uFF0C\u6BD4\u8F03\u6703\u6A19\u8A18 partial",
+    "comparison.configFingerprint": "\u8AD6\u6587\u8A2D\u5B9A SHA-256",
+    "comparison.configPlaceholder": "\u6C92\u6709\u56FA\u5B9A\u8A2D\u5B9A\u5247\u7559\u7A7A",
+    "comparison.datasetsJson": "\u8AD6\u6587 datasets JSON",
+    "comparison.seedsLabel": "\u8AD6\u6587 seeds",
+    "comparison.seedsPlaceholder": "13,37,73\uFF1B\u6C92\u6709\u63ED\u9732\u5247\u7559\u7A7A",
+    "comparison.definitionsJson": "\u6307\u6A19\u5B9A\u7FA9 JSON",
+    "comparison.save": "\u5132\u5B58\u6BD4\u8F03",
+    "comparison.savedTitle": "\u5DF2\u5132\u5B58\u6BD4\u8F03\u8207\u5F85\u6838\u9A57\u5019\u9078",
+    "comparison.savedHint": "\u6BCF\u500B\u6578\u503C\u90FD\u986F\u793A\u8AD6\u6587 Evidence\u3001\u91CD\u73FE commit\u3001seed\u3001\u8A2D\u5B9A\u8207 Artifact \u7D81\u5B9A\uFF1B\u63A5\u53D7\u5019\u9078\u53EA\u8868\u793A\u4FDD\u7559\u5BE9\u95B1\u4EFB\u52D9\u3002",
+    "comparison.savedEmpty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u6548\u679C\u6BD4\u8F03\u8A18\u9304\u3002",
+    "comparison.inputHash": "\u8F38\u5165 hash",
+    "comparison.artifactsCount": "Artifacts {count} \u500B",
+    "comparison.metric": "\u6307\u6A19",
+    "comparison.paper": "\u8AD6\u6587",
+    "comparison.reproductionMean": "\u91CD\u73FE mean",
+    "comparison.status": "\u72C0\u614B",
+    "comparison.evidenceStatus": "Evidence \u72C0\u614B\uFF1A",
+    "comparison.candidateId": "\u5019\u9078 ID",
+    "comparison.keep": "\u4FDD\u7559",
+    "comparison.noCandidates": "\u6C92\u6709\u81EA\u52D5\u7522\u751F\u7684\u5DEE\u7570\u8A0A\u865F\u3002",
+    "research.claimReviewed": "\u5DF2\u5BE9\u95B1 Claim",
+    "research.pageQuote": "\u5B9A\u4F4D quote",
+    "research.metadataOnly": "\u50C5 metadata",
+    "research.eligibleRequired": "\u76EE\u524D\u6C92\u6709\u540C\u6642\u6EFF\u8DB3\u78BA\u8A8D Paper\u3001\u5B9A\u4F4D Evidence \u8207 accepted ClaimReview \u7684\u6750\u6599\u3002",
+    "research.matrixCreated": "\u7814\u7A76\u73FE\u6CC1\u77E9\u9663\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8A18\u9304\u7684\u6B04\u4F4D\u4FDD\u6301 unresolved\u3002",
+    "research.candidateRecorded": "\u5019\u9078\u5DF2\u8A18\u9304\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65B7\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7D50\u8AD6\u3002",
+    "research.acceptGapReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u4FDD\u7559\u70BA\u5F85\u6838\u9A57\u5019\u9078\u3002",
+    "research.rejectGapReason": "\u4F7F\u7528\u8005\u62D2\u7D55\u8A72\u5F85\u6838\u9A57\u5019\u9078\u3002",
+    "research.acceptedGapToast": "\u5019\u9078\u5DF2\u78BA\u8A8D\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7D1A\u70BA\u79D1\u5B78\u7D50\u8AD6\u3002",
+    "research.rejectedGapToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304\u3002",
+    "research.title": "\u7814\u7A76\u73FE\u6CC1\u77E9\u9663",
+    "research.hint": "\u77E9\u9663\u53EA\u63A5\u53D7\u76EE\u524D\u5C08\u6848\u5DF2\u78BA\u8A8D\u7684 Paper\u3001\u5E36\u9801\u78BC/\u7AE0\u7BC0\u5B9A\u4F4D\u7684 Evidence \u8207\u5DF2\u63A5\u53D7 ClaimReview\uFF1B\u672A\u77E5\u6B04\u4F4D\u4E0D\u6703\u7531\u6A21\u578B\u6216 metadata \u731C\u6E2C\u3002",
+    "research.refreshing": "\u6B63\u5728\u91CD\u65B0\u6574\u7406\u5C08\u6848\u7BC4\u570D\u7814\u7A76\u73FE\u6CC1\u2026",
+    "research.matrixReady": "\u77E9\u9663\u5DF2\u5EFA\u7ACB",
+    "research.createMatrix": "\u5EFA\u7ACB\u77E9\u9663",
+    "research.scopeCounts": "\u53EF\u5EFA\u7ACB\u5217\uFF1A{eligible} \xB7 \u76EE\u524D\u77E9\u9663\u5217\uFF1A{rows} \xB7 \u76EE\u524D Idea v{idea}",
+    "research.filtersTitle": "\u7BE9\u9078\u77E9\u9663",
+    "research.filtersHint": "\u7BE9\u9078\u53EA\u5F71\u97FF\u76EE\u524D\u5C08\u6848\u56DE\u50B3\u7684\u8CC7\u6599\uFF0C\u4E0D\u6703\u6539\u8B8A\u8B49\u64DA\u6216\u5019\u9078\u72C0\u614B\u3002",
+    "research.theme": "\u4E3B\u984C",
+    "research.method": "\u65B9\u6CD5",
+    "research.year": "\u5E74\u4EFD",
+    "research.filtersApplied": "\u5DF2\u5957\u7528\u77E9\u9663\u7BE9\u9078\u3002",
+    "research.applyFilters": "\u5957\u7528\u7BE9\u9078",
+    "research.loading": "\u6B63\u5728\u8B80\u53D6\u76EE\u524D\u5C08\u6848\u7684\u7814\u7A76\u73FE\u6CC1\u8CC7\u6599\u2026",
+    "research.requestFailed": "\u7814\u7A76\u73FE\u6CC1\u8ACB\u6C42\u5931\u6557\uFF1A{error}",
+    "research.noMatrix": "\u5C1A\u672A\u5EFA\u7ACB\u7814\u7A76\u73FE\u6CC1\u77E9\u9663\u3002",
+    "research.createFromReviewed": "\u5F9E\u5DF2\u5BE9\u95B1\u6750\u6599\u5EFA\u7ACB",
+    "research.matrixVersion": "\u77E9\u9663 v{version}",
+    "research.matrixMeta": "\u5EFA\u7ACB\u8005\uFF1A{creator} \xB7 {time}",
+    "research.doiUnrecorded": "DOI \u672A\u8A18\u9304",
+    "research.datasets": "\u8CC7\u6599\u96C6",
+    "research.metrics": "\u6307\u6A19",
+    "research.code": "\u7A0B\u5F0F\u78BC",
+    "research.evidence": "\u8B49\u64DA",
+    "research.source": "\u4F86\u6E90",
+    "research.noFilteredRows": "\u7BE9\u9078\u5F8C\u6C92\u6709\u77E9\u9663\u5217\u3002",
+    "research.gapTitle": "\u7814\u7A76\u7A7A\u767D\u8207\u76F8\u4F3C\u4E3B\u984C\u5019\u9078",
+    "research.gapHint": "\u9019\u88E1\u7684\u8A18\u9304\u53EA\u662F\u5F85\u6838\u9A57\u5019\u9078\uFF1B\u63A5\u53D7\u5019\u9078\u8868\u793A\u4FDD\u7559\u8FFD\u8E64\uFF0C\u4E0D\u8868\u793A\u5DF2\u7D93\u8B49\u660E\u5B58\u5728\u7814\u7A76\u7A7A\u767D\u6216\u91CD\u8907\u3002",
+    "research.candidateType": "\u5019\u9078\u985E\u578B",
+    "research.gap": "\u7814\u7A76\u7A7A\u767D",
+    "research.cluster": "\u4E3B\u984C\u53E2\u96C6",
+    "research.duplicateRisk": "\u91CD\u8907\u98A8\u96AA",
+    "research.candidateStatement": "\u5019\u9078\u9673\u8FF0",
+    "research.candidatePlaceholder": "\u5BEB\u4E0B\u9700\u8981\u6838\u9A57\u7684\u5019\u9078\uFF0C\u4E0D\u8981\u5BEB\u6210\u5DF2\u7D93\u8B49\u660E\u7684\u7D50\u8AD6\u3002",
+    "research.recordCandidate": "\u8A18\u9304\u5F85\u6838\u9A57\u5019\u9078",
+    "research.rowsCount": "{count} \u500B\u77E9\u9663\u5217",
+    "research.keepCandidate": "\u4FDD\u7559\u5019\u9078",
+    "research.noCandidates": "\u5C1A\u672A\u8A18\u9304\u5F85\u6838\u9A57\u5019\u9078\u3002",
+    "graph.kind.candidate": "\u5019\u9078",
+    "graph.kind.paper": "Paper",
+    "graph.kind.evidence": "Evidence",
+    "graph.kind.claimReview": "ClaimReview",
+    "graph.status.candidate": "\u5F85\u78BA\u8A8D",
+    "graph.status.confirmed": "\u5DF2\u78BA\u8A8D",
+    "graph.status.unconfirmed": "\u672A\u78BA\u8A8D",
+    "graph.status.located": "\u5DF2\u6709\u5B9A\u4F4D",
+    "graph.status.unlocated": "\u7121\u5B9A\u4F4D",
+    "graph.status.pending": "\u5F85\u5BE9\u95B1",
+    "graph.status.accepted": "\u5DF2\u63A5\u53D7",
+    "graph.status.rejected": "\u5DF2\u62D2\u7D55",
+    "graph.evidence.metadataOnly": "\u50C5 metadata",
+    "graph.evidence.pageQuote": "\u9801\u78BC/\u7AE0\u7BC0 quote",
+    "graph.evidence.claimReviewed": "ClaimReview \u5DF2\u63A5\u53D7",
+    "graph.edgeCount": "{count} \u689D\u908A",
+    "graph.title": "\u5C08\u6848\u7BC4\u570D\u5F15\u7528\u5716",
+    "graph.hint": "\u5716\u53EA\u6295\u5F71\u76EE\u524D project_id \u4E2D\u5DF2\u5132\u5B58\u7684\u5F15\u7528\u3001Paper-Evidence \u8207 ClaimReview-Evidence \u95DC\u4FC2\uFF1Bprovider \u5F15\u7528\u908A\u4ECD\u662F metadata \u95DC\u4FC2\uFF0C\u4E0D\u662F\u7814\u7A76\u7D50\u8AD6\u3002",
+    "graph.requestFailed": "\u5F15\u7528\u5716\u8ACB\u6C42\u5931\u6557\uFF1A{error}",
+    "graph.loading": "\u6B63\u5728\u8B80\u53D6\u5C08\u6848\u7BC4\u570D\u5F15\u7528\u5716\u2026",
+    "graph.permissionScope": "\u6B0A\u9650\u7BC4\u570D",
+    "graph.state": "\u5716\u72C0\u614B",
+    "graph.partial": "\u90E8\u5206\u8CC7\u6599\u53EF\u7528\uFF1B\u672A\u56DE\u50B3\u7684\u4F86\u6E90\u95DC\u4FC2\u4E0D\u6703\u88AB\u731C\u6E2C\u88DC\u9F4A\u3002",
+    "graph.empty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u5DF2\u5132\u5B58\u7684\u5716\u7BC0\u9EDE\u6216\u95DC\u4FC2\u3002",
+    "graph.onlySaved": "\u53EA\u986F\u793A\u8CC7\u6599\u5EAB\u4E2D\u5DF2\u5132\u5B58\u7684\u95DC\u4FC2\u3002",
+    "graph.scale": "\u5716\u898F\u6A21",
+    "graph.scaleText": "{nodes} \u500B\u7BC0\u9EDE \xB7 {edges} \u689D\u908A\uFF1B\u6309\u5019\u9078\u3001Paper\u3001Evidence\u3001ClaimReview \u5206\u5C64\u3002",
+    "graph.alert": "\u76EE\u524D\u56DE\u61C9\u70BA partial\u3002\u5716\u4E2D\u53EA\u5448\u73FE\u6210\u529F\u56DE\u50B3\u4E14\u5DF2\u901A\u904E\u5C08\u6848\u7BC4\u570D\u6821\u9A57\u7684\u7BC0\u9EDE\u8207\u908A\u3002",
+    "graph.legendAria": "\u5716\u4F8B",
+    "graph.legendNote": "\u7BAD\u982D\u8868\u793A\u8CC7\u6599\u5EAB\u4E2D\u660E\u78BA\u5132\u5B58\u7684\u95DC\u4FC2",
+    "graph.aria": "\u5C08\u6848 {projectId} \u7684\u5C08\u6848\u7BC4\u570D\u5F15\u7528\u5716",
+    "graph.titleShort": "\u5C08\u6848\u7BC4\u570D\u5F15\u7528\u5716",
+    "graph.edgesAria": "\u95DC\u4FC2\u908A",
+    "graph.nodesAria": "\u5716\u7BC0\u9EDE",
+    "graph.nodeAria": "{kind}\uFF1A{label}\uFF1B\u72C0\u614B\uFF1A{status}\uFF1B\u8B49\u64DA\uFF1A{evidence}",
+    "graph.selectedNode": "\u5DF2\u9078\u7BC0\u9EDE",
+    "graph.type": "\u985E\u578B",
+    "graph.stableId": "\u7A69\u5B9A ID",
+    "graph.source": "\u4F86\u6E90",
+    "graph.evidenceStatus": "\u8B49\u64DA\u72C0\u614B",
+    "graph.permission": "\u6B0A\u9650",
+    "graph.locator": "\u5B9A\u4F4D",
+    "graph.openSource": "\u958B\u555F\u4F86\u6E90",
+    "graph.selectHint": "\u9078\u64C7\u4E00\u500B\u7BC0\u9EDE\u67E5\u770B\u4F86\u6E90\u3001\u7A69\u5B9A ID\u3001\u5B9A\u4F4D\u3001\u8B49\u64DA\u8207\u6B0A\u9650\u72C0\u614B\u3002",
+    "progress.relatedRun": "\u76F8\u95DC\u5DE5\u4F5C\u905E\u8FF4 {id}",
+    "progress.candidateCount": "{count} \u500B\u5019\u9078 \xB7 {edges} \u689D\u908A",
+    "progress.runPending": "\u672A\u5165\u968A",
+    "progress.title": "\u5C08\u6848\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
+    "progress.hint": "\u9032\u5EA6\u4F86\u81EA\u5DF2\u767C\u751F\u7684\u57F7\u884C\u3001Proposal \u8207\u5BE9\u6279\u4E8B\u4EF6\uFF0C\u4E0D\u7531\u6A21\u578B\u81EA\u884C\u4F30\u8A08\u3002",
+    "progress.count": "{count} \u689D\u8A18\u9304",
+    "progress.empty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u57F7\u884C\u6216\u5F85\u5BE9\u6279\u52D5\u4F5C\u3002",
+    "method.title": "\u65B9\u6CD5\u8A2D\u8A08",
+    "method.hint": "\u65B9\u6CD5\u8A2D\u8A08\u53EA\u6D88\u8CBB\u5DF2\u78BA\u8A8D\u7684\u5C08\u6848\u898F\u683C\u8207\u5DF2\u8A18\u9304\u6587\u737B\uFF1B\u6A21\u578B\u8F38\u51FA\u4ECD\u662F\u5019\u9078\uFF0C\u5BEB\u5165\u9700\u8981 Proposal\u3002",
+    "method.question": "\u7814\u7A76\u554F\u984C",
+    "method.hypotheses": "\u5047\u8A2D",
+    "method.contributions": "\u9810\u671F\u8CA2\u737B",
+    "method.relatedEvidence": "\u76F8\u95DC\u5DE5\u4F5C\u4F9D\u64DA",
+    "method.verifiedCount": "{verified} \u689D\u5DF2\u9A57\u8B49\u8A18\u9304\uFF0C{total} \u689D\u5C08\u6848 Paper",
+    "code.title": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340",
+    "code.hint": "\u9019\u88E1\u5C6C\u65BC\u76EE\u524D\u5C08\u6848\u81EA\u5DF1\u7684\u7A0B\u5F0F\u78BC\uFF1B\u91CD\u73FE\u5009\u5EAB\u8207\u5C08\u6848\u7A0B\u5F0F\u78BC\u56B4\u683C\u5206\u958B\uFF0C\u6240\u6709\u4FEE\u6539\u3001\u4F9D\u8CF4\u8207 Git \u64CD\u4F5C\u90FD\u9700\u8981 Proposal\u3002",
+    "code.error": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340\u8B80\u53D6\u5931\u6557\uFF1A{error}",
+    "code.workspace": "\u5C08\u6848\u5DE5\u4F5C\u5340",
+    "code.gitBaseline": "Git \u57FA\u7DDA",
+    "code.noCommit": "\u5C1A\u7121 commit",
+    "code.pendingTitle": "\u5F85\u5BE9\u6279\u7A0B\u5F0F\u78BC/\u8A2D\u5B9A/\u91CD\u73FE\u52D5\u4F5C",
+    "code.pendingCount": "{count} \u500B",
+    "code.fileTree": "\u53D7\u9650\u6A94\u6848\u6A39",
+    "code.fileTreeHint": "\u6700\u591A\u986F\u793A {max} \u500B\u689D\u76EE\uFF1B\u4E0D\u8B80\u53D6 .git\u3001.venv\u3001node_modules\u3002",
+    "code.emptyDir": "\u7A0B\u5F0F\u78BC\u76EE\u9304\u70BA\u7A7A\uFF0C\u5C1A\u672A\u6709\u5C08\u6848\u7A0B\u5F0F\u78BC\u6A94\u6848\u3002",
+    "code.currentDiff": "\u76EE\u524D diff",
+    "code.diffTruncated": "diff \u5DF2\u622A\u65B7\uFF0C\u5B8C\u6574\u8B8A\u66F4\u4ECD\u9700\u900F\u904E Proposal \u67E5\u770B\u3002",
+    "code.diffReadonly": "\u552F\u8B80\u5C55\u793A\u76EE\u524D\u7A0B\u5F0F\u78BC\u76EE\u9304\u7684 Git diff\u3002",
+    "code.loading": "\u6B63\u5728\u8B80\u53D6\u53D7\u9650 Git \u5DE5\u4F5C\u5340\u2026",
+    "queue.title": "\u57F7\u884C\u4F47\u5217",
+    "queue.hint": "\u57F7\u884C\u72C0\u614B\u8207\u6578\u503C\u5747\u4F86\u81EA\u771F\u5BE6 Experiment Run\uFF1B\u672A\u57F7\u884C\u7684\u8A08\u756B\u4E0D\u6703\u986F\u793A\u70BA\u7D50\u679C\u3002",
+    "queue.count": "{count} \u689D",
+    "queue.runUnassigned": "\u672A\u5206\u914D",
+    "queue.empty": "\u76EE\u524D\u6C92\u6709\u6392\u968A\u6216\u57F7\u884C\u4E2D\u7684\u5BE6\u9A57\u3002",
+    "metrics.title": "\u6307\u6A19\u7D71\u8A08",
+    "metrics.empty": "\u9084\u6C92\u6709\u5E36\u6578\u503C\u6307\u6A19\u7684\u5BE6\u9A57\u7D50\u679C\u3002",
+    "lineage.title": "\u7D50\u679C\u8B5C\u7CFB",
+    "lineage.hint": "\u6BCF\u500B Artifact \u5FC5\u9808\u80FD\u56DE\u93C8 Experiment\u3001Run\u3001Idea \u7248\u672C\u3001\u7A0B\u5F0F\u78BC commit\u3001\u8CC7\u6599\u7248\u672C\u8207\u8A2D\u5B9A\u3002",
+    "lineage.missingMeta": "\u7F3A\u5C11\u8B5C\u7CFB\u5143\u8CC7\u6599",
+    "lineage.empty": "\u76EE\u524D\u6C92\u6709\u53EF\u8FFD\u6EAF\u7684 Artifact\u3002",
+    "workflow.empty": "\u76EE\u524D\u5B50\u9801\u9762\u6C92\u6709\u53EF\u986F\u793A\u7684\u8CC7\u6599\u3002",
+    "literature.recursiveDefaultReason": "\u64F4\u5145\u76EE\u524D\u5C08\u6848\u7684\u76F8\u95DC\u5DE5\u4F5C\u5F15\u7528\u7DB2\u8DEF",
+    "literature.approveReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u8A72 metadata candidate \u53EF\u9032\u5165\u5C08\u6848 Paper",
+    "literature.rejectReason": "\u4F7F\u7528\u8005\u62D2\u7D55\u8A72 metadata candidate",
+    "literature.reopenReason": "\u4F7F\u7528\u8005\u8981\u6C42\u91CD\u65B0\u5BE9\u95B1\u8A72 candidate",
+    "literature.approvedToast": "\u5019\u9078\u5DF2\u8F49\u63DB\u70BA\u5C08\u6848 Paper",
+    "literature.rejectedToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304",
+    "literature.reopenedToast": "\u5019\u9078\u5DF2\u91CD\u65B0\u958B\u555F",
+    "literature.confirmPaper": "\u78BA\u8A8D Paper",
+    "literature.rejectCandidate": "\u62D2\u7D55\u5019\u9078",
+    "literature.reopen": "\u91CD\u65B0\u958B\u555F",
+    "literature.approveDescription": "\u78BA\u8A8D\u5F8C\u6703\u5EFA\u7ACB\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u5167\u7684 Paper\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8B49\u64DA\u3002",
+    "literature.rejectDescription": "\u5019\u9078\u4E0D\u6703\u88AB\u5BE6\u9AD4\u522A\u9664\uFF0C\u6C7A\u5B9A\u8207\u539F\u56E0\u6703\u4FDD\u7559\u5728\u5C08\u6848\u7A3D\u6838\u4E2D\u3002",
+    "literature.fieldSelected": "\u5DF2\u9078\u64C7 {field} \u7684 {provider} \u4F86\u6E90",
+    "literature.enrichReason": "\u88DC\u5168\u76EE\u524D\u5019\u9078\u7F3A\u5931\u6B04\u4F4D\u4E26\u8A18\u9304\u591A\u6E90 provenance",
+    "literature.enrichProposal": "\u6B04\u4F4D\u88DC\u5168 Proposal {id} \u5F85\u5BE9\u6279",
+    "literature.seedRecorded": "\u7A2E\u5B50\u5DF2\u8A18\u9304\uFF1A{status}\uFF0C{candidates} \u500B\u5019\u9078\uFF1Bprovider \u5931\u6557 {failures}",
+    "literature.recursiveProposal": "\u905E\u8FF4\u6AA2\u7D22 Proposal {id} \u5DF2\u5EFA\u7ACB\uFF0C\u7B49\u5F85\u5BE9\u6279",
+    "literature.cancelRecursiveReason": "\u4F7F\u7528\u8005\u5728\u76F8\u95DC\u5DE5\u4F5C\u9801\u9762\u53D6\u6D88\u905E\u8FF4\u6AA2\u7D22",
+    "literature.cancelRequested": "\u905E\u8FF4\u6AA2\u7D22\u5DF2\u767C\u51FA\u53D6\u6D88\u8ACB\u6C42",
+    "literature.searchingSources": "\u6B63\u5728\u4E26\u884C\u6AA2\u7D22\u591A\u500B\u5B78\u8853\u4F86\u6E90\u8207\u8CC7\u6E90\u8A3B\u518A\u8868\u2026",
+    "literature.searchDone": "\u6AA2\u7D22\u5B8C\u6210\uFF1B{failures} \u500B\u4F86\u6E90\u66AB\u6642\u5931\u6557\uFF0C{candidates} \u689D\u5019\u9078\u5F85\u6838\u9A57",
+    "literature.ingestingEvidence": "\u6B63\u5728\u4E0B\u8F09\u958B\u653E PDF \u4E26\u64F7\u53D6\u9801\u78BC\u539F\u6587\u8B49\u64DA\u2026",
+    "literature.evidenceSaved": "\u5DF2\u5132\u5B58 {count} \u689D\u5168\u6587\u8B49\u64DA\uFF1B{failures} \u689D\u5931\u6557",
+    "literature.repoAdded": "\u7A0B\u5F0F\u78BC\u5009\u5EAB\u5019\u9078\u5DF2\u65B0\u589E\uFF0C\u8ACB\u57F7\u884C\u4EA4\u53C9\u9A57\u8B49",
+    "literature.noRepoLinks": "\u8AD6\u6587\u5DF2\u5132\u5B58\u7684\u4F86\u6E90\u4E2D\u6C92\u6709\u660E\u78BA\u7684 GitHub/GitLab \u9023\u7D50\uFF1B\u4E0D\u6703\u6839\u64DA\u6A19\u984C\u731C\u5009\u5EAB",
+    "literature.repoVerified": "\u5009\u5EAB\u96D9\u6E90\u9A57\u8B49\u5B8C\u6210",
+    "literature.downloadProposal": "\u4E0B\u8F09 Proposal {id} \u5DF2\u5EFA\u7ACB",
+    "literature.claimSubmitted": "Claim \u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8B49\u64DA\u8907\u6838",
+    "literature.reviewRecorded": "\u4EBA\u5DE5\u8907\u6838\u5DF2\u8A18\u9304",
+    "literature.reviewRejected": "Claim \u5DF2\u6A19\u8A18\u70BA\u672A\u901A\u904E\u8907\u6838",
+    "literature.downloadedTo": "\u5DF2\u4E0B\u8F09\u5230 {path}",
+    "literature.projectCodeDir": "\u5C08\u6848\u7A0B\u5F0F\u78BC\u76EE\u9304",
+    "literature.proposeDownload": "\u63D0\u51FA\u4E0B\u8F09",
+    "literature.crossVerify": "\u4EA4\u53C9\u9A57\u8B49",
+    "literature.title": "\u53EF\u9A57\u8B49\u6587\u737B\u8A18\u9304",
+    "literature.updateSearch": "\u66F4\u65B0\u6AA2\u7D22",
+    "literature.extractEvidence": "\u64F7\u53D6\u5168\u6587\u8B49\u64DA",
+    "literature.seedTitle": "\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u8207\u5F15\u7528\u7DB2\u8DEF",
+    "literature.seedHint": "\u7A2E\u5B50\u53EA\u6703\u9032\u5165\u76EE\u524D\u5C08\u6848\u7684\u5019\u9078\u6C60\uFF1B\u905E\u8FF4\u64F4\u5145\u5FC5\u9808\u5148\u751F\u6210 Proposal \u4E26\u7372\u5F97\u6838\u51C6\u3002metadata candidate\u3001\u5168\u6587\u8B49\u64DA\u8207\u5DF2\u78BA\u8A8D Paper \u59CB\u7D42\u5206\u958B\u3002",
+    "literature.seedType": "\u7A2E\u5B50\u985E\u578B",
+    "literature.titleOption": "\u6A19\u984C",
+    "literature.urlOption": "\u4F86\u6E90 URL",
+    "literature.pdfOption": "\u53D7\u63A7 PDF Artifact",
+    "literature.existingPaperOption": "\u76EE\u524D\u5C08\u6848\u5DF2\u6709 Paper",
+    "literature.selectPdf": "\u9078\u64C7\u53D7\u63A7 PDF",
+    "literature.selectPaper": "\u9078\u64C7\u76EE\u524D\u5C08\u6848 Paper",
+    "literature.paperTitle": "\u8AD6\u6587\u6A19\u984C",
+    "literature.httpsUrl": "HTTPS \u4F86\u6E90 URL",
+    "literature.bibtexEntry": "BibTeX \u689D\u76EE",
+    "literature.enterTitle": "\u8F38\u5165\u8AD6\u6587\u6A19\u984C",
+    "literature.optionalTitle": "\u53EF\u9078\u6A19\u984C",
+    "literature.optionalTitlePlaceholder": "\u7528\u65BC\u88DC\u5145\u5143\u8CC7\u6599\u89E3\u6790",
+    "literature.parsing": "\u6B63\u5728\u89E3\u6790\u2026",
+    "literature.addSeed": "\u65B0\u589E\u4E26\u89E3\u6790\u7A2E\u5B50",
+    "literature.timeUnknown": "\u6642\u9593\u672A\u77E5",
+    "literature.depth": "\u5C64\u6578",
+    "literature.width": "\u6BCF\u5C64\u5BEC\u5EA6",
+    "literature.maxTotal": "\u5019\u9078\u4E0A\u9650",
+    "literature.proposalReason": "Proposal \u539F\u56E0",
+    "literature.recursiveProviders": "\u905E\u8FF4\u4F86\u6E90",
+    "literature.creating": "\u6B63\u5728\u5EFA\u7ACB\u2026",
+    "literature.createRecursiveProposal": "\u70BA {count} \u500B\u7A2E\u5B50\u5EFA\u7ACB\u905E\u8FF4 Proposal",
+    "literature.noSeeds": "\u9084\u6C92\u6709\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u3002\u5148\u65B0\u589E DOI\u3001\u6A19\u984C\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709 Paper\u3002",
+    "literature.runsTitle": "\u5F15\u7528\u7DB2\u8DEF\u57F7\u884C",
+    "literature.runsHint": "\u57F7\u884C\u72C0\u614B\u8207 provider attempt \u4F86\u81EA\u771F\u5BE6\u8ACB\u6C42\uFF1B\u5931\u6557\u3001\u53D6\u6D88\u8207\u4E0A\u9650\u622A\u65B7\u4E0D\u6703\u88AB\u6A19\u8A18\u70BA\u6210\u529F\u3002",
+    "literature.runCandidates": "{count} \u500B\u5019\u9078 \xB7 {edges} \u689D\u5F15\u7528\u908A",
+    "literature.providerFailures": "Provider \u5931\u6557\u8207\u90E8\u5206\u5931\u6557",
+    "literature.noFailureDetail": "\u672A\u63D0\u4F9B\u5931\u6557\u8A73\u60C5",
+    "literature.edgeTitle": "\u5F15\u7528\u5716\u908A\uFF08\u76EE\u524D\u5C08\u6848\u7BC4\u570D\uFF09",
+    "literature.noRankingSignal": "\u7121\u6392\u5E8F\u8A0A\u865F",
+    "literature.candidatesTitle": "\u5F85\u78BA\u8A8D metadata candidate",
+    "literature.candidatesHint": "\u9019\u4E9B\u8A18\u9304\u4F86\u81EA provider \u5143\u8CC7\u6599\u8207\u5F15\u7528\u7DB2\u8DEF\uFF0C\u5C1A\u672A\u81EA\u52D5\u5347\u7D1A\u70BA\u5DF2\u78BA\u8A8D Paper\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9801\u78BC quote\u3002",
+    "literature.yearUnknown": "\u5E74\u4EFD\u672A\u77E5",
+    "literature.providerEvidenceCount": "{count} \u500B provider \u8B49\u64DA",
+    "literature.fieldProvenanceCount": "\u6B04\u4F4D\u4F86\u6E90 {count} \u689D",
+    "literature.conflicts": "\u885D\u7A81\uFF1A{fields}",
+    "literature.noConflicts": "\u66AB\u7121\u6B04\u4F4D\u885D\u7A81",
+    "literature.viewFieldProvenance": "\u6AA2\u8996\u6B04\u4F4D\u4F86\u6E90",
+    "literature.enrichFields": "\u88DC\u5168\u6B04\u4F4D",
+    "literature.provenanceDescription": "\u9078\u64C7\u4F86\u6E90\u53EA\u6703\u66F4\u65B0\u76EE\u524D\u5C08\u6848\u5019\u9078\u7684\u6B04\u4F4D\u5FEB\u7167\uFF0C\u4E26\u7559\u4E0B\u7A3D\u6838\u8A18\u9304\uFF1B\u5B83\u4E0D\u6703\u628A metadata candidate \u81EA\u52D5\u8B8A\u6210\u5168\u6587\u8B49\u64DA\u3002",
+    "literature.field": "\u6B04\u4F4D",
+    "literature.sourceUnrecorded": "\u4F86\u6E90\u672A\u8A18\u9304",
+    "literature.selected": " \xB7 \u5DF2\u9078",
+    "literature.selectSource": "\u9078\u64C7\u6B64\u4F86\u6E90",
+    "literature.metadataVerified": "\u5143\u8CC7\u6599\u5DF2\u9A57\u8B49",
+    "literature.pendingVerification": "\u5F85\u9A57\u8B49",
+    "literature.fulltextCount": "\u9801\u78BC\u539F\u6587\u8B49\u64DA {count}",
+    "literature.codeCandidateCount": "\u7A0B\u5F0F\u78BC\u5019\u9078 {count}",
+    "literature.openPdf": "\u958B\u555F\u4F86\u6E90 PDF",
+    "literature.loadingRepos": "\u8B80\u53D6\u4E2D\u2026",
+    "literature.findRepoLinks": "\u67E5\u8A62\u8AD6\u6587\u4E2D\u7684\u7A0B\u5F0F\u78BC\u9023\u7D50",
+    "literature.repoPlaceholder": "GitHub \u6216 GitLab HTTPS \u4F4D\u5740",
+    "literature.add": "\u65B0\u589E",
+    "literature.addRepository": "\u65B0\u589E\u7A0B\u5F0F\u78BC\u5009\u5EAB",
+    "literature.discoveryHint": "\u4EE5\u4E0B\u9023\u7D50\u4F86\u81EA\u8A72 Paper \u5DF2\u5132\u5B58\u7684 metadata/\u4F86\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9078\uFF0C\u4ECD\u9700\u96D9\u6E90\u9A57\u8B49\uFF1A",
+    "literature.addCandidate": "\u65B0\u589E\u5019\u9078",
+    "literature.noPapers": "\u5C1A\u7121\u6587\u737B\u8A18\u9304\u3002",
+    "literature.materialsTitle": "\u5C08\u6848\u6750\u6599\u5EAB",
+    "literature.materialsHint": "\u900F\u904E\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u7684 Supermemory \u8A9E\u610F\u6AA2\u7D22\uFF1B\u7D50\u679C\u4FDD\u7559\u4F86\u6E90\u8207\u5B9A\u4F4D\uFF0C\u53EA\u662F\u672A\u6838\u9A57\u4E0A\u4E0B\u6587\u5019\u9078\uFF0C\u4E0D\u662F\u8AD6\u6587\u8B49\u64DA\u3002",
+    "literature.searchMaterials": "\u6AA2\u7D22\u6750\u6599",
+    "literature.materialPlaceholder": "\u6AA2\u7D22\u5DF2\u7D22\u5F15\u6750\u6599\u7684\u8A9E\u610F\u5167\u5BB9",
+    "literature.searchingMaterials": "\u6B63\u5728\u6AA2\u7D22\u6750\u6599\u2026",
+    "literature.materialTotal": "{count} \u500B\u5019\u9078 \xB7 Supermemory \u5C08\u6848\u7BC4\u570D hybrid \u6AA2\u7D22 \xB7 \u4E0D\u5347\u7D1A\u70BA\u5168\u6587\u8B49\u64DA",
+    "literature.similarity": "\u76F8\u4F3C\u5EA6 {value}",
+    "literature.noSnippet": "\u7121\u53EF\u5C55\u793A\u6458\u8981",
+    "literature.semanticCandidate": "\u8A9E\u610F\u5019\u9078 \xB7 \u672A\u6838\u9A57",
+    "literature.loadMore": "\u8F09\u5165\u66F4\u591A",
+    "literature.materialsEmpty": "\u8F38\u5165\u95DC\u9375\u8A5E\u6AA2\u7D22\u76EE\u524D\u5C08\u6848\u7684\u6750\u6599\u3002",
+    "literature.claimTitle": "Claim \u5230\u8B49\u64DA\u4EBA\u5DE5\u8907\u6838",
+    "literature.claimHint": "\u53EA\u80FD\u95DC\u806F\u76EE\u524D\u5C08\u6848\u7684\u9801\u78BC quote\uFF1B\u63A5\u53D7\u8907\u6838\u4E0D\u7B49\u65BC\u8B49\u660E\u79D1\u5B78\u7D50\u8AD6\u3002",
+    "literature.claimToReview": "\u5F85\u8907\u6838 Claim",
+    "literature.claimPlaceholder": "\u5BEB\u51FA\u9700\u8981\u4EBA\u5DE5\u6838\u5C0D\u7684\u5177\u9AD4\u7814\u7A76\u9673\u8FF0",
+    "literature.noLocator": "\u672A\u63D0\u4F9B\u9801\u78BC/\u7AE0\u7BC0",
+    "literature.noQuote": "\u7121 quote",
+    "literature.submitReview": "\u63D0\u4EA4\u4EBA\u5DE5\u8907\u6838",
+    "literature.evidenceFirst": "\u5148\u651D\u53D6\u5E36\u9801\u78BC\u5B9A\u4F4D\u7684\u5168\u6587\u8B49\u64DA\uFF0C\u518D\u5EFA\u7ACB Claim \u8907\u6838\u3002",
+    "literature.quoteCount": "{count} \u689D quote",
+    "literature.acceptReview": "\u63A5\u53D7\u8907\u6838",
+    "literature.rejectReview": "\u62D2\u7D55\u8907\u6838",
+    "literature.externalCandidates": "\u5916\u90E8\u8CC7\u6E90\u5019\u9078",
+    "literature.externalHint": "\u50C5\u4F9B\u767C\u73FE\uFF0C\u5C1A\u672A\u6838\u9A57\u4F86\u6E90\u3001\u8A31\u53EF\u3001\u6240\u6709\u6B0A\u6216\u5168\u6587\u8B49\u64DA\u3002",
+    "literature.count": "{count} \u689D",
+    "literature.candidateResource": "\u5019\u9078\u8CC7\u6E90",
+    "literature.viewTerms": "\u6AA2\u8996\u689D\u6B3E",
+    "literature.toVerify": "\u5F85\u6838\u9A57",
+    "literature.repositoriesTitle": "\u7A0B\u5F0F\u78BC\u5009\u5EAB\u5019\u9078",
+    "literature.repositoriesHint": "\u53EA\u6709\u8AD6\u6587\u8A18\u9304\u8207\u5009\u5EAB\u5F15\u7528\u5F62\u6210\u96D9\u6E90\u5339\u914D\u3001\u6388\u6B0A\u53EF\u8B58\u5225\u4E14 commit \u5DF2\u56FA\u5B9A\u5F8C\uFF0C\u624D\u53EF\u63D0\u51FA\u4E0B\u8F09\u3002",
+    "literature.unknownLicense": "\u672A\u77E5\u6388\u6B0A",
+    "literature.notPinned": "\u672A\u56FA\u5B9A",
+    "literature.notVerified": "\u672A\u9A57\u8B49",
+    "paper.draftProposal": "\u8AD6\u6587\u8349\u7A3F Proposal {id} \u5F85\u5BE9\u6279",
+    "paper.compileProposal": "LaTeX \u7DE8\u8B6F Proposal {id} \u5F85\u5BE9\u6279",
+    "paper.sectionAbstract": "\u6458\u8981",
+    "paper.sectionIntroduction": "\u5F15\u8A00\u8207\u7814\u7A76\u554F\u984C",
+    "paper.sectionRelatedWork": "\u76F8\u95DC\u5DE5\u4F5C",
+    "paper.sectionMethod": "\u65B9\u6CD5",
+    "paper.sectionSetup": "\u5BE6\u9A57\u8A2D\u5B9A",
+    "paper.sectionResults": "\u7D50\u679C\u8207\u8A0E\u8AD6",
+    "paper.sectionLimitations": "\u4FB7\u9650\u8207\u7D50\u8AD6",
+    "paper.outlineTitle": "\u5927\u7DB1\u8207\u7AE0\u7BC0",
+    "paper.outlineHint": "\u7AE0\u7BC0\u72C0\u614B\u4F86\u81EA\u76EE\u524D\u5C08\u6848\u7684\u7D50\u69CB\u5316\u4F86\u6E90\uFF1B\u672A\u78BA\u8A8D\u6B04\u4F4D\u4E0D\u6703\u88AB\u507D\u88DD\u6210\u5DF2\u5B8C\u6210\u7AE0\u7BC0\u3002",
+    "paper.outlineReady": "\u5DF2\u6709\u5C08\u6848\u4F86\u6E90\uFF0C\u53EF\u9032\u5165 Proposal \u5BE9\u95B1",
+    "paper.outlineMissing": "\u7F3A\u5C11\u4E0A\u6E38\u898F\u683C\u3001\u8B49\u64DA\u6216\u771F\u5BE6\u5BE6\u9A57\u4F86\u6E90",
+    "paper.candidate": "\u5019\u9078",
+    "paper.versionRules": "\u7248\u672C\u898F\u5247",
+    "paper.versionRulesText": "\u76EE\u524D\u9801\u9762\u53EA\u5C55\u793A\u7AE0\u7BC0\u6E96\u5099\u5EA6\u3002\u4EFB\u4F55\u5BEB\u5165 paper/main.tex \u7684\u4FEE\u6539\u90FD\u5FC5\u9808\u900F\u904E\u7368\u7ACB Proposal\uFF0C\u6838\u51C6\u5F8C\u5F62\u6210 Git diff\uFF1B\u5931\u6557\u6216\u88AB\u62D2\u7D55\u7684\u5BEB\u5165\u4E0D\u6703\u7522\u751F\u6210\u529F\u7AE0\u7BC0\u3002",
+    "paper.citationsTitle": "\u5F15\u7528\u8207 BibTeX",
+    "paper.citationsHint": "\u53EA\u986F\u793A\u5C08\u6848\u7BC4\u570D Paper\u3001\u9801\u78BC/\u7AE0\u7BC0 Evidence \u8207 ClaimReview \u72C0\u614B\uFF1Bmetadata-only \u4E0D\u80FD\u9032\u5165\u8AD6\u8B49\u3002",
+    "paper.sourcePending": "\u4F86\u6E90\u5F85\u8A18\u9304",
+    "paper.bibtexRecorded": "BibTeX \u5DF2\u8A18\u9304",
+    "paper.bibtexMissing": "BibTeX \u672A\u8A18\u9304",
+    "paper.citationReadiness": "\u5F15\u7528\u6E96\u5099\u5EA6\uFF1A{status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.open": "\u958B\u555F",
+    "paper.noPapers": "\u5C1A\u7121\u5C08\u6848\u7BC4\u570D Paper\uFF1B\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
+    "paper.openLiterature": "\u958B\u555F\u6587\u737B\u6AA2\u7D22",
+    "paper.evidenceGate": "\u8B49\u64DA\u9580\u7981",
+    "paper.claimReviewsTitle": "\u53EF\u7528\u65BC\u8AD6\u8B49\u7684 ClaimReview",
+    "paper.acceptedReviewCount": "{count} \u689D accepted review\uFF1B\u6BCF\u689D\u5FC5\u9808\u95DC\u806F\u76EE\u524D\u5C08\u6848\u7684 Evidence\u3002",
+    "paper.fulltextLocated": "\u5168\u6587\u5B9A\u4F4D",
+    "paper.locatedCount": "{located}/{total} \u689D Evidence \u6709\u9801\u78BC\u6216\u7AE0\u7BC0 locator\u3002",
+    "paper.figuresTitle": "\u5716\u8868\u9078\u64C7\u8207\u63D2\u5165",
+    "paper.figuresHint": "\u9019\u88E1\u53EA\u9078\u64C7 lineage \u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5BE6\u9A57 Artifact \u63D2\u5165\u8AD6\u6587\uFF1B\u5BE6\u9A57\u57F7\u884C\u3001\u4F47\u5217\u8207\u8996\u89BA\u5316\u7BA1\u7406\u5728\u300A\u5BE6\u9A57\u5BE6\u4F5C\u300B\u4E2D\u5B8C\u6210\u3002",
+    "paper.figureCount": "{count} \u500B\u53EF\u9078\u5716\u8868",
+    "paper.noFigures": "\u5C1A\u7121\u53EF\u63D2\u5165\u8AD6\u6587\u7684\u6709\u6548\u5716\u8868\u6216\u5BE6\u9A57\u7522\u7269\u3002\u7121\u95DC baseline\u3001\u7A7A\u9663\u5217\u8207\u5931\u6548 Artifact \u4E0D\u6703\u986F\u793A\u70BA\u7D50\u679C\u3002",
+    "paper.viewArtifacts": "\u67E5\u770B\u5BE6\u9A57\u7522\u7269",
+    "paper.dataTitle": "\u5BE6\u9A57\u8CC7\u6599\u9078\u64C7\u8207\u5F15\u7528",
+    "paper.dataHint": "\u53EA\u5217\u51FA lineage \u5B8C\u6574\u4E14\u6709\u6548\u7684 Artifact \u4F9B\u8AD6\u6587\u5F15\u7528\u6578\u5B57\u8207\u8868\u683C\uFF1B\u6578\u503C\u4F86\u81EA\u771F\u5BE6 Run\uFF0C\u8AD6\u6587\u9801\u4E0D\u57F7\u884C\u6216\u7BA1\u7406\u5BE6\u9A57\u3002",
+    "paper.dataCount": "{count} \u500B\u53EF\u9078\u8CC7\u6599",
+    "paper.typePending": "\u985E\u578B\u5F85\u8A18\u9304",
+    "paper.dataLineage": "Run {run} \xB7 Idea v{idea} \xB7 \u8CC7\u6599\u7248\u672C {data}",
+    "paper.noData": "\u76EE\u524D\u6C92\u6709\u53EF\u5F15\u7528\u7684\u5BE6\u9A57\u8CC7\u6599\u7522\u7269\u3002\u8ACB\u5148\u5B8C\u6210\u5BE6\u9A57\u5BE6\u4F5C\u4E26\u7522\u751F\u6709\u6548 Artifact\u3002",
+    "paper.compileTitle": "LaTeX \u7DE8\u8B6F",
+    "paper.compileHint": "Linux latexmk \u662F\u7368\u7ACB\u5BE9\u6279\u52D5\u4F5C\uFF1B\u7DE8\u8B6F\u5931\u6557\u53EA\u7559\u4E0B\u5931\u6557\u65E5\u8A8C\uFF0C\u4E0D\u7522\u751F\u6210\u529F PDF\u3002",
+    "paper.createCompileProposal": "\u5EFA\u7ACB\u7DE8\u8B6F Proposal",
+    "paper.sourceFile": "\u8AD6\u6587\u539F\u59CB\u6A94",
+    "paper.compileProposalExists": "\u5DF2\u6709\u7DE8\u8B6F Proposal",
+    "paper.notProposed": "\u5C1A\u672A\u63D0\u51FA",
+    "paper.compileRuns": "\u7DE8\u8B6F\u57F7\u884C",
+    "paper.compileRunCount": "{count} \u6B21 compile_latex \u57F7\u884C",
+    "paper.noCompileRuns": "\u5C1A\u7121\u771F\u5BE6\u7DE8\u8B6F\u57F7\u884C",
+    "paper.compileRunRecords": "\u7DE8\u8B6F\u57F7\u884C\u8A18\u9304",
+    "paper.compileApprovals": "\u7DE8\u8B6F\u5BE9\u6279",
+    "paper.noReason": "\u7121\u8AAA\u660E",
+    "paper.pdfTitle": "PDF \u5448\u73FE\u8207\u5BE9\u95B1",
+    "paper.pdfHint": "\u53EA\u5448\u73FE\u6210\u529F\u7DE8\u8B6F\u4E14\u4ECD\u6709\u6548\u7684 PDF Artifact\uFF1B\u7DE8\u8B6F\u5931\u6557\u4E0D\u6703\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u986F\u793A\u70BA\u5DF2\u5B8C\u6210\u3002",
+    "paper.pdfCount": "{count} \u500B PDF",
+    "paper.openPdf": "\u958B\u555F PDF",
+    "paper.noPdf": "\u9084\u6C92\u6709\u6210\u529F\u7DE8\u8B6F\u7684 PDF\u3002\u8ACB\u5148\u5728 LaTeX \u7DE8\u8B6F\u9801\u63D0\u51FA Proposal \u4E26\u5B8C\u6210\u771F\u5BE6\u7DE8\u8B6F\u3002",
+    "paper.goCompile": "\u524D\u5F80 LaTeX \u7DE8\u8B6F",
+    "paper.projectTitle": "\u8AD6\u6587\u5C08\u6848",
+    "paper.projectHint": "\u8AD6\u6587\u8349\u7A3F\u53EA\u4F7F\u7528\u5C08\u6848\u7BC4\u570D\u5167\u5DF2\u8A18\u9304\u6750\u6599\u8207\u4EBA\u5DE5\u8907\u6838\u72C0\u614B\uFF1B\u4FEE\u6539\u8207\u7DE8\u8B6F\u90FD\u5FC5\u9808\u5148\u9032\u5165\u5BE9\u6279\u3002",
+    "paper.createDraftProposal": "\u7522\u751F\u8AD6\u6587\u8349\u7A3F\u63D0\u6848",
+    "paper.proposeCompile": "\u63D0\u51FA LaTeX \u7DE8\u8B6F",
+    "paper.literatureCount": "\u6587\u737B\u8A18\u9304",
+    "paper.evidenceCandidates": "\u539F\u6587\u8B49\u64DA\u5019\u9078",
+    "paper.acceptedClaims": "\u5DF2\u63A5\u53D7 Claim \u8907\u6838",
+    "paper.validArtifacts": "\u6709\u6548\u7522\u7269",
+    "paper.claimPageEvidence": "Claim \u8207\u9801\u78BC\u8B49\u64DA",
+    "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u8907\u6838\u7684 Claim \u624D\u80FD\u4F5C\u70BA\u8AD6\u6587\u8AD6\u8B49\u8F38\u5165\uFF1B\u5143\u8CC7\u6599\u8A18\u9304\u4E0D\u6703\u81EA\u52D5\u5347\u7D1A\u70BA\u5168\u6587\u8B49\u64DA\u3002",
+    "paper.proposalCompile": "Proposal \u8207\u7DE8\u8B6F",
+    "paper.proposalCompileText": "\u6838\u51C6\u5F8C\u624D\u6703\u4FEE\u6539\u5C08\u6848\u4E2D\u7684 paper/main.tex\uFF0C\u4E26\u7531 Linux latexmk \u76E3\u7763\u5668\u7522\u751F\u7DE8\u8B6F\u7522\u7269\u3002",
+    "paper.referenceRecords": "\u8AD6\u6587\u53C3\u8003\u8A18\u9304",
+    "paper.noReferences": "\u5C1A\u7121\u53EF\u5F15\u7528\u7684\u6587\u737B\u8A18\u9304\u3002\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
+    "comparison.reason": "\u4F7F\u7528\u8005\u8ACB\u6C42\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A commit \u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
+    "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
+    "literature.projectPaper": "\u5C08\u6848 Paper",
+    "research.themePlaceholder": "\u4F8B\u5982 efficient adaptation",
+    "research.methodPlaceholder": "\u4F8B\u5982 parameter-efficient tuning"
+  };
+  var en = {
+    "nav.overview": "Project Overview",
+    "nav.relatedWork": "Related Work",
+    "nav.implementation": "Experiment Implementation",
+    "nav.paper": "Academic Paper Writing",
+    "nav.workspaceArea": "Research workspace",
+    "nav.currentWorkspace": "Current workspace pages",
+    "group.overviewIdea": "Idea Discussion",
+    "group.overviewSpec": "Project Specification",
+    "group.overviewInnovation": "Innovation and Boundaries",
+    "group.overviewProgress": "Progress and Decisions",
+    "group.overviewReports": "Reports and Mentor Feedback",
+    "group.relatedSearch": "Seeds and Literature Search",
+    "group.relatedStatus": "Research Status and Citation Graph",
+    "group.implRelated": "Related Work Implementation",
+    "group.implMethod": "Our Method Implementation",
+    "group.paperWriting": "Writing and Compilation",
+    "tab.overview": "Idea Discussion",
+    "tab.overviewSpec": "Description and Research Question",
+    "tab.overviewInnovation": "Innovation and Boundaries",
+    "tab.overviewProgress": "Progress and Decisions",
+    "tab.dailyReports": "Daily Report",
+    "tab.weeklyReports": "Weekly Report",
+    "tab.feedbackInbox": "Mentor Feedback",
+    "tab.feedbackAudit": "Decisions and Audit",
+    "tab.literature": "Seeds and Literature Search",
+    "tab.researchStatus": "Research Status",
+    "tab.citationGraph": "Citation Graph",
+    "tab.reproduction": "Code Reproduction",
+    "tab.comparison": "Effect Comparison",
+    "tab.methodDesign": "Method Design",
+    "tab.codeWorkspace": "Code Workspace",
+    "tab.policies": "Changes and Approvals",
+    "tab.approvals": "Git and Backups",
+    "tab.experiments": "Plans and Results",
+    "tab.experimentQueue": "Run Queue",
+    "tab.experimentMetrics": "Metric Statistics",
+    "tab.artifacts": "Results and Visualization",
+    "tab.lineage": "Experiment Lineage",
+    "tab.paperProject": "Paper Project",
+    "tab.paperOutline": "Outline and Chapters",
+    "tab.paperCitations": "Citations and BibTeX",
+    "tab.paperFigures": "Figure Selection and Insertion",
+    "tab.paperData": "Experiment Data Selection",
+    "tab.paperCompile": "LaTeX Compilation",
+    "tab.paperReview": "PDF Review",
+    "topbar.connected": "Connected",
+    "topbar.offline": "Offline",
+    "topbar.connecting": "Connecting",
+    "topbar.refresh": "Refresh",
+    "topbar.language": "Interface language",
+    "topbar.theme": "Interface theme",
+    "sidebar.newProject": "New Research Project",
+    "sidebar.projects": "Projects",
+    "sidebar.noProjects": "No projects yet",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "Project Memory Graph",
+    "sidebar.modelSettings": "Model Settings",
+    "theme.light": "Light",
+    "theme.dark": "Dark",
+    "theme.colorful": "Colorful",
+    "projectChat": "Project chat",
+    "common.innerPages": "Inner pages",
+    "common.cancel": "Cancel",
+    "common.unrecorded": "Not recorded",
+    "common.notProvided": "Not provided",
+    "common.none": "None",
+    "common.notConfirmed": "Not confirmed yet",
+    "common.waiting": "Waiting\u2026",
+    "common.timePending": "Time pending",
+    "common.pendingConfirm": "Pending confirmation",
+    "common.pendingClarify": "Pending clarification",
+    "common.confirm": "Confirm",
+    "common.reject": "Reject",
+    "common.send": "Send",
+    "common.loadingProject": "Loading project\u2026",
+    "common.seconds": "sec",
+    "common.close": "Close",
+    "common.pendingApproval": "Pending approval",
+    "common.recorded": "Recorded",
+    "common.missing": "Missing",
+    "common.unknown": "Unknown",
+    "common.pending": "Pending",
+    "common.approved": "Approved",
+    "common.rejected": "Rejected",
+    "common.failed": "Failed",
+    "common.running": "Processing",
+    "common.done": "Done",
+    "common.succeeded": "Succeeded",
+    "common.cancelled": "Cancelled",
+    "common.valid": "Valid",
+    "common.invalid": "Invalid",
+    "common.noEvents": "None yet",
+    "common.back": "Back",
+    "common.select": "Select",
+    "errors.timeout": "Request timed out. Check that the local service is running and try again.",
+    "errors.offline": "Cannot connect to the Research OS API. Make sure the local service is still running.",
+    "errors.requestFailed": "Request failed. Please try again later.",
+    "app.newProject": "New Research Project",
+    "app.researchProject": "Research Project",
+    "app.projectCreated": "Project created",
+    "app.openProjectFirst": "Open a research project first.",
+    "app.ideaMeta": "Idea clarification",
+    "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
+    "app.initialMessage": "Describe your research idea directly. I will adaptively analyze the goal and existing clues, explain inferences and risks, and only ask questions that genuinely affect the plan.",
+    "app.thinking.modelRouting": "Model routing",
+    "app.thinking.readingConversation": "Reading conversation",
+    "app.thinking.selectingModel": "Selecting model",
+    "app.thinking.callingModel": "Calling model",
+    "app.thinking.savingResult": "Saving result",
+    "app.thinking.waitingResponse": "Waiting for model response\u2026",
+    "app.thinking.preparingRequest": "Preparing request",
+    "app.thinking.saveComplete": "Save complete",
+    "app.thinking.requestFailed": "Request failed",
+    "app.thinking.assumptionsRecorded": "{count} assumptions recorded",
+    "app.thinking.uploadingFiles": "{count} files",
+    "app.thinking.messageLength": "Message length {count} characters",
+    "app.mode.automatic": "Automatic mode",
+    "app.mode.detailed": "Detailed mode",
+    "idea.errorTitle": "Request failed",
+    "idea.progressTitle": "AI is analyzing",
+    "idea.stage.understand": "Understanding the research goal and existing clues\u2026",
+    "idea.stage.selectModel": "Selecting a cost-appropriate model tier\u2026",
+    "idea.stage.updateDraft": "Updating the ResearchIdea draft\u2026",
+    "idea.stage.checkRisks": "Checking risks, assumptions, and open questions\u2026",
+    "idea.stage.stillWorking": "The model is still working, please wait\u2026",
+    "idea.stage.identifyIntent": "Identifying explanations, suggestions, or change intent\u2026",
+    "idea.stage.checkBoundaries": "Checking project state and approval boundaries\u2026",
+    "idea.stage.organizeReply": "Organizing a reviewable reply\u2026",
+    "idea.toggleDepthTitle": "Toggle Idea clarification depth",
+    "idea.modeHint.automatic": "Few key follow-ups",
+    "idea.modeHint.detailed": "Thorough understanding",
+    "idea.attachTitle": "Attach materials",
+    "idea.placeholder": "Describe your research idea or answer clarifying questions",
+    "spec.unset": "Not specified",
+    "spec.confirmCreate": "Confirm and create project",
+    "spec.empty": "The specification will be generated after clarification.",
+    "thinking.title": "AI request status",
+    "chat.title": "Project chat",
+    "chat.monitoring": "Monitoring",
+    "chat.closeTitle": "Close project chat",
+    "chat.placeholder": "Explain, suggest, or propose a change explicitly",
+    "context.currentScope": "Current project scope",
+    "context.updatedAt": "Updated",
+    "context.pendingCount": "{count} pending approvals",
+    "context.noPending": "No pending approvals",
+    "context.recentFailure": "Latest failure: {code}",
+    "context.noRecentFailure": "Latest failure: none",
+    "context.ariaLabel": "Current project context",
+    "context.taskFailed": "Task failed",
+    "context.sourceRequestFailed": "Source request failed",
+    "context.experimentFailed": "Experiment run failed",
+    "context.reproductionFailed": "Reproduction workflow failed",
+    "context.reportLineageFailed": "Report source lineage cannot be verified",
+    "md.noPreview": "Nothing to preview yet.",
+    "preview.noPoints": "No valid points to display",
+    "preview.resetView": "Reset view",
+    "preview.pointCloud": "Point cloud preview",
+    "preview.loadedFaces": "Loaded {count} faces, shown as wireframe.",
+    "preview.sampled": " \xB7 downsampled",
+    "preview.pointCount": "{count} points",
+    "preview.noFiniteMetrics": "No finite numeric metrics to plot.",
+    "preview.selectionNoFinite": "The current selection has no finite numeric metrics to plot; missing values are not filled or interpolated.",
+    "preview.metric": "Metric",
+    "preview.points": "Points",
+    "preview.selectSeeds": "Select random seeds",
+    "preview.pointsCount": "{count} points",
+    "preview.missingPoints": "{count} points are missing {metric}; they are kept as missing and skipped when plotting.",
+    "preview.imageNote": "Images are shown directly through the download endpoint.",
+    "preview.pdfLabel": "PDF \xB7 {count} pages, only the first 3 extractable pages are shown",
+    "preview.invalidArtifact": "This artifact is invalid and cannot be previewed or downloaded.",
+    "preview.experimentNotSucceeded": "The linked run status is {status}, so it is not shown as a successful artifact.",
+    "preview.loading": "Loading preview\u2026",
+    "preview.error": "Preview failed: {error}",
+    "preview.download": "Download artifact",
+    "preview.lineageUnbound": "unbound",
+    "preview.lineageUnknown": "unknown",
+    "preview.lineageNotDeclared": "not declared",
+    "preview.lineageMissing": "Lineage information not declared",
+    "preview.lineage": "Run {run} \xB7 Idea v{idea} \xB7 Data {data}",
+    "preview.metricCurve": "{metric} metric curve",
+    "preview.runStatus": "Run {status}",
+    "md.previewLabel": "Markdown report preview",
+    "settings.sourceRuntime": "Runtime override",
+    "settings.sourceEnv": "Project .env default",
+    "settings.saveFailed": "Save failed: {error}.",
+    "settings.keyHint": "Leave configured keys blank to keep them; a model failure never switches providers or degrades silently.",
+    "settings.eyebrow": "Runtime settings",
+    "settings.title": "Configuration",
+    "settings.modelsDescription": "Luna, Terra, and Sol apply independently. Unless overridden, the project .env URL and key are used and take effect on the next request.",
+    "settings.embeddingDescription": "Each research project can configure semantic memory Embedding independently; without an override the global default is used (local bge-m3 is about 10x faster than remote in testing).",
+    "settings.modelsTab": "Models \xB7 Luna/Terra/Sol",
+    "settings.embeddingTab": "Embedding \xB7 Semantic memory",
+    "settings.openProjectFirst": "Open a research project first to configure project-level Embedding.",
+    "settings.loadingModels": "Loading model settings\u2026",
+    "settings.keyConfigured": "Key configured",
+    "settings.keyPending": "Key pending",
+    "settings.urlReady": "URL ready",
+    "settings.urlPending": "URL pending",
+    "settings.default": "Default",
+    "settings.modelName": "Model name",
+    "settings.reasoningEffort": "Reasoning effort",
+    "settings.modelUrl": "Model URL",
+    "settings.apiKey": "API key",
+    "settings.keyKeep": "Configured; leave blank to keep",
+    "settings.keyPlaceholder": "Enter API key",
+    "settings.securityNote": "Keys are written only to local runtime files and are never returned by read endpoints. Leaving a configured key blank keeps it unchanged.",
+    "settings.save": "Save settings",
+    "settings.loadFailed": "Unable to load model settings.",
+    "settings.discardTitle": "Discard unsaved settings?",
+    "settings.discardDescription": "Settings have not been saved. Close anyway?",
+    "settings.discardConfirm": "Discard changes",
+    "embedding.loading": "Loading project Embedding settings\u2026",
+    "embedding.providerTitle": "Embedding provider",
+    "embedding.globalDefault": "Using global default",
+    "embedding.localOnnx": "Local ONNX model",
+    "embedding.remoteApi": "Remote OpenAI-compatible API",
+    "embedding.instance": "Instance",
+    "embedding.running": " \xB7 running",
+    "embedding.notRunning": " \xB7 not running",
+    "embedding.sharedProjects": " \xB7 shared by {count} projects",
+    "embedding.mode": "Configuration mode",
+    "embedding.modeGlobal": "Use global default (.env)",
+    "embedding.modeCustom": "Independent configuration for this project",
+    "embedding.provider": "Provider",
+    "embedding.openaiCompatible": "OpenAI-compatible",
+    "embedding.model": "Model",
+    "embedding.modelPlaceholder": "e.g. Qwen3-Embedding-8B",
+    "embedding.dimensions": "Dimensions",
+    "embedding.baseUrl": "Base URL",
+    "embedding.poolNote": "Projects with identical settings share the same Supermemory instance and data directory (reused by config pool, ports 6770\u20136869), while project isolation is still enforced with container tags; different settings start a new pool. The local Xenova/bge-m3 default is recommended (about 10x faster than remote gitee in testing).",
+    "embedding.securityNote": "Keys are written only to local runtime files and are never returned by read endpoints; changing model or dimensions assigns a new config pool (the old data directory is retained and semantic memory must be re-ingested).",
+    "embedding.resetTitle": "Switching models requires rebuilding the data directory",
+    "embedding.resetDescription": "After switching the embedding model or dimensions, existing semantic memory cannot be mixed with the new vector space. A fresh data directory and re-ingestion are required (the old directory is kept as a backup). Continue?",
+    "embedding.resetConfirm": "Confirm rebuild and save",
+    "memory.graphAria": "Project semantic memory graph",
+    "memory.graphPrompt": "Enter a query to load the current project Graph Memory.",
+    "memory.searchPrompt": "Enter a query to search semantic candidates for the current project.",
+    "memory.remoteUnsupported": "Embedding provider {provider} is configured, but this server build only supports local embedding; memory requests fail closed instead of silently degrading.",
+    "memory.configured": "Supermemory configured \xB7 {model} ({dimensions} dimensions); enter a query to load the project-scoped graph.",
+    "memory.notConfigured": "Supermemory has no API key configured; local or unrelated data is never substituted.",
+    "memory.statusFailed": "Failed to read status: {error}",
+    "memory.searching": "Searching the current project scope\u2026",
+    "memory.searchResults": "{total} candidates \xB7 source: Supermemory \xB7 current project scope",
+    "memory.graphResults": "{nodes} nodes \xB7 {edges} relations \xB7 source: Supermemory",
+    "memory.requestFailed": "Request failed: {error}",
+    "memory.eyebrow": "Project-level semantic context",
+    "memory.description": "Only semantic candidates and relations within the current project scope are shown; candidates are not paper evidence.",
+    "memory.viewAria": "Semantic memory views",
+    "memory.graphView": "Graph",
+    "memory.searchView": "Semantic search",
+    "memory.queryLabel": "Query current project",
+    "memory.queryPlaceholder": "Enter a research goal, fact, or material clue",
+    "memory.search": "Search",
+    "memory.projectScope": "Project scope: {projectId} \xB7 semantic candidate, requires human evidence review",
+    "memory.unnamedCandidate": "Unnamed candidate",
+    "memory.similarity": "Similarity: {value}",
+    "memory.source": "Source: {source}",
+    "memory.artifact": "Artifact: {value}",
+    "memory.evidenceStatus": "Evidence status: {value}",
+    "overview.runPending": "Run not assigned yet",
+    "overview.toastSearching": "Searching multiple academic sources and resource registries in parallel\u2026",
+    "overview.toastSearchDone": "Search complete; candidates refreshed",
+    "overview.toastDraftProposal": "Evidence paper draft Proposal {id} pending approval",
+    "overview.toastCompileProposal": "Compile plan {id} pending approval",
+    "overview.toastPaused": "Project paused",
+    "overview.toastResumed": "Project resumed",
+    "overview.toastCancelled": "Project cancelled",
+    "overview.papers": "Papers",
+    "overview.experiments": "Experiments",
+    "overview.artifacts": "Artifacts",
+    "overview.spec": "Research specification",
+    "overview.searchLiterature": "Search literature",
+    "overview.paperDraft": "Generate evidence paper draft",
+    "overview.compilePaper": "Compile paper",
+    "overview.noSpec": "Research specification not generated yet",
+    "overview.projectDescription": "Project description",
+    "overview.descriptionHint": "A reviewable summary of the current project specification.",
+    "overview.domain": "Research domain",
+    "overview.question": "Research question",
+    "overview.hypotheses": "Hypotheses",
+    "overview.successCriteria": "Success criteria",
+    "overview.notGenerated": "Not generated yet",
+    "overview.innovationCandidates": "Innovation candidates",
+    "overview.innovationHint": "Candidate suggestions require related-work evidence and mentor confirmation.",
+    "overview.noInnovation": "No innovation candidates generated yet.",
+    "overview.progress": "Research progress",
+    "overview.progressHint": "The timeline summarizes recorded Proposals, checkpoints, and experiment states; it is not a scientific conclusion.",
+    "overview.noTimeline": "No progress events to show yet.",
+    "overview.projectStatus": "Project status",
+    "overview.stageInitialized": "Initialized",
+    "overview.stageUnknown": "Unknown stage",
+    "overview.ideaVersion": "Idea version {version} \xB7 {status}",
+    "overview.checkpointVersion": "Idea v{version}",
+    "overview.runDetail": "Run {run}",
+    "overview.statusActive": "Active",
+    "overview.statusPaused": "Paused",
+    "overview.statusCancelled": "Cancelled",
+    "overview.pause": "Pause",
+    "overview.resume": "Resume",
+    "overview.cancelProject": "Cancel project",
+    "overview.cancelConfirmDescription": "A cancelled project cannot be restored. Continue?",
+    "overview.confirmCancel": "Confirm cancel",
+    "reports.daily": "Daily report",
+    "reports.weekly": "Weekly report",
+    "reports.generated": "{period} generated; source snapshot recorded",
+    "reports.feedbackRecorded": "Mentor feedback recorded; next steps still require a Proposal before execution",
+    "reports.feedbackProposalSummary": "Generate a reviewable next-step proposal from mentor feedback",
+    "reports.proposalCreated": "Feedback proposal created; approve it in Decisions and Audit",
+    "reports.feedbackInbox": "Mentor feedback inbox",
+    "reports.feedbackHint": "Feedback only creates decisions, Proposals, and audit records; it never directly changes code, installs dependencies, runs experiments, or pushes Git.",
+    "reports.loadingFeedback": "Loading feedback for the current project\u2026",
+    "reports.reference": "linked",
+    "reports.decisionComment": "Decision note: ",
+    "reports.acknowledge": "Acknowledge",
+    "reports.requestRevision": "Request revision",
+    "reports.createProposal": "Create Proposal",
+    "reports.noFeedback": "No mentor feedback in the current project. With no events the state stays empty; no templated report is generated.",
+    "reports.recordFeedback": "Record new feedback",
+    "reports.recordFeedbackHint": "Feedback text is saved to the current project; semantic memory write failures surface as structured errors.",
+    "reports.feedbackType": "Feedback type",
+    "reports.forReport": "About a report",
+    "reports.nextDirection": "Next direction",
+    "reports.feedbackToAi": "Feedback for the AI student",
+    "reports.feedbackPlaceholder": "Point out results to fix, next directions, or evidence to add",
+    "reports.recordFeedbackAction": "Record feedback",
+    "reports.auditTitle": "Feedback and Proposal audit",
+    "reports.auditHint": "Only decisions, Proposals, and failures under current project_id {projectId} are shown.",
+    "reports.loadingAudit": "Loading project audit\u2026",
+    "reports.noAudit": "No feedback or Proposal audit events in the current project yet.",
+    "reports.periodHint": "Reports read real events and save a source_snapshot; with no events the state stays empty.",
+    "reports.generate": "Generate {period}",
+    "reports.blocked": "Current report is not shown: {reason}. Regenerate the report for the current time window.",
+    "reports.lineageUnverifiable": "source lineage cannot be verified",
+    "reports.noneForPeriod": "The current project has no {period} yet.",
+    "reports.history": "History",
+    "reports.view": "View",
+    "reports.viewStatus": "View status",
+    "approvals.launchToast": "Run {id} submitted",
+    "approvals.title": "Change and execution approvals",
+    "approvals.hint": "Approvals generate a Proposal, diff, explicit decision, review, Git commit, and audit record before execution.",
+    "approvals.rerunFailed": "Automatic partial rerun failed; check the audit record",
+    "approvals.rerunSubmitted": "Partial rerun {id} submitted automatically",
+    "approvals.rerunPending": "Approved; submitting the partial rerun automatically",
+    "approvals.estimatedCost": "Estimated",
+    "approvals.impact": "Impact:",
+    "approvals.approve": "Approve",
+    "approvals.reject": "Reject",
+    "approvals.runTopicPlan": "Run topic plan",
+    "approvals.execute": "Execute",
+    "approvals.empty": "No proposals to process.",
+    "artifacts.title": "Visualizations and large artifacts",
+    "artifacts.hint": "Artifacts record SHA-256, experiment, Idea version, data version, config, Run ID, and validity.",
+    "artifacts.empty": "PNG, PLY, JSON, and PDF appear after experiments complete and sync.",
+    "policies.placeholder": "Add a long-term project policy",
+    "policies.propose": "Propose policy",
+    "policies.toast": "Policy proposal {id} pending approval",
+    "policies.executionStatus": "Execution status",
+    "policies.seedTitle": "Minimum random seeds",
+    "policies.seedText": "Random experiments require at least {count} different seeds; both plan generation and Runner submission enforce this.",
+    "policies.citationTitle": "Citation sources and full-text evidence",
+    "policies.citationCount": "DOI/source {value}/{total}",
+    "policies.quotedCount": "page/section quoted evidence {count}",
+    "policies.metadataNotFulltext": "metadata titles do not count as full-text evidence",
+    "policies.approvalTitle": "Human approval",
+    "policies.highCost": "High-cost actions",
+    "policies.externalActions": "External actions",
+    "policies.forced": "enforced",
+    "policies.notConfigured": "not configured",
+    "policies.activeTitle": "Active policies",
+    "policies.notRecognized": "not recognized as an enforceable constraint; kept as a manual rule",
+    "policies.projectPolicy": "project-level persistent policy",
+    "policies.empty": "No project policies configured yet.",
+    "reproduction.sourceDownloaded": "Source downloaded",
+    "reproduction.dependencyPending": "Waiting for dependency plan",
+    "reproduction.dependencyInstalling": "Installing dependencies",
+    "reproduction.dependencyFailed": "Dependency installation failed",
+    "reproduction.ready": "Ready to run",
+    "reproduction.queued": "Queued",
+    "reproduction.running": "Running",
+    "reproduction.awaitingArtifact": "Awaiting artifact approval",
+    "reproduction.completed": "Artifact registered",
+    "reproduction.artifactRejected": "Artifact registration rejected",
+    "reproduction.runFailed": "Run failed",
+    "reproduction.invalidated": "Upstream invalidated",
+    "reproduction.verifyDone": "Repository verification complete",
+    "reproduction.downloadProposalCreated": "Download Proposal created; approve it on the approval page to continue",
+    "reproduction.dependencyReason": "Create an isolated dependency environment for code reproduction at a fixed commit",
+    "reproduction.dependencyProposalCreated": "Dependency installation Proposal created",
+    "reproduction.configJsonInvalid": "Run config must be valid JSON",
+    "reproduction.formInvalid": "Provide a Python entrypoint, at least one integer seed, and a JSON object config",
+    "reproduction.runReason": "Run the fixed code reproduction entrypoint with installed dependencies",
+    "reproduction.runProposalCreated": "Reproduction run Proposal created",
+    "reproduction.title": "Code reproduction candidates",
+    "reproduction.hint": "Reproduction source only enters the current project experiment/reproductions area; download, dependency installation, run, and artifact registration are approved separately.",
+    "reproduction.addFromLiterature": "Add repository from literature",
+    "reproduction.commitUnlocked": "Commit not locked",
+    "reproduction.licensePending": "License pending review",
+    "reproduction.entered": "entered",
+    "reproduction.notDownloaded": "not downloaded yet",
+    "reproduction.verified": "Verified",
+    "reproduction.pendingVerification": "Pending verification",
+    "reproduction.reverify": "Re-verify",
+    "reproduction.createDownloadApproval": "Create download approval",
+    "reproduction.environment": "Reproduction environment",
+    "reproduction.dependencyManifest": "Dependency manifest",
+    "reproduction.createDependencyApproval": "Create dependency installation approval",
+    "reproduction.pythonEntry": "Python entrypoint",
+    "reproduction.pythonEntryPlaceholder": "e.g. scripts/evaluate.py",
+    "reproduction.structuredConfig": "Structured config",
+    "reproduction.createRunApproval": "Create run approval",
+    "reproduction.empty": "No code reproduction candidates yet. Add a paper code repository from the literature page first.",
+    "reproduction.openLiterature": "Open related literature",
+    "reproduction.boundaryTitle": "Reproduction boundaries",
+    "reproduction.boundaryHint": "Only fixed relative entrypoints and structured plans are accepted; shell, cwd, arbitrary paths, or network commands from the model are never executed. A reproduction process is a supervised local Linux process, not VM-level isolation.",
+    "experiment.toastPlan": "Topic-specific plan {id} pending approval",
+    "experiment.diagDone": "Diagnostics complete; suggestions still require approval before execution",
+    "experiment.cancelled": "Run cancelled",
+    "experiment.rerunPrompt": "Explain the reason for the partial rerun",
+    "experiment.rerunDefault": "Recheck this experiment under the current project snapshot",
+    "experiment.rerunToast": "Partial rerun Proposal {id} created; awaiting approval",
+    "experiment.title": "Experiment planning and runs",
+    "experiment.plan": "Generate topic-specific plan",
+    "experiment.diagnostics": "Numeric diagnostics",
+    "experiment.sync": "Sync",
+    "experiment.rerun": "Propose partial rerun",
+    "experiment.empty": "A generated plan enters approval first; the system never creates unrelated experiments automatically.",
+    "experiment.diagnosticsTitle": "Numeric diagnostics",
+    "experiment.loadingDiagnostics": "Computing numeric summaries and failure diagnostics\u2026",
+    "experiment.numericSummary": "Numeric summary",
+    "experiment.runCount": "{count} runs \xB7 deterministic TypeScript computation",
+    "experiment.noMetrics": "No comparable numeric metrics.",
+    "experiment.failureDiagnostics": "Failure diagnostics",
+    "experiment.suggestions": "Follow-up suggestions",
+    "experiment.evidenceRuns": "Evidence runs:",
+    "experiment.diagnosticsEmpty": "Run numeric diagnostics to compute metrics and inspect failure logs.",
+    "comparison.innovation": "Potential innovation signal",
+    "comparison.potentialImprovement": "Potential improvement signal",
+    "comparison.potentialRegression": "Potential regression signal",
+    "comparison.counterexample": "Counterexample signal",
+    "comparison.difference": "Numeric difference",
+    "comparison.comparabilityGap": "Comparability gap",
+    "comparison.researchGap": "Research gap to verify",
+    "comparison.comparable": "Comparable",
+    "comparison.partial": "Partially comparable",
+    "comparison.blocked": "Not comparable/blocked",
+    "comparison.candidate": "Candidate to verify",
+    "comparison.accepted": "Candidate retained",
+    "comparison.rejected": "Rejected",
+    "comparison.metricUnrecorded": "Not recorded",
+    "comparison.selectRequired": "Select a confirmed Paper, a completed reproduction Run, and at least one located Evidence",
+    "comparison.paperMetricsLabel": "paper metrics",
+    "comparison.datasetsLabel": "datasets",
+    "comparison.definitionsLabel": "metric definitions",
+    "comparison.seedsInvalid": "Paper seeds must be comma-separated integers",
+    "comparison.saved": "Comparison saved; candidates still require human review and are not scientific conclusions",
+    "comparison.acceptReason": "Retained as a candidate to verify; independent verification is still required.",
+    "comparison.rejectReason": "Current evidence is insufficient; reject this candidate.",
+    "comparison.acceptedToast": "Candidate retained but not promoted to a research conclusion",
+    "comparison.rejectedToast": "Candidate rejected and audit record retained",
+    "comparison.title": "Reproduction effect comparison",
+    "comparison.hint": "Only confirmed Papers, located and hashed Evidence, and real reproduction Runs with registered Artifacts are compared. Results are integration results; improvement, counterexample, and innovation signals all require human review.",
+    "comparison.projectScope": "Project scope",
+    "comparison.scopeCounts": "Comparable Papers: {papers} \xB7 completed reproductions with Artifacts: {runs} \xB7 saved comparisons: {comparisons}",
+    "comparison.empty": "Before creating a comparison you need a confirmed Paper and a completed reproduction Run with registered output Artifacts.",
+    "comparison.createTitle": "Create a structured comparison",
+    "comparison.createHint": "Paper metrics must be entered by the user from located Evidence; the system never guesses metrics from models or titles.",
+    "comparison.confirmedPaper": "Confirmed Paper",
+    "comparison.reproductionRun": "Reproduction Run",
+    "comparison.paperEvidence": "Paper Evidence",
+    "comparison.unnamedClaim": "unnamed claim",
+    "comparison.missingPdfHash": "missing PDF hash",
+    "comparison.noLocatedEvidence": "The current Paper has no located Evidence.",
+    "comparison.paperMetricsJson": "Paper metrics JSON",
+    "comparison.dataVersion": "Paper data version",
+    "comparison.dataVersionPlaceholder": "leave blank if not disclosed; comparison will be marked partial",
+    "comparison.configFingerprint": "Paper config SHA-256",
+    "comparison.configPlaceholder": "leave blank if no fixed config",
+    "comparison.datasetsJson": "Paper datasets JSON",
+    "comparison.seedsLabel": "Paper seeds",
+    "comparison.seedsPlaceholder": "13,37,73; leave blank if not disclosed",
+    "comparison.definitionsJson": "Metric definitions JSON",
+    "comparison.save": "Save comparison",
+    "comparison.savedTitle": "Saved comparisons and candidates to verify",
+    "comparison.savedHint": "Each value shows Paper Evidence, reproduction commit, seed, config, and Artifact binding; accepting a candidate only retains a review task.",
+    "comparison.savedEmpty": "No effect comparisons in the current project yet.",
+    "comparison.inputHash": "Input hash",
+    "comparison.artifactsCount": "{count} Artifacts",
+    "comparison.metric": "Metric",
+    "comparison.paper": "Paper",
+    "comparison.reproductionMean": "Reproduction mean",
+    "comparison.status": "Status",
+    "comparison.evidenceStatus": "Evidence status: ",
+    "comparison.candidateId": "Candidate ID",
+    "comparison.keep": "Keep",
+    "comparison.noCandidates": "No automatically generated difference signals.",
+    "research.claimReviewed": "Reviewed Claim",
+    "research.pageQuote": "Located quote",
+    "research.metadataOnly": "Metadata only",
+    "research.eligibleRequired": "No material currently satisfies confirmed Paper, located Evidence, and accepted ClaimReview at the same time.",
+    "research.matrixCreated": "Research status matrix created; unrecorded fields remain unresolved.",
+    "research.candidateRecorded": "Candidate recorded; it still requires human judgment and is not a research conclusion.",
+    "research.acceptGapReason": "The user confirmed this as a candidate to verify.",
+    "research.rejectGapReason": "The user rejected this candidate to verify.",
+    "research.acceptedGapToast": "Candidate retained, but not promoted to a scientific conclusion.",
+    "research.rejectedGapToast": "Candidate rejected and audit record retained.",
+    "research.title": "Research status matrix",
+    "research.hint": "The matrix accepts only confirmed Papers, located Evidence, and accepted ClaimReviews in the current project; unknown fields are never guessed by models or metadata.",
+    "research.refreshing": "Refreshing project-scoped research status\u2026",
+    "research.matrixReady": "Matrix created",
+    "research.createMatrix": "Create matrix",
+    "research.scopeCounts": "Rows that can be created: {eligible} \xB7 current matrix rows: {rows} \xB7 current Idea v{idea}",
+    "research.filtersTitle": "Filter matrix",
+    "research.filtersHint": "Filters only affect data returned for the current project; evidence and candidate states never change.",
+    "research.theme": "Theme",
+    "research.method": "Method",
+    "research.year": "Year",
+    "research.filtersApplied": "Matrix filters applied.",
+    "research.applyFilters": "Apply filters",
+    "research.loading": "Loading research status data for the current project\u2026",
+    "research.requestFailed": "Research status request failed: {error}",
+    "research.noMatrix": "No research status matrix has been created yet.",
+    "research.createFromReviewed": "Create from reviewed material",
+    "research.matrixVersion": "Matrix v{version}",
+    "research.matrixMeta": "Created by {creator} \xB7 {time}",
+    "research.doiUnrecorded": "DOI not recorded",
+    "research.datasets": "Datasets",
+    "research.metrics": "Metrics",
+    "research.code": "Code",
+    "research.evidence": "Evidence",
+    "research.source": "Source",
+    "research.noFilteredRows": "No matrix rows after filtering.",
+    "research.gapTitle": "Research gaps and similar-theme candidates",
+    "research.gapHint": "These records are only candidates to verify; accepting a candidate retains follow-up and does not prove a research gap or duplication.",
+    "research.candidateType": "Candidate type",
+    "research.gap": "Research gap",
+    "research.cluster": "Theme cluster",
+    "research.duplicateRisk": "Duplicate risk",
+    "research.candidateStatement": "Candidate statement",
+    "research.candidatePlaceholder": "Write the candidate that needs verification; do not phrase it as a proven conclusion.",
+    "research.recordCandidate": "Record candidate to verify",
+    "research.rowsCount": "{count} matrix rows",
+    "research.keepCandidate": "Keep candidate",
+    "research.noCandidates": "No candidates to verify recorded yet.",
+    "graph.kind.candidate": "Candidate",
+    "graph.kind.paper": "Paper",
+    "graph.kind.evidence": "Evidence",
+    "graph.kind.claimReview": "ClaimReview",
+    "graph.status.candidate": "Pending confirmation",
+    "graph.status.confirmed": "Confirmed",
+    "graph.status.unconfirmed": "Unconfirmed",
+    "graph.status.located": "Located",
+    "graph.status.unlocated": "Not located",
+    "graph.status.pending": "Pending review",
+    "graph.status.accepted": "Accepted",
+    "graph.status.rejected": "Rejected",
+    "graph.evidence.metadataOnly": "Metadata only",
+    "graph.evidence.pageQuote": "Page/section quote",
+    "graph.evidence.claimReviewed": "ClaimReview accepted",
+    "graph.edgeCount": "{count} edges",
+    "graph.title": "Project-scoped citation graph",
+    "graph.hint": "The graph projects only saved citations, Paper-Evidence, and ClaimReview-Evidence relations in the current project_id; provider citation edges are metadata relations, not research conclusions.",
+    "graph.requestFailed": "Citation graph request failed: {error}",
+    "graph.loading": "Loading the project-scoped citation graph\u2026",
+    "graph.permissionScope": "Permission scope",
+    "graph.state": "Graph state",
+    "graph.partial": "Partial data is available; missing source relations are never guessed or filled in.",
+    "graph.empty": "The current project has no saved graph nodes or relations.",
+    "graph.onlySaved": "Only relations already saved in the database are shown.",
+    "graph.scale": "Graph scale",
+    "graph.scaleText": "{nodes} nodes \xB7 {edges} edges; layered by candidate, Paper, Evidence, and ClaimReview.",
+    "graph.alert": "The response is partial. Only nodes and edges returned successfully and validated for the project scope are shown.",
+    "graph.legendAria": "Legend",
+    "graph.legendNote": "Arrows indicate relations explicitly saved in the database",
+    "graph.aria": "Project-scoped citation graph for project {projectId}",
+    "graph.titleShort": "Project-scoped citation graph",
+    "graph.edgesAria": "Relation edges",
+    "graph.nodesAria": "Graph nodes",
+    "graph.nodeAria": "{kind}: {label}; status: {status}; evidence: {evidence}",
+    "graph.selectedNode": "Selected node",
+    "graph.type": "Type",
+    "graph.stableId": "Stable ID",
+    "graph.source": "Source",
+    "graph.evidenceStatus": "Evidence status",
+    "graph.permission": "Permission",
+    "graph.locator": "Locator",
+    "graph.openSource": "Open source",
+    "graph.selectHint": "Select a node to view source, stable ID, locator, evidence, and permission status.",
+    "progress.relatedRun": "Related-work recursion {id}",
+    "progress.candidateCount": "{count} candidates \xB7 {edges} edges",
+    "progress.runPending": "not queued",
+    "progress.title": "Project progress and decisions",
+    "progress.hint": "Progress comes from runs, Proposals, and approval events that actually happened; it is never estimated by a model.",
+    "progress.count": "{count} records",
+    "progress.empty": "The current project has no runs or pending approval actions.",
+    "method.title": "Method design",
+    "method.hint": "Method design consumes only confirmed project specs and recorded literature; model output is still a candidate and writing requires a Proposal.",
+    "method.question": "Research question",
+    "method.hypotheses": "Hypotheses",
+    "method.contributions": "Expected contributions",
+    "method.relatedEvidence": "Related-work basis",
+    "method.verifiedCount": "{verified} verified records, {total} project Papers",
+    "code.title": "Code workspace",
+    "code.hint": "This is the current project\u2019s own code; reproduction repositories and project code remain strictly separate, and every change, dependency, and Git operation requires a Proposal.",
+    "code.error": "Failed to read the code workspace: {error}",
+    "code.workspace": "Project workspace",
+    "code.gitBaseline": "Git baseline",
+    "code.noCommit": "no commit yet",
+    "code.pendingTitle": "Pending code/config/reproduction actions",
+    "code.pendingCount": "{count}",
+    "code.fileTree": "Restricted file tree",
+    "code.fileTreeHint": "Shows at most {max} entries; .git, .venv, and node_modules are not read.",
+    "code.emptyDir": "The code directory is empty and has no project code files yet.",
+    "code.currentDiff": "Current diff",
+    "code.diffTruncated": "The diff is truncated; full changes still require viewing through a Proposal.",
+    "code.diffReadonly": "Read-only view of the Git diff in the current code directory.",
+    "code.loading": "Loading the restricted Git workspace\u2026",
+    "queue.title": "Run queue",
+    "queue.hint": "Run states and numbers come from real Experiment Runs; unexecuted plans are not shown as results.",
+    "queue.count": "{count}",
+    "queue.runUnassigned": "not assigned",
+    "queue.empty": "No queued or running experiments.",
+    "metrics.title": "Metric statistics",
+    "metrics.empty": "No experiment results with numeric metrics yet.",
+    "lineage.title": "Result lineage",
+    "lineage.hint": "Every Artifact must link back to Experiment, Run, Idea version, code commit, data version, and config.",
+    "lineage.missingMeta": "missing lineage metadata",
+    "lineage.empty": "No traceable Artifacts yet.",
+    "workflow.empty": "No data to display on this subpage.",
+    "literature.recursiveDefaultReason": "Expand the related-work citation network for the current project",
+    "literature.approveReason": "The user confirmed this metadata candidate may enter the project Paper",
+    "literature.rejectReason": "The user rejected this metadata candidate",
+    "literature.reopenReason": "The user requested to review this candidate again",
+    "literature.approvedToast": "Candidate converted to project Paper",
+    "literature.rejectedToast": "Candidate rejected and audit record retained",
+    "literature.reopenedToast": "Candidate reopened",
+    "literature.confirmPaper": "Confirm Paper",
+    "literature.rejectCandidate": "Reject candidate",
+    "literature.reopen": "Reopen",
+    "literature.approveDescription": "Confirmation creates a Paper within the current project scope; it is still not full-text evidence.",
+    "literature.rejectDescription": "The candidate is not physically deleted; the decision and reason remain in the project audit.",
+    "literature.fieldSelected": "Selected the {provider} source for {field}",
+    "literature.enrichReason": "Fill missing fields for the current candidate and record multi-source provenance",
+    "literature.enrichProposal": "Field enrichment Proposal {id} pending approval",
+    "literature.seedRecorded": "Seed recorded: {status}, {candidates} candidates; {failures} provider failures",
+    "literature.recursiveProposal": "Recursive search Proposal {id} created; awaiting approval",
+    "literature.cancelRecursiveReason": "The user cancelled recursive search from the related-work page",
+    "literature.cancelRequested": "Cancellation requested for recursive search",
+    "literature.searchingSources": "Searching multiple academic sources and resource registries in parallel\u2026",
+    "literature.searchDone": "Search complete; {failures} sources temporarily failed and {candidates} candidates await review",
+    "literature.ingestingEvidence": "Downloading open PDFs and extracting page-level quoted evidence\u2026",
+    "literature.evidenceSaved": "Saved {count} full-text evidence records; {failures} failed",
+    "literature.repoAdded": "Code repository candidate added; run cross-verification",
+    "literature.noRepoLinks": "No explicit GitHub/GitLab links exist in the saved Paper sources; repositories are never guessed from titles",
+    "literature.repoVerified": "Repository dual-source verification complete",
+    "literature.downloadProposal": "Download Proposal {id} created",
+    "literature.claimSubmitted": "Claim submitted for human evidence review",
+    "literature.reviewRecorded": "Human review recorded",
+    "literature.reviewRejected": "Claim marked as failed review",
+    "literature.downloadedTo": "Downloaded to {path}",
+    "literature.projectCodeDir": "project code directory",
+    "literature.proposeDownload": "Propose download",
+    "literature.crossVerify": "Cross-verify",
+    "literature.title": "Verifiable literature records",
+    "literature.updateSearch": "Update search",
+    "literature.extractEvidence": "Extract full-text evidence",
+    "literature.seedTitle": "Project-scoped seeds and citation network",
+    "literature.seedHint": "Seeds only enter the current project candidate pool; recursive expansion requires a Proposal and approval first. Metadata candidates, full-text evidence, and confirmed Papers always remain separate.",
+    "literature.seedType": "Seed type",
+    "literature.titleOption": "Title",
+    "literature.urlOption": "Source URL",
+    "literature.pdfOption": "Controlled PDF Artifact",
+    "literature.existingPaperOption": "Existing project Paper",
+    "literature.selectPdf": "Select controlled PDF",
+    "literature.selectPaper": "Select project Paper",
+    "literature.paperTitle": "Paper title",
+    "literature.httpsUrl": "HTTPS source URL",
+    "literature.bibtexEntry": "BibTeX entry",
+    "literature.enterTitle": "Enter paper title",
+    "literature.optionalTitle": "Optional title",
+    "literature.optionalTitlePlaceholder": "Used to help parse metadata",
+    "literature.parsing": "Parsing\u2026",
+    "literature.addSeed": "Add and parse seed",
+    "literature.timeUnknown": "time unknown",
+    "literature.depth": "Depth",
+    "literature.width": "Width per layer",
+    "literature.maxTotal": "Candidate limit",
+    "literature.proposalReason": "Proposal reason",
+    "literature.recursiveProviders": "Recursive providers",
+    "literature.creating": "Creating\u2026",
+    "literature.createRecursiveProposal": "Create recursive Proposal for {count} seeds",
+    "literature.noSeeds": "No project-scoped seeds yet. Add a DOI, title, URL, BibTeX, controlled PDF, or existing Paper first.",
+    "literature.runsTitle": "Citation network runs",
+    "literature.runsHint": "Run states and provider attempts come from real requests; failures, cancellations, and limit truncation are never marked successful.",
+    "literature.runCandidates": "{count} candidates \xB7 {edges} citation edges",
+    "literature.providerFailures": "Provider failures and partial failures",
+    "literature.noFailureDetail": "no failure detail provided",
+    "literature.edgeTitle": "Citation graph edges (current project scope)",
+    "literature.noRankingSignal": "no ranking signal",
+    "literature.candidatesTitle": "Metadata candidates to confirm",
+    "literature.candidatesHint": "These records come from provider metadata and the citation network; they are not automatically promoted to confirmed Papers and cannot replace PDF page quotes.",
+    "literature.yearUnknown": "year unknown",
+    "literature.providerEvidenceCount": "{count} provider evidence records",
+    "literature.fieldProvenanceCount": "{count} field provenance records",
+    "literature.conflicts": "conflicts: {fields}",
+    "literature.noConflicts": "no field conflicts",
+    "literature.viewFieldProvenance": "View field provenance",
+    "literature.enrichFields": "Enrich fields",
+    "literature.provenanceDescription": "Selecting a source only updates the field snapshot for the current project candidate and leaves an audit record; it never turns a metadata candidate into full-text evidence automatically.",
+    "literature.field": "Field",
+    "literature.sourceUnrecorded": "source not recorded",
+    "literature.selected": " \xB7 selected",
+    "literature.selectSource": "Select this source",
+    "literature.metadataVerified": "metadata verified",
+    "literature.pendingVerification": "pending verification",
+    "literature.fulltextCount": "{count} page-level full-text evidence",
+    "literature.codeCandidateCount": "{count} code candidates",
+    "literature.openPdf": "Open source PDF",
+    "literature.loadingRepos": "Loading\u2026",
+    "literature.findRepoLinks": "Find code links in paper",
+    "literature.repoPlaceholder": "GitHub or GitLab HTTPS URL",
+    "literature.add": "Add",
+    "literature.addRepository": "Add code repository",
+    "literature.discoveryHint": "The links below come from saved metadata/source URLs of this Paper; they are only candidates and still require dual-source verification:",
+    "literature.addCandidate": "Add candidate",
+    "literature.noPapers": "No literature records yet.",
+    "literature.materialsTitle": "Project material library",
+    "literature.materialsHint": "Semantic search through project-scoped Supermemory; results keep source and locator but are unverified context candidates, not paper evidence.",
+    "literature.searchMaterials": "Search materials",
+    "literature.materialPlaceholder": "Search semantic content of indexed materials",
+    "literature.searchingMaterials": "Searching materials\u2026",
+    "literature.materialTotal": "{count} candidates \xB7 Supermemory project-scoped hybrid search \xB7 not promoted to full-text evidence",
+    "literature.similarity": "similarity {value}",
+    "literature.noSnippet": "no snippet to display",
+    "literature.semanticCandidate": "Semantic candidate \xB7 unverified",
+    "literature.loadMore": "Load more",
+    "literature.materialsEmpty": "Enter keywords to search the current project materials.",
+    "literature.claimTitle": "Claim-to-evidence human review",
+    "literature.claimHint": "Only page quotes in the current project can be linked; accepting a review does not prove a scientific conclusion.",
+    "literature.claimToReview": "Claim to review",
+    "literature.claimPlaceholder": "Write the specific research statement needing human verification",
+    "literature.noLocator": "no page/section provided",
+    "literature.noQuote": "no quote",
+    "literature.submitReview": "Submit human review",
+    "literature.evidenceFirst": "Ingest located full-text evidence first, then create a Claim review.",
+    "literature.quoteCount": "{count} quotes",
+    "literature.acceptReview": "Accept review",
+    "literature.rejectReview": "Reject review",
+    "literature.externalCandidates": "External resource candidates",
+    "literature.externalHint": "For discovery only; source, license, ownership, and full-text evidence have not been verified.",
+    "literature.count": "{count}",
+    "literature.candidateResource": "candidate resource",
+    "literature.viewTerms": "View terms",
+    "literature.toVerify": "To verify",
+    "literature.repositoriesTitle": "Code repository candidates",
+    "literature.repositoriesHint": "Download may only be proposed after the paper record and repository reference form a dual-source match, the license is identifiable, and the commit is pinned.",
+    "literature.unknownLicense": "unknown license",
+    "literature.notPinned": "not pinned",
+    "literature.notVerified": "not verified",
+    "paper.draftProposal": "Paper draft Proposal {id} pending approval",
+    "paper.compileProposal": "LaTeX compilation Proposal {id} pending approval",
+    "paper.sectionAbstract": "Abstract",
+    "paper.sectionIntroduction": "Introduction and research question",
+    "paper.sectionRelatedWork": "Related work",
+    "paper.sectionMethod": "Method",
+    "paper.sectionSetup": "Experimental setup",
+    "paper.sectionResults": "Results and discussion",
+    "paper.sectionLimitations": "Limitations and conclusion",
+    "paper.outlineTitle": "Outline and chapters",
+    "paper.outlineHint": "Chapter status comes from structured project sources; unconfirmed fields are never disguised as completed chapters.",
+    "paper.outlineReady": "Project sources exist; can enter Proposal review",
+    "paper.outlineMissing": "Missing upstream spec, evidence, or real experiment sources",
+    "paper.candidate": "Candidate",
+    "paper.versionRules": "Version rules",
+    "paper.versionRulesText": "This page only shows chapter readiness. Any write to paper/main.tex requires an independent Proposal and produces a Git diff after approval; failed or rejected writes never create successful chapters.",
+    "paper.citationsTitle": "Citations and BibTeX",
+    "paper.citationsHint": "Only project-scoped Papers, page/section Evidence, and ClaimReview states are shown; metadata-only cannot enter the argument.",
+    "paper.sourcePending": "source pending",
+    "paper.bibtexRecorded": "BibTeX recorded",
+    "paper.bibtexMissing": "BibTeX not recorded",
+    "paper.citationReadiness": "Citation readiness: {status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.open": "Open",
+    "paper.noPapers": "No project-scoped Papers yet; complete related-work research first.",
+    "paper.openLiterature": "Open literature search",
+    "paper.evidenceGate": "Evidence gate",
+    "paper.claimReviewsTitle": "ClaimReviews usable for argumentation",
+    "paper.acceptedReviewCount": "{count} accepted reviews; each must link to Evidence in the current project.",
+    "paper.fulltextLocated": "Full-text locators",
+    "paper.locatedCount": "{located}/{total} Evidence records have a page or section locator.",
+    "paper.figuresTitle": "Figure selection and insertion",
+    "paper.figuresHint": "Only experimental Artifacts with complete lineage that remain valid can be inserted; run management and visualization live under Experiment Implementation.",
+    "paper.figureCount": "{count} selectable figures",
+    "paper.noFigures": "No valid figures or experimental artifacts available to insert. Unrelated baselines, empty arrays, and invalid Artifacts are never shown as results.",
+    "paper.viewArtifacts": "View experiment artifacts",
+    "paper.dataTitle": "Experiment data selection and citation",
+    "paper.dataHint": "Only valid Artifacts with complete lineage are listed for citing numbers and tables; values come from real Runs and the paper page never runs or manages experiments.",
+    "paper.dataCount": "{count} selectable data records",
+    "paper.typePending": "type pending",
+    "paper.dataLineage": "Run {run} \xB7 Idea v{idea} \xB7 Data version {data}",
+    "paper.noData": "No citable experimental data artifacts yet. Complete experiment implementation and generate valid Artifacts first.",
+    "paper.compileTitle": "LaTeX compilation",
+    "paper.compileHint": "Linux latexmk is an independent approval action; failed compilations only leave failure logs and never create a successful PDF.",
+    "paper.createCompileProposal": "Create compilation Proposal",
+    "paper.sourceFile": "Paper source file",
+    "paper.compileProposalExists": "Compilation Proposal exists",
+    "paper.notProposed": "Not proposed yet",
+    "paper.compileRuns": "Compilation runs",
+    "paper.compileRunCount": "{count} compile_latex runs",
+    "paper.noCompileRuns": "No real compilation runs yet",
+    "paper.compileRunRecords": "Compilation run records",
+    "paper.compileApprovals": "Compilation approvals",
+    "paper.noReason": "no reason",
+    "paper.pdfTitle": "PDF rendering and review",
+    "paper.pdfHint": "Only successfully compiled, still-valid PDF Artifacts are shown; failed compilations leave no successful PDF and are not marked complete.",
+    "paper.pdfCount": "{count} PDFs",
+    "paper.openPdf": "Open PDF",
+    "paper.noPdf": "No successfully compiled PDF yet. Propose and complete a real compilation on the LaTeX page first.",
+    "paper.goCompile": "Go to LaTeX compilation",
+    "paper.projectTitle": "Paper project",
+    "paper.projectHint": "Paper drafts use only recorded project-scoped material and human review states; modifications and compilations must enter approval first.",
+    "paper.createDraftProposal": "Create paper draft Proposal",
+    "paper.proposeCompile": "Propose LaTeX compilation",
+    "paper.literatureCount": "Literature records",
+    "paper.evidenceCandidates": "Full-text evidence candidates",
+    "paper.acceptedClaims": "Accepted Claim reviews",
+    "paper.validArtifacts": "Valid artifacts",
+    "paper.claimPageEvidence": "Claims and page evidence",
+    "paper.claimPageEvidenceText": "Only Claims accepted by human review can enter paper argumentation; metadata records are never automatically promoted to full-text evidence.",
+    "paper.proposalCompile": "Proposals and compilation",
+    "paper.proposalCompileText": "Only after approval is project paper/main.tex modified, and the Linux latexmk supervisor generates compilation artifacts.",
+    "paper.referenceRecords": "Paper reference records",
+    "paper.noReferences": "No citable literature records yet. Complete related-work research first.",
+    "comparison.reason": "The user requested a comparison of paper-reported metrics with real reproduction output at a fixed commit",
+    "comparison.definitionsPlaceholder": 'e.g. {"accuracy":"top-1 accuracy"}',
+    "literature.projectPaper": "Project Paper",
+    "research.themePlaceholder": "e.g. efficient adaptation",
+    "research.methodPlaceholder": "e.g. parameter-efficient tuning"
+  };
+  var es = {
+    "nav.overview": "Resumen del proyecto",
+    "nav.relatedWork": "Trabajo relacionado",
+    "nav.implementation": "Implementaci\xF3n experimental",
+    "nav.paper": "Redacci\xF3n acad\xE9mica",
+    "nav.workspaceArea": "Espacio de investigaci\xF3n",
+    "nav.currentWorkspace": "P\xE1ginas del espacio actual",
+    "group.overviewIdea": "Discusi\xF3n de la idea",
+    "group.overviewSpec": "Especificaci\xF3n del proyecto",
+    "group.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
+    "group.overviewProgress": "Progreso y decisiones",
+    "group.overviewReports": "Informes y comentarios del tutor",
+    "group.relatedSearch": "B\xFAsqueda de fuentes",
+    "group.relatedStatus": "Estado de la investigaci\xF3n y grafo de citas",
+    "group.implRelated": "Implementaci\xF3n de trabajos relacionados",
+    "group.implMethod": "Implementaci\xF3n de nuestro m\xE9todo",
+    "group.paperWriting": "Escritura y compilaci\xF3n",
+    "tab.overview": "Discusi\xF3n de la idea",
+    "tab.overviewSpec": "Descripci\xF3n y pregunta de investigaci\xF3n",
+    "tab.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
+    "tab.overviewProgress": "Progreso y decisiones",
+    "tab.dailyReports": "Informe diario",
+    "tab.weeklyReports": "Informe semanal",
+    "tab.feedbackInbox": "Comentarios del tutor",
+    "tab.feedbackAudit": "Decisiones y auditor\xEDa",
+    "tab.literature": "B\xFAsqueda de fuentes",
+    "tab.researchStatus": "Estado de la investigaci\xF3n",
+    "tab.citationGraph": "Grafo de citas",
+    "tab.reproduction": "Reproducci\xF3n de c\xF3digo",
+    "tab.comparison": "Comparaci\xF3n de resultados",
+    "tab.methodDesign": "Dise\xF1o del m\xE9todo",
+    "tab.codeWorkspace": "Espacio de c\xF3digo",
+    "tab.policies": "Cambios y aprobaciones",
+    "tab.approvals": "Git y copias de seguridad",
+    "tab.experiments": "Planes y resultados",
+    "tab.experimentQueue": "Cola de ejecuci\xF3n",
+    "tab.experimentMetrics": "Estad\xEDsticas de m\xE9tricas",
+    "tab.artifacts": "Resultados y visualizaci\xF3n",
+    "tab.lineage": "Linaje experimental",
+    "tab.paperProject": "Proyecto de art\xEDculo",
+    "tab.paperOutline": "Esquema y cap\xEDtulos",
+    "tab.paperCitations": "Citas y BibTeX",
+    "tab.paperFigures": "Selecci\xF3n e inserci\xF3n de figuras",
+    "tab.paperData": "Selecci\xF3n de datos experimentales",
+    "tab.paperCompile": "Compilaci\xF3n LaTeX",
+    "tab.paperReview": "Revisi\xF3n del PDF",
+    "topbar.connected": "Conectado",
+    "topbar.offline": "Sin conexi\xF3n",
+    "topbar.connecting": "Conectando",
+    "topbar.refresh": "Actualizar",
+    "topbar.language": "Idioma de la interfaz",
+    "topbar.theme": "Tema de la interfaz",
+    "sidebar.newProject": "Nuevo proyecto de investigaci\xF3n",
+    "sidebar.projects": "Proyectos",
+    "sidebar.noProjects": "A\xFAn no hay proyectos",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "Grafo de memoria del proyecto",
+    "sidebar.modelSettings": "Configuraci\xF3n de modelos",
+    "theme.light": "Claro",
+    "theme.dark": "Oscuro",
+    "theme.colorful": "Colorido",
+    "projectChat": "Chat del proyecto",
+    "common.innerPages": "P\xE1ginas internas",
+    "common.cancel": "Cancelar",
+    "common.unrecorded": "No registrado",
+    "common.notProvided": "No proporcionado",
+    "common.none": "Ninguno",
+    "common.notConfirmed": "A\xFAn no confirmado",
+    "common.waiting": "Esperando\u2026",
+    "common.timePending": "Hora pendiente",
+    "common.pendingConfirm": "Pendiente de confirmaci\xF3n",
+    "common.pendingClarify": "Pendiente de aclaraci\xF3n",
+    "common.confirm": "Confirmar",
+    "common.reject": "Rechazar",
+    "common.send": "Enviar",
+    "common.loadingProject": "Cargando proyecto\u2026",
+    "common.seconds": "seg",
+    "common.close": "Cerrar",
+    "common.pendingApproval": "Aprobaci\xF3n pendiente",
+    "common.recorded": "Registrado",
+    "common.missing": "Falta",
+    "common.unknown": "Desconocido",
+    "common.pending": "Pendiente",
+    "common.approved": "Aprobado",
+    "common.rejected": "Rechazado",
+    "common.failed": "Fallido",
+    "common.running": "Procesando",
+    "common.done": "Completado",
+    "common.succeeded": "Correcto",
+    "common.cancelled": "Cancelado",
+    "common.valid": "V\xE1lido",
+    "common.invalid": "No v\xE1lido",
+    "common.noEvents": "A\xFAn no hay",
+    "common.back": "Volver",
+    "common.select": "Seleccionar",
+    "errors.timeout": "La solicitud super\xF3 el tiempo de espera. Revisa que el servicio local est\xE9 en ejecuci\xF3n e int\xE9ntalo de nuevo.",
+    "errors.offline": "No se puede conectar con la API de Research OS. Aseg\xFArate de que el servicio local siga ejecut\xE1ndose.",
+    "errors.requestFailed": "La solicitud fall\xF3. Int\xE9ntalo de nuevo m\xE1s tarde.",
+    "app.newProject": "Nuevo proyecto de investigaci\xF3n",
+    "app.researchProject": "Proyecto de investigaci\xF3n",
+    "app.projectCreated": "Proyecto creado",
+    "app.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n.",
+    "app.ideaMeta": "Clarificaci\xF3n de la idea",
+    "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
+    "app.initialMessage": "Describe tu idea de investigaci\xF3n directamente. Analizar\xE9 de forma adaptativa el objetivo y las pistas existentes, explicar\xE9 inferencias y riesgos, y solo har\xE9 preguntas que afecten realmente al plan.",
+    "app.thinking.modelRouting": "Enrutamiento de modelos",
+    "app.thinking.readingConversation": "Leyendo conversaci\xF3n",
+    "app.thinking.selectingModel": "Seleccionando modelo",
+    "app.thinking.callingModel": "Llamando al modelo",
+    "app.thinking.savingResult": "Guardando resultado",
+    "app.thinking.waitingResponse": "Esperando respuesta del modelo\u2026",
+    "app.thinking.preparingRequest": "Preparando solicitud",
+    "app.thinking.saveComplete": "Guardado completo",
+    "app.thinking.requestFailed": "Solicitud fallida",
+    "app.thinking.assumptionsRecorded": "{count} supuestos registrados",
+    "app.thinking.uploadingFiles": "{count} archivos",
+    "app.thinking.messageLength": "Longitud del mensaje {count} caracteres",
+    "app.mode.automatic": "Modo autom\xE1tico",
+    "app.mode.detailed": "Modo detallado",
+    "idea.errorTitle": "Solicitud fallida",
+    "idea.progressTitle": "IA analizando",
+    "idea.stage.understand": "Comprendiendo el objetivo y las pistas existentes\u2026",
+    "idea.stage.selectModel": "Seleccionando un nivel de modelo adecuado\u2026",
+    "idea.stage.updateDraft": "Actualizando el borrador de ResearchIdea\u2026",
+    "idea.stage.checkRisks": "Revisando riesgos, supuestos y preguntas abiertas\u2026",
+    "idea.stage.stillWorking": "El modelo sigue trabajando, espera\u2026",
+    "idea.stage.identifyIntent": "Identificando explicaciones, sugerencias o intenci\xF3n de cambio\u2026",
+    "idea.stage.checkBoundaries": "Revisando el estado del proyecto y los l\xEDmites de aprobaci\xF3n\u2026",
+    "idea.stage.organizeReply": "Organizando una respuesta revisable\u2026",
+    "idea.toggleDepthTitle": "Cambiar la profundidad de aclaraci\xF3n de la idea",
+    "idea.modeHint.automatic": "Pocas preguntas clave",
+    "idea.modeHint.detailed": "Comprensi\xF3n exhaustiva",
+    "idea.attachTitle": "Adjuntar materiales",
+    "idea.placeholder": "Describe tu idea de investigaci\xF3n o responde preguntas de aclaraci\xF3n",
+    "spec.unset": "No especificado",
+    "spec.confirmCreate": "Confirmar y crear proyecto",
+    "spec.empty": "La especificaci\xF3n se generar\xE1 despu\xE9s de la aclaraci\xF3n.",
+    "thinking.title": "Estado de las solicitudes de IA",
+    "chat.title": "Chat del proyecto",
+    "chat.monitoring": "Supervisando",
+    "chat.closeTitle": "Cerrar el chat del proyecto",
+    "chat.placeholder": "Explica, sugiere o propone un cambio expl\xEDcito",
+    "context.currentScope": "\xC1mbito actual del proyecto",
+    "context.updatedAt": "Actualizado",
+    "context.pendingCount": "{count} aprobaciones pendientes",
+    "context.noPending": "Sin aprobaciones pendientes",
+    "context.recentFailure": "\xDAltimo fallo: {code}",
+    "context.noRecentFailure": "\xDAltimo fallo: ninguno",
+    "context.ariaLabel": "Contexto actual del proyecto",
+    "context.taskFailed": "Tarea fallida",
+    "context.sourceRequestFailed": "Solicitud de fuente fallida",
+    "context.experimentFailed": "Ejecuci\xF3n experimental fallida",
+    "context.reproductionFailed": "Flujo de reproducci\xF3n fallido",
+    "context.reportLineageFailed": "No se puede verificar el linaje del informe",
+    "md.noPreview": "Nada que previsualizar todav\xEDa.",
+    "preview.noPoints": "No hay puntos v\xE1lidos para mostrar",
+    "preview.resetView": "Restablecer vista",
+    "preview.pointCloud": "Vista previa de nube de puntos",
+    "preview.loadedFaces": "Cargadas {count} caras, mostradas como malla.",
+    "preview.sampled": " \xB7 submuestreado",
+    "preview.pointCount": "{count} puntos",
+    "preview.noFiniteMetrics": "No hay m\xE9tricas num\xE9ricas finitas para graficar.",
+    "preview.selectionNoFinite": "La selecci\xF3n actual no tiene m\xE9tricas num\xE9ricas finitas; los valores faltantes no se rellenan ni interpolan.",
+    "preview.metric": "M\xE9trica",
+    "preview.points": "Puntos",
+    "preview.selectSeeds": "Seleccionar semillas aleatorias",
+    "preview.pointsCount": "{count} puntos",
+    "preview.missingPoints": "{count} puntos no tienen {metric}; se conservan como faltantes y se omiten al graficar.",
+    "preview.imageNote": "Las im\xE1genes se muestran directamente a trav\xE9s del punto de descarga.",
+    "preview.pdfLabel": "PDF \xB7 {count} p\xE1ginas, solo se muestran las primeras 3 p\xE1ginas extra\xEDbles",
+    "preview.invalidArtifact": "Este artefacto no es v\xE1lido y no se puede previsualizar ni descargar.",
+    "preview.experimentNotSucceeded": "El estado de la ejecuci\xF3n vinculada es {status}; no se muestra como artefacto exitoso.",
+    "preview.loading": "Cargando vista previa\u2026",
+    "preview.error": "Error en la vista previa: {error}",
+    "preview.download": "Descargar artefacto",
+    "preview.lineageUnbound": "sin vincular",
+    "preview.lineageUnknown": "desconocido",
+    "preview.lineageNotDeclared": "no declarado",
+    "preview.lineageMissing": "Informaci\xF3n de linaje no declarada",
+    "preview.lineage": "Run {run} \xB7 Idea v{idea} \xB7 Datos {data}",
+    "preview.metricCurve": "Curva de {metric}",
+    "preview.runStatus": "Ejecuci\xF3n {status}",
+    "md.previewLabel": "Vista previa de informe Markdown",
+    "settings.sourceRuntime": "Anulaci\xF3n en tiempo de ejecuci\xF3n",
+    "settings.sourceEnv": "Predeterminado del .env del proyecto",
+    "settings.saveFailed": "Error al guardar: {error}.",
+    "settings.keyHint": "Deja las claves configuradas en blanco para conservarlas; un fallo del modelo nunca cambia de proveedor ni degrada en silencio.",
+    "settings.eyebrow": "Configuraci\xF3n en tiempo de ejecuci\xF3n",
+    "settings.title": "Configuraci\xF3n",
+    "settings.modelsDescription": "Luna, Terra y Sol se aplican de forma independiente. Sin anulaci\xF3n, se usan la URL y la clave del .env del proyecto y surten efecto en la siguiente solicitud.",
+    "settings.embeddingDescription": "Cada proyecto de investigaci\xF3n puede configurar su propio Embedding de memoria sem\xE1ntica; sin anulaci\xF3n se usa el predeterminado global (bge-m3 local es unas 10 veces m\xE1s r\xE1pido que remoto en pruebas).",
+    "settings.modelsTab": "Modelos \xB7 Luna/Terra/Sol",
+    "settings.embeddingTab": "Embedding \xB7 Memoria sem\xE1ntica",
+    "settings.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n para configurar el Embedding del proyecto.",
+    "settings.loadingModels": "Cargando configuraci\xF3n de modelos\u2026",
+    "settings.keyConfigured": "Clave configurada",
+    "settings.keyPending": "Clave pendiente",
+    "settings.urlReady": "URL lista",
+    "settings.urlPending": "URL pendiente",
+    "settings.default": "Predeterminado",
+    "settings.modelName": "Nombre del modelo",
+    "settings.reasoningEffort": "Esfuerzo de razonamiento",
+    "settings.modelUrl": "URL del modelo",
+    "settings.apiKey": "Clave API",
+    "settings.keyKeep": "Configurada; d\xE9jala en blanco para conservarla",
+    "settings.keyPlaceholder": "Introduce la clave API",
+    "settings.securityNote": "Las claves solo se escriben en archivos locales de runtime y nunca se devuelven por los puntos de lectura. Dejar en blanco una clave configurada la mantiene.",
+    "settings.save": "Guardar configuraci\xF3n",
+    "settings.loadFailed": "No se pudo cargar la configuraci\xF3n de modelos.",
+    "settings.discardTitle": "\xBFDescartar la configuraci\xF3n sin guardar?",
+    "settings.discardDescription": "La configuraci\xF3n no se ha guardado. \xBFCerrar de todos modos?",
+    "settings.discardConfirm": "Descartar cambios",
+    "embedding.loading": "Cargando configuraci\xF3n de Embedding del proyecto\u2026",
+    "embedding.providerTitle": "Proveedor de Embedding",
+    "embedding.globalDefault": "Usando predeterminado global",
+    "embedding.localOnnx": "Modelo ONNX local",
+    "embedding.remoteApi": "API remota compatible con OpenAI",
+    "embedding.instance": "Instancia",
+    "embedding.running": " \xB7 en ejecuci\xF3n",
+    "embedding.notRunning": " \xB7 sin ejecutar",
+    "embedding.sharedProjects": " \xB7 compartida por {count} proyectos",
+    "embedding.mode": "Modo de configuraci\xF3n",
+    "embedding.modeGlobal": "Usar predeterminado global (.env)",
+    "embedding.modeCustom": "Configuraci\xF3n independiente de este proyecto",
+    "embedding.provider": "Proveedor",
+    "embedding.openaiCompatible": "compatible con OpenAI",
+    "embedding.model": "Modelo",
+    "embedding.modelPlaceholder": "p. ej. Qwen3-Embedding-8B",
+    "embedding.dimensions": "Dimensiones",
+    "embedding.baseUrl": "URL base",
+    "embedding.poolNote": "Los proyectos con la misma configuraci\xF3n comparten la misma instancia de Supermemory y directorio de datos (reutilizado por grupo de configuraci\xF3n, puertos 6770\u20136869); el aislamiento entre proyectos se mantiene con etiquetas de contenedor y una configuraci\xF3n distinta inicia otro grupo. Se recomienda el local Xenova/bge-m3 (unas 10 veces m\xE1s r\xE1pido que gitee remoto en pruebas).",
+    "embedding.securityNote": "Las claves solo se escriben en archivos locales de runtime y nunca se devuelven; cambiar de modelo o dimensiones asigna un nuevo grupo de configuraci\xF3n (el directorio antiguo se conserva y la memoria sem\xE1ntica debe volver a ingerirse).",
+    "embedding.resetTitle": "Cambiar de modelo requiere reconstruir el directorio de datos",
+    "embedding.resetDescription": "Tras cambiar el modelo o las dimensiones de embedding, la memoria sem\xE1ntica existente no puede mezclarse con el nuevo espacio vectorial. Se necesita un directorio nuevo y volver a ingerir (el antiguo se conserva como copia). \xBFContinuar?",
+    "embedding.resetConfirm": "Confirmar reconstrucci\xF3n y guardar",
+    "memory.graphAria": "Grafo de memoria sem\xE1ntica del proyecto",
+    "memory.graphPrompt": "Introduce una consulta para cargar el Graph Memory del proyecto actual.",
+    "memory.searchPrompt": "Introduce una consulta para buscar candidatos sem\xE1nticos del proyecto actual.",
+    "memory.remoteUnsupported": "El proveedor de embedding {provider} est\xE1 configurado, pero esta compilaci\xF3n del servidor solo admite embedding local; las solicitudes de memoria fallan de forma segura.",
+    "memory.configured": "Supermemory configurado \xB7 {model} ({dimensions} dimensiones); introduce una consulta para cargar el grafo del \xE1mbito del proyecto.",
+    "memory.notConfigured": "Supermemory no tiene clave API configurada; no se sustituye con datos locales o no relacionados.",
+    "memory.statusFailed": "Error al leer el estado: {error}",
+    "memory.searching": "Buscando en el \xE1mbito actual del proyecto\u2026",
+    "memory.searchResults": "{total} candidatos \xB7 fuente: Supermemory \xB7 \xE1mbito actual del proyecto",
+    "memory.graphResults": "{nodes} nodos \xB7 {edges} relaciones \xB7 fuente: Supermemory",
+    "memory.requestFailed": "Solicitud fallida: {error}",
+    "memory.eyebrow": "Contexto sem\xE1ntico del proyecto",
+    "memory.description": "Solo se muestran candidatos y relaciones sem\xE1nticas dentro del \xE1mbito actual; los candidatos no son evidencia de art\xEDculo.",
+    "memory.viewAria": "Vistas de memoria sem\xE1ntica",
+    "memory.graphView": "Grafo",
+    "memory.searchView": "B\xFAsqueda sem\xE1ntica",
+    "memory.queryLabel": "Consultar proyecto actual",
+    "memory.queryPlaceholder": "Introduce un objetivo, hecho o pista material",
+    "memory.search": "Buscar",
+    "memory.projectScope": "\xC1mbito: {projectId} \xB7 candidato sem\xE1ntico, requiere revisi\xF3n humana de evidencia",
+    "memory.unnamedCandidate": "Candidato sin nombre",
+    "memory.similarity": "Similitud: {value}",
+    "memory.source": "Fuente: {source}",
+    "memory.artifact": "Artefacto: {value}",
+    "memory.evidenceStatus": "Estado de evidencia: {value}",
+    "overview.runPending": "Run sin asignar",
+    "overview.toastSearching": "Buscando en varias fuentes acad\xE9micas y registros de recursos en paralelo\u2026",
+    "overview.toastSearchDone": "B\xFAsqueda completa; candidatos actualizados",
+    "overview.toastDraftProposal": "Propuesta de borrador de art\xEDculo {id} pendiente de aprobaci\xF3n",
+    "overview.toastCompileProposal": "Plan de compilaci\xF3n {id} pendiente de aprobaci\xF3n",
+    "overview.toastPaused": "Proyecto pausado",
+    "overview.toastResumed": "Proyecto reanudado",
+    "overview.toastCancelled": "Proyecto cancelado",
+    "overview.papers": "Art\xEDculos",
+    "overview.experiments": "Experimentos",
+    "overview.artifacts": "Artefactos",
+    "overview.spec": "Especificaci\xF3n de investigaci\xF3n",
+    "overview.searchLiterature": "Buscar literatura",
+    "overview.paperDraft": "Generar borrador de art\xEDculo con evidencia",
+    "overview.compilePaper": "Compilar art\xEDculo",
+    "overview.noSpec": "Especificaci\xF3n de investigaci\xF3n a\xFAn no generada",
+    "overview.projectDescription": "Descripci\xF3n del proyecto",
+    "overview.descriptionHint": "Un resumen revisable de la especificaci\xF3n actual del proyecto.",
+    "overview.domain": "Dominio de investigaci\xF3n",
+    "overview.question": "Pregunta de investigaci\xF3n",
+    "overview.hypotheses": "Hip\xF3tesis",
+    "overview.successCriteria": "Criterios de \xE9xito",
+    "overview.notGenerated": "A\xFAn no generado",
+    "overview.innovationCandidates": "Candidatos de innovaci\xF3n",
+    "overview.innovationHint": "Las sugerencias requieren evidencia de trabajo relacionado y confirmaci\xF3n del tutor.",
+    "overview.noInnovation": "A\xFAn no hay candidatos de innovaci\xF3n.",
+    "overview.progress": "Progreso de investigaci\xF3n",
+    "overview.progressHint": "La l\xEDnea de tiempo resume Propuestas, hitos y estados de experimento registrados; no es una conclusi\xF3n cient\xEDfica.",
+    "overview.noTimeline": "A\xFAn no hay eventos de progreso.",
+    "overview.projectStatus": "Estado del proyecto",
+    "overview.stageInitialized": "Inicializado",
+    "overview.stageUnknown": "Fase desconocida",
+    "overview.ideaVersion": "Versi\xF3n de Idea {version} \xB7 {status}",
+    "overview.checkpointVersion": "Idea v{version}",
+    "overview.runDetail": "Run {run}",
+    "overview.statusActive": "Activo",
+    "overview.statusPaused": "En pausa",
+    "overview.statusCancelled": "Cancelado",
+    "overview.pause": "Pausar",
+    "overview.resume": "Reanudar",
+    "overview.cancelProject": "Cancelar proyecto",
+    "overview.cancelConfirmDescription": "Un proyecto cancelado no se puede restaurar. \xBFContinuar?",
+    "overview.confirmCancel": "Confirmar cancelaci\xF3n",
+    "reports.daily": "Informe diario",
+    "reports.weekly": "Informe semanal",
+    "reports.generated": "{period} generado; instant\xE1nea de fuentes registrada",
+    "reports.feedbackRecorded": "Comentarios del tutor registrados; los siguientes pasos requieren una Propuesta antes de ejecutarse",
+    "reports.feedbackProposalSummary": "Generar una propuesta revisable de siguiente paso a partir de los comentarios del tutor",
+    "reports.proposalCreated": "Propuesta de comentarios creada; apru\xE9bala en Decisiones y auditor\xEDa",
+    "reports.feedbackInbox": "Bandeja de comentarios del tutor",
+    "reports.feedbackHint": "Los comentarios solo crean decisiones, Propuestas y registros de auditor\xEDa; nunca cambian c\xF3digo, instalan dependencias, ejecutan experimentos ni env\xEDan Git directamente.",
+    "reports.loadingFeedback": "Cargando comentarios del proyecto actual\u2026",
+    "reports.reference": "vinculado",
+    "reports.decisionComment": "Nota de decisi\xF3n: ",
+    "reports.acknowledge": "Reconocer",
+    "reports.requestRevision": "Solicitar revisi\xF3n",
+    "reports.createProposal": "Crear propuesta",
+    "reports.noFeedback": "No hay comentarios del tutor en el proyecto actual. Sin eventos el estado permanece vac\xEDo; no se genera un informe con plantilla.",
+    "reports.recordFeedback": "Registrar comentario nuevo",
+    "reports.recordFeedbackHint": "El texto del comentario se guarda en el proyecto actual; los fallos de escritura de memoria sem\xE1ntica aparecen como errores estructurados.",
+    "reports.feedbackType": "Tipo de comentario",
+    "reports.forReport": "Sobre un informe",
+    "reports.nextDirection": "Pr\xF3xima direcci\xF3n",
+    "reports.feedbackToAi": "Comentario para el estudiante de IA",
+    "reports.feedbackPlaceholder": "Se\xF1ala resultados a corregir, pr\xF3ximas direcciones o evidencia que a\xF1adir",
+    "reports.recordFeedbackAction": "Registrar comentario",
+    "reports.auditTitle": "Auditor\xEDa de comentarios y propuestas",
+    "reports.auditHint": "Solo se muestran decisiones, Propuestas y fallos bajo el project_id {projectId} actual.",
+    "reports.loadingAudit": "Cargando auditor\xEDa del proyecto\u2026",
+    "reports.noAudit": "A\xFAn no hay eventos de comentarios o Propuestas en el proyecto actual.",
+    "reports.periodHint": "Los informes leen eventos reales y guardan una instant\xE1nea de fuentes; sin eventos el estado permanece vac\xEDo.",
+    "reports.generate": "Generar {period}",
+    "reports.blocked": "El informe actual no se muestra: {reason}. Vuelve a generar el informe de la ventana de tiempo actual.",
+    "reports.lineageUnverifiable": "el linaje de fuentes no se puede verificar",
+    "reports.noneForPeriod": "El proyecto actual a\xFAn no tiene {period}.",
+    "reports.history": "Historial",
+    "reports.view": "Ver",
+    "reports.viewStatus": "Ver estado",
+    "approvals.launchToast": "Run {id} enviado",
+    "approvals.title": "Aprobaciones de cambios y ejecuci\xF3n",
+    "approvals.hint": "Las aprobaciones generan una Propuesta, diff, decisi\xF3n expl\xEDcita, revisi\xF3n, commit de Git y registro de auditor\xEDa antes de ejecutar.",
+    "approvals.rerunFailed": "La reejecuci\xF3n parcial autom\xE1tica fall\xF3; consulta el registro de auditor\xEDa",
+    "approvals.rerunSubmitted": "Reejecuci\xF3n parcial {id} enviada autom\xE1ticamente",
+    "approvals.rerunPending": "Aprobado; enviando la reejecuci\xF3n parcial autom\xE1ticamente",
+    "approvals.estimatedCost": "Estimado",
+    "approvals.impact": "Impacto:",
+    "approvals.approve": "Aprobar",
+    "approvals.reject": "Rechazar",
+    "approvals.runTopicPlan": "Ejecutar plan tem\xE1tico",
+    "approvals.execute": "Ejecutar",
+    "approvals.empty": "No hay propuestas que procesar.",
+    "artifacts.title": "Visualizaciones y artefactos grandes",
+    "artifacts.hint": "Los artefactos registran SHA-256, experimento, versi\xF3n de Idea, versi\xF3n de datos, configuraci\xF3n, ID de Run y validez.",
+    "artifacts.empty": "Los PNG, PLY, JSON y PDF aparecen despu\xE9s de completar y sincronizar los experimentos.",
+    "policies.placeholder": "A\xF1adir una pol\xEDtica de proyecto a largo plazo",
+    "policies.propose": "Proponer pol\xEDtica",
+    "policies.toast": "Propuesta de pol\xEDtica {id} pendiente de aprobaci\xF3n",
+    "policies.executionStatus": "Estado de ejecuci\xF3n",
+    "policies.seedTitle": "M\xEDnimo de semillas aleatorias",
+    "policies.seedText": "Los experimentos aleatorios requieren al menos {count} semillas distintas; tanto la generaci\xF3n del plan como el env\xEDo al Runner lo aplican.",
+    "policies.citationTitle": "Fuentes de citas y evidencia de texto completo",
+    "policies.citationCount": "DOI/fuente {value}/{total}",
+    "policies.quotedCount": "evidencia citada por p\xE1gina/secci\xF3n {count}",
+    "policies.metadataNotFulltext": "los t\xEDtulos de metadatos no cuentan como evidencia de texto completo",
+    "policies.approvalTitle": "Aprobaci\xF3n humana",
+    "policies.highCost": "Acciones de alto costo",
+    "policies.externalActions": "Acciones externas",
+    "policies.forced": "aplicado",
+    "policies.notConfigured": "no configurado",
+    "policies.activeTitle": "Pol\xEDticas activas",
+    "policies.notRecognized": "no reconocida como restricci\xF3n ejecutable; se conserva como regla manual",
+    "policies.projectPolicy": "pol\xEDtica persistente del proyecto",
+    "policies.empty": "A\xFAn no hay pol\xEDticas de proyecto configuradas.",
+    "reproduction.sourceDownloaded": "C\xF3digo fuente descargado",
+    "reproduction.dependencyPending": "Esperando plan de dependencias",
+    "reproduction.dependencyInstalling": "Instalando dependencias",
+    "reproduction.dependencyFailed": "Fallo al instalar dependencias",
+    "reproduction.ready": "Listo para ejecutar",
+    "reproduction.queued": "En cola",
+    "reproduction.running": "Ejecutando",
+    "reproduction.awaitingArtifact": "Esperando aprobaci\xF3n de artefacto",
+    "reproduction.completed": "Artefacto registrado",
+    "reproduction.artifactRejected": "Registro de artefacto rechazado",
+    "reproduction.runFailed": "Ejecuci\xF3n fallida",
+    "reproduction.invalidated": "Fuente invalidada",
+    "reproduction.verifyDone": "Verificaci\xF3n del repositorio completada",
+    "reproduction.downloadProposalCreated": "Propuesta de descarga creada; aprueba en la p\xE1gina de aprobaciones para continuar",
+    "reproduction.dependencyReason": "Crear un entorno de dependencias aislado para la reproducci\xF3n con commit fijo",
+    "reproduction.dependencyProposalCreated": "Propuesta de instalaci\xF3n de dependencias creada",
+    "reproduction.configJsonInvalid": "La configuraci\xF3n de ejecuci\xF3n debe ser JSON v\xE1lido",
+    "reproduction.formInvalid": "Proporciona un punto de entrada de Python, al menos una semilla entera y una configuraci\xF3n JSON",
+    "reproduction.runReason": "Ejecutar el punto de entrada fijo de reproducci\xF3n con dependencias instaladas",
+    "reproduction.runProposalCreated": "Propuesta de ejecuci\xF3n de reproducci\xF3n creada",
+    "reproduction.title": "Candidatos de reproducci\xF3n de c\xF3digo",
+    "reproduction.hint": "El c\xF3digo de reproducci\xF3n solo entra en experiment/reproductions del proyecto actual; descarga, instalaci\xF3n de dependencias, ejecuci\xF3n y registro de artefactos se aprueban por separado.",
+    "reproduction.addFromLiterature": "A\xF1adir repositorio desde literatura",
+    "reproduction.commitUnlocked": "Commit no fijado",
+    "reproduction.licensePending": "Licencia pendiente de revisi\xF3n",
+    "reproduction.entered": "entrado",
+    "reproduction.notDownloaded": "a\xFAn no descargado",
+    "reproduction.verified": "Verificado",
+    "reproduction.pendingVerification": "Pendiente de verificaci\xF3n",
+    "reproduction.reverify": "Volver a verificar",
+    "reproduction.createDownloadApproval": "Crear aprobaci\xF3n de descarga",
+    "reproduction.environment": "Entorno de reproducci\xF3n",
+    "reproduction.dependencyManifest": "Manifiesto de dependencias",
+    "reproduction.createDependencyApproval": "Crear aprobaci\xF3n de instalaci\xF3n de dependencias",
+    "reproduction.pythonEntry": "Punto de entrada de Python",
+    "reproduction.pythonEntryPlaceholder": "p. ej. scripts/evaluate.py",
+    "reproduction.structuredConfig": "Configuraci\xF3n estructurada",
+    "reproduction.createRunApproval": "Crear aprobaci\xF3n de ejecuci\xF3n",
+    "reproduction.empty": "A\xFAn no hay candidatos de reproducci\xF3n de c\xF3digo. A\xF1ade primero un repositorio desde la p\xE1gina de literatura.",
+    "reproduction.openLiterature": "Abrir literatura relacionada",
+    "reproduction.boundaryTitle": "L\xEDmites de reproducci\xF3n",
+    "reproduction.boundaryHint": "Solo se aceptan puntos de entrada relativos fijos y planes estructurados; nunca se ejecutan shell, cwd, rutas arbitrarias ni comandos de red del modelo. El proceso de reproducci\xF3n es un proceso Linux local supervisado, no aislamiento a nivel de VM.",
+    "experiment.toastPlan": "Plan tem\xE1tico {id} pendiente de aprobaci\xF3n",
+    "experiment.diagDone": "Diagn\xF3stico completado; las sugerencias requieren aprobaci\xF3n antes de ejecutarse",
+    "experiment.cancelled": "Ejecuci\xF3n cancelada",
+    "experiment.rerunPrompt": "Explica el motivo de la reejecuci\xF3n parcial",
+    "experiment.rerunDefault": "Revisar este experimento bajo la instant\xE1nea actual del proyecto",
+    "experiment.rerunToast": "Propuesta de reejecuci\xF3n parcial {id} creada; esperando aprobaci\xF3n",
+    "experiment.title": "Planificaci\xF3n y ejecuci\xF3n de experimentos",
+    "experiment.plan": "Generar plan tem\xE1tico",
+    "experiment.diagnostics": "Diagn\xF3stico num\xE9rico",
+    "experiment.sync": "Sincronizar",
+    "experiment.rerun": "Proponer reejecuci\xF3n parcial",
+    "experiment.empty": "El plan generado entra primero en aprobaci\xF3n; el sistema nunca crea experimentos no relacionados autom\xE1ticamente.",
+    "experiment.diagnosticsTitle": "Diagn\xF3stico num\xE9rico",
+    "experiment.loadingDiagnostics": "Calculando res\xFAmenes num\xE9ricos y diagn\xF3sticos de fallos\u2026",
+    "experiment.numericSummary": "Resumen num\xE9rico",
+    "experiment.runCount": "{count} ejecuciones \xB7 c\xE1lculo determinista en TypeScript",
+    "experiment.noMetrics": "No hay m\xE9tricas num\xE9ricas comparables.",
+    "experiment.failureDiagnostics": "Diagn\xF3sticos de fallos",
+    "experiment.suggestions": "Sugerencias posteriores",
+    "experiment.evidenceRuns": "Ejecuciones de evidencia:",
+    "experiment.diagnosticsEmpty": "Ejecuta el diagn\xF3stico num\xE9rico para calcular m\xE9tricas y revisar registros de fallos.",
+    "comparison.innovation": "Posible se\xF1al de innovaci\xF3n",
+    "comparison.potentialImprovement": "Posible se\xF1al de mejora",
+    "comparison.potentialRegression": "Posible se\xF1al de regresi\xF3n",
+    "comparison.counterexample": "Se\xF1al de contraejemplo",
+    "comparison.difference": "Diferencia num\xE9rica",
+    "comparison.comparabilityGap": "Brecha de comparabilidad",
+    "comparison.researchGap": "Brecha de investigaci\xF3n a verificar",
+    "comparison.comparable": "Comparable",
+    "comparison.partial": "Parcialmente comparable",
+    "comparison.blocked": "No comparable/bloqueado",
+    "comparison.candidate": "Candidato a verificar",
+    "comparison.accepted": "Candidato conservado",
+    "comparison.rejected": "Rechazado",
+    "comparison.metricUnrecorded": "No registrado",
+    "comparison.selectRequired": "Selecciona un Paper confirmado, una Run de reproducci\xF3n completada y al menos una Evidence con localizaci\xF3n",
+    "comparison.paperMetricsLabel": "m\xE9tricas del art\xEDculo",
+    "comparison.datasetsLabel": "conjuntos de datos",
+    "comparison.definitionsLabel": "definiciones de m\xE9tricas",
+    "comparison.seedsInvalid": "Las semillas del art\xEDculo deben ser enteros separados por comas",
+    "comparison.saved": "Comparaci\xF3n guardada; los candidatos requieren revisi\xF3n humana y no son conclusiones cient\xEDficas",
+    "comparison.acceptReason": "Conservado como candidato a verificar; a\xFAn se requiere verificaci\xF3n independiente.",
+    "comparison.rejectReason": "La evidencia actual es insuficiente; rechazar este candidato.",
+    "comparison.acceptedToast": "Candidato conservado, pero no promovido a conclusi\xF3n cient\xEDfica",
+    "comparison.rejectedToast": "Candidato rechazado y registro de auditor\xEDa conservado",
+    "comparison.title": "Comparaci\xF3n de resultados de reproducci\xF3n",
+    "comparison.hint": "Solo se comparan Papers confirmados, Evidence con localizaci\xF3n y hash, y Runs de reproducci\xF3n reales con Artefactos registrados. Los resultados son de integraci\xF3n; las se\xF1ales de mejora, contraejemplo e innovaci\xF3n requieren revisi\xF3n humana.",
+    "comparison.projectScope": "\xC1mbito del proyecto",
+    "comparison.scopeCounts": "Papers comparables: {papers} \xB7 reproducciones completas con Artefactos: {runs} \xB7 comparaciones guardadas: {comparisons}",
+    "comparison.empty": "Antes de crear una comparaci\xF3n necesitas un Paper confirmado y una Run de reproducci\xF3n completada con Artefactos de salida registrados.",
+    "comparison.createTitle": "Crear comparaci\xF3n estructurada",
+    "comparison.createHint": "Las m\xE9tricas del art\xEDculo deben introducirlas el usuario desde Evidence con localizaci\xF3n; el sistema nunca adivina m\xE9tricas a partir del modelo o del t\xEDtulo.",
+    "comparison.confirmedPaper": "Paper confirmado",
+    "comparison.reproductionRun": "Run de reproducci\xF3n",
+    "comparison.paperEvidence": "Evidence del art\xEDculo",
+    "comparison.unnamedClaim": "afirmaci\xF3n sin nombre",
+    "comparison.missingPdfHash": "falta hash del PDF",
+    "comparison.noLocatedEvidence": "El Paper actual no tiene Evidence con localizaci\xF3n.",
+    "comparison.paperMetricsJson": "JSON de m\xE9tricas del art\xEDculo",
+    "comparison.dataVersion": "Versi\xF3n de datos del art\xEDculo",
+    "comparison.dataVersionPlaceholder": "deja en blanco si no se declara; la comparaci\xF3n se marcar\xE1 parcial",
+    "comparison.configFingerprint": "SHA-256 de configuraci\xF3n del art\xEDculo",
+    "comparison.configPlaceholder": "deja en blanco si no hay configuraci\xF3n fija",
+    "comparison.datasetsJson": "JSON de datasets del art\xEDculo",
+    "comparison.seedsLabel": "Semillas del art\xEDculo",
+    "comparison.seedsPlaceholder": "13,37,73; deja en blanco si no se declaran",
+    "comparison.definitionsJson": "JSON de definiciones de m\xE9tricas",
+    "comparison.save": "Guardar comparaci\xF3n",
+    "comparison.savedTitle": "Comparaciones guardadas y candidatos a verificar",
+    "comparison.savedHint": "Cada valor muestra Evidence del art\xEDculo, commit de reproducci\xF3n, semilla, configuraci\xF3n y enlace de Artefacto; aceptar un candidato solo conserva una tarea de revisi\xF3n.",
+    "comparison.savedEmpty": "A\xFAn no hay comparaciones de resultados en el proyecto actual.",
+    "comparison.inputHash": "Hash de entrada",
+    "comparison.artifactsCount": "{count} Artefactos",
+    "comparison.metric": "M\xE9trica",
+    "comparison.paper": "Art\xEDculo",
+    "comparison.reproductionMean": "Media de reproducci\xF3n",
+    "comparison.status": "Estado",
+    "comparison.evidenceStatus": "Estado de evidencia: ",
+    "comparison.candidateId": "ID de candidato",
+    "comparison.keep": "Conservar",
+    "comparison.noCandidates": "No hay se\xF1ales de diferencia generadas autom\xE1ticamente.",
+    "research.claimReviewed": "Claim revisada",
+    "research.pageQuote": "Cita con localizaci\xF3n",
+    "research.metadataOnly": "Solo metadatos",
+    "research.eligibleRequired": "No hay material que cumpla a la vez Paper confirmado, Evidence con localizaci\xF3n y ClaimReview aceptada.",
+    "research.matrixCreated": "Matriz de estado de investigaci\xF3n creada; los campos no registrados permanecen unresolved.",
+    "research.candidateRecorded": "Candidato registrado; requiere juicio humano y no es una conclusi\xF3n de investigaci\xF3n.",
+    "research.acceptGapReason": "El usuario confirm\xF3 que se conserve como candidato a verificar.",
+    "research.rejectGapReason": "El usuario rechaz\xF3 este candidato a verificar.",
+    "research.acceptedGapToast": "Candidato conservado, pero no promovido a conclusi\xF3n cient\xEDfica.",
+    "research.rejectedGapToast": "Candidato rechazado y registro de auditor\xEDa conservado.",
+    "research.title": "Matriz de estado de investigaci\xF3n",
+    "research.hint": "La matriz solo acepta Papers confirmados, Evidence con localizaci\xF3n y ClaimReviews aceptadas del proyecto actual; los campos desconocidos nunca se adivinan con modelos o metadatos.",
+    "research.refreshing": "Actualizando el estado de investigaci\xF3n del proyecto\u2026",
+    "research.matrixReady": "Matriz creada",
+    "research.createMatrix": "Crear matriz",
+    "research.scopeCounts": "Filas posibles: {eligible} \xB7 filas actuales: {rows} \xB7 Idea actual v{idea}",
+    "research.filtersTitle": "Filtrar matriz",
+    "research.filtersHint": "Los filtros solo afectan a los datos devueltos del proyecto actual; nunca cambian evidencia ni candidatos.",
+    "research.theme": "Tema",
+    "research.method": "M\xE9todo",
+    "research.year": "A\xF1o",
+    "research.filtersApplied": "Filtros de matriz aplicados.",
+    "research.applyFilters": "Aplicar filtros",
+    "research.loading": "Cargando datos de estado de investigaci\xF3n del proyecto actual\u2026",
+    "research.requestFailed": "La solicitud de estado de investigaci\xF3n fall\xF3: {error}",
+    "research.noMatrix": "A\xFAn no se ha creado una matriz de estado de investigaci\xF3n.",
+    "research.createFromReviewed": "Crear desde material revisado",
+    "research.matrixVersion": "Matriz v{version}",
+    "research.matrixMeta": "Creada por {creator} \xB7 {time}",
+    "research.doiUnrecorded": "DOI no registrado",
+    "research.datasets": "Conjuntos de datos",
+    "research.metrics": "M\xE9tricas",
+    "research.code": "C\xF3digo",
+    "research.evidence": "Evidencia",
+    "research.source": "Fuente",
+    "research.noFilteredRows": "No hay filas tras filtrar.",
+    "research.gapTitle": "Brechas de investigaci\xF3n y candidatos de temas similares",
+    "research.gapHint": "Estos registros son solo candidatos a verificar; aceptar uno conserva el seguimiento y no demuestra una brecha ni duplicaci\xF3n.",
+    "research.candidateType": "Tipo de candidato",
+    "research.gap": "Brecha de investigaci\xF3n",
+    "research.cluster": "Agrupaci\xF3n tem\xE1tica",
+    "research.duplicateRisk": "Riesgo de duplicaci\xF3n",
+    "research.candidateStatement": "Declaraci\xF3n del candidato",
+    "research.candidatePlaceholder": "Escribe el candidato que necesita verificaci\xF3n; no lo redactes como conclusi\xF3n probada.",
+    "research.recordCandidate": "Registrar candidato a verificar",
+    "research.rowsCount": "{count} filas de matriz",
+    "research.keepCandidate": "Conservar candidato",
+    "research.noCandidates": "A\xFAn no hay candidatos a verificar registrados.",
+    "graph.kind.candidate": "Candidato",
+    "graph.kind.paper": "Paper",
+    "graph.kind.evidence": "Evidence",
+    "graph.kind.claimReview": "ClaimReview",
+    "graph.status.candidate": "Pendiente de confirmaci\xF3n",
+    "graph.status.confirmed": "Confirmado",
+    "graph.status.unconfirmed": "No confirmado",
+    "graph.status.located": "Con localizaci\xF3n",
+    "graph.status.unlocated": "Sin localizaci\xF3n",
+    "graph.status.pending": "Pendiente de revisi\xF3n",
+    "graph.status.accepted": "Aceptado",
+    "graph.status.rejected": "Rechazado",
+    "graph.evidence.metadataOnly": "Solo metadatos",
+    "graph.evidence.pageQuote": "Cita de p\xE1gina/secci\xF3n",
+    "graph.evidence.claimReviewed": "ClaimReview aceptada",
+    "graph.edgeCount": "{count} aristas",
+    "graph.title": "Grafo de citas del \xE1mbito del proyecto",
+    "graph.hint": "El grafo proyecta solo citas, relaciones Paper-Evidence y ClaimReview-Evidence guardadas en el project_id actual; las aristas de citas de proveedor son relaciones de metadatos, no conclusiones cient\xEDficas.",
+    "graph.requestFailed": "La solicitud del grafo de citas fall\xF3: {error}",
+    "graph.loading": "Cargando el grafo de citas del \xE1mbito del proyecto\u2026",
+    "graph.permissionScope": "\xC1mbito de permisos",
+    "graph.state": "Estado del grafo",
+    "graph.partial": "Hay datos parciales; las relaciones no devueltas nunca se adivinan ni se rellenan.",
+    "graph.empty": "El proyecto actual no tiene nodos ni relaciones de grafo guardados.",
+    "graph.onlySaved": "Solo se muestran relaciones ya guardadas en la base de datos.",
+    "graph.scale": "Tama\xF1o del grafo",
+    "graph.scaleText": "{nodes} nodos \xB7 {edges} aristas; en capas por candidato, Paper, Evidence y ClaimReview.",
+    "graph.alert": "La respuesta es parcial. Solo se muestran nodos y aristas devueltos correctamente y validados para el \xE1mbito del proyecto.",
+    "graph.legendAria": "Leyenda",
+    "graph.legendNote": "Las flechas indican relaciones guardadas expl\xEDcitamente en la base de datos",
+    "graph.aria": "Grafo de citas del \xE1mbito del proyecto {projectId}",
+    "graph.titleShort": "Grafo de citas del \xE1mbito del proyecto",
+    "graph.edgesAria": "Aristas de relaci\xF3n",
+    "graph.nodesAria": "Nodos del grafo",
+    "graph.nodeAria": "{kind}: {label}; estado: {status}; evidencia: {evidence}",
+    "graph.selectedNode": "Nodo seleccionado",
+    "graph.type": "Tipo",
+    "graph.stableId": "ID estable",
+    "graph.source": "Fuente",
+    "graph.evidenceStatus": "Estado de evidencia",
+    "graph.permission": "Permiso",
+    "graph.locator": "Localizaci\xF3n",
+    "graph.openSource": "Abrir fuente",
+    "graph.selectHint": "Selecciona un nodo para ver fuente, ID estable, localizaci\xF3n, evidencia y permisos.",
+    "progress.relatedRun": "Recursi\xF3n de trabajo relacionado {id}",
+    "progress.candidateCount": "{count} candidatos \xB7 {edges} aristas",
+    "progress.runPending": "sin encolar",
+    "progress.title": "Progreso del proyecto y decisiones",
+    "progress.hint": "El progreso proviene de ejecuciones, Propuestas y aprobaciones reales; nunca lo estima un modelo.",
+    "progress.count": "{count} registros",
+    "progress.empty": "El proyecto actual no tiene ejecuciones ni acciones pendientes de aprobaci\xF3n.",
+    "method.title": "Dise\xF1o del m\xE9todo",
+    "method.hint": "El dise\xF1o consume solo especificaciones confirmadas y literatura registrada; la salida del modelo sigue siendo candidata y escribir requiere una Propuesta.",
+    "method.question": "Pregunta de investigaci\xF3n",
+    "method.hypotheses": "Hip\xF3tesis",
+    "method.contributions": "Contribuciones esperadas",
+    "method.relatedEvidence": "Base de trabajo relacionado",
+    "method.verifiedCount": "{verified} registros verificados, {total} Papers del proyecto",
+    "code.title": "Espacio de c\xF3digo",
+    "code.hint": "Este es el c\xF3digo propio del proyecto actual; los repositorios de reproducci\xF3n y el c\xF3digo del proyecto est\xE1n estrictamente separados, y todo cambio, dependencia y operaci\xF3n de Git requiere una Propuesta.",
+    "code.error": "No se pudo leer el espacio de c\xF3digo: {error}",
+    "code.workspace": "Espacio de trabajo del proyecto",
+    "code.gitBaseline": "L\xEDnea base de Git",
+    "code.noCommit": "sin commit todav\xEDa",
+    "code.pendingTitle": "Acciones de c\xF3digo/configuraci\xF3n/reproducci\xF3n pendientes",
+    "code.pendingCount": "{count}",
+    "code.fileTree": "\xC1rbol de archivos restringido",
+    "code.fileTreeHint": "Muestra como m\xE1ximo {max} entradas; no se leen .git, .venv ni node_modules.",
+    "code.emptyDir": "El directorio de c\xF3digo est\xE1 vac\xEDo y a\xFAn no tiene archivos de proyecto.",
+    "code.currentDiff": "Diff actual",
+    "code.diffTruncated": "El diff est\xE1 truncado; los cambios completos requieren verlos mediante una Propuesta.",
+    "code.diffReadonly": "Vista de solo lectura del diff de Git del directorio de c\xF3digo actual.",
+    "code.loading": "Cargando el espacio Git restringido\u2026",
+    "queue.title": "Cola de ejecuci\xF3n",
+    "queue.hint": "Los estados y n\xFAmeros provienen de Runs de Experiment reales; los planes no ejecutados no se muestran como resultados.",
+    "queue.count": "{count}",
+    "queue.runUnassigned": "sin asignar",
+    "queue.empty": "No hay experimentos en cola ni ejecut\xE1ndose.",
+    "metrics.title": "Estad\xEDsticas de m\xE9tricas",
+    "metrics.empty": "A\xFAn no hay resultados experimentales con m\xE9tricas num\xE9ricas.",
+    "lineage.title": "Linaje de resultados",
+    "lineage.hint": "Cada Artefacto debe enlazar con Experiment, Run, versi\xF3n de Idea, commit de c\xF3digo, versi\xF3n de datos y configuraci\xF3n.",
+    "lineage.missingMeta": "faltan metadatos de linaje",
+    "lineage.empty": "A\xFAn no hay Artefactos trazables.",
+    "workflow.empty": "No hay datos que mostrar en esta subp\xE1gina.",
+    "literature.recursiveDefaultReason": "Expandir la red de citas de trabajo relacionado del proyecto actual",
+    "literature.approveReason": "El usuario confirm\xF3 que este candidato de metadatos puede entrar en el Paper del proyecto",
+    "literature.rejectReason": "El usuario rechaz\xF3 este candidato de metadatos",
+    "literature.reopenReason": "El usuario pidi\xF3 revisar este candidato de nuevo",
+    "literature.approvedToast": "Candidato convertido en Paper del proyecto",
+    "literature.rejectedToast": "Candidato rechazado y registro de auditor\xEDa conservado",
+    "literature.reopenedToast": "Candidato reabierto",
+    "literature.confirmPaper": "Confirmar Paper",
+    "literature.rejectCandidate": "Rechazar candidato",
+    "literature.reopen": "Reabrir",
+    "literature.approveDescription": "La confirmaci\xF3n crea un Paper dentro del \xE1mbito del proyecto actual; sigue sin ser evidencia de texto completo.",
+    "literature.rejectDescription": "El candidato no se elimina f\xEDsicamente; la decisi\xF3n y el motivo permanecen en la auditor\xEDa del proyecto.",
+    "literature.fieldSelected": "Seleccionada la fuente {provider} para {field}",
+    "literature.enrichReason": "Completar campos faltantes del candidato actual y registrar procedencia de varias fuentes",
+    "literature.enrichProposal": "Propuesta de enriquecimiento de campos {id} pendiente de aprobaci\xF3n",
+    "literature.seedRecorded": "Semilla registrada: {status}, {candidates} candidatos; {failures} fallos de proveedor",
+    "literature.recursiveProposal": "Propuesta de b\xFAsqueda recursiva {id} creada; esperando aprobaci\xF3n",
+    "literature.cancelRecursiveReason": "El usuario cancel\xF3 la b\xFAsqueda recursiva desde la p\xE1gina de trabajo relacionado",
+    "literature.cancelRequested": "Cancelaci\xF3n solicitada para la b\xFAsqueda recursiva",
+    "literature.searchingSources": "Buscando en varias fuentes acad\xE9micas y registros de recursos en paralelo\u2026",
+    "literature.searchDone": "B\xFAsqueda completa; {failures} fuentes fallaron temporalmente y {candidates} candidatos esperan revisi\xF3n",
+    "literature.ingestingEvidence": "Descargando PDF abiertos y extrayendo evidencia citada por p\xE1gina\u2026",
+    "literature.evidenceSaved": "Guardados {count} registros de evidencia de texto completo; {failures} fallidos",
+    "literature.repoAdded": "Candidato de repositorio a\xF1adido; ejecuta la verificaci\xF3n cruzada",
+    "literature.noRepoLinks": "No hay enlaces expl\xEDcitos de GitHub/GitLab en las fuentes guardadas del Paper; nunca se adivinan repositorios por el t\xEDtulo",
+    "literature.repoVerified": "Verificaci\xF3n de doble fuente del repositorio completada",
+    "literature.downloadProposal": "Propuesta de descarga {id} creada",
+    "literature.claimSubmitted": "Claim enviada a revisi\xF3n humana de evidencia",
+    "literature.reviewRecorded": "Revisi\xF3n humana registrada",
+    "literature.reviewRejected": "Claim marcada como no superada",
+    "literature.downloadedTo": "Descargado en {path}",
+    "literature.projectCodeDir": "directorio de c\xF3digo del proyecto",
+    "literature.proposeDownload": "Proponer descarga",
+    "literature.crossVerify": "Verificaci\xF3n cruzada",
+    "literature.title": "Registros de literatura verificables",
+    "literature.updateSearch": "Actualizar b\xFAsqueda",
+    "literature.extractEvidence": "Extraer evidencia de texto completo",
+    "literature.seedTitle": "Semillas del \xE1mbito del proyecto y red de citas",
+    "literature.seedHint": "Las semillas solo entran en el grupo de candidatos del proyecto actual; la expansi\xF3n recursiva requiere primero una Propuesta aprobada. Los candidatos de metadatos, la evidencia de texto completo y los Papers confirmados siempre est\xE1n separados.",
+    "literature.seedType": "Tipo de semilla",
+    "literature.titleOption": "T\xEDtulo",
+    "literature.urlOption": "URL de fuente",
+    "literature.pdfOption": "Artefacto PDF controlado",
+    "literature.existingPaperOption": "Paper existente del proyecto",
+    "literature.selectPdf": "Seleccionar PDF controlado",
+    "literature.selectPaper": "Seleccionar Paper del proyecto",
+    "literature.paperTitle": "T\xEDtulo del art\xEDculo",
+    "literature.httpsUrl": "URL HTTPS de fuente",
+    "literature.bibtexEntry": "Entrada BibTeX",
+    "literature.enterTitle": "Introduce el t\xEDtulo del art\xEDculo",
+    "literature.optionalTitle": "T\xEDtulo opcional",
+    "literature.optionalTitlePlaceholder": "Se usa para ayudar a analizar metadatos",
+    "literature.parsing": "Analizando\u2026",
+    "literature.addSeed": "A\xF1adir y analizar semilla",
+    "literature.timeUnknown": "hora desconocida",
+    "literature.depth": "Profundidad",
+    "literature.width": "Anchura por nivel",
+    "literature.maxTotal": "L\xEDmite de candidatos",
+    "literature.proposalReason": "Motivo de la Propuesta",
+    "literature.recursiveProviders": "Proveedores recursivos",
+    "literature.creating": "Creando\u2026",
+    "literature.createRecursiveProposal": "Crear Propuesta recursiva para {count} semillas",
+    "literature.noSeeds": "A\xFAn no hay semillas del \xE1mbito del proyecto. A\xF1ade primero un DOI, t\xEDtulo, URL, BibTeX, PDF controlado o Paper existente.",
+    "literature.runsTitle": "Ejecuciones de red de citas",
+    "literature.runsHint": "Los estados de ejecuci\xF3n y los intentos de proveedor provienen de solicitudes reales; fallos, cancelaciones y truncamientos por l\xEDmite nunca se marcan como \xE9xito.",
+    "literature.runCandidates": "{count} candidatos \xB7 {edges} aristas de citas",
+    "literature.providerFailures": "Fallos y fallos parciales de proveedor",
+    "literature.noFailureDetail": "sin detalle de fallo",
+    "literature.edgeTitle": "Aristas del grafo de citas (\xE1mbito actual)",
+    "literature.noRankingSignal": "sin se\xF1al de orden",
+    "literature.candidatesTitle": "Candidatos de metadatos a confirmar",
+    "literature.candidatesHint": "Estos registros provienen de metadatos de proveedor y de la red de citas; no se promueven autom\xE1ticamente a Papers confirmados y no sustituyen las citas de p\xE1gina del PDF.",
+    "literature.yearUnknown": "a\xF1o desconocido",
+    "literature.providerEvidenceCount": "{count} registros de evidencia de proveedor",
+    "literature.fieldProvenanceCount": "{count} registros de procedencia de campos",
+    "literature.conflicts": "conflictos: {fields}",
+    "literature.noConflicts": "sin conflictos de campos",
+    "literature.viewFieldProvenance": "Ver procedencia de campos",
+    "literature.enrichFields": "Completar campos",
+    "literature.provenanceDescription": "Seleccionar una fuente solo actualiza la instant\xE1nea de campos del candidato y deja un registro de auditor\xEDa; nunca convierte autom\xE1ticamente un candidato de metadatos en evidencia de texto completo.",
+    "literature.field": "Campo",
+    "literature.sourceUnrecorded": "fuente no registrada",
+    "literature.selected": " \xB7 seleccionado",
+    "literature.selectSource": "Seleccionar esta fuente",
+    "literature.metadataVerified": "metadatos verificados",
+    "literature.pendingVerification": "pendiente de verificaci\xF3n",
+    "literature.fulltextCount": "{count} evidencia de texto completo por p\xE1gina",
+    "literature.codeCandidateCount": "{count} candidatos de c\xF3digo",
+    "literature.openPdf": "Abrir PDF de fuente",
+    "literature.loadingRepos": "Cargando\u2026",
+    "literature.findRepoLinks": "Buscar enlaces de c\xF3digo en el art\xEDculo",
+    "literature.repoPlaceholder": "URL HTTPS de GitHub o GitLab",
+    "literature.add": "A\xF1adir",
+    "literature.addRepository": "A\xF1adir repositorio de c\xF3digo",
+    "literature.discoveryHint": "Los enlaces siguientes provienen de los metadatos/URLs guardados de este Paper; son solo candidatos y requieren verificaci\xF3n de doble fuente:",
+    "literature.addCandidate": "A\xF1adir candidato",
+    "literature.noPapers": "A\xFAn no hay registros de literatura.",
+    "literature.materialsTitle": "Biblioteca de materiales del proyecto",
+    "literature.materialsHint": "B\xFAsqueda sem\xE1ntica en Supermemory del \xE1mbito del proyecto; los resultados conservan fuente y localizaci\xF3n, pero son candidatos de contexto no verificados, no evidencia de art\xEDculo.",
+    "literature.searchMaterials": "Buscar materiales",
+    "literature.materialPlaceholder": "Buscar contenido sem\xE1ntico de materiales indexados",
+    "literature.searchingMaterials": "Buscando materiales\u2026",
+    "literature.materialTotal": "{count} candidatos \xB7 b\xFAsqueda h\xEDbrida Supermemory del \xE1mbito del proyecto \xB7 no se promueve a evidencia de texto completo",
+    "literature.similarity": "similitud {value}",
+    "literature.noSnippet": "sin fragmento que mostrar",
+    "literature.semanticCandidate": "Candidato sem\xE1ntico \xB7 no verificado",
+    "literature.loadMore": "Cargar m\xE1s",
+    "literature.materialsEmpty": "Introduce palabras clave para buscar los materiales del proyecto.",
+    "literature.claimTitle": "Revisi\xF3n humana de Claim a evidencia",
+    "literature.claimHint": "Solo se pueden vincular citas de p\xE1gina del proyecto actual; aceptar una revisi\xF3n no prueba una conclusi\xF3n cient\xEDfica.",
+    "literature.claimToReview": "Claim a revisar",
+    "literature.claimPlaceholder": "Escribe la afirmaci\xF3n concreta que necesita verificaci\xF3n humana",
+    "literature.noLocator": "sin p\xE1gina/secci\xF3n",
+    "literature.noQuote": "sin cita",
+    "literature.submitReview": "Enviar revisi\xF3n humana",
+    "literature.evidenceFirst": "Ingiere primero evidencia de texto completo con localizaci\xF3n y luego crea una revisi\xF3n de Claim.",
+    "literature.quoteCount": "{count} citas",
+    "literature.acceptReview": "Aceptar revisi\xF3n",
+    "literature.rejectReview": "Rechazar revisi\xF3n",
+    "literature.externalCandidates": "Candidatos de recursos externos",
+    "literature.externalHint": "Solo para descubrimiento; fuente, licencia, propiedad y evidencia de texto completo no se han verificado.",
+    "literature.count": "{count}",
+    "literature.candidateResource": "recurso candidato",
+    "literature.viewTerms": "Ver t\xE9rminos",
+    "literature.toVerify": "A verificar",
+    "literature.repositoriesTitle": "Candidatos de repositorios de c\xF3digo",
+    "literature.repositoriesHint": "La descarga solo puede proponerse despu\xE9s de una coincidencia de doble fuente entre el Paper y la referencia del repositorio, una licencia identificable y un commit fijado.",
+    "literature.unknownLicense": "licencia desconocida",
+    "literature.notPinned": "no fijado",
+    "literature.notVerified": "no verificado",
+    "paper.draftProposal": "Propuesta de borrador de art\xEDculo {id} pendiente de aprobaci\xF3n",
+    "paper.compileProposal": "Propuesta de compilaci\xF3n LaTeX {id} pendiente de aprobaci\xF3n",
+    "paper.sectionAbstract": "Resumen",
+    "paper.sectionIntroduction": "Introducci\xF3n y pregunta de investigaci\xF3n",
+    "paper.sectionRelatedWork": "Trabajo relacionado",
+    "paper.sectionMethod": "M\xE9todo",
+    "paper.sectionSetup": "Configuraci\xF3n experimental",
+    "paper.sectionResults": "Resultados y discusi\xF3n",
+    "paper.sectionLimitations": "Limitaciones y conclusi\xF3n",
+    "paper.outlineTitle": "Esquema y cap\xEDtulos",
+    "paper.outlineHint": "El estado de los cap\xEDtulos proviene de fuentes estructuradas del proyecto; los campos no confirmados nunca se disfrazan de cap\xEDtulos completados.",
+    "paper.outlineReady": "Existen fuentes del proyecto; puede entrar en revisi\xF3n de Propuesta",
+    "paper.outlineMissing": "Faltan especificaci\xF3n, evidencia o fuentes experimentales reales",
+    "paper.candidate": "Candidato",
+    "paper.versionRules": "Reglas de versi\xF3n",
+    "paper.versionRulesText": "Esta p\xE1gina solo muestra la preparaci\xF3n de cap\xEDtulos. Cualquier escritura en paper/main.tex requiere una Propuesta independiente y produce un diff de Git tras la aprobaci\xF3n; las escrituras fallidas o rechazadas nunca crean cap\xEDtulos exitosos.",
+    "paper.citationsTitle": "Citas y BibTeX",
+    "paper.citationsHint": "Solo se muestran Papers del \xE1mbito del proyecto, Evidence con p\xE1gina/secci\xF3n y estados de ClaimReview; metadata-only no entra en la argumentaci\xF3n.",
+    "paper.sourcePending": "fuente pendiente",
+    "paper.bibtexRecorded": "BibTeX registrado",
+    "paper.bibtexMissing": "BibTeX no registrado",
+    "paper.citationReadiness": "Preparaci\xF3n de citas: {status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.open": "Abrir",
+    "paper.noPapers": "A\xFAn no hay Papers del \xE1mbito del proyecto; completa primero la investigaci\xF3n de trabajo relacionado.",
+    "paper.openLiterature": "Abrir b\xFAsqueda de literatura",
+    "paper.evidenceGate": "Puerta de evidencia",
+    "paper.claimReviewsTitle": "ClaimReviews utilizables en la argumentaci\xF3n",
+    "paper.acceptedReviewCount": "{count} revisiones aceptadas; cada una debe enlazar con Evidence del proyecto actual.",
+    "paper.fulltextLocated": "Localizaciones de texto completo",
+    "paper.locatedCount": "{located}/{total} registros de Evidence tienen localizaci\xF3n de p\xE1gina o secci\xF3n.",
+    "paper.figuresTitle": "Selecci\xF3n e inserci\xF3n de figuras",
+    "paper.figuresHint": "Solo se pueden insertar Artefactos experimentales con linaje completo y todav\xEDa v\xE1lidos; la gesti\xF3n de ejecuciones vive en Implementaci\xF3n experimental.",
+    "paper.figureCount": "{count} figuras seleccionables",
+    "paper.noFigures": "No hay figuras ni artefactos experimentales v\xE1lidos disponibles. Los baselines no relacionados, arrays vac\xEDos y Artefactos inv\xE1lidos nunca se muestran como resultados.",
+    "paper.viewArtifacts": "Ver artefactos experimentales",
+    "paper.dataTitle": "Selecci\xF3n y cita de datos experimentales",
+    "paper.dataHint": "Solo se listan Artefactos v\xE1lidos con linaje completo para citar n\xFAmeros y tablas; los valores provienen de Runs reales y la p\xE1gina del art\xEDculo nunca ejecuta ni gestiona experimentos.",
+    "paper.dataCount": "{count} datos seleccionables",
+    "paper.typePending": "tipo pendiente",
+    "paper.dataLineage": "Run {run} \xB7 Idea v{idea} \xB7 Versi\xF3n de datos {data}",
+    "paper.noData": "A\xFAn no hay artefactos de datos experimentales citables. Completa la implementaci\xF3n experimental y genera Artefactos v\xE1lidos.",
+    "paper.compileTitle": "Compilaci\xF3n LaTeX",
+    "paper.compileHint": "Linux latexmk es una acci\xF3n de aprobaci\xF3n independiente; los fallos solo dejan registros de fallo y nunca crean un PDF exitoso.",
+    "paper.createCompileProposal": "Crear Propuesta de compilaci\xF3n",
+    "paper.sourceFile": "Archivo fuente del art\xEDculo",
+    "paper.compileProposalExists": "Existe Propuesta de compilaci\xF3n",
+    "paper.notProposed": "A\xFAn no propuesta",
+    "paper.compileRuns": "Ejecuciones de compilaci\xF3n",
+    "paper.compileRunCount": "{count} ejecuciones compile_latex",
+    "paper.noCompileRuns": "A\xFAn no hay ejecuciones de compilaci\xF3n reales",
+    "paper.compileRunRecords": "Registros de ejecuci\xF3n de compilaci\xF3n",
+    "paper.compileApprovals": "Aprobaciones de compilaci\xF3n",
+    "paper.noReason": "sin motivo",
+    "paper.pdfTitle": "Presentaci\xF3n y revisi\xF3n del PDF",
+    "paper.pdfHint": "Solo se muestran Artefactos PDF compilados correctamente y todav\xEDa v\xE1lidos; los fallos no dejan PDF exitoso ni se marcan completos.",
+    "paper.pdfCount": "{count} PDF",
+    "paper.openPdf": "Abrir PDF",
+    "paper.noPdf": "A\xFAn no hay un PDF compilado correctamente. Prop\xF3n y completa una compilaci\xF3n real en la p\xE1gina LaTeX.",
+    "paper.goCompile": "Ir a compilaci\xF3n LaTeX",
+    "paper.projectTitle": "Proyecto de art\xEDculo",
+    "paper.projectHint": "Los borradores usan solo material registrado del \xE1mbito del proyecto y estados de revisi\xF3n humana; las modificaciones y compilaciones deben entrar primero en aprobaci\xF3n.",
+    "paper.createDraftProposal": "Crear Propuesta de borrador de art\xEDculo",
+    "paper.proposeCompile": "Proponer compilaci\xF3n LaTeX",
+    "paper.literatureCount": "Registros de literatura",
+    "paper.evidenceCandidates": "Candidatos de evidencia de texto completo",
+    "paper.acceptedClaims": "Revisiones de Claim aceptadas",
+    "paper.validArtifacts": "Artefactos v\xE1lidos",
+    "paper.claimPageEvidence": "Claims y evidencia por p\xE1gina",
+    "paper.claimPageEvidenceText": "Solo las Claims aceptadas por revisi\xF3n humana pueden entrar en la argumentaci\xF3n; los registros de metadatos nunca se promueven autom\xE1ticamente a evidencia de texto completo.",
+    "paper.proposalCompile": "Propuestas y compilaci\xF3n",
+    "paper.proposalCompileText": "Solo tras la aprobaci\xF3n se modifica paper/main.tex y el supervisor Linux latexmk genera artefactos de compilaci\xF3n.",
+    "paper.referenceRecords": "Registros de referencia del art\xEDculo",
+    "paper.noReferences": "A\xFAn no hay registros de literatura citables. Completa primero la investigaci\xF3n de trabajo relacionado.",
+    "comparison.reason": "El usuario solicit\xF3 comparar las m\xE9tricas del art\xEDculo con la salida real de reproducci\xF3n en un commit fijo",
+    "comparison.definitionsPlaceholder": 'p. ej. {"accuracy":"top-1 accuracy"}',
+    "literature.projectPaper": "Paper del proyecto",
+    "research.themePlaceholder": "p. ej. efficient adaptation",
+    "research.methodPlaceholder": "p. ej. parameter-efficient tuning"
+  };
+  var dictionaries = {
+    "zh-CN": zhCN,
+    "zh-TW": zhTW,
+    en,
+    es
+  };
+  function initialLocale() {
+    if (typeof window === "undefined") return "zh-CN";
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const locale = stored === "zh-TW" || stored === "en" || stored === "es" ? stored : DEFAULT_LOCALE;
+    window.document.documentElement.lang = locale;
+    return locale;
+  }
+  var currentLocale = initialLocale();
+  var listeners = /* @__PURE__ */ new Set();
+  function subscribe(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+  function getLocale() {
+    return currentLocale;
+  }
+  function setLocale(locale) {
+    if (locale === currentLocale) return;
+    currentLocale = locale;
+    window.localStorage.setItem(STORAGE_KEY, locale);
+    window.document.documentElement.lang = locale;
+    listeners.forEach((listener) => listener());
+  }
+  function useLocale() {
+    return (0, import_react.useSyncExternalStore)(subscribe, getLocale, getLocale);
+  }
+  function useTranslation() {
+    const locale = useLocale();
+    const t = (key, params) => {
+      let value = dictionaries[locale][key] ?? zhCN[key] ?? key;
+      if (params) {
+        for (const [name, paramValue] of Object.entries(params)) {
+          value = value.replaceAll(`{${name}}`, String(paramValue));
+        }
+      }
+      return value;
+    };
+    return { locale, t, setLocale };
+  }
+  function formatDateTime(value, locale) {
+    if (!value) return dictionaries[locale]["common.timePending"];
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString(locale === "zh-CN" || locale === "zh-TW" ? "zh-CN" : locale, { dateStyle: "short", timeStyle: "short" });
+  }
+
   // src/api.ts
   var CHAT_REQUEST_TIMEOUT_MS = 3e5;
+  function localize(key) {
+    return dictionaries[getLocale()][key];
+  }
+  var CHAT_ERROR_KEYS = {
+    timeout: "errors.timeout",
+    offline: "errors.offline"
+  };
   var ChatRequestError = class extends Error {
     code;
     cause;
@@ -12777,10 +16198,10 @@
       return await fetchImpl(input, { ...init, signal: controller.signal });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
-        throw new ChatRequestError("timeout", "\u8BF7\u6C42\u8D85\u65F6\uFF0C\u8BF7\u68C0\u67E5\u670D\u52A1\u72B6\u6001\u540E\u91CD\u8BD5\u3002", error);
+        throw new ChatRequestError("timeout", "", error);
       }
       if (error instanceof TypeError) {
-        throw new ChatRequestError("offline", "\u65E0\u6CD5\u8FDE\u63A5 Research OS API\uFF0C\u8BF7\u786E\u8BA4\u672C\u5730\u670D\u52A1\u4ECD\u5728\u8FD0\u884C\u3002", error);
+        throw new ChatRequestError("offline", "", error);
       }
       throw error;
     } finally {
@@ -12832,11 +16253,15 @@
     }
   }
   function errorMessage(error) {
-    return error instanceof Error && error.message ? error.message : "\u8BF7\u6C42\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002";
+    if (error instanceof ChatRequestError) {
+      const key = CHAT_ERROR_KEYS[error.code];
+      if (key) return localize(key);
+    }
+    return error instanceof Error && error.message ? error.message : localize("errors.requestFailed");
   }
 
   // ../../node_modules/lucide-react/dist/esm/createLucideIcon.mjs
-  var import_react3 = __toESM(require_react(), 1);
+  var import_react4 = __toESM(require_react(), 1);
 
   // ../../node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
   var mergeClasses = (...classes) => classes.filter((className, index, array) => {
@@ -12859,7 +16284,7 @@
   };
 
   // ../../node_modules/lucide-react/dist/esm/Icon.mjs
-  var import_react2 = __toESM(require_react(), 1);
+  var import_react3 = __toESM(require_react(), 1);
 
   // ../../node_modules/lucide-react/dist/esm/defaultAttributes.mjs
   var defaultAttributes = {
@@ -12885,12 +16310,12 @@
   };
 
   // ../../node_modules/lucide-react/dist/esm/context.mjs
-  var import_react = __toESM(require_react(), 1);
-  var LucideContext = (0, import_react.createContext)({});
-  var useLucideContext = () => (0, import_react.useContext)(LucideContext);
+  var import_react2 = __toESM(require_react(), 1);
+  var LucideContext = (0, import_react2.createContext)({});
+  var useLucideContext = () => (0, import_react2.useContext)(LucideContext);
 
   // ../../node_modules/lucide-react/dist/esm/Icon.mjs
-  var Icon = (0, import_react2.forwardRef)(
+  var Icon = (0, import_react3.forwardRef)(
     ({ color, size, strokeWidth, absoluteStrokeWidth, className = "", children, iconNode, ...rest }, ref) => {
       const {
         size: contextSize = 24,
@@ -12900,7 +16325,7 @@
         className: contextClass = ""
       } = useLucideContext() ?? {};
       const calculatedStrokeWidth = absoluteStrokeWidth ?? contextAbsoluteStrokeWidth ? Number(strokeWidth ?? contextStrokeWidth) * 24 / Number(size ?? contextSize) : strokeWidth ?? contextStrokeWidth;
-      return (0, import_react2.createElement)(
+      return (0, import_react3.createElement)(
         "svg",
         {
           ref,
@@ -12914,7 +16339,7 @@
           ...rest
         },
         [
-          ...iconNode.map(([tag, attrs]) => (0, import_react2.createElement)(tag, attrs)),
+          ...iconNode.map(([tag, attrs]) => (0, import_react3.createElement)(tag, attrs)),
           ...Array.isArray(children) ? children : [children]
         ]
       );
@@ -12923,8 +16348,8 @@
 
   // ../../node_modules/lucide-react/dist/esm/createLucideIcon.mjs
   var createLucideIcon = (iconName, iconNode) => {
-    const Component = (0, import_react3.forwardRef)(
-      ({ className, ...props }, ref) => (0, import_react3.createElement)(Icon, {
+    const Component = (0, import_react4.forwardRef)(
+      ({ className, ...props }, ref) => (0, import_react4.createElement)(Icon, {
         ref,
         iconNode,
         className: mergeClasses(
@@ -13616,314 +17041,6 @@
   ];
   var X = createLucideIcon("x", __iconNode63);
 
-  // src/i18n.ts
-  var import_react4 = __toESM(require_react(), 1);
-  var DEFAULT_LOCALE = "zh-CN";
-  var LOCALE_OPTIONS = [
-    { value: "zh-CN", label: "\u7B80\u4F53\u4E2D\u6587" },
-    { value: "zh-TW", label: "\u7E41\u9AD4\u4E2D\u6587" },
-    { value: "en", label: "English" },
-    { value: "es", label: "Espa\xF1ol" }
-  ];
-  var STORAGE_KEY = "researchos.locale";
-  var zhCN = {
-    "nav.overview": "\u9879\u76EE\u6982\u8FF0",
-    "nav.relatedWork": "\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814",
-    "nav.implementation": "\u5B9E\u9A8C\u5B9E\u73B0",
-    "nav.paper": "\u5B66\u672F\u8BBA\u6587\u64B0\u5199",
-    "nav.workspaceArea": "\u79D1\u7814\u5DE5\u4F5C\u533A",
-    "nav.currentWorkspace": "\u5F53\u524D\u5DE5\u4F5C\u533A\u9875\u9762",
-    "group.overviewIdea": "Idea \u8BA8\u8BBA",
-    "group.overviewSpec": "\u9879\u76EE\u89C4\u683C",
-    "group.overviewInnovation": "\u521B\u65B0\u4E0E\u8FB9\u754C",
-    "group.overviewProgress": "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
-    "group.overviewReports": "\u65E5\u62A5/\u5468\u62A5\u4E0E\u5BFC\u5E08\u53CD\u9988",
-    "group.relatedSearch": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
-    "group.relatedStatus": "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE",
-    "group.implRelated": "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0",
-    "group.implMethod": "\u672C\u65B9\u6CD5\u5B9E\u73B0",
-    "group.paperWriting": "\u8BBA\u6587\u5199\u4F5C\u4E0E\u7F16\u8BD1",
-    "tab.overview": "Idea \u8BA8\u8BBA",
-    "tab.overviewSpec": "\u9879\u76EE\u63CF\u8FF0\u4E0E\u7814\u7A76\u95EE\u9898",
-    "tab.overviewInnovation": "\u521B\u65B0\u70B9\u4E0E\u8FB9\u754C",
-    "tab.overviewProgress": "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
-    "tab.dailyReports": "\u65E5\u62A5",
-    "tab.weeklyReports": "\u5468\u62A5",
-    "tab.feedbackInbox": "\u5BFC\u5E08\u53CD\u9988",
-    "tab.feedbackAudit": "\u51B3\u7B56\u4E0E\u5BA1\u8BA1",
-    "tab.literature": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
-    "tab.researchStatus": "\u7814\u7A76\u73B0\u72B6",
-    "tab.citationGraph": "\u5F15\u7528\u56FE",
-    "tab.reproduction": "\u4EE3\u7801\u590D\u73B0",
-    "tab.comparison": "\u6548\u679C\u6BD4\u8F83",
-    "tab.methodDesign": "\u65B9\u6CD5\u8BBE\u8BA1",
-    "tab.codeWorkspace": "\u4EE3\u7801\u5DE5\u4F5C\u533A",
-    "tab.policies": "\u53D8\u66F4\u4E0E\u5BA1\u6279",
-    "tab.approvals": "Git \u4E0E\u5907\u4EFD",
-    "tab.experiments": "\u5B9E\u9A8C\u8BA1\u5212\u4E0E\u7ED3\u679C",
-    "tab.experimentQueue": "\u8FD0\u884C\u961F\u5217",
-    "tab.experimentMetrics": "\u6307\u6807\u7EDF\u8BA1",
-    "tab.artifacts": "\u7ED3\u679C\u4E0E\u53EF\u89C6\u5316",
-    "tab.lineage": "\u5B9E\u9A8C\u8C31\u7CFB",
-    "tab.paperProject": "\u8BBA\u6587\u9879\u76EE",
-    "tab.paperOutline": "\u5927\u7EB2\u4E0E\u7AE0\u8282",
-    "tab.paperCitations": "\u5F15\u7528\u4E0E BibTeX",
-    "tab.paperFigures": "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165",
-    "tab.paperData": "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528",
-    "tab.paperCompile": "LaTeX \u7F16\u8BD1",
-    "tab.paperReview": "PDF \u5448\u73B0\u4E0E\u5BA1\u9605",
-    "topbar.connected": "\u5DF2\u8FDE\u63A5",
-    "topbar.offline": "\u79BB\u7EBF",
-    "topbar.connecting": "\u8FDE\u63A5\u4E2D",
-    "topbar.refresh": "\u5237\u65B0",
-    "topbar.language": "\u754C\u9762\u8BED\u8A00",
-    "topbar.theme": "\u754C\u9762\u4E3B\u9898",
-    "sidebar.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
-    "sidebar.projects": "\u9879\u76EE",
-    "sidebar.noProjects": "\u6682\u65E0\u9879\u76EE",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
-    "sidebar.memoryGraph": "\u9879\u76EE\u8BB0\u5FC6\u56FE",
-    "sidebar.modelSettings": "\u6A21\u578B\u914D\u7F6E",
-    "theme.light": "\u6D45\u8272",
-    "theme.dark": "\u6697\u8272",
-    "theme.colorful": "\u5F69\u8272",
-    "projectChat": "\u9879\u76EE\u5BF9\u8BDD",
-    "common.innerPages": "\u5185\u90E8\u9875\u9762",
-    "common.cancel": "\u53D6\u6D88"
-  };
-  var zhTW = {
-    "nav.overview": "\u5C08\u6848\u6982\u89BD",
-    "nav.relatedWork": "\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814",
-    "nav.implementation": "\u5BE6\u9A57\u5BE6\u4F5C",
-    "nav.paper": "\u5B78\u8853\u8AD6\u6587\u64B0\u5BEB",
-    "nav.workspaceArea": "\u79D1\u7814\u5DE5\u4F5C\u5340",
-    "nav.currentWorkspace": "\u76EE\u524D\u5DE5\u4F5C\u5340\u9801\u9762",
-    "group.overviewIdea": "Idea \u8A0E\u8AD6",
-    "group.overviewSpec": "\u5C08\u6848\u898F\u683C",
-    "group.overviewInnovation": "\u5275\u65B0\u8207\u908A\u754C",
-    "group.overviewProgress": "\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
-    "group.overviewReports": "\u65E5\u5831/\u9031\u5831\u8207\u5C0E\u5E2B\u56DE\u994B",
-    "group.relatedSearch": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
-    "group.relatedStatus": "\u7814\u7A76\u73FE\u6CC1\u8207\u5F15\u7528\u5716",
-    "group.implRelated": "\u76F8\u95DC\u5DE5\u4F5C\u5BE6\u4F5C",
-    "group.implMethod": "\u672C\u65B9\u6CD5\u5BE6\u4F5C",
-    "group.paperWriting": "\u8AD6\u6587\u5BEB\u4F5C\u8207\u7DE8\u8B6F",
-    "tab.overview": "Idea \u8A0E\u8AD6",
-    "tab.overviewSpec": "\u5C08\u6848\u63CF\u8FF0\u8207\u7814\u7A76\u554F\u984C",
-    "tab.overviewInnovation": "\u5275\u65B0\u9EDE\u8207\u908A\u754C",
-    "tab.overviewProgress": "\u5C08\u6848\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
-    "tab.dailyReports": "\u65E5\u5831",
-    "tab.weeklyReports": "\u9031\u5831",
-    "tab.feedbackInbox": "\u5C0E\u5E2B\u56DE\u994B",
-    "tab.feedbackAudit": "\u6C7A\u7B56\u8207\u7A3D\u6838",
-    "tab.literature": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
-    "tab.researchStatus": "\u7814\u7A76\u73FE\u6CC1",
-    "tab.citationGraph": "\u5F15\u7528\u5716",
-    "tab.reproduction": "\u7A0B\u5F0F\u78BC\u91CD\u73FE",
-    "tab.comparison": "\u6548\u679C\u6BD4\u8F03",
-    "tab.methodDesign": "\u65B9\u6CD5\u8A2D\u8A08",
-    "tab.codeWorkspace": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340",
-    "tab.policies": "\u8B8A\u66F4\u8207\u5BE9\u6279",
-    "tab.approvals": "Git \u8207\u5099\u4EFD",
-    "tab.experiments": "\u5BE6\u9A57\u8A08\u756B\u8207\u7D50\u679C",
-    "tab.experimentQueue": "\u57F7\u884C\u4F47\u5217",
-    "tab.experimentMetrics": "\u6307\u6A19\u7D71\u8A08",
-    "tab.artifacts": "\u7D50\u679C\u8207\u8996\u89BA\u5316",
-    "tab.lineage": "\u5BE6\u9A57\u8B5C\u7CFB",
-    "tab.paperProject": "\u8AD6\u6587\u5C08\u6848",
-    "tab.paperOutline": "\u5927\u7DB1\u8207\u7AE0\u7BC0",
-    "tab.paperCitations": "\u5F15\u7528\u8207 BibTeX",
-    "tab.paperFigures": "\u5716\u8868\u9078\u64C7\u8207\u63D2\u5165",
-    "tab.paperData": "\u5BE6\u9A57\u8CC7\u6599\u9078\u64C7\u8207\u5F15\u7528",
-    "tab.paperCompile": "LaTeX \u7DE8\u8B6F",
-    "tab.paperReview": "PDF \u5448\u73FE\u8207\u5BE9\u95B1",
-    "topbar.connected": "\u5DF2\u9023\u7DDA",
-    "topbar.offline": "\u96E2\u7DDA",
-    "topbar.connecting": "\u9023\u7DDA\u4E2D",
-    "topbar.refresh": "\u91CD\u65B0\u6574\u7406",
-    "topbar.language": "\u4ECB\u9762\u8A9E\u8A00",
-    "topbar.theme": "\u4ECB\u9762\u4E3B\u984C",
-    "sidebar.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
-    "sidebar.projects": "\u5C08\u6848",
-    "sidebar.noProjects": "\u5C1A\u7121\u5C08\u6848",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
-    "sidebar.memoryGraph": "\u5C08\u6848\u8A18\u61B6\u5716",
-    "sidebar.modelSettings": "\u6A21\u578B\u8A2D\u5B9A",
-    "theme.light": "\u6DFA\u8272",
-    "theme.dark": "\u6697\u8272",
-    "theme.colorful": "\u5F69\u8272",
-    "projectChat": "\u5C08\u6848\u5C0D\u8A71",
-    "common.innerPages": "\u5167\u90E8\u9801\u9762",
-    "common.cancel": "\u53D6\u6D88"
-  };
-  var en = {
-    "nav.overview": "Project Overview",
-    "nav.relatedWork": "Related Work",
-    "nav.implementation": "Experiment Implementation",
-    "nav.paper": "Academic Paper Writing",
-    "nav.workspaceArea": "Research workspace",
-    "nav.currentWorkspace": "Current workspace pages",
-    "group.overviewIdea": "Idea Discussion",
-    "group.overviewSpec": "Project Specification",
-    "group.overviewInnovation": "Innovation and Boundaries",
-    "group.overviewProgress": "Progress and Decisions",
-    "group.overviewReports": "Reports and Mentor Feedback",
-    "group.relatedSearch": "Seeds and Literature Search",
-    "group.relatedStatus": "Research Status and Citation Graph",
-    "group.implRelated": "Related Work Implementation",
-    "group.implMethod": "Our Method Implementation",
-    "group.paperWriting": "Writing and Compilation",
-    "tab.overview": "Idea Discussion",
-    "tab.overviewSpec": "Description and Research Question",
-    "tab.overviewInnovation": "Innovation and Boundaries",
-    "tab.overviewProgress": "Progress and Decisions",
-    "tab.dailyReports": "Daily Report",
-    "tab.weeklyReports": "Weekly Report",
-    "tab.feedbackInbox": "Mentor Feedback",
-    "tab.feedbackAudit": "Decisions and Audit",
-    "tab.literature": "Seeds and Literature Search",
-    "tab.researchStatus": "Research Status",
-    "tab.citationGraph": "Citation Graph",
-    "tab.reproduction": "Code Reproduction",
-    "tab.comparison": "Effect Comparison",
-    "tab.methodDesign": "Method Design",
-    "tab.codeWorkspace": "Code Workspace",
-    "tab.policies": "Changes and Approvals",
-    "tab.approvals": "Git and Backups",
-    "tab.experiments": "Plans and Results",
-    "tab.experimentQueue": "Run Queue",
-    "tab.experimentMetrics": "Metric Statistics",
-    "tab.artifacts": "Results and Visualization",
-    "tab.lineage": "Experiment Lineage",
-    "tab.paperProject": "Paper Project",
-    "tab.paperOutline": "Outline and Chapters",
-    "tab.paperCitations": "Citations and BibTeX",
-    "tab.paperFigures": "Figure Selection and Insertion",
-    "tab.paperData": "Experiment Data Selection",
-    "tab.paperCompile": "LaTeX Compilation",
-    "tab.paperReview": "PDF Review",
-    "topbar.connected": "Connected",
-    "topbar.offline": "Offline",
-    "topbar.connecting": "Connecting",
-    "topbar.refresh": "Refresh",
-    "topbar.language": "Interface language",
-    "topbar.theme": "Interface theme",
-    "sidebar.newProject": "New Research Project",
-    "sidebar.projects": "Projects",
-    "sidebar.noProjects": "No projects yet",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
-    "sidebar.memoryGraph": "Project Memory Graph",
-    "sidebar.modelSettings": "Model Settings",
-    "theme.light": "Light",
-    "theme.dark": "Dark",
-    "theme.colorful": "Colorful",
-    "projectChat": "Project chat",
-    "common.innerPages": "Inner pages",
-    "common.cancel": "Cancel"
-  };
-  var es = {
-    "nav.overview": "Resumen del proyecto",
-    "nav.relatedWork": "Trabajo relacionado",
-    "nav.implementation": "Implementaci\xF3n experimental",
-    "nav.paper": "Redacci\xF3n acad\xE9mica",
-    "nav.workspaceArea": "Espacio de investigaci\xF3n",
-    "nav.currentWorkspace": "P\xE1ginas del espacio actual",
-    "group.overviewIdea": "Discusi\xF3n de la idea",
-    "group.overviewSpec": "Especificaci\xF3n del proyecto",
-    "group.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
-    "group.overviewProgress": "Progreso y decisiones",
-    "group.overviewReports": "Informes y comentarios del tutor",
-    "group.relatedSearch": "B\xFAsqueda de fuentes",
-    "group.relatedStatus": "Estado de la investigaci\xF3n y grafo de citas",
-    "group.implRelated": "Implementaci\xF3n de trabajos relacionados",
-    "group.implMethod": "Implementaci\xF3n de nuestro m\xE9todo",
-    "group.paperWriting": "Escritura y compilaci\xF3n",
-    "tab.overview": "Discusi\xF3n de la idea",
-    "tab.overviewSpec": "Descripci\xF3n y pregunta de investigaci\xF3n",
-    "tab.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
-    "tab.overviewProgress": "Progreso y decisiones",
-    "tab.dailyReports": "Informe diario",
-    "tab.weeklyReports": "Informe semanal",
-    "tab.feedbackInbox": "Comentarios del tutor",
-    "tab.feedbackAudit": "Decisiones y auditor\xEDa",
-    "tab.literature": "B\xFAsqueda de fuentes",
-    "tab.researchStatus": "Estado de la investigaci\xF3n",
-    "tab.citationGraph": "Grafo de citas",
-    "tab.reproduction": "Reproducci\xF3n de c\xF3digo",
-    "tab.comparison": "Comparaci\xF3n de resultados",
-    "tab.methodDesign": "Dise\xF1o del m\xE9todo",
-    "tab.codeWorkspace": "Espacio de c\xF3digo",
-    "tab.policies": "Cambios y aprobaciones",
-    "tab.approvals": "Git y copias de seguridad",
-    "tab.experiments": "Planes y resultados",
-    "tab.experimentQueue": "Cola de ejecuci\xF3n",
-    "tab.experimentMetrics": "Estad\xEDsticas de m\xE9tricas",
-    "tab.artifacts": "Resultados y visualizaci\xF3n",
-    "tab.lineage": "Linaje experimental",
-    "tab.paperProject": "Proyecto de art\xEDculo",
-    "tab.paperOutline": "Esquema y cap\xEDtulos",
-    "tab.paperCitations": "Citas y BibTeX",
-    "tab.paperFigures": "Selecci\xF3n e inserci\xF3n de figuras",
-    "tab.paperData": "Selecci\xF3n de datos experimentales",
-    "tab.paperCompile": "Compilaci\xF3n LaTeX",
-    "tab.paperReview": "Revisi\xF3n del PDF",
-    "topbar.connected": "Conectado",
-    "topbar.offline": "Sin conexi\xF3n",
-    "topbar.connecting": "Conectando",
-    "topbar.refresh": "Actualizar",
-    "topbar.language": "Idioma de la interfaz",
-    "topbar.theme": "Tema de la interfaz",
-    "sidebar.newProject": "Nuevo proyecto de investigaci\xF3n",
-    "sidebar.projects": "Proyectos",
-    "sidebar.noProjects": "A\xFAn no hay proyectos",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
-    "sidebar.memoryGraph": "Grafo de memoria del proyecto",
-    "sidebar.modelSettings": "Configuraci\xF3n de modelos",
-    "theme.light": "Claro",
-    "theme.dark": "Oscuro",
-    "theme.colorful": "Colorido",
-    "projectChat": "Chat del proyecto",
-    "common.innerPages": "P\xE1ginas internas",
-    "common.cancel": "Cancelar"
-  };
-  var dictionaries = {
-    "zh-CN": zhCN,
-    "zh-TW": zhTW,
-    en,
-    es
-  };
-  function initialLocale() {
-    if (typeof window === "undefined") return "zh-CN";
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    const locale = stored === "zh-TW" || stored === "en" || stored === "es" ? stored : DEFAULT_LOCALE;
-    window.document.documentElement.lang = locale;
-    return locale;
-  }
-  var currentLocale = initialLocale();
-  var listeners = /* @__PURE__ */ new Set();
-  function subscribe(listener) {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  }
-  function getLocale() {
-    return currentLocale;
-  }
-  function setLocale(locale) {
-    if (locale === currentLocale) return;
-    currentLocale = locale;
-    window.localStorage.setItem(STORAGE_KEY, locale);
-    window.document.documentElement.lang = locale;
-    listeners.forEach((listener) => listener());
-  }
-  function useLocale() {
-    return (0, import_react4.useSyncExternalStore)(subscribe, getLocale, getLocale);
-  }
-  function useTranslation() {
-    const locale = useLocale();
-    const t = (key) => dictionaries[locale][key] ?? zhCN[key] ?? key;
-    return { locale, t, setLocale };
-  }
-
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
   function Sidebar({
@@ -14047,15 +17164,17 @@
   // src/components/SpecPane.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
   function FieldList({ label, values }) {
+    const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "spec-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: label }),
-      values && values.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("ul", { children: values.map((value, index) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("li", { children: value }, index)) }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { children: "\u672A\u6307\u5B9A" })
+      values && values.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("ul", { children: values.map((value, index) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("li", { children: value }, index)) }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { children: t("spec.unset") })
     ] });
   }
   function FieldText({ label, value }) {
+    const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "spec-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { children: value || "\u672A\u6307\u5B9A" })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { children: value || t("spec.unset") })
     ] });
   }
   function SpecPane({
@@ -14063,11 +17182,13 @@
     status,
     onConfirm
   }) {
+    const { t } = useTranslation();
     const idea = spec?.idea;
+    const statusLabel2 = status === "pending_clarification" ? t("common.pendingClarify") : status === "pending_confirmation" ? t("common.pendingConfirm") : status;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "spec-pane-content", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "pane-heading", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { children: "ResearchIdea / ProjectSpec" }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `badge ${status === "\u5F85\u786E\u8BA4" ? "pending" : "neutral"}`, children: status })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `badge ${status === "pending_confirmation" ? "pending" : "neutral"}`, children: statusLabel2 })
       ] }),
       spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: "Title", value: idea.title }),
@@ -14085,9 +17206,9 @@
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Approvals", values: spec.required_approvals }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { className: "primary full", type: "button", onClick: onConfirm, children: [
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Check, { size: 17 }),
-          "\u786E\u8BA4\u5E76\u521B\u5EFA\u9879\u76EE"
+          t("spec.confirmCreate")
         ] })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "spec-empty", children: "\u89C4\u683C\u5C06\u5728\u6F84\u6E05\u5B8C\u6210\u540E\u751F\u6210\u3002" })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "spec-empty", children: t("spec.empty") })
     ] });
   }
 
@@ -14097,9 +17218,10 @@
     sessions,
     onToggle
   }) {
+    const { t } = useTranslation();
     if (!sessions.length) return null;
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "ai-thinking", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "pane-heading", style: { marginTop: 24 }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "AI \u8BF7\u6C42\u72B6\u6001" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "pane-heading", style: { marginTop: 24 }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: t("thinking.title") }) }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "thinking-sessions", children: sessions.map((session) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: `thinking-session ${session.collapsed ? "collapsed" : ""}`, children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
           "button",
@@ -14111,7 +17233,7 @@
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ChevronDown, { className: "toggle-icon", size: 16 }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-model", children: session.modelLabel }),
-              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: `session-status ${session.status}`, children: session.status === "running" ? "\u5904\u7406\u4E2D" : session.status === "done" ? "\u5DF2\u5B8C\u6210" : "\u5931\u8D25" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: `session-status ${session.status}`, children: session.status === "running" ? t("common.running") : session.status === "done" ? t("common.done") : t("common.failed") }),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-time", children: session.time })
             ]
           }
@@ -14129,17 +17251,18 @@
 
   // src/components/IdeaView.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
-  var IDEA_PROGRESS_STAGES = [
-    "\u6B63\u5728\u7406\u89E3\u7814\u7A76\u76EE\u6807\u4E0E\u5DF2\u6709\u7EBF\u7D22\u2026",
-    "\u6B63\u5728\u9009\u62E9\u6210\u672C\u5408\u9002\u7684\u6A21\u578B\u5C42\u7EA7\u2026",
-    "\u6B63\u5728\u66F4\u65B0 ResearchIdea \u8349\u7A3F\u2026",
-    "\u6B63\u5728\u68C0\u67E5\u98CE\u9669\u3001\u5047\u8BBE\u4E0E\u5F85\u786E\u8BA4\u4E8B\u9879\u2026",
-    "\u6A21\u578B\u4ECD\u5728\u5904\u7406\uFF0C\u8BF7\u7A0D\u5019\u2026"
+  var IDEA_PROGRESS_STAGE_KEYS = [
+    "idea.stage.understand",
+    "idea.stage.selectModel",
+    "idea.stage.updateDraft",
+    "idea.stage.checkRisks",
+    "idea.stage.stillWorking"
   ];
   function MessageItem({ message }) {
+    const { t } = useTranslation();
     if (message.role === "error") {
       return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "request-error", role: "alert", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: "\u8BF7\u6C42\u5931\u8D25" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: t("idea.errorTitle") }),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: message.text })
       ] });
     }
@@ -14152,8 +17275,10 @@
     ] });
   }
   function AiProgress({ project = false }) {
+    const { t } = useTranslation();
     const [elapsed, setElapsed] = (0, import_react6.useState)(0);
-    const stages = project ? ["\u6B63\u5728\u8BC6\u522B\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u53D8\u66F4\u610F\u56FE\u2026", "\u6B63\u5728\u68C0\u67E5\u9879\u76EE\u72B6\u6001\u4E0E\u5BA1\u6279\u8FB9\u754C\u2026", "\u6B63\u5728\u7EC4\u7EC7\u53EF\u5BA1\u9605\u7684\u56DE\u590D\u2026", "\u6A21\u578B\u4ECD\u5728\u5904\u7406\uFF0C\u8BF7\u7A0D\u5019\u2026"] : IDEA_PROGRESS_STAGES;
+    const stageKeys = project ? ["idea.stage.identifyIntent", "idea.stage.checkBoundaries", "idea.stage.organizeReply", "idea.stage.stillWorking"] : IDEA_PROGRESS_STAGE_KEYS;
+    const stages = stageKeys.map((key) => t(key));
     const [stageIndex, setStageIndex] = (0, import_react6.useState)(0);
     (0, import_react6.useEffect)(() => {
       const started = Date.now();
@@ -14167,10 +17292,11 @@
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "ai-progress", role: "status", "aria-live": "polite", children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "ai-progress-head", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "thinking-dot" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: "AI \u6B63\u5728\u5206\u6790" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: t("idea.progressTitle") }),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { children: [
           elapsed,
-          " \u79D2"
+          " ",
+          t("common.seconds")
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "ai-progress-track", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", {}) }),
@@ -14191,6 +17317,7 @@
     thinkingSessions,
     onToggleThinking
   }) {
+    const { t } = useTranslation();
     const [input, setInput] = (0, import_react6.useState)("");
     const messagesEndRef = (0, import_react6.useRef)(null);
     const fileInputRef = (0, import_react6.useRef)(null);
@@ -14218,7 +17345,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { ref: messagesEndRef })
         ] }),
         chatBusy ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(AiProgress, {}) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "clarification-mode-bar", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "mode-switch", htmlFor: "clarificationMode", title: "\u5207\u6362 Idea \u6F84\u6E05\u6DF1\u5EA6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "clarification-mode-bar", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "mode-switch", htmlFor: "clarificationMode", title: t("idea.toggleDepthTitle"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
             "input",
             {
@@ -14233,12 +17360,12 @@
           ),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", {}) }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "mode-copy", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: automatic ? "\u5168\u81EA\u52A8\u6A21\u5F0F" : "\u8BE6\u7EC6\u6A21\u5F0F" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("small", { id: "clarificationModeHint", children: automatic ? "\u5C11\u91CF\u5173\u952E\u8FFD\u95EE" : "\u5168\u9762\u4E86\u89E3\u9700\u6C42" })
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: automatic ? t("app.mode.automatic") : t("app.mode.detailed") }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("small", { id: "clarificationModeHint", children: automatic ? t("idea.modeHint.automatic") : t("idea.modeHint.detailed") })
           ] })
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("form", { className: "composer", onSubmit: handleSubmit, "aria-busy": chatBusy, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "attach-btn", title: "\u6DFB\u52A0\u6750\u6599", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "attach-btn", title: t("idea.attachTitle"), children: [
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Paperclip, { size: 17 }),
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
               "input",
@@ -14260,13 +17387,13 @@
             {
               value: input,
               rows: 2,
-              placeholder: "\u8F93\u5165\u7814\u7A76 Idea \u6216\u56DE\u7B54\u6F84\u6E05\u95EE\u9898",
+              placeholder: t("idea.placeholder"),
               "aria-keyshortcuts": "Control+Enter Meta+Enter",
               onChange: (event) => setInput(event.target.value),
               onKeyDown: handleKeyDown
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { className: "send-btn", type: "submit", title: "\u53D1\u9001", "aria-label": "\u53D1\u9001", disabled: chatBusy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Send, { size: 17 }) })
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: chatBusy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Send, { size: 17 }) })
         ] }),
         queuedFiles.length ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "file-queue", children: queuedFiles.map((file) => file.name).join(" \xB7 ") }) : null
       ] }),
@@ -14281,14 +17408,10 @@
   var import_react7 = __toESM(require_react(), 1);
   var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
   function ProjectProgress() {
+    const { t } = useTranslation();
     const [elapsed, setElapsed] = (0, import_react7.useState)(0);
     const [stageIndex, setStageIndex] = (0, import_react7.useState)(0);
-    const stages = [
-      "\u6B63\u5728\u8BC6\u522B\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u53D8\u66F4\u610F\u56FE\u2026",
-      "\u6B63\u5728\u68C0\u67E5\u9879\u76EE\u72B6\u6001\u4E0E\u5BA1\u6279\u8FB9\u754C\u2026",
-      "\u6B63\u5728\u7EC4\u7EC7\u53EF\u5BA1\u9605\u7684\u56DE\u590D\u2026",
-      "\u6A21\u578B\u4ECD\u5728\u5904\u7406\uFF0C\u8BF7\u7A0D\u5019\u2026"
-    ];
+    const stages = [t("idea.stage.identifyIntent"), t("idea.stage.checkBoundaries"), t("idea.stage.organizeReply"), t("idea.stage.stillWorking")];
     (0, import_react7.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
@@ -14301,10 +17424,11 @@
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "ai-progress compact", role: "status", "aria-live": "polite", children: [
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "ai-progress-head", children: [
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "thinking-dot" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "AI \u6B63\u5728\u5206\u6790" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: t("idea.progressTitle") }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { children: [
           elapsed,
-          " \u79D2"
+          " ",
+          t("common.seconds")
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "ai-progress-track", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", {}) }),
@@ -14318,6 +17442,7 @@
     onClose,
     mobileOpen
   }) {
+    const { t } = useTranslation();
     const [input, setInput] = (0, import_react7.useState)("");
     const messagesEndRef = (0, import_react7.useRef)(null);
     (0, import_react7.useEffect)(() => {
@@ -14332,17 +17457,17 @@
     };
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("aside", { className: `project-chat ${mobileOpen ? "mobile-open" : ""}`, children: [
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "pane-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "\u9879\u76EE\u5BF9\u8BDD" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: t("chat.title") }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "chat-heading-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "badge live", children: "\u76D1\u7763\u4E2D" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "icon-btn mobile-chat-close", type: "button", onClick: onClose, title: "\u5173\u95ED\u9879\u76EE\u5BF9\u8BDD", "aria-label": "\u5173\u95ED\u9879\u76EE\u5BF9\u8BDD", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(X, { size: 17 }) })
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "badge live", children: t("chat.monitoring") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "icon-btn mobile-chat-close", type: "button", onClick: onClose, title: t("chat.closeTitle"), "aria-label": t("chat.closeTitle"), children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(X, { size: 17 }) })
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "messages compact", children: [
         messages.map((message) => {
           if (message.role === "error") {
             return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "request-error", role: "alert", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "\u8BF7\u6C42\u5931\u8D25" }),
+              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: t("idea.errorTitle") }),
               /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: message.text })
             ] }, message.id);
           }
@@ -14363,7 +17488,7 @@
           {
             value: input,
             rows: 2,
-            placeholder: "\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u660E\u786E\u63D0\u51FA\u53D8\u66F4",
+            placeholder: t("chat.placeholder"),
             "aria-keyshortcuts": "Control+Enter Meta+Enter",
             onChange: (event) => setInput(event.target.value),
             onKeyDown: (event) => {
@@ -14374,7 +17499,7 @@
             }
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "send-btn", type: "submit", title: "\u53D1\u9001", "aria-label": "\u53D1\u9001", disabled: busy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Send, { size: 17 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: busy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Send, { size: 17 }) })
       ] })
     ] });
   }
@@ -14422,6 +17547,7 @@
     wide = false
   }) {
     const closeRef = (0, import_react8.useRef)(null);
+    const { t } = useTranslation();
     (0, import_react8.useEffect)(() => {
       closeRef.current?.focus();
       const onKeyDown = (event) => {
@@ -14439,7 +17565,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { children: title }),
           description ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: description }) : null
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "icon-btn", ref: closeRef, type: "button", onClick: onClose, "aria-label": "\u5173\u95ED", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(X, { size: 17 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "icon-btn", ref: closeRef, type: "button", onClick: onClose, "aria-label": t("common.close"), children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(X, { size: 17 }) })
       ] }),
       children
     ] }) });
@@ -14448,17 +17574,18 @@
     title,
     description,
     confirmLabel,
-    cancelLabel = "\u53D6\u6D88",
+    cancelLabel,
     onConfirm,
     onCancel
   }) {
+    const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "modal", role: "presentation", onMouseDown: (event) => {
       if (event.target === event.currentTarget) onCancel();
     }, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "modal-panel confirm-panel", role: "alertdialog", "aria-modal": "true", "aria-label": title, children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "modal-heading", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { children: title }) }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted confirm-description", children: description }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "secondary", type: "button", onClick: onCancel, children: cancelLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "secondary", type: "button", onClick: onCancel, children: cancelLabel || t("common.cancel") }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "reject", type: "button", onClick: onConfirm, children: confirmLabel })
       ] })
     ] }) });
@@ -14476,6 +17603,7 @@
     onNavigate,
     onRequestConfirm
   }) {
+    const { t, locale } = useTranslation();
     const counts = project.counts || {
       papers: project.papers?.length || 0,
       experiments: project.experiments?.length || 0,
@@ -14487,17 +17615,16 @@
     const proposals = project.proposals || [];
     const experiments = project.experiments || [];
     const timeline = [
-      ...checkpoints.map((item) => ({ id: `checkpoint-${item.id}`, label: item.stage, detail: `Idea v${item.idea_version ?? project.current_idea_version ?? 1}`, status: item.valid === false ? "invalidated" : "recorded", created_at: item.created_at })),
+      ...checkpoints.map((item) => ({ id: `checkpoint-${item.id}`, label: item.stage, detail: t("overview.checkpointVersion", { version: item.idea_version ?? project.current_idea_version ?? 1 }), status: item.valid === false ? "invalidated" : "recorded", created_at: item.created_at })),
       ...proposals.map((item) => ({ id: `proposal-${item.id}`, label: item.summary, detail: item.reason || item.kind, status: item.status, created_at: item.created_at })),
-      ...experiments.map((item) => ({ id: `experiment-${item.id}`, label: item.experiment_type, detail: item.run_id ? `Run ${item.run_id}` : "\u5C1A\u672A\u5206\u914D Run", status: item.status, created_at: item.created_at }))
+      ...experiments.map((item) => ({ id: `experiment-${item.id}`, label: item.experiment_type, detail: item.run_id ? t("overview.runDetail", { run: item.run_id }) : t("overview.runPending"), status: item.status, created_at: item.created_at }))
     ].sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || ""))).slice(0, 8);
-    const formatTime3 = (value) => value ? new Date(value).toLocaleString("zh-CN", { dateStyle: "short", timeStyle: "short" }) : "\u65F6\u95F4\u5F85\u8BB0\u5F55";
     const runSearch = async () => {
       try {
-        showToast("\u6B63\u5728\u5E76\u884C\u68C0\u7D22\u591A\u4E2A\u5B66\u672F\u6765\u6E90\u4E0E\u8D44\u6E90\u6CE8\u518C\u8868\u2026");
+        showToast(t("overview.toastSearching"));
         await api("/api/search", { method: "POST", body: JSON.stringify({ project_id: project.id, limit: 8 }) });
         await onRefresh();
-        showToast("\u68C0\u7D22\u5B8C\u6210\uFF0C\u5019\u9009\u8D44\u6E90\u5DF2\u5237\u65B0");
+        showToast(t("overview.toastSearchDone"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14507,7 +17634,7 @@
         const result = await api(`/api/projects/${project.id}/paper-draft`, { method: "POST" });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u8BC1\u636E\u8BBA\u6587\u8349\u7A3F Proposal ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("overview.toastDraftProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14517,7 +17644,7 @@
         const result = await api(`/api/projects/${project.id}/compile-plan`, { method: "POST" });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u7F16\u8BD1\u8BA1\u5212 ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("overview.toastCompileProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14527,7 +17654,7 @@
       try {
         await api(`/api/projects/${project.id}/state`, { method: "POST", body: JSON.stringify({ action, reason }) });
         await onRefresh();
-        showToast(action === "pause" ? "\u9879\u76EE\u5DF2\u6682\u505C" : action === "resume" ? "\u9879\u76EE\u5DF2\u6062\u590D" : "\u9879\u76EE\u5DF2\u53D6\u6D88");
+        showToast(action === "pause" ? t("overview.toastPaused") : action === "resume" ? t("overview.toastResumed") : t("overview.toastCancelled"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14537,19 +17664,19 @@
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "metric-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u8BBA\u6587" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.papers") }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: counts.papers ?? 0 })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u5B9E\u9A8C" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.experiments") }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: counts.experiments ?? 0 })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u4EA7\u7269" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.artifacts") }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: counts.artifacts ?? 0 })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u5F85\u5BA1\u6279" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("common.pendingApproval") }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: pendingCount })
         ] })
       ] }),
@@ -14557,26 +17684,26 @@
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           SectionHeading,
           {
-            title: "\u7814\u7A76\u89C4\u683C",
+            title: t("overview.spec"),
             extra: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(ButtonRow, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: runSearch, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Search, { size: 15 }),
-                "\u68C0\u7D22\u6587\u732E"
+                t("overview.searchLiterature")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createPaperDraft, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(FilePenLine, { size: 15 }),
-                "\u751F\u6210\u8BC1\u636E\u8BBA\u6587\u8349\u7A3F"
+                t("overview.paperDraft")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createCompilePlan, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(FileCheck, { size: 15 }),
-                "\u7F16\u8BD1\u8BBA\u6587"
+                t("overview.compilePaper")
               ] })
             ] })
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { children: spec?.research_question || "\u5C1A\u672A\u751F\u6210\u7814\u7A76\u89C4\u683C" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { children: spec?.research_question || t("overview.noSpec") }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
               spec?.domain,
               " \xB7 ",
@@ -14588,37 +17715,37 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "section overview-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "data-list overview-card", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SectionHeading, { title: "\u9879\u76EE\u63CF\u8FF0", hint: "\u5F53\u524D\u9879\u76EE\u89C4\u683C\u7684\u53EF\u5BA1\u9605\u6458\u8981\u3002" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SectionHeading, { title: t("overview.projectDescription"), hint: t("overview.descriptionHint") }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "overview-fields", children: [
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u7814\u7A76\u9886\u57DF" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.domain || "\u5C1A\u672A\u786E\u8BA4" })
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.domain") }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.domain || t("common.notConfirmed") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u7814\u7A76\u95EE\u9898" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.research_question || "\u5C1A\u672A\u786E\u8BA4" })
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.question") }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.research_question || t("common.notConfirmed") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u5047\u8BBE" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.hypotheses?.join("\uFF1B") || "\u5C1A\u672A\u751F\u6210" })
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.hypotheses") }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.hypotheses?.join("\uFF1B") || t("overview.notGenerated") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "\u6210\u529F\u6807\u51C6" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.success_criteria?.join("\uFF1B") || "\u5C1A\u672A\u751F\u6210" })
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: t("overview.successCriteria") }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: spec?.success_criteria?.join("\uFF1B") || t("overview.notGenerated") })
             ] })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "data-list overview-card", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SectionHeading, { title: "\u521B\u65B0\u70B9\u5019\u9009", hint: "\u5019\u9009\u5EFA\u8BAE\u9700\u8981\u76F8\u5173\u5DE5\u4F5C\u8BC1\u636E\u548C\u5BFC\u5E08\u786E\u8BA4\u3002" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SectionHeading, { title: t("overview.innovationCandidates"), hint: t("overview.innovationHint") }),
           spec?.expected_contributions?.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("ul", { className: "candidate-list", children: spec.expected_contributions.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("li", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ShieldAlert, { size: 15 }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: item }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: "candidate-only" })
-          ] }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "empty-inline", children: "\u5C1A\u672A\u751F\u6210\u521B\u65B0\u70B9\u5019\u9009\u3002" })
+          ] }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "empty-inline", children: t("overview.noInnovation") })
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SectionHeading, { title: "\u7814\u7A76\u8FDB\u5EA6", hint: "\u65F6\u95F4\u7EBF\u53EA\u6C47\u603B\u5DF2\u8BB0\u5F55\u7684 Proposal\u3001Checkpoint \u548C\u5B9E\u9A8C\u72B6\u6001\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B66\u7ED3\u8BBA\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SectionHeading, { title: t("overview.progress"), hint: t("overview.progressHint") }),
         timeline.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "timeline", role: "list", children: timeline.map((item) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "timeline-item", role: "listitem", children: [
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "timeline-dot" }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
@@ -14626,59 +17753,57 @@
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
               item.detail,
               " \xB7 ",
-              formatTime3(item.created_at)
+              formatDateTime(item.created_at, locale)
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: item.status })
-        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "empty", children: "\u5C1A\u65E0\u53EF\u5C55\u793A\u7684\u8FDB\u5EA6\u4E8B\u4EF6\u3002" })
+        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "empty", children: t("overview.noTimeline") })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "section", children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           SectionHeading,
           {
-            title: "\u9879\u76EE\u72B6\u6001",
+            title: t("overview.projectStatus"),
             extra: project.status === "active" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(ButtonRow, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "secondary", type: "button", onClick: () => changeState("pause"), children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Pause, { size: 15 }),
-                "\u6682\u505C"
+                t("overview.pause")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "reject", type: "button", onClick: () => onRequestConfirm({
-                title: "\u53D6\u6D88\u9879\u76EE",
-                description: "\u53D6\u6D88\u9879\u76EE\u540E\u4E0D\u80FD\u6062\u590D\uFF0C\u786E\u5B9A\u7EE7\u7EED\u5417\uFF1F",
-                confirmLabel: "\u786E\u8BA4\u53D6\u6D88",
+                title: t("overview.cancelProject"),
+                description: t("overview.cancelConfirmDescription"),
+                confirmLabel: t("overview.confirmCancel"),
                 onConfirm: () => changeState("cancel")
               }), children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Square, { size: 15 }),
-                "\u53D6\u6D88\u9879\u76EE"
+                t("overview.cancelProject")
               ] })
             ] }) : project.status === "paused" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(ButtonRow, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "approve", type: "button", onClick: () => changeState("resume"), children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Play, { size: 15 }),
-                "\u6062\u590D"
+                t("overview.resume")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "reject", type: "button", onClick: () => onRequestConfirm({
-                title: "\u53D6\u6D88\u9879\u76EE",
-                description: "\u53D6\u6D88\u9879\u76EE\u540E\u4E0D\u80FD\u6062\u590D\uFF0C\u786E\u5B9A\u7EE7\u7EED\u5417\uFF1F",
-                confirmLabel: "\u786E\u8BA4\u53D6\u6D88",
+                title: t("overview.cancelProject"),
+                description: t("overview.cancelConfirmDescription"),
+                confirmLabel: t("overview.confirmCancel"),
                 onConfirm: () => changeState("cancel")
               }), children: [
                 /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Square, { size: 15 }),
-                "\u53D6\u6D88\u9879\u76EE"
+                t("overview.cancelProject")
               ] })
             ] }) : null
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { children: project.current_stage || "research" }),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
-              "Idea version ",
-              project.current_idea_version ?? 1,
-              " \xB7 ",
-              project.status
-            ] })
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { children: project.current_stage === "initialized" ? t("overview.stageInitialized") : project.current_stage || t("overview.stageUnknown") }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { children: t("overview.ideaVersion", {
+              version: project.current_idea_version ?? 1,
+              status: project.status === "active" ? t("overview.statusActive") : project.status === "paused" ? t("overview.statusPaused") : project.status === "cancelled" ? t("overview.statusCancelled") : project.status
+            }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: project.status })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: project.status, children: project.status === "active" ? t("overview.statusActive") : project.status === "paused" ? t("overview.statusPaused") : project.status === "cancelled" ? t("overview.statusCancelled") : project.status })
         ] }) })
       ] })
     ] });
@@ -14695,6 +17820,7 @@
     onRequestConfirm,
     searchCandidates
   }) {
+    const { t } = useTranslation();
     const [materialQuery, setMaterialQuery] = (0, import_react9.useState)("");
     const [materialLoading, setMaterialLoading] = (0, import_react9.useState)(false);
     const [materialRows, setMaterialRows] = (0, import_react9.useState)([]);
@@ -14717,14 +17843,14 @@
     const [recursiveWidth, setRecursiveWidth] = (0, import_react9.useState)(5);
     const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react9.useState)(30);
     const [recursiveProviders, setRecursiveProviders] = (0, import_react9.useState)(["crossref", "openalex", "semantic_scholar"]);
-    const [recursiveReason, setRecursiveReason] = (0, import_react9.useState)("\u6269\u5C55\u5F53\u524D\u9879\u76EE\u7684\u76F8\u5173\u5DE5\u4F5C\u5F15\u7528\u7F51\u7EDC");
+    const [recursiveReason, setRecursiveReason] = (0, import_react9.useState)(t("literature.recursiveDefaultReason"));
     const [recursiveLoading, setRecursiveLoading] = (0, import_react9.useState)(false);
     const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react9.useState)(null);
     const activeRecursiveRun = project.related_work_runs?.find((run) => ["queued", "running"].includes(run.status));
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
     const valueLabel = (value) => {
-      if (value === null || value === void 0) return "\u672A\u63D0\u4F9B";
+      if (value === null || value === void 0) return t("common.notProvided");
       if (typeof value === "string") return value.length > 180 ? `${value.slice(0, 180)}\u2026` : value;
       try {
         return JSON.stringify(value);
@@ -14736,19 +17862,19 @@
       try {
         await api(`/api/projects/${project.id}/related-work/candidates/${candidate.id}/decision`, {
           method: "POST",
-          body: JSON.stringify({ decision, reason: decision === "approved" ? "\u7528\u6237\u786E\u8BA4\u8BE5 metadata candidate \u53EF\u8FDB\u5165\u9879\u76EE Paper" : decision === "rejected" ? "\u7528\u6237\u62D2\u7EDD\u8BE5 metadata candidate" : "\u7528\u6237\u8981\u6C42\u91CD\u65B0\u5BA1\u9605\u8BE5 candidate" })
+          body: JSON.stringify({ decision, reason: decision === "approved" ? t("literature.approveReason") : decision === "rejected" ? t("literature.rejectReason") : t("literature.reopenReason") })
         });
         await onRefresh();
-        showToast(decision === "approved" ? "\u5019\u9009\u5DF2\u8F6C\u6362\u4E3A\u9879\u76EE Paper" : decision === "rejected" ? "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55" : "\u5019\u9009\u5DF2\u91CD\u65B0\u6253\u5F00");
+        showToast(decision === "approved" ? t("literature.approvedToast") : decision === "rejected" ? t("literature.rejectedToast") : t("literature.reopenedToast"));
       } catch (error) {
         showToast(errorMessage(error));
       }
     };
     const requestCandidateDecision = (candidate, decision) => {
-      const labels = { approved: "\u786E\u8BA4 Paper", rejected: "\u62D2\u7EDD\u5019\u9009", reopened: "\u91CD\u65B0\u6253\u5F00" };
+      const labels = { approved: t("literature.confirmPaper"), rejected: t("literature.rejectCandidate"), reopened: t("literature.reopen") };
       onRequestConfirm({
         title: labels[decision],
-        description: decision === "approved" ? "\u786E\u8BA4\u540E\u4F1A\u521B\u5EFA\u5F53\u524D\u9879\u76EE\u8303\u56F4\u5185\u7684 Paper\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8BC1\u636E\u3002" : "\u5019\u9009\u4E0D\u4F1A\u88AB\u7269\u7406\u5220\u9664\uFF0C\u51B3\u5B9A\u548C\u539F\u56E0\u4F1A\u4FDD\u7559\u5728\u9879\u76EE\u5BA1\u8BA1\u4E2D\u3002",
+        description: decision === "approved" ? t("literature.approveDescription") : t("literature.rejectDescription"),
         confirmLabel: labels[decision],
         onConfirm: () => {
           void decideCandidate(candidate, decision);
@@ -14762,7 +17888,7 @@
           body: JSON.stringify({ provenance_id: field.id })
         });
         await onRefresh();
-        showToast(`\u5DF2\u9009\u62E9 ${field.field_name} \u7684 ${field.provider} \u6765\u6E90`);
+        showToast(t("literature.fieldSelected", { field: field.field_name, provider: field.provider }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14772,11 +17898,11 @@
       try {
         const result = await api(`/api/projects/${project.id}/related-work/candidate-enrichment`, {
           method: "POST",
-          body: JSON.stringify({ candidate_id: candidate.id, fields, providers: ["crossref", "openalex", "semantic_scholar", "dblp", "arxiv"], reason: "\u8865\u5168\u5F53\u524D\u5019\u9009\u7F3A\u5931\u5B57\u6BB5\u5E76\u8BB0\u5F55\u591A\u6E90 provenance" })
+          body: JSON.stringify({ candidate_id: candidate.id, fields, providers: ["crossref", "openalex", "semantic_scholar", "dblp", "arxiv"], reason: t("literature.enrichReason") })
         });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u5B57\u6BB5\u8865\u5168 Proposal ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("literature.enrichProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14812,7 +17938,7 @@
         });
         await onRefresh();
         resetSeedForm();
-        showToast(`\u79CD\u5B50\u5DF2\u8BB0\u5F55\uFF1A${result.status}\uFF0C${result.candidate_ids?.length || 0} \u4E2A\u5019\u9009\uFF1Bprovider \u5931\u8D25 ${result.attempts?.filter((item) => item.status !== "succeeded").length || 0}`);
+        showToast(t("literature.seedRecorded", { status: result.status, candidates: result.candidate_ids?.length || 0, failures: result.attempts?.filter((item) => item.status !== "succeeded").length || 0 }));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -14829,7 +17955,7 @@
         });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u9012\u5F52\u68C0\u7D22 Proposal ${result.proposal_id.slice(0, 8)} \u5DF2\u521B\u5EFA\uFF0C\u7B49\u5F85\u5BA1\u6279`);
+        showToast(t("literature.recursiveProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -14838,9 +17964,9 @@
     };
     const cancelRecursiveRun = async (run) => {
       try {
-        await api(`/api/projects/${project.id}/related-work/runs/${run.id}/cancel`, { method: "POST", body: JSON.stringify({ reason: "\u7528\u6237\u5728\u76F8\u5173\u5DE5\u4F5C\u9875\u9762\u53D6\u6D88\u9012\u5F52\u68C0\u7D22" }) });
+        await api(`/api/projects/${project.id}/related-work/runs/${run.id}/cancel`, { method: "POST", body: JSON.stringify({ reason: t("literature.cancelRecursiveReason") }) });
         await onRefresh();
-        showToast("\u9012\u5F52\u68C0\u7D22\u5DF2\u53D1\u51FA\u53D6\u6D88\u8BF7\u6C42");
+        showToast(t("literature.cancelRequested"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14850,26 +17976,26 @@
     };
     const runSearch = async () => {
       try {
-        showToast("\u6B63\u5728\u5E76\u884C\u68C0\u7D22\u591A\u4E2A\u5B66\u672F\u6765\u6E90\u4E0E\u8D44\u6E90\u6CE8\u518C\u8868\u2026");
+        showToast(t("literature.searchingSources"));
         const result = await api("/api/search", {
           method: "POST",
           body: JSON.stringify({ project_id: project.id, limit: 8 })
         });
         await onRefresh();
-        showToast(`\u68C0\u7D22\u5B8C\u6210\uFF1B${result.provider_errors?.length || 0} \u4E2A\u6765\u6E90\u6682\u65F6\u5931\u8D25\uFF0C${result.resource_candidates?.length || 0} \u6761\u5019\u9009\u5F85\u6838\u9A8C`);
+        showToast(t("literature.searchDone", { failures: result.provider_errors?.length || 0, candidates: result.resource_candidates?.length || 0 }));
       } catch (error) {
         showToast(errorMessage(error));
       }
     };
     const ingestEvidence = async () => {
       try {
-        showToast("\u6B63\u5728\u4E0B\u8F7D\u5F00\u653E PDF \u5E76\u63D0\u53D6\u9875\u7801\u539F\u6587\u8BC1\u636E\u2026");
+        showToast(t("literature.ingestingEvidence"));
         const result = await api(`/api/projects/${project.id}/evidence/ingest`, {
           method: "POST",
           body: JSON.stringify({ limit: 3 })
         });
         await onRefresh();
-        showToast(`\u5DF2\u4FDD\u5B58 ${result.stored_count} \u6761\u5168\u6587\u8BC1\u636E\uFF1B${result.errors.length} \u6761\u5931\u8D25`);
+        showToast(t("literature.evidenceSaved", { count: result.stored_count, failures: result.errors.length }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14904,7 +18030,7 @@
         setRepoInputFor(null);
         setRepoUrl("");
         await onRefresh();
-        showToast("\u4EE3\u7801\u4ED3\u5E93\u5019\u9009\u5DF2\u6DFB\u52A0\uFF0C\u8BF7\u6267\u884C\u4EA4\u53C9\u9A8C\u8BC1");
+        showToast(t("literature.repoAdded"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14914,7 +18040,7 @@
       try {
         const response = await api(`/api/projects/${project.id}/papers/${paperId}/repositories/discover`);
         setRepositoryDiscoveries((previous) => ({ ...previous, [paperId]: response.candidates }));
-        if (!response.candidates.length) showToast("\u8BBA\u6587\u5DF2\u4FDD\u5B58\u7684\u6765\u6E90\u4E2D\u6CA1\u6709\u660E\u786E\u7684 GitHub/GitLab \u94FE\u63A5\uFF1B\u4E0D\u4F1A\u6839\u636E\u6807\u9898\u731C\u4ED3\u5E93");
+        if (!response.candidates.length) showToast(t("literature.noRepoLinks"));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -14925,7 +18051,7 @@
       try {
         await api(`/api/projects/${project.id}/repositories/${repositoryId}/verify`, { method: "POST" });
         await onRefresh();
-        showToast("\u4ED3\u5E93\u53CC\u6E90\u9A8C\u8BC1\u5B8C\u6210");
+        showToast(t("literature.repoVerified"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14935,7 +18061,7 @@
         const result = await api(`/api/projects/${project.id}/repositories/${repositoryId}/download`, { method: "POST" });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u4E0B\u8F7D Proposal ${result.proposal_id.slice(0, 8)} \u5DF2\u521B\u5EFA`);
+        showToast(t("literature.downloadProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14951,7 +18077,7 @@
         setClaimText("");
         setSelectedEvidence([]);
         await onRefresh();
-        showToast("Claim \u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838");
+        showToast(t("literature.claimSubmitted"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14963,7 +18089,7 @@
           body: JSON.stringify({ decision, actor: "local-user" })
         });
         await onRefresh();
-        showToast(decision === "accepted" ? "\u4EBA\u5DE5\u590D\u6838\u5DF2\u8BB0\u5F55" : "Claim \u5DF2\u6807\u8BB0\u4E3A\u672A\u901A\u8FC7\u590D\u6838");
+        showToast(decision === "accepted" ? t("literature.reviewRecorded") : t("literature.reviewRejected"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -14973,78 +18099,75 @@
       const download = repository.metadata?.download;
       const knownSpdx = verification.license_status === "known_spdx";
       if (repository.verified_official && knownSpdx) {
-        return download ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "muted", children: [
-          "\u5DF2\u4E0B\u8F7D\u5230 ",
-          download.relative_path || "\u9879\u76EE\u4EE3\u7801\u76EE\u5F55"
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeRepositoryDownload(repository.id), children: [
+        return download ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "muted", children: t("literature.downloadedTo", { path: download.relative_path || t("literature.projectCodeDir") }) }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeRepositoryDownload(repository.id), children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Download, { size: 15 }),
-          "\u63D0\u51FA\u4E0B\u8F7D"
+          t("literature.proposeDownload")
         ] });
       }
       return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: () => verifyRepository(repository.id), children: [
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ShieldCheck, { size: 15 }),
-        "\u4EA4\u53C9\u9A8C\u8BC1"
+        t("literature.crossVerify")
       ] });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         SectionHeading,
         {
-          title: "\u53EF\u9A8C\u8BC1\u6587\u732E\u8BB0\u5F55",
+          title: t("literature.title"),
           extra: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(ButtonRow, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: runSearch, children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Search, { size: 15 }),
-              "\u66F4\u65B0\u68C0\u7D22"
+              t("literature.updateSearch")
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: ingestEvidence, children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ScanText, { size: 15 }),
-              "\u63D0\u53D6\u5168\u6587\u8BC1\u636E"
+              t("literature.extractEvidence")
             ] })
           ] })
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section related-work-seed-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u4E0E\u5F15\u7528\u7F51\u7EDC", hint: "\u79CD\u5B50\u53EA\u4F1A\u8FDB\u5165\u5F53\u524D\u9879\u76EE\u7684\u5019\u9009\u6C60\uFF1B\u9012\u5F52\u6269\u5C55\u5FC5\u987B\u5148\u751F\u6210 Proposal \u5E76\u83B7\u5F97\u6279\u51C6\u3002metadata candidate\u3001\u5168\u6587\u8BC1\u636E\u548C\u5DF2\u786E\u8BA4 Paper \u59CB\u7EC8\u5206\u5F00\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.seedTitle"), hint: t("literature.seedHint") }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "related-work-seed-form", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-            "\u79CD\u5B50\u7C7B\u578B",
+            t("literature.seedType"),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: seedType, onChange: (event) => {
               setSeedType(event.target.value);
               resetSeedForm();
             }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "doi", children: "DOI" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "title", children: "\u6807\u9898" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "url", children: "\u6765\u6E90 URL" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "title", children: t("literature.titleOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "url", children: t("literature.urlOption") }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "bibtex", children: "BibTeX" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "artifact_pdf", children: "\u53D7\u63A7 PDF Artifact" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "existing_paper", children: "\u5F53\u524D\u9879\u76EE\u5DF2\u6709 Paper" })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "artifact_pdf", children: t("literature.pdfOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "existing_paper", children: t("literature.existingPaperOption") })
             ] })
           ] }),
           seedType === "artifact_pdf" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
             "PDF Artifact",
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: seedArtifactId, onChange: (event) => setSeedArtifactId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "", children: "\u9009\u62E9\u53D7\u63A7 PDF" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "", children: t("literature.selectPdf") }),
               (project.artifacts || []).filter((artifact) => artifact.mime_type === "application/pdf" && artifact.valid !== false).map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: artifact.id, children: artifact.name }, artifact.id))
             ] })
           ] }) : null,
           seedType === "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-            "\u9879\u76EE Paper",
+            t("literature.projectPaper"),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: seedPaperId, onChange: (event) => setSeedPaperId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "", children: "\u9009\u62E9\u5F53\u524D\u9879\u76EE Paper" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "", children: t("literature.selectPaper") }),
               (project.papers || []).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
             ] })
           ] }) : null,
           seedType !== "artifact_pdf" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "related-work-seed-value", children: [
-            seedType === "doi" ? "DOI" : seedType === "title" ? "\u8BBA\u6587\u6807\u9898" : seedType === "url" ? "HTTPS \u6765\u6E90 URL" : "BibTeX \u6761\u76EE",
-            seedType === "bibtex" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("textarea", { rows: 5, maxLength: 1e5, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: "@article{...}" }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { maxLength: 2e3, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: seedType === "doi" ? "10.1000/example" : seedType === "url" ? "https://doi.org/..." : "\u8F93\u5165\u8BBA\u6587\u6807\u9898" })
+            seedType === "doi" ? "DOI" : seedType === "title" ? t("literature.paperTitle") : seedType === "url" ? t("literature.httpsUrl") : t("literature.bibtexEntry"),
+            seedType === "bibtex" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("textarea", { rows: 5, maxLength: 1e5, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: "@article{...}" }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { maxLength: 2e3, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: seedType === "doi" ? "10.1000/example" : seedType === "url" ? "https://doi.org/..." : t("literature.enterTitle") })
           ] }) : null,
           seedType !== "title" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-            "\u53EF\u9009\u6807\u9898",
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { maxLength: 2e3, value: seedTitle, onChange: (event) => setSeedTitle(event.target.value), placeholder: "\u7528\u4E8E\u8865\u5145\u5143\u6570\u636E\u89E3\u6790" })
+            t("literature.optionalTitle"),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { maxLength: 2e3, value: seedTitle, onChange: (event) => setSeedTitle(event.target.value), placeholder: t("literature.optionalTitlePlaceholder") })
           ] }) : null,
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: seedLoading || (seedType === "artifact_pdf" ? !seedArtifactId : seedType === "existing_paper" ? !seedPaperId : !seedValue.trim()), onClick: () => void addSeed(), children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(GitFork, { size: 15 }),
-            seedLoading ? "\u6B63\u5728\u89E3\u6790\u2026" : "\u6DFB\u52A0\u5E76\u89E3\u6790\u79CD\u5B50"
+            seedLoading ? t("literature.parsing") : t("literature.addSeed")
           ] })
         ] }),
         project.related_work_seeds?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "related-work-seeds", children: [
@@ -15064,7 +18187,7 @@
                 " \xB7 ",
                 seed.status,
                 " \xB7 ",
-                seed.created_at ? new Date(seed.created_at).toLocaleString() : "\u65F6\u95F4\u672A\u77E5"
+                seed.created_at ? new Date(seed.created_at).toLocaleString() : t("literature.timeUnknown")
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: seed.status })
@@ -15072,44 +18195,41 @@
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "related-work-recursive-controls", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "control-grid", children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-                "\u5C42\u6570",
+                t("literature.depth"),
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", min: 1, max: 5, value: recursiveDepth, onChange: (event) => setRecursiveDepth(Number(event.target.value)) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-                "\u6BCF\u5C42\u5BBD\u5EA6",
+                t("literature.width"),
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", min: 1, max: 50, value: recursiveWidth, onChange: (event) => setRecursiveWidth(Number(event.target.value)) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-                "\u5019\u9009\u4E0A\u9650",
+                t("literature.maxTotal"),
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", min: 1, max: 500, value: recursiveMaxTotal, onChange: (event) => setRecursiveMaxTotal(Number(event.target.value)) })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-              "Proposal \u539F\u56E0",
+              t("literature.proposalReason"),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { maxLength: 2e3, value: recursiveReason, onChange: (event) => setRecursiveReason(event.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "provider-choice", "aria-label": "\u9012\u5F52\u6765\u6E90", children: ["crossref", "openalex", "semantic_scholar"].map((provider) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "provider-choice", "aria-label": t("literature.recursiveProviders"), children: ["crossref", "openalex", "semantic_scholar"].map((provider) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: recursiveProviders.includes(provider), onChange: () => toggleRecursiveProvider(provider) }),
               provider
             ] }, provider)) }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: recursiveLoading || !selectedSeeds.length || !recursiveProviders.length, onClick: () => void createRecursivePlan(), children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(GitFork, { size: 15 }),
-              recursiveLoading ? "\u6B63\u5728\u521B\u5EFA\u2026" : `\u4E3A ${selectedSeeds.length} \u4E2A\u79CD\u5B50\u521B\u5EFA\u9012\u5F52 Proposal`
+              recursiveLoading ? t("literature.creating") : t("literature.createRecursiveProposal", { count: selectedSeeds.length })
             ] })
           ] })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u8FD8\u6CA1\u6709\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u3002\u5148\u6DFB\u52A0 DOI\u3001\u6807\u9898\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709 Paper\u3002" })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: t("literature.noSeeds") })
       ] }),
       project.related_work_runs?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section related-work-run-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u5F15\u7528\u7F51\u7EDC\u8FD0\u884C", hint: "\u8FD0\u884C\u72B6\u6001\u548C provider attempt \u6765\u81EA\u771F\u5B9E\u8BF7\u6C42\uFF1B\u5931\u8D25\u3001\u53D6\u6D88\u548C\u4E0A\u9650\u622A\u65AD\u4E0D\u4F1A\u88AB\u6807\u8BB0\u4E3A\u6210\u529F\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.runsTitle"), hint: t("literature.runsHint") }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("h3", { children: [
               run.status,
               " \xB7 ",
-              run.discovered_count || 0,
-              " \u4E2A\u5019\u9009 \xB7 ",
-              run.edge_count || 0,
-              " \u6761\u5F15\u7528\u8FB9"
+              t("literature.runCandidates", { count: run.discovered_count || 0, edges: run.edge_count || 0 })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
               "depth ",
@@ -15127,22 +18247,22 @@
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: run.status }),
             ["queued", "running"].includes(run.status) ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: () => void cancelRecursiveRun(run), children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Square, { size: 14 }),
-              "\u53D6\u6D88"
+              t("common.cancel")
             ] }) : null
           ] })
         ] }, run.id)) }),
         project.related_work_attempts?.some((attempt) => attempt.status !== "succeeded") ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "related-work-failures", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: "Provider \u5931\u8D25\u4E0E\u90E8\u5206\u5931\u8D25" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: t("literature.providerFailures") }),
           project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: attempt.provider }),
             " \xB7 ",
             attempt.status,
             " \xB7 ",
-            attempt.failure?.message || "\u672A\u63D0\u4F9B\u5931\u8D25\u8BE6\u60C5"
+            attempt.failure?.message || t("literature.noFailureDetail")
           ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`))
         ] }) : null,
         project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "citation-edge-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: "\u5F15\u7528\u56FE\u8FB9\uFF08\u5F53\u524D\u9879\u76EE\u8303\u56F4\uFF09" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: t("literature.edgeTitle") }),
           project.related_work_edges.slice(0, 20).map((edge) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: edge.source_title || edge.source_candidate_id }),
             " \u2192 ",
@@ -15150,12 +18270,12 @@
             " \xB7 ",
             edge.provider,
             " \xB7 ",
-            (edge.ranking_reasons || []).join(", ") || "\u65E0\u6392\u5E8F\u4FE1\u53F7"
+            (edge.ranking_reasons || []).join(", ") || t("literature.noRankingSignal")
           ] }, edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`))
         ] }) : null
       ] }) : null,
       project.related_work_candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section related-work-candidate-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u5F85\u786E\u8BA4 metadata candidate", hint: "\u8FD9\u4E9B\u8BB0\u5F55\u6765\u81EA provider \u5143\u6570\u636E\u548C\u5F15\u7528\u7F51\u7EDC\uFF0C\u5C1A\u672A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5DF2\u786E\u8BA4 Paper\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9875\u7801 quote\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.candidatesTitle"), hint: t("literature.candidatesHint") }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: project.related_work_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: candidate.title }),
@@ -15164,33 +18284,31 @@
               " \xB7 depth ",
               candidate.discovery_depth ?? 0,
               " \xB7 ",
-              candidate.year || "\u5E74\u4EFD\u672A\u77E5",
+              candidate.year || t("literature.yearUnknown"),
               " \xB7 DOI ",
-              candidate.normalized_doi || "\u672A\u63D0\u4F9B",
+              candidate.normalized_doi || t("common.notProvided"),
               " \xB7 ",
-              candidate.source_count || 0,
-              " \u4E2A provider \u8BC1\u636E"
+              t("literature.providerEvidenceCount", { count: candidate.source_count || 0 })
             ] }),
             (() => {
               const provenance = candidateProvenance(candidate.id);
               const conflictFields = [...new Set(provenance.filter((item) => item.status === "conflict").map((item) => item.field_name))];
               return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { className: "muted", children: [
-                "\u5B57\u6BB5\u6765\u6E90 ",
-                provenance.length,
-                " \u6761 \xB7 ",
-                conflictFields.length ? `\u51B2\u7A81\uFF1A${conflictFields.join("\u3001")}` : "\u6682\u65E0\u5B57\u6BB5\u51B2\u7A81"
+                t("literature.fieldProvenanceCount", { count: provenance.length }),
+                " \xB7 ",
+                conflictFields.length ? t("literature.conflicts", { fields: conflictFields.join(", ") }) : t("literature.noConflicts")
               ] });
             })()
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "button-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: candidate.paper_id ? "confirmed-paper" : candidate.status || "metadata-candidate" }),
-            candidateProvenance(candidate.id).length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => setProvenanceCandidateId(candidate.id), children: "\u67E5\u770B\u5B57\u6BB5\u6765\u6E90" }) : null,
+            candidateProvenance(candidate.id).length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => setProvenanceCandidateId(candidate.id), children: t("literature.viewFieldProvenance") }) : null,
             !candidate.paper_id && candidate.status !== "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void proposeCandidateEnrichment(candidate), children: "\u8865\u5168\u5B57\u6BB5" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "primary", type: "button", onClick: () => requestCandidateDecision(candidate, "approved"), children: "\u786E\u8BA4 Paper" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "reject", type: "button", onClick: () => requestCandidateDecision(candidate, "rejected"), children: "\u62D2\u7EDD" })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void proposeCandidateEnrichment(candidate), children: t("literature.enrichFields") }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "primary", type: "button", onClick: () => requestCandidateDecision(candidate, "approved"), children: t("literature.confirmPaper") }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "reject", type: "button", onClick: () => requestCandidateDecision(candidate, "rejected"), children: t("common.reject") })
             ] }) : null,
-            !candidate.paper_id && candidate.status === "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => requestCandidateDecision(candidate, "reopened"), children: "\u91CD\u65B0\u6253\u5F00" }) : null
+            !candidate.paper_id && candidate.status === "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => requestCandidateDecision(candidate, "reopened"), children: t("literature.reopen") }) : null
           ] })
         ] }, candidate.id)) })
       ] }) : null,
@@ -15199,7 +18317,7 @@
         {
           eyebrow: "Field provenance",
           title: provenanceCandidate.title,
-          description: "\u9009\u62E9\u6765\u6E90\u53EA\u4F1A\u66F4\u65B0\u5F53\u524D\u9879\u76EE\u5019\u9009\u7684\u5B57\u6BB5\u5FEB\u7167\uFF0C\u5E76\u7559\u4E0B\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u5B83\u4E0D\u4F1A\u628A metadata candidate \u81EA\u52A8\u53D8\u6210\u5168\u6587\u8BC1\u636E\u3002",
+          description: t("literature.provenanceDescription"),
           onClose: () => setProvenanceCandidateId(null),
           wide: true,
           children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "provenance-drawer-list", children: [...new Set(candidateProvenance(provenanceCandidate.id).map((item) => item.field_name))].sort().map((fieldName) => {
@@ -15207,7 +18325,7 @@
             return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("section", { className: "provenance-drawer-field", children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "provenance-drawer-field-heading", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "eyebrow", children: "\u5B57\u6BB5" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "eyebrow", children: t("literature.field") }),
                   /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: fieldName })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: fields.some((item) => item.status === "conflict") ? "conflict" : fields.some((item) => item.status === "selected") ? "selected" : "observed" })
@@ -15215,24 +18333,24 @@
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: fields.map((field) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row compact-row", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
                   /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("strong", { children: [
-                    field.provider || field.source_type || "\u6765\u6E90\u672A\u8BB0\u5F55",
-                    field.status === "selected" ? " \xB7 \u5DF2\u9009" : ""
+                    field.provider || field.source_type || t("literature.sourceUnrecorded"),
+                    field.status === "selected" ? t("literature.selected") : ""
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: valueLabel(field.normalized_value) }),
                   /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { className: "muted", children: [
                     "source_type=",
                     field.source_type || "unknown",
                     " \xB7 attempt=",
-                    field.source_attempt_id || "\u65E0",
+                    field.source_attempt_id || t("common.none"),
                     " \xB7 artifact=",
-                    field.artifact_id || "\u65E0",
+                    field.artifact_id || t("common.none"),
                     " \xB7 locator=",
-                    field.locator || "\u65E0",
+                    field.locator || t("common.none"),
                     " \xB7 hash=",
-                    field.raw_value_hash || "\u65E0"
+                    field.raw_value_hash || t("common.none")
                   ] })
                 ] }),
-                field.status !== "selected" && !provenanceCandidate.paper_id ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary compact", type: "button", onClick: () => void selectCandidateField(provenanceCandidate, field), children: "\u9009\u62E9\u6B64\u6765\u6E90" }) : null
+                field.status !== "selected" && !provenanceCandidate.paper_id ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary compact", type: "button", onClick: () => void selectCandidateField(provenanceCandidate, field), children: t("literature.selectSource") }) : null
               ] }, field.id)) })
             ] }, fieldName);
           }) })
@@ -15248,15 +18366,15 @@
             " \xB7 ",
             paper.source_provider || "unknown",
             " \xB7 DOI ",
-            paper.doi || "\u672A\u63D0\u4F9B",
+            paper.doi || t("common.notProvided"),
             " \xB7",
-            paper.verified ? " \u5143\u6570\u636E\u5DF2\u9A8C\u8BC1" : " \u5F85\u9A8C\u8BC1",
-            " \xB7 \u9875\u7801\u539F\u6587\u8BC1\u636E ",
-            paper.fulltext_evidence_count || 0,
-            " \xB7 \u4EE3\u7801\u5019\u9009 ",
-            (paper.code_repositories || []).length
+            paper.verified ? t("literature.metadataVerified") : t("literature.pendingVerification"),
+            " \xB7 ",
+            t("literature.fulltextCount", { count: paper.fulltext_evidence_count || 0 }),
+            " \xB7",
+            t("literature.codeCandidateCount", { count: (paper.code_repositories || []).length })
           ] }),
-          paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: "\u6253\u5F00\u6765\u6E90 PDF" }) }) : null,
+          paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: t("literature.openPdf") }) }) : null,
           paper.bibtex ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("details", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("summary", { children: "BibTeX" }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("pre", { className: "code-block", children: paper.bibtex })
@@ -15268,28 +18386,28 @@
             void discoverRepositories(paper.id);
           }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Search, { size: 15 }),
-            repositoryDiscoveryLoading === paper.id ? "\u8BFB\u53D6\u4E2D\u2026" : "\u67E5\u627E\u8BBA\u6587\u4E2D\u7684\u4EE3\u7801\u94FE\u63A5"
+            repositoryDiscoveryLoading === paper.id ? t("literature.loadingRepos") : t("literature.findRepoLinks")
           ] }),
           repoInputFor === paper.id ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "inline-repo-form", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               "input",
               {
                 value: repoUrl,
-                placeholder: "GitHub \u6216 GitLab HTTPS \u5730\u5740",
+                placeholder: t("literature.repoPlaceholder"),
                 onChange: (event) => setRepoUrl(event.target.value)
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => addRepositoryCandidate(paper.id), children: "\u6DFB\u52A0" })
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => addRepositoryCandidate(paper.id), children: t("literature.add") })
           ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
             setRepoInputFor(paper.id);
             setRepoUrl("");
           }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(GitBranch, { size: 15 }),
-            "\u6DFB\u52A0\u4EE3\u7801\u4ED3\u5E93"
+            t("literature.addRepository")
           ] })
         ] }),
         repositoryDiscoveries[paper.id]?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "repository-discovery-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: "\u4EE5\u4E0B\u94FE\u63A5\u6765\u81EA\u8BE5 Paper \u5DF2\u4FDD\u5B58\u7684 metadata/\u6765\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9009\uFF0C\u4ECD\u9700\u53CC\u6E90\u9A8C\u8BC1\uFF1A" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: t("literature.discoveryHint") }),
           repositoryDiscoveries[paper.id].map((discovery) => {
             const exists = (paper.code_repositories || []).some((repository) => repository.source_url === discovery.canonical_url);
             return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "repository-discovery-row", children: [
@@ -15297,13 +18415,13 @@
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "muted", children: discovery.locator }),
               exists ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: "candidate-exists" }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary compact", type: "button", onClick: () => {
                 void addRepositoryCandidate(paper.id, discovery.canonical_url);
-              }, children: "\u6DFB\u52A0\u5019\u9009" })
+              }, children: t("literature.addCandidate") })
             ] }, discovery.canonical_url);
           })
         ] }) : null
-      ] }, paper.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u5C1A\u65E0\u6587\u732E\u8BB0\u5F55\u3002" }),
+      ] }, paper.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: t("literature.noPapers") }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section material-search-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u9879\u76EE\u6750\u6599\u5E93", hint: "\u901A\u8FC7\u5F53\u524D\u9879\u76EE\u8303\u56F4\u7684 Supermemory \u8BED\u4E49\u68C0\u7D22\uFF1B\u7ED3\u679C\u4FDD\u7559\u6765\u6E90\u548C\u5B9A\u4F4D\uFF0C\u53EA\u662F\u672A\u6838\u9A8C\u4E0A\u4E0B\u6587\u5019\u9009\uFF0C\u4E0D\u662F\u8BBA\u6587\u8BC1\u636E\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.materialsTitle"), hint: t("literature.materialsHint") }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
           "form",
           {
@@ -15313,29 +18431,26 @@
               void searchMaterials(0, false);
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { className: "sr-only", htmlFor: "materialSearchQuery", children: "\u68C0\u7D22\u6750\u6599" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { className: "sr-only", htmlFor: "materialSearchQuery", children: t("literature.searchMaterials") }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
                 "input",
                 {
                   id: "materialSearchQuery",
                   maxLength: 200,
-                  placeholder: "\u68C0\u7D22\u5DF2\u7D22\u5F15\u6750\u6599\u7684\u8BED\u4E49\u5185\u5BB9",
+                  placeholder: t("literature.materialPlaceholder"),
                   value: materialQuery,
                   onChange: (event) => setMaterialQuery(event.target.value)
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "submit", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Search, { size: 15 }),
-                "\u68C0\u7D22\u6750\u6599"
+                t("literature.searchMaterials")
               ] })
             ]
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "material-search-results", children: materialLoading ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u6B63\u5728\u68C0\u7D22\u6750\u6599\u2026" }) : materialRows.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { className: "muted", children: [
-            materialTotal,
-            " \u4E2A\u5019\u9009 \xB7 Supermemory \u9879\u76EE\u8303\u56F4 hybrid \u68C0\u7D22 \xB7 \u4E0D\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E"
-          ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "material-search-results", children: materialLoading ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: t("literature.searchingMaterials") }) : materialRows.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: t("literature.materialTotal", { count: materialTotal }) }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: materialRows.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: item.name }),
@@ -15345,31 +18460,31 @@
                 item.parse_status || "unknown",
                 " \xB7 SHA-256 ",
                 String(item.sha256 || "").slice(0, 12),
-                "\u2026 \xB7 \u76F8\u4F3C\u5EA6 ",
-                String(item.similarity ?? "\u672A\u63D0\u4F9B")
+                "\u2026 \xB7 ",
+                t("literature.similarity", { value: String(item.similarity ?? t("common.notProvided")) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: item.snippet || "\u65E0\u53EF\u5C55\u793A\u6458\u8981" })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: item.snippet || t("literature.noSnippet") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge pending", children: "\u8BED\u4E49\u5019\u9009 \xB7 \u672A\u6838\u9A8C" })
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge pending", children: t("literature.semanticCandidate") })
           ] }, index)) }),
           nextOffset != null ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary material-search-more", type: "button", onClick: () => searchMaterials(nextOffset, true), children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ChevronsDown, { size: 15 }),
-            "\u52A0\u8F7D\u66F4\u591A"
+            t("literature.loadMore")
           ] }) : null
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u8F93\u5165\u5173\u952E\u8BCD\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u6750\u6599\u3002" }) })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: t("literature.materialsEmpty") }) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section claim-review-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "Claim \u5230\u8BC1\u636E\u4EBA\u5DE5\u590D\u6838", hint: "\u53EA\u80FD\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684\u9875\u7801 quote\uFF1B\u63A5\u53D7\u590D\u6838\u4E0D\u7B49\u4E8E\u8BC1\u660E\u79D1\u5B66\u7ED3\u8BBA\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.claimTitle"), hint: t("literature.claimHint") }),
         project.evidence?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "claim-review-input", children: [
-            "\u5F85\u590D\u6838 Claim",
+            t("literature.claimToReview"),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               "textarea",
               {
                 value: claimText,
                 maxLength: 4e3,
                 rows: 3,
-                placeholder: "\u5199\u51FA\u9700\u8981\u4EBA\u5DE5\u6838\u5BF9\u7684\u5177\u4F53\u7814\u7A76\u9648\u8FF0",
+                placeholder: t("literature.claimPlaceholder"),
                 onChange: (event) => setClaimText(event.target.value)
               }
             )
@@ -15384,18 +18499,18 @@
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: evidence.locator || "\u672A\u63D0\u4F9B\u9875\u7801/\u7AE0\u8282" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: evidence.quote || "\u65E0 quote" })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: evidence.locator || t("literature.noLocator") }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: evidence.quote || t("literature.noQuote") })
             ] })
           ] }, evidence.id)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", disabled: !claimText.trim() || !selectedEvidence.length, onClick: () => void createClaimReview(), children: "\u63D0\u4EA4\u4EBA\u5DE5\u590D\u6838" })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: "\u5148\u6444\u53D6\u5E26\u9875\u7801\u5B9A\u4F4D\u7684\u5168\u6587\u8BC1\u636E\uFF0C\u518D\u521B\u5EFA Claim \u590D\u6838\u3002" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", disabled: !claimText.trim() || !selectedEvidence.length, onClick: () => void createClaimReview(), children: t("literature.submitReview") })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(EmptyState, { text: t("literature.evidenceFirst") }),
         project.claim_reviews?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list claim-review-list", children: project.claim_reviews.map((review) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: review.claim }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
-              review.evidence_ids.length,
-              " \u6761 quote \xB7 ",
+              t("literature.quoteCount", { count: review.evidence_ids.length }),
+              " \xB7 ",
               review.evidence_status
             ] }),
             review.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: review.decision_comment }) : null
@@ -15403,17 +18518,17 @@
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "button-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: review.status }),
             review.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "accepted"), children: "\u63A5\u53D7\u590D\u6838" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "rejected"), children: "\u62D2\u7EDD\u590D\u6838" })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "accepted"), children: t("literature.acceptReview") }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "rejected"), children: t("literature.rejectReview") })
             ] }) : null
           ] })
         ] }, review.id)) }) : null
       ] }),
       searchCandidates.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section search-candidates", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u5916\u90E8\u8D44\u6E90\u5019\u9009", hint: "\u4EC5\u4F9B\u53D1\u73B0\uFF0C\u5C1A\u672A\u6838\u9A8C\u6765\u6E90\u3001\u8BB8\u53EF\u3001\u6240\u6709\u6743\u6216\u5168\u6587\u8BC1\u636E\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { children: `${searchCandidates.length} \u6761` }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.externalCandidates"), hint: t("literature.externalHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { children: t("literature.count", { count: searchCandidates.length }) }) }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: searchCandidates.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: item.url, target: "_blank", rel: "noreferrer", children: item.name || item.title || item.url || "\u5019\u9009\u8D44\u6E90" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: item.url, target: "_blank", rel: "noreferrer", children: item.name || item.title || item.url || t("literature.candidateResource") }) }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
               item.resource_type || "resource",
               " \xB7 ",
@@ -15422,25 +18537,25 @@
               item.compliance?.robots_status || "unknown",
               item.compliance?.terms_url ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
                 " \xB7 ",
-                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: item.compliance.terms_url, target: "_blank", rel: "noreferrer", children: "\u67E5\u770B\u6761\u6B3E" })
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: item.compliance.terms_url, target: "_blank", rel: "noreferrer", children: t("literature.viewTerms") })
               ] }) : null
             ] }),
             item.snippet ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: item.snippet }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge pending", children: "\u5F85\u6838\u9A8C" })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge pending", children: t("literature.toVerify") })
         ] }, index)) })
       ] }) : null,
       project.repositories?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: "\u4EE3\u7801\u4ED3\u5E93\u5019\u9009", hint: "\u53EA\u6709\u8BBA\u6587\u8BB0\u5F55\u4E0E\u4ED3\u5E93\u5F15\u7528\u5F62\u6210\u53CC\u6E90\u5339\u914D\u3001\u8BB8\u53EF\u8BC1\u53EF\u8BC6\u522B\u4E14 commit \u5DF2\u56FA\u5B9A\u540E\uFF0C\u624D\u53EF\u63D0\u51FA\u4E0B\u8F7D\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("literature.repositoriesTitle"), hint: t("literature.repositoriesHint") }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: project.repositories.map((repository) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: repository.source_url }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
-              repository.license_spdx || "\u672A\u77E5\u8BB8\u53EF\u8BC1",
+              repository.license_spdx || t("literature.unknownLicense"),
               " \xB7 commit ",
-              String(repository.commit_or_tag || "\u672A\u56FA\u5B9A").slice(0, 12),
+              String(repository.commit_or_tag || t("literature.notPinned")).slice(0, 12),
               " \xB7",
-              repository.metadata?.verification?.match?.method || "\u672A\u9A8C\u8BC1"
+              repository.metadata?.verification?.match?.method || t("literature.notVerified")
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "button-row", children: [
@@ -15461,6 +18576,7 @@
   var import_react10 = __toESM(require_react(), 1);
   var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   function PointCloudPreview({ preview }) {
+    const { t } = useTranslation();
     const canvasRef = (0, import_react10.useRef)(null);
     const points = preview.points || [];
     const [resetKey, setResetKey] = (0, import_react10.useState)(0);
@@ -15480,7 +18596,7 @@
           context.fillStyle = "#aab6b1";
           context.font = "14px sans-serif";
           context.textAlign = "center";
-          context.fillText("\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6709\u6548\u70B9", width / 2, height / 2);
+          context.fillText(t("preview.noPoints"), width / 2, height / 2);
           return;
         }
         const mins = [Infinity, Infinity, Infinity];
@@ -15570,20 +18686,18 @@
           points.length,
           "/",
           Number(preview.source_point_count || points.length),
-          " \u70B9",
-          preview.sampled ? " \xB7 \u5DF2\u964D\u91C7\u6837" : ""
+          " ",
+          t("preview.pointCount", { count: "" }),
+          preview.sampled ? t("preview.sampled") : ""
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "icon-btn point-reset", type: "button", title: "\u91CD\u7F6E\u89C6\u56FE", "aria-label": "\u91CD\u7F6E\u89C6\u56FE", onClick: reset, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(RotateCcw, { size: 15 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "icon-btn point-reset", type: "button", title: t("preview.resetView"), "aria-label": t("preview.resetView"), onClick: reset, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(RotateCcw, { size: 15 }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("canvas", { ref: canvasRef, className: "point-cloud-canvas", width: "640", height: "420", "aria-label": "\u70B9\u4E91\u9884\u89C8" }),
-      preview.faces?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "preview-footnote", children: [
-        "\u5DF2\u52A0\u8F7D ",
-        preview.faces.length,
-        " \u4E2A\u9762\u7247\uFF0C\u4F7F\u7528\u7EBF\u6846\u663E\u793A\u3002"
-      ] }) : null
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("canvas", { ref: canvasRef, className: "point-cloud-canvas", width: "640", height: "420", "aria-label": t("preview.pointCloud") }),
+      preview.faces?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-footnote", children: t("preview.loadedFaces", { count: preview.faces.length }) }) : null
     ] });
   }
   function TimeseriesPreview({ preview }) {
+    const { t } = useTranslation();
     const points = (preview.points || []).filter((point) => point && Number.isFinite(Number(point.step)));
     const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
       (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
@@ -15601,13 +18715,13 @@
       });
     }, [seedKey]);
     if (!points.length || !metrics.length) {
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: "\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\u3002" });
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: t("preview.noFiniteMetrics") });
     }
     const visible = points.slice(-windowSize);
     const numeric = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && Number.isFinite(Number(point[metric])));
     const missingCount = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && !Number.isFinite(Number(point[metric]))).length;
     if (!numeric.length) {
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: "\u5F53\u524D\u9009\u62E9\u6CA1\u6709\u53EF\u7ED8\u5236\u7684\u6709\u9650\u6570\u503C\u6307\u6807\uFF1B\u7F3A\u5931\u503C\u4E0D\u4F1A\u88AB\u8865\u5199\u6216\u63D2\u503C\u3002" });
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: t("preview.selectionNoFinite") });
     }
     const steps = numeric.map((point) => Number(point.step));
     const minStep = Math.min(...steps);
@@ -15621,11 +18735,11 @@
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "artifact-preview", children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "timeseries-toolbar", children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-          "\u6307\u6807",
+          t("preview.metric"),
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("select", { value: metric, onChange: (event) => setMetric(event.target.value), children: metrics.map((name) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: name, children: name }, name)) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-          "\u70B9\u6570",
+          t("preview.points"),
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
@@ -15637,7 +18751,7 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "timeseries-seeds", "aria-label": "\u9009\u62E9\u968F\u673A\u79CD\u5B50", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "timeseries-seeds", "aria-label": t("preview.selectSeeds"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "muted", children: "seed" }),
           allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "button",
@@ -15654,7 +18768,8 @@
           numeric.length,
           "/",
           points.length,
-          " \u4E2A\u70B9"
+          " ",
+          t("preview.pointsCount", { count: "" })
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "timeseries-chart-wrap", children: [
@@ -15664,7 +18779,7 @@
             className: "timeseries-chart",
             viewBox: "0 0 720 300",
             role: "img",
-            "aria-label": `${metric} \u6307\u6807\u66F2\u7EBF`,
+            "aria-label": t("preview.metricCurve", { metric }),
             onMouseLeave: () => setHovered(null),
             onMouseMove: (event) => {
               const rect = event.currentTarget.getBoundingClientRect();
@@ -15732,15 +18847,11 @@
           hovered.value.toPrecision(6)
         ] }) : null
       ] }),
-      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "preview-footnote", children: [
-        missingCount,
-        " \u4E2A\u70B9\u7F3A\u5C11 ",
-        metric,
-        "\uFF0C\u5DF2\u6309\u7F3A\u5931\u503C\u4FDD\u7559\u5E76\u8DF3\u8FC7\u7ED8\u5236\u3002"
-      ] }) : null
+      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-footnote", children: t("preview.missingPoints", { count: missingCount, metric }) }) : null
     ] });
   }
   function PreviewBody({ preview }) {
+    const { t } = useTranslation();
     switch (preview.type) {
       case "point_cloud":
         return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(PointCloudPreview, { preview });
@@ -15749,13 +18860,12 @@
       case "video":
         return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("video", { className: "artifact-video", controls: true, preload: "metadata", src: preview.download_url });
       case "image":
-        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-footnote", children: "\u56FE\u7247\u76F4\u63A5\u4F7F\u7528\u4E0B\u8F7D\u63A5\u53E3\u5C55\u793A\u3002" });
+        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-footnote", children: t("preview.imageNote") });
       case "json": {
         const value = typeof preview.value === "string" ? preview.value : JSON.stringify(preview.value, null, 2);
         return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("pre", { className: "preview-text", children: value });
       }
       case "pdf": {
-        const label = `PDF \xB7 ${Number(preview.page_count || 0)} \u9875\uFF0C\u4EC5\u5C55\u793A\u524D 3 \u9875\u53EF\u63D0\u53D6\u6587\u672C`;
         return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("pre", { className: "preview-text", children: preview.text || "" });
       }
       case "table":
@@ -15768,6 +18878,7 @@
     }
   }
   function ArtifactCard({ artifact }) {
+    const { t } = useTranslation();
     const [preview, setPreview] = (0, import_react10.useState)(null);
     const [status, setStatus] = (0, import_react10.useState)("idle");
     const [error, setError] = (0, import_react10.useState)("");
@@ -15784,24 +18895,21 @@
       });
     }, [artifact.preview_url, artifact.mime_type]);
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className: "artifact-card", children: [
-      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: "\u8BE5\u4EA7\u7269\u5DF2\u5931\u6548\uFF0C\u4E0D\u80FD\u9884\u89C8\u6216\u4E0B\u8F7D\u3002" }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "artifact-preview preview-error", children: [
-        "\u5173\u8054\u8FD0\u884C\u72B6\u6001\u4E3A ",
-        artifact.experiment_status,
-        "\uFF0C\u4E0D\u663E\u793A\u4E3A\u6210\u529F\u4EA7\u7269\u3002"
-      ] }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-loading", children: "\u52A0\u8F7D\u9884\u89C8\u2026" }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "preview-error", children: [
-        "\u9884\u89C8\u5931\u8D25\uFF1A",
-        error
-      ] }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(PreviewBody, { preview }) : null,
+      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: artifact.experiment_status }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(PreviewBody, { preview }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "artifact-body", children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: artifact.name }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted", children: [
           artifact.kind,
           " \xB7 ",
-          artifact.valid ? "\u6709\u6548" : "\u5DF2\u5931\u6548",
-          artifact.experiment_status ? ` \xB7 \u8FD0\u884C ${artifact.experiment_status}` : ""
+          artifact.valid ? t("common.valid") : t("common.invalid"),
+          artifact.experiment_status ? ` \xB7 ${t("preview.runStatus", { status: artifact.experiment_status })}` : ""
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? `Run ${String(artifact.metadata.lineage.run_id || "\u672A\u7ED1\u5B9A")} \xB7 Idea v${String(artifact.metadata.lineage.idea_version || "\u672A\u77E5")} \xB7 \u6570\u636E ${String(artifact.metadata.lineage.data_version || "\u672A\u58F0\u660E")}` : "\u8C31\u7CFB\u4FE1\u606F\u672A\u58F0\u660E" }),
-        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: "\u4E0B\u8F7D\u4EA7\u7269" }) : null
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? t("preview.lineage", {
+          run: String(artifact.metadata.lineage.run_id || t("preview.lineageUnbound")),
+          idea: String(artifact.metadata.lineage.idea_version || t("preview.lineageUnknown")),
+          data: String(artifact.metadata.lineage.data_version || t("preview.lineageNotDeclared"))
+        }) : t("preview.lineageMissing") }),
+        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: t("preview.download") }) : null
       ] })
     ] });
   }
@@ -15823,17 +18931,18 @@
     onRefresh,
     showToast
   }) {
+    const { t } = useTranslation();
     const acceptedReviews = project.claim_reviews?.filter((review) => review.status === "accepted").length || 0;
     const evidenceCount = project.evidence?.length || 0;
     const validArtifacts = (project.artifacts || []).filter((artifact) => artifact.valid !== false);
     const compileRuns = (project.experiments || []).filter((item) => item.experiment_type === "compile_latex");
-    const compileProposals = (project.proposals || []).filter((item) => item.payload?.experiment_type === "compile_latex" || item.summary.toLowerCase().includes("compile") || item.summary.includes("\u7F16\u8BD1"));
+    const compileProposals = (project.proposals || []).filter((item) => item.payload?.experiment_type === "compile_latex" || item.summary.toLowerCase().includes("compile"));
     const createPaperDraft = async () => {
       try {
         const result = await api(`/api/projects/${project.id}/paper-draft`, { method: "POST" });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u8BBA\u6587\u8349\u7A3F Proposal ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("paper.draftProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -15843,39 +18952,39 @@
         const result = await api(`/api/projects/${project.id}/compile-plan`, { method: "POST" });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`LaTeX \u7F16\u8BD1 Proposal ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("paper.compileProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
     };
     if (tab === "paper_outline") {
       const sections = [
-        ["\u6458\u8981", Boolean(project.spec?.idea?.research_question)],
-        ["\u5F15\u8A00\u4E0E\u7814\u7A76\u95EE\u9898", Boolean(project.spec?.idea?.research_question)],
-        ["\u76F8\u5173\u5DE5\u4F5C", (project.papers || []).some((paper) => paper.confirmed)],
-        ["\u65B9\u6CD5", Boolean(project.spec?.idea?.hypotheses?.length)],
-        ["\u5B9E\u9A8C\u8BBE\u7F6E", (project.experiments || []).length > 0],
-        ["\u7ED3\u679C\u4E0E\u8BA8\u8BBA", (project.experiments || []).some((experiment) => experiment.status === "succeeded")],
-        ["\u5C40\u9650\u4E0E\u7ED3\u8BBA", Boolean(project.spec?.idea?.risks?.length)]
+        ["paper.sectionAbstract", Boolean(project.spec?.idea?.research_question)],
+        ["paper.sectionIntroduction", Boolean(project.spec?.idea?.research_question)],
+        ["paper.sectionRelatedWork", (project.papers || []).some((paper) => paper.confirmed)],
+        ["paper.sectionMethod", Boolean(project.spec?.idea?.hypotheses?.length)],
+        ["paper.sectionSetup", (project.experiments || []).length > 0],
+        ["paper.sectionResults", (project.experiments || []).some((experiment) => experiment.status === "succeeded")],
+        ["paper.sectionLimitations", Boolean(project.spec?.idea?.risks?.length)]
       ];
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u5927\u7EB2\u4E0E\u7AE0\u8282", hint: "\u7AE0\u8282\u72B6\u6001\u6765\u81EA\u5F53\u524D\u9879\u76EE\u7684\u7ED3\u6784\u5316\u6765\u6E90\uFF1B\u672A\u786E\u8BA4\u5B57\u6BB5\u4E0D\u4F1A\u88AB\u4F2A\u88C5\u6210\u5DF2\u5B8C\u6210\u7AE0\u8282\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: sections.map(([title, ready]) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.outlineTitle"), hint: t("paper.outlineHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: sections.map(([key, ready]) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: title }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: ready ? "\u5DF2\u6709\u9879\u76EE\u6765\u6E90\uFF0C\u53EF\u8FDB\u5165 Proposal \u5BA1\u9605" : "\u7F3A\u5C11\u4E0A\u6E38\u89C4\u683C\u3001\u8BC1\u636E\u6216\u771F\u5B9E\u5B9E\u9A8C\u6765\u6E90" })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t(key) }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: ready ? t("paper.outlineReady") : t("paper.outlineMissing") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: ready ? "candidate" : "blocked", children: ready ? "\u5019\u9009" : "blocked" })
-        ] }, title)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: ready ? "candidate" : "blocked", children: ready ? t("paper.candidate") : "blocked" })
+        ] }, key)) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u7248\u672C\u89C4\u5219" }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: "\u5F53\u524D\u9875\u9762\u53EA\u5C55\u793A\u7AE0\u8282\u51C6\u5907\u5EA6\u3002\u4EFB\u4F55\u5199\u5165 paper/main.tex \u7684\u4FEE\u6539\u90FD\u5FC5\u987B\u901A\u8FC7\u72EC\u7ACB Proposal\uFF0C\u6279\u51C6\u540E\u5F62\u6210 Git diff\uFF1B\u5931\u8D25\u6216\u88AB\u62D2\u7EDD\u7684\u5199\u5165\u4E0D\u4F1A\u751F\u6210\u6210\u529F\u7AE0\u8282\u3002" })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.versionRules") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("paper.versionRulesText") })
         ] })
       ] });
     }
     if (tab === "paper_citations") {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u5F15\u7528\u4E0E BibTeX", hint: "\u53EA\u663E\u793A\u9879\u76EE\u8303\u56F4 Paper\u3001\u9875\u7801/\u7AE0\u8282 Evidence \u548C ClaimReview \u72B6\u6001\uFF1Bmetadata-only \u4E0D\u80FD\u8FDB\u5165\u8BBA\u8BC1\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.citationsTitle"), hint: t("paper.citationsHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
         project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.papers.map((paper) => {
           const evidence = paperEvidence(project, paper);
           const status = evidenceStatus(project, paper);
@@ -15883,52 +18992,37 @@
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: paper.title }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-                paper.doi || paper.source_url || "\u6765\u6E90\u5F85\u8BB0\u5F55",
+                paper.doi || paper.source_url || t("paper.sourcePending"),
                 " \xB7 Evidence ",
                 evidence.length,
                 " \xB7 ",
-                paper.bibtex ? "BibTeX \u5DF2\u8BB0\u5F55" : "BibTeX \u672A\u8BB0\u5F55"
+                paper.bibtex ? t("paper.bibtexRecorded") : t("paper.bibtexMissing")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
-                "\u5F15\u7528\u51C6\u5907\u5EA6\uFF1A",
-                status,
-                " \xB7 confirmed=",
-                String(Boolean(paper.confirmed)),
-                " \xB7 verified=",
-                String(Boolean(paper.verified))
-              ] })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("paper.citationReadiness", { status, confirmed: String(Boolean(paper.confirmed)), verified: String(Boolean(paper.verified)) }) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" }),
-              paper.source_url ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { className: "secondary", href: paper.source_url, target: "_blank", rel: "noreferrer", "aria-label": `\u6253\u5F00 ${paper.title}`, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ExternalLink, { size: 14 }) }) : null
+              paper.source_url ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { className: "secondary", href: paper.source_url, target: "_blank", rel: "noreferrer", "aria-label": `${t("paper.open")} ${paper.title}`, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ExternalLink, { size: 14 }) }) : null
             ] })
           ] }, paper.id);
-        }) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: "\u5C1A\u65E0\u9879\u76EE\u8303\u56F4 Paper\uFF1B\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002", action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
+        }) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paper.noPapers"), action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Link2, { size: 14 }),
-          "\u6253\u5F00\u6587\u732E\u68C0\u7D22"
+          t("paper.openLiterature")
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u8BC1\u636E\u95E8\u7981" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-list", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: "\u53EF\u7528\u4E8E\u8BBA\u8BC1\u7684 ClaimReview" }),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-                  acceptedReviews,
-                  " \u6761 accepted review\uFF1B\u6BCF\u6761\u5FC5\u987B\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684 Evidence\u3002"
-                ] })
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paper.claimReviewsTitle") }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: t("paper.acceptedReviewCount", { count: acceptedReviews }) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: acceptedReviews ? "ready" : "evidence-required" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: "\u5168\u6587\u5B9A\u4F4D" }),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-                  (project.evidence || []).filter((item) => item.locator).length,
-                  "/",
-                  evidenceCount,
-                  " \u6761 Evidence \u6709\u9875\u7801\u6216\u7AE0\u8282 locator\u3002"
-                ] })
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paper.fulltextLocated") }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: t("paper.locatedCount", { located: (project.evidence || []).filter((item) => item.locator).length, total: evidenceCount }) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ShieldCheck, { size: 16, className: "muted" })
             ] })
@@ -15939,23 +19033,17 @@
     if (tab === "paper_figures") {
       const figures = validArtifacts.filter((artifact) => /image|plot|chart|png|jpe?g|svg|pdf|ply|mesh/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165", hint: "\u8FD9\u91CC\u53EA\u9009\u62E9 lineage \u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5B9E\u9A8C Artifact \u63D2\u5165\u8BBA\u6587\uFF1B\u5B9E\u9A8C\u8FD0\u884C\u3001\u961F\u5217\u548C\u53EF\u89C6\u5316\u7BA1\u7406\u5728\u300A\u5B9E\u9A8C\u5B9E\u73B0\u300B\u4E2D\u5B8C\u6210\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Badge, { status: "project-scoped", children: [
-          figures.length,
-          " \u4E2A\u53EF\u9009\u56FE\u8868"
-        ] }) }),
-        figures.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-grid", children: figures.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: "\u5C1A\u65E0\u53EF\u63D2\u5165\u8BBA\u6587\u7684\u6709\u6548\u56FE\u8868\u6216\u5B9E\u9A8C\u4EA7\u7269\u3002\u65E0\u5173 baseline\u3001\u7A7A\u6570\u7EC4\u548C\u5931\u6548 Artifact \u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002", action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.figuresTitle"), hint: t("paper.figuresHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: t("paper.figureCount", { count: figures.length }) }) }),
+        figures.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-grid", children: figures.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paper.noFigures"), action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Image, { size: 14 }),
-          "\u67E5\u770B\u5B9E\u9A8C\u4EA7\u7269"
+          t("paper.viewArtifacts")
         ] }) })
       ] });
     }
     if (tab === "paper_data") {
       const dataArtifacts = validArtifacts.filter((artifact) => /json|csv|tsv|table|metric|loss|data|timeseries/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528", hint: "\u53EA\u5217\u51FA lineage \u5B8C\u6574\u4E14\u6709\u6548\u7684 Artifact \u4F9B\u8BBA\u6587\u5F15\u7528\u6570\u5B57\u548C\u8868\u683C\uFF1B\u6570\u503C\u6765\u81EA\u771F\u5B9E Run\uFF0C\u8BBA\u6587\u9875\u4E0D\u8FD0\u884C\u6216\u7BA1\u7406\u5B9E\u9A8C\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Badge, { status: "project-scoped", children: [
-          dataArtifacts.length,
-          " \u4E2A\u53EF\u9009\u6570\u636E"
-        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.dataTitle"), hint: t("paper.dataHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: t("paper.dataCount", { count: dataArtifacts.length }) }) }),
         dataArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: dataArtifacts.map((artifact) => {
           const lineage = artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? artifact.metadata.lineage : {};
           return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
@@ -15964,55 +19052,48 @@
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
                 artifact.kind,
                 " \xB7 ",
-                artifact.mime_type || "\u7C7B\u578B\u5F85\u8BB0\u5F55"
+                artifact.mime_type || t("paper.typePending")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
-                "Run ",
-                String(lineage.run_id || "\u672A\u7ED1\u5B9A"),
-                " \xB7 Idea v",
-                String(lineage.idea_version || "\u672A\u77E5"),
-                " \xB7 \u6570\u636E\u7248\u672C ",
-                String(lineage.data_version || "\u672A\u58F0\u660E")
-              ] })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("paper.dataLineage", { run: String(lineage.run_id || t("preview.lineageUnbound")), idea: String(lineage.idea_version || t("preview.lineageUnknown")), data: String(lineage.data_version || t("preview.lineageNotDeclared")) }) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
           ] }, artifact.id);
-        }) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: "\u5F53\u524D\u6CA1\u6709\u53EF\u5F15\u7528\u7684\u5B9E\u9A8C\u6570\u636E\u4EA7\u7269\u3002\u8BF7\u5148\u5B8C\u6210\u5B9E\u9A8C\u5B9E\u73B0\u5E76\u751F\u6210\u6709\u6548 Artifact\u3002", action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
+        }) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paper.noData"), action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Image, { size: 14 }),
-          "\u67E5\u770B\u5B9E\u9A8C\u4EA7\u7269"
+          t("paper.viewArtifacts")
         ] }) })
       ] });
     }
     if (tab === "paper_compile") {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "LaTeX \u7F16\u8BD1", hint: "Linux latexmk \u662F\u72EC\u7ACB\u5BA1\u6279\u52A8\u4F5C\uFF1B\u7F16\u8BD1\u5931\u8D25\u53EA\u7559\u4E0B\u5931\u8D25\u65E5\u5FD7\uFF0C\u4E0D\u751F\u6210\u6210\u529F PDF\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.compileTitle"), hint: t("paper.compileHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void createCompilePlan();
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 15 }),
-          "\u521B\u5EFA\u7F16\u8BD1 Proposal"
+          t("paper.createCompileProposal")
         ] }) }) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-list", children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: "\u8BBA\u6587\u6E90\u6587\u4EF6" }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paper.sourceFile") }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("code", { children: [
                 "projects/",
                 project.id,
                 "/paper/main.tex"
               ] }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: compileProposals.length ? "candidate" : "blocked", children: compileProposals.length ? "\u5DF2\u6709\u7F16\u8BD1 Proposal" : "\u5C1A\u672A\u63D0\u51FA" })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: compileProposals.length ? "candidate" : "blocked", children: compileProposals.length ? t("paper.compileProposalExists") : t("paper.notProposed") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: "\u7F16\u8BD1\u8FD0\u884C" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: compileRuns.length ? `${compileRuns.length} \u6B21 compile_latex \u8FD0\u884C` : "\u5C1A\u65E0\u771F\u5B9E\u7F16\u8BD1\u8FD0\u884C" })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paper.compileRuns") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: compileRuns.length ? t("paper.compileRunCount", { count: compileRuns.length }) : t("paper.noCompileRuns") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: compileRuns.some((item) => item.status === "succeeded") ? "succeeded" : compileRuns.length ? compileRuns[0].status : "empty" })
           ] })
         ] }),
         compileRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u7F16\u8BD1\u8FD0\u884C\u8BB0\u5F55" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.compileRunRecords") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: compileRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: run.run_id || run.id }),
@@ -16022,14 +19103,14 @@
           ] }, run.id)) })
         ] }) : null,
         compileProposals.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u7F16\u8BD1\u5BA1\u6279" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.compileApprovals") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: compileProposals.map((proposal) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: proposal.summary }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-                proposal.reason || "\u65E0\u8BF4\u660E",
+                proposal.reason || t("paper.noReason"),
                 " \xB7 ",
-                proposal.created_at || "\u65F6\u95F4\u5F85\u8BB0\u5F55"
+                proposal.created_at || t("common.timePending")
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: proposal.status })
@@ -16040,101 +19121,99 @@
     if (tab === "paper_review") {
       const pdfArtifacts = validArtifacts.filter((artifact) => /pdf/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "PDF \u5448\u73B0\u4E0E\u5BA1\u9605", hint: "\u53EA\u5448\u73B0\u6210\u529F\u7F16\u8BD1\u4E14\u4ECD\u6709\u6548\u7684 PDF Artifact\uFF1B\u7F16\u8BD1\u5931\u8D25\u4E0D\u4F1A\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u663E\u793A\u4E3A\u5DF2\u5B8C\u6210\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Badge, { status: "project-scoped", children: [
-          pdfArtifacts.length,
-          " \u4E2A PDF"
-        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.pdfTitle"), hint: t("paper.pdfHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: t("paper.pdfCount", { count: pdfArtifacts.length }) }) }),
         pdfArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: pdfArtifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: artifact.name }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
               artifact.mime_type || "application/pdf",
               " \xB7 SHA-256 ",
-              artifact.sha256 ? artifact.sha256.slice(0, 12) : "\u672A\u8BB0\u5F55",
+              artifact.sha256 ? artifact.sha256.slice(0, 12) : t("common.unrecorded"),
               "\u2026"
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "button-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" }),
             artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("a", { className: "secondary", href: artifact.download_url || artifact.url, target: "_blank", rel: "noreferrer", children: [
-              "\u6253\u5F00 PDF ",
+              t("paper.openPdf"),
+              " ",
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ExternalLink, { size: 14 })
             ] }) : null
           ] })
-        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: "\u8FD8\u6CA1\u6709\u6210\u529F\u7F16\u8BD1\u7684 PDF\u3002\u8BF7\u5148\u5728 LaTeX \u7F16\u8BD1\u9875\u63D0\u51FA Proposal \u5E76\u5B8C\u6210\u771F\u5B9E\u7F16\u8BD1\u3002", action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("paper_compile"), children: [
+        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paper.noPdf"), action: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("paper_compile"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 14 }),
-          "\u524D\u5F80 LaTeX \u7F16\u8BD1"
+          t("paper.goCompile")
         ] }) })
       ] });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u8BBA\u6587\u9879\u76EE", hint: "\u8BBA\u6587\u8349\u7A3F\u53EA\u4F7F\u7528\u9879\u76EE\u8303\u56F4\u5185\u5DF2\u8BB0\u5F55\u6750\u6599\u548C\u4EBA\u5DE5\u590D\u6838\u72B6\u6001\uFF1B\u4FEE\u6539\u4E0E\u7F16\u8BD1\u90FD\u5FC5\u987B\u5148\u8FDB\u5165\u5BA1\u6279\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.projectTitle"), hint: t("paper.projectHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void createPaperDraft();
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FilePenLine, { size: 15 }),
-          "\u751F\u6210\u8BBA\u6587\u8349\u7A3F\u63D0\u6848"
+          t("paper.createDraftProposal")
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void createCompilePlan();
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 15 }),
-          "\u63D0\u51FA LaTeX \u7F16\u8BD1"
+          t("paper.proposeCompile")
         ] })
       ] }) }),
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "\u6587\u732E\u8BB0\u5F55" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("paper.literatureCount") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: project.papers?.length || 0 })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "\u539F\u6587\u8BC1\u636E\u5019\u9009" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("paper.evidenceCandidates") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: evidenceCount })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "\u5DF2\u63A5\u53D7 Claim \u590D\u6838" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("paper.acceptedClaims") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: acceptedReviews })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "\u6709\u6548\u4EA7\u7269" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("paper.validArtifacts") }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: validArtifacts.length })
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u8BBA\u6587\u8BC1\u636E\u95E8\u7981" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-list", children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: "Claim \u4E0E\u9875\u7801\u8BC1\u636E" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u590D\u6838\u7684 Claim \u624D\u80FD\u4F5C\u4E3A\u8BBA\u6587\u8BBA\u8BC1\u8F93\u5165\uFF1B\u5143\u6570\u636E\u8BB0\u5F55\u4E0D\u4F1A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E\u3002" })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paper.claimPageEvidence") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: t("paper.claimPageEvidenceText") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: acceptedReviews > 0 ? "ready" : "evidence-required" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: "Proposal \u4E0E\u7F16\u8BD1" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: "\u6279\u51C6\u540E\u624D\u4F1A\u4FEE\u6539\u9879\u76EE\u4E2D\u7684 paper/main.tex\uFF0C\u5E76\u7531 Linux latexmk \u76D1\u7763\u5668\u751F\u6210\u7F16\u8BD1\u4EA7\u7269\u3002" })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paper.proposalCompile") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: t("paper.proposalCompileText") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ShieldCheck, { size: 16, className: "muted" })
           ] })
         ] })
       ] }),
       project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: "\u8BBA\u6587\u53C2\u8003\u8BB0\u5F55" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.referenceRecords") }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.papers.slice(0, 8).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: paper.title }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-              paper.year || "\u5E74\u4EFD\u672A\u77E5",
+              paper.year || t("literature.yearUnknown"),
               " \xB7 ",
-              paper.venue || paper.source_provider || "\u6765\u6E90\u5F85\u8865\u5168",
+              paper.venue || paper.source_provider || t("paper.sourcePending"),
               " \xB7 DOI ",
-              paper.doi || "\u672A\u63D0\u4F9B"
+              paper.doi || t("common.notProvided")
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" })
         ] }, paper.id)) })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: "\u5C1A\u65E0\u53EF\u5F15\u7528\u7684\u6587\u732E\u8BB0\u5F55\u3002\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002" })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paper.noReferences") })
     ] });
   }
 
@@ -16144,18 +19223,18 @@
   var defaultForm = () => ({ dependency_manifest: "requirements.txt", entrypoint: "", random_seeds: "13,37,73", config: "{}" });
   function statusText(status) {
     const labels = {
-      source_downloaded: "\u6E90\u7801\u5DF2\u4E0B\u8F7D",
-      dependency_pending: "\u7B49\u5F85\u4F9D\u8D56\u8BA1\u5212",
-      dependency_installing: "\u6B63\u5728\u5B89\u88C5\u4F9D\u8D56",
-      dependency_failed: "\u4F9D\u8D56\u5B89\u88C5\u5931\u8D25",
-      ready: "\u53EF\u8FD0\u884C",
-      queued: "\u7B49\u5F85\u8FD0\u884C",
-      running: "\u6B63\u5728\u8FD0\u884C",
-      awaiting_artifact_approval: "\u7B49\u5F85\u4EA7\u7269\u5BA1\u6279",
-      completed: "\u4EA7\u7269\u5DF2\u767B\u8BB0",
-      artifact_rejected: "\u4EA7\u7269\u767B\u8BB0\u88AB\u62D2\u7EDD",
-      failed: "\u8FD0\u884C\u5931\u8D25",
-      invalidated: "\u4E0A\u6E38\u5DF2\u5931\u6548"
+      source_downloaded: "reproduction.sourceDownloaded",
+      dependency_pending: "reproduction.dependencyPending",
+      dependency_installing: "reproduction.dependencyInstalling",
+      dependency_failed: "reproduction.dependencyFailed",
+      ready: "reproduction.ready",
+      queued: "reproduction.queued",
+      running: "reproduction.running",
+      awaiting_artifact_approval: "reproduction.awaitingArtifact",
+      completed: "reproduction.completed",
+      artifact_rejected: "reproduction.artifactRejected",
+      failed: "reproduction.runFailed",
+      invalidated: "reproduction.invalidated"
     };
     return labels[status] || status;
   }
@@ -16165,6 +19244,7 @@
     onRefresh,
     showToast
   }) {
+    const { t } = useTranslation();
     const repositories = project.repositories || [];
     const reproductions = project.reproductions || [];
     const runs = project.reproduction_runs || [];
@@ -16184,7 +19264,7 @@
       try {
         await api(`/api/projects/${project.id}/repositories/${repository.id}/verify`, { method: "POST" });
         await onRefresh();
-        showToast("\u4EE3\u7801\u4ED3\u5E93\u9A8C\u8BC1\u5B8C\u6210");
+        showToast(t("reproduction.verifyDone"));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -16196,7 +19276,7 @@
       try {
         await api(`/api/projects/${project.id}/repositories/${repository.id}/download`, { method: "POST" });
         await onRefresh();
-        showToast("\u4E0B\u8F7D Proposal \u5DF2\u521B\u5EFA\uFF0C\u8BF7\u5728\u5BA1\u6279\u9875\u6279\u51C6\u540E\u7EE7\u7EED");
+        showToast(t("reproduction.downloadProposalCreated"));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -16209,10 +19289,10 @@
       try {
         await api(`/api/projects/${project.id}/reproductions/${reproduction.id}/dependency-plan`, {
           method: "POST",
-          body: JSON.stringify({ dependency_manifest: form.dependency_manifest.trim(), reason: "\u4E3A\u5DF2\u56FA\u5B9A commit \u7684\u4EE3\u7801\u590D\u73B0\u521B\u5EFA\u72EC\u7ACB\u4F9D\u8D56\u73AF\u5883" })
+          body: JSON.stringify({ dependency_manifest: form.dependency_manifest.trim(), reason: t("reproduction.dependencyReason") })
         });
         await onRefresh();
-        showToast("\u4F9D\u8D56\u5B89\u88C5 Proposal \u5DF2\u521B\u5EFA");
+        showToast(t("reproduction.dependencyProposalCreated"));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -16225,22 +19305,22 @@
       try {
         config = JSON.parse(form.config || "{}");
       } catch {
-        showToast("\u8FD0\u884C\u914D\u7F6E\u5FC5\u987B\u662F\u6709\u6548 JSON");
+        showToast(t("reproduction.configJsonInvalid"));
         return;
       }
       const randomSeeds = form.random_seeds.split(",").map((item) => Number(item.trim())).filter(Number.isInteger);
       if (!form.entrypoint.trim() || !randomSeeds.length || !config || typeof config !== "object" || Array.isArray(config)) {
-        showToast("\u8BF7\u586B\u5199 Python \u5165\u53E3\u3001\u81F3\u5C11\u4E00\u4E2A\u6574\u6570 seed \u548C JSON \u5BF9\u8C61\u914D\u7F6E");
+        showToast(t("reproduction.formInvalid"));
         return;
       }
       setBusy(`run:${reproduction.id}`);
       try {
         await api(`/api/projects/${project.id}/reproductions/${reproduction.id}/run-plan`, {
           method: "POST",
-          body: JSON.stringify({ entrypoint: form.entrypoint.trim(), random_seeds: randomSeeds, config, timeout_seconds: 3600, reason: "\u8FD0\u884C\u5DF2\u5B89\u88C5\u4F9D\u8D56\u7684\u56FA\u5B9A\u4EE3\u7801\u590D\u73B0\u5165\u53E3" })
+          body: JSON.stringify({ entrypoint: form.entrypoint.trim(), random_seeds: randomSeeds, config, timeout_seconds: 3600, reason: t("reproduction.runReason") })
         });
         await onRefresh();
-        showToast("\u590D\u73B0\u8FD0\u884C Proposal \u5DF2\u521B\u5EFA");
+        showToast(t("reproduction.runProposalCreated"));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -16254,11 +19334,11 @@
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         SectionHeading,
         {
-          title: "\u4EE3\u7801\u590D\u73B0\u5019\u9009",
-          hint: "\u590D\u73B0\u6E90\u7801\u53EA\u8FDB\u5165\u5F53\u524D\u9879\u76EE\u7684 experiment/reproductions \u533A\u57DF\uFF1B\u4E0B\u8F7D\u3001\u4F9D\u8D56\u5B89\u88C5\u3001\u8FD0\u884C\u548C\u4EA7\u7269\u767B\u8BB0\u5206\u522B\u5BA1\u6279\u3002",
+          title: t("reproduction.title"),
+          hint: t("reproduction.hint"),
           extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(GitBranch, { size: 15 }),
-            "\u4ECE\u6587\u732E\u6DFB\u52A0\u4ED3\u5E93"
+            t("reproduction.addFromLiterature")
           ] }) })
         }
       ),
@@ -16274,39 +19354,39 @@
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ExternalLink, { size: 13, "aria-hidden": "true" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
-              repository.commit_or_tag || "\u63D0\u4EA4\u672A\u9501\u5B9A",
+              repository.commit_or_tag || t("reproduction.commitUnlocked"),
               " \xB7 ",
-              repository.license_spdx || verification.license_status || "\u8BB8\u53EF\u8BC1\u5F85\u6838\u9A8C",
+              repository.license_spdx || verification.license_status || t("reproduction.licensePending"),
               " \xB7",
-              download?.source_relative_path ? ` \u5DF2\u8FDB\u5165 ${download.source_relative_path}` : " \u5C1A\u672A\u4E0B\u8F7D"
+              download?.source_relative_path ? ` ${t("reproduction.entered")} ${download.source_relative_path}` : ` ${t("reproduction.notDownloaded")}`
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row reproduction-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: repository.verified_official ? "verified" : "review-required", children: repository.verified_official ? "\u5DF2\u9A8C\u8BC1" : "\u5F85\u9A8C\u8BC1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: repository.verified_official ? "verified" : "review-required", children: repository.verified_official ? t("reproduction.verified") : t("reproduction.pendingVerification") }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `verify:${repository.id}`, onClick: () => {
                 void verifyRepository(repository);
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(RefreshCw, { size: 15 }),
-                "\u91CD\u65B0\u9A8C\u8BC1"
+                t("reproduction.reverify")
               ] }),
               repository.verified_official && !reproduction ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `download:${repository.id}`, onClick: () => {
                 void requestDownload(repository);
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Download, { size: 15 }),
-                "\u521B\u5EFA\u4E0B\u8F7D\u5BA1\u6279"
+                t("reproduction.createDownloadApproval")
               ] }) : null
             ] })
           ] }),
           reproduction ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "reproduction-detail", children: [
             /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row compact-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: "\u590D\u73B0\u73AF\u5883" }),
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: t("reproduction.environment") }),
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
                   /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("code", { children: reproduction.repository_relative_path }),
                   " \xB7 ",
                   /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("code", { children: reproduction.venv_relative_path })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: reproduction.status, children: statusText(reproduction.status) })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: reproduction.status, children: t(statusText(reproduction.status)) })
             ] }),
             reproduction.error ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "inline-warning", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TriangleAlert, { size: 15 }),
@@ -16315,34 +19395,34 @@
             ] }) : null,
             ["source_downloaded", "dependency_failed"].includes(reproduction.status) ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "reproduction-form", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
-                "\u4F9D\u8D56\u6E05\u5355",
+                t("reproduction.dependencyManifest"),
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { value: formFor(reproduction).dependency_manifest, onChange: (event) => updateForm(reproduction.id, "dependency_manifest", event.target.value) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `dependency:${reproduction.id}`, onClick: () => {
                 void requestDependencies(reproduction);
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(PackageCheck, { size: 15 }),
-                "\u521B\u5EFA\u4F9D\u8D56\u5B89\u88C5\u5BA1\u6279"
+                t("reproduction.createDependencyApproval")
               ] })
             ] }) : null,
             reproduction.status === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "reproduction-form", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
-                "Python \u5165\u53E3",
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { placeholder: "\u4F8B\u5982 scripts/evaluate.py", value: formFor(reproduction).entrypoint, onChange: (event) => updateForm(reproduction.id, "entrypoint", event.target.value) })
+                t("reproduction.pythonEntry"),
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { placeholder: t("reproduction.pythonEntryPlaceholder"), value: formFor(reproduction).entrypoint, onChange: (event) => updateForm(reproduction.id, "entrypoint", event.target.value) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
                 "Seeds",
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { value: formFor(reproduction).random_seeds, onChange: (event) => updateForm(reproduction.id, "random_seeds", event.target.value) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
-                "\u7ED3\u6784\u5316\u914D\u7F6E",
+                t("reproduction.structuredConfig"),
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("textarea", { rows: 2, value: formFor(reproduction).config, onChange: (event) => updateForm(reproduction.id, "config", event.target.value) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `run:${reproduction.id}`, onClick: () => {
                 void requestRun(reproduction);
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Play, { size: 15 }),
-                "\u521B\u5EFA\u8FD0\u884C\u5BA1\u6279"
+                t("reproduction.createRunApproval")
               ] })
             ] }) : null,
             reproductionRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "reproduction-runs", children: reproductionRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row compact-row", children: [
@@ -16358,21 +19438,21 @@
                   run.error ? ` \xB7 ${run.error}` : ""
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: run.status, children: statusText(run.status) })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: run.status, children: t(statusText(run.status)) })
             ] }, run.id)) }) : null
           ] }) : null
         ] }, repository.id);
       }) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         EmptyState,
         {
-          text: "\u5C1A\u65E0\u4EE3\u7801\u590D\u73B0\u5019\u9009\u3002\u8BF7\u5148\u5728\u76F8\u5173\u6587\u732E\u9875\u9762\u6DFB\u52A0\u8BBA\u6587\u4EE3\u7801\u4ED3\u5E93\u3002",
+          text: t("reproduction.empty"),
           action: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(GitBranch, { size: 15 }),
-            "\u6253\u5F00\u76F8\u5173\u6587\u732E"
+            t("reproduction.openLiterature")
           ] })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "section", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: "\u590D\u73B0\u8FB9\u754C", hint: "\u7CFB\u7EDF\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5BF9\u5165\u53E3\u548C\u7ED3\u6784\u5316\u8BA1\u5212\uFF1B\u4E0D\u4F1A\u6267\u884C\u6A21\u578B\u4F20\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F84\u6216\u7F51\u7EDC\u547D\u4EE4\u3002\u590D\u73B0\u8FDB\u7A0B\u662F\u53D7\u76D1\u7763\u7684\u672C\u673A Linux \u8FDB\u7A0B\uFF0C\u4E0D\u7B49\u540C\u4E8E\u865A\u62DF\u673A\u9694\u79BB\u3002" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "section", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("reproduction.boundaryTitle"), hint: t("reproduction.boundaryHint") }) })
     ] });
   }
 
@@ -16391,31 +19471,32 @@
   }
   function candidateLabel(type) {
     const labels = {
-      innovation: "\u6F5C\u5728\u521B\u65B0\u4FE1\u53F7",
-      potential_improvement: "\u6F5C\u5728\u6539\u5584\u4FE1\u53F7",
-      potential_regression: "\u6F5C\u5728\u56DE\u5F52\u4FE1\u53F7",
-      counterexample: "\u53CD\u4F8B\u4FE1\u53F7",
-      difference: "\u6570\u503C\u5DEE\u5F02",
-      comparability_gap: "\u53EF\u6BD4\u6027\u7F3A\u53E3",
-      research_gap: "\u5F85\u6838\u9A8C\u7814\u7A76\u7A7A\u767D"
+      innovation: "comparison.innovation",
+      potential_improvement: "comparison.potentialImprovement",
+      potential_regression: "comparison.potentialRegression",
+      counterexample: "comparison.counterexample",
+      difference: "comparison.difference",
+      comparability_gap: "comparison.comparabilityGap",
+      research_gap: "comparison.researchGap"
     };
     return labels[type] || type;
   }
   function statusLabel(status) {
-    const labels = { comparable: "\u53EF\u6BD4", partial: "\u90E8\u5206\u53EF\u6BD4", blocked: "\u4E0D\u53EF\u6BD4/\u963B\u585E", candidate: "\u5F85\u6838\u9A8C\u5019\u9009", accepted: "\u5DF2\u4FDD\u7559\u5019\u9009", rejected: "\u5DF2\u62D2\u7EDD" };
+    const labels = { comparable: "comparison.comparable", partial: "comparison.partial", blocked: "comparison.blocked", candidate: "comparison.candidate", accepted: "comparison.accepted", rejected: "comparison.rejected" };
     return labels[status] || status;
   }
   function metricNumber(value) {
-    return typeof value === "number" && Number.isFinite(value) ? value.toPrecision(8).replace(/0+$/, "").replace(/\.$/, "") : "\u672A\u8BB0\u5F55";
+    return typeof value === "number" && Number.isFinite(value) ? value.toPrecision(8).replace(/0+$/, "").replace(/\.$/, "") : "comparison.metricUnrecorded";
   }
   function parseJson(value, label) {
     try {
       return JSON.parse(value);
     } catch {
-      throw new Error(`${label}\u5FC5\u987B\u662F\u6709\u6548 JSON`);
+      throw new Error(label);
     }
   }
   function ComparisonTab({ project, onRefresh, showToast }) {
+    const { t } = useTranslation();
     const papers = (0, import_react12.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
     const runs = (0, import_react12.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
     const [paperId, setPaperId] = (0, import_react12.useState)("");
@@ -16439,12 +19520,12 @@
       setBusy(true);
       setError(null);
       try {
-        if (!paperId || !runId || !evidenceIds.length) throw new Error("\u8BF7\u9009\u62E9\u5DF2\u786E\u8BA4 Paper\u3001\u5DF2\u5B8C\u6210\u590D\u73B0 Run \u548C\u81F3\u5C11\u4E00\u6761\u5B9A\u4F4D Evidence");
-        const metrics = parseJson(paperMetrics, "\u8BBA\u6587\u6307\u6807");
-        const datasets = parseJson(context.datasets || "[]", "\u6570\u636E\u96C6");
-        const definitions = parseJson(context.metric_definitions || "{}", "\u6307\u6807\u5B9A\u4E49");
+        if (!paperId || !runId || !evidenceIds.length) throw new Error(t("comparison.selectRequired"));
+        const metrics = parseJson(paperMetrics, t("comparison.paperMetricsLabel"));
+        const datasets = parseJson(context.datasets || "[]", t("comparison.datasetsLabel"));
+        const definitions = parseJson(context.metric_definitions || "{}", t("comparison.definitionsLabel"));
         const seeds = context.seeds.trim() ? context.seeds.split(",").map((item) => Number(item.trim())) : null;
-        if (seeds && seeds.some((seed) => !Number.isInteger(seed))) throw new Error("\u8BBA\u6587 seeds \u5FC5\u987B\u662F\u9017\u53F7\u5206\u9694\u7684\u6574\u6570");
+        if (seeds && seeds.some((seed) => !Number.isInteger(seed))) throw new Error(t("comparison.seedsInvalid"));
         await api(`/api/projects/${project.id}/research-comparisons`, {
           method: "POST",
           body: JSON.stringify({
@@ -16459,11 +19540,11 @@
               seeds,
               metric_definitions: definitions
             },
-            reason: "\u7528\u6237\u8BF7\u6C42\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A commit \u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA"
+            reason: t("comparison.reason")
           })
         });
         await onRefresh();
-        showToast("\u6BD4\u8F83\u8BB0\u5F55\u5DF2\u4FDD\u5B58\uFF1B\u5019\u9009\u4ECD\u9700\u4EBA\u5DE5\u6838\u9A8C\uFF0C\u4E0D\u662F\u79D1\u5B66\u7ED3\u8BBA");
+        showToast(t("comparison.saved"));
       } catch (requestError) {
         const message = errorMessage(requestError);
         setError(message);
@@ -16477,10 +19558,10 @@
       try {
         await api(`/api/projects/${project.id}/research-comparisons/${comparisonId}/candidates/${candidateId}/decision`, {
           method: "POST",
-          body: JSON.stringify({ decision, reason: decision === "accepted" ? "\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\uFF0C\u540E\u7EED\u9700\u8981\u72EC\u7ACB\u9A8C\u8BC1\u3002" : "\u5F53\u524D\u8BC1\u636E\u4E0D\u8DB3\uFF0C\u62D2\u7EDD\u8BE5\u5019\u9009\u3002" })
+          body: JSON.stringify({ decision, reason: decision === "accepted" ? t("comparison.acceptReason") : t("comparison.rejectReason") })
         });
         await onRefresh();
-        showToast(decision === "accepted" ? "\u5019\u9009\u5DF2\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u7814\u7A76\u7ED3\u8BBA" : "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55");
+        showToast(decision === "accepted" ? t("comparison.acceptedToast") : t("comparison.rejectedToast"));
       } catch (requestError) {
         showToast(errorMessage(requestError));
       } finally {
@@ -16492,51 +19573,44 @@
       /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         SectionHeading,
         {
-          title: "\u590D\u73B0\u6548\u679C\u6BD4\u8F83",
-          hint: "\u53EA\u6BD4\u8F83\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4 Paper\u3001\u5E26\u5B9A\u4F4D\u548C\u54C8\u5E0C\u7684 Evidence\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8BB0 Artifact \u7684\u771F\u5B9E\u590D\u73B0 Run\u3002\u7ED3\u679C\u662F integration result\uFF1B\u6F5C\u5728\u6539\u5584\u3001\u53CD\u4F8B\u548C\u521B\u65B0\u4FE1\u53F7\u90FD\u5FC5\u987B\u4EBA\u5DE5\u6838\u9A8C\u3002",
+          title: t("comparison.title"),
+          hint: t("comparison.hint"),
           extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
             void onRefresh();
           }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RefreshCw, { size: 15 }),
-            "\u5237\u65B0"
+            t("topbar.refresh")
           ] }) })
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section comparison-scope", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row compact-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: "\u9879\u76EE\u8303\u56F4" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: t("comparison.projectScope") }),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: project.id }) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: "project-scoped" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { className: "muted", children: [
-          "\u53EF\u6BD4\u8F83 Paper\uFF1A",
-          papers.length,
-          " \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709 Artifact \u7684\u590D\u73B0\uFF1A",
-          runs.length,
-          " \xB7 \u5DF2\u4FDD\u5B58\u6BD4\u8F83\uFF1A",
-          comparisons.length
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("comparison.scopeCounts", { papers: papers.length, runs: runs.length, comparisons: comparisons.length }) })
       ] }),
-      !papers.length || !runs.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: "\u521B\u5EFA\u6BD4\u8F83\u524D\uFF0C\u9700\u8981\u5DF2\u786E\u8BA4 Paper\uFF0C\u4EE5\u53CA completed \u4E14\u5DF2\u767B\u8BB0\u8F93\u51FA Artifact \u7684\u590D\u73B0 Run\u3002" }) : null,
+      !papers.length || !runs.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("comparison.empty") }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section comparison-form-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: "\u521B\u5EFA\u7ED3\u6784\u5316\u6BD4\u8F83", hint: "\u8BBA\u6587\u6307\u6807\u5FC5\u987B\u7531\u7528\u6237\u4ECE\u6709\u5B9A\u4F4D\u7684 Evidence \u4E2D\u5F55\u5165\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u4ECE\u6A21\u578B\u6216\u6807\u9898\u731C\u6D4B\u6307\u6807\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(GitCompare, { size: 16, className: "muted" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("comparison.createTitle"), hint: t("comparison.createHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(GitCompare, { size: 16, className: "muted" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "form-grid two-up", children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-            "\u786E\u8BA4\u7684 Paper",
+            t("comparison.confirmedPaper"),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("select", { value: paperId, onChange: (event) => {
               setPaperId(event.target.value);
               setEvidenceIds([]);
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: "", children: "\u8BF7\u9009\u62E9" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: "", children: t("common.select") }),
               papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-            "\u590D\u73B0 Run",
+            t("comparison.reproductionRun"),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("select", { value: runId, onChange: (event) => setRunId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: "", children: "\u8BF7\u9009\u62E9" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: "", children: t("common.select") }),
               runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("option", { value: run.id, children: [
                 "Run ",
                 run.id.slice(0, 8),
@@ -16547,42 +19621,42 @@
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "comparison-evidence-picker", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: "\u8BBA\u6587 Evidence" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: t("comparison.paperEvidence") }),
           selectedPaper && paperEvidence2.length ? paperEvidence2.map((evidence) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { className: "comparison-evidence-option", children: [
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { type: "checkbox", checked: evidenceIds.includes(evidence.id), onChange: () => toggleEvidence(evidence.id) }),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
               evidence.locator,
               " \xB7 ",
-              evidence.claim || "\u672A\u547D\u540D claim",
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: evidence.metadata?.pdf_sha256 ? `SHA-256 ${String(evidence.metadata.pdf_sha256).slice(0, 12)}\u2026` : "\u7F3A\u5C11 PDF hash" })
+              evidence.claim || t("comparison.unnamedClaim"),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: evidence.metadata?.pdf_sha256 ? `SHA-256 ${String(evidence.metadata.pdf_sha256).slice(0, 12)}\u2026` : t("comparison.missingPdfHash") })
             ] })
-          ] }, evidence.id)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: "\u5F53\u524D Paper \u6CA1\u6709\u5E26\u5B9A\u4F4D\u7684 Evidence\u3002" })
+          ] }, evidence.id)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("comparison.noLocatedEvidence") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-          "\u8BBA\u6587\u6307\u6807 JSON",
+          t("comparison.paperMetricsJson"),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("textarea", { rows: 7, value: paperMetrics, onChange: (event) => setPaperMetrics(event.target.value) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "form-grid two-up", children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-            "\u8BBA\u6587\u6570\u636E\u7248\u672C",
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.data_version, onChange: (event) => setContext((current) => ({ ...current, data_version: event.target.value })), placeholder: "\u6CA1\u6709\u62AB\u9732\u5219\u7559\u7A7A\uFF0C\u6BD4\u8F83\u4F1A\u6807\u8BB0 partial" })
+            t("comparison.dataVersion"),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.data_version, onChange: (event) => setContext((current) => ({ ...current, data_version: event.target.value })), placeholder: t("comparison.dataVersionPlaceholder") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-            "\u8BBA\u6587\u914D\u7F6E SHA-256",
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.config_fingerprint, onChange: (event) => setContext((current) => ({ ...current, config_fingerprint: event.target.value })), placeholder: "\u6CA1\u6709\u56FA\u5B9A\u914D\u7F6E\u5219\u7559\u7A7A" })
+            t("comparison.configFingerprint"),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.config_fingerprint, onChange: (event) => setContext((current) => ({ ...current, config_fingerprint: event.target.value })), placeholder: t("comparison.configPlaceholder") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-            "\u8BBA\u6587 datasets JSON",
+            t("comparison.datasetsJson"),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.datasets, onChange: (event) => setContext((current) => ({ ...current, datasets: event.target.value })) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-            "\u8BBA\u6587 seeds",
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.seeds, onChange: (event) => setContext((current) => ({ ...current, seeds: event.target.value })), placeholder: "13,37,73\uFF1B\u6CA1\u6709\u62AB\u9732\u5219\u7559\u7A7A" })
+            t("comparison.seedsLabel"),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: context.seeds, onChange: (event) => setContext((current) => ({ ...current, seeds: event.target.value })), placeholder: t("comparison.seedsPlaceholder") })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-          "\u6307\u6807\u5B9A\u4E49 JSON",
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("textarea", { rows: 3, value: context.metric_definitions, onChange: (event) => setContext((current) => ({ ...current, metric_definitions: event.target.value })), placeholder: '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}' })
+          t("comparison.definitionsJson"),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("textarea", { rows: 3, value: context.metric_definitions, onChange: (event) => setContext((current) => ({ ...current, metric_definitions: event.target.value })), placeholder: t("comparison.definitionsPlaceholder") })
         ] }),
         error ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "inline-warning", role: "alert", children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(TriangleAlert, { size: 15 }),
@@ -16592,16 +19666,17 @@
           void createComparison();
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ShieldCheck, { size: 15 }),
-          "\u4FDD\u5B58\u6BD4\u8F83"
+          t("comparison.save")
         ] }) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section comparison-results", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: "\u5DF2\u4FDD\u5B58\u6BD4\u8F83\u4E0E\u5F85\u6838\u9A8C\u5019\u9009", hint: "\u6BCF\u4E2A\u6570\u503C\u90FD\u663E\u793A\u8BBA\u6587 Evidence\u3001\u590D\u73B0 commit\u3001seed\u3001\u914D\u7F6E\u548C Artifact \u7ED1\u5B9A\uFF1B\u63A5\u53D7\u5019\u9009\u53EA\u8868\u793A\u4FDD\u7559\u5BA1\u9605\u4EFB\u52A1\u3002" }),
-        comparisons.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: comparisons.map((comparison) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ComparisonCard, { comparison, busy, onDecide: decideCandidate }, comparison.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u6548\u679C\u6BD4\u8F83\u8BB0\u5F55\u3002" })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("comparison.savedTitle"), hint: t("comparison.savedHint") }),
+        comparisons.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: comparisons.map((comparison) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ComparisonCard, { comparison, busy, onDecide: decideCandidate }, comparison.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("comparison.savedEmpty") })
       ] })
     ] });
   }
   function ComparisonCard({ comparison, busy, onDecide }) {
+    const { t } = useTranslation();
     const metrics = Object.entries(comparison.metric_comparisons || {});
     const snapshot = comparison.source_snapshot || {};
     const reproduction = snapshot.reproduction_run || {};
@@ -16616,72 +19691,72 @@
             comparison.reproduction_run_id.slice(0, 8)
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
-            "\u8F93\u5165 hash ",
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: comparison.input_hash || "\u672A\u8BB0\u5F55" })
+            t("comparison.inputHash"),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: comparison.input_hash || t("common.unrecorded") })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: comparison.status, children: statusLabel(comparison.status) })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: comparison.status, children: t(statusLabel(comparison.status)) })
       ] }),
       comparison.blocking_reasons?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "inline-warning", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(TriangleAlert, { size: 15 }),
-        comparison.blocking_reasons.join("\u3001")
+        comparison.blocking_reasons.join(", ")
       ] }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "comparison-provenance", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
           "commit ",
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: String(reproduction.source_commit || "\u672A\u8BB0\u5F55") })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: String(reproduction.source_commit || t("common.unrecorded")) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
           "seeds ",
-          Array.isArray(reproduction.random_seeds) ? reproduction.random_seeds.join(", ") : "\u672A\u8BB0\u5F55"
+          Array.isArray(reproduction.random_seeds) ? reproduction.random_seeds.join(", ") : t("common.unrecorded")
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
-          "Artifacts ",
-          artifacts.length,
-          " \u4E2A"
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: t("comparison.artifactsCount", { count: artifacts.length }) })
       ] }),
       metrics.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "comparison-metrics", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("table", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "\u6307\u6807" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "\u8BBA\u6587" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "\u590D\u73B0 mean" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.metric") }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.paper") }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.reproductionMean") }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "std" }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "delta" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "\u72B6\u6001" })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.status") })
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tbody", { children: metrics.map(([name, metric]) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("tr", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: name }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: metricNumber(metric.paper_value) }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: metricNumber(metric.reproduction_mean) }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: metricNumber(metric.reproduction_population_std) }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: metricNumber(metric.delta) }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: metric.status, children: statusLabel(metric.status) }) })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.paper_value)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.reproduction_mean)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.reproduction_population_std)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.delta)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: metric.status, children: t(statusLabel(metric.status)) }) })
         ] }, name)) })
       ] }) }) : null,
       comparison.candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "comparison-candidates", children: comparison.candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row compact-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: candidateLabel(candidate.candidate_type) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: t(candidateLabel(candidate.candidate_type)) }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: candidate.statement }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("small", { children: [
-            "Evidence \u72B6\u6001\uFF1A",
+            t("comparison.evidenceStatus"),
+            " ",
             candidate.evidence_status,
-            " \xB7 \u5019\u9009 ID ",
+            " \xB7 ",
+            t("comparison.candidateId"),
+            " ",
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: candidate.id.slice(0, 8) })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(ButtonRow, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: candidate.status, children: statusLabel(candidate.status) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: candidate.status, children: t(statusLabel(candidate.status)) }),
           candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
               void onDecide(comparison.id, candidate.id, "accepted");
-            }, children: "\u4FDD\u7559" }),
+            }, children: t("comparison.keep") }),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
               void onDecide(comparison.id, candidate.id, "rejected");
-            }, children: "\u62D2\u7EDD" })
+            }, children: t("common.reject") })
           ] }) : null
         ] })
-      ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: "\u6CA1\u6709\u81EA\u52A8\u751F\u6210\u7684\u5DEE\u5F02\u4FE1\u53F7\u3002" })
+      ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("comparison.noCandidates") })
     ] });
   }
 
@@ -16689,17 +19764,18 @@
   var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function listLabel(values) {
-    return values.length ? values.join("\u3001") : "unresolved";
+    return values.length ? values.join(", ") : "unresolved";
   }
   function evidenceLabel(status) {
-    if (status === "claim_reviewed") return "\u5DF2\u5BA1\u9605 Claim";
-    if (status === "page_quote") return "\u5B9A\u4F4D quote";
-    return "\u4EC5 metadata";
+    if (status === "claim_reviewed") return "research.claimReviewed";
+    if (status === "page_quote") return "research.pageQuote";
+    return "research.metadataOnly";
   }
   function ResearchStatusTab({
     project,
     showToast
   }) {
+    const { t, locale } = useTranslation();
     const [status, setStatus] = (0, import_react13.useState)(null);
     const [loading, setLoading] = (0, import_react13.useState)(true);
     const [working, setWorking] = (0, import_react13.useState)(false);
@@ -16752,7 +19828,7 @@
     }, [project]);
     const createMatrix = async () => {
       if (!eligibleRows.length) {
-        showToast("\u5F53\u524D\u6CA1\u6709\u540C\u65F6\u6EE1\u8DB3\u786E\u8BA4 Paper\u3001\u5B9A\u4F4D Evidence \u548C accepted ClaimReview \u7684\u6750\u6599\u3002");
+        showToast(t("research.eligibleRequired"));
         return;
       }
       setWorking(true);
@@ -16762,7 +19838,7 @@
           body: JSON.stringify({ rows: eligibleRows })
         });
         setStatus(created);
-        showToast("\u7814\u7A76\u73B0\u72B6\u77E9\u9635\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8BB0\u5F55\u7684\u5B57\u6BB5\u4FDD\u6301 unresolved\u3002");
+        showToast(t("research.matrixCreated"));
       } catch (requestError) {
         showToast(errorMessage(requestError));
       } finally {
@@ -16784,7 +19860,7 @@
         });
         setGapStatement("");
         await loadStatus();
-        showToast("\u5019\u9009\u5DF2\u8BB0\u5F55\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65AD\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7ED3\u8BBA\u3002");
+        showToast(t("research.candidateRecorded"));
       } catch (requestError) {
         showToast(errorMessage(requestError));
       } finally {
@@ -16796,10 +19872,10 @@
       try {
         await api(`/api/projects/${project.id}/research-status/gap-candidates/${candidate.id}/decision`, {
           method: "POST",
-          body: JSON.stringify({ decision, reason: decision === "accepted" ? "\u7528\u6237\u786E\u8BA4\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\u3002" : "\u7528\u6237\u62D2\u7EDD\u8BE5\u5F85\u6838\u9A8C\u5019\u9009\u3002" })
+          body: JSON.stringify({ decision, reason: decision === "accepted" ? t("research.acceptGapReason") : t("research.rejectGapReason") })
         });
         await loadStatus();
-        showToast(decision === "accepted" ? "\u5019\u9009\u5DF2\u786E\u8BA4\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u79D1\u5B66\u7ED3\u8BBA\u3002" : "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55\u3002");
+        showToast(decision === "accepted" ? t("research.acceptedGapToast") : t("research.rejectedGapToast"));
       } catch (requestError) {
         showToast(errorMessage(requestError));
       } finally {
@@ -16812,21 +19888,21 @@
       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         SectionHeading,
         {
-          title: "\u7814\u7A76\u73B0\u72B6\u77E9\u9635",
-          hint: "\u77E9\u9635\u53EA\u63A5\u53D7\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4\u7684 Paper\u3001\u5E26\u9875\u7801/\u7AE0\u8282\u5B9A\u4F4D\u7684 Evidence \u548C\u5DF2\u63A5\u53D7 ClaimReview\uFF1B\u672A\u77E5\u5B57\u6BB5\u4E0D\u4F1A\u7531\u6A21\u578B\u6216 metadata \u731C\u6D4B\u3002",
+          title: t("research.title"),
+          hint: t("research.hint"),
           extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", disabled: loading || working, onClick: () => {
               void loadStatus();
-              showToast("\u6B63\u5728\u5237\u65B0\u9879\u76EE\u8303\u56F4\u7814\u7A76\u73B0\u72B6\u2026");
+              showToast(t("research.refreshing"));
             }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RefreshCw, { size: 15 }),
-              "\u5237\u65B0"
+              t("topbar.refresh")
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "primary", type: "button", disabled: working || Boolean(matrix), onClick: () => {
               void createMatrix();
             }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Table2, { size: 15 }),
-              matrix ? "\u77E9\u9635\u5DF2\u5EFA\u7ACB" : "\u5EFA\u7ACB\u77E9\u9635"
+              matrix ? t("research.matrixReady") : t("research.createMatrix")
             ] })
           ] })
         }
@@ -16839,44 +19915,37 @@
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: status?.permission_status || "project-scoped" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { className: "muted", children: [
-          "\u53EF\u5EFA\u7ACB\u884C\uFF1A",
-          eligibleRows.length,
-          " \xB7 \u5F53\u524D\u77E9\u9635\u884C\uFF1A",
-          matrix?.rows.length || 0,
-          " \xB7 \u5F53\u524D Idea v",
-          project.current_idea_version || 1
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "muted", children: t("research.scopeCounts", { eligible: eligibleRows.length, rows: matrix?.rows.length || 0, idea: project.current_idea_version || 1 }) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section research-status-filters", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: "\u7B5B\u9009\u77E9\u9635", hint: "\u7B5B\u9009\u53EA\u5F71\u54CD\u5F53\u524D\u9879\u76EE\u8FD4\u56DE\u7684\u6570\u636E\uFF0C\u4E0D\u4F1A\u6539\u53D8\u8BC1\u636E\u6216\u5019\u9009\u72B6\u6001\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Funnel, { size: 16, className: "muted" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("research.filtersTitle"), hint: t("research.filtersHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Funnel, { size: 16, className: "muted" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "form-grid three-up", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
-            "\u4E3B\u9898",
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: theme, onChange: (event) => setTheme2(event.target.value), placeholder: "\u4F8B\u5982 efficient adaptation" })
+            t("research.theme"),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: theme, onChange: (event) => setTheme2(event.target.value), placeholder: t("research.themePlaceholder") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
-            "\u65B9\u6CD5",
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: method, onChange: (event) => setMethod(event.target.value), placeholder: "\u4F8B\u5982 parameter-efficient tuning" })
+            t("research.method"),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: method, onChange: (event) => setMethod(event.target.value), placeholder: t("research.methodPlaceholder") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
-            "\u5E74\u4EFD",
+            t("research.year"),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { inputMode: "numeric", value: year, onChange: (event) => setYear(event.target.value), placeholder: "2024" })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", disabled: loading, onClick: () => {
           void loadStatus();
-          showToast("\u5DF2\u5E94\u7528\u77E9\u9635\u7B5B\u9009\u3002");
-        }, children: "\u5E94\u7528\u7B5B\u9009" }) })
+          showToast(t("research.filtersApplied"));
+        }, children: t("research.applyFilters") }) })
       ] }),
-      loading ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: "\u6B63\u5728\u8BFB\u53D6\u5F53\u524D\u9879\u76EE\u7684\u7814\u7A76\u73B0\u72B6\u6570\u636E\u2026" }) : null,
-      error ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: `\u7814\u7A76\u73B0\u72B6\u8BF7\u6C42\u5931\u8D25\uFF1A${error}` }) : null,
-      !loading && !error && status && !matrix ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: status.limitations[0] || "\u5C1A\u672A\u521B\u5EFA\u7814\u7A76\u73B0\u72B6\u77E9\u9635\u3002", action: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", disabled: working || !eligibleRows.length, onClick: () => {
+      loading ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("research.loading") }) : null,
+      error ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("research.requestFailed", { error }) }) : null,
+      !loading && !error && status && !matrix ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: status.limitations[0] || t("research.noMatrix"), action: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", disabled: working || !eligibleRows.length, onClick: () => {
         void createMatrix();
-      }, children: "\u4ECE\u5DF2\u5BA1\u9605\u6750\u6599\u5EFA\u7ACB" }) }) : null,
+      }, children: t("research.createFromReviewed") }) }) : null,
       !loading && !error && matrix ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section research-status-matrix-panel", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: `\u77E9\u9635 v${matrix.idea_version}`, hint: `\u521B\u5EFA\u8005\uFF1A${matrix.created_by} \xB7 ${new Date(matrix.created_at).toLocaleString()}`, extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("research.matrixVersion", { version: matrix.idea_version }), hint: t("research.matrixMeta", { creator: matrix.created_by, time: formatDateTime(matrix.created_at, locale) }), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("a", { className: "secondary", href: exportUrl("csv"), download: true, children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Download, { size: 15 }),
               "CSV"
@@ -16893,18 +19962,18 @@
           matrix.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "research-status-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("table", { className: "research-status-table", children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("tr", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "Paper" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u4E3B\u9898" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u65B9\u6CD5" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u5E74\u4EFD" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u6570\u636E\u96C6" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u6307\u6807" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u4EE3\u7801" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "\u8BC1\u636E" })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.theme") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.method") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.year") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.datasets") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.metrics") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.code") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.evidence") })
             ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("tbody", { children: matrix.rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("tr", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("td", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: row.paper?.title || row.paper_id }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: row.paper?.doi || "DOI \u672A\u8BB0\u5F55" })
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: row.paper?.doi || t("research.doiUnrecorded") })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.theme || "unresolved" }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.method || "unresolved" }),
@@ -16915,44 +19984,44 @@
               /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("td", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: row.evidence_status }),
                 " ",
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: evidenceLabel(row.evidence_status) }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: t(evidenceLabel(row.evidence_status)) }),
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("details", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("summary", { children: "\u6765\u6E90" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("summary", { children: t("research.source") }),
                   /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: row.evidence_ids.join(", ") }),
                   /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("br", {}),
                   /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: row.claim_review_ids.join(", ") })
                 ] })
               ] })
             ] }, row.id)) })
-          ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: "\u7B5B\u9009\u540E\u6CA1\u6709\u77E9\u9635\u884C\u3002" })
+          ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("research.noFilteredRows") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section research-gap-panel", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: "\u7814\u7A76\u7A7A\u767D\u4E0E\u76F8\u4F3C\u4E3B\u9898\u5019\u9009", hint: "\u8FD9\u91CC\u7684\u8BB0\u5F55\u53EA\u662F\u5F85\u6838\u9A8C\u5019\u9009\uFF1B\u63A5\u53D7\u5019\u9009\u8868\u793A\u4FDD\u7559\u8DDF\u8FDB\uFF0C\u4E0D\u8868\u793A\u5DF2\u7ECF\u8BC1\u660E\u5B58\u5728\u7814\u7A76\u7A7A\u767D\u6216\u91CD\u590D\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Lightbulb, { size: 16, className: "muted" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("research.gapTitle"), hint: t("research.gapHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Lightbulb, { size: 16, className: "muted" }) }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "form-grid gap-candidate-form", children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
-              "\u5019\u9009\u7C7B\u578B",
+              t("research.candidateType"),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { value: gapType, onChange: (event) => setGapType(event.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "gap", children: "\u7814\u7A76\u7A7A\u767D" }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "cluster", children: "\u4E3B\u9898\u805A\u7C7B" }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "duplicate_risk", children: "\u91CD\u590D\u98CE\u9669" })
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "gap", children: t("research.gap") }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "cluster", children: t("research.cluster") }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "duplicate_risk", children: t("research.duplicateRisk") })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "wide-field", children: [
-              "\u5019\u9009\u9648\u8FF0",
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("textarea", { value: gapStatement, onChange: (event) => setGapStatement(event.target.value), placeholder: "\u5199\u4E0B\u9700\u8981\u6838\u9A8C\u7684\u5019\u9009\uFF0C\u4E0D\u8981\u5199\u6210\u5DF2\u7ECF\u8BC1\u660E\u7684\u7ED3\u8BBA\u3002", rows: 3 })
+              t("research.candidateStatement"),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("textarea", { value: gapStatement, onChange: (event) => setGapStatement(event.target.value), placeholder: t("research.candidatePlaceholder"), rows: 3 })
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", disabled: working || !gapStatement.trim(), onClick: () => {
             void createGapCandidate();
-          }, children: "\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009" }) }),
+          }, children: t("research.recordCandidate") }) }),
           status.gap_candidates.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: status.gap_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: candidate.statement }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
                 candidate.candidate_type,
                 " \xB7 ",
-                candidate.row_ids.length,
-                " \u4E2A\u77E9\u9635\u884C \xB7 ",
+                t("research.rowsCount", { count: candidate.row_ids.length }),
+                " \xB7 ",
                 candidate.evidence_status
               ] })
             ] }),
@@ -16961,13 +20030,13 @@
               candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", disabled: working, onClick: () => {
                   void decideGap(candidate, "accepted");
-                }, children: "\u4FDD\u7559\u5019\u9009" }),
+                }, children: t("research.keepCandidate") }),
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", disabled: working, onClick: () => {
                   void decideGap(candidate, "rejected");
-                }, children: "\u62D2\u7EDD" })
+                }, children: t("common.reject") })
               ] }) : null
             ] })
-          ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: "\u5C1A\u672A\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009\u3002" })
+          ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("research.noCandidates") })
         ] })
       ] }) : null
     ] });
@@ -16982,6 +20051,7 @@
     showToast,
     onNavigate
   }) {
+    const { t } = useTranslation();
     const [diagnostics, setDiagnostics] = (0, import_react14.useState)(null);
     const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react14.useState)(false);
     const createExperimentPlan = async () => {
@@ -16989,7 +20059,7 @@
         const result = await api(`/api/projects/${project.id}/experiment-plan`, { method: "POST" });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u4E3B\u9898\u4E13\u5C5E\u8BA1\u5212 ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("experiment.toastPlan", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -16999,7 +20069,7 @@
       try {
         const report = await api(`/api/projects/${project.id}/diagnostics`, { method: "POST" });
         setDiagnostics(report);
-        showToast("\u8BCA\u65AD\u5B8C\u6210\uFF0C\u5EFA\u8BAE\u9700\u5BA1\u6279\u540E\u624D\u80FD\u6267\u884C");
+        showToast(t("experiment.diagDone"));
       } catch (error) {
         showToast(errorMessage(error));
       } finally {
@@ -17018,7 +20088,7 @@
       try {
         await api(`/api/experiments/${runId}/cancel`, { method: "POST" });
         await onRefresh();
-        showToast("\u8FD0\u884C\u5DF2\u53D6\u6D88");
+        showToast(t("experiment.cancelled"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -17029,7 +20099,7 @@
       return (project.checkpoints || []).find((item) => item.stage === stage && item.state?.run_id === experiment.id);
     };
     const proposeCheckpointRerun = async (checkpointId) => {
-      const reason = window.prompt("\u8BF7\u8BF4\u660E\u5C40\u90E8\u91CD\u8DD1\u539F\u56E0", "\u590D\u6838\u8BE5\u5B9E\u9A8C\u5728\u5F53\u524D\u9879\u76EE\u5FEB\u7167\u4E0B\u7684\u7ED3\u679C");
+      const reason = window.prompt(t("experiment.rerunPrompt"), t("experiment.rerunDefault"));
       if (!reason || reason.trim().length < 5) return;
       try {
         const result = await api(`/api/projects/${project.id}/checkpoints/${checkpointId}/rerun`, {
@@ -17038,7 +20108,7 @@
         });
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u5C40\u90E8\u91CD\u8DD1 Proposal ${result.proposal_id.slice(0, 8)} \u5DF2\u521B\u5EFA\uFF0C\u7B49\u5F85\u5BA1\u6279`);
+        showToast(t("experiment.rerunToast", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -17059,21 +20129,21 @@
           Number(value.max).toPrecision(6)
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: "\u5DF2\u8BA1\u7B97" })
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: "calculated" })
     ] }, name)) : [];
     return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         SectionHeading,
         {
-          title: "\u5B9E\u9A8C\u89C4\u5212\u4E0E\u8FD0\u884C",
+          title: t("experiment.title"),
           extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(ButtonRow, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: createExperimentPlan, children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ListChecks, { size: 15 }),
-              "\u751F\u6210\u4E3B\u9898\u4E13\u5C5E\u8BA1\u5212"
+              t("experiment.plan")
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: diagnosticsLoading, onClick: runDiagnostics, children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Activity, { size: 15 }),
-              "\u6570\u503C\u8BCA\u65AD"
+              t("experiment.diagnostics")
             ] })
           ] })
         }
@@ -17092,32 +20162,29 @@
             /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: experiment.status }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => syncRun(experiment.id), children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { size: 15 }),
-              "\u540C\u6B65"
+              t("experiment.sync")
             ] }),
             ["queued", "running"].includes(experiment.status) ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "reject", type: "button", onClick: () => cancelRun(experiment.id), children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Square, { size: 15 }),
-              "\u53D6\u6D88"
+              t("common.cancel")
             ] }) : null,
             checkpoint ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeCheckpointRerun(checkpoint.id), children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RotateCcw, { size: 15 }),
-              "\u63D0\u51FA\u5C40\u90E8\u91CD\u8DD1"
+              t("experiment.rerun")
             ] }) : null
           ] })
         ] }, experiment.id);
-      }) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: "\u751F\u6210\u8BA1\u5212\u540E\u4F1A\u5148\u8FDB\u5165\u5BA1\u6279\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u81EA\u52A8\u521B\u5EFA\u65E0\u5173\u5B9E\u9A8C\u3002" }),
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("experiment.empty") }),
       /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: "\u6570\u503C\u8BCA\u65AD" }),
-        diagnosticsLoading ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: "\u6B63\u5728\u8BA1\u7B97\u6570\u503C\u6458\u8981\u4E0E\u5931\u8D25\u8BCA\u65AD\u2026" }) : diagnostics ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("experiment.diagnosticsTitle") }),
+        diagnosticsLoading ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("experiment.loadingDiagnostics") }) : diagnostics ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section-head", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: "\u6570\u503C\u6458\u8981" }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "muted", children: [
-              diagnostics.run_count ?? 0,
-              " \u6B21\u8FD0\u884C \xB7 TypeScript \u786E\u5B9A\u6027\u8BA1\u7B97"
-            ] })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("experiment.numericSummary") }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "muted", children: t("experiment.runCount", { count: diagnostics.run_count ?? 0 }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: metricRows.length ? metricRows : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: "\u6CA1\u6709\u53EF\u6BD4\u8F83\u7684\u6570\u503C\u6307\u6807\u3002" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: metricRows.length ? metricRows : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("experiment.noMetrics") }) }),
           diagnostics.failures?.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "section-head", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: "\u5931\u8D25\u8BCA\u65AD" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "section-head", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("experiment.failureDiagnostics") }) }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: diagnostics.failures.map((failure, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: failure.experiment_id.slice(0, 8) }),
@@ -17132,7 +20199,7 @@
           ] }) : null,
           diagnostics.suggestions?.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section-head", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: "\u540E\u7EED\u5EFA\u8BAE" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("experiment.suggestions") }),
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "badge pending", children: [
                 "Proposal ",
                 String(diagnostics.proposal_id || "").slice(0, 8)
@@ -17143,14 +20210,15 @@
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: suggestion.title }),
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: suggestion.reason }),
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "muted", children: [
-                  "\u8BC1\u636E\u8FD0\u884C: ",
+                  t("experiment.evidenceRuns"),
+                  " ",
                   (suggestion.evidence_experiment_ids || []).map((id) => id.slice(0, 8)).join(", ")
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "badge pending", children: "\u5F85\u5BA1\u6279" })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "badge pending", children: t("common.pendingApproval") })
             ] }, index)) })
           ] }) : null
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: "\u8FD0\u884C\u6570\u503C\u8BCA\u65AD\u4EE5\u8BA1\u7B97\u6307\u6807\u5E76\u68C0\u67E5\u5931\u8D25\u65E5\u5FD7\u3002" })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("experiment.diagnosticsEmpty") })
       ] })
     ] });
   }
@@ -17158,9 +20226,10 @@
   // src/components/tabs/ArtifactsTab.tsx
   var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
   function ArtifactsTab({ project }) {
+    const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: "\u53EF\u89C6\u5316\u4E0E\u5927\u6587\u4EF6\u4EA7\u7269", hint: "\u4EA7\u7269\u8BB0\u5F55 SHA-256\u3001\u5B9E\u9A8C\u3001Idea \u7248\u672C\u3001\u6570\u636E\u7248\u672C\u3001\u914D\u7F6E\u3001Run ID \u548C\u6709\u6548\u6027\u3002" }),
-      project.artifacts?.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "artifact-grid", children: project.artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: "\u5B9E\u9A8C\u5B8C\u6210\u5E76\u540C\u6B65\u540E\u663E\u793A PNG\u3001PLY\u3001JSON \u548C PDF\u3002" })
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("artifacts.title"), hint: t("artifacts.hint") }),
+      project.artifacts?.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "artifact-grid", children: project.artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("artifacts.empty") })
     ] });
   }
 
@@ -17172,6 +20241,7 @@
     showToast,
     onNavigate
   }) {
+    const { t } = useTranslation();
     const decide = async (proposalId, decision) => {
       try {
         await api(`/api/proposals/${proposalId}/decision`, {
@@ -17200,28 +20270,31 @@
         });
         await onRefresh();
         onNavigate("experiments");
-        showToast(`\u8FD0\u884C ${result.run_id.slice(0, 8)} \u5DF2\u63D0\u4EA4`);
+        showToast(t("approvals.launchToast", { id: result.run_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SectionHeading, { title: "\u53D8\u66F4\u4E0E\u6267\u884C\u5BA1\u6279", hint: "\u6279\u51C6\u524D\u4F1A\u751F\u6210 Proposal\u3001diff\u3001\u660E\u786E\u5BA1\u6279\u3001\u590D\u6838\u3001Git commit \u548C\u5BA1\u8BA1\u8BB0\u5F55\u3002" }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SectionHeading, { title: t("approvals.title"), hint: t("approvals.hint") }),
       project.proposals?.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "data-list", children: project.proposals.map((proposal) => {
         const execution = proposal.impact?.automatic_execution || {};
-        const rerunStatus = proposal.kind === "experiment_rerun" && proposal.status === "approved" ? execution.status === "failed" ? "\u81EA\u52A8\u5C40\u90E8\u91CD\u8DD1\u5931\u8D25\uFF0C\u8BF7\u67E5\u770B\u5BA1\u8BA1\u8BB0\u5F55" : execution.run_id ? `\u5DF2\u81EA\u52A8\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1 ${String(execution.run_id).slice(0, 8)}` : "\u5DF2\u6279\u51C6\uFF0C\u6B63\u5728\u81EA\u52A8\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1" : null;
+        const rerunStatus = proposal.kind === "experiment_rerun" && proposal.status === "approved" ? execution.status === "failed" ? t("approvals.rerunFailed") : execution.run_id ? t("approvals.rerunSubmitted", { id: String(execution.run_id).slice(0, 8) }) : t("approvals.rerunPending") : null;
         const canLaunch = proposal.status === "approved" && proposal.kind === "experiment_plan";
         return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: proposal.summary }),
             /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
               proposal.reason,
-              " \xB7 \u9884\u8BA1 $",
+              " \xB7 ",
+              t("approvals.estimatedCost"),
+              " $",
               Number(proposal.estimated_cost_usd || 0).toFixed(2)
             ] }),
             proposal.diff ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("pre", { className: "code-block", children: proposal.diff }) : null,
             /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
-              "\u5F71\u54CD: ",
+              t("approvals.impact"),
+              " ",
               JSON.stringify(proposal.impact)
             ] })
           ] }),
@@ -17230,21 +20303,21 @@
             proposal.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "approve", type: "button", onClick: () => decide(proposal.id, "approved"), children: [
                 /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Check, { size: 15 }),
-                "\u6279\u51C6"
+                t("approvals.approve")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "reject", type: "button", onClick: () => decide(proposal.id, "rejected"), children: [
                 /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(X, { size: 15 }),
-                "\u9A73\u56DE"
+                t("approvals.reject")
               ] })
             ] }) : null,
             canLaunch ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "secondary", type: "button", onClick: () => launch(proposal), children: [
               /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Play, { size: 15 }),
-              proposal.payload?.plan_type === "topic_specific" ? "\u6267\u884C\u4E3B\u9898\u8BA1\u5212" : "\u6267\u884C"
+              proposal.payload?.plan_type === "topic_specific" ? t("approvals.runTopicPlan") : t("approvals.execute")
             ] }) : null,
             rerunStatus ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "muted", children: rerunStatus }) : null
           ] })
         ] }, proposal.id);
-      }) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: "\u6CA1\u6709\u5F85\u5904\u7406\u63D0\u6848\u3002" })
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("approvals.empty") })
     ] });
   }
 
@@ -17257,6 +20330,7 @@
     showToast,
     onNavigate
   }) {
+    const { t } = useTranslation();
     const [rule, setRule] = (0, import_react15.useState)("");
     const addPolicy = async (event) => {
       event.preventDefault();
@@ -17269,7 +20343,7 @@
         setRule("");
         await onRefresh();
         onNavigate("approvals");
-        showToast(`\u7B56\u7565\u63D0\u6848 ${result.proposal_id.slice(0, 8)} \u5F85\u5BA1\u6279`);
+        showToast(t("policies.toast", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -17288,53 +20362,50 @@
           "input",
           {
             value: rule,
-            placeholder: "\u65B0\u589E\u957F\u671F\u9879\u76EE\u7B56\u7565",
+            placeholder: t("policies.placeholder"),
             required: true,
             onChange: (event) => setRule(event.target.value)
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "primary", type: "submit", children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ShieldCheck, { size: 16 }),
-          "\u63D0\u51FA\u7B56\u7565"
+          t("policies.propose")
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SectionHeading, { title: "\u6267\u884C\u72B6\u6001", extra: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: enforcement.status || "unknown" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SectionHeading, { title: t("policies.executionStatus"), extra: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: enforcement.status || "unknown" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-list", children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: "\u968F\u673A\u79CD\u5B50\u4E0B\u9650" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
-                "\u968F\u673A\u5B9E\u9A8C\u81F3\u5C11 ",
-                Number(enforcement.minimum_random_seed_count || 1),
-                " \u4E2A\u4E0D\u540C\u79CD\u5B50\uFF1B\u8BA1\u5212\u751F\u6210\u548C Runner \u63D0\u4EA4\u53CC\u91CD\u6821\u9A8C"
-              ] })
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: t("policies.seedTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: t("policies.seedText", { count: Number(enforcement.minimum_random_seed_count || 1) }) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: enforcement.runner_compatible === false ? "unsupported" : "enforced" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: "\u5F15\u7528\u6765\u6E90\u4E0E\u539F\u6587\u8BC1\u636E" }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: t("policies.citationTitle") }),
               /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
-                "DOI/\u6765\u6E90 ",
-                Number(citation.records_with_doi_or_source_url || 0),
-                "/",
-                Number(citation.paper_records || 0),
-                " \xB7 \u9875\u7801/\u7AE0\u8282\u539F\u6587\u8BC1\u636E ",
-                Number(citation.page_or_section_quoted_evidence || 0),
-                " \xB7 \u5143\u6570\u636E\u6807\u9898\u4E0D\u8BA1\u4E3A\u5168\u6587\u8BC1\u636E"
+                t("policies.citationCount", { value: Number(citation.records_with_doi_or_source_url || 0), total: Number(citation.paper_records || 0) }),
+                " \xB7",
+                t("policies.quotedCount", { count: Number(citation.page_or_section_quoted_evidence || 0) }),
+                " \xB7 ",
+                t("policies.metadataNotFulltext")
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: citation.quoted_evidence_requirement_satisfied ? "ready" : "evidence-required" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: "\u4EBA\u5DE5\u5BA1\u6279" }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: t("policies.approvalTitle") }),
               /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
-                "\u9AD8\u6210\u672C\u64CD\u4F5C ",
-                enforcement.approval?.high_cost_actions ? "\u5F3A\u5236" : "\u672A\u914D\u7F6E",
-                " \xB7 \u5BF9\u5916\u64CD\u4F5C ",
-                enforcement.approval?.external_actions ? "\u5F3A\u5236" : "\u672A\u914D\u7F6E"
+                t("policies.highCost"),
+                " ",
+                enforcement.approval?.high_cost_actions ? t("policies.forced") : t("policies.notConfigured"),
+                " \xB7",
+                t("policies.externalActions"),
+                " ",
+                enforcement.approval?.external_actions ? t("policies.forced") : t("policies.notConfigured")
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: "enforced" })
@@ -17342,18 +20413,18 @@
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SectionHeading, { title: "\u751F\u6548\u7B56\u7565" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SectionHeading, { title: t("policies.activeTitle") }),
         project.policies?.length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "data-list", children: project.policies.map((policy) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: policy.rule }),
             /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
-              (policy.enforced_requirements || []).join(" \xB7 ") || "\u672A\u8BC6\u522B\u4E3A\u53EF\u6267\u884C\u7EA6\u675F\uFF1B\u4FDD\u7559\u4E3A\u4EBA\u5DE5\u89C4\u5219",
+              (policy.enforced_requirements || []).join(" \xB7 ") || t("policies.notRecognized"),
               " \xB7",
-              policy.rationale || "\u9879\u76EE\u7EA7\u6301\u4E45\u7B56\u7565"
+              policy.rationale || t("policies.projectPolicy")
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: policy.recognized ? "enforced" : "manual" })
-        ] }, policy.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty", children: "\u5C1A\u672A\u914D\u7F6E\u9879\u76EE\u7B56\u7565\u3002" })
+        ] }, policy.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty", children: t("policies.empty") })
       ] })
     ] });
   }
@@ -17471,8 +20542,9 @@
     return blocks;
   }
   function MarkdownPreview({ content }) {
+    const { t } = useTranslation();
     const blocks = parseBlocks(content);
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "markdown-preview", "aria-label": "Markdown \u62A5\u544A\u9884\u89C8", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "markdown-preview", "aria-label": t("md.previewLabel"), children: [
       blocks.map((block, index) => {
         const key = `markdown-${index}`;
         if (block.kind === "heading") {
@@ -17487,7 +20559,7 @@
         if (block.kind === "code") return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("pre", { "data-language": block.language || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("code", { children: block.text }) }, key);
         return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: inlineNodes(block.text, key) }, key);
       }),
-      !blocks.length ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "muted", children: "\u6682\u65E0\u53EF\u9884\u89C8\u5185\u5BB9\u3002" }) : null
+      !blocks.length ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "muted", children: t("md.noPreview") }) : null
     ] });
   }
 
@@ -17495,11 +20567,6 @@
   var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   function displayable(report) {
     return report?.status === "valid";
-  }
-  function formatTime(value) {
-    if (!value) return "\u65F6\u95F4\u5F85\u8BB0\u5F55";
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? value : date.toLocaleString("zh-CN", { dateStyle: "short", timeStyle: "short" });
   }
   function periodForTab(tab) {
     return tab === "weekly_reports" ? "weekly" : "daily";
@@ -17510,6 +20577,7 @@
     onRefresh,
     showToast
   }) {
+    const { t, locale } = useTranslation();
     const isFeedback = tab === "feedback_inbox";
     const isAudit = tab === "feedback_audit";
     const period = periodForTab(tab);
@@ -17549,7 +20617,7 @@
         setActiveReportStatus("valid");
         setActiveReportReason("");
         await onRefresh();
-        showToast(`${period === "daily" ? "\u65E5\u62A5" : "\u5468\u62A5"}\u5DF2\u751F\u6210\uFF1B\u6765\u6E90\u5FEB\u7167\u5DF2\u8BB0\u5F55`);
+        showToast(t("reports.generated", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -17570,7 +20638,7 @@
         });
         setFeedback("");
         await onRefresh();
-        showToast("\u5BFC\u5E08\u53CD\u9988\u5DF2\u8BB0\u5F55\uFF1B\u540E\u7EED\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u4F1A\u6267\u884C");
+        showToast(t("reports.feedbackRecorded"));
       } catch (error) {
         showToast(errorMessage(error));
       }
@@ -17594,31 +20662,31 @@
           method: "POST",
           body: JSON.stringify({
             kind: "diagnostic_suggestion",
-            summary: "\u6839\u636E\u5BFC\u5E08\u53CD\u9988\u751F\u6210\u5F85\u5BA1\u9605\u4E0B\u4E00\u6B65\u63D0\u6848",
+            summary: t("reports.feedbackProposalSummary"),
             reason: row.instruction,
             payload: { category: row.category, reference_id: row.reference_id || null }
           })
         });
         await onRefresh();
-        showToast("\u53CD\u9988\u63D0\u6848\u5DF2\u521B\u5EFA\uFF0C\u8BF7\u5728\u201C\u51B3\u7B56\u4E0E\u5BA1\u8BA1\u201D\u4E2D\u5BA1\u6279");
+        showToast(t("reports.proposalCreated"));
       } catch (error) {
         showToast(errorMessage(error));
       }
     };
     if (isFeedback) {
       return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: "\u5BFC\u5E08\u53CD\u9988\u6536\u4EF6\u7BB1", hint: "\u53CD\u9988\u53EA\u80FD\u4EA7\u751F\u53CD\u9988\u51B3\u7B56\u3001Proposal \u548C\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u4E0D\u4F1A\u76F4\u63A5\u6539\u4EE3\u7801\u3001\u88C5\u4F9D\u8D56\u3001\u8FD0\u884C\u5B9E\u9A8C\u6216\u63A8\u9001 Git\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "project-scoped", children: project.id.slice(0, 8) }) }),
-        loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: "\u6B63\u5728\u8BFB\u53D6\u5F53\u524D\u9879\u76EE\u7684\u53CD\u9988\u2026" }) : feedbackRows.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: feedbackRows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("article", { className: "data-row feedback-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("reports.feedbackInbox"), hint: t("reports.feedbackHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "project-scoped", children: project.id.slice(0, 8) }) }),
+        loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: t("reports.loadingFeedback") }) : feedbackRows.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: feedbackRows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("article", { className: "data-row feedback-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: row.instruction }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
               row.category,
               " \xB7 ",
-              formatTime(row.created_at),
-              row.reference_id ? ` \xB7 \u5173\u8054 ${row.reference_id.slice(0, 8)}` : ""
+              formatDateTime(row.created_at, locale),
+              row.reference_id ? ` \xB7 ${t("reports.reference")} ${row.reference_id.slice(0, 8)}` : ""
             ] }),
             row.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { className: "muted", children: [
-              "\u51B3\u7B56\u8BF4\u660E\uFF1A",
+              t("reports.decisionComment"),
               row.decision_comment
             ] }) : null
           ] }),
@@ -17629,48 +20697,48 @@
                 void decideFeedback(row.id, "acknowledged");
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Check, { size: 14 }),
-                "\u786E\u8BA4"
+                t("reports.acknowledge")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
                 void decideFeedback(row.id, "revision_requested");
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(MessageSquare, { size: 14 }),
-                "\u8981\u6C42\u4FEE\u8BA2"
+                t("reports.requestRevision")
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "reject", type: "button", onClick: () => {
                 void decideFeedback(row.id, "rejected");
               }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(X, { size: 14 }),
-                "\u62D2\u7EDD"
+                t("common.reject")
               ] })
             ] }) : null,
             row.status !== "rejected" && row.status !== "proposal_created" ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
               void createFeedbackProposal(row);
             }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Gavel, { size: 14 }),
-              "\u751F\u6210 Proposal"
+              t("reports.createProposal")
             ] }) : null
           ] })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: "\u5F53\u524D\u9879\u76EE\u6CA1\u6709\u5BFC\u5E08\u53CD\u9988\u3002\u6CA1\u6709\u4E8B\u4EF6\u65F6\u4FDD\u6301 empty\uFF0C\u4E0D\u751F\u6210\u6A21\u677F\u5316\u62A5\u544A\u3002" }),
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: t("reports.noFeedback") }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "section report-feedback", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: "\u8BB0\u5F55\u65B0\u53CD\u9988", hint: "\u53CD\u9988\u6587\u672C\u4F1A\u4FDD\u5B58\u5230\u5F53\u524D\u9879\u76EE\uFF1B\u8BED\u4E49\u8BB0\u5FC6\u5199\u5165\u5931\u8D25\u65F6\u76F4\u63A5\u663E\u793A\u7ED3\u6784\u5316\u9519\u8BEF\u3002" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("reports.recordFeedback"), hint: t("reports.recordFeedbackHint") }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "feedback-form", children: [
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { children: [
-              "\u53CD\u9988\u7C7B\u578B",
+              t("reports.feedbackType"),
               /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("select", { value: feedbackCategory, onChange: (event) => setFeedbackCategory(event.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "report", children: "\u9488\u5BF9\u62A5\u544A" }),
-                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "general", children: "\u4E0B\u4E00\u6B65\u65B9\u5411" })
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "report", children: t("reports.forReport") }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "general", children: t("reports.nextDirection") })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { children: [
-              "\u7ED9 AI \u5B66\u751F\u7684\u53CD\u9988",
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("textarea", { maxLength: 8e3, value: feedback, placeholder: "\u6307\u51FA\u9700\u8981\u4FEE\u6B63\u7684\u7ED3\u679C\u3001\u4E0B\u4E00\u6B65\u65B9\u5411\u6216\u9700\u8981\u8865\u5145\u7684\u8BC1\u636E", onChange: (event) => setFeedback(event.target.value) })
+              t("reports.feedbackToAi"),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("textarea", { maxLength: 8e3, value: feedback, placeholder: t("reports.feedbackPlaceholder"), onChange: (event) => setFeedback(event.target.value) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "secondary", type: "button", disabled: !feedback.trim(), onClick: () => {
               void submitFeedback();
             }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Send, { size: 15 }),
-              "\u8BB0\u5F55\u53CD\u9988"
+              t("reports.recordFeedbackAction")
             ] })
           ] })
         ] })
@@ -17679,45 +20747,44 @@
     if (isAudit) {
       const relevant = auditRows.filter((row) => row.action.startsWith("human_feedback") || row.action.startsWith("proposal."));
       return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: "\u53CD\u9988\u4E0E Proposal \u5BA1\u8BA1", hint: `\u53EA\u663E\u793A\u5F53\u524D project_id ${project.id} \u4E0B\u7684\u51B3\u7B56\u3001Proposal \u548C\u5931\u8D25\u4E8B\u4EF6\u3002`, extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
-        loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE\u5BA1\u8BA1\u2026" }) : relevant.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: relevant.map((row) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
+        loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: t("reports.loadingAudit") }) : relevant.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: relevant.map((row) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: row.action }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
               row.actor,
               " \xB7 ",
-              formatTime(row.created_at),
+              formatDateTime(row.created_at, locale),
               " \xB7 ",
               JSON.stringify(row.details || {})
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "recorded" })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u53CD\u9988\u6216 Proposal \u5BA1\u8BA1\u4E8B\u4EF6\u3002" })
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: t("reports.noAudit") })
       ] });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: period === "daily" ? "\u65E5\u62A5" : "\u5468\u62A5", hint: "\u62A5\u544A\u53EA\u8BFB\u53D6\u771F\u5B9E\u4E8B\u4EF6\u5E76\u4FDD\u5B58 source_snapshot\uFF1B\u6CA1\u6709\u4E8B\u4EF6\u65F6\u663E\u793A empty\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: period === "daily" ? t("reports.daily") : t("reports.weekly"), hint: t("reports.periodHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
         void generateReport();
       }, children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(FileText, { size: 15 }),
-        "\u751F\u6210",
-        period === "daily" ? "\u65E5\u62A5" : "\u5468\u62A5"
+        t("reports.generate", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") })
       ] }) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? `\u5F53\u524D\u62A5\u544A\u672A\u663E\u793A\uFF1A${activeReportReason || "\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u590D\u6838"}\u3002\u8BF7\u91CD\u65B0\u751F\u6210\u5F53\u524D\u65F6\u95F4\u7A97\u53E3\u7684\u62A5\u544A\u3002` : `\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709${period === "daily" ? "\u65E5\u62A5" : "\u5468\u62A5"}\u3002` }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }) }),
       reports.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: "\u5386\u53F2\u7248\u672C" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: t("reports.history") }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: formatTime(report.created_at) }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
               report.id,
               " \xB7 source snapshot ",
-              report.source_snapshot ? "\u5DF2\u8BB0\u5F55" : "\u7F3A\u5931"
+              report.source_snapshot ? t("common.recorded") : t("common.missing")
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(ButtonRow, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: report.status || "legacy_unverified" }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { className: "secondary", type: "button", onClick: () => selectReport(report), children: report.status === "valid" ? "\u67E5\u770B" : "\u67E5\u770B\u72B6\u6001" })
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { className: "secondary", type: "button", onClick: () => selectReport(report), children: report.status === "valid" ? t("reports.view") : t("reports.viewStatus") })
           ] })
         ] }, report.id)) })
       ] }) : null
@@ -17727,8 +20794,8 @@
   // src/components/tabs/WorkflowStageTab.tsx
   var import_react17 = __toESM(require_react(), 1);
   var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
-  function text(value, fallback = "\u672A\u8BB0\u5F55") {
-    return typeof value === "string" && value.trim() ? value : fallback;
+  function text(value, t) {
+    return typeof value === "string" && value.trim() ? value : t("common.unrecorded");
   }
   var GRAPH_KINDS = ["candidate", "paper", "evidence", "claim_review"];
   var GRAPH_NODE_WIDTH = 224;
@@ -17738,35 +20805,35 @@
   var GRAPH_TOP = 58;
   var GRAPH_ROW_GAP = 18;
   var GRAPH_KIND_LABELS = {
-    candidate: "\u5019\u9009",
-    paper: "Paper",
-    evidence: "Evidence",
-    claim_review: "ClaimReview"
+    candidate: "graph.kind.candidate",
+    paper: "graph.kind.paper",
+    evidence: "graph.kind.evidence",
+    claim_review: "graph.kind.claimReview"
   };
   var GRAPH_STATUS_LABELS = {
-    candidate: "\u5F85\u786E\u8BA4",
-    confirmed: "\u5DF2\u786E\u8BA4",
-    unconfirmed: "\u672A\u786E\u8BA4",
-    located: "\u5DF2\u6709\u5B9A\u4F4D",
-    unlocated: "\u65E0\u5B9A\u4F4D",
-    pending: "\u5F85\u5BA1\u9605",
-    accepted: "\u5DF2\u63A5\u53D7",
-    rejected: "\u5DF2\u62D2\u7EDD"
+    candidate: "graph.status.candidate",
+    confirmed: "graph.status.confirmed",
+    unconfirmed: "graph.status.unconfirmed",
+    located: "graph.status.located",
+    unlocated: "graph.status.unlocated",
+    pending: "graph.status.pending",
+    accepted: "graph.status.accepted",
+    rejected: "graph.status.rejected"
   };
   var GRAPH_EVIDENCE_LABELS = {
-    metadata_only: "\u4EC5 metadata",
-    page_quote: "\u9875\u7801/\u7AE0\u8282 quote",
-    claim_reviewed: "ClaimReview \u5DF2\u63A5\u53D7"
+    metadata_only: "graph.evidence.metadataOnly",
+    page_quote: "graph.evidence.pageQuote",
+    claim_reviewed: "graph.evidence.claimReviewed"
   };
-  function graphLabel(value, maxLength = 31) {
-    const normalized = text(value);
+  function graphLabel(value, t, maxLength = 31) {
+    const normalized = text(value, t);
     return normalized.length > maxLength ? `${normalized.slice(0, maxLength - 1)}\u2026` : normalized;
   }
   function graphStatusLabel(status) {
-    return GRAPH_STATUS_LABELS[status] || status || "\u672A\u8BB0\u5F55";
+    return GRAPH_STATUS_LABELS[status] || status || "common.unrecorded";
   }
   function graphEvidenceLabel(status) {
-    return GRAPH_EVIDENCE_LABELS[status] || status || "\u672A\u8BB0\u5F55";
+    return GRAPH_EVIDENCE_LABELS[status] || status || "common.unrecorded";
   }
   function layoutGraph(nodes) {
     const grouped = /* @__PURE__ */ new Map();
@@ -17811,6 +20878,7 @@
     project,
     tab
   }) {
+    const { t } = useTranslation();
     const [workspace, setWorkspace] = (0, import_react17.useState)(null);
     const [workspaceError, setWorkspaceError] = (0, import_react17.useState)(null);
     const [researchStatus, setResearchStatus] = (0, import_react17.useState)(null);
@@ -17834,56 +20902,51 @@
     }, [project.id, tab]);
     if (tab === "citation_graph") {
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE", hint: "\u56FE\u53EA\u6295\u5F71\u5F53\u524D project_id \u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5F15\u7528\u3001Paper-Evidence \u548C ClaimReview-Evidence \u5173\u7CFB\uFF1Bprovider \u5F15\u7528\u8FB9\u4ECD\u7136\u662F metadata \u5173\u7CFB\uFF0C\u4E0D\u662F\u7814\u7A76\u7ED3\u8BBA\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { children: `${researchStatus?.graph.edges.length || 0} \u6761\u8FB9` }) }),
-        researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: `\u5F15\u7528\u56FE\u8BF7\u6C42\u5931\u8D25\uFF1A${researchStatusError}` }) : null,
-        !researchStatus && !researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE\u2026" }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("graph.title"), hint: t("graph.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { children: t("graph.edgeCount", { count: researchStatus?.graph.edges.length || 0 }) }) }),
+        researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("graph.requestFailed", { error: researchStatusError }) }) : null,
+        !researchStatus && !researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("graph.loading") }) : null,
         researchStatus ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-list", children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u6743\u9650\u8303\u56F4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("graph.permissionScope") }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: researchStatus.project_id }) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: researchStatus.permission_status })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u56FE\u72B6\u6001" }),
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: researchStatus.graph_status === "partial" ? "\u90E8\u5206\u6570\u636E\u53EF\u7528\uFF1B\u672A\u8FD4\u56DE\u7684\u6765\u6E90\u5173\u7CFB\u4E0D\u4F1A\u88AB\u731C\u6D4B\u8865\u9F50\u3002" : researchStatus.graph_status === "empty" ? "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u5DF2\u4FDD\u5B58\u7684\u56FE\u8282\u70B9\u6216\u5173\u7CFB\u3002" : "\u53EA\u663E\u793A\u6570\u636E\u5E93\u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5173\u7CFB\u3002" })
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("graph.state") }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: researchStatus.graph_status === "partial" ? t("graph.partial") : researchStatus.graph_status === "empty" ? t("graph.empty") : t("graph.onlySaved") })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: researchStatus.graph_status })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u56FE\u89C4\u6A21" }),
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
-                  researchStatus.graph.nodes.length,
-                  " \u4E2A\u8282\u70B9 \xB7 ",
-                  researchStatus.graph.edges.length,
-                  " \u6761\u8FB9\uFF1B\u6309\u5019\u9009\u3001Paper\u3001Evidence\u3001ClaimReview \u5206\u5C42\u3002"
-                ] })
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("graph.scale") }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: t("graph.scaleText", { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length }) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Network, { size: 16, className: "muted" })
             ] })
           ] }),
-          researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "research-graph-alert", role: "status", children: "\u5F53\u524D\u54CD\u5E94\u4E3A partial\u3002\u56FE\u4E2D\u53EA\u5448\u73B0\u6210\u529F\u8FD4\u56DE\u4E14\u5DF2\u901A\u8FC7\u9879\u76EE\u8303\u56F4\u6821\u9A8C\u7684\u8282\u70B9\u548C\u8FB9\u3002" }) : null,
+          researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
           graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "research-graph-panel", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "research-graph-legend", "aria-label": "\u56FE\u4F8B", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [
               GRAPH_KINDS.map((kind) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("span", { className: `research-graph-legend-item kind-${kind}`, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("i", { "aria-hidden": "true" }),
-                GRAPH_KIND_LABELS[kind]
+                t(GRAPH_KIND_LABELS[kind])
               ] }, kind)),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "research-graph-legend-note", children: "\u7BAD\u5934\u8868\u793A\u6570\u636E\u5E93\u4E2D\u660E\u786E\u4FDD\u5B58\u7684\u5173\u7CFB" })
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "research-graph-legend-note", children: t("graph.legendNote") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": `\u9879\u76EE ${researchStatus.project_id} \u7684\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE`, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("title", { children: "\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": t("graph.aria", { projectId: researchStatus.project_id }), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("title", { children: t("graph.titleShort") }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("marker", { id: "research-graph-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("path", { d: "M 0 0 L 8 4 L 0 8 z" }) }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: GRAPH_KINDS.map((kind, index) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { x: GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP), y: "27", children: GRAPH_KIND_LABELS[kind] }, kind)) }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-edges", "aria-label": "\u5173\u7CFB\u8FB9", children: researchStatus.graph.edges.map((edge) => {
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: GRAPH_KINDS.map((kind, index) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { x: GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP), y: "27", children: t(GRAPH_KIND_LABELS[kind]) }, kind)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
                 const path = graphEdgePath(edge, graphNodesById);
                 return path ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${edge.evidence_status} \xB7 ${edge.permission_status}` }, edge.id) : null;
               }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-nodes", "aria-label": "\u56FE\u8282\u70B9", children: graphLayout.nodes.map((node) => {
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-nodes", "aria-label": t("graph.nodesAria"), children: graphLayout.nodes.map((node) => {
                 const selected = selectedGraphNodeId === node.id;
                 const selectNode = () => setSelectedGraphNodeId(node.id);
                 return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
@@ -17892,7 +20955,7 @@
                     className: `research-graph-node-group kind-${node.kind}${selected ? " selected" : ""}`,
                     role: "button",
                     tabIndex: 0,
-                    "aria-label": `${GRAPH_KIND_LABELS[node.kind]}\uFF1A${node.label}\uFF1B\u72B6\u6001\uFF1A${graphStatusLabel(node.status)}\uFF1B\u8BC1\u636E\uFF1A${graphEvidenceLabel(node.evidence_status)}`,
+                    "aria-label": t("graph.nodeAria", { kind: t(GRAPH_KIND_LABELS[node.kind]), label: node.label, status: t(graphStatusLabel(node.status)), evidence: t(graphEvidenceLabel(node.evidence_status)) }),
                     "aria-pressed": selected,
                     onClick: selectNode,
                     onKeyDown: (event) => {
@@ -17905,12 +20968,12 @@
                       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("title", { children: `${node.label} \xB7 ${node.id}` }),
                       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("rect", { x: node.x, y: node.y, width: GRAPH_NODE_WIDTH, height: GRAPH_NODE_HEIGHT, rx: "14" }),
                       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + GRAPH_NODE_HEIGHT - 12 }),
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: GRAPH_KIND_LABELS[node.kind] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: t(GRAPH_KIND_LABELS[node.kind]) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label, t) }),
                       /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("text", { className: "research-graph-node-status", x: node.x + 15, y: node.y + 66, children: [
-                        graphStatusLabel(node.status),
+                        t(graphStatusLabel(node.status)),
                         " \xB7 ",
-                        graphEvidenceLabel(node.evidence_status)
+                        t(graphEvidenceLabel(node.evidence_status))
                       ] })
                     ]
                   },
@@ -17921,34 +20984,34 @@
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "research-graph-details", "aria-live": "polite", children: selectedGraphNode ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "research-graph-details-heading", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "eyebrow", children: "\u5DF2\u9009\u8282\u70B9" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "eyebrow", children: t("graph.selectedNode") }),
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: selectedGraphNode.label })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: selectedGraphNode.status, children: graphStatusLabel(selectedGraphNode.status) })
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: selectedGraphNode.status, children: t(graphStatusLabel(selectedGraphNode.status)) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("dl", { className: "research-graph-details-list", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "\u7C7B\u578B" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: GRAPH_KIND_LABELS[selectedGraphNode.kind] })
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.type") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: t(GRAPH_KIND_LABELS[selectedGraphNode.kind]) })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "\u7A33\u5B9A ID" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: text(selectedGraphNode.source.stable_id, selectedGraphNode.id) }) })
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.stableId") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: text(selectedGraphNode.source.stable_id, t) || selectedGraphNode.id }) })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "\u6765\u6E90" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.source") }),
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("dd", { children: [
-                    text(selectedGraphNode.source.source_type),
+                    text(selectedGraphNode.source.source_type, t),
                     " \xB7 ",
                     /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: selectedGraphNode.source.source_id })
                   ] })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "\u8BC1\u636E\u72B6\u6001" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: graphEvidenceLabel(selectedGraphNode.evidence_status) })
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.evidenceStatus") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: t(graphEvidenceLabel(selectedGraphNode.evidence_status)) })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "\u6743\u9650" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.permission") }),
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: selectedGraphNode.permission_status })
                 ] }),
                 selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
@@ -17956,71 +21019,67 @@
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: selectedGraphNode.source.provider })
                 ] }) : null,
                 selectedGraphNode.source.locator ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "\u5B9A\u4F4D" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.locator") }),
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: selectedGraphNode.source.locator })
                 ] }) : null
               ] }),
               selectedGraphNode.source.url ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("a", { className: "research-graph-source-link", href: selectedGraphNode.source.url, target: "_blank", rel: "noreferrer", children: [
-                "\u6253\u5F00\u6765\u6E90 ",
+                t("graph.openSource"),
+                " ",
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(ExternalLink, { size: 13 })
               ] }) : null
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "muted", children: "\u9009\u62E9\u4E00\u4E2A\u8282\u70B9\u67E5\u770B\u6765\u6E90\u3001\u7A33\u5B9A ID\u3001\u5B9A\u4F4D\u3001\u8BC1\u636E\u548C\u6743\u9650\u72B6\u6001\u3002" }) })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u5DF2\u4FDD\u5B58\u7684\u56FE\u8282\u70B9\u6216\u5173\u7CFB\u3002" })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "muted", children: t("graph.selectHint") }) })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("graph.empty") })
         ] }) : null
       ] });
     }
     if (tab === "overview_progress") {
       const rows = [
-        ...(project.related_work_runs || []).map((run) => ({ id: `search-${run.id}`, title: `\u76F8\u5173\u5DE5\u4F5C\u9012\u5F52 ${run.id.slice(0, 8)}`, detail: `${run.discovered_count || 0} \u4E2A\u5019\u9009 \xB7 ${run.edge_count || 0} \u6761\u8FB9`, status: run.status })),
-        ...(project.experiments || []).map((run) => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: `Run ${run.run_id || "\u672A\u5165\u961F"}`, status: run.status })),
+        ...(project.related_work_runs || []).map((run) => ({ id: `search-${run.id}`, title: t("progress.relatedRun", { id: run.id.slice(0, 8) }), detail: t("progress.candidateCount", { count: run.discovered_count || 0, edges: run.edge_count || 0 }), status: run.status })),
+        ...(project.experiments || []).map((run) => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: `Run ${run.run_id || t("progress.runPending")}`, status: run.status })),
         ...(project.proposals || []).filter((item) => item.status === "pending").map((item) => ({ id: `proposal-${item.id}`, title: item.summary, detail: item.kind, status: "waiting-approval" }))
       ];
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56", hint: "\u8FDB\u5EA6\u6765\u81EA\u5DF2\u53D1\u751F\u7684\u8FD0\u884C\u3001Proposal \u548C\u5BA1\u6279\u4E8B\u4EF6\uFF0C\u4E0D\u7531\u6A21\u578B\u81EA\u884C\u4F30\u8BA1\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { children: `${rows.length} \u6761\u8BB0\u5F55` }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("progress.title"), hint: t("progress.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { children: t("progress.count", { count: rows.length }) }) }),
         rows.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "data-list", children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: row.title }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: row.detail })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: row.status })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u8FD0\u884C\u6216\u5F85\u5BA1\u6279\u52A8\u4F5C\u3002" })
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("progress.empty") })
       ] });
     }
     if (tab === "method_design") {
       const idea = project.spec?.idea;
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u65B9\u6CD5\u8BBE\u8BA1", hint: "\u65B9\u6CD5\u8BBE\u8BA1\u53EA\u6D88\u8D39\u5DF2\u786E\u8BA4\u7684\u9879\u76EE\u89C4\u683C\u548C\u5DF2\u8BB0\u5F55\u6587\u732E\uFF1B\u6A21\u578B\u8F93\u51FA\u4ECD\u7136\u662F\u5019\u9009\uFF0C\u5199\u5165\u9700\u8981 Proposal\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("method.title"), hint: t("method.hint") }),
         /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-list", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u7814\u7A76\u95EE\u9898" }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: text(idea?.research_question, "\u5C1A\u672A\u786E\u8BA4") })
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("method.question") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: text(idea?.research_question, t) || t("common.notConfirmed") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: idea?.research_question ? "recorded" : "unresolved" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u5047\u8BBE" }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: idea?.hypotheses?.join("\uFF1B") || "\u5C1A\u672A\u786E\u8BA4" })
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("method.hypotheses") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: idea?.hypotheses?.join("\uFF1B") || t("common.notConfirmed") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: idea?.hypotheses?.length ? "recorded" : "unresolved" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u9884\u671F\u8D21\u732E" }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: idea?.expected_contributions?.join("\uFF1B") || "\u5C1A\u672A\u786E\u8BA4" })
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("method.contributions") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: idea?.expected_contributions?.join("\uFF1B") || t("common.notConfirmed") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: idea?.expected_contributions?.length ? "candidate" : "unresolved" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u76F8\u5173\u5DE5\u4F5C\u4F9D\u636E" }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
-                (project.papers || []).filter((paper) => paper.verified).length,
-                " \u6761\u5DF2\u9A8C\u8BC1\u8BB0\u5F55\uFF0C",
-                project.papers?.length || 0,
-                " \u6761\u9879\u76EE Paper"
-              ] })
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("method.relatedEvidence") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: t("method.verifiedCount", { verified: (project.papers || []).filter((paper) => paper.verified).length, total: project.papers?.length || 0 }) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(ShieldCheck, { size: 16, className: "muted" })
           ] })
@@ -18029,41 +21088,38 @@
     }
     if (tab === "code_workspace") {
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u4EE3\u7801\u5DE5\u4F5C\u533A", hint: "\u8FD9\u91CC\u5C5E\u4E8E\u5F53\u524D\u9879\u76EE\u81EA\u5DF1\u7684\u4EE3\u7801\uFF1B\u590D\u73B0\u4ED3\u5E93\u548C\u9879\u76EE\u4EE3\u7801\u4E25\u683C\u5206\u5F00\uFF0C\u6240\u6709\u4FEE\u6539\u3001\u4F9D\u8D56\u548C Git \u64CD\u4F5C\u90FD\u9700\u8981 Proposal\u3002" }),
-        workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: `\u4EE3\u7801\u5DE5\u4F5C\u533A\u8BFB\u53D6\u5931\u8D25\uFF1A${workspaceError}` }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("code.title"), hint: t("code.hint") }),
+        workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("code.error", { error: workspaceError }) }) : null,
         workspace ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-list", children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u9879\u76EE\u5DE5\u4F5C\u533A" }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("code.workspace") }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: workspace.code_relative_path }) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: workspace.code_directory_exists ? "project-scoped" : "missing" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "Git \u57FA\u7EBF" }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("code.gitBaseline") }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
                   workspace.branch || "detached/unknown",
                   " \xB7 ",
-                  workspace.head || "\u5C1A\u65E0 commit"
+                  workspace.head || t("code.noCommit")
                 ] })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: workspace.dirty ? "dirty" : "clean" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: "\u5F85\u5BA1\u6279\u4EE3\u7801/\u914D\u7F6E/\u590D\u73B0\u52A8\u4F5C" }),
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
-                  (project.proposals || []).filter((item) => ["code_patch", "config_change", "dependency_install", "repository_download", "repository_dependency_install", "repository_reproduction_run", "repository_artifact_write"].includes(item.kind) && item.status === "pending").length,
-                  " \u4E2A"
-                ] })
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("code.pendingTitle") }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: t("code.pendingCount", { count: (project.proposals || []).filter((item) => ["code_patch", "config_change", "dependency_install", "repository_download", "repository_dependency_install", "repository_reproduction_run", "repository_artifact_write"].includes(item.kind) && item.status === "pending").length }) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: "approval-required" })
             ] })
           ] }),
           workspace.files?.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u53D7\u9650\u6587\u4EF6\u6811", hint: `\u6700\u591A\u663E\u793A ${workspace.limits?.max_files || 600} \u4E2A\u6761\u76EE\uFF1B\u4E0D\u8BFB\u53D6 .git\u3001.venv\u3001node_modules\u3002` }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("code.fileTree"), hint: t("code.fileTreeHint", { max: workspace.limits?.max_files || 600 }) }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "data-list", children: workspace.files.map((file) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row compact-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: file.kind === "directory" ? `${file.path}/` : file.path }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("span", { className: "muted", children: [
@@ -18071,88 +21127,85 @@
                 " B"
               ] })
             ] }, file.path)) })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u4EE3\u7801\u76EE\u5F55\u4E3A\u7A7A\uFF0C\u5C1A\u672A\u6709\u9879\u76EE\u4EE3\u7801\u6587\u4EF6\u3002" }),
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("code.emptyDir") }),
           workspace.diff ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u5F53\u524D diff", hint: workspace.diff_truncated ? "diff \u5DF2\u622A\u65AD\uFF0C\u5B8C\u6574\u53D8\u66F4\u4ECD\u9700\u901A\u8FC7 Proposal \u67E5\u770B\u3002" : "\u53EA\u8BFB\u5C55\u793A\u5F53\u524D\u4EE3\u7801\u76EE\u5F55\u7684 Git diff\u3002" }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("code.currentDiff"), hint: workspace.diff_truncated ? t("code.diffTruncated") : t("code.diffReadonly") }),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("pre", { className: "code-block workspace-diff", children: workspace.diff })
           ] }) : null
-        ] }) : !workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u6B63\u5728\u8BFB\u53D6\u53D7\u9650 Git \u5DE5\u4F5C\u533A\u2026" }) : null
+        ] }) : !workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("code.loading") }) : null
       ] });
     }
     if (tab === "experiment_queue" || tab === "experiment_metrics") {
       const experiments = project.experiments || [];
       const filtered = tab === "experiment_queue" ? experiments.filter((item) => ["queued", "running", "paused", "cancelled", "waiting-approval"].includes(item.status)) : experiments.filter((item) => Object.keys(item.metrics || {}).length > 0);
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: tab === "experiment_queue" ? "\u8FD0\u884C\u961F\u5217" : "\u6307\u6807\u7EDF\u8BA1", hint: "\u8FD0\u884C\u72B6\u6001\u548C\u6570\u503C\u5747\u6765\u81EA\u771F\u5B9E Experiment Run\uFF1B\u672A\u6267\u884C\u7684\u8BA1\u5212\u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002", extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { children: `${filtered.length} \u6761` }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: tab === "experiment_queue" ? t("queue.title") : t("metrics.title"), hint: t("queue.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { children: t("queue.count", { count: filtered.length }) }) }),
         filtered.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "data-list", children: filtered.map((item) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: item.experiment_type }),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: tab === "experiment_queue" ? `Run ${item.run_id || "\u672A\u5206\u914D"}` : JSON.stringify(item.metrics) })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: tab === "experiment_queue" ? `Run ${item.run_id || t("queue.runUnassigned")}` : JSON.stringify(item.metrics) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: item.status })
-        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: tab === "experiment_queue" ? "\u5F53\u524D\u6CA1\u6709\u6392\u961F\u6216\u6267\u884C\u4E2D\u7684\u5B9E\u9A8C\u3002" : "\u8FD8\u6CA1\u6709\u5E26\u6570\u503C\u6307\u6807\u7684\u5B9E\u9A8C\u7ED3\u679C\u3002" })
+        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: tab === "experiment_queue" ? t("queue.empty") : t("metrics.empty") })
       ] });
     }
     if (tab === "lineage") {
       const artifacts = project.artifacts || [];
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: "\u7ED3\u679C\u8C31\u7CFB", hint: "\u6BCF\u4E2A Artifact \u5FC5\u987B\u80FD\u56DE\u94FE Experiment\u3001Run\u3001Idea \u7248\u672C\u3001\u4EE3\u7801 commit\u3001\u6570\u636E\u7248\u672C\u548C\u914D\u7F6E\u3002" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("lineage.title"), hint: t("lineage.hint") }),
         artifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "data-list", children: artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: artifact.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: artifact.metadata?.lineage ? JSON.stringify(artifact.metadata.lineage) : "\u7F3A\u5C11\u8C31\u7CFB\u5143\u6570\u636E" })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: artifact.metadata?.lineage ? JSON.stringify(artifact.metadata.lineage) : t("lineage.missingMeta") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
-        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u5F53\u524D\u6CA1\u6709\u53EF\u8FFD\u6EAF\u7684 Artifact\u3002" })
+        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("lineage.empty") })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: "\u5F53\u524D\u5B50\u9875\u9762\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6570\u636E\u3002" });
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: t("workflow.empty") });
   }
 
   // src/components/WorkspaceContextBar.tsx
   var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
-  function latestFailure(project) {
+  function latestFailure(project, t) {
     const failures = [];
     for (const task of project.tasks || []) {
-      if (task.status === "failed" || task.error) failures.push({ code: task.kind, message: task.error || "\u4EFB\u52A1\u5931\u8D25", source: "task", created_at: task.updated_at || task.created_at });
+      if (task.status === "failed" || task.error) failures.push({ code: task.kind, message: task.error || t("context.taskFailed"), source: "task", created_at: task.updated_at || task.created_at });
     }
     for (const attempt of project.related_work_attempts || []) {
       if (attempt.failure || ["failed", "timed_out", "rate_limited", "invalid_response", "cancelled"].includes(attempt.status)) {
-        failures.push({ code: attempt.failure?.code || attempt.status, message: attempt.failure?.message || "\u6765\u6E90\u8BF7\u6C42\u5931\u8D25", source: attempt.provider, created_at: attempt.finished_at || attempt.started_at });
+        failures.push({ code: attempt.failure?.code || attempt.status, message: attempt.failure?.message || t("context.sourceRequestFailed"), source: attempt.provider, created_at: attempt.finished_at || attempt.started_at });
       }
     }
     for (const experiment of project.experiments || []) {
-      if (experiment.status === "failed" || experiment.error) failures.push({ code: "experiment_run", message: experiment.error || "\u5B9E\u9A8C\u8FD0\u884C\u5931\u8D25", source: experiment.experiment_type, created_at: experiment.finished_at || experiment.created_at });
+      if (experiment.status === "failed" || experiment.error) failures.push({ code: "experiment_run", message: experiment.error || t("context.experimentFailed"), source: experiment.experiment_type, created_at: experiment.finished_at || experiment.created_at });
     }
     for (const reproduction of project.reproductions || []) {
-      if (reproduction.error || reproduction.status.endsWith("_failed")) failures.push({ code: reproduction.status, message: reproduction.error || "\u590D\u73B0\u6D41\u7A0B\u5931\u8D25", source: "reproduction", created_at: reproduction.updated_at || reproduction.created_at });
+      if (reproduction.error || reproduction.status.endsWith("_failed")) failures.push({ code: reproduction.status, message: reproduction.error || t("context.reproductionFailed"), source: "reproduction", created_at: reproduction.updated_at || reproduction.created_at });
     }
     for (const report of project.reports || []) {
-      if (report.status === "blocked" || report.status === "failed") failures.push({ code: report.blocking_reason || report.status, message: report.blocking_reason || "\u62A5\u544A\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u9A8C\u8BC1", source: "report", created_at: report.created_at });
+      if (report.status === "blocked" || report.status === "failed") failures.push({ code: report.blocking_reason || report.status, message: report.blocking_reason || t("context.reportLineageFailed"), source: "report", created_at: report.created_at });
     }
     return failures.sort((left, right) => String(right.created_at || "").localeCompare(String(left.created_at || "")))[0] || null;
   }
-  function formatTime2(value) {
-    if (!value) return "\u65F6\u95F4\u5F85\u8BB0\u5F55";
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString("zh-CN", { dateStyle: "short", timeStyle: "short" });
-  }
   function WorkspaceContextBar({ project }) {
+    const { t, locale } = useTranslation();
     const pending = (project.proposals || []).filter((proposal) => proposal.status === "pending").length;
-    const failure = latestFailure(project);
+    const failure = latestFailure(project, t);
     const scopeLabel = project.id;
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { className: "workspace-context", "aria-label": "\u5F53\u524D\u9879\u76EE\u4E0A\u4E0B\u6587", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { className: "workspace-context", "aria-label": t("context.ariaLabel"), children: [
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "workspace-context-main", children: [
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "workspace-context-title", children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(FingerprintPattern, { size: 15, "aria-hidden": "true" }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "\u5F53\u524D\u9879\u76EE\u8303\u56F4" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: t("context.currentScope") }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("code", { title: scopeLabel, children: scopeLabel })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "workspace-context-meta", children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Clock3, { size: 13, "aria-hidden": "true" }),
-            "\u66F4\u65B0\u4E8E ",
-            formatTime2(project.updated_at)
+            t("context.updatedAt"),
+            " ",
+            formatDateTime(project.updated_at, locale)
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(LockKeyhole, { size: 13, "aria-hidden": "true" }),
@@ -18160,19 +21213,17 @@
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldCheck, { size: 13, "aria-hidden": "true" }),
-            "Idea v",
-            project.current_idea_version || 1
+            t("overview.checkpointVersion", { version: project.current_idea_version || 1 })
           ] })
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "workspace-context-actions", children: [
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: project.status, children: project.status }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: pending ? "pending" : "ready", children: pending ? `${pending} \u4E2A\u5F85\u5BA1\u6279` : "\u65E0\u5F85\u5BA1\u6279" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: pending ? "pending" : "ready", children: pending ? t("context.pendingCount", { count: pending }) : t("context.noPending") }),
         failure ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "workspace-context-failure", title: `${failure.code}: ${failure.message}`, children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(TriangleAlert, { size: 13, "aria-hidden": "true" }),
-          "\u6700\u8FD1\u5931\u8D25\uFF1A",
-          failure.code
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "workspace-context-ok", children: "\u6700\u8FD1\u5931\u8D25\uFF1A\u65E0" })
+          t("context.recentFailure", { code: failure.code })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "workspace-context-ok", children: t("context.noRecentFailure") })
       ] })
     ] });
   }
@@ -18442,6 +21493,7 @@
   var import_react18 = __toESM(require_react(), 1);
   var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
+    const { t } = useTranslation();
     const [values, setValues] = (0, import_react18.useState)(null);
     const [instance, setInstance] = (0, import_react18.useState)(null);
     const [loading, setLoading] = (0, import_react18.useState)(false);
@@ -18502,17 +21554,17 @@
         onChanged();
       } catch (err) {
         const message = errorMessage(err);
-        if (!resetData && message.includes("embedding_requires_reset") || !resetData && message.includes("\u5168\u65B0\u6570\u636E\u76EE\u5F55")) {
+        if (!resetData && message.includes("embedding_requires_reset")) {
           setConfirmReset(true);
         } else {
-          setError(`\u4FDD\u5B58\u5931\u8D25\uFF1A${message}`);
+          setError(t("settings.saveFailed", { error: message }));
         }
       } finally {
         setSaving(false);
       }
     };
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "empty", children: "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE Embedding \u914D\u7F6E\u2026" });
-    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-error", role: "alert", children: error || "\u65E0\u6CD5\u52A0\u8F7D Embedding \u914D\u7F6E\u3002" });
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "empty", children: t("embedding.loading") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
     const custom = values.mode === "custom";
     const remote = custom && values.provider !== "local";
     const ready = custom && (values.provider === "local" || Boolean(values.base_url && (values.key || values.key_configured)));
@@ -18524,36 +21576,37 @@
         /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { className: "model-tier", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "model-tier-heading", children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: "Embedding \u63D0\u4F9B\u65B9\u5F0F" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("embedding.providerTitle") }),
               /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tier-status", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(StatusDot, { ready }),
-                values.mode === "global" ? "\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4" : values.provider === "local" ? "\u672C\u5730 ONNX \u6A21\u578B" : "\u8FDC\u7A0B OpenAI-compatible API"
+                values.mode === "global" ? t("embedding.globalDefault") : values.provider === "local" ? t("embedding.localOnnx") : t("embedding.remoteApi")
               ] })
             ] }),
             instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { className: "tier-default", children: [
-              "\u5B9E\u4F8B :",
+              t("embedding.instance"),
+              " :",
               instance.port,
-              instance.running ? " \xB7 \u8FD0\u884C\u4E2D" : " \xB7 \u672A\u8FD0\u884C",
-              instance.shared_projects > 1 ? ` \xB7 \u5171\u4EAB ${instance.shared_projects} \u4E2A\u9879\u76EE` : ""
+              instance.running ? t("embedding.running") : t("embedding.notRunning"),
+              instance.shared_projects > 1 ? t("embedding.sharedProjects", { count: instance.shared_projects }) : ""
             ] }) : null
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "model-tier-grid", children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-              "\u914D\u7F6E\u6A21\u5F0F",
+              t("embedding.mode"),
               /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
                 "select",
                 {
                   value: values.mode,
                   onChange: (event) => update("mode", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "global", children: "\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08.env\uFF09" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "custom", children: "\u672C\u9879\u76EE\u72EC\u7ACB\u914D\u7F6E" })
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "global", children: t("embedding.modeGlobal") }),
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "custom", children: t("embedding.modeCustom") })
                   ]
                 }
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-              "Provider",
+              t("embedding.provider"),
               /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
                 "select",
                 {
@@ -18561,28 +21614,36 @@
                   disabled: !custom,
                   onChange: (event) => update("provider", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "local", children: "local\uFF08\u672C\u673A ONNX\uFF09" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "openai", children: "openai\uFF08OpenAI-compatible\uFF09" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("option", { value: "local", children: [
+                      "local (",
+                      t("embedding.localOnnx"),
+                      ")"
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("option", { value: "openai", children: [
+                      "openai (",
+                      t("embedding.openaiCompatible"),
+                      ")"
+                    ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "gemini", children: "gemini" })
                   ]
                 }
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-              "\u6A21\u578B",
+              t("embedding.model"),
               /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                 "input",
                 {
                   value: values.model,
                   disabled: !custom,
                   maxLength: 300,
-                  placeholder: values.provider === "local" ? "Xenova/bge-m3" : "\u4F8B\u5982 Qwen3-Embedding-8B",
+                  placeholder: values.provider === "local" ? "Xenova/bge-m3" : t("embedding.modelPlaceholder"),
                   onChange: (event) => update("model", event.target.value)
                 }
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-              "\u7EF4\u5EA6",
+              t("embedding.dimensions"),
               /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                 "input",
                 {
@@ -18597,7 +21658,7 @@
             ] }),
             remote ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-                "\u57FA\u7840 URL",
+                t("embedding.baseUrl"),
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                   "input",
                   {
@@ -18609,13 +21670,13 @@
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-                "API key",
+                t("settings.apiKey"),
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                   "input",
                   {
                     type: "password",
                     value: values.key,
-                    placeholder: values.key_configured ? "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8" : "\u8F93\u5165 API key",
+                    placeholder: values.key_configured ? t("settings.keyKeep") : t("settings.keyPlaceholder"),
                     autoComplete: "new-password",
                     maxLength: 2e3,
                     onChange: (event) => update("key", event.target.value)
@@ -18626,28 +21687,28 @@
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { className: "settings-note", children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Database, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u76F8\u540C\u914D\u7F6E\u7684\u9879\u76EE\u5171\u4EAB\u540C\u4E00\u4E2A Supermemory \u5B9E\u4F8B\u4E0E\u6570\u636E\u76EE\u5F55\uFF08\u6309\u914D\u7F6E\u6C60\u590D\u7528\uFF0C\u7AEF\u53E3 6770\u20136869\uFF09\uFF0C\u9879\u76EE\u4E4B\u95F4\u4ECD\u7528 container tag \u9694\u79BB\u8BED\u4E49\u8BB0\u5FC6\uFF1B\u914D\u7F6E\u4E0D\u540C\u624D\u542F\u7528\u65B0\u7684\u914D\u7F6E\u6C60\u3002\u9ED8\u8BA4\u63A8\u8350\u672C\u5730 Xenova/bge-m3\uFF08\u5B9E\u6D4B\u6BD4\u8FDC\u7A0B gitee \u5FEB\u7EA6 10 \u500D\uFF09\u3002" })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: t("embedding.poolNote") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { className: "settings-note", children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ShieldCheck, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\uFF1B\u5207\u6362\u6A21\u578B\u6216\u7EF4\u5EA6\u4F1A\u4E3A\u9879\u76EE\u5206\u914D\u65B0\u7684\u914D\u7F6E\u6C60\uFF08\u65E7\u6C60\u6570\u636E\u4FDD\u7559\uFF0C\u8BED\u4E49\u8BB0\u5FC6\u9700\u91CD\u65B0\u6444\u5165\uFF09\u3002" })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: t("embedding.securityNote") })
           ] })
         ] }),
         error ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
         /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "modal-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: "\u5237\u65B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Save, { size: 16 }),
-            "\u4FDD\u5B58\u914D\u7F6E"
+            t("settings.save")
           ] })
         ] })
       ] }),
       confirmReset ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         ConfirmDialog,
         {
-          title: "\u5207\u6362\u6A21\u578B\u9700\u8981\u91CD\u5EFA\u6570\u636E\u76EE\u5F55",
-          description: "\u5207\u6362 embedding \u6A21\u578B\u6216\u7EF4\u5EA6\u540E\uFF0C\u8BE5\u9879\u76EE\u5DF2\u6709\u7684\u8BED\u4E49\u8BB0\u5FC6\u65E0\u6CD5\u4E0E\u65B0\u7684\u5411\u91CF\u7A7A\u95F4\u6DF7\u7528\uFF0C\u9700\u8981\u5168\u65B0\u6570\u636E\u76EE\u5F55\u5E76\u91CD\u65B0\u6444\u5165\uFF08\u65E7\u6570\u636E\u76EE\u5F55\u4F1A\u4FDD\u7559\u4E3A\u5907\u4EFD\uFF09\u3002\u786E\u8BA4\u7EE7\u7EED\u5417\uFF1F",
-          confirmLabel: "\u786E\u8BA4\u91CD\u5EFA\u5E76\u4FDD\u5B58",
+          title: t("embedding.resetTitle"),
+          description: t("embedding.resetDescription"),
+          confirmLabel: t("embedding.resetConfirm"),
           onConfirm: () => void save(true),
           onCancel: () => setConfirmReset(false)
         }
@@ -18662,10 +21723,11 @@
     { id: "medium", label: "Terra", defaultEffort: "medium" },
     { id: "complex", label: "Sol", defaultEffort: "high" }
   ];
-  function sourceLabel(value) {
-    return value === "runtime_override" ? "\u8FD0\u884C\u65F6\u8986\u76D6" : "\u9879\u76EE .env \u9ED8\u8BA4";
+  function sourceLabelKey(value) {
+    return value === "runtime_override" ? "settings.sourceRuntime" : "settings.sourceEnv";
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
+    const { t } = useTranslation();
     const [tab, setTab] = (0, import_react19.useState)("models");
     const [values, setValues] = (0, import_react19.useState)(null);
     const [loading, setLoading] = (0, import_react19.useState)(false);
@@ -18754,7 +21816,7 @@
         setDirty(false);
         onClose();
       } catch (err) {
-        setError(`\u4FDD\u5B58\u5931\u8D25\uFF1A${errorMessage(err)}\u3002\u5DF2\u914D\u7F6E\u7684 key \u7559\u7A7A\u5373\u53EF\u4FDD\u7559\uFF1B\u6A21\u578B\u8C03\u7528\u5931\u8D25\u4E0D\u4F1A\u5207\u6362\u6216\u964D\u7EA7\u3002`);
+        setError(`${t("settings.saveFailed", { error: errorMessage(err) })}${t("settings.keyHint")}`);
       } finally {
         setSaving(false);
       }
@@ -18763,14 +21825,14 @@
       /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
         Modal,
         {
-          eyebrow: "\u8FD0\u884C\u65F6\u8BBE\u7F6E",
-          title: "\u914D\u7F6E",
-          description: tab === "models" ? "Luna\u3001Terra\u3001Sol \u4E09\u6863\u5206\u522B\u751F\u6548\u3002\u672A\u5355\u72EC\u8986\u76D6\u65F6\uFF0C\u9ED8\u8BA4\u4F7F\u7528\u9879\u76EE .env \u4E2D\u7684 URL \u548C key\uFF0C\u4FDD\u5B58\u540E\u7ACB\u5373\u7528\u4E8E\u4E0B\u4E00\u6B21\u8BF7\u6C42\u3002" : "\u6BCF\u4E2A\u79D1\u7814\u9879\u76EE\u53EF\u4EE5\u72EC\u7ACB\u914D\u7F6E\u8BED\u4E49\u8BB0\u5FC6 Embedding\uFF1B\u4E0D\u8986\u76D6\u65F6\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08\u5B9E\u6D4B\u672C\u5730 bge-m3 \u6BD4\u8FDC\u7A0B\u5FEB\u7EA6 10 \u500D\uFF09\u3002",
+          eyebrow: t("settings.eyebrow"),
+          title: t("settings.title"),
+          description: tab === "models" ? t("settings.modelsDescription") : t("settings.embeddingDescription"),
           onClose: requestClose,
           children: [
             /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "settings-tabs", role: "tablist", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: "\u6A21\u578B \xB7 Luna/Terra/Sol" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: "Embedding \xB7 \u8BED\u4E49\u8BB0\u5FC6" })
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: t("settings.modelsTab") }),
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: t("settings.embeddingTab") })
             ] }),
             tab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               ProjectEmbeddingSettingsForm,
@@ -18778,7 +21840,7 @@
                 projectId,
                 onChanged: () => setDirty(false)
               }
-            ) : /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "empty", children: "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF0C\u518D\u914D\u7F6E\u9879\u76EE\u7EA7 Embedding\u3002" }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "empty", children: "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026" }) : values ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+            ) : /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "empty", children: t("settings.loadingModels") }) : values ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
               TIERS.map((tier) => {
                 const item = values[tier.id];
                 return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { className: "model-tier", children: [
@@ -18790,29 +21852,30 @@
                       ] }),
                       /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "tier-status", children: [
                         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
-                        item.key_configured ? "\u5DF2\u914D\u7F6E key" : "\u5F85\u914D\u7F6E key",
+                        item.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
                         " \xB7 ",
-                        item.url ? "URL \u5DF2\u5C31\u7EEA" : "\u5F85\u914D\u7F6E URL"
+                        item.url ? t("settings.urlReady") : t("settings.urlPending")
                       ] }),
                       /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "tier-sources", children: [
                         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { children: [
                           "URL\uFF1A",
-                          sourceLabel(item.sources?.url)
+                          t(sourceLabelKey(item.sources?.url))
                         ] }),
                         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { children: [
                           "key\uFF1A",
-                          sourceLabel(item.sources?.key)
+                          t(sourceLabelKey(item.sources?.key))
                         ] })
                       ] })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { className: "tier-default", children: [
-                      "\u9ED8\u8BA4 ",
+                      t("settings.default"),
+                      " ",
                       tier.defaultEffort
                     ] })
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "model-tier-grid", children: [
                     /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
-                      "\u6A21\u578B\u540D\u79F0",
+                      t("settings.modelName"),
                       /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
                         "input",
                         {
@@ -18824,7 +21887,7 @@
                       )
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
-                      "\u63A8\u7406\u5F3A\u5EA6",
+                      t("settings.reasoningEffort"),
                       /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
                         "select",
                         {
@@ -18839,7 +21902,7 @@
                       )
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
-                      "\u6A21\u578B URL",
+                      t("settings.modelUrl"),
                       /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
                         "input",
                         {
@@ -18853,13 +21916,13 @@
                       )
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
-                      "API key",
+                      t("settings.apiKey"),
                       /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
                         "input",
                         {
                           type: "password",
                           value: item.key,
-                          placeholder: item.key_configured ? "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8" : "\u8F93\u5165 API key",
+                          placeholder: item.key_configured ? t("settings.keyKeep") : t("settings.keyPlaceholder"),
                           autoComplete: "new-password",
                           maxLength: 1e3,
                           onChange: (event) => update(tier.id, "key", event.target.value)
@@ -18871,26 +21934,26 @@
               }),
               /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { className: "settings-note", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ShieldCheck, { size: 16 }),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u5BC6\u94A5\u53EA\u5199\u5165\u672C\u673A runtime \u6587\u4EF6\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE\u5BC6\u94A5\u3002\u7559\u7A7A\u5DF2\u914D\u7F6E\u7684 key \u4F1A\u4FDD\u6301\u4E0D\u53D8\u3002" })
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: t("settings.securityNote") })
               ] }),
               error ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
               /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "modal-actions", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: "\u53D6\u6D88" }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: t("common.cancel") }),
                 /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Save, { size: 16 }),
-                  "\u4FDD\u5B58\u914D\u7F6E"
+                  t("settings.save")
                 ] })
               ] })
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-error", role: "alert", children: error || "\u65E0\u6CD5\u52A0\u8F7D\u6A21\u578B\u914D\u7F6E\u3002" })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") })
           ]
         }
       ),
       confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         ConfirmDialog,
         {
-          title: "\u653E\u5F03\u672A\u4FDD\u5B58\u7684\u914D\u7F6E\uFF1F",
-          description: "\u914D\u7F6E\u5C1A\u672A\u4FDD\u5B58\uFF0C\u786E\u5B9A\u5173\u95ED\u5417\uFF1F",
-          confirmLabel: "\u653E\u5F03\u4FEE\u6539",
+          title: t("settings.discardTitle"),
+          description: t("settings.discardDescription"),
+          confirmLabel: t("settings.discardConfirm"),
           onConfirm: () => {
             setConfirmClose(false);
             setDirty(false);
@@ -18906,6 +21969,7 @@
   var import_react20 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
+    const { t } = useTranslation();
     if (!graph) return null;
     const nodes = graph.nodes || [];
     const edges = graph.edges || [];
@@ -18913,7 +21977,7 @@
       x: 80 + index % 5 * 150,
       y: 70 + Math.floor(index / 5) * 120
     }]));
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": "\u9879\u76EE\u8BED\u4E49\u8BB0\u5FC6\u5173\u7CFB\u56FE", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
       edges.map((edge) => {
         const source = positions.get(edge.source);
         const target = positions.get(edge.target);
@@ -18944,9 +22008,10 @@
     onClose,
     showToast
   }) {
+    const { t } = useTranslation();
     const [view, setView] = (0, import_react20.useState)("graph");
     const [query, setQuery] = (0, import_react20.useState)("");
-    const [status, setStatus] = (0, import_react20.useState)("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
+    const [status, setStatus] = (0, import_react20.useState)(t("memory.graphPrompt"));
     const [graph, setGraph] = (0, import_react20.useState)(null);
     const [search, setSearch] = (0, import_react20.useState)(null);
     const [loading, setLoading] = (0, import_react20.useState)(false);
@@ -18959,20 +22024,20 @@
       api(`/api/projects/${projectId}/memory/status`).then((result) => {
         const embedding = result.embedding;
         if (embedding && embedding.provider !== "local" && !embedding.remote_embedding_supported) {
-          setStatus(`\u5DF2\u914D\u7F6E ${embedding.provider} embedding\uFF0C\u4F46\u5F53\u524D\u670D\u52A1\u7AEF\u4EC5\u652F\u6301\u672C\u5730 embedding\uFF1B\u8BB0\u5FC6\u8BF7\u6C42\u4F1A\u5931\u8D25\u5173\u95ED\uFF0C\u4E0D\u4F1A\u9759\u9ED8\u964D\u7EA7\u3002`);
+          setStatus(t("memory.remoteUnsupported", { provider: embedding.provider }));
           return;
         }
         const model = embedding?.model || "Xenova/bge-m3";
         const dimensions = embedding?.dimensions || 1024;
-        setStatus(result.key_configured ? `Supermemory \u5DF2\u914D\u7F6E \xB7 ${model}\uFF08${dimensions} \u7EF4\uFF09\uFF0C\u8F93\u5165\u67E5\u8BE2\u540E\u52A0\u8F7D\u9879\u76EE\u8303\u56F4\u56FE\u3002` : "Supermemory \u5C1A\u672A\u914D\u7F6E API key\uFF1B\u4E0D\u4F1A\u4F7F\u7528\u672C\u5730\u6216\u65E0\u5173\u6570\u636E\u66FF\u4EE3\u3002");
-      }).catch((error) => setStatus(`\u72B6\u6001\u8BFB\u53D6\u5931\u8D25\uFF1A${errorMessage(error)}`));
+        setStatus(result.key_configured ? t("memory.configured", { model, dimensions }) : t("memory.notConfigured"));
+      }).catch((error) => setStatus(t("memory.statusFailed", { error: errorMessage(error) })));
     }, [open, projectId]);
     if (!open) return null;
     const submit = async (event) => {
       event.preventDefault();
       if (!projectId || !query.trim()) return;
       setLoading(true);
-      setStatus("\u6B63\u5728\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u8303\u56F4\u2026");
+      setStatus(t("memory.searching"));
       setGraph(null);
       setSearch(null);
       try {
@@ -18982,17 +22047,17 @@
             body: JSON.stringify({ query: query.trim(), limit: 20, search_mode: "hybrid" })
           });
           setSearch(result);
-          setStatus(`${result.total} \u6761\u5019\u9009 \xB7 \u6765\u6E90\uFF1ASupermemory \xB7 \u5F53\u524D\u9879\u76EE\u8303\u56F4`);
+          setStatus(t("memory.searchResults", { total: result.total }));
         } else {
           const result = await api(`/api/projects/${projectId}/memory/graph`, {
             method: "POST",
             body: JSON.stringify({ query: query.trim(), limit: 8 })
           });
           setGraph(result);
-          setStatus(`${result.nodes.length} \u4E2A\u8282\u70B9 \xB7 ${result.edges.length} \u6761\u5173\u7CFB \xB7 \u6765\u6E90\uFF1ASupermemory`);
+          setStatus(t("memory.graphResults", { nodes: result.nodes.length, edges: result.edges.length }));
         }
       } catch (error) {
-        setStatus(`\u8BF7\u6C42\u5931\u8D25\uFF1A${errorMessage(error)}`);
+        setStatus(t("memory.requestFailed", { error: errorMessage(error) }));
         showToast(errorMessage(error));
       } finally {
         setLoading(false);
@@ -19001,13 +22066,13 @@
     return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
       Modal,
       {
-        eyebrow: "\u9879\u76EE\u7EA7\u8BED\u4E49\u4E0A\u4E0B\u6587",
+        eyebrow: t("memory.eyebrow"),
         title: "Supermemory Graph Memory",
-        description: "\u53EA\u663E\u793A\u5F53\u524D\u9879\u76EE\u8303\u56F4\u7684\u8BED\u4E49\u5019\u9009\u53CA\u5176\u5173\u7CFB\uFF1B\u5019\u9009\u4E0D\u7B49\u4E8E\u8BBA\u6587\u8BC1\u636E\u3002",
+        description: t("memory.description"),
         onClose,
         wide: true,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": "\u8BED\u4E49\u8BB0\u5FC6\u89C6\u56FE", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
             /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
               "button",
               {
@@ -19017,11 +22082,11 @@
                 "aria-selected": view === "graph",
                 onClick: () => {
                   setView("graph");
-                  setStatus("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
+                  setStatus(t("memory.graphPrompt"));
                 },
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Share2, { size: 16 }),
-                  "\u5173\u7CFB\u56FE"
+                  t("memory.graphView")
                 ]
               }
             ),
@@ -19034,17 +22099,17 @@
                 "aria-selected": view === "search",
                 onClick: () => {
                   setView("search");
-                  setStatus("\u8F93\u5165\u67E5\u8BE2\u4EE5\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u8BED\u4E49\u5019\u9009\u3002");
+                  setStatus(t("memory.searchPrompt"));
                 },
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Search, { size: 16 }),
-                  "\u8BED\u4E49\u68C0\u7D22"
+                  t("memory.searchView")
                 ]
               }
             )
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { htmlFor: "memoryGraphQuery", children: "\u67E5\u8BE2\u5F53\u524D\u9879\u76EE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
             /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "memory-graph-query", children: [
               /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                 "input",
@@ -19052,43 +22117,37 @@
                   id: "memoryGraphQuery",
                   maxLength: 2e3,
                   required: true,
-                  placeholder: "\u8F93\u5165\u7814\u7A76\u76EE\u6807\u3001\u4E8B\u5B9E\u6216\u6750\u6599\u7EBF\u7D22",
+                  placeholder: t("memory.queryPlaceholder"),
                   value: query,
                   onChange: (event) => setQuery(event.target.value)
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Search, { size: 16 }),
-                "\u68C0\u7D22"
+                t("memory.search")
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "empty", children: loading ? "\u6B63\u5728\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u8303\u56F4\u2026" : status }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
           view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(GraphCanvas, { graph }),
             graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("article", { className: "memory-graph-result", children: [
               /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("strong", { children: node.label }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { children: [
-                "\u9879\u76EE\u8303\u56F4\uFF1A",
-                graph.project_id,
-                " \xB7 \u8BED\u4E49\u5019\u9009\uFF0C\u9700\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838"
-              ] })
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
             ] }, node.id)) }) : null
           ] }) : /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
             const source = item.source_type ? `${item.source_type}${item.source_id ? ` \xB7 ${item.source_id}` : ""}` : "Supermemory semantic result";
             return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("article", { className: "memory-search-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: String(item.memory || "\u672A\u547D\u540D\u5019\u9009") }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
               /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { children: [
-                "\u76F8\u4F3C\u5EA6\uFF1A",
-                String(item.similarity ?? "\u672A\u63D0\u4F9B"),
-                " \xB7 \u6765\u6E90\uFF1A",
-                source
+                t("memory.similarity", { value: String(item.similarity ?? t("common.notProvided")) }),
+                " \xB7 ",
+                t("memory.source", { source })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { children: [
-                "Artifact\uFF1A",
-                String(item.artifact_id || item.metadata?.artifact_id || "\u65E0"),
-                " \xB7 \u8BC1\u636E\u72B6\u6001\uFF1A",
-                String(item.evidence_status || "semantic_candidate")
+                t("memory.artifact", { value: String(item.artifact_id || item.metadata?.artifact_id || t("common.none")) }),
+                " \xB7 ",
+                t("memory.evidenceStatus", { value: String(item.evidence_status || "semantic_candidate") })
               ] })
             ] }, index);
           }) : null })
@@ -19099,21 +22158,25 @@
 
   // src/App.tsx
   var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
-  var INITIAL_MESSAGE = {
-    id: "initial-assistant",
-    role: "assistant",
-    text: "\u8BF7\u76F4\u63A5\u63CF\u8FF0\u4F60\u7684\u7814\u7A76 Idea\u3002\u6211\u4F1A\u81EA\u9002\u5E94\u5206\u6790\u76EE\u6807\u4E0E\u5DF2\u6709\u7EBF\u7D22\uFF0C\u8BF4\u660E\u63A8\u65AD\u548C\u98CE\u9669\uFF0C\u53EA\u8FFD\u95EE\u771F\u6B63\u5F71\u54CD\u65B9\u6848\u7684\u672A\u77E5\u4FE1\u606F\u3002"
-  };
   var EMPTY_STAGES = [
-    { key: "analyzing_input", label: "\u8BFB\u53D6\u5BF9\u8BDD", detail: "\u7B49\u5F85\u4E2D\u2026", state: "pending" },
-    { key: "selecting_route", label: "\u9009\u62E9\u6A21\u578B", detail: "\u7B49\u5F85\u4E2D\u2026", state: "pending" },
-    { key: "calling_llm", label: "\u8C03\u7528\u6A21\u578B", detail: "\u7B49\u5F85\u4E2D\u2026", state: "pending" },
-    { key: "parsing", label: "\u4FDD\u5B58\u7ED3\u679C", detail: "\u7B49\u5F85\u4E2D\u2026", state: "pending" }
+    { key: "analyzing_input", labelKey: "app.thinking.readingConversation" },
+    { key: "selecting_route", labelKey: "app.thinking.selectingModel" },
+    { key: "calling_llm", labelKey: "app.thinking.callingModel" },
+    { key: "parsing", labelKey: "app.thinking.savingResult" }
   ];
   function nextMessageId() {
     return `m-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
   function App() {
+    const { t, locale } = useTranslation();
+    const initialMessage = {
+      id: "initial-assistant",
+      role: "assistant",
+      text: t("app.initialMessage")
+    };
+    (0, import_react21.useEffect)(() => {
+      setMessages((current) => current.map((message) => message.id === "initial-assistant" ? { ...message, text: t("app.initialMessage") } : message));
+    }, [locale]);
     const [projects, setProjects] = (0, import_react21.useState)([]);
     const [projectId, setProjectId] = (0, import_react21.useState)(null);
     const [project, setProject] = (0, import_react21.useState)(null);
@@ -19122,10 +22185,10 @@
     const [activeTab, setActiveTab] = (0, import_react21.useState)("overview");
     const [health, setHealth] = (0, import_react21.useState)("connecting");
     const [toast, setToast] = (0, import_react21.useState)(null);
-    const [messages, setMessages] = (0, import_react21.useState)([INITIAL_MESSAGE]);
+    const [messages, setMessages] = (0, import_react21.useState)([initialMessage]);
     const [projectMessages, setProjectMessages] = (0, import_react21.useState)([]);
     const [spec, setSpec] = (0, import_react21.useState)(null);
-    const [specStatus, setSpecStatus] = (0, import_react21.useState)("\u5F85\u6F84\u6E05");
+    const [specStatus, setSpecStatus] = (0, import_react21.useState)("pending_clarification");
     const [chatBusy, setChatBusy] = (0, import_react21.useState)(false);
     const [projectChatBusy, setProjectChatBusy] = (0, import_react21.useState)(false);
     const [queuedFiles, setQueuedFiles] = (0, import_react21.useState)([]);
@@ -19195,8 +22258,8 @@
       setView("idea");
       setActiveArea("overview");
       setSpec(null);
-      setSpecStatus("\u5F85\u6F84\u6E05");
-      setMessages([INITIAL_MESSAGE]);
+      setSpecStatus("pending_clarification");
+      setMessages([initialMessage]);
       setProjectMessages([]);
       setQueuedFiles([]);
       setThinkingSessions([]);
@@ -19242,16 +22305,16 @@
     };
     const startThinkingSession = () => {
       const id = `ts-${Date.now()}`;
-      const time = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const time = (/* @__PURE__ */ new Date()).toLocaleTimeString(locale === "zh-CN" || locale === "zh-TW" ? "zh-CN" : locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
       setThinkingSessions((previous) => [
         ...previous.map((item) => ({ ...item, collapsed: true })),
         {
           id,
           time,
-          modelLabel: "\u6A21\u578B\u8DEF\u7531",
+          modelLabel: t("app.thinking.modelRouting"),
           status: "running",
           collapsed: false,
-          stages: EMPTY_STAGES.map((stage) => ({ ...stage }))
+          stages: EMPTY_STAGES.map((stage) => ({ key: stage.key, label: t(stage.labelKey), detail: t("common.waiting"), state: "pending" }))
         }
       ]);
       return id;
@@ -19266,9 +22329,9 @@
         if (event === "stage") {
           if (data.stage === "model_request") {
             patchStage("analyzing_input", "done");
-            patchStage("calling_llm", "active", "\u8C03\u7528\u6A21\u578B", "\u7B49\u5F85\u6A21\u578B\u54CD\u5E94\u2026");
+            patchStage("calling_llm", "active", t("app.thinking.callingModel"), t("app.thinking.waitingResponse"));
           } else {
-            patchStage("parsing", "active", "\u4FDD\u5B58\u7ED3\u679C", data.detail || data.stage || "");
+            patchStage("parsing", "active", t("app.thinking.savingResult"), data.detail || data.stage || "");
           }
         } else if (event === "model_route") {
           next = {
@@ -19276,22 +22339,22 @@
             modelLabel: `${data.tier} \xB7 ${data.model} \xB7 reasoning ${data.reasoning_effort}`
           };
           patchStage("analyzing_input", "done");
-          patchStage("selecting_route", "done", "\u9009\u62E9\u6A21\u578B", `${data.tier} \u2192 ${data.model}`);
-          patchStage("calling_llm", "active", "\u8C03\u7528\u6A21\u578B", "\u7B49\u5F85\u6A21\u578B\u54CD\u5E94\u2026");
+          patchStage("selecting_route", "done", t("app.thinking.selectingModel"), `${data.tier} \u2192 ${data.model}`);
+          patchStage("calling_llm", "active", t("app.thinking.callingModel"), t("app.thinking.waitingResponse"));
         } else if (event === "progress") {
           const map = {
-            preparing_request: { key: "analyzing_input", label: "\u51C6\u5907\u8BF7\u6C42" },
-            calling_model: { key: "calling_llm", label: "\u8C03\u7528\u6A21\u578B" },
-            saving_result: { key: "parsing", label: "\u4FDD\u5B58\u7ED3\u679C" }
+            preparing_request: { key: "analyzing_input", labelKey: "app.thinking.preparingRequest" },
+            calling_model: { key: "calling_llm", labelKey: "app.thinking.callingModel" },
+            saving_result: { key: "parsing", labelKey: "app.thinking.savingResult" }
           };
-          const target = map[data.stage] || { key: "parsing", label: data.stage || "\u4FDD\u5B58\u7ED3\u679C" };
-          patchStage(target.key, "active", target.label, data.detail || "");
+          const target = map[data.stage] || { key: "parsing", labelKey: "app.thinking.savingResult" };
+          patchStage(target.key, "active", t(target.labelKey), data.detail || "");
         } else if (event === "result") {
           patchStage("calling_llm", "done");
-          patchStage("parsing", "done", "\u4FDD\u5B58\u5B8C\u6210", `${(data.assumptions || []).length} \u4E2A\u5DF2\u8BB0\u5F55\u5047\u8BBE`);
+          patchStage("parsing", "done", t("app.thinking.saveComplete"), t("app.thinking.assumptionsRecorded", { count: (data.assumptions || []).length }));
           next = { ...next, status: "done" };
         } else if (event === "error") {
-          patchStage("calling_llm", "done", "\u8BF7\u6C42\u5931\u8D25", data.message || "");
+          patchStage("calling_llm", "done", t("app.thinking.requestFailed"), data.message || "");
           next = { ...next, status: "failed" };
         }
         return next;
@@ -19310,7 +22373,7 @@
       setChatBusy(true);
       setMessages((previous) => addMessage(previous, "user", message));
       const thinkingId = startThinkingSession();
-      applyThinkingEvent(thinkingId, "stage", { stage: "preparing_request", detail: `\u6D88\u606F\u957F\u5EA6 ${message.length} \u5B57\u7B26` });
+      applyThinkingEvent(thinkingId, "stage", { stage: "preparing_request", detail: t("app.thinking.messageLength", { count: message.length }) });
       try {
         let currentSessionId = sessionIdRef.current;
         if (queuedFiles.length) {
@@ -19318,7 +22381,7 @@
             currentSessionId = crypto.randomUUID();
             setActiveSession(currentSessionId);
           }
-          applyThinkingEvent(thinkingId, "stage", { stage: "uploading", detail: `${queuedFiles.length} \u4E2A\u6587\u4EF6` });
+          applyThinkingEvent(thinkingId, "stage", { stage: "uploading", detail: t("app.thinking.uploadingFiles", { count: queuedFiles.length }) });
           for (const file of queuedFiles) await uploadFile(currentSessionId, file);
           setQueuedFiles([]);
         }
@@ -19369,7 +22432,7 @@
             }
           }
         }
-        if (streamError) throw new Error(streamError.message || "\u6A21\u578B\u8BF7\u6C42\u5931\u8D25");
+        if (streamError) throw new Error(streamError.message || t("app.thinking.requestFailed"));
         if (result) {
           setActiveSession(result.session_id || currentSessionId);
           const routeMeta = result.model ? `${result.model_tier || "adaptive"} \xB7 ${result.model} \xB7 reasoning ${result.reasoning_effort || "default"}` : "";
@@ -19377,11 +22440,11 @@
             previous,
             "assistant",
             result.reply || "",
-            `${clarificationMode === "automatic" ? "\u5168\u81EA\u52A8\u6A21\u5F0F" : "\u8BE6\u7EC6\u6A21\u5F0F"}${routeMeta ? ` \xB7 ${routeMeta}` : ""}`
+            `${clarificationMode === "automatic" ? t("app.mode.automatic") : t("app.mode.detailed")}${routeMeta ? ` \xB7 ${routeMeta}` : ""}`
           ));
           if (result.spec) {
             setSpec(result.spec);
-            setSpecStatus("\u5F85\u786E\u8BA4");
+            setSpecStatus("pending_confirmation");
           }
         }
       } catch (error) {
@@ -19400,7 +22463,7 @@
           method: "POST",
           body: JSON.stringify({ session_id: sessionIdRef.current, confirmed: true })
         });
-        showToast("\u9879\u76EE\u5DF2\u521B\u5EFA");
+        showToast(t("app.projectCreated"));
         await openProject(result.project.id);
       } catch (error) {
         showToast(errorMessage(error));
@@ -19454,7 +22517,7 @@
           onNewProject: newProject,
           onOpenProject: (id) => void openProject(id),
           onOpenMemory: () => {
-            if (!projectId) showToast("\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\u3002");
+            if (!projectId) showToast(t("app.openProjectFirst"));
             else setMemoryOpen(true);
           },
           onOpenSettings: () => setSettingsOpen(true)
@@ -19464,8 +22527,12 @@
         /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
           Topbar,
           {
-            title: view === "idea" ? "\u65B0\u7814\u7A76\u9879\u76EE" : project?.title || "\u7814\u7A76\u9879\u76EE",
-            meta: view === "idea" ? "Idea clarification" : `${project?.current_stage || "research"} \xB7 v${project?.current_idea_version ?? 1} \xB7 ${String(projectId || "").slice(0, 8)}`,
+            title: view === "idea" ? t("app.newProject") : project?.title || t("app.researchProject"),
+            meta: view === "idea" ? t("app.ideaMeta") : t("app.projectMeta", {
+              stage: project?.current_stage === "initialized" ? t("overview.stageInitialized") : project?.current_stage || t("overview.stageUnknown"),
+              version: project?.current_idea_version ?? 1,
+              id: String(projectId || "").slice(0, 8)
+            }),
             health,
             onRefresh: () => void refreshProject()
           }
@@ -19504,7 +22571,7 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026" }) })
+        ) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
       /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(

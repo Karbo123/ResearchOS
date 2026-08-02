@@ -703,10 +703,15 @@ a.secondary { text-decoration: none; color: var(--ink); }
 
 @media (max-width: 760px) {
   .topbar { min-height: 68px; }
-  .top-actions { gap: 6px; }
+  .topbar > div:first-child { min-width: 0; overflow: hidden; }
+  .topbar h1 { max-width: 30vw; font-size: 16px; }
+  .topbar .muted { max-width: 30vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top-actions { flex: none; gap: 4px; }
   .health { display: none; }
-  .control-pill { padding-left: 8px; }
-  .control-pill select { max-width: 92px; }
+  .control-pill { min-height: 32px; padding: 0 4px 0 6px; }
+  .control-pill svg { display: none; }
+  .control-pill select { max-width: 62px; padding-right: 2px; }
+  .icon-btn { width: 32px; height: 32px; }
 }
 
 /* Project-scoped citation graph: a quiet, inspectable canvas rather than a decorative network. */

@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react'
 import type { ThinkingSession } from '../types'
+import { useTranslation } from '../i18n'
 
 export function ThinkingSessions({
   sessions,
@@ -8,11 +9,12 @@ export function ThinkingSessions({
   sessions: ThinkingSession[]
   onToggle: (id: string) => void
 }) {
+  const { t } = useTranslation()
   if (!sessions.length) return null
   return (
     <div className="ai-thinking">
       <div className="pane-heading" style={{ marginTop: 24 }}>
-        <h2>AI 请求状态</h2>
+        <h2>{t('thinking.title')}</h2>
       </div>
       <div className="thinking-sessions">
         {sessions.map(session => (
@@ -26,7 +28,7 @@ export function ThinkingSessions({
               <ChevronDown className="toggle-icon" size={16} />
               <span className="session-model">{session.modelLabel}</span>
               <span className={`session-status ${session.status}`}>
-                {session.status === 'running' ? '处理中' : session.status === 'done' ? '已完成' : '失败'}
+                {session.status === 'running' ? t('common.running') : session.status === 'done' ? t('common.done') : t('common.failed')}
               </span>
               <span className="session-time">{session.time}</span>
             </button>

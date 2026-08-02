@@ -3,6 +3,7 @@ import { Database, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ProjectEmbeddingSettingsResponse } from '../types'
 import { ConfirmDialog, StatusDot } from './ui'
+import { useTranslation } from '../i18n'
 
 interface FormValues {
   mode: 'global' | 'custom'
@@ -25,6 +26,7 @@ const EMPTY: FormValues = {
 }
 
 export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { projectId: string; onChanged: () => void }) {
+  const { t } = useTranslation()
   const [values, setValues] = useState<FormValues | null>(null)
   const [instance, setInstance] = useState<ProjectEmbeddingSettingsResponse['instance'] | null>(null)
   const [loading, setLoading] = useState(false)
@@ -90,18 +92,18 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
       onChanged()
     } catch (err) {
       const message = errorMessage(err)
-      if (!resetData && message.includes('embedding_requires_reset') || (!resetData && message.includes('全新数据目录'))) {
+      if (!resetData && message.includes('embedding_requires_reset')) {
         setConfirmReset(true)
       } else {
-        setError(`保存失败：${message}`)
+        setError(t('settings.saveFailed', { error: message }))
       }
     } finally {
       setSaving(false)
     }
   }
 
-  if (loading) return <div className="empty">正在读取项目 Embedding 配置…</div>
-  if (!values) return <div className="form-error" role="alert">{error || '无法加载 Embedding 配置。'}</div>
+  if (loading) return <div className="empty">{t('embedding.loading')}</div>
+  if (!values) return <div className="form-error" role="alert">{error || t('settings.loadFailed')}</div>
 
   const custom = values.mode === 'custom'
   const remote = custom && values.provider !== 'local'
@@ -113,53 +115,53 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
         <section className="model-tier">
           <div className="model-tier-heading">
             <div>
-              <h3>Embedding 提供方式</h3>
+              <h3>{t('embedding.providerTitle')}</h3>
               <div className="tier-status">
                 <StatusDot ready={ready} />
-                {values.mode === 'global' ? '使用全局默认' : values.provider === 'local' ? '本地 ONNX 模型' : '远程 OpenAI-compatible API'}
+                {values.mode === 'global' ? t('embedding.globalDefault') : values.provider === 'local' ? t('embedding.localOnnx') : t('embedding.remoteApi')}
               </div>
             </div>
             {instance?.mode === 'custom' && instance.port ? (
-              <span className="tier-default">实例 :{instance.port}{instance.running ? ' · 运行中' : ' · 未运行'}
-                {instance.shared_projects > 1 ? ` · 共享 ${instance.shared_projects} 个项目` : ''}
+              <span className="tier-default">{t('embedding.instance')} :{instance.port}{instance.running ? t('embedding.running') : t('embedding.notRunning')}
+                {instance.shared_projects > 1 ? t('embedding.sharedProjects', { count: instance.shared_projects }) : ''}
               </span>
             ) : null}
           </div>
           <div className="model-tier-grid">
             <label>
-              配置模式
+              {t('embedding.mode')}
               <select
                 value={values.mode}
                 onChange={event => update('mode', event.target.value as FormValues['mode'])}
               >
-                <option value="global">使用全局默认（.env）</option>
-                <option value="custom">本项目独立配置</option>
+                <option value="global">{t('embedding.modeGlobal')}</option>
+                <option value="custom">{t('embedding.modeCustom')}</option>
               </select>
             </label>
             <label>
-              Provider
+              {t('embedding.provider')}
               <select
                 value={values.provider}
                 disabled={!custom}
                 onChange={event => update('provider', event.target.value as FormValues['provider'])}
               >
-                <option value="local">local（本机 ONNX）</option>
-                <option value="openai">openai（OpenAI-compatible）</option>
+                <option value="local">local ({t('embedding.localOnnx')})</option>
+                <option value="openai">openai ({t('embedding.openaiCompatible')})</option>
                 <option value="gemini">gemini</option>
               </select>
             </label>
             <label>
-              模型
+              {t('embedding.model')}
               <input
                 value={values.model}
                 disabled={!custom}
                 maxLength={300}
-                placeholder={values.provider === 'local' ? 'Xenova/bge-m3' : '例如 Qwen3-Embedding-8B'}
+                placeholder={values.provider === 'local' ? 'Xenova/bge-m3' : t('embedding.modelPlaceholder')}
                 onChange={event => update('model', event.target.value)}
               />
             </label>
             <label>
-              维度
+              {t('embedding.dimensions')}
               <input
                 type="number"
                 value={values.dimensions}
@@ -172,7 +174,7 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
             {remote ? (
               <>
                 <label>
-                  基础 URL
+                  {t('embedding.baseUrl')}
                   <input
                     value={values.base_url}
                     maxLength={500}
@@ -181,11 +183,11 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
                   />
                 </label>
                 <label>
-                  API key
+                  {t('settings.apiKey')}
                   <input
                     type="password"
                     value={values.key}
-                    placeholder={values.key_configured ? '已配置，留空保持不变' : '输入 API key'}
+                    placeholder={values.key_configured ? t('settings.keyKeep') : t('settings.keyPlaceholder')}
                     autoComplete="new-password"
                     maxLength={2000}
                     onChange={event => update('key', event.target.value)}
@@ -197,29 +199,28 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
           <p className="settings-note">
             <Database size={16} />
             <span>
-              相同配置的项目共享同一个 Supermemory 实例与数据目录（按配置池复用，端口 6770–6869），项目之间仍用
-              container tag 隔离语义记忆；配置不同才启用新的配置池。默认推荐本地 Xenova/bge-m3（实测比远程 gitee 快约 10 倍）。
+              {t('embedding.poolNote')}
             </span>
           </p>
           <p className="settings-note">
             <ShieldCheck size={16} />
-            <span>密钥只写入本机 runtime 文件，读取接口不会返回密钥；切换模型或维度会为项目分配新的配置池（旧池数据保留，语义记忆需重新摄入）。</span>
+            <span>{t('embedding.securityNote')}</span>
           </p>
         </section>
         {error ? <div className="form-error" role="alert">{error}</div> : null}
         <div className="modal-actions">
-          <button className="secondary" type="button" onClick={() => void load()}>刷新</button>
+          <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
           <button className="primary" type="submit" disabled={saving || !dirty}>
             <Save size={16} />
-            保存配置
+            {t('settings.save')}
           </button>
         </div>
       </form>
       {confirmReset ? (
         <ConfirmDialog
-          title="切换模型需要重建数据目录"
-          description="切换 embedding 模型或维度后，该项目已有的语义记忆无法与新的向量空间混用，需要全新数据目录并重新摄入（旧数据目录会保留为备份）。确认继续吗？"
-          confirmLabel="确认重建并保存"
+          title={t('embedding.resetTitle')}
+          description={t('embedding.resetDescription')}
+          confirmLabel={t('embedding.resetConfirm')}
           onConfirm={() => void save(true)}
           onCancel={() => setConfirmReset(false)}
         />

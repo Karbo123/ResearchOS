@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import { useTranslation } from '../i18n'
 
 type MarkdownBlock =
   | { kind: 'heading'; level: number; text: string }
@@ -123,9 +124,10 @@ function parseBlocks(content: string): MarkdownBlock[] {
 }
 
 export function MarkdownPreview({ content }: { content: string }) {
+  const { t } = useTranslation()
   const blocks = parseBlocks(content)
   return (
-    <article className="markdown-preview" aria-label="Markdown 报告预览">
+    <article className="markdown-preview" aria-label={t('md.previewLabel')}>
       {blocks.map((block, index) => {
         const key = `markdown-${index}`
         if (block.kind === 'heading') {
@@ -144,7 +146,7 @@ export function MarkdownPreview({ content }: { content: string }) {
         if (block.kind === 'code') return <pre key={key} data-language={block.language || undefined}><code>{block.text}</code></pre>
         return <p key={key}>{inlineNodes(block.text, key)}</p>
       })}
-      {!blocks.length ? <p className="muted">暂无可预览内容。</p> : null}
+      {!blocks.length ? <p className="muted">{t('md.noPreview')}</p> : null}
     </article>
   )
 }
