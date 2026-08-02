@@ -43,7 +43,7 @@ export const AREA_DEFAULT_TAB: Record<ResearchArea, TabId> = {
 export const AREA_TABS: Record<ResearchArea, TabId[]> = {
   overview: ['overview', 'overview_spec', 'overview_innovation', 'overview_progress', 'daily_reports', 'weekly_reports', 'feedback_inbox', 'feedback_audit', 'reports'],
   related_work: ['literature', 'research_status', 'citation_graph'],
-  implementation: ['reproduction', 'comparison', 'method_design', 'code_workspace', 'policies', 'approvals', 'experiments', 'experiment_queue', 'experiment_metrics', 'artifacts', 'lineage'],
+  implementation: ['method_design', 'code_workspace', 'policies', 'approvals', 'experiments', 'experiment_queue', 'experiment_metrics', 'artifacts', 'lineage', 'reproduction', 'comparison'],
   paper: ['paper', 'paper_outline', 'paper_citations', 'paper_figures', 'paper_data', 'paper_compile', 'paper_review'],
 }
 

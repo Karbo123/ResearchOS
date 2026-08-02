@@ -278,7 +278,7 @@ button { -webkit-font-smoothing: inherit; }
   .project-view { padding-top: 0; }
   .tabs { margin: 9px 10px 0; border-radius: 13px; }
   .tabs button { min-width: max-content; padding-left: 11px; padding-right: 11px; }
-  .project-layout { display: block; height: calc(100% - 58px); padding: 10px; }
+  .project-layout { display: block; height: auto; min-height: 0; flex: 1; padding: 10px; }
   .tab-content { height: 100%; padding: 19px 15px 28px; border-radius: 20px; }
   .project-chat { top: 134px; right: 10px; width: min(390px, calc(100vw - 20px)); border-radius: 20px; }
   .modal { align-items: end; padding: 10px; }
@@ -505,7 +505,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
-  margin: 0 0 18px;
+  margin: 7px 18px 0;
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -638,7 +638,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .control-grid { grid-template-columns: 1fr; }
   .related-work-seed-row { grid-template-columns: auto minmax(0, 1fr); }
   .related-work-seed-row > .badge { grid-column: 2; justify-self: start; }
-  .workflow-local-nav { margin-bottom: 14px; }
+  .workflow-local-nav { margin: 5px 10px 0; }
   .workflow-local-label { width: 100%; padding: 3px 7px 1px; }
   .workspace-context { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 10px; padding: 9px 10px; }
   .workspace-context-actions { justify-content: flex-start; }

@@ -22161,10 +22161,6 @@
       labelKey: "nav.implementation",
       icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FlaskConical, { size: 16 }),
       groups: [
-        { id: "implementation_related", labelKey: "group.implRelated", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }), tabs: [
-          { id: "reproduction", labelKey: "tab.reproduction", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }) },
-          { id: "comparison", labelKey: "tab.comparison", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitCompare, { size: 15 }) }
-        ] },
         { id: "implementation_method", labelKey: "group.implMethod", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Waypoints, { size: 15 }), tabs: [
           { id: "method_design", labelKey: "tab.methodDesign", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Waypoints, { size: 15 }) },
           { id: "code_workspace", labelKey: "tab.codeWorkspace", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Terminal, { size: 15 }) },
@@ -22175,6 +22171,10 @@
           { id: "experiment_metrics", labelKey: "tab.experimentMetrics", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) },
           { id: "artifacts", labelKey: "tab.artifacts", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Image, { size: 15 }) },
           { id: "lineage", labelKey: "tab.lineage", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(RotateCcwClock, { size: 15 }) }
+        ] },
+        { id: "implementation_related", labelKey: "group.implRelated", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }), tabs: [
+          { id: "reproduction", labelKey: "tab.reproduction", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }) },
+          { id: "comparison", labelKey: "tab.comparison", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitCompare, { size: 15 }) }
         ] }
       ]
     },
@@ -22248,26 +22248,26 @@
         },
         group.id
       )) }),
+      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("nav", { className: "workflow-local-nav", "aria-label": `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "workflow-local-label", children: t(activeGroup.labelKey) }),
+        activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+          "button",
+          {
+            type: "button",
+            className: activeTab === tab.id ? "active" : "",
+            "aria-current": activeTab === tab.id ? "page" : void 0,
+            onClick: () => onTabChange(tab.id),
+            children: [
+              tab.icon,
+              t(tab.labelKey)
+            ]
+          },
+          tab.id
+        ))
+      ] }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "project-layout", children: [
         /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "tab-content", children: [
           /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(WorkspaceContextBar, { project }),
-          activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("nav", { className: "workflow-local-nav", "aria-label": `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "workflow-local-label", children: t(activeGroup.labelKey) }),
-            activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
-              "button",
-              {
-                type: "button",
-                className: activeTab === tab.id ? "active" : "",
-                "aria-current": activeTab === tab.id ? "page" : void 0,
-                onClick: () => onTabChange(tab.id),
-                children: [
-                  tab.icon,
-                  t(tab.labelKey)
-                ]
-              },
-              tab.id
-            ))
-          ] }) : null,
           activeTab === "overview" || activeTab === "overview_spec" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(OverviewTab, { ...tabProps }) : null,
           activeTab === "overview_innovation" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ResearchStatusTab, { project, showToast }) : null,
           activeTab === "overview_progress" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,

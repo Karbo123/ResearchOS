@@ -58,10 +58,6 @@ const AREAS: ProjectArea[] = [
     labelKey: 'nav.implementation',
     icon: <FlaskConical size={16} />,
     groups: [
-      { id: 'implementation_related', labelKey: 'group.implRelated', icon: <GitBranch size={15} />, tabs: [
-        { id: 'reproduction', labelKey: 'tab.reproduction', icon: <GitBranch size={15} /> },
-        { id: 'comparison', labelKey: 'tab.comparison', icon: <GitCompare size={15} /> },
-      ] },
       { id: 'implementation_method', labelKey: 'group.implMethod', icon: <Waypoints size={15} />, tabs: [
         { id: 'method_design', labelKey: 'tab.methodDesign', icon: <Waypoints size={15} /> },
         { id: 'code_workspace', labelKey: 'tab.codeWorkspace', icon: <Terminal size={15} /> },
@@ -72,6 +68,10 @@ const AREAS: ProjectArea[] = [
         { id: 'experiment_metrics', labelKey: 'tab.experimentMetrics', icon: <BarChart3 size={15} /> },
         { id: 'artifacts', labelKey: 'tab.artifacts', icon: <Image size={15} /> },
         { id: 'lineage', labelKey: 'tab.lineage', icon: <History size={15} /> },
+      ] },
+      { id: 'implementation_related', labelKey: 'group.implRelated', icon: <GitBranch size={15} />, tabs: [
+        { id: 'reproduction', labelKey: 'tab.reproduction', icon: <GitBranch size={15} /> },
+        { id: 'comparison', labelKey: 'tab.comparison', icon: <GitCompare size={15} /> },
       ] },
     ],
   },
@@ -163,26 +163,26 @@ export function ProjectView({
           </button>
         ))}
       </nav>
+      {activeGroup.tabs.length > 1 ? (
+        <nav className="workflow-local-nav" aria-label={`${t(activeGroup.labelKey)} · ${t('common.innerPages')}`}>
+          <span className="workflow-local-label">{t(activeGroup.labelKey)}</span>
+          {activeGroup.tabs.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              className={activeTab === tab.id ? 'active' : ''}
+              aria-current={activeTab === tab.id ? 'page' : undefined}
+              onClick={() => onTabChange(tab.id)}
+            >
+              {tab.icon}
+              {t(tab.labelKey)}
+            </button>
+          ))}
+        </nav>
+      ) : null}
       <div className="project-layout">
         <div className="tab-content">
           <WorkspaceContextBar project={project} />
-          {activeGroup.tabs.length > 1 ? (
-            <nav className="workflow-local-nav" aria-label={`${t(activeGroup.labelKey)} · ${t('common.innerPages')}`}>
-              <span className="workflow-local-label">{t(activeGroup.labelKey)}</span>
-              {activeGroup.tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  className={activeTab === tab.id ? 'active' : ''}
-                  aria-current={activeTab === tab.id ? 'page' : undefined}
-                  onClick={() => onTabChange(tab.id)}
-                >
-                  {tab.icon}
-                  {t(tab.labelKey)}
-                </button>
-              ))}
-            </nav>
-          ) : null}
           {activeTab === 'overview' || activeTab === 'overview_spec' ? <OverviewTab {...tabProps} /> : null}
           {activeTab === 'overview_innovation' ? <ResearchStatusTab project={project} showToast={showToast} /> : null}
           {activeTab === 'overview_progress' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}

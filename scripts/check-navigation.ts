@@ -26,6 +26,7 @@ for (const tab of ['paper', 'paper_outline', 'paper_citations', 'paper_figures',
 
 assert.equal(AREA_DEFAULT_TAB.paper, 'paper_outline', 'paper area must default to outline')
 assert.equal(AREA_DEFAULT_TAB.implementation, 'reproduction', 'implementation area must default to related-work reproduction')
+assert.deepEqual(AREA_TABS.implementation.slice(0, 2), ['method_design', 'code_workspace'], 'implementation tabs must start with the method workspace')
 
 const legacyMethod = resolveWorkspaceParts('#project/p1/method/method_design')
 assert.deepEqual(legacyMethod, { projectId: 'p1', area: 'implementation', tab: 'method_design' })
