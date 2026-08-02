@@ -4,6 +4,7 @@ import type { Paper, ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
 import { ArtifactCard } from '../previews'
 import { useTranslation } from '../../i18n'
+import { localizeFailure } from '../../api'
 
 function paperEvidence(project: ProjectDetail, paper: Paper) {
   return (project.evidence || []).filter(evidence => evidence.paper_id === paper.id)
@@ -105,7 +106,7 @@ export function PaperTab({
     return <>
       <SectionHeading title={t('paper.compileTitle')} hint={t('paper.compileHint')} extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void createCompilePlan() }}><FileCheck size={15} />{t('paper.createCompileProposal')}</button></ButtonRow>} />
       <div className="data-list"><div className="data-row"><div><h3>{t('paper.sourceFile')}</h3><p><code>projects/{project.id}/paper/main.tex</code></p></div><Badge status={compileProposals.length ? 'candidate' : 'blocked'}>{compileProposals.length ? t('paper.compileProposalExists') : t('paper.notProposed')}</Badge></div><div className="data-row"><div><h3>{t('paper.compileRuns')}</h3><p>{compileRuns.length ? t('paper.compileRunCount', { count: compileRuns.length }) : t('paper.noCompileRuns')}</p></div><Badge status={compileRuns.some(item => item.status === 'succeeded') ? 'succeeded' : compileRuns.length ? compileRuns[0].status : 'empty'} /></div></div>
-      {compileRuns.length ? <div className="section"><SectionHeading title={t('paper.compileRunRecords')} /><div className="data-list">{compileRuns.map(run => <div className="data-row" key={run.id}><div><h3>{run.run_id || run.id}</h3><p>{run.error || JSON.stringify(run.metrics || {})}</p></div><Badge status={run.status} /></div>)}</div></div> : null}
+      {compileRuns.length ? <div className="section"><SectionHeading title={t('paper.compileRunRecords')} /><div className="data-list">{compileRuns.map(run => <div className="data-row" key={run.id}><div><h3>{run.run_id || run.id}</h3><p>{run.error ? localizeFailure(run.status, run.error) : JSON.stringify(run.metrics || {})}</p></div><Badge status={run.status} /></div>)}</div></div> : null}
       {compileProposals.length ? <div className="section"><SectionHeading title={t('paper.compileApprovals')} /><div className="data-list">{compileProposals.map(proposal => <div className="data-row" key={proposal.id}><div><h3>{proposal.summary}</h3><p>{proposal.reason || t('paper.noReason')} · {proposal.created_at || t('common.timePending')}</p></div><Badge status={proposal.status} /></div>)}</div></div> : null}
     </>
   }

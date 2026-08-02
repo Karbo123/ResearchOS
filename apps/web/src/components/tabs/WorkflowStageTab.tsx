@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Network, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { ProjectDetail, ProjectWorkspaceDetail, ResearchStatusGraphEdge, ResearchStatusGraphNode, ResearchStatusResponse, TabId } from '../../types'
-import { Badge, EmptyState, SectionHeading } from '../ui'
+import { Badge, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { useTranslation, type TranslationKey } from '../../i18n'
 
 function text(value: unknown, t: (key: TranslationKey) => string) {
@@ -170,7 +170,7 @@ export function WorkflowStageTab({
                     <g className="research-graph-edges" aria-label={t('graph.edgesAria')}>
                       {researchStatus.graph.edges.map(edge => {
                         const path = graphEdgePath(edge, graphNodesById)
-                        return path ? <path key={edge.id} d={path} className={`research-graph-edge evidence-${edge.evidence_status}`} markerEnd="url(#research-graph-arrow)" aria-label={`${edge.relation} · ${edge.evidence_status} · ${edge.permission_status}`} /> : null
+                        return path ? <path key={edge.id} d={path} className={`research-graph-edge evidence-${edge.evidence_status}`} markerEnd="url(#research-graph-arrow)" aria-label={`${edge.relation} · ${statusLabel(edge.evidence_status, t)} · ${statusLabel(edge.permission_status, t)}`} /> : null
                       })}
                     </g>
                     <g className="research-graph-nodes" aria-label={t('graph.nodesAria')}>
@@ -214,7 +214,7 @@ export function WorkflowStageTab({
                         <div><dt>{t('graph.stableId')}</dt><dd><code>{text(selectedGraphNode.source.stable_id, t) || selectedGraphNode.id}</code></dd></div>
                         <div><dt>{t('graph.source')}</dt><dd>{text(selectedGraphNode.source.source_type, t)} · <code>{selectedGraphNode.source.source_id}</code></dd></div>
                         <div><dt>{t('graph.evidenceStatus')}</dt><dd>{t(graphEvidenceLabel(selectedGraphNode.evidence_status) as TranslationKey)}</dd></div>
-                        <div><dt>{t('graph.permission')}</dt><dd>{selectedGraphNode.permission_status}</dd></div>
+                        <div><dt>{t('graph.permission')}</dt><dd>{statusLabel(selectedGraphNode.permission_status, t)}</dd></div>
                         {selectedGraphNode.source.provider ? <div><dt>Provider</dt><dd>{selectedGraphNode.source.provider}</dd></div> : null}
                         {selectedGraphNode.source.locator ? <div><dt>{t('graph.locator')}</dt><dd>{selectedGraphNode.source.locator}</dd></div> : null}
                       </dl>

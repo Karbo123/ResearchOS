@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AlertTriangle, Download, ExternalLink, GitBranch, PackageCheck, Play, RefreshCw } from 'lucide-react'
-import { api, errorMessage } from '../../api'
+import { api, errorMessage, localizeFailure } from '../../api'
 import type { ProjectDetail, Reproduction, ReproductionRun, Repository, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
 import { useTranslation, type TranslationKey } from '../../i18n'
@@ -176,7 +176,7 @@ export function ReproductionTab({
                       <div><strong>{t('reproduction.environment')}</strong><p><code>{reproduction.repository_relative_path}</code> · <code>{reproduction.venv_relative_path}</code></p></div>
                       <Badge status={reproduction.status}>{t(statusText(reproduction.status) as TranslationKey)}</Badge>
                     </div>
-                    {reproduction.error ? <div className="inline-warning"><AlertTriangle size={15} /> {reproduction.error}</div> : null}
+                    {reproduction.error ? <div className="inline-warning"><AlertTriangle size={15} /> {localizeFailure(reproduction.status, reproduction.error)}</div> : null}
                     {['source_downloaded', 'dependency_failed'].includes(reproduction.status) ? (
                       <div className="reproduction-form">
                         <label>{t('reproduction.dependencyManifest')}<input value={formFor(reproduction).dependency_manifest} onChange={event => updateForm(reproduction.id, 'dependency_manifest', event.target.value)} /></label>
@@ -191,7 +191,7 @@ export function ReproductionTab({
                         <button className="secondary" type="button" disabled={busy === `run:${reproduction.id}`} onClick={() => { void requestRun(reproduction) }}><Play size={15} />{t('reproduction.createRunApproval')}</button>
                       </div>
                     ) : null}
-                    {reproductionRuns.length ? <div className="reproduction-runs">{reproductionRuns.map(run => <div className="data-row compact-row" key={run.id}><div><strong>Run {run.id.slice(0, 8)}</strong><p>{run.entrypoint} · seeds {run.random_seeds.join(', ')}{run.error ? ` · ${run.error}` : ''}</p></div><Badge status={run.status}>{t(statusText(run.status) as TranslationKey)}</Badge></div>)}</div> : null}
+                    {reproductionRuns.length ? <div className="reproduction-runs">{reproductionRuns.map(run => <div className="data-row compact-row" key={run.id}><div><strong>Run {run.id.slice(0, 8)}</strong><p>{run.entrypoint} · seeds {run.random_seeds.join(', ')}{run.error ? ` · ${localizeFailure(run.status, run.error)}` : ''}</p></div><Badge status={run.status}>{t(statusText(run.status) as TranslationKey)}</Badge></div>)}</div> : null}
                   </div>
                 ) : null}
               </article>

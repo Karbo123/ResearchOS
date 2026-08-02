@@ -1,19 +1,104 @@
 import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
-import { useTranslation } from '../i18n'
+import { useTranslation, type TranslationKey } from '../i18n'
 
 export type BadgeKind = 'neutral' | 'live' | 'pending' | 'failed'
 
+const STATUS_KEYS: Record<string, TranslationKey> = {
+  accepted: 'status.accepted',
+  active: 'status.active',
+  approval_required: 'status.approvalRequired',
+  approved: 'status.approved',
+  awaiting_artifact_approval: 'status.awaitingArtifactApproval',
+  blocked: 'status.blocked',
+  calculated: 'status.calculated',
+  cancel_requested: 'status.cancelRequested',
+  candidate: 'status.candidate',
+  candidate_exists: 'status.candidateExists',
+  candidate_only: 'status.candidateOnly',
+  cancelled: 'status.cancelled',
+  claim_reviewed: 'status.claimReviewed',
+  clean: 'status.clean',
+  closed: 'status.closed',
+  completed: 'status.completed',
+  confirmed: 'status.confirmed',
+  confirmed_paper: 'status.confirmedPaper',
+  conflict: 'status.conflict',
+  declared: 'status.declared',
+  dependency_failed: 'status.dependencyFailed',
+  dependency_installing: 'status.dependencyInstalling',
+  dependency_pending: 'status.dependencyPending',
+  dirty: 'status.dirty',
+  disabled: 'status.disabled',
+  done: 'common.done',
+  empty: 'status.empty',
+  enabled: 'status.enabled',
+  enforced: 'status.enforced',
+  evidence_required: 'status.evidenceRequired',
+  failed: 'status.failed',
+  fulltext_evidence: 'status.fulltextEvidence',
+  invalid: 'common.invalid',
+  invalid_response: 'status.invalidResponse',
+  invalidated: 'status.invalidated',
+  legacy_unverified: 'status.legacyUnverified',
+  license_review_required: 'status.licenseReviewRequired',
+  located: 'status.located',
+  manual: 'status.manual',
+  max_total_reached: 'status.maxTotalReached',
+  metadata_candidate: 'status.metadataCandidate',
+  metadata_candidates_only: 'status.metadataCandidatesOnly',
+  metadata_only: 'status.metadataOnly',
+  observed: 'status.observed',
+  ok: 'status.ok',
+  open: 'status.open',
+  page_quote: 'status.pageQuote',
+  partial: 'status.partial',
+  paused: 'status.paused',
+  pending: 'status.pending',
+  project_contained: 'status.projectContained',
+  project_scoped: 'status.projectScoped',
+  proposal_created: 'status.proposalCreated',
+  queued: 'status.queued',
+  rate_limited: 'status.rateLimited',
+  ready: 'status.ready',
+  rejected: 'status.rejected',
+  reopened: 'status.reopened',
+  review_required: 'status.reviewRequired',
+  running: 'status.running',
+  selected: 'status.selected',
+  semantic_candidate: 'status.semanticCandidate',
+  source_downloaded: 'status.sourceDownloaded',
+  source_downloading: 'status.sourceDownloading',
+  started: 'status.started',
+  succeeded: 'status.succeeded',
+  timed_out: 'status.timedOut',
+  unconfirmed: 'status.unconfirmed',
+  unknown: 'common.unknown',
+  unlocated: 'status.unlocated',
+  unresolved: 'status.unresolved',
+  unsupported: 'status.unsupported',
+  valid: 'status.valid',
+  verified: 'status.verified',
+  waiting_approval: 'status.waitingApproval',
+}
+
+export function statusLabel(status: string | null | undefined, t: (key: TranslationKey) => string): string {
+  const normalized = String(status || '').replaceAll('-', '_').toLowerCase()
+  const key = STATUS_KEYS[normalized]
+  return key ? t(key) : status || ''
+}
+
 export function badgeKind(status?: string | null): BadgeKind {
   const value = String(status || '').toLowerCase()
-  if (value === 'approved' || value === 'succeeded' || value === 'verified' || value === 'active' || value === 'enforced' || value === 'ready' || value === 'fulltext-evidence' || value === 'enabled') return 'live'
-  if (value === 'failed' || value === 'rejected' || value === 'cancelled' || value === 'unsupported' || value === 'license-review-required') return 'failed'
-  if (value === 'pending' || value === 'candidate-only' || value === 'metadata-only' || value === 'review-required' || value === 'manual' || value === 'evidence-required' || value === 'unknown') return 'pending'
+  if (['approved', 'succeeded', 'verified', 'active', 'enforced', 'ready', 'fulltext-evidence', 'fulltext_evidence', 'enabled', 'completed', 'valid', 'running', 'claim_reviewed', 'page_quote', 'source_downloaded'].includes(value)) return 'live'
+  if (['failed', 'rejected', 'cancelled', 'unsupported', 'license-review-required', 'license_review_required', 'invalid', 'invalidated', 'blocked', 'dependency_failed', 'timed_out', 'rate_limited', 'invalid_response'].includes(value)) return 'failed'
+  if (['pending', 'candidate-only', 'candidate_only', 'metadata-only', 'metadata_only', 'review-required', 'review_required', 'manual', 'evidence-required', 'evidence_required', 'unknown', 'queued', 'paused', 'awaiting_artifact_approval', 'source_downloading', 'waiting_approval', 'dependency_pending', 'unconfirmed', 'unlocated', 'candidate'].includes(value)) return 'pending'
   return 'neutral'
 }
 
 export function Badge({ status, children }: { status?: string | null; children?: React.ReactNode }) {
-  return <span className={`badge ${badgeKind(status)}`}>{children ?? status}</span>
+  const { t } = useTranslation()
+  return <span className={`badge ${badgeKind(status)}`}>{children ?? statusLabel(status, t)}</span>
 }
 
 export function StatusDot({ ready }: { ready: boolean }) {

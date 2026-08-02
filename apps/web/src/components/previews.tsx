@@ -3,6 +3,7 @@ import { RotateCcw } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { Artifact, ArtifactPreview } from '../types'
 import { useTranslation } from '../i18n'
+import { statusLabel } from './ui'
 
 function PointCloudPreview({ preview }: { preview: Extract<ArtifactPreview, { type: 'point_cloud' }> }) {
   const { t } = useTranslation()
@@ -341,7 +342,7 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
       {!artifact.valid ? (
         <div className="artifact-preview preview-error">{t('preview.invalidArtifact')}</div>
       ) : artifact.experiment_status && artifact.experiment_status !== 'succeeded' ? (
-        <div className="artifact-preview preview-error">{t('preview.experimentNotSucceeded', { status: artifact.experiment_status })}</div>
+        <div className="artifact-preview preview-error">{t('preview.experimentNotSucceeded', { status: statusLabel(artifact.experiment_status, t) })}</div>
       ) : artifact.mime_type?.startsWith('image/') ? (
         <img className="artifact-image" src={artifact.download_url || artifact.url} alt={artifact.name} />
       ) : status === 'loading' ? (
@@ -353,7 +354,7 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
       ) : null}
       <div className="artifact-body">
         <h3>{artifact.name}</h3>
-        <p className="muted">{artifact.kind} · {artifact.valid ? t('common.valid') : t('common.invalid')}{artifact.experiment_status ? ` · ${t('preview.runStatus', { status: artifact.experiment_status })}` : ''}</p>
+        <p className="muted">{artifact.kind} · {artifact.valid ? t('common.valid') : t('common.invalid')}{artifact.experiment_status ? ` · ${t('preview.runStatus', { status: statusLabel(artifact.experiment_status, t) })}` : ''}</p>
         <p className="artifact-lineage">{artifact.metadata?.lineage && typeof artifact.metadata.lineage === 'object'
           ? t('preview.lineage', {
             run: String((artifact.metadata.lineage as Record<string, unknown>).run_id || t('preview.lineageUnbound')),

@@ -12822,7 +12822,7 @@
     "sidebar.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
     "sidebar.projects": "\u9879\u76EE",
     "sidebar.noProjects": "\u6682\u65E0\u9879\u76EE",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.mastraWorkflows": "Mastra \u5DE5\u4F5C\u6D41",
     "sidebar.memoryGraph": "\u9879\u76EE\u8BB0\u5FC6\u56FE",
     "sidebar.modelSettings": "\u6A21\u578B\u914D\u7F6E",
     "theme.light": "\u6D45\u8272",
@@ -13203,6 +13203,109 @@
     "errors.timeout": "\u8BF7\u6C42\u8D85\u65F6\uFF0C\u8BF7\u68C0\u67E5\u672C\u5730\u670D\u52A1\u72B6\u6001\u540E\u91CD\u8BD5\u3002",
     "errors.offline": "\u65E0\u6CD5\u8FDE\u63A5 Research OS API\uFF0C\u8BF7\u786E\u8BA4\u672C\u5730\u670D\u52A1\u4ECD\u5728\u8FD0\u884C\u3002",
     "errors.requestFailed": "\u8BF7\u6C42\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
+    "errors.apiFailure": "\u8BF7\u6C42\u5931\u8D25\uFF08{code}\uFF09\u3002",
+    "apiError.api_unknown": "\u672C\u5730\u670D\u52A1\u8FD4\u56DE\u4E86\u65E0\u6CD5\u8BC6\u522B\u7684\u9519\u8BEF\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
+    "apiError.artifact_invalidated": "\u8BE5\u4EA7\u7269\u5DF2\u56E0\u4E0A\u6E38\u53D8\u5316\u5931\u6548\uFF0C\u4E0D\u80FD\u7EE7\u7EED\u4F7F\u7528\u3002",
+    "apiError.artifact_not_found": "\u5F53\u524D\u9879\u76EE\u4E2D\u4E0D\u5B58\u5728\u8BE5\u4EA7\u7269\u3002",
+    "apiError.claim_review_not_found": "\u5F53\u524D\u9879\u76EE\u4E2D\u4E0D\u5B58\u5728\u8BE5\u8BBA\u65AD\u5BA1\u9605\u3002",
+    "apiError.embedding_requires_reset": "\u5207\u6362\u6A21\u578B\u9700\u8981\u91CD\u5EFA\u6570\u636E\u76EE\u5F55\u5E76\u91CD\u65B0\u6444\u5165\u8BED\u4E49\u8BB0\u5FC6\u3002",
+    "apiError.experiment_not_found": "\u5F53\u524D\u9879\u76EE\u4E2D\u4E0D\u5B58\u5728\u8BE5\u5B9E\u9A8C\u8FD0\u884C\u3002",
+    "apiError.feedback_not_found": "\u5F53\u524D\u9879\u76EE\u4E2D\u4E0D\u5B58\u5728\u8BE5\u53CD\u9988\u3002",
+    "apiError.idea_not_ready": "\u7814\u7A76 Idea \u5C1A\u672A\u8FBE\u5230\u53EF\u786E\u8BA4\u72B6\u6001\u3002",
+    "apiError.invalid_json": "\u8BF7\u6C42\u6B63\u6587\u5FC5\u987B\u662F\u6709\u6548 JSON\u3002",
+    "apiError.malware_detected": "Windows Defender \u68C0\u6D4B\u5230\u5A01\u80C1\uFF0C\u6587\u4EF6\u5DF2\u62D2\u7EDD\u3002",
+    "apiError.material_search_pagination_unsupported": "\u5F53\u524D\u8BED\u4E49\u68C0\u7D22\u4E0D\u652F\u6301\u672C\u5730\u5206\u9875\u3002",
+    "apiError.memory_link_not_active": "\u53EA\u6709 active \u8BED\u4E49\u8BB0\u5FC6\u53EF\u4EE5\u64A4\u9500\u6216\u5220\u9664\u3002",
+    "apiError.memory_link_not_found": "\u9879\u76EE\u8BED\u4E49\u8BB0\u5FC6\u5173\u8054\u4E0D\u5B58\u5728\u3002",
+    "apiError.no_open_pdf_candidates": "\u5F53\u524D\u5019\u9009\u6CA1\u6709\u767D\u540D\u5355\u5F00\u653E PDF\uFF0C\u65E0\u6CD5\u63D0\u53D6\u5168\u6587\u8BC1\u636E\u3002",
+    "apiError.paper_not_found": "\u8BE5\u6587\u732E\u4E0D\u5C5E\u4E8E\u5F53\u524D\u9879\u76EE\u3002",
+    "apiError.project_cancelled": "\u5DF2\u53D6\u6D88\u9879\u76EE\u4E0D\u80FD\u6062\u590D\u3002",
+    "apiError.project_not_active": "\u9879\u76EE\u5F53\u524D\u4E0D\u53EF\u6267\u884C\u8BE5\u64CD\u4F5C\u3002",
+    "apiError.project_not_found": "\u9879\u76EE\u4E0D\u5B58\u5728\u3002",
+    "apiError.proposal_not_found": "Proposal \u4E0D\u5B58\u5728\u3002",
+    "apiError.related_work_run_not_found": "\u76F8\u5173\u5DE5\u4F5C\u9012\u5F52\u8FD0\u884C\u4E0D\u5B58\u5728\u3002",
+    "apiError.report_no_events": "\u5F53\u524D\u7A97\u53E3\u6CA1\u6709\u771F\u5B9E\u9879\u76EE\u4E8B\u4EF6\uFF0C\u62A5\u544A\u4FDD\u6301\u4E3A\u7A7A\u3002",
+    "apiError.repository_candidate_exists": "\u8BE5\u9879\u76EE\u5DF2\u7ECF\u6DFB\u52A0\u8FC7\u8FD9\u4E2A\u4ED3\u5E93\u5019\u9009\u3002",
+    "apiError.repository_not_found": "\u4ED3\u5E93\u5019\u9009\u4E0D\u5B58\u5728\u3002",
+    "apiError.reproduction_run_not_found": "\u590D\u73B0\u8FD0\u884C\u4E0D\u5B58\u5728\u3002",
+    "apiError.session_not_found": "\u5BF9\u8BDD\u4F1A\u8BDD\u4E0D\u5B58\u5728\u3002",
+    "apiError.session_project_mismatch": "\u4F1A\u8BDD\u4E0D\u5C5E\u4E8E\u8BE5\u9879\u76EE\u3002",
+    "apiError.upload_file_missing": "\u7F3A\u5C11\u4E0A\u4F20\u6587\u4EF6\u3002",
+    "apiError.upload_too_large": "\u6587\u4EF6\u8D85\u8FC7 50 MB \u9650\u5236\u3002",
+    "apiError.upload_type_forbidden": "\u8BE5\u6587\u4EF6\u7C7B\u578B\u4E0D\u5141\u8BB8\u4E0A\u4F20\u3002",
+    "apiError.validation_error": "\u63D0\u4EA4\u5185\u5BB9\u672A\u901A\u8FC7\u6821\u9A8C\uFF0C\u8BF7\u68C0\u67E5\u540E\u91CD\u8BD5\u3002",
+    "status.accepted": "\u5DF2\u63A5\u53D7",
+    "status.approvalRequired": "\u9700\u5BA1\u6279",
+    "status.awaitingArtifactApproval": "\u7B49\u5F85\u4EA7\u7269\u5BA1\u6279",
+    "status.blocked": "\u963B\u585E",
+    "status.calculated": "\u5DF2\u8BA1\u7B97",
+    "status.cancelRequested": "\u5DF2\u8BF7\u6C42\u53D6\u6D88",
+    "status.candidateExists": "\u5DF2\u6709\u5019\u9009",
+    "status.candidateOnly": "\u4EC5\u5019\u9009",
+    "status.clean": "\u5E72\u51C0",
+    "status.closed": "\u5DF2\u5173\u95ED",
+    "status.completed": "\u5DF2\u5B8C\u6210",
+    "status.confirmedPaper": "\u5DF2\u786E\u8BA4\u8BBA\u6587",
+    "status.conflict": "\u51B2\u7A81",
+    "status.declared": "\u5DF2\u58F0\u660E",
+    "status.dependencyFailed": "\u4F9D\u8D56\u5B89\u88C5\u5931\u8D25",
+    "status.dependencyInstalling": "\u4F9D\u8D56\u5B89\u88C5\u4E2D",
+    "status.dirty": "\u6709\u672A\u63D0\u4EA4\u53D8\u66F4",
+    "status.disabled": "\u5DF2\u7981\u7528",
+    "status.empty": "\u7A7A",
+    "status.enabled": "\u5DF2\u542F\u7528",
+    "status.enforced": "\u5DF2\u5F3A\u5236\u6267\u884C",
+    "status.evidenceRequired": "\u9700\u8BC1\u636E",
+    "status.fulltextEvidence": "\u5168\u6587\u8BC1\u636E",
+    "status.invalidResponse": "\u54CD\u5E94\u65E0\u6548",
+    "status.invalidated": "\u5DF2\u5931\u6548",
+    "status.legacyUnverified": "\u5386\u53F2\u672A\u9A8C\u8BC1",
+    "status.licenseReviewRequired": "\u8BB8\u53EF\u8BC1\u5F85\u5BA1",
+    "status.manual": "\u624B\u52A8",
+    "status.maxTotalReached": "\u5DF2\u8FBE\u603B\u91CF\u4E0A\u9650",
+    "status.metadataCandidate": "\u5143\u6570\u636E\u5019\u9009",
+    "status.metadataCandidatesOnly": "\u4EC5\u5143\u6570\u636E\u5019\u9009",
+    "status.metadataOnly": "\u4EC5\u5143\u6570\u636E",
+    "status.observed": "\u5DF2\u89C2\u6D4B",
+    "status.ok": "\u6B63\u5E38",
+    "status.open": "\u5F85\u5904\u7406",
+    "status.partial": "\u90E8\u5206\u5B8C\u6210",
+    "status.projectContained": "\u9879\u76EE\u53D7\u63A7",
+    "status.projectScoped": "\u9879\u76EE\u8303\u56F4",
+    "status.proposalCreated": "\u63D0\u6848\u5DF2\u521B\u5EFA",
+    "status.queued": "\u6392\u961F\u4E2D",
+    "status.rateLimited": "\u9650\u6D41",
+    "status.ready": "\u5C31\u7EEA",
+    "status.reopened": "\u5DF2\u91CD\u65B0\u6253\u5F00",
+    "status.reviewRequired": "\u5F85\u5BA1\u9605",
+    "status.semanticCandidate": "\u8BED\u4E49\u5019\u9009",
+    "status.selected": "\u5DF2\u9009\u62E9",
+    "status.started": "\u5DF2\u5F00\u59CB",
+    "status.timedOut": "\u8D85\u65F6",
+    "status.unresolved": "\u672A\u89E3\u51B3",
+    "status.unsupported": "\u4E0D\u652F\u6301",
+    "status.verified": "\u5DF2\u9A8C\u8BC1",
+    "status.active": "\u8FDB\u884C\u4E2D",
+    "status.approved": "\u5DF2\u6279\u51C6",
+    "status.candidate": "\u5019\u9009",
+    "status.cancelled": "\u5DF2\u53D6\u6D88",
+    "status.claimReviewed": "\u5DF2\u5BA1\u9605\u8BBA\u65AD",
+    "status.confirmed": "\u5DF2\u786E\u8BA4",
+    "status.dependencyPending": "\u7B49\u5F85\u4F9D\u8D56\u5B89\u88C5",
+    "status.failed": "\u5931\u8D25",
+    "status.located": "\u5DF2\u5B9A\u4F4D",
+    "status.pageQuote": "\u9875\u7801\u5F15\u6587",
+    "status.paused": "\u5DF2\u6682\u505C",
+    "status.pending": "\u5F85\u5904\u7406",
+    "status.rejected": "\u5DF2\u62D2\u7EDD",
+    "status.running": "\u5904\u7406\u4E2D",
+    "status.sourceDownloaded": "\u6E90\u7801\u5DF2\u4E0B\u8F7D",
+    "status.sourceDownloading": "\u6E90\u7801\u4E0B\u8F7D\u4E2D",
+    "status.succeeded": "\u6210\u529F",
+    "status.unconfirmed": "\u672A\u786E\u8BA4",
+    "status.unlocated": "\u672A\u5B9A\u4F4D",
+    "status.valid": "\u6709\u6548",
+    "status.waitingApproval": "\u7B49\u5F85\u5BA1\u6279",
     "comparison.innovation": "\u6F5C\u5728\u521B\u65B0\u4FE1\u53F7",
     "comparison.potentialImprovement": "\u6F5C\u5728\u6539\u5584\u4FE1\u53F7",
     "comparison.potentialRegression": "\u6F5C\u5728\u56DE\u5F52\u4FE1\u53F7",
@@ -13217,7 +13320,7 @@
     "comparison.accepted": "\u5DF2\u4FDD\u7559\u5019\u9009",
     "comparison.rejected": "\u5DF2\u62D2\u7EDD",
     "comparison.metricUnrecorded": "\u672A\u8BB0\u5F55",
-    "comparison.selectRequired": "\u8BF7\u9009\u62E9\u5DF2\u786E\u8BA4 Paper\u3001\u5DF2\u5B8C\u6210\u590D\u73B0 Run \u548C\u81F3\u5C11\u4E00\u6761\u5B9A\u4F4D Evidence",
+    "comparison.selectRequired": "\u8BF7\u9009\u62E9\u5DF2\u786E\u8BA4\u8BBA\u6587\u3001\u5DF2\u5B8C\u6210\u590D\u73B0\u8FD0\u884C\u548C\u81F3\u5C11\u4E00\u6761\u5DF2\u5B9A\u4F4D\u8BC1\u636E",
     "comparison.paperMetricsLabel": "\u8BBA\u6587\u6307\u6807",
     "comparison.datasetsLabel": "\u6570\u636E\u96C6",
     "comparison.definitionsLabel": "\u6307\u6807\u5B9A\u4E49",
@@ -13228,18 +13331,18 @@
     "comparison.acceptedToast": "\u5019\u9009\u5DF2\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u7814\u7A76\u7ED3\u8BBA",
     "comparison.rejectedToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55",
     "comparison.title": "\u590D\u73B0\u6548\u679C\u6BD4\u8F83",
-    "comparison.hint": "\u53EA\u6BD4\u8F83\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4 Paper\u3001\u5E26\u5B9A\u4F4D\u548C\u54C8\u5E0C\u7684 Evidence\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8BB0 Artifact \u7684\u771F\u5B9E\u590D\u73B0 Run\u3002\u7ED3\u679C\u662F integration result\uFF1B\u6F5C\u5728\u6539\u5584\u3001\u53CD\u4F8B\u548C\u521B\u65B0\u4FE1\u53F7\u90FD\u5FC5\u987B\u4EBA\u5DE5\u6838\u9A8C\u3002",
+    "comparison.hint": "\u53EA\u6BD4\u8F83\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4\u8BBA\u6587\u3001\u5E26\u5B9A\u4F4D\u548C\u54C8\u5E0C\u7684\u8BC1\u636E\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8BB0\u4EA7\u7269\u7684\u771F\u5B9E\u590D\u73B0\u8FD0\u884C\u3002\u7ED3\u679C\u5C5E\u4E8E\u96C6\u6210\u7ED3\u679C\uFF1B\u6F5C\u5728\u6539\u5584\u3001\u53CD\u4F8B\u548C\u521B\u65B0\u4FE1\u53F7\u90FD\u5FC5\u987B\u4EBA\u5DE5\u6838\u9A8C\u3002",
     "comparison.projectScope": "\u9879\u76EE\u8303\u56F4",
-    "comparison.scopeCounts": "\u53EF\u6BD4\u8F83 Paper\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709 Artifact \u7684\u590D\u73B0\uFF1A{runs} \xB7 \u5DF2\u4FDD\u5B58\u6BD4\u8F83\uFF1A{comparisons}",
-    "comparison.empty": "\u521B\u5EFA\u6BD4\u8F83\u524D\uFF0C\u9700\u8981\u5DF2\u786E\u8BA4 Paper\uFF0C\u4EE5\u53CA completed \u4E14\u5DF2\u767B\u8BB0\u8F93\u51FA Artifact \u7684\u590D\u73B0 Run\u3002",
+    "comparison.scopeCounts": "\u53EF\u6BD4\u8F83\u8BBA\u6587\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709\u4EA7\u7269\u7684\u590D\u73B0\uFF1A{runs} \xB7 \u5DF2\u4FDD\u5B58\u6BD4\u8F83\uFF1A{comparisons}",
+    "comparison.empty": "\u521B\u5EFA\u6BD4\u8F83\u524D\uFF0C\u9700\u8981\u5DF2\u786E\u8BA4\u8BBA\u6587\uFF0C\u4EE5\u53CA\u5DF2\u5B8C\u6210\u4E14\u5DF2\u767B\u8BB0\u8F93\u51FA\u4EA7\u7269\u7684\u590D\u73B0\u8FD0\u884C\u3002",
     "comparison.createTitle": "\u521B\u5EFA\u7ED3\u6784\u5316\u6BD4\u8F83",
-    "comparison.createHint": "\u8BBA\u6587\u6307\u6807\u5FC5\u987B\u7531\u7528\u6237\u4ECE\u6709\u5B9A\u4F4D\u7684 Evidence \u4E2D\u5F55\u5165\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u4ECE\u6A21\u578B\u6216\u6807\u9898\u731C\u6D4B\u6307\u6807\u3002",
-    "comparison.confirmedPaper": "\u786E\u8BA4\u7684 Paper",
-    "comparison.reproductionRun": "\u590D\u73B0 Run",
-    "comparison.paperEvidence": "\u8BBA\u6587 Evidence",
-    "comparison.unnamedClaim": "\u672A\u547D\u540D claim",
+    "comparison.createHint": "\u8BBA\u6587\u6307\u6807\u5FC5\u987B\u7531\u7528\u6237\u4ECE\u5DF2\u5B9A\u4F4D\u8BC1\u636E\u4E2D\u5F55\u5165\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u4ECE\u6A21\u578B\u6216\u6807\u9898\u731C\u6D4B\u6307\u6807\u3002",
+    "comparison.confirmedPaper": "\u786E\u8BA4\u7684\u8BBA\u6587",
+    "comparison.reproductionRun": "\u590D\u73B0\u8FD0\u884C",
+    "comparison.paperEvidence": "\u8BBA\u6587\u8BC1\u636E",
+    "comparison.unnamedClaim": "\u672A\u547D\u540D\u8BBA\u65AD",
     "comparison.missingPdfHash": "\u7F3A\u5C11 PDF hash",
-    "comparison.noLocatedEvidence": "\u5F53\u524D Paper \u6CA1\u6709\u5E26\u5B9A\u4F4D\u7684 Evidence\u3002",
+    "comparison.noLocatedEvidence": "\u5F53\u524D\u8BBA\u6587\u6CA1\u6709\u5DF2\u5B9A\u4F4D\u7684\u8BC1\u636E\u3002",
     "comparison.paperMetricsJson": "\u8BBA\u6587\u6307\u6807 JSON",
     "comparison.dataVersion": "\u8BBA\u6587\u6570\u636E\u7248\u672C",
     "comparison.dataVersionPlaceholder": "\u6CA1\u6709\u62AB\u9732\u5219\u7559\u7A7A\uFF0C\u6BD4\u8F83\u4F1A\u6807\u8BB0 partial",
@@ -13251,22 +13354,22 @@
     "comparison.definitionsJson": "\u6307\u6807\u5B9A\u4E49 JSON",
     "comparison.save": "\u4FDD\u5B58\u6BD4\u8F83",
     "comparison.savedTitle": "\u5DF2\u4FDD\u5B58\u6BD4\u8F83\u4E0E\u5F85\u6838\u9A8C\u5019\u9009",
-    "comparison.savedHint": "\u6BCF\u4E2A\u6570\u503C\u90FD\u663E\u793A\u8BBA\u6587 Evidence\u3001\u590D\u73B0 commit\u3001seed\u3001\u914D\u7F6E\u548C Artifact \u7ED1\u5B9A\uFF1B\u63A5\u53D7\u5019\u9009\u53EA\u8868\u793A\u4FDD\u7559\u5BA1\u9605\u4EFB\u52A1\u3002",
+    "comparison.savedHint": "\u6BCF\u4E2A\u6570\u503C\u90FD\u663E\u793A\u8BBA\u6587\u8BC1\u636E\u3001\u590D\u73B0\u63D0\u4EA4\u3001\u968F\u673A\u79CD\u5B50\u3001\u914D\u7F6E\u548C\u4EA7\u7269\u7ED1\u5B9A\uFF1B\u63A5\u53D7\u5019\u9009\u53EA\u8868\u793A\u4FDD\u7559\u5BA1\u9605\u4EFB\u52A1\u3002",
     "comparison.savedEmpty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u6548\u679C\u6BD4\u8F83\u8BB0\u5F55\u3002",
     "comparison.inputHash": "\u8F93\u5165 hash",
-    "comparison.artifactsCount": "Artifacts {count} \u4E2A",
+    "comparison.artifactsCount": "\u4EA7\u7269 {count} \u4E2A",
     "comparison.metric": "\u6307\u6807",
     "comparison.paper": "\u8BBA\u6587",
     "comparison.reproductionMean": "\u590D\u73B0 mean",
     "comparison.status": "\u72B6\u6001",
-    "comparison.evidenceStatus": "Evidence \u72B6\u6001\uFF1A",
+    "comparison.evidenceStatus": "\u8BC1\u636E\u72B6\u6001\uFF1A",
     "comparison.candidateId": "\u5019\u9009 ID",
     "comparison.keep": "\u4FDD\u7559",
     "comparison.noCandidates": "\u6CA1\u6709\u81EA\u52A8\u751F\u6210\u7684\u5DEE\u5F02\u4FE1\u53F7\u3002",
-    "research.claimReviewed": "\u5DF2\u5BA1\u9605 Claim",
-    "research.pageQuote": "\u5B9A\u4F4D quote",
-    "research.metadataOnly": "\u4EC5 metadata",
-    "research.eligibleRequired": "\u5F53\u524D\u6CA1\u6709\u540C\u65F6\u6EE1\u8DB3\u786E\u8BA4 Paper\u3001\u5B9A\u4F4D Evidence \u548C accepted ClaimReview \u7684\u6750\u6599\u3002",
+    "research.claimReviewed": "\u5DF2\u5BA1\u9605\u8BBA\u65AD",
+    "research.pageQuote": "\u5B9A\u4F4D\u5F15\u6587",
+    "research.metadataOnly": "\u4EC5\u5143\u6570\u636E",
+    "research.eligibleRequired": "\u5F53\u524D\u6CA1\u6709\u540C\u65F6\u6EE1\u8DB3\u5DF2\u786E\u8BA4\u8BBA\u6587\u3001\u5DF2\u5B9A\u4F4D\u8BC1\u636E\u548C\u5DF2\u63A5\u53D7\u8BBA\u65AD\u5BA1\u9605\u7684\u6750\u6599\u3002",
     "research.matrixCreated": "\u7814\u7A76\u73B0\u72B6\u77E9\u9635\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8BB0\u5F55\u7684\u5B57\u6BB5\u4FDD\u6301 unresolved\u3002",
     "research.candidateRecorded": "\u5019\u9009\u5DF2\u8BB0\u5F55\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65AD\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7ED3\u8BBA\u3002",
     "research.acceptGapReason": "\u7528\u6237\u786E\u8BA4\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\u3002",
@@ -13274,7 +13377,7 @@
     "research.acceptedGapToast": "\u5019\u9009\u5DF2\u786E\u8BA4\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u79D1\u5B66\u7ED3\u8BBA\u3002",
     "research.rejectedGapToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55\u3002",
     "research.title": "\u7814\u7A76\u73B0\u72B6\u77E9\u9635",
-    "research.hint": "\u77E9\u9635\u53EA\u63A5\u53D7\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4\u7684 Paper\u3001\u5E26\u9875\u7801/\u7AE0\u8282\u5B9A\u4F4D\u7684 Evidence \u548C\u5DF2\u63A5\u53D7 ClaimReview\uFF1B\u672A\u77E5\u5B57\u6BB5\u4E0D\u4F1A\u7531\u6A21\u578B\u6216 metadata \u731C\u6D4B\u3002",
+    "research.hint": "\u77E9\u9635\u53EA\u63A5\u53D7\u5F53\u524D\u9879\u76EE\u5DF2\u786E\u8BA4\u7684\u8BBA\u6587\u3001\u5E26\u9875\u7801/\u7AE0\u8282\u5B9A\u4F4D\u7684\u8BC1\u636E\u548C\u5DF2\u63A5\u53D7\u8BBA\u65AD\u5BA1\u9605\uFF1B\u672A\u77E5\u5B57\u6BB5\u4E0D\u4F1A\u7531\u6A21\u578B\u6216\u5143\u6570\u636E\u731C\u6D4B\u3002",
     "research.refreshing": "\u6B63\u5728\u5237\u65B0\u9879\u76EE\u8303\u56F4\u7814\u7A76\u73B0\u72B6\u2026",
     "research.matrixReady": "\u77E9\u9635\u5DF2\u5EFA\u7ACB",
     "research.createMatrix": "\u5EFA\u7ACB\u77E9\u9635",
@@ -13312,9 +13415,9 @@
     "research.keepCandidate": "\u4FDD\u7559\u5019\u9009",
     "research.noCandidates": "\u5C1A\u672A\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009\u3002",
     "graph.kind.candidate": "\u5019\u9009",
-    "graph.kind.paper": "Paper",
-    "graph.kind.evidence": "Evidence",
-    "graph.kind.claimReview": "ClaimReview",
+    "graph.kind.paper": "\u8BBA\u6587",
+    "graph.kind.evidence": "\u8BC1\u636E",
+    "graph.kind.claimReview": "\u8BBA\u65AD\u5BA1\u9605",
     "graph.status.candidate": "\u5F85\u786E\u8BA4",
     "graph.status.confirmed": "\u5DF2\u786E\u8BA4",
     "graph.status.unconfirmed": "\u672A\u786E\u8BA4",
@@ -13323,12 +13426,12 @@
     "graph.status.pending": "\u5F85\u5BA1\u9605",
     "graph.status.accepted": "\u5DF2\u63A5\u53D7",
     "graph.status.rejected": "\u5DF2\u62D2\u7EDD",
-    "graph.evidence.metadataOnly": "\u4EC5 metadata",
-    "graph.evidence.pageQuote": "\u9875\u7801/\u7AE0\u8282 quote",
-    "graph.evidence.claimReviewed": "ClaimReview \u5DF2\u63A5\u53D7",
+    "graph.evidence.metadataOnly": "\u4EC5\u5143\u6570\u636E",
+    "graph.evidence.pageQuote": "\u9875\u7801/\u7AE0\u8282\u5F15\u6587",
+    "graph.evidence.claimReviewed": "\u8BBA\u65AD\u5BA1\u9605\u5DF2\u63A5\u53D7",
     "graph.edgeCount": "{count} \u6761\u8FB9",
     "graph.title": "\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE",
-    "graph.hint": "\u56FE\u53EA\u6295\u5F71\u5F53\u524D project_id \u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5F15\u7528\u3001Paper-Evidence \u548C ClaimReview-Evidence \u5173\u7CFB\uFF1Bprovider \u5F15\u7528\u8FB9\u4ECD\u7136\u662F metadata \u5173\u7CFB\uFF0C\u4E0D\u662F\u7814\u7A76\u7ED3\u8BBA\u3002",
+    "graph.hint": "\u56FE\u53EA\u6295\u5F71\u5F53\u524D project_id \u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5F15\u7528\u3001\u8BBA\u6587-\u8BC1\u636E\u548C\u8BBA\u65AD\u5BA1\u9605-\u8BC1\u636E\u5173\u7CFB\uFF1B\u6765\u6E90\u5F15\u7528\u8FB9\u4ECD\u7136\u662F\u5143\u6570\u636E\u5173\u7CFB\uFF0C\u4E0D\u662F\u7814\u7A76\u7ED3\u8BBA\u3002",
     "graph.requestFailed": "\u5F15\u7528\u56FE\u8BF7\u6C42\u5931\u8D25\uFF1A{error}",
     "graph.loading": "\u6B63\u5728\u8BFB\u53D6\u9879\u76EE\u8303\u56F4\u5F15\u7528\u56FE\u2026",
     "graph.permissionScope": "\u6743\u9650\u8303\u56F4",
@@ -13337,7 +13440,7 @@
     "graph.empty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u5DF2\u4FDD\u5B58\u7684\u56FE\u8282\u70B9\u6216\u5173\u7CFB\u3002",
     "graph.onlySaved": "\u53EA\u663E\u793A\u6570\u636E\u5E93\u4E2D\u5DF2\u7ECF\u4FDD\u5B58\u7684\u5173\u7CFB\u3002",
     "graph.scale": "\u56FE\u89C4\u6A21",
-    "graph.scaleText": "{nodes} \u4E2A\u8282\u70B9 \xB7 {edges} \u6761\u8FB9\uFF1B\u6309\u5019\u9009\u3001Paper\u3001Evidence\u3001ClaimReview \u5206\u5C42\u3002",
+    "graph.scaleText": "{nodes} \u4E2A\u8282\u70B9 \xB7 {edges} \u6761\u8FB9\uFF1B\u6309\u5019\u9009\u3001\u8BBA\u6587\u3001\u8BC1\u636E\u3001\u8BBA\u65AD\u5BA1\u9605\u5206\u5C42\u3002",
     "graph.alert": "\u5F53\u524D\u54CD\u5E94\u4E3A partial\u3002\u56FE\u4E2D\u53EA\u5448\u73B0\u6210\u529F\u8FD4\u56DE\u4E14\u5DF2\u901A\u8FC7\u9879\u76EE\u8303\u56F4\u6821\u9A8C\u7684\u8282\u70B9\u548C\u8FB9\u3002",
     "graph.legendAria": "\u56FE\u4F8B",
     "graph.legendNote": "\u7BAD\u5934\u8868\u793A\u6570\u636E\u5E93\u4E2D\u660E\u786E\u4FDD\u5B58\u7684\u5173\u7CFB",
@@ -13368,13 +13471,13 @@
     "method.hypotheses": "\u5047\u8BBE",
     "method.contributions": "\u9884\u671F\u8D21\u732E",
     "method.relatedEvidence": "\u76F8\u5173\u5DE5\u4F5C\u4F9D\u636E",
-    "method.verifiedCount": "{verified} \u6761\u5DF2\u9A8C\u8BC1\u8BB0\u5F55\uFF0C{total} \u6761\u9879\u76EE Paper",
+    "method.verifiedCount": "{verified} \u6761\u5DF2\u9A8C\u8BC1\u8BB0\u5F55\uFF0C{total} \u6761\u9879\u76EE\u8BBA\u6587",
     "code.title": "\u4EE3\u7801\u5DE5\u4F5C\u533A",
     "code.hint": "\u8FD9\u91CC\u5C5E\u4E8E\u5F53\u524D\u9879\u76EE\u81EA\u5DF1\u7684\u4EE3\u7801\uFF1B\u590D\u73B0\u4ED3\u5E93\u548C\u9879\u76EE\u4EE3\u7801\u4E25\u683C\u5206\u5F00\uFF0C\u6240\u6709\u4FEE\u6539\u3001\u4F9D\u8D56\u548C Git \u64CD\u4F5C\u90FD\u9700\u8981 Proposal\u3002",
     "code.error": "\u4EE3\u7801\u5DE5\u4F5C\u533A\u8BFB\u53D6\u5931\u8D25\uFF1A{error}",
     "code.workspace": "\u9879\u76EE\u5DE5\u4F5C\u533A",
     "code.gitBaseline": "Git \u57FA\u7EBF",
-    "code.noCommit": "\u5C1A\u65E0 commit",
+    "code.noCommit": "\u5C1A\u65E0\u63D0\u4EA4",
     "code.pendingTitle": "\u5F85\u5BA1\u6279\u4EE3\u7801/\u914D\u7F6E/\u590D\u73B0\u52A8\u4F5C",
     "code.pendingCount": "{count} \u4E2A",
     "code.fileTree": "\u53D7\u9650\u6587\u4EF6\u6811",
@@ -13385,28 +13488,28 @@
     "code.diffReadonly": "\u53EA\u8BFB\u5C55\u793A\u5F53\u524D\u4EE3\u7801\u76EE\u5F55\u7684 Git diff\u3002",
     "code.loading": "\u6B63\u5728\u8BFB\u53D6\u53D7\u9650 Git \u5DE5\u4F5C\u533A\u2026",
     "queue.title": "\u8FD0\u884C\u961F\u5217",
-    "queue.hint": "\u8FD0\u884C\u72B6\u6001\u548C\u6570\u503C\u5747\u6765\u81EA\u771F\u5B9E Experiment Run\uFF1B\u672A\u6267\u884C\u7684\u8BA1\u5212\u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002",
+    "queue.hint": "\u8FD0\u884C\u72B6\u6001\u548C\u6570\u503C\u5747\u6765\u81EA\u771F\u5B9E\u5B9E\u9A8C\u8FD0\u884C\uFF1B\u672A\u6267\u884C\u7684\u8BA1\u5212\u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002",
     "queue.count": "{count} \u6761",
     "queue.runUnassigned": "\u672A\u5206\u914D",
     "queue.empty": "\u5F53\u524D\u6CA1\u6709\u6392\u961F\u6216\u6267\u884C\u4E2D\u7684\u5B9E\u9A8C\u3002",
     "metrics.title": "\u6307\u6807\u7EDF\u8BA1",
     "metrics.empty": "\u8FD8\u6CA1\u6709\u5E26\u6570\u503C\u6307\u6807\u7684\u5B9E\u9A8C\u7ED3\u679C\u3002",
     "lineage.title": "\u7ED3\u679C\u8C31\u7CFB",
-    "lineage.hint": "\u6BCF\u4E2A Artifact \u5FC5\u987B\u80FD\u56DE\u94FE Experiment\u3001Run\u3001Idea \u7248\u672C\u3001\u4EE3\u7801 commit\u3001\u6570\u636E\u7248\u672C\u548C\u914D\u7F6E\u3002",
+    "lineage.hint": "\u6BCF\u4E2A\u4EA7\u7269\u5FC5\u987B\u80FD\u56DE\u94FE\u5B9E\u9A8C\u3001\u8FD0\u884C\u3001Idea \u7248\u672C\u3001\u4EE3\u7801\u63D0\u4EA4\u3001\u6570\u636E\u7248\u672C\u548C\u914D\u7F6E\u3002",
     "lineage.missingMeta": "\u7F3A\u5C11\u8C31\u7CFB\u5143\u6570\u636E",
-    "lineage.empty": "\u5F53\u524D\u6CA1\u6709\u53EF\u8FFD\u6EAF\u7684 Artifact\u3002",
+    "lineage.empty": "\u5F53\u524D\u6CA1\u6709\u53EF\u8FFD\u6EAF\u7684\u4EA7\u7269\u3002",
     "workflow.empty": "\u5F53\u524D\u5B50\u9875\u9762\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6570\u636E\u3002",
     "literature.recursiveDefaultReason": "\u6269\u5C55\u5F53\u524D\u9879\u76EE\u7684\u76F8\u5173\u5DE5\u4F5C\u5F15\u7528\u7F51\u7EDC",
-    "literature.approveReason": "\u7528\u6237\u786E\u8BA4\u8BE5 metadata candidate \u53EF\u8FDB\u5165\u9879\u76EE Paper",
-    "literature.rejectReason": "\u7528\u6237\u62D2\u7EDD\u8BE5 metadata candidate",
+    "literature.approveReason": "\u7528\u6237\u786E\u8BA4\u8BE5\u5143\u6570\u636E\u5019\u9009\u53EF\u8FDB\u5165\u9879\u76EE\u8BBA\u6587",
+    "literature.rejectReason": "\u7528\u6237\u62D2\u7EDD\u8BE5\u5143\u6570\u636E\u5019\u9009",
     "literature.reopenReason": "\u7528\u6237\u8981\u6C42\u91CD\u65B0\u5BA1\u9605\u8BE5 candidate",
-    "literature.approvedToast": "\u5019\u9009\u5DF2\u8F6C\u6362\u4E3A\u9879\u76EE Paper",
+    "literature.approvedToast": "\u5019\u9009\u5DF2\u8F6C\u6362\u4E3A\u9879\u76EE\u8BBA\u6587",
     "literature.rejectedToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55",
     "literature.reopenedToast": "\u5019\u9009\u5DF2\u91CD\u65B0\u6253\u5F00",
-    "literature.confirmPaper": "\u786E\u8BA4 Paper",
+    "literature.confirmPaper": "\u786E\u8BA4\u8BBA\u6587",
     "literature.rejectCandidate": "\u62D2\u7EDD\u5019\u9009",
     "literature.reopen": "\u91CD\u65B0\u6253\u5F00",
-    "literature.approveDescription": "\u786E\u8BA4\u540E\u4F1A\u521B\u5EFA\u5F53\u524D\u9879\u76EE\u8303\u56F4\u5185\u7684 Paper\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8BC1\u636E\u3002",
+    "literature.approveDescription": "\u786E\u8BA4\u540E\u4F1A\u521B\u5EFA\u5F53\u524D\u9879\u76EE\u8303\u56F4\u5185\u7684\u8BBA\u6587\u8BB0\u5F55\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8BC1\u636E\u3002",
     "literature.rejectDescription": "\u5019\u9009\u4E0D\u4F1A\u88AB\u7269\u7406\u5220\u9664\uFF0C\u51B3\u5B9A\u548C\u539F\u56E0\u4F1A\u4FDD\u7559\u5728\u9879\u76EE\u5BA1\u8BA1\u4E2D\u3002",
     "literature.fieldSelected": "\u5DF2\u9009\u62E9 {field} \u7684 {provider} \u6765\u6E90",
     "literature.enrichReason": "\u8865\u5168\u5F53\u524D\u5019\u9009\u7F3A\u5931\u5B57\u6BB5\u5E76\u8BB0\u5F55\u591A\u6E90 provenance",
@@ -13423,9 +13526,9 @@
     "literature.noRepoLinks": "\u8BBA\u6587\u5DF2\u4FDD\u5B58\u7684\u6765\u6E90\u4E2D\u6CA1\u6709\u660E\u786E\u7684 GitHub/GitLab \u94FE\u63A5\uFF1B\u4E0D\u4F1A\u6839\u636E\u6807\u9898\u731C\u4ED3\u5E93",
     "literature.repoVerified": "\u4ED3\u5E93\u53CC\u6E90\u9A8C\u8BC1\u5B8C\u6210",
     "literature.downloadProposal": "\u4E0B\u8F7D Proposal {id} \u5DF2\u521B\u5EFA",
-    "literature.claimSubmitted": "Claim \u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838",
+    "literature.claimSubmitted": "\u8BBA\u65AD\u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8BC1\u636E\u590D\u6838",
     "literature.reviewRecorded": "\u4EBA\u5DE5\u590D\u6838\u5DF2\u8BB0\u5F55",
-    "literature.reviewRejected": "Claim \u5DF2\u6807\u8BB0\u4E3A\u672A\u901A\u8FC7\u590D\u6838",
+    "literature.reviewRejected": "\u8BBA\u65AD\u5DF2\u6807\u8BB0\u4E3A\u672A\u901A\u8FC7\u590D\u6838",
     "literature.downloadedTo": "\u5DF2\u4E0B\u8F7D\u5230 {path}",
     "literature.projectCodeDir": "\u9879\u76EE\u4EE3\u7801\u76EE\u5F55",
     "literature.proposeDownload": "\u63D0\u51FA\u4E0B\u8F7D",
@@ -13434,14 +13537,14 @@
     "literature.updateSearch": "\u66F4\u65B0\u68C0\u7D22",
     "literature.extractEvidence": "\u63D0\u53D6\u5168\u6587\u8BC1\u636E",
     "literature.seedTitle": "\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u4E0E\u5F15\u7528\u7F51\u7EDC",
-    "literature.seedHint": "\u79CD\u5B50\u53EA\u4F1A\u8FDB\u5165\u5F53\u524D\u9879\u76EE\u7684\u5019\u9009\u6C60\uFF1B\u9012\u5F52\u6269\u5C55\u5FC5\u987B\u5148\u751F\u6210 Proposal \u5E76\u83B7\u5F97\u6279\u51C6\u3002metadata candidate\u3001\u5168\u6587\u8BC1\u636E\u548C\u5DF2\u786E\u8BA4 Paper \u59CB\u7EC8\u5206\u5F00\u3002",
+    "literature.seedHint": "\u79CD\u5B50\u53EA\u4F1A\u8FDB\u5165\u5F53\u524D\u9879\u76EE\u7684\u5019\u9009\u6C60\uFF1B\u9012\u5F52\u6269\u5C55\u5FC5\u987B\u5148\u751F\u6210\u63D0\u6848\u5E76\u83B7\u5F97\u6279\u51C6\u3002\u5143\u6570\u636E\u5019\u9009\u3001\u5168\u6587\u8BC1\u636E\u548C\u5DF2\u786E\u8BA4\u8BBA\u6587\u59CB\u7EC8\u5206\u5F00\u3002",
     "literature.seedType": "\u79CD\u5B50\u7C7B\u578B",
     "literature.titleOption": "\u6807\u9898",
     "literature.urlOption": "\u6765\u6E90 URL",
-    "literature.pdfOption": "\u53D7\u63A7 PDF Artifact",
-    "literature.existingPaperOption": "\u5F53\u524D\u9879\u76EE\u5DF2\u6709 Paper",
+    "literature.pdfOption": "\u53D7\u63A7 PDF \u4EA7\u7269",
+    "literature.existingPaperOption": "\u5F53\u524D\u9879\u76EE\u5DF2\u6709\u8BBA\u6587",
     "literature.selectPdf": "\u9009\u62E9\u53D7\u63A7 PDF",
-    "literature.selectPaper": "\u9009\u62E9\u5F53\u524D\u9879\u76EE Paper",
+    "literature.selectPaper": "\u9009\u62E9\u5F53\u524D\u9879\u76EE\u8BBA\u6587",
     "literature.paperTitle": "\u8BBA\u6587\u6807\u9898",
     "literature.httpsUrl": "HTTPS \u6765\u6E90 URL",
     "literature.bibtexEntry": "BibTeX \u6761\u76EE",
@@ -13458,7 +13561,7 @@
     "literature.recursiveProviders": "\u9012\u5F52\u6765\u6E90",
     "literature.creating": "\u6B63\u5728\u521B\u5EFA\u2026",
     "literature.createRecursiveProposal": "\u4E3A {count} \u4E2A\u79CD\u5B50\u521B\u5EFA\u9012\u5F52 Proposal",
-    "literature.noSeeds": "\u8FD8\u6CA1\u6709\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u3002\u5148\u6DFB\u52A0 DOI\u3001\u6807\u9898\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709 Paper\u3002",
+    "literature.noSeeds": "\u8FD8\u6CA1\u6709\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u3002\u5148\u6DFB\u52A0 DOI\u3001\u6807\u9898\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709\u8BBA\u6587\u3002",
     "literature.runsTitle": "\u5F15\u7528\u7F51\u7EDC\u8FD0\u884C",
     "literature.runsHint": "\u8FD0\u884C\u72B6\u6001\u548C provider attempt \u6765\u81EA\u771F\u5B9E\u8BF7\u6C42\uFF1B\u5931\u8D25\u3001\u53D6\u6D88\u548C\u4E0A\u9650\u622A\u65AD\u4E0D\u4F1A\u88AB\u6807\u8BB0\u4E3A\u6210\u529F\u3002",
     "literature.runCandidates": "{count} \u4E2A\u5019\u9009 \xB7 {edges} \u6761\u5F15\u7528\u8FB9",
@@ -13466,16 +13569,16 @@
     "literature.noFailureDetail": "\u672A\u63D0\u4F9B\u5931\u8D25\u8BE6\u60C5",
     "literature.edgeTitle": "\u5F15\u7528\u56FE\u8FB9\uFF08\u5F53\u524D\u9879\u76EE\u8303\u56F4\uFF09",
     "literature.noRankingSignal": "\u65E0\u6392\u5E8F\u4FE1\u53F7",
-    "literature.candidatesTitle": "\u5F85\u786E\u8BA4 metadata candidate",
-    "literature.candidatesHint": "\u8FD9\u4E9B\u8BB0\u5F55\u6765\u81EA provider \u5143\u6570\u636E\u548C\u5F15\u7528\u7F51\u7EDC\uFF0C\u5C1A\u672A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5DF2\u786E\u8BA4 Paper\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9875\u7801 quote\u3002",
+    "literature.candidatesTitle": "\u5F85\u786E\u8BA4\u5143\u6570\u636E\u5019\u9009",
+    "literature.candidatesHint": "\u8FD9\u4E9B\u8BB0\u5F55\u6765\u81EA\u6765\u6E90\u5143\u6570\u636E\u548C\u5F15\u7528\u7F51\u7EDC\uFF0C\u5C1A\u672A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5DF2\u786E\u8BA4\u8BBA\u6587\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9875\u7801\u5F15\u6587\u3002",
     "literature.yearUnknown": "\u5E74\u4EFD\u672A\u77E5",
-    "literature.providerEvidenceCount": "{count} \u4E2A provider \u8BC1\u636E",
+    "literature.providerEvidenceCount": "{count} \u4E2A\u6765\u6E90\u8BC1\u636E",
     "literature.fieldProvenanceCount": "\u5B57\u6BB5\u6765\u6E90 {count} \u6761",
     "literature.conflicts": "\u51B2\u7A81\uFF1A{fields}",
     "literature.noConflicts": "\u6682\u65E0\u5B57\u6BB5\u51B2\u7A81",
     "literature.viewFieldProvenance": "\u67E5\u770B\u5B57\u6BB5\u6765\u6E90",
     "literature.enrichFields": "\u8865\u5168\u5B57\u6BB5",
-    "literature.provenanceDescription": "\u9009\u62E9\u6765\u6E90\u53EA\u4F1A\u66F4\u65B0\u5F53\u524D\u9879\u76EE\u5019\u9009\u7684\u5B57\u6BB5\u5FEB\u7167\uFF0C\u5E76\u7559\u4E0B\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u5B83\u4E0D\u4F1A\u628A metadata candidate \u81EA\u52A8\u53D8\u6210\u5168\u6587\u8BC1\u636E\u3002",
+    "literature.provenanceDescription": "\u9009\u62E9\u6765\u6E90\u53EA\u4F1A\u66F4\u65B0\u5F53\u524D\u9879\u76EE\u5019\u9009\u7684\u5B57\u6BB5\u5FEB\u7167\uFF0C\u5E76\u7559\u4E0B\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u5B83\u4E0D\u4F1A\u628A\u5143\u6570\u636E\u5019\u9009\u81EA\u52A8\u53D8\u6210\u5168\u6587\u8BC1\u636E\u3002",
     "literature.field": "\u5B57\u6BB5",
     "literature.sourceUnrecorded": "\u6765\u6E90\u672A\u8BB0\u5F55",
     "literature.selected": " \xB7 \u5DF2\u9009",
@@ -13490,7 +13593,7 @@
     "literature.repoPlaceholder": "GitHub \u6216 GitLab HTTPS \u5730\u5740",
     "literature.add": "\u6DFB\u52A0",
     "literature.addRepository": "\u6DFB\u52A0\u4EE3\u7801\u4ED3\u5E93",
-    "literature.discoveryHint": "\u4EE5\u4E0B\u94FE\u63A5\u6765\u81EA\u8BE5 Paper \u5DF2\u4FDD\u5B58\u7684 metadata/\u6765\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9009\uFF0C\u4ECD\u9700\u53CC\u6E90\u9A8C\u8BC1\uFF1A",
+    "literature.discoveryHint": "\u4EE5\u4E0B\u94FE\u63A5\u6765\u81EA\u8BE5\u8BBA\u6587\u5DF2\u4FDD\u5B58\u7684\u5143\u6570\u636E/\u6765\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9009\uFF0C\u4ECD\u9700\u53CC\u6E90\u9A8C\u8BC1\uFF1A",
     "literature.addCandidate": "\u6DFB\u52A0\u5019\u9009",
     "literature.noPapers": "\u5C1A\u65E0\u6587\u732E\u8BB0\u5F55\u3002",
     "literature.materialsTitle": "\u9879\u76EE\u6750\u6599\u5E93",
@@ -13504,15 +13607,15 @@
     "literature.semanticCandidate": "\u8BED\u4E49\u5019\u9009 \xB7 \u672A\u6838\u9A8C",
     "literature.loadMore": "\u52A0\u8F7D\u66F4\u591A",
     "literature.materialsEmpty": "\u8F93\u5165\u5173\u952E\u8BCD\u68C0\u7D22\u5F53\u524D\u9879\u76EE\u7684\u6750\u6599\u3002",
-    "literature.claimTitle": "Claim \u5230\u8BC1\u636E\u4EBA\u5DE5\u590D\u6838",
-    "literature.claimHint": "\u53EA\u80FD\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684\u9875\u7801 quote\uFF1B\u63A5\u53D7\u590D\u6838\u4E0D\u7B49\u4E8E\u8BC1\u660E\u79D1\u5B66\u7ED3\u8BBA\u3002",
-    "literature.claimToReview": "\u5F85\u590D\u6838 Claim",
+    "literature.claimTitle": "\u8BBA\u65AD\u5230\u8BC1\u636E\u4EBA\u5DE5\u590D\u6838",
+    "literature.claimHint": "\u53EA\u80FD\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684\u9875\u7801\u5F15\u6587\uFF1B\u63A5\u53D7\u590D\u6838\u4E0D\u7B49\u4E8E\u8BC1\u660E\u79D1\u5B66\u7ED3\u8BBA\u3002",
+    "literature.claimToReview": "\u5F85\u590D\u6838\u8BBA\u65AD",
     "literature.claimPlaceholder": "\u5199\u51FA\u9700\u8981\u4EBA\u5DE5\u6838\u5BF9\u7684\u5177\u4F53\u7814\u7A76\u9648\u8FF0",
     "literature.noLocator": "\u672A\u63D0\u4F9B\u9875\u7801/\u7AE0\u8282",
-    "literature.noQuote": "\u65E0 quote",
+    "literature.noQuote": "\u65E0\u5F15\u6587",
     "literature.submitReview": "\u63D0\u4EA4\u4EBA\u5DE5\u590D\u6838",
-    "literature.evidenceFirst": "\u5148\u6444\u53D6\u5E26\u9875\u7801\u5B9A\u4F4D\u7684\u5168\u6587\u8BC1\u636E\uFF0C\u518D\u521B\u5EFA Claim \u590D\u6838\u3002",
-    "literature.quoteCount": "{count} \u6761 quote",
+    "literature.evidenceFirst": "\u5148\u6444\u53D6\u5E26\u9875\u7801\u5B9A\u4F4D\u7684\u5168\u6587\u8BC1\u636E\uFF0C\u518D\u521B\u5EFA\u8BBA\u65AD\u590D\u6838\u3002",
+    "literature.quoteCount": "{count} \u6761\u5F15\u6587",
     "literature.acceptReview": "\u63A5\u53D7\u590D\u6838",
     "literature.rejectReview": "\u62D2\u7EDD\u590D\u6838",
     "literature.externalCandidates": "\u5916\u90E8\u8D44\u6E90\u5019\u9009",
@@ -13543,30 +13646,30 @@
     "paper.versionRules": "\u7248\u672C\u89C4\u5219",
     "paper.versionRulesText": "\u5F53\u524D\u9875\u9762\u53EA\u5C55\u793A\u7AE0\u8282\u51C6\u5907\u5EA6\u3002\u4EFB\u4F55\u5199\u5165 paper/main.tex \u7684\u4FEE\u6539\u90FD\u5FC5\u987B\u901A\u8FC7\u72EC\u7ACB Proposal\uFF0C\u6279\u51C6\u540E\u5F62\u6210 Git diff\uFF1B\u5931\u8D25\u6216\u88AB\u62D2\u7EDD\u7684\u5199\u5165\u4E0D\u4F1A\u751F\u6210\u6210\u529F\u7AE0\u8282\u3002",
     "paper.citationsTitle": "\u5F15\u7528\u4E0E BibTeX",
-    "paper.citationsHint": "\u53EA\u663E\u793A\u9879\u76EE\u8303\u56F4 Paper\u3001\u9875\u7801/\u7AE0\u8282 Evidence \u548C ClaimReview \u72B6\u6001\uFF1Bmetadata-only \u4E0D\u80FD\u8FDB\u5165\u8BBA\u8BC1\u3002",
+    "paper.citationsHint": "\u53EA\u663E\u793A\u9879\u76EE\u8303\u56F4\u8BBA\u6587\u3001\u9875\u7801/\u7AE0\u8282\u8BC1\u636E\u548C\u8BBA\u65AD\u5BA1\u9605\u72B6\u6001\uFF1B\u4EC5\u5143\u6570\u636E\u4E0D\u80FD\u8FDB\u5165\u8BBA\u8BC1\u3002",
     "paper.sourcePending": "\u6765\u6E90\u5F85\u8BB0\u5F55",
     "paper.bibtexRecorded": "BibTeX \u5DF2\u8BB0\u5F55",
     "paper.bibtexMissing": "BibTeX \u672A\u8BB0\u5F55",
     "paper.citationReadiness": "\u5F15\u7528\u51C6\u5907\u5EA6\uFF1A{status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
     "paper.open": "\u6253\u5F00",
-    "paper.noPapers": "\u5C1A\u65E0\u9879\u76EE\u8303\u56F4 Paper\uFF1B\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
+    "paper.noPapers": "\u5C1A\u65E0\u9879\u76EE\u8303\u56F4\u8BBA\u6587\uFF1B\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
     "paper.openLiterature": "\u6253\u5F00\u6587\u732E\u68C0\u7D22",
     "paper.evidenceGate": "\u8BC1\u636E\u95E8\u7981",
-    "paper.claimReviewsTitle": "\u53EF\u7528\u4E8E\u8BBA\u8BC1\u7684 ClaimReview",
-    "paper.acceptedReviewCount": "{count} \u6761 accepted review\uFF1B\u6BCF\u6761\u5FC5\u987B\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684 Evidence\u3002",
+    "paper.claimReviewsTitle": "\u53EF\u7528\u4E8E\u8BBA\u8BC1\u7684\u8BBA\u65AD\u5BA1\u9605",
+    "paper.acceptedReviewCount": "{count} \u6761\u5DF2\u63A5\u53D7\u5BA1\u9605\uFF1B\u6BCF\u6761\u5FC5\u987B\u5173\u8054\u5F53\u524D\u9879\u76EE\u7684\u8BC1\u636E\u3002",
     "paper.fulltextLocated": "\u5168\u6587\u5B9A\u4F4D",
-    "paper.locatedCount": "{located}/{total} \u6761 Evidence \u6709\u9875\u7801\u6216\u7AE0\u8282 locator\u3002",
+    "paper.locatedCount": "{located}/{total} \u6761\u8BC1\u636E\u6709\u9875\u7801\u6216\u7AE0\u8282\u5B9A\u4F4D\u3002",
     "paper.figuresTitle": "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165",
-    "paper.figuresHint": "\u8FD9\u91CC\u53EA\u9009\u62E9 lineage \u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5B9E\u9A8C Artifact \u63D2\u5165\u8BBA\u6587\uFF1B\u5B9E\u9A8C\u8FD0\u884C\u3001\u961F\u5217\u548C\u53EF\u89C6\u5316\u7BA1\u7406\u5728\u300A\u5B9E\u9A8C\u5B9E\u73B0\u300B\u4E2D\u5B8C\u6210\u3002",
+    "paper.figuresHint": "\u8FD9\u91CC\u53EA\u9009\u62E9\u8C31\u7CFB\u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5B9E\u9A8C\u4EA7\u7269\u63D2\u5165\u8BBA\u6587\uFF1B\u5B9E\u9A8C\u8FD0\u884C\u3001\u961F\u5217\u548C\u53EF\u89C6\u5316\u7BA1\u7406\u5728\u300A\u5B9E\u9A8C\u5B9E\u73B0\u300B\u4E2D\u5B8C\u6210\u3002",
     "paper.figureCount": "{count} \u4E2A\u53EF\u9009\u56FE\u8868",
-    "paper.noFigures": "\u5C1A\u65E0\u53EF\u63D2\u5165\u8BBA\u6587\u7684\u6709\u6548\u56FE\u8868\u6216\u5B9E\u9A8C\u4EA7\u7269\u3002\u65E0\u5173 baseline\u3001\u7A7A\u6570\u7EC4\u548C\u5931\u6548 Artifact \u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002",
+    "paper.noFigures": "\u5C1A\u65E0\u53EF\u63D2\u5165\u8BBA\u6587\u7684\u6709\u6548\u56FE\u8868\u6216\u5B9E\u9A8C\u4EA7\u7269\u3002\u65E0\u5173\u57FA\u7EBF\u3001\u7A7A\u6570\u7EC4\u548C\u5931\u6548\u4EA7\u7269\u4E0D\u4F1A\u663E\u793A\u4E3A\u7ED3\u679C\u3002",
     "paper.viewArtifacts": "\u67E5\u770B\u5B9E\u9A8C\u4EA7\u7269",
     "paper.dataTitle": "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528",
-    "paper.dataHint": "\u53EA\u5217\u51FA lineage \u5B8C\u6574\u4E14\u6709\u6548\u7684 Artifact \u4F9B\u8BBA\u6587\u5F15\u7528\u6570\u5B57\u548C\u8868\u683C\uFF1B\u6570\u503C\u6765\u81EA\u771F\u5B9E Run\uFF0C\u8BBA\u6587\u9875\u4E0D\u8FD0\u884C\u6216\u7BA1\u7406\u5B9E\u9A8C\u3002",
+    "paper.dataHint": "\u53EA\u5217\u51FA\u8C31\u7CFB\u5B8C\u6574\u4E14\u6709\u6548\u7684\u4EA7\u7269\u4F9B\u8BBA\u6587\u5F15\u7528\u6570\u5B57\u548C\u8868\u683C\uFF1B\u6570\u503C\u6765\u81EA\u771F\u5B9E\u8FD0\u884C\uFF0C\u8BBA\u6587\u9875\u4E0D\u8FD0\u884C\u6216\u7BA1\u7406\u5B9E\u9A8C\u3002",
     "paper.dataCount": "{count} \u4E2A\u53EF\u9009\u6570\u636E",
     "paper.typePending": "\u7C7B\u578B\u5F85\u8BB0\u5F55",
-    "paper.dataLineage": "Run {run} \xB7 Idea v{idea} \xB7 \u6570\u636E\u7248\u672C {data}",
-    "paper.noData": "\u5F53\u524D\u6CA1\u6709\u53EF\u5F15\u7528\u7684\u5B9E\u9A8C\u6570\u636E\u4EA7\u7269\u3002\u8BF7\u5148\u5B8C\u6210\u5B9E\u9A8C\u5B9E\u73B0\u5E76\u751F\u6210\u6709\u6548 Artifact\u3002",
+    "paper.dataLineage": "\u8FD0\u884C {run} \xB7 Idea v{idea} \xB7 \u6570\u636E\u7248\u672C {data}",
+    "paper.noData": "\u5F53\u524D\u6CA1\u6709\u53EF\u5F15\u7528\u7684\u5B9E\u9A8C\u6570\u636E\u4EA7\u7269\u3002\u8BF7\u5148\u5B8C\u6210\u5B9E\u9A8C\u5B9E\u73B0\u5E76\u751F\u6210\u6709\u6548\u4EA7\u7269\u3002",
     "paper.compileTitle": "LaTeX \u7F16\u8BD1",
     "paper.compileHint": "Linux latexmk \u662F\u72EC\u7ACB\u5BA1\u6279\u52A8\u4F5C\uFF1B\u7F16\u8BD1\u5931\u8D25\u53EA\u7559\u4E0B\u5931\u8D25\u65E5\u5FD7\uFF0C\u4E0D\u751F\u6210\u6210\u529F PDF\u3002",
     "paper.createCompileProposal": "\u521B\u5EFA\u7F16\u8BD1 Proposal",
@@ -13580,7 +13683,7 @@
     "paper.compileApprovals": "\u7F16\u8BD1\u5BA1\u6279",
     "paper.noReason": "\u65E0\u8BF4\u660E",
     "paper.pdfTitle": "PDF \u5448\u73B0\u4E0E\u5BA1\u9605",
-    "paper.pdfHint": "\u53EA\u5448\u73B0\u6210\u529F\u7F16\u8BD1\u4E14\u4ECD\u6709\u6548\u7684 PDF Artifact\uFF1B\u7F16\u8BD1\u5931\u8D25\u4E0D\u4F1A\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u663E\u793A\u4E3A\u5DF2\u5B8C\u6210\u3002",
+    "paper.pdfHint": "\u53EA\u5448\u73B0\u6210\u529F\u7F16\u8BD1\u4E14\u4ECD\u6709\u6548\u7684 PDF \u4EA7\u7269\uFF1B\u7F16\u8BD1\u5931\u8D25\u4E0D\u4F1A\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u663E\u793A\u4E3A\u5DF2\u5B8C\u6210\u3002",
     "paper.pdfCount": "{count} \u4E2A PDF",
     "paper.openPdf": "\u6253\u5F00 PDF",
     "paper.noPdf": "\u8FD8\u6CA1\u6709\u6210\u529F\u7F16\u8BD1\u7684 PDF\u3002\u8BF7\u5148\u5728 LaTeX \u7F16\u8BD1\u9875\u63D0\u51FA Proposal \u5E76\u5B8C\u6210\u771F\u5B9E\u7F16\u8BD1\u3002",
@@ -13591,17 +13694,17 @@
     "paper.proposeCompile": "\u63D0\u51FA LaTeX \u7F16\u8BD1",
     "paper.literatureCount": "\u6587\u732E\u8BB0\u5F55",
     "paper.evidenceCandidates": "\u539F\u6587\u8BC1\u636E\u5019\u9009",
-    "paper.acceptedClaims": "\u5DF2\u63A5\u53D7 Claim \u590D\u6838",
+    "paper.acceptedClaims": "\u5DF2\u63A5\u53D7\u8BBA\u65AD\u590D\u6838",
     "paper.validArtifacts": "\u6709\u6548\u4EA7\u7269",
-    "paper.claimPageEvidence": "Claim \u4E0E\u9875\u7801\u8BC1\u636E",
-    "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u590D\u6838\u7684 Claim \u624D\u80FD\u4F5C\u4E3A\u8BBA\u6587\u8BBA\u8BC1\u8F93\u5165\uFF1B\u5143\u6570\u636E\u8BB0\u5F55\u4E0D\u4F1A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E\u3002",
+    "paper.claimPageEvidence": "\u8BBA\u65AD\u4E0E\u9875\u7801\u8BC1\u636E",
+    "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u590D\u6838\u7684\u8BBA\u65AD\u624D\u80FD\u4F5C\u4E3A\u8BBA\u6587\u8BBA\u8BC1\u8F93\u5165\uFF1B\u5143\u6570\u636E\u8BB0\u5F55\u4E0D\u4F1A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E\u3002",
     "paper.proposalCompile": "Proposal \u4E0E\u7F16\u8BD1",
     "paper.proposalCompileText": "\u6279\u51C6\u540E\u624D\u4F1A\u4FEE\u6539\u9879\u76EE\u4E2D\u7684 paper/main.tex\uFF0C\u5E76\u7531 Linux latexmk \u76D1\u7763\u5668\u751F\u6210\u7F16\u8BD1\u4EA7\u7269\u3002",
     "paper.referenceRecords": "\u8BBA\u6587\u53C2\u8003\u8BB0\u5F55",
     "paper.noReferences": "\u5C1A\u65E0\u53EF\u5F15\u7528\u7684\u6587\u732E\u8BB0\u5F55\u3002\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
-    "comparison.reason": "\u7528\u6237\u8BF7\u6C42\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A commit \u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
+    "comparison.reason": "\u7528\u6237\u8BF7\u6C42\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
-    "literature.projectPaper": "\u9879\u76EE Paper",
+    "literature.projectPaper": "\u9879\u76EE\u8BBA\u6587",
     "research.themePlaceholder": "\u4F8B\u5982 efficient adaptation",
     "research.methodPlaceholder": "\u4F8B\u5982 parameter-efficient tuning"
   };
@@ -13660,7 +13763,7 @@
     "sidebar.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
     "sidebar.projects": "\u5C08\u6848",
     "sidebar.noProjects": "\u5C1A\u7121\u5C08\u6848",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.mastraWorkflows": "Mastra \u5DE5\u4F5C\u6D41\u7A0B",
     "sidebar.memoryGraph": "\u5C08\u6848\u8A18\u61B6\u5716",
     "sidebar.modelSettings": "\u6A21\u578B\u8A2D\u5B9A",
     "theme.light": "\u6DFA\u8272",
@@ -13703,6 +13806,109 @@
     "errors.timeout": "\u8ACB\u6C42\u903E\u6642\uFF0C\u8ACB\u6AA2\u67E5\u672C\u6A5F\u670D\u52D9\u72C0\u614B\u5F8C\u91CD\u8A66\u3002",
     "errors.offline": "\u7121\u6CD5\u9023\u63A5 Research OS API\uFF0C\u8ACB\u78BA\u8A8D\u672C\u6A5F\u670D\u52D9\u4ECD\u5728\u57F7\u884C\u3002",
     "errors.requestFailed": "\u8ACB\u6C42\u5931\u6557\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
+    "errors.apiFailure": "\u8ACB\u6C42\u5931\u6557\uFF08{code}\uFF09\u3002",
+    "apiError.api_unknown": "\u672C\u6A5F\u670D\u52D9\u50B3\u56DE\u4E86\u7121\u6CD5\u8FA8\u8B58\u7684\u932F\u8AA4\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
+    "apiError.artifact_invalidated": "\u8A72\u7522\u7269\u5DF2\u56E0\u4E0A\u6E38\u8B8A\u5316\u5931\u6548\uFF0C\u4E0D\u80FD\u7E7C\u7E8C\u4F7F\u7528\u3002",
+    "apiError.artifact_not_found": "\u76EE\u524D\u5C08\u6848\u4E2D\u4E0D\u5B58\u5728\u8A72\u7522\u7269\u3002",
+    "apiError.claim_review_not_found": "\u76EE\u524D\u5C08\u6848\u4E2D\u4E0D\u5B58\u5728\u8A72\u8AD6\u65B7\u5BE9\u95B1\u3002",
+    "apiError.embedding_requires_reset": "\u5207\u63DB\u6A21\u578B\u9700\u8981\u91CD\u5EFA\u8CC7\u6599\u76EE\u9304\u4E26\u91CD\u65B0\u651D\u5165\u8A9E\u610F\u8A18\u61B6\u3002",
+    "apiError.experiment_not_found": "\u76EE\u524D\u5C08\u6848\u4E2D\u4E0D\u5B58\u5728\u8A72\u5BE6\u9A57\u57F7\u884C\u3002",
+    "apiError.feedback_not_found": "\u76EE\u524D\u5C08\u6848\u4E2D\u4E0D\u5B58\u5728\u8A72\u56DE\u994B\u3002",
+    "apiError.idea_not_ready": "\u7814\u7A76 Idea \u5C1A\u672A\u9054\u5230\u53EF\u78BA\u8A8D\u72C0\u614B\u3002",
+    "apiError.invalid_json": "\u8ACB\u6C42\u5167\u6587\u5FC5\u9808\u662F\u6709\u6548 JSON\u3002",
+    "apiError.malware_detected": "Windows Defender \u5075\u6E2C\u5230\u5A01\u8105\uFF0C\u6A94\u6848\u5DF2\u62D2\u7D55\u3002",
+    "apiError.material_search_pagination_unsupported": "\u76EE\u524D\u8A9E\u610F\u6AA2\u7D22\u4E0D\u652F\u63F4\u672C\u6A5F\u5206\u9801\u3002",
+    "apiError.memory_link_not_active": "\u53EA\u6709 active \u8A9E\u610F\u8A18\u61B6\u53EF\u4EE5\u64A4\u92B7\u6216\u522A\u9664\u3002",
+    "apiError.memory_link_not_found": "\u5C08\u6848\u8A9E\u610F\u8A18\u61B6\u95DC\u806F\u4E0D\u5B58\u5728\u3002",
+    "apiError.no_open_pdf_candidates": "\u76EE\u524D\u5019\u9078\u6C92\u6709\u767D\u540D\u55AE\u958B\u653E PDF\uFF0C\u7121\u6CD5\u64F7\u53D6\u5168\u6587\u8B49\u64DA\u3002",
+    "apiError.paper_not_found": "\u8A72\u6587\u737B\u4E0D\u5C6C\u65BC\u76EE\u524D\u5C08\u6848\u3002",
+    "apiError.project_cancelled": "\u5DF2\u53D6\u6D88\u5C08\u6848\u4E0D\u80FD\u6062\u5FA9\u3002",
+    "apiError.project_not_active": "\u5C08\u6848\u76EE\u524D\u4E0D\u53EF\u57F7\u884C\u8A72\u64CD\u4F5C\u3002",
+    "apiError.project_not_found": "\u5C08\u6848\u4E0D\u5B58\u5728\u3002",
+    "apiError.proposal_not_found": "Proposal \u4E0D\u5B58\u5728\u3002",
+    "apiError.related_work_run_not_found": "\u76F8\u95DC\u5DE5\u4F5C\u905E\u8FF4\u57F7\u884C\u4E0D\u5B58\u5728\u3002",
+    "apiError.report_no_events": "\u76EE\u524D\u6642\u9593\u5340\u9593\u6C92\u6709\u771F\u5BE6\u5C08\u6848\u4E8B\u4EF6\uFF0C\u5831\u544A\u4FDD\u6301\u70BA\u7A7A\u3002",
+    "apiError.repository_candidate_exists": "\u8A72\u5C08\u6848\u5DF2\u7D93\u65B0\u589E\u904E\u9019\u500B\u5009\u5EAB\u5019\u9078\u3002",
+    "apiError.repository_not_found": "\u5009\u5EAB\u5019\u9078\u4E0D\u5B58\u5728\u3002",
+    "apiError.reproduction_run_not_found": "\u8907\u73FE\u57F7\u884C\u4E0D\u5B58\u5728\u3002",
+    "apiError.session_not_found": "\u5C0D\u8A71\u5DE5\u4F5C\u968E\u6BB5\u4E0D\u5B58\u5728\u3002",
+    "apiError.session_project_mismatch": "\u5DE5\u4F5C\u968E\u6BB5\u4E0D\u5C6C\u65BC\u8A72\u5C08\u6848\u3002",
+    "apiError.upload_file_missing": "\u7F3A\u5C11\u4E0A\u50B3\u6A94\u6848\u3002",
+    "apiError.upload_too_large": "\u6A94\u6848\u8D85\u904E 50 MB \u9650\u5236\u3002",
+    "apiError.upload_type_forbidden": "\u8A72\u6A94\u6848\u985E\u578B\u4E0D\u5141\u8A31\u4E0A\u50B3\u3002",
+    "apiError.validation_error": "\u63D0\u4EA4\u5167\u5BB9\u672A\u901A\u904E\u9A57\u8B49\uFF0C\u8ACB\u6AA2\u67E5\u5F8C\u91CD\u8A66\u3002",
+    "status.accepted": "\u5DF2\u63A5\u53D7",
+    "status.approvalRequired": "\u9700\u5BE9\u6279",
+    "status.awaitingArtifactApproval": "\u7B49\u5F85\u7522\u7269\u5BE9\u6279",
+    "status.blocked": "\u963B\u585E",
+    "status.calculated": "\u5DF2\u8A08\u7B97",
+    "status.cancelRequested": "\u5DF2\u8ACB\u6C42\u53D6\u6D88",
+    "status.candidateExists": "\u5DF2\u6709\u5019\u9078",
+    "status.candidateOnly": "\u50C5\u5019\u9078",
+    "status.clean": "\u4E7E\u6DE8",
+    "status.closed": "\u5DF2\u95DC\u9589",
+    "status.completed": "\u5DF2\u5B8C\u6210",
+    "status.confirmedPaper": "\u5DF2\u78BA\u8A8D\u8AD6\u6587",
+    "status.conflict": "\u885D\u7A81",
+    "status.declared": "\u5DF2\u5BA3\u544A",
+    "status.dependencyFailed": "\u4F9D\u8CF4\u5B89\u88DD\u5931\u6557",
+    "status.dependencyInstalling": "\u4F9D\u8CF4\u5B89\u88DD\u4E2D",
+    "status.dirty": "\u6709\u672A\u63D0\u4EA4\u8B8A\u66F4",
+    "status.disabled": "\u5DF2\u505C\u7528",
+    "status.empty": "\u7A7A",
+    "status.enabled": "\u5DF2\u555F\u7528",
+    "status.enforced": "\u5DF2\u5F37\u5236\u57F7\u884C",
+    "status.evidenceRequired": "\u9700\u8B49\u64DA",
+    "status.fulltextEvidence": "\u5168\u6587\u8B49\u64DA",
+    "status.invalidResponse": "\u56DE\u61C9\u7121\u6548",
+    "status.invalidated": "\u5DF2\u5931\u6548",
+    "status.legacyUnverified": "\u6B77\u53F2\u672A\u9A57\u8B49",
+    "status.licenseReviewRequired": "\u6388\u6B0A\u5F85\u5BE9",
+    "status.manual": "\u624B\u52D5",
+    "status.maxTotalReached": "\u5DF2\u9054\u7E3D\u91CF\u4E0A\u9650",
+    "status.metadataCandidate": "\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078",
+    "status.metadataCandidatesOnly": "\u50C5\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078",
+    "status.metadataOnly": "\u50C5\u4E2D\u7E7C\u8CC7\u6599",
+    "status.observed": "\u5DF2\u89C0\u6E2C",
+    "status.ok": "\u6B63\u5E38",
+    "status.open": "\u5F85\u8655\u7406",
+    "status.partial": "\u90E8\u5206\u5B8C\u6210",
+    "status.projectContained": "\u5C08\u6848\u53D7\u63A7",
+    "status.projectScoped": "\u5C08\u6848\u7BC4\u570D",
+    "status.proposalCreated": "\u63D0\u6848\u5DF2\u5EFA\u7ACB",
+    "status.queued": "\u6392\u968A\u4E2D",
+    "status.rateLimited": "\u9650\u6D41",
+    "status.ready": "\u5C31\u7DD2",
+    "status.reopened": "\u5DF2\u91CD\u65B0\u958B\u555F",
+    "status.reviewRequired": "\u5F85\u5BE9\u95B1",
+    "status.semanticCandidate": "\u8A9E\u610F\u5019\u9078",
+    "status.selected": "\u5DF2\u9078\u64C7",
+    "status.started": "\u5DF2\u958B\u59CB",
+    "status.timedOut": "\u903E\u6642",
+    "status.unresolved": "\u672A\u89E3\u6C7A",
+    "status.unsupported": "\u4E0D\u652F\u63F4",
+    "status.verified": "\u5DF2\u9A57\u8B49",
+    "status.active": "\u9032\u884C\u4E2D",
+    "status.approved": "\u5DF2\u6838\u51C6",
+    "status.candidate": "\u5019\u9078",
+    "status.cancelled": "\u5DF2\u53D6\u6D88",
+    "status.claimReviewed": "\u5DF2\u5BE9\u95B1\u8AD6\u65B7",
+    "status.confirmed": "\u5DF2\u78BA\u8A8D",
+    "status.dependencyPending": "\u7B49\u5F85\u4F9D\u8CF4\u5B89\u88DD",
+    "status.failed": "\u5931\u6557",
+    "status.located": "\u5DF2\u5B9A\u4F4D",
+    "status.pageQuote": "\u9801\u78BC\u5F15\u6587",
+    "status.paused": "\u5DF2\u66AB\u505C",
+    "status.pending": "\u5F85\u8655\u7406",
+    "status.rejected": "\u5DF2\u62D2\u7D55",
+    "status.running": "\u8655\u7406\u4E2D",
+    "status.sourceDownloaded": "\u539F\u59CB\u78BC\u5DF2\u4E0B\u8F09",
+    "status.sourceDownloading": "\u539F\u59CB\u78BC\u4E0B\u8F09\u4E2D",
+    "status.succeeded": "\u6210\u529F",
+    "status.unconfirmed": "\u672A\u78BA\u8A8D",
+    "status.unlocated": "\u672A\u5B9A\u4F4D",
+    "status.valid": "\u6709\u6548",
+    "status.waitingApproval": "\u7B49\u5F85\u5BE9\u6279",
     "app.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
     "app.researchProject": "\u7814\u7A76\u5C08\u6848",
     "app.projectCreated": "\u5C08\u6848\u5DF2\u5EFA\u7ACB",
@@ -14055,7 +14261,7 @@
     "comparison.accepted": "\u5DF2\u4FDD\u7559\u5019\u9078",
     "comparison.rejected": "\u5DF2\u62D2\u7D55",
     "comparison.metricUnrecorded": "\u672A\u8A18\u9304",
-    "comparison.selectRequired": "\u8ACB\u9078\u64C7\u5DF2\u78BA\u8A8D Paper\u3001\u5DF2\u5B8C\u6210\u91CD\u73FE Run \u548C\u81F3\u5C11\u4E00\u689D\u5B9A\u4F4D Evidence",
+    "comparison.selectRequired": "\u8ACB\u9078\u64C7\u5DF2\u78BA\u8A8D\u8AD6\u6587\u3001\u5DF2\u5B8C\u6210\u91CD\u73FE\u57F7\u884C\u548C\u81F3\u5C11\u4E00\u689D\u5DF2\u5B9A\u4F4D\u8B49\u64DA",
     "comparison.paperMetricsLabel": "\u8AD6\u6587\u6307\u6A19",
     "comparison.datasetsLabel": "\u8CC7\u6599\u96C6",
     "comparison.definitionsLabel": "\u6307\u6A19\u5B9A\u7FA9",
@@ -14066,18 +14272,18 @@
     "comparison.acceptedToast": "\u5019\u9078\u5DF2\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7D1A\u70BA\u7814\u7A76\u7D50\u8AD6",
     "comparison.rejectedToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304",
     "comparison.title": "\u91CD\u73FE\u6548\u679C\u6BD4\u8F03",
-    "comparison.hint": "\u53EA\u6BD4\u8F03\u76EE\u524D\u5C08\u6848\u5DF2\u78BA\u8A8D Paper\u3001\u5E36\u5B9A\u4F4D\u548C\u96DC\u6E4A\u7684 Evidence\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8A18 Artifact \u7684\u771F\u5BE6\u91CD\u73FE Run\u3002\u7D50\u679C\u662F integration result\uFF1B\u6F5B\u5728\u6539\u5584\u3001\u53CD\u4F8B\u8207\u5275\u65B0\u8A0A\u865F\u90FD\u5FC5\u9808\u4EBA\u5DE5\u6838\u9A57\u3002",
+    "comparison.hint": "\u53EA\u6BD4\u8F03\u76EE\u524D\u5C08\u6848\u5DF2\u78BA\u8A8D\u8AD6\u6587\u3001\u5E36\u5B9A\u4F4D\u548C\u96DC\u6E4A\u7684\u8B49\u64DA\uFF0C\u4EE5\u53CA\u5DF2\u767B\u8A18\u7522\u7269\u7684\u771F\u5BE6\u91CD\u73FE\u57F7\u884C\u3002\u7D50\u679C\u5C6C\u65BC\u6574\u5408\u7D50\u679C\uFF1B\u6F5B\u5728\u6539\u5584\u3001\u53CD\u4F8B\u8207\u5275\u65B0\u8A0A\u865F\u90FD\u5FC5\u9808\u4EBA\u5DE5\u6838\u9A57\u3002",
     "comparison.projectScope": "\u5C08\u6848\u7BC4\u570D",
-    "comparison.scopeCounts": "\u53EF\u6BD4\u8F03 Paper\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709 Artifact \u7684\u91CD\u73FE\uFF1A{runs} \xB7 \u5DF2\u5132\u5B58\u6BD4\u8F03\uFF1A{comparisons}",
-    "comparison.empty": "\u5EFA\u7ACB\u6BD4\u8F03\u524D\uFF0C\u9700\u8981\u5DF2\u78BA\u8A8D Paper\uFF0C\u4EE5\u53CA completed \u4E14\u5DF2\u767B\u8A18\u8F38\u51FA Artifact \u7684\u91CD\u73FE Run\u3002",
+    "comparison.scopeCounts": "\u53EF\u6BD4\u8F03\u8AD6\u6587\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709\u7522\u7269\u7684\u91CD\u73FE\uFF1A{runs} \xB7 \u5DF2\u5132\u5B58\u6BD4\u8F03\uFF1A{comparisons}",
+    "comparison.empty": "\u5EFA\u7ACB\u6BD4\u8F03\u524D\uFF0C\u9700\u8981\u5DF2\u78BA\u8A8D\u8AD6\u6587\uFF0C\u4EE5\u53CA\u5DF2\u5B8C\u6210\u4E14\u5DF2\u767B\u8A18\u8F38\u51FA\u7522\u7269\u7684\u91CD\u73FE\u57F7\u884C\u3002",
     "comparison.createTitle": "\u5EFA\u7ACB\u7D50\u69CB\u5316\u6BD4\u8F03",
-    "comparison.createHint": "\u8AD6\u6587\u6307\u6A19\u5FC5\u9808\u7531\u4F7F\u7528\u8005\u5F9E\u6709\u5B9A\u4F4D\u7684 Evidence \u4E2D\u8F38\u5165\uFF1B\u7CFB\u7D71\u4E0D\u6703\u5F9E\u6A21\u578B\u6216\u6A19\u984C\u731C\u6E2C\u6307\u6A19\u3002",
-    "comparison.confirmedPaper": "\u78BA\u8A8D\u7684 Paper",
-    "comparison.reproductionRun": "\u91CD\u73FE Run",
-    "comparison.paperEvidence": "\u8AD6\u6587 Evidence",
-    "comparison.unnamedClaim": "\u672A\u547D\u540D claim",
+    "comparison.createHint": "\u8AD6\u6587\u6307\u6A19\u5FC5\u9808\u7531\u4F7F\u7528\u8005\u5F9E\u5DF2\u5B9A\u4F4D\u8B49\u64DA\u4E2D\u8F38\u5165\uFF1B\u7CFB\u7D71\u4E0D\u6703\u5F9E\u6A21\u578B\u6216\u6A19\u984C\u731C\u6E2C\u6307\u6A19\u3002",
+    "comparison.confirmedPaper": "\u78BA\u8A8D\u7684\u8AD6\u6587",
+    "comparison.reproductionRun": "\u91CD\u73FE\u57F7\u884C",
+    "comparison.paperEvidence": "\u8AD6\u6587\u8B49\u64DA",
+    "comparison.unnamedClaim": "\u672A\u547D\u540D\u8AD6\u65B7",
     "comparison.missingPdfHash": "\u7F3A\u5C11 PDF hash",
-    "comparison.noLocatedEvidence": "\u76EE\u524D Paper \u6C92\u6709\u5E36\u5B9A\u4F4D\u7684 Evidence\u3002",
+    "comparison.noLocatedEvidence": "\u76EE\u524D\u8AD6\u6587\u6C92\u6709\u5DF2\u5B9A\u4F4D\u7684\u8B49\u64DA\u3002",
     "comparison.paperMetricsJson": "\u8AD6\u6587\u6307\u6A19 JSON",
     "comparison.dataVersion": "\u8AD6\u6587\u8CC7\u6599\u7248\u672C",
     "comparison.dataVersionPlaceholder": "\u6C92\u6709\u63ED\u9732\u5247\u7559\u7A7A\uFF0C\u6BD4\u8F03\u6703\u6A19\u8A18 partial",
@@ -14089,22 +14295,22 @@
     "comparison.definitionsJson": "\u6307\u6A19\u5B9A\u7FA9 JSON",
     "comparison.save": "\u5132\u5B58\u6BD4\u8F03",
     "comparison.savedTitle": "\u5DF2\u5132\u5B58\u6BD4\u8F03\u8207\u5F85\u6838\u9A57\u5019\u9078",
-    "comparison.savedHint": "\u6BCF\u500B\u6578\u503C\u90FD\u986F\u793A\u8AD6\u6587 Evidence\u3001\u91CD\u73FE commit\u3001seed\u3001\u8A2D\u5B9A\u8207 Artifact \u7D81\u5B9A\uFF1B\u63A5\u53D7\u5019\u9078\u53EA\u8868\u793A\u4FDD\u7559\u5BE9\u95B1\u4EFB\u52D9\u3002",
+    "comparison.savedHint": "\u6BCF\u500B\u6578\u503C\u90FD\u986F\u793A\u8AD6\u6587\u8B49\u64DA\u3001\u91CD\u73FE\u63D0\u4EA4\u3001\u96A8\u6A5F\u7A2E\u5B50\u3001\u8A2D\u5B9A\u8207\u7522\u7269\u7D81\u5B9A\uFF1B\u63A5\u53D7\u5019\u9078\u53EA\u8868\u793A\u4FDD\u7559\u5BE9\u95B1\u4EFB\u52D9\u3002",
     "comparison.savedEmpty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u6548\u679C\u6BD4\u8F03\u8A18\u9304\u3002",
     "comparison.inputHash": "\u8F38\u5165 hash",
-    "comparison.artifactsCount": "Artifacts {count} \u500B",
+    "comparison.artifactsCount": "\u7522\u7269 {count} \u500B",
     "comparison.metric": "\u6307\u6A19",
     "comparison.paper": "\u8AD6\u6587",
     "comparison.reproductionMean": "\u91CD\u73FE mean",
     "comparison.status": "\u72C0\u614B",
-    "comparison.evidenceStatus": "Evidence \u72C0\u614B\uFF1A",
+    "comparison.evidenceStatus": "\u8B49\u64DA\u72C0\u614B\uFF1A",
     "comparison.candidateId": "\u5019\u9078 ID",
     "comparison.keep": "\u4FDD\u7559",
     "comparison.noCandidates": "\u6C92\u6709\u81EA\u52D5\u7522\u751F\u7684\u5DEE\u7570\u8A0A\u865F\u3002",
-    "research.claimReviewed": "\u5DF2\u5BE9\u95B1 Claim",
-    "research.pageQuote": "\u5B9A\u4F4D quote",
-    "research.metadataOnly": "\u50C5 metadata",
-    "research.eligibleRequired": "\u76EE\u524D\u6C92\u6709\u540C\u6642\u6EFF\u8DB3\u78BA\u8A8D Paper\u3001\u5B9A\u4F4D Evidence \u8207 accepted ClaimReview \u7684\u6750\u6599\u3002",
+    "research.claimReviewed": "\u5DF2\u5BE9\u95B1\u8AD6\u65B7",
+    "research.pageQuote": "\u5B9A\u4F4D\u5F15\u6587",
+    "research.metadataOnly": "\u50C5\u4E2D\u7E7C\u8CC7\u6599",
+    "research.eligibleRequired": "\u76EE\u524D\u6C92\u6709\u540C\u6642\u6EFF\u8DB3\u5DF2\u78BA\u8A8D\u8AD6\u6587\u3001\u5DF2\u5B9A\u4F4D\u8B49\u64DA\u8207\u5DF2\u63A5\u53D7\u8AD6\u65B7\u5BE9\u95B1\u7684\u6750\u6599\u3002",
     "research.matrixCreated": "\u7814\u7A76\u73FE\u6CC1\u77E9\u9663\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8A18\u9304\u7684\u6B04\u4F4D\u4FDD\u6301 unresolved\u3002",
     "research.candidateRecorded": "\u5019\u9078\u5DF2\u8A18\u9304\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65B7\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7D50\u8AD6\u3002",
     "research.acceptGapReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u4FDD\u7559\u70BA\u5F85\u6838\u9A57\u5019\u9078\u3002",
@@ -14112,7 +14318,7 @@
     "research.acceptedGapToast": "\u5019\u9078\u5DF2\u78BA\u8A8D\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7D1A\u70BA\u79D1\u5B78\u7D50\u8AD6\u3002",
     "research.rejectedGapToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304\u3002",
     "research.title": "\u7814\u7A76\u73FE\u6CC1\u77E9\u9663",
-    "research.hint": "\u77E9\u9663\u53EA\u63A5\u53D7\u76EE\u524D\u5C08\u6848\u5DF2\u78BA\u8A8D\u7684 Paper\u3001\u5E36\u9801\u78BC/\u7AE0\u7BC0\u5B9A\u4F4D\u7684 Evidence \u8207\u5DF2\u63A5\u53D7 ClaimReview\uFF1B\u672A\u77E5\u6B04\u4F4D\u4E0D\u6703\u7531\u6A21\u578B\u6216 metadata \u731C\u6E2C\u3002",
+    "research.hint": "\u77E9\u9663\u53EA\u63A5\u53D7\u76EE\u524D\u5C08\u6848\u5DF2\u78BA\u8A8D\u7684\u8AD6\u6587\u3001\u5E36\u9801\u78BC/\u7AE0\u7BC0\u5B9A\u4F4D\u7684\u8B49\u64DA\u8207\u5DF2\u63A5\u53D7\u8AD6\u65B7\u5BE9\u95B1\uFF1B\u672A\u77E5\u6B04\u4F4D\u4E0D\u6703\u7531\u6A21\u578B\u6216\u4E2D\u7E7C\u8CC7\u6599\u731C\u6E2C\u3002",
     "research.refreshing": "\u6B63\u5728\u91CD\u65B0\u6574\u7406\u5C08\u6848\u7BC4\u570D\u7814\u7A76\u73FE\u6CC1\u2026",
     "research.matrixReady": "\u77E9\u9663\u5DF2\u5EFA\u7ACB",
     "research.createMatrix": "\u5EFA\u7ACB\u77E9\u9663",
@@ -14150,9 +14356,9 @@
     "research.keepCandidate": "\u4FDD\u7559\u5019\u9078",
     "research.noCandidates": "\u5C1A\u672A\u8A18\u9304\u5F85\u6838\u9A57\u5019\u9078\u3002",
     "graph.kind.candidate": "\u5019\u9078",
-    "graph.kind.paper": "Paper",
-    "graph.kind.evidence": "Evidence",
-    "graph.kind.claimReview": "ClaimReview",
+    "graph.kind.paper": "\u8AD6\u6587",
+    "graph.kind.evidence": "\u8B49\u64DA",
+    "graph.kind.claimReview": "\u8AD6\u65B7\u5BE9\u95B1",
     "graph.status.candidate": "\u5F85\u78BA\u8A8D",
     "graph.status.confirmed": "\u5DF2\u78BA\u8A8D",
     "graph.status.unconfirmed": "\u672A\u78BA\u8A8D",
@@ -14161,12 +14367,12 @@
     "graph.status.pending": "\u5F85\u5BE9\u95B1",
     "graph.status.accepted": "\u5DF2\u63A5\u53D7",
     "graph.status.rejected": "\u5DF2\u62D2\u7D55",
-    "graph.evidence.metadataOnly": "\u50C5 metadata",
-    "graph.evidence.pageQuote": "\u9801\u78BC/\u7AE0\u7BC0 quote",
-    "graph.evidence.claimReviewed": "ClaimReview \u5DF2\u63A5\u53D7",
+    "graph.evidence.metadataOnly": "\u50C5\u4E2D\u7E7C\u8CC7\u6599",
+    "graph.evidence.pageQuote": "\u9801\u78BC/\u7AE0\u7BC0\u5F15\u6587",
+    "graph.evidence.claimReviewed": "\u8AD6\u65B7\u5BE9\u95B1\u5DF2\u63A5\u53D7",
     "graph.edgeCount": "{count} \u689D\u908A",
     "graph.title": "\u5C08\u6848\u7BC4\u570D\u5F15\u7528\u5716",
-    "graph.hint": "\u5716\u53EA\u6295\u5F71\u76EE\u524D project_id \u4E2D\u5DF2\u5132\u5B58\u7684\u5F15\u7528\u3001Paper-Evidence \u8207 ClaimReview-Evidence \u95DC\u4FC2\uFF1Bprovider \u5F15\u7528\u908A\u4ECD\u662F metadata \u95DC\u4FC2\uFF0C\u4E0D\u662F\u7814\u7A76\u7D50\u8AD6\u3002",
+    "graph.hint": "\u5716\u53EA\u6295\u5F71\u76EE\u524D project_id \u4E2D\u5DF2\u5132\u5B58\u7684\u5F15\u7528\u3001\u8AD6\u6587-\u8B49\u64DA\u8207\u8AD6\u65B7\u5BE9\u95B1-\u8B49\u64DA\u95DC\u4FC2\uFF1B\u4F86\u6E90\u5F15\u7528\u908A\u4ECD\u662F\u4E2D\u7E7C\u8CC7\u6599\u95DC\u4FC2\uFF0C\u4E0D\u662F\u7814\u7A76\u7D50\u8AD6\u3002",
     "graph.requestFailed": "\u5F15\u7528\u5716\u8ACB\u6C42\u5931\u6557\uFF1A{error}",
     "graph.loading": "\u6B63\u5728\u8B80\u53D6\u5C08\u6848\u7BC4\u570D\u5F15\u7528\u5716\u2026",
     "graph.permissionScope": "\u6B0A\u9650\u7BC4\u570D",
@@ -14175,7 +14381,7 @@
     "graph.empty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u5DF2\u5132\u5B58\u7684\u5716\u7BC0\u9EDE\u6216\u95DC\u4FC2\u3002",
     "graph.onlySaved": "\u53EA\u986F\u793A\u8CC7\u6599\u5EAB\u4E2D\u5DF2\u5132\u5B58\u7684\u95DC\u4FC2\u3002",
     "graph.scale": "\u5716\u898F\u6A21",
-    "graph.scaleText": "{nodes} \u500B\u7BC0\u9EDE \xB7 {edges} \u689D\u908A\uFF1B\u6309\u5019\u9078\u3001Paper\u3001Evidence\u3001ClaimReview \u5206\u5C64\u3002",
+    "graph.scaleText": "{nodes} \u500B\u7BC0\u9EDE \xB7 {edges} \u689D\u908A\uFF1B\u6309\u5019\u9078\u3001\u8AD6\u6587\u3001\u8B49\u64DA\u3001\u8AD6\u65B7\u5BE9\u95B1\u5206\u5C64\u3002",
     "graph.alert": "\u76EE\u524D\u56DE\u61C9\u70BA partial\u3002\u5716\u4E2D\u53EA\u5448\u73FE\u6210\u529F\u56DE\u50B3\u4E14\u5DF2\u901A\u904E\u5C08\u6848\u7BC4\u570D\u6821\u9A57\u7684\u7BC0\u9EDE\u8207\u908A\u3002",
     "graph.legendAria": "\u5716\u4F8B",
     "graph.legendNote": "\u7BAD\u982D\u8868\u793A\u8CC7\u6599\u5EAB\u4E2D\u660E\u78BA\u5132\u5B58\u7684\u95DC\u4FC2",
@@ -14206,13 +14412,13 @@
     "method.hypotheses": "\u5047\u8A2D",
     "method.contributions": "\u9810\u671F\u8CA2\u737B",
     "method.relatedEvidence": "\u76F8\u95DC\u5DE5\u4F5C\u4F9D\u64DA",
-    "method.verifiedCount": "{verified} \u689D\u5DF2\u9A57\u8B49\u8A18\u9304\uFF0C{total} \u689D\u5C08\u6848 Paper",
+    "method.verifiedCount": "{verified} \u689D\u5DF2\u9A57\u8B49\u8A18\u9304\uFF0C{total} \u689D\u5C08\u6848\u8AD6\u6587",
     "code.title": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340",
     "code.hint": "\u9019\u88E1\u5C6C\u65BC\u76EE\u524D\u5C08\u6848\u81EA\u5DF1\u7684\u7A0B\u5F0F\u78BC\uFF1B\u91CD\u73FE\u5009\u5EAB\u8207\u5C08\u6848\u7A0B\u5F0F\u78BC\u56B4\u683C\u5206\u958B\uFF0C\u6240\u6709\u4FEE\u6539\u3001\u4F9D\u8CF4\u8207 Git \u64CD\u4F5C\u90FD\u9700\u8981 Proposal\u3002",
     "code.error": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340\u8B80\u53D6\u5931\u6557\uFF1A{error}",
     "code.workspace": "\u5C08\u6848\u5DE5\u4F5C\u5340",
     "code.gitBaseline": "Git \u57FA\u7DDA",
-    "code.noCommit": "\u5C1A\u7121 commit",
+    "code.noCommit": "\u5C1A\u7121\u63D0\u4EA4",
     "code.pendingTitle": "\u5F85\u5BE9\u6279\u7A0B\u5F0F\u78BC/\u8A2D\u5B9A/\u91CD\u73FE\u52D5\u4F5C",
     "code.pendingCount": "{count} \u500B",
     "code.fileTree": "\u53D7\u9650\u6A94\u6848\u6A39",
@@ -14223,28 +14429,28 @@
     "code.diffReadonly": "\u552F\u8B80\u5C55\u793A\u76EE\u524D\u7A0B\u5F0F\u78BC\u76EE\u9304\u7684 Git diff\u3002",
     "code.loading": "\u6B63\u5728\u8B80\u53D6\u53D7\u9650 Git \u5DE5\u4F5C\u5340\u2026",
     "queue.title": "\u57F7\u884C\u4F47\u5217",
-    "queue.hint": "\u57F7\u884C\u72C0\u614B\u8207\u6578\u503C\u5747\u4F86\u81EA\u771F\u5BE6 Experiment Run\uFF1B\u672A\u57F7\u884C\u7684\u8A08\u756B\u4E0D\u6703\u986F\u793A\u70BA\u7D50\u679C\u3002",
+    "queue.hint": "\u57F7\u884C\u72C0\u614B\u8207\u6578\u503C\u5747\u4F86\u81EA\u771F\u5BE6\u5BE6\u9A57\u57F7\u884C\uFF1B\u672A\u57F7\u884C\u7684\u8A08\u756B\u4E0D\u6703\u986F\u793A\u70BA\u7D50\u679C\u3002",
     "queue.count": "{count} \u689D",
     "queue.runUnassigned": "\u672A\u5206\u914D",
     "queue.empty": "\u76EE\u524D\u6C92\u6709\u6392\u968A\u6216\u57F7\u884C\u4E2D\u7684\u5BE6\u9A57\u3002",
     "metrics.title": "\u6307\u6A19\u7D71\u8A08",
     "metrics.empty": "\u9084\u6C92\u6709\u5E36\u6578\u503C\u6307\u6A19\u7684\u5BE6\u9A57\u7D50\u679C\u3002",
     "lineage.title": "\u7D50\u679C\u8B5C\u7CFB",
-    "lineage.hint": "\u6BCF\u500B Artifact \u5FC5\u9808\u80FD\u56DE\u93C8 Experiment\u3001Run\u3001Idea \u7248\u672C\u3001\u7A0B\u5F0F\u78BC commit\u3001\u8CC7\u6599\u7248\u672C\u8207\u8A2D\u5B9A\u3002",
+    "lineage.hint": "\u6BCF\u500B\u7522\u7269\u5FC5\u9808\u80FD\u56DE\u93C8\u5BE6\u9A57\u3001\u57F7\u884C\u3001Idea \u7248\u672C\u3001\u7A0B\u5F0F\u78BC\u63D0\u4EA4\u3001\u8CC7\u6599\u7248\u672C\u8207\u8A2D\u5B9A\u3002",
     "lineage.missingMeta": "\u7F3A\u5C11\u8B5C\u7CFB\u5143\u8CC7\u6599",
-    "lineage.empty": "\u76EE\u524D\u6C92\u6709\u53EF\u8FFD\u6EAF\u7684 Artifact\u3002",
+    "lineage.empty": "\u76EE\u524D\u6C92\u6709\u53EF\u8FFD\u6EAF\u7684\u7522\u7269\u3002",
     "workflow.empty": "\u76EE\u524D\u5B50\u9801\u9762\u6C92\u6709\u53EF\u986F\u793A\u7684\u8CC7\u6599\u3002",
     "literature.recursiveDefaultReason": "\u64F4\u5145\u76EE\u524D\u5C08\u6848\u7684\u76F8\u95DC\u5DE5\u4F5C\u5F15\u7528\u7DB2\u8DEF",
-    "literature.approveReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u8A72 metadata candidate \u53EF\u9032\u5165\u5C08\u6848 Paper",
-    "literature.rejectReason": "\u4F7F\u7528\u8005\u62D2\u7D55\u8A72 metadata candidate",
+    "literature.approveReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u8A72\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078\u53EF\u9032\u5165\u5C08\u6848\u8AD6\u6587",
+    "literature.rejectReason": "\u4F7F\u7528\u8005\u62D2\u7D55\u8A72\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078",
     "literature.reopenReason": "\u4F7F\u7528\u8005\u8981\u6C42\u91CD\u65B0\u5BE9\u95B1\u8A72 candidate",
-    "literature.approvedToast": "\u5019\u9078\u5DF2\u8F49\u63DB\u70BA\u5C08\u6848 Paper",
+    "literature.approvedToast": "\u5019\u9078\u5DF2\u8F49\u63DB\u70BA\u5C08\u6848\u8AD6\u6587",
     "literature.rejectedToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304",
     "literature.reopenedToast": "\u5019\u9078\u5DF2\u91CD\u65B0\u958B\u555F",
-    "literature.confirmPaper": "\u78BA\u8A8D Paper",
+    "literature.confirmPaper": "\u78BA\u8A8D\u8AD6\u6587",
     "literature.rejectCandidate": "\u62D2\u7D55\u5019\u9078",
     "literature.reopen": "\u91CD\u65B0\u958B\u555F",
-    "literature.approveDescription": "\u78BA\u8A8D\u5F8C\u6703\u5EFA\u7ACB\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u5167\u7684 Paper\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8B49\u64DA\u3002",
+    "literature.approveDescription": "\u78BA\u8A8D\u5F8C\u6703\u5EFA\u7ACB\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u5167\u7684\u8AD6\u6587\u8A18\u9304\uFF1B\u5B83\u4ECD\u7136\u4E0D\u662F\u5168\u6587\u8B49\u64DA\u3002",
     "literature.rejectDescription": "\u5019\u9078\u4E0D\u6703\u88AB\u5BE6\u9AD4\u522A\u9664\uFF0C\u6C7A\u5B9A\u8207\u539F\u56E0\u6703\u4FDD\u7559\u5728\u5C08\u6848\u7A3D\u6838\u4E2D\u3002",
     "literature.fieldSelected": "\u5DF2\u9078\u64C7 {field} \u7684 {provider} \u4F86\u6E90",
     "literature.enrichReason": "\u88DC\u5168\u76EE\u524D\u5019\u9078\u7F3A\u5931\u6B04\u4F4D\u4E26\u8A18\u9304\u591A\u6E90 provenance",
@@ -14261,9 +14467,9 @@
     "literature.noRepoLinks": "\u8AD6\u6587\u5DF2\u5132\u5B58\u7684\u4F86\u6E90\u4E2D\u6C92\u6709\u660E\u78BA\u7684 GitHub/GitLab \u9023\u7D50\uFF1B\u4E0D\u6703\u6839\u64DA\u6A19\u984C\u731C\u5009\u5EAB",
     "literature.repoVerified": "\u5009\u5EAB\u96D9\u6E90\u9A57\u8B49\u5B8C\u6210",
     "literature.downloadProposal": "\u4E0B\u8F09 Proposal {id} \u5DF2\u5EFA\u7ACB",
-    "literature.claimSubmitted": "Claim \u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8B49\u64DA\u8907\u6838",
+    "literature.claimSubmitted": "\u8AD6\u65B7\u5DF2\u63D0\u4EA4\u4EBA\u5DE5\u8B49\u64DA\u8907\u6838",
     "literature.reviewRecorded": "\u4EBA\u5DE5\u8907\u6838\u5DF2\u8A18\u9304",
-    "literature.reviewRejected": "Claim \u5DF2\u6A19\u8A18\u70BA\u672A\u901A\u904E\u8907\u6838",
+    "literature.reviewRejected": "\u8AD6\u65B7\u5DF2\u6A19\u8A18\u70BA\u672A\u901A\u904E\u8907\u6838",
     "literature.downloadedTo": "\u5DF2\u4E0B\u8F09\u5230 {path}",
     "literature.projectCodeDir": "\u5C08\u6848\u7A0B\u5F0F\u78BC\u76EE\u9304",
     "literature.proposeDownload": "\u63D0\u51FA\u4E0B\u8F09",
@@ -14272,14 +14478,14 @@
     "literature.updateSearch": "\u66F4\u65B0\u6AA2\u7D22",
     "literature.extractEvidence": "\u64F7\u53D6\u5168\u6587\u8B49\u64DA",
     "literature.seedTitle": "\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u8207\u5F15\u7528\u7DB2\u8DEF",
-    "literature.seedHint": "\u7A2E\u5B50\u53EA\u6703\u9032\u5165\u76EE\u524D\u5C08\u6848\u7684\u5019\u9078\u6C60\uFF1B\u905E\u8FF4\u64F4\u5145\u5FC5\u9808\u5148\u751F\u6210 Proposal \u4E26\u7372\u5F97\u6838\u51C6\u3002metadata candidate\u3001\u5168\u6587\u8B49\u64DA\u8207\u5DF2\u78BA\u8A8D Paper \u59CB\u7D42\u5206\u958B\u3002",
+    "literature.seedHint": "\u7A2E\u5B50\u53EA\u6703\u9032\u5165\u76EE\u524D\u5C08\u6848\u7684\u5019\u9078\u6C60\uFF1B\u905E\u8FF4\u64F4\u5145\u5FC5\u9808\u5148\u751F\u6210\u63D0\u6848\u4E26\u7372\u5F97\u6838\u51C6\u3002\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078\u3001\u5168\u6587\u8B49\u64DA\u8207\u5DF2\u78BA\u8A8D\u8AD6\u6587\u59CB\u7D42\u5206\u958B\u3002",
     "literature.seedType": "\u7A2E\u5B50\u985E\u578B",
     "literature.titleOption": "\u6A19\u984C",
     "literature.urlOption": "\u4F86\u6E90 URL",
-    "literature.pdfOption": "\u53D7\u63A7 PDF Artifact",
-    "literature.existingPaperOption": "\u76EE\u524D\u5C08\u6848\u5DF2\u6709 Paper",
+    "literature.pdfOption": "\u53D7\u63A7 PDF \u7522\u7269",
+    "literature.existingPaperOption": "\u76EE\u524D\u5C08\u6848\u5DF2\u6709\u8AD6\u6587",
     "literature.selectPdf": "\u9078\u64C7\u53D7\u63A7 PDF",
-    "literature.selectPaper": "\u9078\u64C7\u76EE\u524D\u5C08\u6848 Paper",
+    "literature.selectPaper": "\u9078\u64C7\u76EE\u524D\u5C08\u6848\u8AD6\u6587",
     "literature.paperTitle": "\u8AD6\u6587\u6A19\u984C",
     "literature.httpsUrl": "HTTPS \u4F86\u6E90 URL",
     "literature.bibtexEntry": "BibTeX \u689D\u76EE",
@@ -14296,7 +14502,7 @@
     "literature.recursiveProviders": "\u905E\u8FF4\u4F86\u6E90",
     "literature.creating": "\u6B63\u5728\u5EFA\u7ACB\u2026",
     "literature.createRecursiveProposal": "\u70BA {count} \u500B\u7A2E\u5B50\u5EFA\u7ACB\u905E\u8FF4 Proposal",
-    "literature.noSeeds": "\u9084\u6C92\u6709\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u3002\u5148\u65B0\u589E DOI\u3001\u6A19\u984C\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709 Paper\u3002",
+    "literature.noSeeds": "\u9084\u6C92\u6709\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u3002\u5148\u65B0\u589E DOI\u3001\u6A19\u984C\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709\u8AD6\u6587\u3002",
     "literature.runsTitle": "\u5F15\u7528\u7DB2\u8DEF\u57F7\u884C",
     "literature.runsHint": "\u57F7\u884C\u72C0\u614B\u8207 provider attempt \u4F86\u81EA\u771F\u5BE6\u8ACB\u6C42\uFF1B\u5931\u6557\u3001\u53D6\u6D88\u8207\u4E0A\u9650\u622A\u65B7\u4E0D\u6703\u88AB\u6A19\u8A18\u70BA\u6210\u529F\u3002",
     "literature.runCandidates": "{count} \u500B\u5019\u9078 \xB7 {edges} \u689D\u5F15\u7528\u908A",
@@ -14304,16 +14510,16 @@
     "literature.noFailureDetail": "\u672A\u63D0\u4F9B\u5931\u6557\u8A73\u60C5",
     "literature.edgeTitle": "\u5F15\u7528\u5716\u908A\uFF08\u76EE\u524D\u5C08\u6848\u7BC4\u570D\uFF09",
     "literature.noRankingSignal": "\u7121\u6392\u5E8F\u8A0A\u865F",
-    "literature.candidatesTitle": "\u5F85\u78BA\u8A8D metadata candidate",
-    "literature.candidatesHint": "\u9019\u4E9B\u8A18\u9304\u4F86\u81EA provider \u5143\u8CC7\u6599\u8207\u5F15\u7528\u7DB2\u8DEF\uFF0C\u5C1A\u672A\u81EA\u52D5\u5347\u7D1A\u70BA\u5DF2\u78BA\u8A8D Paper\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9801\u78BC quote\u3002",
+    "literature.candidatesTitle": "\u5F85\u78BA\u8A8D\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078",
+    "literature.candidatesHint": "\u9019\u4E9B\u8A18\u9304\u4F86\u81EA\u4F86\u6E90\u4E2D\u7E7C\u8CC7\u6599\u8207\u5F15\u7528\u7DB2\u8DEF\uFF0C\u5C1A\u672A\u81EA\u52D5\u5347\u7D1A\u70BA\u5DF2\u78BA\u8A8D\u8AD6\u6587\uFF0C\u4E5F\u4E0D\u80FD\u66FF\u4EE3 PDF \u9801\u78BC\u5F15\u6587\u3002",
     "literature.yearUnknown": "\u5E74\u4EFD\u672A\u77E5",
-    "literature.providerEvidenceCount": "{count} \u500B provider \u8B49\u64DA",
+    "literature.providerEvidenceCount": "{count} \u500B\u4F86\u6E90\u8B49\u64DA",
     "literature.fieldProvenanceCount": "\u6B04\u4F4D\u4F86\u6E90 {count} \u689D",
     "literature.conflicts": "\u885D\u7A81\uFF1A{fields}",
     "literature.noConflicts": "\u66AB\u7121\u6B04\u4F4D\u885D\u7A81",
     "literature.viewFieldProvenance": "\u6AA2\u8996\u6B04\u4F4D\u4F86\u6E90",
     "literature.enrichFields": "\u88DC\u5168\u6B04\u4F4D",
-    "literature.provenanceDescription": "\u9078\u64C7\u4F86\u6E90\u53EA\u6703\u66F4\u65B0\u76EE\u524D\u5C08\u6848\u5019\u9078\u7684\u6B04\u4F4D\u5FEB\u7167\uFF0C\u4E26\u7559\u4E0B\u7A3D\u6838\u8A18\u9304\uFF1B\u5B83\u4E0D\u6703\u628A metadata candidate \u81EA\u52D5\u8B8A\u6210\u5168\u6587\u8B49\u64DA\u3002",
+    "literature.provenanceDescription": "\u9078\u64C7\u4F86\u6E90\u53EA\u6703\u66F4\u65B0\u76EE\u524D\u5C08\u6848\u5019\u9078\u7684\u6B04\u4F4D\u5FEB\u7167\uFF0C\u4E26\u7559\u4E0B\u7A3D\u6838\u8A18\u9304\uFF1B\u5B83\u4E0D\u6703\u628A\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078\u81EA\u52D5\u8B8A\u6210\u5168\u6587\u8B49\u64DA\u3002",
     "literature.field": "\u6B04\u4F4D",
     "literature.sourceUnrecorded": "\u4F86\u6E90\u672A\u8A18\u9304",
     "literature.selected": " \xB7 \u5DF2\u9078",
@@ -14328,7 +14534,7 @@
     "literature.repoPlaceholder": "GitHub \u6216 GitLab HTTPS \u4F4D\u5740",
     "literature.add": "\u65B0\u589E",
     "literature.addRepository": "\u65B0\u589E\u7A0B\u5F0F\u78BC\u5009\u5EAB",
-    "literature.discoveryHint": "\u4EE5\u4E0B\u9023\u7D50\u4F86\u81EA\u8A72 Paper \u5DF2\u5132\u5B58\u7684 metadata/\u4F86\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9078\uFF0C\u4ECD\u9700\u96D9\u6E90\u9A57\u8B49\uFF1A",
+    "literature.discoveryHint": "\u4EE5\u4E0B\u9023\u7D50\u4F86\u81EA\u8A72\u8AD6\u6587\u5DF2\u5132\u5B58\u7684\u4E2D\u7E7C\u8CC7\u6599/\u4F86\u6E90 URL\uFF0C\u53EA\u662F\u5019\u9078\uFF0C\u4ECD\u9700\u96D9\u6E90\u9A57\u8B49\uFF1A",
     "literature.addCandidate": "\u65B0\u589E\u5019\u9078",
     "literature.noPapers": "\u5C1A\u7121\u6587\u737B\u8A18\u9304\u3002",
     "literature.materialsTitle": "\u5C08\u6848\u6750\u6599\u5EAB",
@@ -14342,15 +14548,15 @@
     "literature.semanticCandidate": "\u8A9E\u610F\u5019\u9078 \xB7 \u672A\u6838\u9A57",
     "literature.loadMore": "\u8F09\u5165\u66F4\u591A",
     "literature.materialsEmpty": "\u8F38\u5165\u95DC\u9375\u8A5E\u6AA2\u7D22\u76EE\u524D\u5C08\u6848\u7684\u6750\u6599\u3002",
-    "literature.claimTitle": "Claim \u5230\u8B49\u64DA\u4EBA\u5DE5\u8907\u6838",
-    "literature.claimHint": "\u53EA\u80FD\u95DC\u806F\u76EE\u524D\u5C08\u6848\u7684\u9801\u78BC quote\uFF1B\u63A5\u53D7\u8907\u6838\u4E0D\u7B49\u65BC\u8B49\u660E\u79D1\u5B78\u7D50\u8AD6\u3002",
-    "literature.claimToReview": "\u5F85\u8907\u6838 Claim",
+    "literature.claimTitle": "\u8AD6\u65B7\u5230\u8B49\u64DA\u4EBA\u5DE5\u8907\u6838",
+    "literature.claimHint": "\u53EA\u80FD\u95DC\u806F\u76EE\u524D\u5C08\u6848\u7684\u9801\u78BC\u5F15\u6587\uFF1B\u63A5\u53D7\u8907\u6838\u4E0D\u7B49\u65BC\u8B49\u660E\u79D1\u5B78\u7D50\u8AD6\u3002",
+    "literature.claimToReview": "\u5F85\u8907\u6838\u8AD6\u65B7",
     "literature.claimPlaceholder": "\u5BEB\u51FA\u9700\u8981\u4EBA\u5DE5\u6838\u5C0D\u7684\u5177\u9AD4\u7814\u7A76\u9673\u8FF0",
     "literature.noLocator": "\u672A\u63D0\u4F9B\u9801\u78BC/\u7AE0\u7BC0",
-    "literature.noQuote": "\u7121 quote",
+    "literature.noQuote": "\u7121\u5F15\u6587",
     "literature.submitReview": "\u63D0\u4EA4\u4EBA\u5DE5\u8907\u6838",
-    "literature.evidenceFirst": "\u5148\u651D\u53D6\u5E36\u9801\u78BC\u5B9A\u4F4D\u7684\u5168\u6587\u8B49\u64DA\uFF0C\u518D\u5EFA\u7ACB Claim \u8907\u6838\u3002",
-    "literature.quoteCount": "{count} \u689D quote",
+    "literature.evidenceFirst": "\u5148\u651D\u53D6\u5E36\u9801\u78BC\u5B9A\u4F4D\u7684\u5168\u6587\u8B49\u64DA\uFF0C\u518D\u5EFA\u7ACB\u8AD6\u65B7\u8907\u6838\u3002",
+    "literature.quoteCount": "{count} \u689D\u5F15\u6587",
     "literature.acceptReview": "\u63A5\u53D7\u8907\u6838",
     "literature.rejectReview": "\u62D2\u7D55\u8907\u6838",
     "literature.externalCandidates": "\u5916\u90E8\u8CC7\u6E90\u5019\u9078",
@@ -14381,30 +14587,30 @@
     "paper.versionRules": "\u7248\u672C\u898F\u5247",
     "paper.versionRulesText": "\u76EE\u524D\u9801\u9762\u53EA\u5C55\u793A\u7AE0\u7BC0\u6E96\u5099\u5EA6\u3002\u4EFB\u4F55\u5BEB\u5165 paper/main.tex \u7684\u4FEE\u6539\u90FD\u5FC5\u9808\u900F\u904E\u7368\u7ACB Proposal\uFF0C\u6838\u51C6\u5F8C\u5F62\u6210 Git diff\uFF1B\u5931\u6557\u6216\u88AB\u62D2\u7D55\u7684\u5BEB\u5165\u4E0D\u6703\u7522\u751F\u6210\u529F\u7AE0\u7BC0\u3002",
     "paper.citationsTitle": "\u5F15\u7528\u8207 BibTeX",
-    "paper.citationsHint": "\u53EA\u986F\u793A\u5C08\u6848\u7BC4\u570D Paper\u3001\u9801\u78BC/\u7AE0\u7BC0 Evidence \u8207 ClaimReview \u72C0\u614B\uFF1Bmetadata-only \u4E0D\u80FD\u9032\u5165\u8AD6\u8B49\u3002",
+    "paper.citationsHint": "\u53EA\u986F\u793A\u5C08\u6848\u7BC4\u570D\u8AD6\u6587\u3001\u9801\u78BC/\u7AE0\u7BC0\u8B49\u64DA\u8207\u8AD6\u65B7\u5BE9\u95B1\u72C0\u614B\uFF1B\u50C5\u4E2D\u7E7C\u8CC7\u6599\u4E0D\u80FD\u9032\u5165\u8AD6\u8B49\u3002",
     "paper.sourcePending": "\u4F86\u6E90\u5F85\u8A18\u9304",
     "paper.bibtexRecorded": "BibTeX \u5DF2\u8A18\u9304",
     "paper.bibtexMissing": "BibTeX \u672A\u8A18\u9304",
     "paper.citationReadiness": "\u5F15\u7528\u6E96\u5099\u5EA6\uFF1A{status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
     "paper.open": "\u958B\u555F",
-    "paper.noPapers": "\u5C1A\u7121\u5C08\u6848\u7BC4\u570D Paper\uFF1B\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
+    "paper.noPapers": "\u5C1A\u7121\u5C08\u6848\u7BC4\u570D\u8AD6\u6587\uFF1B\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
     "paper.openLiterature": "\u958B\u555F\u6587\u737B\u6AA2\u7D22",
     "paper.evidenceGate": "\u8B49\u64DA\u9580\u7981",
-    "paper.claimReviewsTitle": "\u53EF\u7528\u65BC\u8AD6\u8B49\u7684 ClaimReview",
-    "paper.acceptedReviewCount": "{count} \u689D accepted review\uFF1B\u6BCF\u689D\u5FC5\u9808\u95DC\u806F\u76EE\u524D\u5C08\u6848\u7684 Evidence\u3002",
+    "paper.claimReviewsTitle": "\u53EF\u7528\u65BC\u8AD6\u8B49\u7684\u8AD6\u65B7\u5BE9\u95B1",
+    "paper.acceptedReviewCount": "{count} \u689D\u5DF2\u63A5\u53D7\u5BE9\u95B1\uFF1B\u6BCF\u689D\u5FC5\u9808\u95DC\u806F\u76EE\u524D\u5C08\u6848\u7684\u8B49\u64DA\u3002",
     "paper.fulltextLocated": "\u5168\u6587\u5B9A\u4F4D",
-    "paper.locatedCount": "{located}/{total} \u689D Evidence \u6709\u9801\u78BC\u6216\u7AE0\u7BC0 locator\u3002",
+    "paper.locatedCount": "{located}/{total} \u689D\u8B49\u64DA\u6709\u9801\u78BC\u6216\u7AE0\u7BC0\u5B9A\u4F4D\u3002",
     "paper.figuresTitle": "\u5716\u8868\u9078\u64C7\u8207\u63D2\u5165",
-    "paper.figuresHint": "\u9019\u88E1\u53EA\u9078\u64C7 lineage \u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5BE6\u9A57 Artifact \u63D2\u5165\u8AD6\u6587\uFF1B\u5BE6\u9A57\u57F7\u884C\u3001\u4F47\u5217\u8207\u8996\u89BA\u5316\u7BA1\u7406\u5728\u300A\u5BE6\u9A57\u5BE6\u4F5C\u300B\u4E2D\u5B8C\u6210\u3002",
+    "paper.figuresHint": "\u9019\u88E1\u53EA\u9078\u64C7\u8B5C\u7CFB\u5B8C\u6574\u4E14\u4ECD\u6709\u6548\u7684\u5BE6\u9A57\u7522\u7269\u63D2\u5165\u8AD6\u6587\uFF1B\u5BE6\u9A57\u57F7\u884C\u3001\u4F47\u5217\u8207\u8996\u89BA\u5316\u7BA1\u7406\u5728\u300A\u5BE6\u9A57\u5BE6\u4F5C\u300B\u4E2D\u5B8C\u6210\u3002",
     "paper.figureCount": "{count} \u500B\u53EF\u9078\u5716\u8868",
-    "paper.noFigures": "\u5C1A\u7121\u53EF\u63D2\u5165\u8AD6\u6587\u7684\u6709\u6548\u5716\u8868\u6216\u5BE6\u9A57\u7522\u7269\u3002\u7121\u95DC baseline\u3001\u7A7A\u9663\u5217\u8207\u5931\u6548 Artifact \u4E0D\u6703\u986F\u793A\u70BA\u7D50\u679C\u3002",
+    "paper.noFigures": "\u5C1A\u7121\u53EF\u63D2\u5165\u8AD6\u6587\u7684\u6709\u6548\u5716\u8868\u6216\u5BE6\u9A57\u7522\u7269\u3002\u7121\u95DC\u57FA\u7DDA\u3001\u7A7A\u9663\u5217\u8207\u5931\u6548\u7522\u7269\u4E0D\u6703\u986F\u793A\u70BA\u7D50\u679C\u3002",
     "paper.viewArtifacts": "\u67E5\u770B\u5BE6\u9A57\u7522\u7269",
     "paper.dataTitle": "\u5BE6\u9A57\u8CC7\u6599\u9078\u64C7\u8207\u5F15\u7528",
-    "paper.dataHint": "\u53EA\u5217\u51FA lineage \u5B8C\u6574\u4E14\u6709\u6548\u7684 Artifact \u4F9B\u8AD6\u6587\u5F15\u7528\u6578\u5B57\u8207\u8868\u683C\uFF1B\u6578\u503C\u4F86\u81EA\u771F\u5BE6 Run\uFF0C\u8AD6\u6587\u9801\u4E0D\u57F7\u884C\u6216\u7BA1\u7406\u5BE6\u9A57\u3002",
+    "paper.dataHint": "\u53EA\u5217\u51FA\u8B5C\u7CFB\u5B8C\u6574\u4E14\u6709\u6548\u7684\u7522\u7269\u4F9B\u8AD6\u6587\u5F15\u7528\u6578\u5B57\u8207\u8868\u683C\uFF1B\u6578\u503C\u4F86\u81EA\u771F\u5BE6\u57F7\u884C\uFF0C\u8AD6\u6587\u9801\u4E0D\u57F7\u884C\u6216\u7BA1\u7406\u5BE6\u9A57\u3002",
     "paper.dataCount": "{count} \u500B\u53EF\u9078\u8CC7\u6599",
     "paper.typePending": "\u985E\u578B\u5F85\u8A18\u9304",
-    "paper.dataLineage": "Run {run} \xB7 Idea v{idea} \xB7 \u8CC7\u6599\u7248\u672C {data}",
-    "paper.noData": "\u76EE\u524D\u6C92\u6709\u53EF\u5F15\u7528\u7684\u5BE6\u9A57\u8CC7\u6599\u7522\u7269\u3002\u8ACB\u5148\u5B8C\u6210\u5BE6\u9A57\u5BE6\u4F5C\u4E26\u7522\u751F\u6709\u6548 Artifact\u3002",
+    "paper.dataLineage": "\u57F7\u884C {run} \xB7 Idea v{idea} \xB7 \u8CC7\u6599\u7248\u672C {data}",
+    "paper.noData": "\u76EE\u524D\u6C92\u6709\u53EF\u5F15\u7528\u7684\u5BE6\u9A57\u8CC7\u6599\u7522\u7269\u3002\u8ACB\u5148\u5B8C\u6210\u5BE6\u9A57\u5BE6\u4F5C\u4E26\u7522\u751F\u6709\u6548\u7522\u7269\u3002",
     "paper.compileTitle": "LaTeX \u7DE8\u8B6F",
     "paper.compileHint": "Linux latexmk \u662F\u7368\u7ACB\u5BE9\u6279\u52D5\u4F5C\uFF1B\u7DE8\u8B6F\u5931\u6557\u53EA\u7559\u4E0B\u5931\u6557\u65E5\u8A8C\uFF0C\u4E0D\u7522\u751F\u6210\u529F PDF\u3002",
     "paper.createCompileProposal": "\u5EFA\u7ACB\u7DE8\u8B6F Proposal",
@@ -14418,7 +14624,7 @@
     "paper.compileApprovals": "\u7DE8\u8B6F\u5BE9\u6279",
     "paper.noReason": "\u7121\u8AAA\u660E",
     "paper.pdfTitle": "PDF \u5448\u73FE\u8207\u5BE9\u95B1",
-    "paper.pdfHint": "\u53EA\u5448\u73FE\u6210\u529F\u7DE8\u8B6F\u4E14\u4ECD\u6709\u6548\u7684 PDF Artifact\uFF1B\u7DE8\u8B6F\u5931\u6557\u4E0D\u6703\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u986F\u793A\u70BA\u5DF2\u5B8C\u6210\u3002",
+    "paper.pdfHint": "\u53EA\u5448\u73FE\u6210\u529F\u7DE8\u8B6F\u4E14\u4ECD\u6709\u6548\u7684 PDF \u7522\u7269\uFF1B\u7DE8\u8B6F\u5931\u6557\u4E0D\u6703\u7559\u4E0B\u6210\u529F PDF\uFF0C\u4E5F\u4E0D\u986F\u793A\u70BA\u5DF2\u5B8C\u6210\u3002",
     "paper.pdfCount": "{count} \u500B PDF",
     "paper.openPdf": "\u958B\u555F PDF",
     "paper.noPdf": "\u9084\u6C92\u6709\u6210\u529F\u7DE8\u8B6F\u7684 PDF\u3002\u8ACB\u5148\u5728 LaTeX \u7DE8\u8B6F\u9801\u63D0\u51FA Proposal \u4E26\u5B8C\u6210\u771F\u5BE6\u7DE8\u8B6F\u3002",
@@ -14429,17 +14635,17 @@
     "paper.proposeCompile": "\u63D0\u51FA LaTeX \u7DE8\u8B6F",
     "paper.literatureCount": "\u6587\u737B\u8A18\u9304",
     "paper.evidenceCandidates": "\u539F\u6587\u8B49\u64DA\u5019\u9078",
-    "paper.acceptedClaims": "\u5DF2\u63A5\u53D7 Claim \u8907\u6838",
+    "paper.acceptedClaims": "\u5DF2\u63A5\u53D7\u8AD6\u65B7\u8907\u6838",
     "paper.validArtifacts": "\u6709\u6548\u7522\u7269",
-    "paper.claimPageEvidence": "Claim \u8207\u9801\u78BC\u8B49\u64DA",
-    "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u8907\u6838\u7684 Claim \u624D\u80FD\u4F5C\u70BA\u8AD6\u6587\u8AD6\u8B49\u8F38\u5165\uFF1B\u5143\u8CC7\u6599\u8A18\u9304\u4E0D\u6703\u81EA\u52D5\u5347\u7D1A\u70BA\u5168\u6587\u8B49\u64DA\u3002",
+    "paper.claimPageEvidence": "\u8AD6\u65B7\u8207\u9801\u78BC\u8B49\u64DA",
+    "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u8907\u6838\u7684\u8AD6\u65B7\u624D\u80FD\u4F5C\u70BA\u8AD6\u6587\u8AD6\u8B49\u8F38\u5165\uFF1B\u4E2D\u7E7C\u8CC7\u6599\u8A18\u9304\u4E0D\u6703\u81EA\u52D5\u5347\u7D1A\u70BA\u5168\u6587\u8B49\u64DA\u3002",
     "paper.proposalCompile": "Proposal \u8207\u7DE8\u8B6F",
     "paper.proposalCompileText": "\u6838\u51C6\u5F8C\u624D\u6703\u4FEE\u6539\u5C08\u6848\u4E2D\u7684 paper/main.tex\uFF0C\u4E26\u7531 Linux latexmk \u76E3\u7763\u5668\u7522\u751F\u7DE8\u8B6F\u7522\u7269\u3002",
     "paper.referenceRecords": "\u8AD6\u6587\u53C3\u8003\u8A18\u9304",
     "paper.noReferences": "\u5C1A\u7121\u53EF\u5F15\u7528\u7684\u6587\u737B\u8A18\u9304\u3002\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
-    "comparison.reason": "\u4F7F\u7528\u8005\u8ACB\u6C42\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A commit \u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
+    "comparison.reason": "\u4F7F\u7528\u8005\u8ACB\u6C42\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
-    "literature.projectPaper": "\u5C08\u6848 Paper",
+    "literature.projectPaper": "\u5C08\u6848\u8AD6\u6587",
     "research.themePlaceholder": "\u4F8B\u5982 efficient adaptation",
     "research.methodPlaceholder": "\u4F8B\u5982 parameter-efficient tuning"
   };
@@ -14541,6 +14747,109 @@
     "errors.timeout": "Request timed out. Check that the local service is running and try again.",
     "errors.offline": "Cannot connect to the Research OS API. Make sure the local service is still running.",
     "errors.requestFailed": "Request failed. Please try again later.",
+    "errors.apiFailure": "Request failed ({code}).",
+    "apiError.api_unknown": "The local service returned an unrecognized error. Please try again later.",
+    "apiError.artifact_invalidated": "This artifact is no longer valid because an upstream dependency changed.",
+    "apiError.artifact_not_found": "No such artifact exists in the current project.",
+    "apiError.claim_review_not_found": "No such claim review exists in the current project.",
+    "apiError.embedding_requires_reset": "Switching models requires rebuilding the data directory and re-ingesting semantic memory.",
+    "apiError.experiment_not_found": "No such experiment run exists in the current project.",
+    "apiError.feedback_not_found": "No such feedback exists in the current project.",
+    "apiError.idea_not_ready": "The research Idea is not ready to be confirmed yet.",
+    "apiError.invalid_json": "The request body must be valid JSON.",
+    "apiError.malware_detected": "Windows Defender detected a threat and the file was rejected.",
+    "apiError.material_search_pagination_unsupported": "Local pagination is not supported for semantic search.",
+    "apiError.memory_link_not_active": "Only active semantic memory links can be revoked or deleted.",
+    "apiError.memory_link_not_found": "The project semantic memory link does not exist.",
+    "apiError.no_open_pdf_candidates": "No allowlisted open-access PDF is available for this candidate.",
+    "apiError.paper_not_found": "This paper does not belong to the current project.",
+    "apiError.project_cancelled": "A cancelled project cannot be resumed.",
+    "apiError.project_not_active": "The project cannot perform this action right now.",
+    "apiError.project_not_found": "Project not found.",
+    "apiError.proposal_not_found": "Proposal not found.",
+    "apiError.related_work_run_not_found": "Related-work recursive run not found.",
+    "apiError.report_no_events": "No real project events exist in this window, so the report stays empty.",
+    "apiError.repository_candidate_exists": "This repository candidate was already added to the project.",
+    "apiError.repository_not_found": "Repository candidate not found.",
+    "apiError.reproduction_run_not_found": "Reproduction run not found.",
+    "apiError.session_not_found": "Conversation session not found.",
+    "apiError.session_project_mismatch": "The session does not belong to this project.",
+    "apiError.upload_file_missing": "No upload file was provided.",
+    "apiError.upload_too_large": "The file exceeds the 50 MB limit.",
+    "apiError.upload_type_forbidden": "This file type is not allowed.",
+    "apiError.validation_error": "The submitted content did not pass validation. Please check and try again.",
+    "status.accepted": "Accepted",
+    "status.approvalRequired": "Approval required",
+    "status.awaitingArtifactApproval": "Awaiting artifact approval",
+    "status.blocked": "Blocked",
+    "status.calculated": "Calculated",
+    "status.cancelRequested": "Cancel requested",
+    "status.candidateExists": "Candidate exists",
+    "status.candidateOnly": "Candidate only",
+    "status.clean": "Clean",
+    "status.closed": "Closed",
+    "status.completed": "Completed",
+    "status.confirmedPaper": "Confirmed Paper",
+    "status.conflict": "Conflict",
+    "status.declared": "Declared",
+    "status.dependencyFailed": "Dependency install failed",
+    "status.dependencyInstalling": "Installing dependencies",
+    "status.dirty": "Uncommitted changes",
+    "status.disabled": "Disabled",
+    "status.empty": "Empty",
+    "status.enabled": "Enabled",
+    "status.enforced": "Enforced",
+    "status.evidenceRequired": "Evidence required",
+    "status.fulltextEvidence": "Full-text evidence",
+    "status.invalidResponse": "Invalid response",
+    "status.invalidated": "Invalidated",
+    "status.legacyUnverified": "Legacy unverified",
+    "status.licenseReviewRequired": "License review required",
+    "status.manual": "Manual",
+    "status.maxTotalReached": "Maximum total reached",
+    "status.metadataCandidate": "Metadata candidate",
+    "status.metadataCandidatesOnly": "Metadata candidates only",
+    "status.metadataOnly": "Metadata only",
+    "status.observed": "Observed",
+    "status.ok": "OK",
+    "status.open": "Open",
+    "status.partial": "Partial",
+    "status.projectContained": "Project-contained",
+    "status.projectScoped": "Project-scoped",
+    "status.proposalCreated": "Proposal created",
+    "status.queued": "Queued",
+    "status.rateLimited": "Rate limited",
+    "status.ready": "Ready",
+    "status.reopened": "Reopened",
+    "status.reviewRequired": "Review required",
+    "status.semanticCandidate": "Semantic candidate",
+    "status.selected": "Selected",
+    "status.started": "Started",
+    "status.timedOut": "Timed out",
+    "status.unresolved": "Unresolved",
+    "status.unsupported": "Unsupported",
+    "status.verified": "Verified",
+    "status.active": "Active",
+    "status.approved": "Approved",
+    "status.candidate": "Candidate",
+    "status.cancelled": "Cancelled",
+    "status.claimReviewed": "Claim reviewed",
+    "status.confirmed": "Confirmed",
+    "status.dependencyPending": "Waiting for dependencies",
+    "status.failed": "Failed",
+    "status.located": "Located",
+    "status.pageQuote": "Page quote",
+    "status.paused": "Paused",
+    "status.pending": "Pending",
+    "status.rejected": "Rejected",
+    "status.running": "Running",
+    "status.sourceDownloaded": "Source downloaded",
+    "status.sourceDownloading": "Downloading source",
+    "status.succeeded": "Succeeded",
+    "status.unconfirmed": "Unconfirmed",
+    "status.unlocated": "Not located",
+    "status.valid": "Valid",
+    "status.waitingApproval": "Waiting for approval",
     "app.newProject": "New Research Project",
     "app.researchProject": "Research Project",
     "app.projectCreated": "Project created",
@@ -15336,7 +15645,7 @@
     "sidebar.newProject": "Nuevo proyecto de investigaci\xF3n",
     "sidebar.projects": "Proyectos",
     "sidebar.noProjects": "A\xFAn no hay proyectos",
-    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.mastraWorkflows": "Flujos de trabajo de Mastra",
     "sidebar.memoryGraph": "Grafo de memoria del proyecto",
     "sidebar.modelSettings": "Configuraci\xF3n de modelos",
     "theme.light": "Claro",
@@ -15379,6 +15688,109 @@
     "errors.timeout": "La solicitud super\xF3 el tiempo de espera. Revisa que el servicio local est\xE9 en ejecuci\xF3n e int\xE9ntalo de nuevo.",
     "errors.offline": "No se puede conectar con la API de Research OS. Aseg\xFArate de que el servicio local siga ejecut\xE1ndose.",
     "errors.requestFailed": "La solicitud fall\xF3. Int\xE9ntalo de nuevo m\xE1s tarde.",
+    "errors.apiFailure": "La solicitud fall\xF3 ({code}).",
+    "apiError.api_unknown": "El servicio local devolvi\xF3 un error no reconocido. Int\xE9ntalo de nuevo m\xE1s tarde.",
+    "apiError.artifact_invalidated": "Este artefacto ya no es v\xE1lido porque cambi\xF3 una dependencia de origen.",
+    "apiError.artifact_not_found": "No existe este artefacto en el proyecto actual.",
+    "apiError.claim_review_not_found": "No existe esta revisi\xF3n de afirmaci\xF3n en el proyecto actual.",
+    "apiError.embedding_requires_reset": "Cambiar el modelo requiere reconstruir el directorio de datos y volver a ingerir la memoria sem\xE1ntica.",
+    "apiError.experiment_not_found": "No existe esta ejecuci\xF3n de experimento en el proyecto actual.",
+    "apiError.feedback_not_found": "No existe este comentario en el proyecto actual.",
+    "apiError.idea_not_ready": "La Idea de investigaci\xF3n a\xFAn no est\xE1 lista para confirmarse.",
+    "apiError.invalid_json": "El cuerpo de la solicitud debe ser JSON v\xE1lido.",
+    "apiError.malware_detected": "Windows Defender detect\xF3 una amenaza y rechaz\xF3 el archivo.",
+    "apiError.material_search_pagination_unsupported": "La b\xFAsqueda sem\xE1ntica no admite paginaci\xF3n local.",
+    "apiError.memory_link_not_active": "Solo se pueden revocar o eliminar enlaces de memoria sem\xE1ntica activos.",
+    "apiError.memory_link_not_found": "El enlace de memoria sem\xE1ntica del proyecto no existe.",
+    "apiError.no_open_pdf_candidates": "No hay PDF de acceso abierto permitido para este candidato.",
+    "apiError.paper_not_found": "Este art\xEDculo no pertenece al proyecto actual.",
+    "apiError.project_cancelled": "Un proyecto cancelado no se puede reanudar.",
+    "apiError.project_not_active": "El proyecto no puede realizar esta acci\xF3n en este momento.",
+    "apiError.project_not_found": "Proyecto no encontrado.",
+    "apiError.proposal_not_found": "Propuesta no encontrada.",
+    "apiError.related_work_run_not_found": "Ejecuci\xF3n recursiva de trabajos relacionados no encontrada.",
+    "apiError.report_no_events": "No hay eventos reales del proyecto en este intervalo, por lo que el informe permanece vac\xEDo.",
+    "apiError.repository_candidate_exists": "Este candidato de repositorio ya se agreg\xF3 al proyecto.",
+    "apiError.repository_not_found": "Candidato de repositorio no encontrado.",
+    "apiError.reproduction_run_not_found": "Ejecuci\xF3n de reproducci\xF3n no encontrada.",
+    "apiError.session_not_found": "Sesi\xF3n de conversaci\xF3n no encontrada.",
+    "apiError.session_project_mismatch": "La sesi\xF3n no pertenece a este proyecto.",
+    "apiError.upload_file_missing": "No se proporcion\xF3 un archivo para subir.",
+    "apiError.upload_too_large": "El archivo supera el l\xEDmite de 50 MB.",
+    "apiError.upload_type_forbidden": "Este tipo de archivo no est\xE1 permitido.",
+    "apiError.validation_error": "El contenido enviado no super\xF3 la validaci\xF3n. Rev\xEDsalo e int\xE9ntalo de nuevo.",
+    "status.accepted": "Aceptado",
+    "status.approvalRequired": "Requiere aprobaci\xF3n",
+    "status.awaitingArtifactApproval": "Esperando aprobaci\xF3n del artefacto",
+    "status.blocked": "Bloqueado",
+    "status.calculated": "Calculado",
+    "status.cancelRequested": "Cancelaci\xF3n solicitada",
+    "status.candidateExists": "Ya existe un candidato",
+    "status.candidateOnly": "Solo candidato",
+    "status.clean": "Limpio",
+    "status.closed": "Cerrado",
+    "status.completed": "Completado",
+    "status.confirmedPaper": "Paper confirmado",
+    "status.conflict": "Conflicto",
+    "status.declared": "Declarado",
+    "status.dependencyFailed": "Fall\xF3 la instalaci\xF3n de dependencias",
+    "status.dependencyInstalling": "Instalando dependencias",
+    "status.dirty": "Cambios sin confirmar",
+    "status.disabled": "Deshabilitado",
+    "status.empty": "Vac\xEDo",
+    "status.enabled": "Habilitado",
+    "status.enforced": "Aplicado",
+    "status.evidenceRequired": "Se requiere evidencia",
+    "status.fulltextEvidence": "Evidencia de texto completo",
+    "status.invalidResponse": "Respuesta no v\xE1lida",
+    "status.invalidated": "Invalidado",
+    "status.legacyUnverified": "Legado sin verificar",
+    "status.licenseReviewRequired": "Revisi\xF3n de licencia requerida",
+    "status.manual": "Manual",
+    "status.maxTotalReached": "Se alcanz\xF3 el m\xE1ximo total",
+    "status.metadataCandidate": "Candidato de metadatos",
+    "status.metadataCandidatesOnly": "Solo candidatos de metadatos",
+    "status.metadataOnly": "Solo metadatos",
+    "status.observed": "Observado",
+    "status.ok": "Correcto",
+    "status.open": "Abierto",
+    "status.partial": "Parcial",
+    "status.projectContained": "Contenido en el proyecto",
+    "status.projectScoped": "\xC1mbito del proyecto",
+    "status.proposalCreated": "Propuesta creada",
+    "status.queued": "En cola",
+    "status.rateLimited": "L\xEDmite de velocidad",
+    "status.ready": "Listo",
+    "status.reopened": "Reabierto",
+    "status.reviewRequired": "Se requiere revisi\xF3n",
+    "status.semanticCandidate": "Candidato sem\xE1ntico",
+    "status.selected": "Seleccionado",
+    "status.started": "Iniciado",
+    "status.timedOut": "Tiempo agotado",
+    "status.unresolved": "Sin resolver",
+    "status.unsupported": "No compatible",
+    "status.verified": "Verificado",
+    "status.active": "Activo",
+    "status.approved": "Aprobado",
+    "status.candidate": "Candidato",
+    "status.cancelled": "Cancelado",
+    "status.claimReviewed": "Afirmaci\xF3n revisada",
+    "status.confirmed": "Confirmado",
+    "status.dependencyPending": "Esperando dependencias",
+    "status.failed": "Fallido",
+    "status.located": "Localizado",
+    "status.pageQuote": "Cita de p\xE1gina",
+    "status.paused": "En pausa",
+    "status.pending": "Pendiente",
+    "status.rejected": "Rechazado",
+    "status.running": "En ejecuci\xF3n",
+    "status.sourceDownloaded": "C\xF3digo descargado",
+    "status.sourceDownloading": "Descargando c\xF3digo",
+    "status.succeeded": "Completado",
+    "status.unconfirmed": "Sin confirmar",
+    "status.unlocated": "No localizado",
+    "status.valid": "V\xE1lido",
+    "status.waitingApproval": "Esperando aprobaci\xF3n",
     "app.newProject": "Nuevo proyecto de investigaci\xF3n",
     "app.researchProject": "Proyecto de investigaci\xF3n",
     "app.projectCreated": "Proyecto creado",
@@ -16180,6 +16592,15 @@
     timeout: "errors.timeout",
     offline: "errors.offline"
   };
+  var ApiError = class extends Error {
+    code;
+    constructor(code, message, cause) {
+      super(message);
+      this.name = "ApiError";
+      this.code = code;
+      this.cause = cause;
+    }
+  };
   var ChatRequestError = class extends Error {
     code;
     cause;
@@ -16219,6 +16640,17 @@
     }
     return typeof record.message === "string" ? record.message : `${status} ${statusText2}`;
   }
+  function codeFromErrorBody(body) {
+    if (!body || typeof body !== "object") return "api_unknown";
+    const record = body;
+    if (typeof record.code === "string" && record.code) return record.code;
+    const detail = record.detail;
+    if (detail && typeof detail === "object") {
+      const nested = detail;
+      if (typeof nested.code === "string" && nested.code) return nested.code;
+    }
+    return "api_unknown";
+  }
   async function api(path, init = {}, timeoutMs = CHAT_REQUEST_TIMEOUT_MS) {
     const { headers, ...rest } = init;
     const response = await fetchWithTimeout(
@@ -16232,7 +16664,7 @@
     );
     if (!response.ok) {
       const body = await response.json().catch(() => null);
-      throw new Error(messageFromErrorBody(body, response.status, response.statusText));
+      throw new ApiError(codeFromErrorBody(body), messageFromErrorBody(body, response.status, response.statusText));
     }
     return await response.json();
   }
@@ -16249,7 +16681,7 @@
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       const reason = messageFromErrorBody(body, response.status, response.statusText);
-      throw new Error(`${file.name}: ${reason}`);
+      throw new ApiError(codeFromErrorBody(body), `${file.name}: ${reason}`);
     }
   }
   function errorMessage(error) {
@@ -16257,7 +16689,19 @@
       const key = CHAT_ERROR_KEYS[error.code];
       if (key) return localize(key);
     }
+    if (error instanceof ApiError) {
+      const key = `apiError.${error.code}`;
+      const dictionary = dictionaries[getLocale()];
+      if (Object.prototype.hasOwnProperty.call(dictionary, key)) return dictionary[key];
+      return localize("errors.apiFailure").replaceAll("{code}", error.code);
+    }
     return error instanceof Error && error.message ? error.message : localize("errors.requestFailed");
+  }
+  function localizeFailure(code, fallback) {
+    const dictionary = dictionaries[getLocale()];
+    const key = `apiError.${code}`;
+    if (code && Object.prototype.hasOwnProperty.call(dictionary, key)) return dictionary[key];
+    return code ? localize("errors.apiFailure").replaceAll("{code}", code) : fallback;
   }
 
   // ../../node_modules/lucide-react/dist/esm/createLucideIcon.mjs
@@ -17184,11 +17628,11 @@
   }) {
     const { t } = useTranslation();
     const idea = spec?.idea;
-    const statusLabel2 = status === "pending_clarification" ? t("common.pendingClarify") : status === "pending_confirmation" ? t("common.pendingConfirm") : status;
+    const statusLabel3 = status === "pending_clarification" ? t("common.pendingClarify") : status === "pending_confirmation" ? t("common.pendingConfirm") : status;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "spec-pane-content", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "pane-heading", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { children: "ResearchIdea / ProjectSpec" }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `badge ${status === "pending_confirmation" ? "pending" : "neutral"}`, children: statusLabel2 })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `badge ${status === "pending_confirmation" ? "pending" : "neutral"}`, children: statusLabel3 })
       ] }),
       spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: "Title", value: idea.title }),
@@ -17507,15 +17951,98 @@
   // src/components/ui.tsx
   var import_react8 = __toESM(require_react(), 1);
   var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_KEYS = {
+    accepted: "status.accepted",
+    active: "status.active",
+    approval_required: "status.approvalRequired",
+    approved: "status.approved",
+    awaiting_artifact_approval: "status.awaitingArtifactApproval",
+    blocked: "status.blocked",
+    calculated: "status.calculated",
+    cancel_requested: "status.cancelRequested",
+    candidate: "status.candidate",
+    candidate_exists: "status.candidateExists",
+    candidate_only: "status.candidateOnly",
+    cancelled: "status.cancelled",
+    claim_reviewed: "status.claimReviewed",
+    clean: "status.clean",
+    closed: "status.closed",
+    completed: "status.completed",
+    confirmed: "status.confirmed",
+    confirmed_paper: "status.confirmedPaper",
+    conflict: "status.conflict",
+    declared: "status.declared",
+    dependency_failed: "status.dependencyFailed",
+    dependency_installing: "status.dependencyInstalling",
+    dependency_pending: "status.dependencyPending",
+    dirty: "status.dirty",
+    disabled: "status.disabled",
+    done: "common.done",
+    empty: "status.empty",
+    enabled: "status.enabled",
+    enforced: "status.enforced",
+    evidence_required: "status.evidenceRequired",
+    failed: "status.failed",
+    fulltext_evidence: "status.fulltextEvidence",
+    invalid: "common.invalid",
+    invalid_response: "status.invalidResponse",
+    invalidated: "status.invalidated",
+    legacy_unverified: "status.legacyUnverified",
+    license_review_required: "status.licenseReviewRequired",
+    located: "status.located",
+    manual: "status.manual",
+    max_total_reached: "status.maxTotalReached",
+    metadata_candidate: "status.metadataCandidate",
+    metadata_candidates_only: "status.metadataCandidatesOnly",
+    metadata_only: "status.metadataOnly",
+    observed: "status.observed",
+    ok: "status.ok",
+    open: "status.open",
+    page_quote: "status.pageQuote",
+    partial: "status.partial",
+    paused: "status.paused",
+    pending: "status.pending",
+    project_contained: "status.projectContained",
+    project_scoped: "status.projectScoped",
+    proposal_created: "status.proposalCreated",
+    queued: "status.queued",
+    rate_limited: "status.rateLimited",
+    ready: "status.ready",
+    rejected: "status.rejected",
+    reopened: "status.reopened",
+    review_required: "status.reviewRequired",
+    running: "status.running",
+    selected: "status.selected",
+    semantic_candidate: "status.semanticCandidate",
+    source_downloaded: "status.sourceDownloaded",
+    source_downloading: "status.sourceDownloading",
+    started: "status.started",
+    succeeded: "status.succeeded",
+    timed_out: "status.timedOut",
+    unconfirmed: "status.unconfirmed",
+    unknown: "common.unknown",
+    unlocated: "status.unlocated",
+    unresolved: "status.unresolved",
+    unsupported: "status.unsupported",
+    valid: "status.valid",
+    verified: "status.verified",
+    waiting_approval: "status.waitingApproval"
+  };
+  function statusLabel(status, t) {
+    const normalized = String(status || "").replaceAll("-", "_").toLowerCase();
+    const key = STATUS_KEYS[normalized];
+    return key ? t(key) : status || "";
+  }
   function badgeKind(status) {
     const value = String(status || "").toLowerCase();
-    if (value === "approved" || value === "succeeded" || value === "verified" || value === "active" || value === "enforced" || value === "ready" || value === "fulltext-evidence" || value === "enabled") return "live";
-    if (value === "failed" || value === "rejected" || value === "cancelled" || value === "unsupported" || value === "license-review-required") return "failed";
-    if (value === "pending" || value === "candidate-only" || value === "metadata-only" || value === "review-required" || value === "manual" || value === "evidence-required" || value === "unknown") return "pending";
+    if (["approved", "succeeded", "verified", "active", "enforced", "ready", "fulltext-evidence", "fulltext_evidence", "enabled", "completed", "valid", "running", "claim_reviewed", "page_quote", "source_downloaded"].includes(value)) return "live";
+    if (["failed", "rejected", "cancelled", "unsupported", "license-review-required", "license_review_required", "invalid", "invalidated", "blocked", "dependency_failed", "timed_out", "rate_limited", "invalid_response"].includes(value)) return "failed";
+    if (["pending", "candidate-only", "candidate_only", "metadata-only", "metadata_only", "review-required", "review_required", "manual", "evidence-required", "evidence_required", "unknown", "queued", "paused", "awaiting_artifact_approval", "source_downloading", "waiting_approval", "dependency_pending", "unconfirmed", "unlocated", "candidate"].includes(value)) return "pending";
     return "neutral";
   }
   function Badge({ status, children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `badge ${badgeKind(status)}`, children: children ?? status });
+    const { t } = useTranslation();
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `badge ${badgeKind(status)}`, children: children ?? statusLabel(status, t) });
   }
   function StatusDot({ ready }) {
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `status-dot ${ready ? "ready" : ""}` });
@@ -17803,7 +18330,7 @@
               status: project.status === "active" ? t("overview.statusActive") : project.status === "paused" ? t("overview.statusPaused") : project.status === "cancelled" ? t("overview.statusCancelled") : project.status
             }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: project.status, children: project.status === "active" ? t("overview.statusActive") : project.status === "paused" ? t("overview.statusPaused") : project.status === "cancelled" ? t("overview.statusCancelled") : project.status })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: project.status })
         ] }) })
       ] })
     ] });
@@ -18185,7 +18712,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
                 seed.source_type,
                 " \xB7 ",
-                seed.status,
+                statusLabel(seed.status, t),
                 " \xB7 ",
                 seed.created_at ? new Date(seed.created_at).toLocaleString() : t("literature.timeUnknown")
               ] })
@@ -18227,7 +18754,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("h3", { children: [
-              run.status,
+              statusLabel(run.status, t),
               " \xB7 ",
               t("literature.runCandidates", { count: run.discovered_count || 0, edges: run.edge_count || 0 })
             ] }),
@@ -18241,7 +18768,7 @@
               " \xB7 providers ",
               run.providers.join(", ")
             ] }),
-            run.error ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "error-text", children: run.error }) : null
+            run.error ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "button-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: run.status }),
@@ -18256,9 +18783,9 @@
           project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: attempt.provider }),
             " \xB7 ",
-            attempt.status,
+            statusLabel(attempt.status, t),
             " \xB7 ",
-            attempt.failure?.message || t("literature.noFailureDetail")
+            attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t("literature.noFailureDetail")
           ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`))
         ] }) : null,
         project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "citation-edge-list", children: [
@@ -18511,7 +19038,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
               t("literature.quoteCount", { count: review.evidence_ids.length }),
               " \xB7 ",
-              review.evidence_status
+              statusLabel(review.evidence_status, t)
             ] }),
             review.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: review.decision_comment }) : null
           ] }),
@@ -18895,14 +19422,14 @@
       });
     }, [artifact.preview_url, artifact.mime_type]);
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className: "artifact-card", children: [
-      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: artifact.experiment_status }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(PreviewBody, { preview }) : null,
+      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: statusLabel(artifact.experiment_status, t) }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(PreviewBody, { preview }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "artifact-body", children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: artifact.name }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted", children: [
           artifact.kind,
           " \xB7 ",
           artifact.valid ? t("common.valid") : t("common.invalid"),
-          artifact.experiment_status ? ` \xB7 ${t("preview.runStatus", { status: artifact.experiment_status })}` : ""
+          artifact.experiment_status ? ` \xB7 ${t("preview.runStatus", { status: statusLabel(artifact.experiment_status, t) })}` : ""
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? t("preview.lineage", {
           run: String(artifact.metadata.lineage.run_id || t("preview.lineageUnbound")),
@@ -19097,7 +19624,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: compileRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: run.run_id || run.id }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: run.error || JSON.stringify(run.metrics || {}) })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: run.error ? localizeFailure(run.status, run.error) : JSON.stringify(run.metrics || {}) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: run.status })
           ] }, run.id)) })
@@ -19391,7 +19918,7 @@
             reproduction.error ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "inline-warning", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TriangleAlert, { size: 15 }),
               " ",
-              reproduction.error
+              localizeFailure(reproduction.status, reproduction.error)
             ] }) : null,
             ["source_downloaded", "dependency_failed"].includes(reproduction.status) ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "reproduction-form", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
@@ -19435,7 +19962,7 @@
                   run.entrypoint,
                   " \xB7 seeds ",
                   run.random_seeds.join(", "),
-                  run.error ? ` \xB7 ${run.error}` : ""
+                  run.error ? ` \xB7 ${localizeFailure(run.status, run.error)}` : ""
                 ] })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: run.status, children: t(statusText(run.status)) })
@@ -19481,7 +20008,7 @@
     };
     return labels[type] || type;
   }
-  function statusLabel(status) {
+  function statusLabel2(status) {
     const labels = { comparable: "comparison.comparable", partial: "comparison.partial", blocked: "comparison.blocked", candidate: "comparison.candidate", accepted: "comparison.accepted", rejected: "comparison.rejected" };
     return labels[status] || status;
   }
@@ -19696,7 +20223,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: comparison.input_hash || t("common.unrecorded") })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: comparison.status, children: t(statusLabel(comparison.status)) })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: comparison.status, children: t(statusLabel2(comparison.status)) })
       ] }),
       comparison.blocking_reasons?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "inline-warning", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(TriangleAlert, { size: 15 }),
@@ -19728,7 +20255,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.reproduction_mean)) }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.reproduction_population_std)) }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: t(metricNumber(metric.delta)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: metric.status, children: t(statusLabel(metric.status)) }) })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: metric.status, children: t(statusLabel2(metric.status)) }) })
         ] }, name)) })
       ] }) }) : null,
       comparison.candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "comparison-candidates", children: comparison.candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row compact-row", children: [
@@ -19738,7 +20265,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("small", { children: [
             t("comparison.evidenceStatus"),
             " ",
-            candidate.evidence_status,
+            statusLabel(candidate.evidence_status, t),
             " \xB7 ",
             t("comparison.candidateId"),
             " ",
@@ -19746,7 +20273,7 @@
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(ButtonRow, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: candidate.status, children: t(statusLabel(candidate.status)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: candidate.status, children: t(statusLabel2(candidate.status)) }),
           candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
               void onDecide(comparison.id, candidate.id, "accepted");
@@ -20022,7 +20549,7 @@
                 " \xB7 ",
                 t("research.rowsCount", { count: candidate.row_ids.length }),
                 " \xB7 ",
-                candidate.evidence_status
+                statusLabel(candidate.evidence_status, t)
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
@@ -20189,7 +20716,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: failure.experiment_id.slice(0, 8) }),
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
-                  failure.status,
+                  statusLabel(failure.status, t),
                   " \xB7 ",
                   failure.error_code
                 ] })
@@ -20944,7 +21471,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: GRAPH_KINDS.map((kind, index) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("text", { x: GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP), y: "27", children: t(GRAPH_KIND_LABELS[kind]) }, kind)) }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
                 const path = graphEdgePath(edge, graphNodesById);
-                return path ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${edge.evidence_status} \xB7 ${edge.permission_status}` }, edge.id) : null;
+                return path ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${statusLabel(edge.evidence_status, t)} \xB7 ${statusLabel(edge.permission_status, t)}` }, edge.id) : null;
               }) }),
               /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("g", { className: "research-graph-nodes", "aria-label": t("graph.nodesAria"), children: graphLayout.nodes.map((node) => {
                 const selected = selectedGraphNodeId === node.id;
@@ -21012,7 +21539,7 @@
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.permission") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: selectedGraphNode.permission_status })
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
                 ] }),
                 selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "Provider" }),
@@ -21170,21 +21697,21 @@
   function latestFailure(project, t) {
     const failures = [];
     for (const task of project.tasks || []) {
-      if (task.status === "failed" || task.error) failures.push({ code: task.kind, message: task.error || t("context.taskFailed"), source: "task", created_at: task.updated_at || task.created_at });
+      if (task.status === "failed" || task.error) failures.push({ code: task.kind, message: localizeFailure(task.kind, task.error || t("context.taskFailed")), source: "task", created_at: task.updated_at || task.created_at });
     }
     for (const attempt of project.related_work_attempts || []) {
       if (attempt.failure || ["failed", "timed_out", "rate_limited", "invalid_response", "cancelled"].includes(attempt.status)) {
-        failures.push({ code: attempt.failure?.code || attempt.status, message: attempt.failure?.message || t("context.sourceRequestFailed"), source: attempt.provider, created_at: attempt.finished_at || attempt.started_at });
+        failures.push({ code: attempt.failure?.code || attempt.status, message: localizeFailure(attempt.failure?.code || attempt.status, attempt.failure?.message || t("context.sourceRequestFailed")), source: attempt.provider, created_at: attempt.finished_at || attempt.started_at });
       }
     }
     for (const experiment of project.experiments || []) {
-      if (experiment.status === "failed" || experiment.error) failures.push({ code: "experiment_run", message: experiment.error || t("context.experimentFailed"), source: experiment.experiment_type, created_at: experiment.finished_at || experiment.created_at });
+      if (experiment.status === "failed" || experiment.error) failures.push({ code: "experiment_run", message: localizeFailure("experiment_run", experiment.error || t("context.experimentFailed")), source: experiment.experiment_type, created_at: experiment.finished_at || experiment.created_at });
     }
     for (const reproduction of project.reproductions || []) {
-      if (reproduction.error || reproduction.status.endsWith("_failed")) failures.push({ code: reproduction.status, message: reproduction.error || t("context.reproductionFailed"), source: "reproduction", created_at: reproduction.updated_at || reproduction.created_at });
+      if (reproduction.error || reproduction.status.endsWith("_failed")) failures.push({ code: reproduction.status, message: localizeFailure(reproduction.status, reproduction.error || t("context.reproductionFailed")), source: "reproduction", created_at: reproduction.updated_at || reproduction.created_at });
     }
     for (const report of project.reports || []) {
-      if (report.status === "blocked" || report.status === "failed") failures.push({ code: report.blocking_reason || report.status, message: report.blocking_reason || t("context.reportLineageFailed"), source: "report", created_at: report.created_at });
+      if (report.status === "blocked" || report.status === "failed") failures.push({ code: report.blocking_reason || report.status, message: localizeFailure(report.blocking_reason || report.status, report.blocking_reason || t("context.reportLineageFailed")), source: "report", created_at: report.created_at });
     }
     return failures.sort((left, right) => String(right.created_at || "").localeCompare(String(left.created_at || "")))[0] || null;
   }
@@ -21218,7 +21745,7 @@
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "workspace-context-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: project.status, children: project.status }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: project.status }),
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: pending ? "pending" : "ready", children: pending ? t("context.pendingCount", { count: pending }) : t("context.noPending") }),
         failure ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "workspace-context-failure", title: `${failure.code}: ${failure.message}`, children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(TriangleAlert, { size: 13, "aria-hidden": "true" }),
@@ -22397,7 +22924,7 @@
         });
         if (!response.ok) {
           const body = await response.json().catch(() => null);
-          throw new Error(body?.message || `HTTP ${response.status}`);
+          throw new ApiError(typeof body?.code === "string" ? body.code : "chat_request_failed", body?.message || `HTTP ${response.status}`);
         }
         if (!response.body) throw new Error("No response body");
         const reader = response.body.getReader();
@@ -22432,7 +22959,7 @@
             }
           }
         }
-        if (streamError) throw new Error(streamError.message || t("app.thinking.requestFailed"));
+        if (streamError) throw new ApiError(typeof streamError.code === "string" ? streamError.code : "chat_stream_failed", streamError.message || t("app.thinking.requestFailed"));
         if (result) {
           setActiveSession(result.session_id || currentSessionId);
           const routeMeta = result.model ? `${result.model_tier || "adaptive"} \xB7 ${result.model} \xB7 reasoning ${result.reasoning_effort || "default"}` : "";

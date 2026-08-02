@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ChevronsDown, Download, GitBranch, GitFork, ScanText, Search, ShieldCheck, Square } from 'lucide-react'
-import { api, errorMessage } from '../../api'
+import { api, errorMessage, localizeFailure } from '../../api'
 import type { ClaimReview, MaterialSearchResponse, ProjectDetail, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
-import { Badge, ButtonRow, EmptyState, Modal, SectionHeading } from '../ui'
+import { Badge, ButtonRow, EmptyState, Modal, SectionHeading, statusLabel } from '../ui'
 import { useTranslation } from '../../i18n'
 
 export function LiteratureTab({
@@ -413,7 +413,7 @@ export function LiteratureTab({
                   />
                   <span>
                     <strong>{seed.input_summary}</strong>
-                    <span>{seed.source_type} · {seed.status} · {seed.created_at ? new Date(seed.created_at).toLocaleString() : t('literature.timeUnknown')}</span>
+                    <span>{seed.source_type} · {statusLabel(seed.status, t)} · {seed.created_at ? new Date(seed.created_at).toLocaleString() : t('literature.timeUnknown')}</span>
                   </span>
                   <Badge status={seed.status} />
                 </label>
@@ -447,9 +447,9 @@ export function LiteratureTab({
             {project.related_work_runs.map(run => (
               <div className="data-row" key={run.id}>
                 <div>
-                  <h3>{run.status} · {t('literature.runCandidates', { count: run.discovered_count || 0, edges: run.edge_count || 0 })}</h3>
+                  <h3>{statusLabel(run.status, t)} · {t('literature.runCandidates', { count: run.discovered_count || 0, edges: run.edge_count || 0 })}</h3>
                   <p>depth {run.depth} · width {run.width} · max_total {run.max_total} · providers {run.providers.join(', ')}</p>
-                  {run.error ? <p className="error-text">{run.error}</p> : null}
+                  {run.error ? <p className="error-text">{localizeFailure(run.status, run.error)}</p> : null}
                 </div>
                 <div className="button-row">
                   <Badge status={run.status} />
@@ -462,7 +462,7 @@ export function LiteratureTab({
             <div className="related-work-failures">
               <h3>{t('literature.providerFailures')}</h3>
               {project.related_work_attempts.filter(attempt => attempt.status !== 'succeeded').slice(0, 12).map(attempt => (
-                <p key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}><strong>{attempt.provider}</strong> · {attempt.status} · {attempt.failure?.message || t('literature.noFailureDetail')}</p>
+                <p key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}><strong>{attempt.provider}</strong> · {statusLabel(attempt.status, t)} · {attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t('literature.noFailureDetail')}</p>
               ))}
             </div>
           ) : null}
@@ -699,7 +699,7 @@ export function LiteratureTab({
               <div className="data-row" key={review.id}>
                 <div>
                   <h3>{review.claim}</h3>
-                  <p>{t('literature.quoteCount', { count: review.evidence_ids.length })} · {review.evidence_status}</p>
+                  <p>{t('literature.quoteCount', { count: review.evidence_ids.length })} · {statusLabel(review.evidence_status, t)}</p>
                   {review.decision_comment ? <p className="muted">{review.decision_comment}</p> : null}
                 </div>
                 <div className="button-row">

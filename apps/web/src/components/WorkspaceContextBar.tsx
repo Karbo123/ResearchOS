@@ -2,6 +2,7 @@ import { AlertTriangle, Clock3, Fingerprint, LockKeyhole, ShieldCheck } from 'lu
 import type { ProjectDetail } from '../types'
 import { Badge } from './ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../i18n'
+import { localizeFailure } from '../api'
 
 type ContextFailure = {
   code: string
@@ -13,21 +14,21 @@ type ContextFailure = {
 function latestFailure(project: ProjectDetail, t: (key: TranslationKey) => string): ContextFailure | null {
   const failures: ContextFailure[] = []
   for (const task of project.tasks || []) {
-    if (task.status === 'failed' || task.error) failures.push({ code: task.kind, message: task.error || t('context.taskFailed'), source: 'task', created_at: task.updated_at || task.created_at })
+    if (task.status === 'failed' || task.error) failures.push({ code: task.kind, message: localizeFailure(task.kind, task.error || t('context.taskFailed')), source: 'task', created_at: task.updated_at || task.created_at })
   }
   for (const attempt of project.related_work_attempts || []) {
     if (attempt.failure || ['failed', 'timed_out', 'rate_limited', 'invalid_response', 'cancelled'].includes(attempt.status)) {
-      failures.push({ code: attempt.failure?.code || attempt.status, message: attempt.failure?.message || t('context.sourceRequestFailed'), source: attempt.provider, created_at: attempt.finished_at || attempt.started_at })
+      failures.push({ code: attempt.failure?.code || attempt.status, message: localizeFailure(attempt.failure?.code || attempt.status, attempt.failure?.message || t('context.sourceRequestFailed')), source: attempt.provider, created_at: attempt.finished_at || attempt.started_at })
     }
   }
   for (const experiment of project.experiments || []) {
-    if (experiment.status === 'failed' || experiment.error) failures.push({ code: 'experiment_run', message: experiment.error || t('context.experimentFailed'), source: experiment.experiment_type, created_at: experiment.finished_at || experiment.created_at })
+    if (experiment.status === 'failed' || experiment.error) failures.push({ code: 'experiment_run', message: localizeFailure('experiment_run', experiment.error || t('context.experimentFailed')), source: experiment.experiment_type, created_at: experiment.finished_at || experiment.created_at })
   }
   for (const reproduction of project.reproductions || []) {
-    if (reproduction.error || reproduction.status.endsWith('_failed')) failures.push({ code: reproduction.status, message: reproduction.error || t('context.reproductionFailed'), source: 'reproduction', created_at: reproduction.updated_at || reproduction.created_at })
+    if (reproduction.error || reproduction.status.endsWith('_failed')) failures.push({ code: reproduction.status, message: localizeFailure(reproduction.status, reproduction.error || t('context.reproductionFailed')), source: 'reproduction', created_at: reproduction.updated_at || reproduction.created_at })
   }
   for (const report of project.reports || []) {
-    if (report.status === 'blocked' || report.status === 'failed') failures.push({ code: report.blocking_reason || report.status, message: report.blocking_reason || t('context.reportLineageFailed'), source: 'report', created_at: report.created_at })
+    if (report.status === 'blocked' || report.status === 'failed') failures.push({ code: report.blocking_reason || report.status, message: localizeFailure(report.blocking_reason || report.status, report.blocking_reason || t('context.reportLineageFailed')), source: 'report', created_at: report.created_at })
   }
   return failures.sort((left, right) => String(right.created_at || '').localeCompare(String(left.created_at || '')))[0] || null
 }
@@ -52,7 +53,7 @@ export function WorkspaceContextBar({ project }: { project: ProjectDetail }) {
         </div>
       </div>
       <div className="workspace-context-actions">
-        <Badge status={project.status}>{project.status}</Badge>
+        <Badge status={project.status} />
         <Badge status={pending ? 'pending' : 'ready'}>{pending ? t('context.pendingCount', { count: pending }) : t('context.noPending')}</Badge>
         {failure ? (
           <span className="workspace-context-failure" title={`${failure.code}: ${failure.message}`}>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Activity, ListChecks, RefreshCw, RotateCcw, Square } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { Checkpoint, DiagnosticsReport, Experiment, ProjectDetail, TabId } from '../../types'
-import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
+import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { useTranslation } from '../../i18n'
 
 export function ExperimentsTab({
@@ -178,7 +178,7 @@ export function ExperimentsTab({
                     <div className="data-row" key={index}>
                       <div>
                         <h3>{failure.experiment_id.slice(0, 8)}</h3>
-                        <p>{failure.status} · {failure.error_code}</p>
+                        <p>{statusLabel(failure.status, t)} · {failure.error_code}</p>
                       </div>
                       <Badge status="failed" />
                     </div>

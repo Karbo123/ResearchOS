@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { api, errorMessage, uploadFile } from './api'
+import { ApiError, api, errorMessage, uploadFile } from './api'
 import type {
   ChatMessage,
   ConfirmRequest,
@@ -285,7 +285,7 @@ export function App() {
       })
       if (!response.ok) {
         const body = await response.json().catch(() => null)
-        throw new Error(body?.message || `HTTP ${response.status}`)
+        throw new ApiError(typeof body?.code === 'string' ? body.code : 'chat_request_failed', body?.message || `HTTP ${response.status}`)
       }
       if (!response.body) throw new Error('No response body')
 
@@ -324,7 +324,7 @@ export function App() {
         }
       }
 
-      if (streamError) throw new Error(streamError.message || t('app.thinking.requestFailed'))
+      if (streamError) throw new ApiError(typeof streamError.code === 'string' ? streamError.code : 'chat_stream_failed', streamError.message || t('app.thinking.requestFailed'))
       if (result) {
         setActiveSession(result.session_id || currentSessionId)
         const routeMeta = result.model

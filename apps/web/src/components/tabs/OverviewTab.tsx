@@ -214,7 +214,7 @@ export function OverviewTab({
                       : project.status,
               })}</p>
             </div>
-            <Badge status={project.status}>{project.status === 'active' ? t('overview.statusActive') : project.status === 'paused' ? t('overview.statusPaused') : project.status === 'cancelled' ? t('overview.statusCancelled') : project.status}</Badge>
+            <Badge status={project.status} />
           </div>
         </div>
       </div>

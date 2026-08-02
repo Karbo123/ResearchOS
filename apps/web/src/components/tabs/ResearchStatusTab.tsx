@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Download, Filter, Lightbulb, RefreshCw, Table2 } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { ProjectDetail, ResearchStatusGapCandidate, ResearchStatusResponse } from '../../types'
-import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
+import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 
 function listLabel(values: string[]) {
@@ -205,7 +205,7 @@ export function ResearchStatusTab({
               <label className="wide-field">{t('research.candidateStatement')}<textarea value={gapStatement} onChange={event => setGapStatement(event.target.value)} placeholder={t('research.candidatePlaceholder')} rows={3} /></label>
             </div>
             <ButtonRow><button className="secondary" type="button" disabled={working || !gapStatement.trim()} onClick={() => { void createGapCandidate() }}>{t('research.recordCandidate')}</button></ButtonRow>
-            {status.gap_candidates.length ? <div className="data-list">{status.gap_candidates.map(candidate => <div className="data-row" key={candidate.id}><div><h3>{candidate.statement}</h3><p>{candidate.candidate_type} · {t('research.rowsCount', { count: candidate.row_ids.length })} · {candidate.evidence_status}</p></div><ButtonRow><Badge status={candidate.status} />{candidate.status === 'candidate' ? <><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'accepted') }}>{t('research.keepCandidate')}</button><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'rejected') }}>{t('common.reject')}</button></> : null}</ButtonRow></div>)}</div> : <EmptyState text={t('research.noCandidates')} />}
+            {status.gap_candidates.length ? <div className="data-list">{status.gap_candidates.map(candidate => <div className="data-row" key={candidate.id}><div><h3>{candidate.statement}</h3><p>{candidate.candidate_type} · {t('research.rowsCount', { count: candidate.row_ids.length })} · {statusLabel(candidate.evidence_status, t)}</p></div><ButtonRow><Badge status={candidate.status} />{candidate.status === 'candidate' ? <><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'accepted') }}>{t('research.keepCandidate')}</button><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'rejected') }}>{t('common.reject')}</button></> : null}</ButtonRow></div>)}</div> : <EmptyState text={t('research.noCandidates')} />}
           </div>
         </>
       ) : null}

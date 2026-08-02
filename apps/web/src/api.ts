@@ -11,6 +11,17 @@ const CHAT_ERROR_KEYS: Record<string, TranslationKey> = {
   offline: 'errors.offline',
 }
 
+export class ApiError extends Error {
+  readonly code: string
+
+  constructor(code: string, message: string, cause?: unknown) {
+    super(message)
+    this.name = 'ApiError'
+    this.code = code
+    this.cause = cause
+  }
+}
+
 export class ChatRequestError extends Error {
   readonly code: string
   readonly cause?: unknown
@@ -59,6 +70,18 @@ function messageFromErrorBody(body: unknown, status: number, statusText: string)
   return typeof record.message === 'string' ? record.message : `${status} ${statusText}`
 }
 
+function codeFromErrorBody(body: unknown): string {
+  if (!body || typeof body !== 'object') return 'api_unknown'
+  const record = body as Record<string, unknown>
+  if (typeof record.code === 'string' && record.code) return record.code
+  const detail = record.detail
+  if (detail && typeof detail === 'object') {
+    const nested = detail as Record<string, unknown>
+    if (typeof nested.code === 'string' && nested.code) return nested.code
+  }
+  return 'api_unknown'
+}
+
 export async function api<T = unknown>(
   path: string,
   init: RequestInit = {},
@@ -76,7 +99,7 @@ export async function api<T = unknown>(
   )
   if (!response.ok) {
     const body = await response.json().catch(() => null)
-    throw new Error(messageFromErrorBody(body, response.status, response.statusText))
+    throw new ApiError(codeFromErrorBody(body), messageFromErrorBody(body, response.status, response.statusText))
   }
   return (await response.json()) as T
 }
@@ -94,7 +117,7 @@ export async function uploadFile(sessionId: string, file: File): Promise<void> {
   if (!response.ok) {
     const body = await response.json().catch(() => null)
     const reason = messageFromErrorBody(body, response.status, response.statusText)
-    throw new Error(`${file.name}: ${reason}`)
+    throw new ApiError(codeFromErrorBody(body), `${file.name}: ${reason}`)
   }
 }
 
@@ -103,5 +126,18 @@ export function errorMessage(error: unknown): string {
     const key = CHAT_ERROR_KEYS[error.code]
     if (key) return localize(key)
   }
+  if (error instanceof ApiError) {
+    const key = `apiError.${error.code}` as TranslationKey
+    const dictionary = dictionaries[getLocale()]
+    if (Object.prototype.hasOwnProperty.call(dictionary, key)) return dictionary[key]
+    return localize('errors.apiFailure').replaceAll('{code}', error.code)
+  }
   return error instanceof Error && error.message ? error.message : localize('errors.requestFailed')
+}
+
+export function localizeFailure(code: string, fallback: string): string {
+  const dictionary = dictionaries[getLocale()]
+  const key = `apiError.${code}` as TranslationKey
+  if (code && Object.prototype.hasOwnProperty.call(dictionary, key)) return dictionary[key]
+  return code ? localize('errors.apiFailure').replaceAll('{code}', code) : fallback
 }
