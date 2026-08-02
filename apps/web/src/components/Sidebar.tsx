@@ -134,33 +134,35 @@ export function Sidebar({
                   {project.pinned ? <Pin className="project-pinned-indicator" size={13} strokeWidth={2.2} aria-hidden="true" /> : null}
                 </button>
                 <div className="project-actions">
-                  <button
-                    type="button"
-                    className={`project-action project-pin${project.pinned ? ' pinned' : ''}`}
-                    aria-label={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
-                    title={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
-                    aria-pressed={project.pinned === true}
-                    tabIndex={0}
-                    onClick={event => {
-                      event.stopPropagation()
-                      onPinProject(project)
-                    }}
-                  >
-                    {project.pinned ? <PinOff size={15} strokeWidth={2.2} /> : <Pin size={15} strokeWidth={2.2} />}
-                  </button>
-                  <button
-                    type="button"
-                    className="project-action project-delete"
-                    aria-label={t('sidebar.deleteProjectAction', { title: project.title })}
-                    title={t('sidebar.deleteProjectAction', { title: project.title })}
-                    tabIndex={0}
-                    onClick={event => {
-                      event.stopPropagation()
-                      onDeleteProject(project)
-                    }}
-                  >
-                    <Trash2 size={15} strokeWidth={2.2} />
-                  </button>
+                  <div className="project-actions-track">
+                    <button
+                      type="button"
+                      className={`project-action project-pin${project.pinned ? ' pinned' : ''}`}
+                      aria-label={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
+                      title={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
+                      aria-pressed={project.pinned === true}
+                      tabIndex={0}
+                      onClick={event => {
+                        event.stopPropagation()
+                        onPinProject(project)
+                      }}
+                    >
+                      {project.pinned ? <PinOff size={15} strokeWidth={2.2} /> : <Pin size={15} strokeWidth={2.2} />}
+                    </button>
+                    <button
+                      type="button"
+                      className="project-action project-delete"
+                      aria-label={t('sidebar.deleteProjectAction', { title: project.title })}
+                      title={t('sidebar.deleteProjectAction', { title: project.title })}
+                      tabIndex={0}
+                      onClick={event => {
+                        event.stopPropagation()
+                        onDeleteProject(project)
+                      }}
+                    >
+                      <Trash2 size={15} strokeWidth={2.2} />
+                    </button>
+                  </div>
                 </div>
               </div>
             )

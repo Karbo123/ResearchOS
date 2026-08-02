@@ -17990,7 +17990,7 @@
                   ]
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "project-actions", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions-track", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "button",
                   {
@@ -18022,7 +18022,7 @@
                     children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trash2, { size: 15, strokeWidth: 2.2 })
                   }
                 )
-              ] })
+              ] }) })
             ]
           },
           project.id

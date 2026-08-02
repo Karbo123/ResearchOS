@@ -89,7 +89,7 @@ button { -webkit-font-smoothing: inherit; }
 .primary:hover { background: #248bff; box-shadow: 0 11px 26px rgba(0, 122, 255, .28), inset 0 1px 0 rgba(255, 255, 255, .30); transform: translateY(-1px); }
 .primary:active, .send-btn:active, .secondary:active, .icon-btn:active { transform: scale(.97); }
 .side-label { margin: 27px 9px 8px; color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .10em; text-transform: uppercase; }
-.project-list { gap: 4px; padding: 0 2px 0 0; scrollbar-color: rgba(60, 60, 67, .24) transparent; }
+.project-list { gap: 4px; padding: 0 2px 0 0; overflow-x: clip; scrollbar-color: rgba(60, 60, 67, .24) transparent; }
 .project-list::-webkit-scrollbar { width: 7px; }
 .project-list::-webkit-scrollbar-thumb { background: rgba(60, 60, 67, .22); border: 2px solid transparent; background-clip: content-box; }
 .project-list::-webkit-scrollbar-thumb:hover { background-color: rgba(60, 60, 67, .36); }
@@ -126,7 +126,14 @@ button { -webkit-font-smoothing: inherit; }
 .sidebar-resizer:focus-visible::after,
 .sidebar-resizer.is-resizing::after { background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
 .sidebar-resizer:focus-visible { outline: none; }
-.project-row { position: relative; min-width: 0; }
+.project-row {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: clip;
+  contain: paint;
+}
 .project-row .project-main-button { display: flex; align-items: center; gap: 6px; min-width: 0; width: 100%; padding-right: 11px; overflow: hidden; transition: padding-right .42s var(--ease); }
 .project-row:hover .project-main-button,
 .project-row:has(:focus-visible) .project-main-button { padding-right: 72px; }
@@ -136,23 +143,61 @@ button { -webkit-font-smoothing: inherit; }
   position: absolute;
   top: 50%;
   right: 5px;
+  width: 58px;
+  height: 30px;
+  overflow: clip;
+  pointer-events: none;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+.project-actions-track {
   display: flex;
   align-items: center;
   gap: 2px;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(48px, -50%) scale(.92);
-  transition: opacity .34s var(--ease), transform .34s var(--spring);
+  width: max-content;
+  transform: translate3d(66px, 0, 0);
+  transition-property: transform;
+  transition-duration: .28s;
+  transition-timing-function: cubic-bezier(.4, 0, 1, 1);
+  will-change: transform;
 }
-.project-row:hover .project-actions { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); transition-duration: 1s; }
-.project-row:has(:focus-visible) .project-actions { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); transition-duration: .22s; }
-.project-action { display: inline-flex !important; align-items: center; justify-content: center; width: 28px; min-width: 28px; height: 28px; min-height: 28px !important; padding: 5px !important; border: 1px solid transparent !important; border-radius: 9px !important; background: transparent !important; transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring); }
+.project-row:hover .project-actions,
+.project-row:has(:focus-visible) .project-actions { pointer-events: auto; }
+.project-row:has(:focus-visible) .project-actions-track {
+  transform: translate3d(0, 0, 0);
+  transition-duration: .24s;
+  transition-timing-function: var(--ease);
+}
+.project-row:hover .project-actions-track {
+  transform: translate3d(0, 0, 0);
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(.25, .1, .25, 1);
+}
+.project-actions .project-action {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  min-height: 28px !important;
+  padding: 5px !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .12s var(--ease);
+}
 .project-pin { color: var(--blue); }
 .project-pin:hover, .project-pin.pinned { background: var(--blue-soft) !important; border-color: rgba(0, 122, 255, .18) !important; box-shadow: 0 4px 10px rgba(0, 122, 255, .12); }
 .project-delete { color: var(--red); }
 .project-delete:hover { color: var(--danger-ink); background: var(--red-soft) !important; border-color: var(--red-soft) !important; box-shadow: 0 4px 10px rgba(255, 59, 48, .16); }
-.project-action:active { transform: scale(.92); }
+.project-actions .project-action:active { transform: scale(.92); }
 .project-row .project-main-button.active { color: var(--blue-dark); background: var(--blue-soft); border-color: rgba(0, 122, 255, .22); box-shadow: inset 3px 0 0 var(--blue), inset 0 1px 0 rgba(255, 255, 255, .06); }
+
+@supports not (overflow: clip) {
+  .project-list { overflow-x: hidden; }
+  .project-row, .project-actions { overflow: hidden; }
+}
 
 .workspace { min-width: 0; min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); }
 .topbar { position: relative; z-index: 30; min-height: 70px; height: auto; flex: 0 0 auto; padding: 13px 30px; overflow: visible; border-bottom: 1px solid var(--line); background: rgba(250, 250, 252, .72); box-shadow: 0 1px 0 var(--glass-highlight); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); }
@@ -1188,6 +1233,20 @@ a.secondary { text-decoration: none; color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   .not-found-card,
   .not-found-icon { animation: none; }
+  /* Keep this small user-requested reveal visible when Windows disables broader motion. */
+  .project-actions-track {
+    transition-property: transform !important;
+    transition-duration: .28s !important;
+    transition-timing-function: cubic-bezier(.4, 0, 1, 1) !important;
+  }
+  .project-row:has(:focus-visible) .project-actions-track {
+    transition-duration: .24s !important;
+    transition-timing-function: var(--ease) !important;
+  }
+  .project-row:hover .project-actions-track {
+    transition-duration: 1s !important;
+    transition-timing-function: cubic-bezier(.25, .1, .25, 1) !important;
+  }
 }
 
 @media (max-width: 560px) {

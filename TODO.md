@@ -436,9 +436,11 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `093a` 移除 JavaScript 逐帧动画，悬停立即设置 CSS 过渡目标，持续 1 秒从右侧滑入，离开时快速平滑收回。
   - [~] `093b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
 
-- [~] `P0-PROJECT-UX-094` 将项目操作图标显示完全交给 CSS `:hover`/`:focus-visible`，移除 React 显示状态对过渡的干扰。
+- [x] `P0-PROJECT-UX-094` 将项目操作图标显示完全交给 CSS `:hover`/`:focus-visible`，移除 React 显示状态对过渡的干扰。
   - [x] `094a` 使用 `.project-row:hover` 直接触发 1 秒滑入，使用 `:has(:focus-visible)` 支持键盘立即显示，按钮保持可访问且不依赖计时器。
-  - [~] `094b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
+  - [x] `094b` 类型检查、UI 检查、Web 构建和差异校验通过；已通过 Windows Headless Chrome CDP 建立可采样真实 hover 计算样式的浏览器反馈环。
+  - [x] `094c` 修正动作层的横向溢出与瞬时显示：固定 58px 右侧裁剪窗口，只让 66px 外的动作轨道做纯 CSS 位移；项目列表真实浏览器 `clientWidth` 与 `scrollWidth` 全程一致，未再被撑宽。
+  - [x] `094d` 真实浏览器确认并修复三项根因：Windows Chrome 命中 `prefers-reduced-motion: reduce` 后移除 transform、通用 `.project-list button` 规则覆盖动作按钮 transition、原 spring 曲线在前 400ms 完成约 93% 位移。资源版本更新至 `project-actions-11`；reduced-motion 原始环境下 0/40/100/200/400/700/1000ms 多帧采样、收回采样、三轮重复悬停和截图验收均通过。
 
 ## 5. 平台任务和外部阻塞
 
