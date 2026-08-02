@@ -120,9 +120,18 @@ button { -webkit-font-smoothing: inherit; }
   transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring);
 }
 .control-pill:hover { border-color: rgba(0, 122, 255, .34); background: var(--surface-elevated); box-shadow: 0 5px 14px rgba(25, 25, 35, .08); transform: translateY(-1px); }
-.control-pill svg { color: var(--muted); flex: none; }
-.control-pill select { max-width: 128px; border: 0; background: transparent; color: var(--ink); font-size: 11px; font-weight: 650; cursor: pointer; outline: none; }
-.control-pill select:focus-visible { border-radius: 8px; box-shadow: 0 0 0 3px rgba(10, 132, 255, .18); }
+.topbar-menu { position: relative; }
+.control-menu-trigger { min-width: 118px; justify-content: flex-start; color: var(--ink); cursor: pointer; text-align: left; }
+.control-menu-leading { display: inline-flex; color: var(--muted); flex: none; }
+.control-menu-value { min-width: 0; flex: 1; overflow: hidden; color: var(--ink); font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.control-menu-chevron { color: var(--muted); flex: none; transition: transform .24s var(--spring), color .2s var(--ease); }
+.topbar-menu[data-open='true'] .control-menu-trigger { border-color: rgba(0, 122, 255, .42); background: var(--surface-elevated); box-shadow: 0 0 0 3px var(--blue-soft), var(--shadow-soft); transform: none; }
+.topbar-menu[data-open='true'] .control-menu-chevron { color: var(--blue); transform: rotate(180deg); }
+.control-menu-popover { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; min-width: 166px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface-elevated); box-shadow: var(--shadow-lg), inset 0 1px 0 var(--glass-highlight); backdrop-filter: blur(26px) saturate(150%); -webkit-backdrop-filter: blur(26px) saturate(150%); transform-origin: top right; animation: menu-in .22s var(--spring) both; }
+.control-menu-option { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 34px; gap: 16px; padding: 8px 9px; border: 0; border-radius: 9px; background: transparent; color: var(--ink); font-size: 11px; font-weight: 600; text-align: left; transition: background-color .16s var(--ease), color .16s var(--ease), transform .16s var(--spring); }
+.control-menu-option:hover, .control-menu-option:focus-visible, .control-menu-option[data-highlighted='true'] { background: var(--blue-soft); color: var(--ink); outline: 0; transform: translateX(1px); }
+.control-menu-option[aria-selected='true'] { color: var(--blue-dark); font-weight: 720; }
+.control-menu-check { color: var(--blue); flex: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .icon-btn { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-2); color: var(--ink); box-shadow: 0 2px 7px rgba(25, 25, 35, .04); transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--spring), box-shadow .2s var(--ease); }
 .icon-btn:hover { border-color: rgba(0, 122, 255, .34); background: var(--surface-elevated); color: var(--blue); box-shadow: 0 5px 14px rgba(25, 25, 35, .08); transform: translateY(-1px); }
@@ -784,8 +793,11 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .top-actions { flex: none; gap: 4px; }
   .health { display: none; }
   .control-pill { min-height: 32px; padding: 0 4px 0 6px; }
-  .control-pill svg { display: none; }
-  .control-pill select { max-width: 62px; padding-right: 2px; }
+  .topbar-menu { max-width: 92px; }
+  .control-menu-trigger { min-width: 0; max-width: 92px; padding: 0 6px; }
+  .control-menu-leading, .control-menu-chevron { display: none; }
+  .control-menu-value { max-width: 80px; font-size: 10px; }
+  .control-menu-popover { min-width: 150px; }
   .icon-btn { width: 32px; height: 32px; }
 }
 
@@ -872,6 +884,10 @@ a.secondary { text-decoration: none; color: var(--ink); }
 
 /* Fluid Apple-style motion: surfaces arrive from their source, hover lifts are
    spring-like, and every transition stays interruptible and reduced-motion safe. */
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 @keyframes surface-in {
   from { opacity: 0; transform: translateY(9px) scale(.992); }
   to { opacity: 1; transform: translateY(0) scale(1); }
