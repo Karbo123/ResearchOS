@@ -32,6 +32,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - Mastra 文档只能说明框架能力，不能放宽本项目的安全边界、无 fallback 约束、审批门禁、固定实验入口或密钥处理规则。接入新能力前必须把范围、依赖、数据流和验收补充到 `TODO.md`，并以当前项目的严格 Zod 契约和审计要求复核。
 - Idea 澄清、项目监督和实验规划使用 Mastra Agent；不得手写 Agent 循环或复制提示词。
 - Idea Agent 使用 Mastra Agent、Skills 和 Tools；语义 Agent Memory 统一由 Supermemory 管理，并通过 Supermemory 官方 Mastra 集成接入。Mastra 自带 Memory 不能作为 Research OS 的唯一或默认语义事实源。Agent 不得获得任意 Shell、SQL、文件路径、可执行程序或网络工具。
+网页右上角提供语言与主题控件：语言支持 zh-CN（默认）、zh-TW、en、es；主题提供浅色（默认）、暗色两档，使用语义 CSS 变量并按 Apple 配色规范实现。UI 文案必须走 i18n key 与统一术语表，禁止在 TSX 中硬编码中文；模型/数据动态内容（聊天回复、报告/论文正文、实验日志）保持原文，不自动翻译。语言/主题功能完成并通过四语言、两主题真实浏览器验收前，不得在 README 中写成已实现。
 - Supermemory 是长文本、事实、记录、文献知识和多模态内容的语义记忆系统；PGlite 只保存结构化业务状态、实体 ID、状态、审批、哈希、权限和审计，不把句子级语义内容硬编码为 SQL 查询。
 - Supermemory 官方资料入口：`https://supermemory.ai/docs/integrations/mastra.md`、`https://supermemory.ai/docs/concepts/graph-memory.md`、`https://supermemory.ai/docs/concepts/super-rag.md`、`https://supermemory.ai/docs/llms.txt`、`https://supermemory.ai/llms.txt`。接入前必须按官方文档和当前安装版本类型定义核对 API，不能依据摘要或臆造字段。
 - Supermemory 默认使用官方 Supermemory Local 自托管服务（本机 `127.0.0.1:6767`），不依赖 Supermemory 云端；其本地自动认证只允许回环地址。使用云端或其他非回环地址时必须显式配置 key，并保持同样的失败关闭约束。
@@ -88,6 +89,7 @@ npx tsx scripts/ops-guard.ts status
 `npm run supermemory:acceptance` 需要本机 Supermemory Local 服务在 `127.0.0.1:6767` 运行（WSL2 内启动 linux-x64 二进制），且使用隔离的临时数据库；脚本只删除带 `acceptance` 标记的远端容器，不会触碰真实项目记忆。核心验证通过而外部阻塞未解除时，脚本如实返回 `partial`（退出码 1）：配置的模型端点返回 `503` 时 `forget` 撤销与 PDF 终态处理无法验证；图片摄取需要 Gemini/Vertex key，`0.0.7-rc.2` 各平台 build 在无 key 时处理图片都会崩溃。任何阻塞步骤都不得降级为本地 fallback 或伪造成通过。
 
 README.md 保持英文，README.zh-CN.md 保持中文，章节顺序、命令、端口、环境变量、能力和限制同步；更新时同步 `DOCS_SYNC_VERSION`。重大更新同步 `.env.example`、架构、运维、安全、需求审计和 TODO。UI 变化需要真实浏览器检查和无重叠截图。
+语言/主题变化还需要四语言、两主题的真实浏览器截图验收。
 
 ## Git 交付
 

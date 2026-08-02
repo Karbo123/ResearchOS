@@ -37,11 +37,7 @@ export function Topbar({
             {THEME_OPTIONS.map(option => <option key={option} value={option}>{t(
               option === 'light'
                 ? 'theme.light'
-                : option === 'dark'
-                  ? 'theme.dark'
-                  : option === 'colorful-light'
-                    ? 'theme.colorfulLight'
-                    : 'theme.colorfulDark',
+                : 'theme.dark',
             )}</option>)}
           </select>
         </label>
