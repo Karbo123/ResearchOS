@@ -420,6 +420,19 @@ export function App() {
     }
   }
 
+  const pinProject = async (target: ProjectSummary) => {
+    try {
+      await api<ProjectSummary>(`/api/projects/${target.id}/pin`, {
+        method: 'PATCH',
+        body: JSON.stringify({ pinned: !target.pinned }),
+      })
+      await loadProjects()
+      showToast(t(target.pinned ? 'app.projectUnpinned' : 'app.projectPinned'))
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
   const sendProjectChat = async (message: string) => {
     if (projectChatBusyRef.current || !project) return
     projectChatBusyRef.current = true
@@ -484,6 +497,7 @@ export function App() {
         }}
         onOpenSettings={() => setSettingsOpen(true)}
         onDeleteProject={setDeleteProjectTarget}
+        onPinProject={project => void pinProject(project)}
         sidebarWidth={sidebarWidth}
         onSidebarWidthChange={updateSidebarWidth}
       />

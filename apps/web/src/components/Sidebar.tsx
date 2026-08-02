@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Plus, Settings, Share2, Trash2, Workflow } from 'lucide-react'
+import { Pin, PinOff, Plus, Settings, Share2, Trash2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 
@@ -18,6 +18,7 @@ export function Sidebar({
   onOpenMemory,
   onOpenSettings,
   onDeleteProject,
+  onPinProject,
   sidebarWidth,
   onSidebarWidthChange,
 }: {
@@ -28,33 +29,59 @@ export function Sidebar({
   onOpenMemory: () => void
   onOpenSettings: () => void
   onDeleteProject: (project: ProjectSummary) => void
+  onPinProject: (project: ProjectSummary) => void
   sidebarWidth: number
   onSidebarWidthChange: (width: number) => void
 }) {
   const { t } = useTranslation()
-  const [visibleActions, setVisibleActions] = useState<Set<string>>(new Set())
-  const timers = useRef(new Map<string, number>())
+  const [actionReveal, setActionReveal] = useState<Map<string, 'hidden' | 'partial' | 'full'>>(new Map())
+  const timers = useRef(new Map<string, { partial?: number; full?: number }>())
   const [resizing, setResizing] = useState(false)
   const resizeFrame = useRef<number | null>(null)
 
   const startProjectHover = (projectId: string) => {
-    const currentTimer = timers.current.get(projectId)
-    if (currentTimer !== undefined) window.clearTimeout(currentTimer)
-    const timer = window.setTimeout(() => {
-      setVisibleActions(current => new Set(current).add(projectId))
+    const currentTimers = timers.current.get(projectId)
+    if (currentTimers?.partial !== undefined) window.clearTimeout(currentTimers.partial)
+    if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
+    const partial = window.setTimeout(() => {
+      setActionReveal(current => {
+        const next = new Map(current)
+        next.set(projectId, 'partial')
+        return next
+      })
+    }, 1000)
+    const full = window.setTimeout(() => {
+      setActionReveal(current => {
+        const next = new Map(current)
+        next.set(projectId, 'full')
+        return next
+      })
       timers.current.delete(projectId)
     }, 3000)
-    timers.current.set(projectId, timer)
+    timers.current.set(projectId, { partial, full })
   }
 
   const stopProjectHover = (projectId: string) => {
-    const timer = timers.current.get(projectId)
-    if (timer !== undefined) window.clearTimeout(timer)
+    const currentTimers = timers.current.get(projectId)
+    if (currentTimers?.partial !== undefined) window.clearTimeout(currentTimers.partial)
+    if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
     timers.current.delete(projectId)
-    setVisibleActions(current => {
+    setActionReveal(current => {
       if (!current.has(projectId)) return current
-      const next = new Set(current)
-      next.delete(projectId)
+      const next = new Map(current)
+      next.set(projectId, 'hidden')
+      return next
+    })
+  }
+
+  const revealProjectActions = (projectId: string) => {
+    const currentTimers = timers.current.get(projectId)
+    if (currentTimers?.partial !== undefined) window.clearTimeout(currentTimers.partial)
+    if (currentTimers?.full !== undefined) window.clearTimeout(currentTimers.full)
+    timers.current.delete(projectId)
+    setActionReveal(current => {
+      const next = new Map(current)
+      next.set(projectId, 'full')
       return next
     })
   }
@@ -140,14 +167,15 @@ export function Sidebar({
       <nav className="project-list" aria-label={t('sidebar.projects')}>
         {projects.length ? (
           projects.map(project => {
-            const actionsVisible = visibleActions.has(project.id)
+            const reveal = actionReveal.get(project.id) || 'hidden'
+            const actionsVisible = reveal !== 'hidden'
             return (
               <div
                 key={project.id}
-                className={`project-row${actionsVisible ? ' actions-visible' : ''}`}
+                className={`project-row project-actions-${reveal}`}
                 onMouseEnter={() => startProjectHover(project.id)}
                 onMouseLeave={() => stopProjectHover(project.id)}
-                onFocus={() => setVisibleActions(current => new Set(current).add(project.id))}
+                onFocus={() => revealProjectActions(project.id)}
                 onBlur={event => {
                   if (!event.currentTarget.contains(event.relatedTarget as Node | null)) stopProjectHover(project.id)
                 }}
@@ -159,21 +187,38 @@ export function Sidebar({
                   title={project.title}
                   onClick={() => onOpenProject(project.id)}
                 >
-                  {project.title}
+                  <span className="project-title-text">{project.title}</span>
+                  {project.pinned ? <Pin className="project-pinned-indicator" size={13} strokeWidth={2.2} aria-hidden="true" /> : null}
                 </button>
-                <button
-                  type="button"
-                  className={`project-more${actionsVisible ? ' visible' : ''}`}
-                  aria-label={t('sidebar.deleteProjectAction', { title: project.title })}
-                  title={t('sidebar.deleteProjectAction', { title: project.title })}
-                  tabIndex={actionsVisible ? 0 : -1}
-                  onClick={event => {
-                    event.stopPropagation()
-                    onDeleteProject(project)
-                  }}
-                >
-                  <Trash2 size={16} strokeWidth={2.2} />
-                </button>
+                <div className={`project-actions${actionsVisible ? ' visible' : ''}`} aria-hidden={!actionsVisible}>
+                  <button
+                    type="button"
+                    className={`project-action project-pin${project.pinned ? ' pinned' : ''}`}
+                    aria-label={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
+                    title={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
+                    aria-pressed={project.pinned === true}
+                    tabIndex={reveal === 'full' ? 0 : -1}
+                    onClick={event => {
+                      event.stopPropagation()
+                      onPinProject(project)
+                    }}
+                  >
+                    {project.pinned ? <PinOff size={15} strokeWidth={2.2} /> : <Pin size={15} strokeWidth={2.2} />}
+                  </button>
+                  <button
+                    type="button"
+                    className="project-action project-delete"
+                    aria-label={t('sidebar.deleteProjectAction', { title: project.title })}
+                    title={t('sidebar.deleteProjectAction', { title: project.title })}
+                    tabIndex={reveal === 'full' ? 0 : -1}
+                    onClick={event => {
+                      event.stopPropagation()
+                      onDeleteProject(project)
+                    }}
+                  >
+                    <Trash2 size={15} strokeWidth={2.2} />
+                  </button>
+                </div>
               </div>
             )
           })

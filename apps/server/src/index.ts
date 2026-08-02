@@ -1,7 +1,7 @@
 import './env.js'
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
-import { basename, extname, resolve } from 'node:path'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { basename, dirname, extname, resolve } from 'node:path'
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
@@ -10,7 +10,7 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
-  claimReviewDecisionRequest, claimReviewRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, uuid,
+  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
@@ -18,23 +18,33 @@ import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
 import { privateModelSettings, publicModelSettings, saveModelSettings } from './model-settings.js'
 import { tierFor } from './model-routing.js'
-import { artifactsRoot, pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
-import { createProjectWorkspace, enqueue, projectDetail, requireProject, type ProjectRow } from './project-service.js'
+import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
+import { createProjectWorkspace, enqueue, moveSessionUploadsIntoProject, projectDetail, requireProject, type ProjectRow } from './project-service.js'
 import { nextAvailableProjectSlug, normalizeProjectSlug, normalizeProjectSlugKeywords } from './project-slug.js'
-import { createOperationalReport, diagnostics, noveltyAnalysis, searchLiterature } from './research-services.js'
+import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal } from './paper-service.js'
 import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { scanFile } from './malware-scanner.js'
-import { canonicalRepositoryUrl, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
-import { installRepositoryArchive } from './repository-install-service.js'
+import { canonicalRepositoryUrl, discoverRepositoryCandidates, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
 import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
 import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
 import { computedEmbeddingSettings, projectEmbeddingSettings, publicProjectEmbeddingSettings, saveProjectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, stopPoolInstance } from './supermemory-instance.js'
 import { buildArtifactPreview, verifyArtifactFile } from './artifact-preview-service.js'
+import { relatedWorkCandidateDecisionRequest, relatedWorkEnrichmentRequest, relatedWorkFieldName, relatedWorkFieldSelectionRequest, relatedWorkRecursivePlanRequest, relatedWorkRunCancelRequest, relatedWorkRunExecuteRequest, relatedWorkSeedRequest } from './related-work/contracts.js'
+import { cancelRelatedWorkRun, createRelatedWorkEnrichmentProposal, createRelatedWorkRecursiveProposal, createRelatedWorkSeed, decideRelatedWorkCandidate, executeRelatedWorkEnrichment, relatedWorkRunDetail, resumeQueuedRelatedWorkRuns, selectRelatedWorkField, startRelatedWorkRun } from './related-work/service.js'
+import { projectWorkspaceDetail } from './workspace-service.js'
+import { researchStatusExportFormat, researchStatusFilterRequest, researchStatusGapCandidateRequest, researchStatusGapDecisionRequest, researchStatusMatrixCreateRequest } from './research-status/contracts.js'
+import { createResearchStatusGapCandidate, createResearchStatusMatrix, decideResearchStatusGapCandidate, exportResearchStatus, getResearchStatus } from './research-status/service.js'
+import { createDependencyInstallProposal, createRunProposal, downloadRepositoryForReproduction, finalizeReproductionArtifacts, installReproductionDependencies, queueReproductionRun, rejectReproductionArtifacts } from './reproduction-service.js'
+import { comparisonCandidateCreateRequest, comparisonCandidateDecisionRequest, researchComparisonRequest } from './research-comparison/contracts.js'
+import { createResearchComparison, createResearchComparisonCandidate, decideResearchComparisonCandidate, getResearchComparison, listResearchComparisons } from './research-comparison/service.js'
+import { deleteProject } from './project-delete-service.js'
+import { migrateProjectArtifactFiles } from './project-artifact-migration.js'
+import { projectArtifactPath, projectArtifactRelativePath, projectFilePath } from './project-storage.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
 type MessageRow = { role: string; content: string }
@@ -42,15 +52,6 @@ type ProposalRow = { id: string; project_id: string; kind: string; status: strin
 type ExperimentRow = { id: string; project_id: string; status: string; metrics: Record<string, number>; error: string | null }
 type RepositoryRow = { id: string; project_id: string; paper_id: string | null; source_url: string; license_spdx: string | null; commit_or_tag: string | null; verified_official: boolean; metadata: Record<string, unknown>; retrieved_at: string }
 type PaperIdentity = { id: string; title: string; doi: string | null }
-
-export const app = new Hono()
-app.onError((error, context) => {
-  if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) {
-    return context.json({ code: error.code, message: error.message }, error.status)
-  }
-  return errorResponse(error, context)
-})
-app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
 
 async function projectIdForReference(reference: string): Promise<string> {
   let decoded: string
@@ -61,6 +62,15 @@ async function projectIdForReference(reference: string): Promise<string> {
   if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')
   return project.id
 }
+
+export const app = new Hono()
+app.onError((error, context) => {
+  if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) {
+    return context.json({ code: error.code, message: error.message }, error.status)
+  }
+  return errorResponse(error, context)
+})
+app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
 
 async function sessionFor(input: z.infer<typeof chatRequest>): Promise<SessionRow> {
   if (input.session_id) {
@@ -276,13 +286,18 @@ app.post('/api/projects', async context => {
     await database.query('DELETE FROM projects WHERE id=$1', [id])
     throw error
   }
+  try { await moveSessionUploadsIntoProject(id, session.id) }
+  catch (error) {
+    await database.query('DELETE FROM projects WHERE id=$1', [id]).catch(() => undefined)
+    throw new ApiError(500, 'project_upload_migration_failed', error instanceof Error ? error.message : '项目上传文件迁移失败。')
+  }
   if (supermemoryEnabled()) {
     try { await ingestConversationMemory(id, session.id) }
     catch (error) {
       if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) throw new ApiError(error.status, error.code, error.message)
       throw error
     }
-    const uploadedFiles = await rows<{ id: string }>('SELECT id FROM uploaded_files WHERE session_id=$1 AND project_id IS NULL ORDER BY created_at,id', [session.id])
+    const uploadedFiles = await rows<{ id: string }>('SELECT id FROM uploaded_files WHERE session_id=$1 AND project_id=$2 ORDER BY created_at,id', [session.id, id])
     for (const uploadedFile of uploadedFiles) await enqueue(id, 'material_index', { uploaded_file_id: uploadedFile.id }, `material-index:${uploadedFile.id}`)
   }
   await enqueue(id, 'research_bootstrap', { project_id: id }, `research-bootstrap:${id}:v1`)
@@ -291,16 +306,112 @@ app.post('/api/projects', async context => {
 app.get('/api/projects', async context => {
   const status = context.req.query('status')
   if (status && !['active', 'paused', 'cancelled'].includes(status)) throw new ApiError(422, 'invalid_project_status', '项目状态筛选无效。')
-  return context.json(await rows<ProjectRow>(`SELECT * FROM projects${status ? ' WHERE status=$1' : ''} ORDER BY updated_at DESC`, status ? [status] : []))
+  return context.json(await rows<ProjectRow>(`SELECT * FROM projects${status ? ' WHERE status=$1' : ''} ORDER BY pinned DESC, updated_at DESC`, status ? [status] : []))
 })
 app.get('/api/projects/:projectRef', async context => context.json(await projectDetail(await projectIdForReference(context.req.param('projectRef')))))
+app.patch('/api/projects/:projectId/pin', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, projectPinRequest)
+  await requireProject(projectId)
+  const project = await one<ProjectRow>('UPDATE projects SET pinned=$2,updated_at=NOW() WHERE id=$1 RETURNING *', [projectId, body.pinned])
+  if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')
+  await audit(body.pinned ? 'project.pinned' : 'project.unpinned', projectId, { pinned: body.pinned })
+  return context.json(project)
+})
+app.delete('/api/projects/:projectId', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, projectDeleteRequest)
+  return context.json(await deleteProject(projectId, body.project_title, body.confirmation))
+})
+app.get('/api/projects/:projectId/workspace', async context => context.json(await projectWorkspaceDetail(uuid.parse(context.req.param('projectId')))))
+
+app.post('/api/projects/:projectId/related-work/seeds', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, relatedWorkSeedRequest)
+  return context.json(await createRelatedWorkSeed(projectId, body), 201)
+})
+app.post('/api/projects/:projectId/related-work/candidates/:candidateId/decision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const candidateId = uuid.parse(context.req.param('candidateId'))
+  const body = await jsonBody(context, relatedWorkCandidateDecisionRequest)
+  return context.json(await decideRelatedWorkCandidate(projectId, candidateId, body))
+})
+app.post('/api/projects/:projectId/related-work/candidates/:candidateId/fields/:fieldName/select', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const candidateId = uuid.parse(context.req.param('candidateId'))
+  const fieldName = relatedWorkFieldName.parse(context.req.param('fieldName'))
+  const body = await jsonBody(context, relatedWorkFieldSelectionRequest)
+  return context.json(await selectRelatedWorkField(projectId, candidateId, fieldName, body))
+})
+app.post('/api/projects/:projectId/related-work/candidate-enrichment', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, relatedWorkEnrichmentRequest)
+  return context.json(await createRelatedWorkEnrichmentProposal(projectId, body), 201)
+})
+app.post('/api/projects/:projectId/related-work/recursive-plan', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, relatedWorkRecursivePlanRequest)
+  return context.json(await createRelatedWorkRecursiveProposal(projectId, body), 201)
+})
+app.get('/api/projects/:projectId/related-work/runs/:runId', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const runId = uuid.parse(context.req.param('runId'))
+  return context.json(await relatedWorkRunDetail(projectId, runId))
+})
+app.post('/api/projects/:projectId/related-work/runs/:runId/execute', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const runId = uuid.parse(context.req.param('runId'))
+  const body = await jsonBody(context, relatedWorkRunExecuteRequest)
+  const run = await one<{ id: string; proposal_id: string }>('SELECT id,proposal_id FROM related_work_recursive_runs WHERE id=$1 AND project_id=$2', [runId, projectId])
+  if (!run) throw new ApiError(404, 'related_work_run_not_found', '相关工作递归运行不存在。')
+  return context.json(await startRelatedWorkRun(projectId, run.proposal_id, body.actor))
+})
+app.post('/api/projects/:projectId/related-work/runs/:runId/cancel', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const runId = uuid.parse(context.req.param('runId'))
+  const body = await jsonBody(context, relatedWorkRunCancelRequest)
+  return context.json(await cancelRelatedWorkRun(projectId, runId, body.reason, body.actor))
+})
 
 app.post('/api/search', async context => {
   const body = await jsonBody(context, z.object({ project_id: uuid, query: z.string().max(500).nullable().optional(), limit: z.number().int().min(1).max(30).default(8) }).strict())
   const project = await requireProject(body.project_id, true)
   return context.json(await searchLiterature(body.project_id, body.query || project.title, body.limit))
 })
-app.get('/api/projects/:projectId/novelty', async context => context.json(await noveltyAnalysis(uuid.parse(context.req.param('projectId')))))
+app.get('/api/projects/:projectId/research-status', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const filter = researchStatusFilterRequest.parse({
+    matrix_id: context.req.query('matrix_id') || undefined,
+    theme: context.req.query('theme') || undefined,
+    method: context.req.query('method') || undefined,
+    year: context.req.query('year') || undefined,
+  })
+  return context.json(await getResearchStatus(projectId, filter))
+})
+app.post('/api/projects/:projectId/research-status/matrices', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, researchStatusMatrixCreateRequest)
+  return context.json(await createResearchStatusMatrix(projectId, body), 201)
+})
+app.get('/api/projects/:projectId/research-status/export', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const format = researchStatusExportFormat.parse(context.req.query('format') || 'json')
+  const matrixId = context.req.query('matrix_id') || null
+  const filter = researchStatusFilterRequest.parse({ matrix_id: matrixId || undefined })
+  const exported = await exportResearchStatus(projectId, matrixId, filter, format)
+  return new Response(exported.content, { status: 200, headers: { 'content-type': exported.contentType, 'content-disposition': `attachment; filename="${exported.filename}"` } })
+})
+app.post('/api/projects/:projectId/research-status/gap-candidates', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, researchStatusGapCandidateRequest)
+  return context.json(await createResearchStatusGapCandidate(projectId, body), 201)
+})
+app.post('/api/projects/:projectId/research-status/gap-candidates/:candidateId/decision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const candidateId = uuid.parse(context.req.param('candidateId'))
+  const body = await jsonBody(context, researchStatusGapDecisionRequest)
+  return context.json(await decideResearchStatusGapCandidate(projectId, candidateId, body))
+})
 app.post('/api/projects/:projectId/evidence/ingest', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const body = await jsonBody(context, z.object({ limit: z.number().int().min(1).max(10).default(3) }).strict())
@@ -319,6 +430,21 @@ async function refreshRepositoryVerification(repository: RepositoryRow, paper: P
   await database.query('UPDATE repositories SET license_spdx=$2,commit_or_tag=$3,verified_official=$4,metadata=$5,retrieved_at=NOW() WHERE id=$1', [repository.id, updated.license_spdx, updated.commit_or_tag, updated.verified_official, updated.metadata])
   return updated
 }
+
+app.get('/api/projects/:projectId/papers/:paperId/repositories/discover', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const paperId = uuid.parse(context.req.param('paperId'))
+  await requireProject(projectId)
+  const paper = await one<{ id: string; source_url: string; metadata: unknown }>('SELECT id,source_url,metadata FROM papers WHERE id=$1 AND project_id=$2', [paperId, projectId])
+  if (!paper) throw new ApiError(404, 'paper_not_found', '该文献不属于当前项目。')
+  return context.json({
+    project_id: projectId,
+    paper_id: paperId,
+    candidates: discoverRepositoryCandidates(paper),
+    evidence_status: 'candidate_requires_repository_and_paper_verification',
+    limitations: ['只读取 Paper 已保存的 URL/metadata，不根据标题猜仓库；用户仍需逐个验证论文与仓库的官方关系、许可证、固定 commit、入口、依赖、数据和运行要求。'],
+  })
+})
 
 app.post('/api/projects/:projectId/repositories', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
@@ -356,17 +482,69 @@ app.post('/api/projects/:projectId/repositories/:repositoryId/download', async c
   const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, projectId])
   if (!repository) throw new ApiError(404, 'repository_not_found', '仓库候选不存在。')
   const commit = validateDownloadGate(repository)
-  const existing = await one<{ id: string }>("SELECT id FROM proposals WHERE project_id=$1 AND kind='dependency_install' AND status IN ('pending','approved') AND payload->>'repository_id'=$2", [projectId, repositoryId])
-  if (existing) throw new ApiError(409, 'repository_download_proposal_exists', '该仓库已经有待处理或已批准的下载 Proposal。')
+  const existing = await one<{ id: string }>("SELECT id FROM proposals WHERE project_id=$1 AND kind='repository_download' AND status='pending' AND payload->>'repository_id'=$2", [projectId, repositoryId])
+  if (existing) throw new ApiError(409, 'repository_download_proposal_exists', '该仓库已经有待审批的下载 Proposal。')
   const proposalId = crypto.randomUUID()
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,impact,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'dependency_install', 'User requested a verified repository archive', 'Download verified repository at fixed commit', { repository_id: repositoryId, commit, license_spdx: repository.license_spdx, source_url: repository.source_url }, { repository_id: repositoryId, requested_commit: commit, source_url: repository.source_url, paper_id: repository.paper_id }])
-  await audit('proposal.created', projectId, { proposal_id: proposalId, kind: 'dependency_install', repository_id: repositoryId, commit }, 'local-user')
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,impact,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'repository_download', 'User requested a verified repository archive', 'Download verified repository to the isolated reproduction area', { repository_id: repositoryId, commit, license_spdx: repository.license_spdx, source_url: repository.source_url }, { repository_id: repositoryId, requested_commit: commit, source_url: repository.source_url, paper_id: repository.paper_id }])
+  await audit('proposal.created', projectId, { proposal_id: proposalId, kind: 'repository_download', repository_id: repositoryId, commit }, 'local-user')
   return context.json({ proposal_id: proposalId, status: 'pending', commit }, 201)
+})
+
+app.post('/api/projects/:projectId/reproductions/:reproductionId/dependency-plan', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const reproductionId = uuid.parse(context.req.param('reproductionId'))
+  const body = await jsonBody(context, repositoryDependencyPlanRequest)
+  await requireProject(projectId, true)
+  return context.json(await createDependencyInstallProposal(projectId, reproductionId, body.dependency_manifest, body.reason), 201)
+})
+
+app.get('/api/projects/:projectId/reproductions', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const reproductions = await rows('SELECT * FROM reproductions WHERE project_id=$1 ORDER BY created_at DESC', [projectId])
+  const runs = await rows('SELECT * FROM reproduction_runs WHERE project_id=$1 ORDER BY created_at DESC', [projectId])
+  return context.json({ project_id: projectId, reproductions, runs })
+})
+
+app.post('/api/projects/:projectId/reproductions/:reproductionId/run-plan', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const reproductionId = uuid.parse(context.req.param('reproductionId'))
+  const body = await jsonBody(context, repositoryReproductionRunRequest)
+  await requireProject(projectId, true)
+  return context.json(await createRunProposal(projectId, reproductionId, body), 201)
+})
+app.post('/api/projects/:projectId/research-comparisons', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, researchComparisonRequest)
+  return context.json(await createResearchComparison(projectId, body), 201)
+})
+app.get('/api/projects/:projectId/research-comparisons', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  return context.json(await listResearchComparisons(projectId))
+})
+app.get('/api/projects/:projectId/research-comparisons/:comparisonId', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const comparisonId = uuid.parse(context.req.param('comparisonId'))
+  return context.json(await getResearchComparison(projectId, comparisonId))
+})
+app.post('/api/projects/:projectId/research-comparisons/:comparisonId/candidates', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const comparisonId = uuid.parse(context.req.param('comparisonId'))
+  const body = await jsonBody(context, comparisonCandidateCreateRequest)
+  return context.json(await createResearchComparisonCandidate(projectId, comparisonId, body), 201)
+})
+app.post('/api/projects/:projectId/research-comparisons/:comparisonId/candidates/:candidateId/decision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const comparisonId = uuid.parse(context.req.param('comparisonId'))
+  const candidateId = uuid.parse(context.req.param('candidateId'))
+  const body = await jsonBody(context, comparisonCandidateDecisionRequest)
+  return context.json(await decideResearchComparisonCandidate(projectId, comparisonId, candidateId, body))
 })
 
 app.post('/api/proposals', async context => {
   const body = await jsonBody(context, proposalCreateRequest)
   await requireProject(body.project_id, true)
+  if (body.kind.startsWith('repository_')) throw new ApiError(422, 'repository_proposal_route_required', '仓库复现 Proposal 必须通过受控的阶段 API 创建。')
   const id = crypto.randomUUID()
   await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,impact,estimated_cost_usd,payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, body.project_id, body.kind, body.reason, body.summary, body.diff ?? null, body.impact, body.estimated_cost_usd, body.payload])
   await audit('proposal.created', body.project_id, { proposal_id: id, kind: body.kind }, 'local-user')
@@ -390,6 +568,7 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   const proposal = await one<ProposalRow>('SELECT * FROM proposals WHERE id=$1', [proposalId])
   if (!proposal) throw new ApiError(404, 'proposal_not_found', 'Proposal 不存在。')
   if (proposal.status !== 'pending') throw new ApiError(409, 'proposal_already_decided', 'Proposal 已经完成决策。')
+  if (body.decision === 'approved' && proposal.kind === 'dependency_install' && typeof proposal.payload.repository_id === 'string') throw new ApiError(422, 'legacy_repository_proposal_unsupported', '旧的仓库 dependency_install Proposal 已淘汰，请重新从代码复现页面创建四阶段审批链。')
   const mastraApprovalFields = [body.mastra_run_id, body.tool_name, body.args_fingerprint, body.policy_version]
   if (mastraApprovalFields.some(value => value !== undefined && value !== null) && mastraApprovalFields.some(value => !value)) {
     throw new ApiError(422, 'mastra_approval_binding_incomplete', 'Mastra 审批必须同时绑定 run、工具、参数指纹和策略版本。')
@@ -403,8 +582,8 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   }
   let ideaRevision: unknown = null
   if (body.decision === 'approved' && proposal.kind === 'idea_revision') ideaRevision = await applyApprovedIdeaRevision(proposal.project_id, proposal.payload, body.actor)
-  let repositoryInstall: Awaited<ReturnType<typeof installRepositoryArchive>> | null = null
-  if (body.decision === 'approved' && proposal.kind === 'dependency_install') {
+  let repositoryDownload: Awaited<ReturnType<typeof downloadRepositoryForReproduction>> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'repository_download') {
     const repositoryId = uuid.parse(String(proposal.payload.repository_id || ''))
     const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, proposal.project_id])
     if (!repository || !repository.paper_id) throw new ApiError(404, 'repository_not_found', '待下载的仓库候选不存在。')
@@ -412,8 +591,20 @@ app.post('/api/proposals/:proposalId/decision', async context => {
     if (!paper) throw new ApiError(404, 'paper_not_found', '仓库关联论文不存在。')
     const refreshed = await refreshRepositoryVerification(repository, paper)
     const commit = validateDownloadGate(refreshed, String(proposal.payload.requested_commit || ''))
-    repositoryInstall = await installRepositoryArchive(refreshed, body.actor, commit)
+    repositoryDownload = await downloadRepositoryForReproduction(refreshed, body.actor, commit)
   }
+  let reproductionDependencies: Awaited<ReturnType<typeof installReproductionDependencies>> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'repository_dependency_install') {
+    const reproductionId = uuid.parse(String(proposal.payload.reproduction_id || ''))
+    const dependencyManifest = String(proposal.payload.dependency_manifest || '')
+    const dependencySha256 = String(proposal.payload.dependency_sha256 || '')
+    reproductionDependencies = await installReproductionDependencies(proposal.project_id, reproductionId, dependencyManifest, dependencySha256, body.actor)
+  }
+  let reproductionRun: { run_id: string; task_id: string; status: string } | null = null
+  if (body.decision === 'approved' && proposal.kind === 'repository_reproduction_run') reproductionRun = await queueReproductionRun(proposal.project_id, proposalId, proposal.payload)
+  let reproductionArtifacts: { reproduction_run_id: string; artifact_ids: string[] } | null = null
+  if (body.decision === 'approved' && proposal.kind === 'repository_artifact_write') reproductionArtifacts = await finalizeReproductionArtifacts(proposal.project_id, proposalId, body.actor)
+  if (body.decision === 'rejected' && proposal.kind === 'repository_artifact_write') await rejectReproductionArtifacts(proposal.project_id, proposalId, body.actor, body.comment || 'local-user rejected the reproduction artifact registration')
   let memoryRevocation: unknown = null
   if (body.decision === 'approved' && proposal.kind === 'memory_revoke') {
     const memoryLinkId = uuid.parse(String(proposal.payload.memory_link_id || ''))
@@ -451,6 +642,10 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   }
   const impact = automaticExecution ? { ...proposal.impact, automatic_execution: automaticExecution } : proposal.impact
   await database.query('UPDATE proposals SET status=$2,decided_by=$3,decision_comment=$4,impact=$5,decided_at=NOW() WHERE id=$1', [proposalId, body.decision, body.actor, body.comment ?? null, impact])
+  let relatedWorkRun: { run_id: string; status: string } | null = null
+  if (body.decision === 'approved' && proposal.kind === 'related_work_recursive') relatedWorkRun = await startRelatedWorkRun(proposal.project_id, proposalId, body.actor)
+  let relatedWorkEnrichment: Record<string, unknown> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'related_work_field_enrichment') relatedWorkEnrichment = await executeRelatedWorkEnrichment(proposal.project_id, proposalId, body.actor)
   if (body.decision === 'approved' && proposal.kind === 'config_change' && typeof proposal.payload.rule === 'string') await database.query('INSERT INTO policies(id,project_id,rule,rationale) VALUES ($1,$2,$3,$4)', [crypto.randomUUID(), proposal.project_id, proposal.payload.rule, body.comment ?? null])
   await audit(`proposal.${body.decision}`, proposal.project_id, {
     proposal_id: proposalId,
@@ -461,7 +656,7 @@ app.post('/api/proposals/:proposalId/decision', async context => {
       policy_version: body.policy_version,
     } : null,
   }, body.actor)
-  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, idea_revision: ideaRevision, repository_install: repositoryInstall, lineage_invalidation: lineageInvalidation, automatic_execution: automaticExecution, memory_revocation: memoryRevocation })
+  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, idea_revision: ideaRevision, repository_download: repositoryDownload, reproduction_dependencies: reproductionDependencies, reproduction_run: reproductionRun, reproduction_artifacts: reproductionArtifacts, lineage_invalidation: lineageInvalidation, automatic_execution: automaticExecution, memory_revocation: memoryRevocation, related_work_run: relatedWorkRun, related_work_enrichment: relatedWorkEnrichment })
 })
 
 app.post('/api/projects/:projectId/paper-draft', async context => context.json(await createPaperDraftProposal(uuid.parse(context.req.param('projectId'))), 201))
@@ -543,9 +738,41 @@ app.post('/api/projects/:projectId/feedback', async context => {
     },
     task_type: 'memory', idempotency_key: `feedback:${feedbackId}`,
   })
-  await database.query('INSERT INTO human_feedback(id,project_id,session_id,category,instruction) VALUES ($1,$2,$3,$4,$5)', [feedbackId, projectId, body.session_id ?? null, body.category, body.instruction])
+  await database.query('INSERT INTO human_feedback(id,project_id,session_id,reference_id,category,instruction) VALUES ($1,$2,$3,$4,$5,$6)', [feedbackId, projectId, body.session_id ?? null, body.reference_id ?? null, body.category, body.instruction])
   await audit('human_feedback.created', projectId, { feedback_id: feedbackId, category: body.category, reference_id: body.reference_id ?? null }, 'local-user')
   return context.json({ id: feedbackId, project_id: projectId, status: 'recorded', semantic_memory: supermemoryEnabled() ? 'active' : 'disabled' }, 201)
+})
+app.get('/api/projects/:projectId/feedback', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json({ project_id: projectId, feedback: await rows('SELECT * FROM human_feedback WHERE project_id=$1 ORDER BY created_at DESC', [projectId]) })
+})
+app.post('/api/projects/:projectId/feedback/:feedbackId/decision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const feedbackId = uuid.parse(context.req.param('feedbackId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, humanFeedbackDecisionRequest)
+  const feedback = await one<{ id: string; status: string }>('SELECT id,status FROM human_feedback WHERE id=$1 AND project_id=$2', [feedbackId, projectId])
+  if (!feedback) throw new ApiError(404, 'feedback_not_found', '当前项目中不存在该反馈。')
+  if (feedback.status !== 'open') throw new ApiError(409, 'feedback_already_decided', '该反馈已经完成决策。')
+  await database.query('UPDATE human_feedback SET status=$2,decided_by=$3,decision_comment=$4,decided_at=NOW() WHERE id=$1 AND project_id=$5', [feedbackId, body.decision, body.actor, body.comment ?? null, projectId])
+  await audit(`human_feedback.${body.decision}`, projectId, { feedback_id: feedbackId, comment: body.comment ?? null }, body.actor)
+  return context.json({ id: feedbackId, project_id: projectId, status: body.decision })
+})
+app.post('/api/projects/:projectId/feedback/:feedbackId/proposal', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const feedbackId = uuid.parse(context.req.param('feedbackId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, feedbackProposalRequest)
+  const feedback = await one<{ id: string; status: string; instruction: string; reference_id: string | null }>('SELECT id,status,instruction,reference_id FROM human_feedback WHERE id=$1 AND project_id=$2', [feedbackId, projectId])
+  if (!feedback) throw new ApiError(404, 'feedback_not_found', '当前项目中不存在该反馈。')
+  if (feedback.status === 'rejected') throw new ApiError(409, 'feedback_rejected', '被拒绝的反馈不能创建 Proposal。')
+  const proposalId = crypto.randomUUID()
+  const payload = { ...body.payload, feedback_id: feedbackId, feedback_reference_id: feedback.reference_id, feedback_instruction: feedback.instruction }
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,impact,estimated_cost_usd,payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [proposalId, projectId, body.kind, body.reason, body.summary, body.diff ?? null, { source: 'human_feedback', feedback_id: feedbackId }, body.estimated_cost_usd, payload])
+  await database.query("UPDATE human_feedback SET status='proposal_created' WHERE id=$1 AND project_id=$2", [feedbackId, projectId])
+  await audit('human_feedback.proposal_created', projectId, { feedback_id: feedbackId, proposal_id: proposalId, kind: body.kind }, 'local-user')
+  return context.json({ proposal_id: proposalId, feedback_id: feedbackId, status: 'pending' }, 201)
 })
 app.get('/api/projects/:projectId/claim-reviews', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
@@ -638,13 +865,16 @@ app.post('/api/uploads', async context => {
   if (!safeName || ['.exe', '.dll', '.bat', '.cmd', '.ps1', '.msi'].includes(extname(safeName).toLowerCase())) throw new ApiError(422, 'upload_type_forbidden', '该文件类型不允许上传。')
   const bytes = Buffer.from(await file.arrayBuffer())
   const id = crypto.randomUUID()
-  const directory = pathInside(artifactsRoot, 'uploads', sessionId)
-  mkdirSync(directory, { recursive: true })
-  const target = pathInside(directory, `${id}-${safeName}`)
+  const relativePath = session.project_id
+    ? projectArtifactRelativePath(`uploads/${sessionId}/${id}-${safeName}`)
+    : `staging/uploads/${sessionId}/${id}-${safeName}`
+  const target = session.project_id
+    ? projectArtifactPath(session.project_id, relativePath)
+    : pathInside(runtimeRoot, ...relativePath.split('/'))
+  mkdirSync(dirname(target), { recursive: true })
   writeFileSync(target, bytes, { flag: 'wx' })
   try { await scanFile(target) } catch (error) { try { await import('node:fs').then(module => module.rmSync(target)) } catch { /* Preserve scanner error. */ } throw error }
   const sha256 = createHash('sha256').update(bytes).digest('hex')
-  const relativePath = target.slice(artifactsRoot.length + 1).replaceAll('\\', '/')
   await database.query('INSERT INTO uploaded_files(id,session_id,project_id,name,relative_path,mime_type,size_bytes,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, sessionId, session.project_id, safeName, relativePath, file.type || 'application/octet-stream', bytes.length, sha256, { scan: 'windows_defender_clean', evidence_status: 'untrusted_uploaded_material' }])
   let indexTask: { id: string } | null = null
   if (session.project_id && supermemoryEnabled()) indexTask = await enqueue(session.project_id, 'material_index', { uploaded_file_id: id }, `material-index:${id}`)
@@ -658,7 +888,7 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/preview', async context 
   const artifact = await one<{ relative_path: string; mime_type: string; name: string; sha256: string; valid: boolean }>('SELECT relative_path,mime_type,name,sha256,valid FROM artifacts WHERE id=$1 AND project_id=$2', [artifactId, projectId])
   if (!artifact) throw new ApiError(404, 'artifact_not_found', '项目中不存在该产物或产物已经失效。')
   if (!artifact.valid) throw new ApiError(409, 'artifact_invalidated', '该产物已经因上游依赖变化而失效，不能继续预览。')
-  const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
+  const path = projectFilePath(projectId, artifact.relative_path)
   if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
   try {
     await verifyArtifactFile(path, artifact.sha256)
@@ -675,7 +905,7 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context
   const artifact = await one<{ relative_path: string; mime_type: string; name: string; sha256: string; valid: boolean }>('SELECT relative_path,mime_type,name,sha256,valid FROM artifacts WHERE id=$1 AND project_id=$2', [artifactId, projectId])
   if (!artifact) throw new ApiError(404, 'artifact_not_found', '项目中不存在该产物或产物已经失效。')
   if (!artifact.valid) throw new ApiError(409, 'artifact_invalidated', '该产物已经因上游依赖变化而失效，不能下载。')
-  const path = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
+  const path = projectFilePath(projectId, artifact.relative_path)
   if (!existsSync(path)) throw new ApiError(404, 'artifact_file_missing', '产物文件缺失。')
   try { await verifyArtifactFile(path, artifact.sha256) }
   catch (error) {
@@ -687,13 +917,13 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context
   return context.body(readFileSync(path))
 })
 
-app.get('/project/*', context => {
-  const path = pathInside(publicRoot, 'index.html')
-  return context.html(readFileSync(path, 'utf8'))
-})
-
 // HTML must always revalidate so UI/CSS fixes reach browsers immediately;
 // versioned assets (app.js/styles.css?v=...) remain cacheable by default.
+app.get('/project/*', context => {
+  context.header('Cache-Control', 'no-cache')
+  context.header('Content-Type', 'text/html; charset=UTF-8')
+  return context.body(readFileSync(resolve(publicRoot, 'index.html')))
+})
 app.use('/*', async (context, next) => {
   if (context.req.path === '/' || context.req.path === '/index.html') context.header('Cache-Control', 'no-cache')
   await next()
@@ -716,7 +946,9 @@ app.notFound(context => {
 const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
 if (!isTestRuntime) {
   await migrate()
+  await migrateProjectArtifactFiles()
   await recoverInterruptedWork()
+  await resumeQueuedRelatedWorkRuns()
   const port = Number(process.env.RESEARCH_API_PORT || 8080)
   serve({ fetch: app.fetch, hostname: '127.0.0.1', port }, info => console.log(`Research OS native TypeScript server: http://127.0.0.1:${info.port}`))
   startTaskWorker()

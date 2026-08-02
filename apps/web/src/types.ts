@@ -50,6 +50,7 @@ export interface ProjectSummary {
   slug: string
   title: string
   status?: string
+  pinned?: boolean
 }
 
 export interface IdeaSpec {

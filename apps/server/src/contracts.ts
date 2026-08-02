@@ -41,6 +41,13 @@ export const projectCreateRequest = z.object({
   confirmed: z.literal(true),
   slug: z.string().trim().max(120).nullable().optional(),
 }).strict()
+export const projectDeleteRequest = z.object({
+  project_title: z.string().trim().min(1).max(240),
+  confirmation: z.literal('DELETE'),
+}).strict()
+export const projectPinRequest = z.object({
+  pinned: z.boolean(),
+}).strict()
 export const modelTierSettings = z.object({
   model: z.string().trim().min(1).max(200),
   url: z.string().url().max(500),
@@ -69,7 +76,7 @@ export type ProjectEmbeddingSettingsRequest = z.infer<typeof projectEmbeddingSet
 
 export const proposalCreateRequest = z.object({
   project_id: uuid,
-  kind: z.enum(['experiment_plan', 'experiment_rerun', 'code_patch', 'config_change', 'idea_revision', 'data_change', 'dependency_install', 'delete_artifact', 'memory_revoke', 'external_publish', 'diagnostic_suggestion']),
+  kind: z.enum(['experiment_plan', 'experiment_rerun', 'code_patch', 'config_change', 'idea_revision', 'data_change', 'dependency_install', 'delete_artifact', 'memory_revoke', 'external_publish', 'diagnostic_suggestion', 'related_work_recursive', 'related_work_field_enrichment', 'repository_download', 'repository_dependency_install', 'repository_reproduction_run', 'repository_artifact_write']),
   reason: z.string().min(5),
   summary: z.string().min(5),
   diff: z.string().nullable().optional(),
@@ -116,6 +123,23 @@ export const humanFeedbackRequest = z.object({
   instruction: z.string().trim().min(1).max(8_000),
   reference_id: uuid.nullable().optional(),
 }).strict()
+export const humanFeedbackDecisionRequest = z.object({
+  decision: z.enum(['acknowledged', 'rejected', 'revision_requested']),
+  actor: z.string().trim().min(1).max(200).default('local-user'),
+  comment: z.string().max(4000).nullable().optional(),
+}).strict()
+export const feedbackProposalRequest = z.object({
+  kind: z.enum(['idea_revision', 'experiment_plan', 'related_work_recursive', 'code_patch', 'config_change', 'diagnostic_suggestion']),
+  summary: z.string().trim().min(5).max(500),
+  reason: z.string().trim().min(5).max(2000),
+  diff: z.string().max(100_000).nullable().optional(),
+  payload: z.record(z.string(), z.unknown()).default({}),
+  estimated_cost_usd: z.number().min(0).default(0),
+}).strict().superRefine((value, context) => {
+  if (['code_patch', 'config_change'].includes(value.kind) && !value.diff) {
+    context.addIssue({ code: 'custom', path: ['diff'], message: '代码或配置 Proposal 必须提供明确 diff。' })
+  }
+})
 export const claimReviewRequest = z.object({
   claim: z.string().trim().min(5).max(4_000),
   evidence_ids: z.array(uuid).min(1).max(30),
@@ -126,6 +150,29 @@ export const claimReviewDecisionRequest = z.object({
   comment: z.string().max(4_000).nullable().optional(),
 }).strict()
 export const repositoryCandidateRequest = z.object({ paper_id: uuid, source_url: z.string().url().max(500) }).strict()
+export const repositoryDependencyPlanRequest = z.object({
+  dependency_manifest: z.string().trim().min(1).max(300),
+  reason: z.string().trim().min(5).max(2000),
+}).strict()
+const reproductionConfigValue = z.union([
+  z.string().max(4000),
+  z.number().finite(),
+  z.boolean(),
+  z.array(z.union([z.string().max(4000), z.number().finite(), z.boolean()])).max(100),
+])
+export const repositoryReproductionRunRequest = z.object({
+  entrypoint: z.string().trim().min(1).max(300),
+  random_seeds: z.array(z.number().int().min(-1_000_000).max(1_000_000)).min(1).max(10),
+  config: z.record(z.string().max(120), reproductionConfigValue).default({}),
+  timeout_seconds: z.number().int().min(1).max(86_400).default(3_600),
+  reason: z.string().trim().min(5).max(2000),
+}).strict().superRefine((value, context) => {
+  const forbiddenKeys = new Set(['command', 'cmd', 'shell', 'cwd', 'path', 'url', 'image', 'network', 'environment', 'env', 'executable', 'interpreter'])
+  for (const key of Object.keys(value.config)) {
+    if (forbiddenKeys.has(key.toLowerCase())) context.addIssue({ code: 'custom', path: ['config', key], message: '任意执行、路径或网络字段不允许进入复现计划。' })
+  }
+  if (new Set(value.random_seeds).size !== value.random_seeds.length) context.addIssue({ code: 'custom', path: ['random_seeds'], message: '复现 seed 必须互不重复。' })
+})
 const flatMemoryMetadata = z.record(z.string(), z.union([z.string().max(4000), z.number().finite(), z.boolean(), z.array(z.string().max(4000)).max(20)])).default({})
 export const memoryIngestRequest = z.object({
   source_type: z.enum(['idea_message', 'project_chat_message', 'report', 'experiment_summary', 'experiment_plan', 'related_work', 'artifact', 'manual']),

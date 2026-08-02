@@ -12828,6 +12828,8 @@
     "layout.resizeProjectChat": "\u8C03\u6574\u9879\u76EE\u5BF9\u8BDD\u5BBD\u5EA6",
     "layout.resizeSpecPane": "\u8C03\u6574\u89C4\u683C\u9762\u677F\u5BBD\u5EA6",
     "sidebar.deleteProjectAction": "\u5220\u9664\u9879\u76EE\uFF1A{title}",
+    "sidebar.pinProjectAction": "\u7F6E\u9876\u9879\u76EE\uFF1A{title}",
+    "sidebar.unpinProjectAction": "\u53D6\u6D88\u7F6E\u9876\u9879\u76EE\uFF1A{title}",
     "deleteProject.eyebrow": "\u9879\u76EE\u7BA1\u7406",
     "deleteProject.title": "\u5220\u9664\u8FD9\u4E2A\u9879\u76EE\uFF1F",
     "deleteProject.description": "\u5220\u9664\u4F1A\u79FB\u9664\u9879\u76EE\u76EE\u5F55\u3001\u6587\u4EF6\u3001\u4EA7\u7269\u3001\u8BB0\u5F55\u548C\u9879\u76EE\u7EA7\u8BED\u4E49\u8BB0\u5FC6\u3002\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
@@ -12884,6 +12886,8 @@
     "app.researchProject": "\u7814\u7A76\u9879\u76EE",
     "app.projectCreated": "\u9879\u76EE\u5DF2\u521B\u5EFA",
     "app.projectDeleted": "\u9879\u76EE\u5DF2\u5220\u9664",
+    "app.projectPinned": "\u9879\u76EE\u5DF2\u7F6E\u9876",
+    "app.projectUnpinned": "\u9879\u76EE\u5DF2\u53D6\u6D88\u7F6E\u9876",
     "app.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\u3002",
     "app.ideaMeta": "Idea \u6F84\u6E05",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -13837,6 +13841,8 @@
     "layout.resizeProjectChat": "\u8ABF\u6574\u5C08\u6848\u5C0D\u8A71\u5BEC\u5EA6",
     "layout.resizeSpecPane": "\u8ABF\u6574\u898F\u683C\u9762\u677F\u5BEC\u5EA6",
     "sidebar.deleteProjectAction": "\u522A\u9664\u5C08\u6848\uFF1A{title}",
+    "sidebar.pinProjectAction": "\u5C07\u5C08\u6848\u7F6E\u9802\uFF1A{title}",
+    "sidebar.unpinProjectAction": "\u53D6\u6D88\u5C08\u6848\u7F6E\u9802\uFF1A{title}",
     "deleteProject.eyebrow": "\u5C08\u6848\u7BA1\u7406",
     "deleteProject.title": "\u8981\u522A\u9664\u9019\u500B\u5C08\u6848\u55CE\uFF1F",
     "deleteProject.description": "\u522A\u9664\u6703\u79FB\u9664\u5C08\u6848\u8CC7\u6599\u593E\u3001\u6A94\u6848\u3001\u7522\u7269\u3001\u8A18\u9304\u8207\u5C08\u6848\u7D1A\u8A9E\u610F\u8A18\u61B6\u3002\u6B64\u64CD\u4F5C\u7121\u6CD5\u5FA9\u539F\u3002",
@@ -14004,6 +14010,8 @@
     "app.researchProject": "\u7814\u7A76\u5C08\u6848",
     "app.projectCreated": "\u5C08\u6848\u5DF2\u5EFA\u7ACB",
     "app.projectDeleted": "\u5C08\u6848\u5DF2\u522A\u9664",
+    "app.projectPinned": "\u5C08\u6848\u5DF2\u7F6E\u9802",
+    "app.projectUnpinned": "\u5C08\u6848\u5DF2\u53D6\u6D88\u7F6E\u9802",
     "app.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\u3002",
     "app.ideaMeta": "Idea \u6F84\u6E05",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -14846,6 +14854,8 @@
     "layout.resizeProjectChat": "Resize project chat",
     "layout.resizeSpecPane": "Resize specification pane",
     "sidebar.deleteProjectAction": "Delete project: {title}",
+    "sidebar.pinProjectAction": "Pin project: {title}",
+    "sidebar.unpinProjectAction": "Unpin project: {title}",
     "deleteProject.eyebrow": "Project management",
     "deleteProject.title": "Delete this project?",
     "deleteProject.description": "This removes the project folder, files, artifacts, records, and project-scoped semantic memory. This cannot be undone.",
@@ -15013,6 +15023,8 @@
     "app.researchProject": "Research Project",
     "app.projectCreated": "Project created",
     "app.projectDeleted": "Project deleted",
+    "app.projectPinned": "Project pinned",
+    "app.projectUnpinned": "Project unpinned",
     "app.openProjectFirst": "Open a research project first.",
     "app.ideaMeta": "Idea clarification",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -15855,6 +15867,8 @@
     "layout.resizeProjectChat": "Cambiar el ancho del chat del proyecto",
     "layout.resizeSpecPane": "Cambiar el ancho del panel de especificaciones",
     "sidebar.deleteProjectAction": "Eliminar proyecto: {title}",
+    "sidebar.pinProjectAction": "Fijar proyecto: {title}",
+    "sidebar.unpinProjectAction": "Desfijar proyecto: {title}",
     "deleteProject.eyebrow": "Gesti\xF3n del proyecto",
     "deleteProject.title": "\xBFEliminar este proyecto?",
     "deleteProject.description": "Esto elimina la carpeta, los archivos, los artefactos, los registros y la memoria sem\xE1ntica del proyecto. No se puede deshacer.",
@@ -16022,6 +16036,8 @@
     "app.researchProject": "Proyecto de investigaci\xF3n",
     "app.projectCreated": "Proyecto creado",
     "app.projectDeleted": "Proyecto eliminado",
+    "app.projectPinned": "Proyecto fijado",
+    "app.projectUnpinned": "Proyecto desfijado",
     "app.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n.",
     "app.ideaMeta": "Clarificaci\xF3n de la idea",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -17549,8 +17565,36 @@
   ];
   var Pause = createLucideIcon("pause", __iconNode43);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/pin-off.mjs
   var __iconNode44 = [
+    ["path", { d: "M12 17v5", key: "bb1du9" }],
+    ["path", { d: "M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89", key: "znwnzq" }],
+    ["path", { d: "m2 2 20 20", key: "1ooewy" }],
+    [
+      "path",
+      {
+        d: "M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11",
+        key: "c9qhm2"
+      }
+    ]
+  ];
+  var PinOff = createLucideIcon("pin-off", __iconNode44);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/pin.mjs
+  var __iconNode45 = [
+    ["path", { d: "M12 17v5", key: "bb1du9" }],
+    [
+      "path",
+      {
+        d: "M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z",
+        key: "1nkz8b"
+      }
+    ]
+  ];
+  var Pin = createLucideIcon("pin", __iconNode45);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
+  var __iconNode46 = [
     [
       "path",
       {
@@ -17559,17 +17603,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode44);
+  var Play = createLucideIcon("play", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode45 = [
+  var __iconNode47 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode45);
+  var Plus = createLucideIcon("plus", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode46 = [
+  var __iconNode48 = [
     [
       "path",
       {
@@ -17585,34 +17629,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode46);
+  var Quote = createLucideIcon("quote", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode47 = [
+  var __iconNode49 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode47);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode48 = [
+  var __iconNode50 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode48);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode49 = [
+  var __iconNode51 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode49);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode50 = [
+  var __iconNode52 = [
     [
       "path",
       {
@@ -17623,10 +17667,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode50);
+  var Save = createLucideIcon("save", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode51 = [
+  var __iconNode53 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -17635,17 +17679,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode51);
+  var ScanText = createLucideIcon("scan-text", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode52 = [
+  var __iconNode54 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode52);
+  var Search = createLucideIcon("search", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode53 = [
+  var __iconNode55 = [
     [
       "path",
       {
@@ -17655,10 +17699,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode53);
+  var Send = createLucideIcon("send", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode54 = [
+  var __iconNode56 = [
     [
       "path",
       {
@@ -17668,20 +17712,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode54);
+  var Settings = createLucideIcon("settings", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode55 = [
+  var __iconNode57 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode55);
+  var Share2 = createLucideIcon("share-2", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode56 = [
+  var __iconNode58 = [
     [
       "path",
       {
@@ -17692,10 +17736,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode56);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode57 = [
+  var __iconNode59 = [
     [
       "path",
       {
@@ -17705,10 +17749,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode57);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode58 = [
+  var __iconNode60 = [
     [
       "path",
       {
@@ -17720,26 +17764,26 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode58);
+  var Sparkles = createLucideIcon("sparkles", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode59 = [
+  var __iconNode61 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode59);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode60 = [
+  var __iconNode62 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode60);
+  var Square = createLucideIcon("square", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode61 = [
+  var __iconNode63 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -17750,10 +17794,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode61);
+  var Stamp = createLucideIcon("stamp", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode62 = [
+  var __iconNode64 = [
     [
       "path",
       {
@@ -17762,27 +17806,27 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode62);
+  var Table2 = createLucideIcon("table-2", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode63 = [
+  var __iconNode65 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode63);
+  var Terminal = createLucideIcon("terminal", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode64 = [
+  var __iconNode66 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode64);
+  var Trash2 = createLucideIcon("trash-2", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode65 = [
+  var __iconNode67 = [
     [
       "path",
       {
@@ -17793,10 +17837,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode65);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode67);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode66 = [
+  var __iconNode68 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -17805,22 +17849,22 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode66);
+  var Waypoints = createLucideIcon("waypoints", __iconNode68);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode67 = [
+  var __iconNode69 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode67);
+  var Workflow = createLucideIcon("workflow", __iconNode69);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode68 = [
+  var __iconNode70 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode68);
+  var X = createLucideIcon("x", __iconNode70);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -17837,31 +17881,56 @@
     onOpenMemory,
     onOpenSettings,
     onDeleteProject,
+    onPinProject,
     sidebarWidth,
     onSidebarWidthChange
   }) {
     const { t } = useTranslation();
-    const [visibleActions, setVisibleActions] = (0, import_react5.useState)(/* @__PURE__ */ new Set());
+    const [actionReveal, setActionReveal] = (0, import_react5.useState)(/* @__PURE__ */ new Map());
     const timers = (0, import_react5.useRef)(/* @__PURE__ */ new Map());
     const [resizing, setResizing] = (0, import_react5.useState)(false);
     const resizeFrame = (0, import_react5.useRef)(null);
     const startProjectHover = (projectId) => {
-      const currentTimer = timers.current.get(projectId);
-      if (currentTimer !== void 0) window.clearTimeout(currentTimer);
-      const timer = window.setTimeout(() => {
-        setVisibleActions((current) => new Set(current).add(projectId));
+      const currentTimers = timers.current.get(projectId);
+      if (currentTimers?.partial !== void 0) window.clearTimeout(currentTimers.partial);
+      if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
+      const partial = window.setTimeout(() => {
+        setActionReveal((current) => {
+          const next = new Map(current);
+          next.set(projectId, "partial");
+          return next;
+        });
+      }, 1e3);
+      const full = window.setTimeout(() => {
+        setActionReveal((current) => {
+          const next = new Map(current);
+          next.set(projectId, "full");
+          return next;
+        });
         timers.current.delete(projectId);
       }, 3e3);
-      timers.current.set(projectId, timer);
+      timers.current.set(projectId, { partial, full });
     };
     const stopProjectHover = (projectId) => {
-      const timer = timers.current.get(projectId);
-      if (timer !== void 0) window.clearTimeout(timer);
+      const currentTimers = timers.current.get(projectId);
+      if (currentTimers?.partial !== void 0) window.clearTimeout(currentTimers.partial);
+      if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
       timers.current.delete(projectId);
-      setVisibleActions((current) => {
+      setActionReveal((current) => {
         if (!current.has(projectId)) return current;
-        const next = new Set(current);
-        next.delete(projectId);
+        const next = new Map(current);
+        next.set(projectId, "hidden");
+        return next;
+      });
+    };
+    const revealProjectActions = (projectId) => {
+      const currentTimers = timers.current.get(projectId);
+      if (currentTimers?.partial !== void 0) window.clearTimeout(currentTimers.partial);
+      if (currentTimers?.full !== void 0) window.clearTimeout(currentTimers.full);
+      timers.current.delete(projectId);
+      setActionReveal((current) => {
+        const next = new Map(current);
+        next.set(projectId, "full");
         return next;
       });
     };
@@ -17944,19 +18013,20 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: t("sidebar.projects") }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: projects.length ? projects.map((project) => {
-        const actionsVisible = visibleActions.has(project.id);
+        const reveal = actionReveal.get(project.id) || "hidden";
+        const actionsVisible = reveal !== "hidden";
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `project-row${actionsVisible ? " actions-visible" : ""}`,
+            className: `project-row project-actions-${reveal}`,
             onMouseEnter: () => startProjectHover(project.id),
             onMouseLeave: () => stopProjectHover(project.id),
-            onFocus: () => setVisibleActions((current) => new Set(current).add(project.id)),
+            onFocus: () => revealProjectActions(project.id),
             onBlur: (event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) stopProjectHover(project.id);
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                 "button",
                 {
                   type: "button",
@@ -17964,24 +18034,45 @@
                   "aria-current": project.id === activeProjectId ? "page" : void 0,
                   title: project.title,
                   onClick: () => onOpenProject(project.id),
-                  children: project.title
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "project-title-text", children: project.title }),
+                    project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { className: "project-pinned-indicator", size: 13, strokeWidth: 2.2, "aria-hidden": "true" }) : null
+                  ]
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                "button",
-                {
-                  type: "button",
-                  className: `project-more${actionsVisible ? " visible" : ""}`,
-                  "aria-label": t("sidebar.deleteProjectAction", { title: project.title }),
-                  title: t("sidebar.deleteProjectAction", { title: project.title }),
-                  tabIndex: actionsVisible ? 0 : -1,
-                  onClick: (event) => {
-                    event.stopPropagation();
-                    onDeleteProject(project);
-                  },
-                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trash2, { size: 16, strokeWidth: 2.2 })
-                }
-              )
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `project-actions${actionsVisible ? " visible" : ""}`, "aria-hidden": !actionsVisible, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    type: "button",
+                    className: `project-action project-pin${project.pinned ? " pinned" : ""}`,
+                    "aria-label": t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
+                    title: t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
+                    "aria-pressed": project.pinned === true,
+                    tabIndex: reveal === "full" ? 0 : -1,
+                    onClick: (event) => {
+                      event.stopPropagation();
+                      onPinProject(project);
+                    },
+                    children: project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PinOff, { size: 15, strokeWidth: 2.2 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { size: 15, strokeWidth: 2.2 })
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    type: "button",
+                    className: "project-action project-delete",
+                    "aria-label": t("sidebar.deleteProjectAction", { title: project.title }),
+                    title: t("sidebar.deleteProjectAction", { title: project.title }),
+                    tabIndex: reveal === "full" ? 0 : -1,
+                    onClick: (event) => {
+                      event.stopPropagation();
+                      onDeleteProject(project);
+                    },
+                    children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trash2, { size: 15, strokeWidth: 2.2 })
+                  }
+                )
+              ] })
             ]
           },
           project.id
@@ -24071,6 +24162,18 @@
         setDeleteBusy(false);
       }
     };
+    const pinProject = async (target) => {
+      try {
+        await api(`/api/projects/${target.id}/pin`, {
+          method: "PATCH",
+          body: JSON.stringify({ pinned: !target.pinned })
+        });
+        await loadProjects();
+        showToast(t(target.pinned ? "app.projectUnpinned" : "app.projectPinned"));
+      } catch (error) {
+        showToast(errorMessage(error));
+      }
+    };
     const sendProjectChat = async (message) => {
       if (projectChatBusyRef.current || !project) return;
       projectChatBusyRef.current = true;
@@ -24129,6 +24232,7 @@
           },
           onOpenSettings: () => setSettingsOpen(true),
           onDeleteProject: setDeleteProjectTarget,
+          onPinProject: (project2) => void pinProject(project2),
           sidebarWidth,
           onSidebarWidthChange: updateSidebarWidth
         }
@@ -24337,6 +24441,8 @@ lucide-react/dist/esm/icons/package-check.mjs:
 lucide-react/dist/esm/icons/palette.mjs:
 lucide-react/dist/esm/icons/paperclip.mjs:
 lucide-react/dist/esm/icons/pause.mjs:
+lucide-react/dist/esm/icons/pin-off.mjs:
+lucide-react/dist/esm/icons/pin.mjs:
 lucide-react/dist/esm/icons/play.mjs:
 lucide-react/dist/esm/icons/plus.mjs:
 lucide-react/dist/esm/icons/quote.mjs:

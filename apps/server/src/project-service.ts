@@ -1,11 +1,83 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import { basename } from 'node:path'
 import { gitBinary, pathInside, projectsRoot } from './paths.js'
 import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { reconcileProjectLineage } from './impact-service.js'
+import { moveIntoProject, projectStagingPath } from './project-storage.js'
 
-export type ProjectRow = { id: string; slug: string; title: string; status: string; current_idea_version: number; current_stage: string; created_at: string; updated_at: string }
+export async function moveSessionUploadsIntoProject(projectId: string, sessionId: string): Promise<void> {
+  const files = await rows<{ id: string; relative_path: string }>('SELECT id,relative_path FROM uploaded_files WHERE session_id=$1 AND project_id=$2', [sessionId, projectId])
+  for (const file of files) {
+    if (!file.relative_path.startsWith('staging/')) continue
+    const source = pathInside(projectStagingPath(sessionId), basename(file.relative_path))
+    const destinationRelativePath = `uploads/${sessionId}/${basename(file.relative_path)}`
+    moveIntoProject(projectId, source, destinationRelativePath)
+    await database.query('UPDATE uploaded_files SET relative_path=$2 WHERE id=$1 AND project_id=$3', [file.id, `artifacts/${destinationRelativePath}`, projectId])
+  }
+}
+
+export type ProjectRow = { id: string; slug: string; title: string; status: string; pinned: boolean; current_idea_version: number; current_stage: string; created_at: string; updated_at: string }
+
+type ReportSourceSnapshot = {
+  project_id?: unknown
+  paper_ids?: unknown
+  evidence_ids?: unknown
+  experiment_ids?: unknown
+  artifact_ids?: unknown
+  proposal_ids?: unknown
+}
+
+type ReportRow = {
+  id: string
+  project_id: string
+  period: string
+  content: string
+  status?: string
+  source_snapshot?: ReportSourceSnapshot
+  created_at?: string
+}
+
+function reportIds(value: unknown): string[] {
+  return Array.isArray(value) && value.every(item => typeof item === 'string') ? value : []
+}
+
+async function validateReportLineage(projectId: string, reports: ReportRow[]): Promise<Array<ReportRow & { status: string; blocking_reason?: string | null; missing_source_ids?: string[] }>> {
+  return Promise.all(reports.map(async report => {
+    const snapshot = report.source_snapshot
+    const sourceKeys: Array<keyof ReportSourceSnapshot> = ['paper_ids', 'evidence_ids', 'experiment_ids', 'artifact_ids', 'proposal_ids']
+    if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot) || Object.keys(snapshot).length === 0) {
+      return { ...report, status: 'legacy_unverified', blocking_reason: 'report_source_snapshot_missing', missing_source_ids: [] }
+    }
+    if (snapshot.project_id !== projectId) {
+      return { ...report, status: 'blocked', blocking_reason: 'report_source_project_mismatch', missing_source_ids: [] }
+    }
+    if (!sourceKeys.every(key => Array.isArray(snapshot[key]))) {
+      return { ...report, status: 'blocked', blocking_reason: 'report_source_snapshot_invalid', missing_source_ids: [] }
+    }
+
+    const sourceGroups: Array<{ label: string; table: 'papers' | 'evidence' | 'experiments' | 'artifacts' | 'proposals'; ids: string[]; validOnly?: boolean }> = [
+      { label: 'paper', table: 'papers', ids: reportIds(snapshot.paper_ids) },
+      { label: 'evidence', table: 'evidence', ids: reportIds(snapshot.evidence_ids) },
+      { label: 'experiment', table: 'experiments', ids: reportIds(snapshot.experiment_ids) },
+      { label: 'artifact', table: 'artifacts', ids: reportIds(snapshot.artifact_ids), validOnly: true },
+      { label: 'proposal', table: 'proposals', ids: reportIds(snapshot.proposal_ids) },
+    ]
+    const missing: string[] = []
+    for (const group of sourceGroups) {
+      if (!group.ids.length) continue
+      const placeholders = group.ids.map((_, index) => `$${index + 2}`).join(',')
+      const validClause = group.validOnly ? ' AND valid=TRUE' : ''
+      const existing = await rows<{ id: string }>(`SELECT id FROM ${group.table} WHERE project_id=$1${validClause} AND id IN (${placeholders})`, [projectId, ...group.ids])
+      const existingIds = new Set(existing.map(item => item.id))
+      for (const id of group.ids) if (!existingIds.has(id)) missing.push(`${group.label}:${id}`)
+    }
+    return missing.length
+      ? { ...report, status: 'blocked', blocking_reason: 'report_source_missing_or_invalid', missing_source_ids: missing }
+      : { ...report, status: 'valid', blocking_reason: null, missing_source_ids: [] }
+  }))
+}
 
 export async function requireProject(projectId: string, active = false): Promise<ProjectRow> {
   const project = await one<ProjectRow>('SELECT * FROM projects WHERE id=$1', [projectId])
@@ -17,7 +89,7 @@ export async function requireProject(projectId: string, active = false): Promise
 export async function createProjectWorkspace(projectId: string, slug: string, spec: object): Promise<string> {
   const root = pathInside(projectsRoot, projectId)
   if (existsSync(root)) throw new Error('project_workspace_exists')
-  for (const directory of ['experiment', 'paper', 'literature', 'data', 'artifacts']) mkdirSync(pathInside(root, directory), { recursive: true })
+  for (const directory of ['code', 'experiment', 'paper', 'literature', 'data', 'artifacts']) mkdirSync(pathInside(root, directory), { recursive: true })
   writeFileSync(pathInside(root, 'idea.json'), `${JSON.stringify(spec, null, 2)}\n`, 'utf8')
   writeFileSync(pathInside(root, 'README.md'), `# ${slug}\n\nResearch OS project workspace.\n`, 'utf8')
   execFileSync(gitBinary(), ['init', '--initial-branch=main'], { cwd: root, stdio: 'ignore' })
@@ -30,7 +102,7 @@ export async function createProjectWorkspace(projectId: string, slug: string, sp
 export async function projectDetail(projectId: string) {
   const project = await requireProject(projectId)
   const lineage = await reconcileProjectLineage(projectId)
-  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews] = await Promise.all([
+  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews, feedback, reproductions, reproductionRuns, relatedWorkSeeds, relatedWorkCandidates, relatedWorkRuns, relatedWorkAttempts, relatedWorkEdges, relatedWorkFieldProvenance, relatedWorkCandidateReviews, researchComparisons, researchComparisonCandidates] = await Promise.all([
     rows('SELECT * FROM idea_versions WHERE project_id=$1 ORDER BY version DESC', [projectId]),
     rows('SELECT * FROM papers WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM evidence WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
@@ -46,6 +118,24 @@ export async function projectDetail(projectId: string) {
     rows('SELECT * FROM tasks WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM checkpoints WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM claim_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM human_feedback WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM reproductions WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM reproduction_runs WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM related_work_seeds WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows(`SELECT c.*,COUNT(s.id)::integer AS source_count
+      FROM related_work_candidates c LEFT JOIN related_work_candidate_sources s ON s.candidate_id=c.id
+      WHERE c.project_id=$1 GROUP BY c.id ORDER BY c.updated_at DESC`, [projectId]),
+    rows('SELECT * FROM related_work_recursive_runs WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM related_work_source_attempts WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows(`SELECT e.*,s.title AS source_title,t.title AS target_title
+      FROM related_work_citation_edges e
+      JOIN related_work_candidates s ON s.id=e.source_candidate_id
+      JOIN related_work_candidates t ON t.id=e.target_candidate_id
+      WHERE e.project_id=$1 ORDER BY e.created_at DESC`, [projectId]),
+    rows('SELECT * FROM related_work_field_provenance WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM related_work_candidate_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM research_comparisons WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM research_comparison_candidates WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
   ])
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 ORDER BY updated_at DESC LIMIT 1', [projectId])
   const repositoryRows = repositories as Array<Record<string, unknown>>
@@ -80,6 +170,7 @@ export async function projectDetail(projectId: string) {
     download_url: `/api/projects/${projectId}/artifacts/${artifact.id}/download`,
     url: `/api/projects/${projectId}/artifacts/${artifact.id}/download`,
   }))
+  const reportRows = await validateReportLineage(projectId, reports as ReportRow[])
   return {
     ...project,
     session_id: session?.id ?? null,
@@ -92,10 +183,24 @@ export async function projectDetail(projectId: string) {
     experiments,
     artifacts: artifactRows,
     policies,
-    reports,
+    reports: reportRows,
     tasks,
     checkpoints,
     claim_reviews: claimReviews,
+    feedback,
+    reproductions,
+    reproduction_runs: reproductionRuns,
+    related_work_seeds: relatedWorkSeeds,
+    related_work_candidates: relatedWorkCandidates,
+    related_work_runs: relatedWorkRuns,
+    related_work_attempts: relatedWorkAttempts,
+    related_work_edges: relatedWorkEdges,
+    related_work_field_provenance: relatedWorkFieldProvenance,
+    related_work_candidate_reviews: relatedWorkCandidateReviews,
+    research_comparisons: (researchComparisons as Array<Record<string, unknown>>).map(comparison => ({
+      ...comparison,
+      candidates: (researchComparisonCandidates as Array<Record<string, unknown>>).filter(candidate => candidate.comparison_id === comparison.id),
+    })),
     lineage,
   }
 }
