@@ -442,6 +442,9 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `094c` 修正动作层的横向溢出与瞬时显示：固定 58px 右侧裁剪窗口，只让 66px 外的动作轨道做纯 CSS 位移；项目列表真实浏览器 `clientWidth` 与 `scrollWidth` 全程一致，未再被撑宽。
   - [x] `094d` 真实浏览器确认并修复三项根因：Windows Chrome 命中 `prefers-reduced-motion: reduce` 后移除 transform、通用 `.project-list button` 规则覆盖动作按钮 transition、原 spring 曲线在前 400ms 完成约 93% 位移。资源版本更新至 `project-actions-11`；reduced-motion 原始环境下 0/40/100/200/400/700/1000ms 多帧采样、收回采样、三轮重复悬停和截图验收均通过。
 
+- [x] `P0-PROJECT-UX-095` 消除项目操作按钮滑入前提前出现的大块右侧空白。
+  - [x] `095a` 真实 Chrome 复现并修复：旧实现 hover 后 100ms 动作轨道仍接近右侧边界，但标题因 `padding-right` 被 reduced-motion 规则瞬间完成而从 165px 缩至 104px。现将标题让位与动作轨道统一为相同的纯 CSS 时长和曲线，并将最终预留从 72px 收紧至 66px；资源版本更新至 `project-actions-12`。100ms 标题仍为 159.8px、padding 仅 16.2px，0/100/250/400/700/1000ms 进度同步、280ms 收回同步、宽度稳定和关键帧截图验收均通过。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

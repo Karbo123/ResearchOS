@@ -134,9 +134,28 @@ button { -webkit-font-smoothing: inherit; }
   overflow: clip;
   contain: paint;
 }
-.project-row .project-main-button { display: flex; align-items: center; gap: 6px; min-width: 0; width: 100%; padding-right: 11px; overflow: hidden; transition: padding-right .42s var(--ease); }
-.project-row:hover .project-main-button,
-.project-row:has(:focus-visible) .project-main-button { padding-right: 72px; }
+.project-row .project-main-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+  padding-right: 11px;
+  overflow: hidden;
+  transition-property: padding-right;
+  transition-duration: .28s;
+  transition-timing-function: cubic-bezier(.4, 0, 1, 1);
+}
+.project-row:has(:focus-visible) .project-main-button {
+  padding-right: 66px;
+  transition-duration: .24s;
+  transition-timing-function: var(--ease);
+}
+.project-row:hover .project-main-button {
+  padding-right: 66px;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(.25, .1, .25, 1);
+}
 .project-title-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .project-pinned-indicator { flex: 0 0 auto; color: var(--blue); }
 .project-actions {
@@ -1234,15 +1253,22 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .not-found-card,
   .not-found-icon { animation: none; }
   /* Keep this small user-requested reveal visible when Windows disables broader motion. */
+  .project-row .project-main-button {
+    transition-property: padding-right !important;
+    transition-duration: .28s !important;
+    transition-timing-function: cubic-bezier(.4, 0, 1, 1) !important;
+  }
   .project-actions-track {
     transition-property: transform !important;
     transition-duration: .28s !important;
     transition-timing-function: cubic-bezier(.4, 0, 1, 1) !important;
   }
+  .project-row:has(:focus-visible) .project-main-button,
   .project-row:has(:focus-visible) .project-actions-track {
     transition-duration: .24s !important;
     transition-timing-function: var(--ease) !important;
   }
+  .project-row:hover .project-main-button,
   .project-row:hover .project-actions-track {
     transition-duration: 1s !important;
     transition-timing-function: cubic-bezier(.25, .1, .25, 1) !important;
