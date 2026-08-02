@@ -124,24 +124,28 @@ button { -webkit-font-smoothing: inherit; }
 .sidebar-resizer:focus-visible::after,
 .sidebar-resizer.is-resizing::after { background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
 .sidebar-resizer:focus-visible { outline: none; }
-.project-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; min-width: 0; }
-.project-row .project-main-button { min-width: 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-row { position: relative; min-width: 0; }
+.project-row .project-main-button { min-width: 0; width: 100%; padding-right: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: padding-right .38s var(--ease); }
+.project-row.actions-visible .project-main-button { padding-right: 40px; }
 .project-row .project-more {
+  position: absolute;
+  top: 50%;
+  right: 5px;
   width: 30px;
   min-height: 30px;
   padding: 5px;
   border: 1px solid transparent;
   border-radius: 9px;
-  color: var(--sidebar-muted);
+  color: var(--red);
   background: transparent;
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-4px) scale(.94);
-  transition: opacity .24s var(--ease), transform .34s var(--spring), color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+  transform: translate(12px, -50%) scale(.86);
+  transition: opacity .32s var(--ease), transform .46s var(--spring), color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
 }
 .project-row .project-more.visible,
-.project-row:focus-within .project-more { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); }
-.project-row .project-more:hover { color: var(--danger-ink); background: var(--red-soft); border-color: var(--red-soft); }
+.project-row:focus-within .project-more { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); }
+.project-row .project-more:hover { color: var(--danger-ink); background: var(--red-soft); border-color: var(--red-soft); box-shadow: 0 4px 10px rgba(255, 59, 48, .16); }
 .project-row .project-main-button.active { color: var(--blue-dark); background: var(--blue-soft); border-color: rgba(0, 122, 255, .22); box-shadow: inset 3px 0 0 var(--blue), inset 0 1px 0 rgba(255, 255, 255, .06); }
 
 .workspace { min-width: 0; min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); }
@@ -267,7 +271,7 @@ button { -webkit-font-smoothing: inherit; }
 .artifact-card img, .artifact-image { background: rgba(242, 242, 247, .72); }
 .artifact-body { padding: 14px; }
 
-.modal { z-index: 20; padding: 22px; background: rgba(20, 20, 24, .46); backdrop-filter: blur(18px) saturate(120%); -webkit-backdrop-filter: blur(18px) saturate(120%); }
+.modal { z-index: 100; padding: 22px; background: rgba(20, 20, 24, .46); backdrop-filter: blur(18px) saturate(120%); -webkit-backdrop-filter: blur(18px) saturate(120%); }
 .modal-panel { width: min(780px, 100%); max-height: min(820px, 92dvh); padding: 26px; border: 1px solid rgba(255, 255, 255, .68); border-radius: 24px; background: var(--surface-elevated); box-shadow: var(--shadow-lg), inset 0 1px 0 var(--glass-highlight); backdrop-filter: blur(32px) saturate(145%); -webkit-backdrop-filter: blur(32px) saturate(145%); }
 .modal-heading { margin-bottom: 20px; }
 .modal-heading h2 { font-size: 22px; font-weight: 720; letter-spacing: -.03em; }
@@ -611,13 +615,13 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .workflow-local-nav button.active { color: var(--blue-dark); background: var(--surface-elevated); box-shadow: 0 2px 7px rgba(25, 25, 35, .07), inset 0 1px 0 var(--glass-highlight); }
 .workflow-local-nav button.active svg { color: var(--blue); }
 .delete-project-content { display: grid; gap: 9px; }
-.delete-project-target { display: grid; gap: 4px; padding: 12px 13px; border: 1px solid var(--red-soft); border-radius: 13px; background: var(--red-soft); color: var(--danger-ink); }
+.delete-project-target { display: grid; gap: 4px; padding: 12px 13px; border: 1px solid var(--red-soft); border-radius: 13px; background: var(--red-soft); color: var(--danger-ink); user-select: none; -webkit-user-select: none; }
 .delete-project-target span { font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .06em; }
 .delete-project-target strong { min-width: 0; overflow-wrap: anywhere; font-size: 14px; line-height: 1.4; }
 .delete-project-content .field-label { margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 650; }
 .delete-project-content .text-input { width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 11px; outline: none; background: var(--surface-2); color: var(--ink); transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease); }
 .delete-project-content .text-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); background: var(--surface-elevated); }
-.delete-project-content .confirmation-input { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; }
+.delete-project-content .confirmation-input { font: inherit; letter-spacing: normal; }
 .delete-project-warning { margin: 3px 0 0; color: var(--danger-ink); font-size: 12px; line-height: 1.5; }
 .delete-project-content .modal-actions { margin-top: 7px; }
 .delete-project-content button:disabled { cursor: not-allowed; opacity: .42; transform: none; box-shadow: none; }

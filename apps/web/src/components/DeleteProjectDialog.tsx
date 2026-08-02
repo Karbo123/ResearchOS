@@ -39,6 +39,8 @@ export function DeleteProjectDialog({
           disabled={busy}
           placeholder={t('deleteProject.namePlaceholder')}
           onChange={event => setTitle(event.target.value)}
+          onPaste={event => event.preventDefault()}
+          onDrop={event => event.preventDefault()}
           autoComplete="off"
         />
         <label className="field-label" htmlFor="delete-project-confirmation">{t('deleteProject.confirmationLabel')}</label>
@@ -49,6 +51,8 @@ export function DeleteProjectDialog({
           disabled={busy}
           placeholder={t('deleteProject.confirmationPlaceholder')}
           onChange={event => setConfirmation(event.target.value)}
+          onPaste={event => event.preventDefault()}
+          onDrop={event => event.preventDefault()}
           autoComplete="off"
           spellCheck={false}
         />

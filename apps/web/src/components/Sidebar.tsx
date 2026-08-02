@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { MoreHorizontal, Plus, Settings, Share2, Workflow } from 'lucide-react'
+import { Plus, Settings, Share2, Trash2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 
@@ -112,7 +112,7 @@ export function Sidebar({
             return (
               <div
                 key={project.id}
-                className="project-row"
+                className={`project-row${actionsVisible ? ' actions-visible' : ''}`}
                 onMouseEnter={() => startProjectHover(project.id)}
                 onMouseLeave={() => stopProjectHover(project.id)}
                 onFocus={() => setVisibleActions(current => new Set(current).add(project.id))}
@@ -140,7 +140,7 @@ export function Sidebar({
                     onDeleteProject(project)
                   }}
                 >
-                  <MoreHorizontal size={17} />
+                  <Trash2 size={16} strokeWidth={2.2} />
                 </button>
               </div>
             )
