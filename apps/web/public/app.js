@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react22 = __toESM(require_react(), 1);
+  var import_react23 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -12859,6 +12859,12 @@
     "common.invalid": "\u5DF2\u5931\u6548",
     "common.noEvents": "\u6682\u65E0",
     "common.back": "\u8FD4\u56DE",
+    "notFound.badge": "\u9875\u9762\u672A\u627E\u5230",
+    "notFound.title": "\u627E\u4E0D\u5230\u8FD9\u4E2A\u9875\u9762",
+    "notFound.description": "\u4F60\u8BBF\u95EE\u7684\u5730\u5740\u4E0D\u5B58\u5728\uFF0C\u6216\u94FE\u63A5\u5DF2\u7ECF\u5931\u6548\u3002",
+    "notFound.pathLabel": "\u5F53\u524D\u5730\u5740",
+    "notFound.redirect": "{seconds} \u79D2\u540E\u8FD4\u56DE\u9996\u9875",
+    "notFound.home": "\u8FD4\u56DE\u9996\u9875",
     "app.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
     "app.researchProject": "\u7814\u7A76\u9879\u76EE",
     "app.projectCreated": "\u9879\u76EE\u5DF2\u521B\u5EFA",
@@ -13846,6 +13852,12 @@
     "common.invalid": "\u5DF2\u5931\u6548",
     "common.noEvents": "\u66AB\u7121",
     "common.back": "\u8FD4\u56DE",
+    "notFound.badge": "\u627E\u4E0D\u5230\u9801\u9762",
+    "notFound.title": "\u627E\u4E0D\u5230\u9019\u500B\u9801\u9762",
+    "notFound.description": "\u4F60\u9020\u8A2A\u7684\u5730\u5740\u4E0D\u5B58\u5728\uFF0C\u6216\u9023\u7D50\u5DF2\u7D93\u5931\u6548\u3002",
+    "notFound.pathLabel": "\u76EE\u524D\u5730\u5740",
+    "notFound.redirect": "{seconds} \u79D2\u5F8C\u8FD4\u56DE\u9996\u9801",
+    "notFound.home": "\u8FD4\u56DE\u9996\u9801",
     "common.select": "\u8ACB\u9078\u64C7",
     "errors.timeout": "\u8ACB\u6C42\u903E\u6642\uFF0C\u8ACB\u6AA2\u67E5\u672C\u6A5F\u670D\u52D9\u72C0\u614B\u5F8C\u91CD\u8A66\u3002",
     "errors.offline": "\u7121\u6CD5\u9023\u63A5 Research OS API\uFF0C\u8ACB\u78BA\u8A8D\u672C\u6A5F\u670D\u52D9\u4ECD\u5728\u57F7\u884C\u3002",
@@ -14833,6 +14845,12 @@
     "common.invalid": "Invalid",
     "common.noEvents": "None yet",
     "common.back": "Back",
+    "notFound.badge": "Page not found",
+    "notFound.title": "We could not find that page",
+    "notFound.description": "The address you opened does not exist or the link has expired.",
+    "notFound.pathLabel": "Current address",
+    "notFound.redirect": "Returning home in {seconds}s",
+    "notFound.home": "Return home",
     "common.select": "Select",
     "errors.timeout": "Request timed out. Check that the local service is running and try again.",
     "errors.offline": "Cannot connect to the Research OS API. Make sure the local service is still running.",
@@ -15820,6 +15838,12 @@
     "common.invalid": "No v\xE1lido",
     "common.noEvents": "A\xFAn no hay",
     "common.back": "Volver",
+    "notFound.badge": "P\xE1gina no encontrada",
+    "notFound.title": "No encontramos esta p\xE1gina",
+    "notFound.description": "La direcci\xF3n que abriste no existe o el enlace ha caducado.",
+    "notFound.pathLabel": "Direcci\xF3n actual",
+    "notFound.redirect": "Volver\xE1s al inicio en {seconds}s",
+    "notFound.home": "Volver al inicio",
     "common.select": "Seleccionar",
     "errors.timeout": "La solicitud super\xF3 el tiempo de espera. Revisa que el servicio local est\xE9 en ejecuci\xF3n e int\xE9ntalo de nuevo.",
     "errors.offline": "No se puede conectar con la API de Research OS. Aseg\xFArate de que el servicio local siga ejecut\xE1ndose.",
@@ -16778,10 +16802,12 @@
   };
   var ApiError = class extends Error {
     code;
-    constructor(code, message, cause) {
+    status;
+    constructor(code, message, cause, status = 0) {
       super(message);
       this.name = "ApiError";
       this.code = code;
+      this.status = status;
       this.cause = cause;
     }
   };
@@ -16848,7 +16874,7 @@
     );
     if (!response.ok) {
       const body = await response.json().catch(() => null);
-      throw new ApiError(codeFromErrorBody(body), messageFromErrorBody(body, response.status, response.statusText));
+      throw new ApiError(codeFromErrorBody(body), messageFromErrorBody(body, response.status, response.statusText), void 0, response.status);
     }
     return await response.json();
   }
@@ -16865,7 +16891,7 @@
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       const reason = messageFromErrorBody(body, response.status, response.statusText);
-      throw new ApiError(codeFromErrorBody(body), `${file.name}: ${reason}`);
+      throw new ApiError(codeFromErrorBody(body), `${file.name}: ${reason}`, void 0, response.status);
     }
   }
   function errorMessage(error) {
@@ -17151,8 +17177,22 @@
   ];
   var FilePenLine = createLucideIcon("file-pen-line", __iconNode16);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/file-text.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/file-question-mark.mjs
   var __iconNode17 = [
+    [
+      "path",
+      {
+        d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
+        key: "1oefj6"
+      }
+    ],
+    ["path", { d: "M12 17h.01", key: "p32p05" }],
+    ["path", { d: "M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3", key: "mhlwft" }]
+  ];
+  var FileQuestionMark = createLucideIcon("file-question-mark", __iconNode17);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/file-text.mjs
+  var __iconNode18 = [
     [
       "path",
       {
@@ -17165,10 +17205,10 @@
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode17);
+  var FileText = createLucideIcon("file-text", __iconNode18);
 
   // ../../node_modules/lucide-react/dist/esm/icons/fingerprint-pattern.mjs
-  var __iconNode18 = [
+  var __iconNode19 = [
     ["path", { d: "M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4", key: "1nerag" }],
     ["path", { d: "M14 13.12c0 2.38 0 6.38-1 8.88", key: "o46ks0" }],
     ["path", { d: "M17.29 21.02c.12-.6.43-2.3.5-3.02", key: "ptglia" }],
@@ -17179,10 +17219,10 @@
     ["path", { d: "M8.65 22c.21-.66.45-1.32.57-2", key: "13wd9y" }],
     ["path", { d: "M9 6.8a6 6 0 0 1 9 5.2v2", key: "1fr1j5" }]
   ];
-  var FingerprintPattern = createLucideIcon("fingerprint-pattern", __iconNode18);
+  var FingerprintPattern = createLucideIcon("fingerprint-pattern", __iconNode19);
 
   // ../../node_modules/lucide-react/dist/esm/icons/flask-conical.mjs
-  var __iconNode19 = [
+  var __iconNode20 = [
     [
       "path",
       {
@@ -17193,10 +17233,10 @@
     ["path", { d: "M6.453 15h11.094", key: "3shlmq" }],
     ["path", { d: "M8.5 2h7", key: "csnxdl" }]
   ];
-  var FlaskConical = createLucideIcon("flask-conical", __iconNode19);
+  var FlaskConical = createLucideIcon("flask-conical", __iconNode20);
 
   // ../../node_modules/lucide-react/dist/esm/icons/funnel.mjs
-  var __iconNode20 = [
+  var __iconNode21 = [
     [
       "path",
       {
@@ -17205,55 +17245,68 @@
       }
     ]
   ];
-  var Funnel = createLucideIcon("funnel", __iconNode20);
+  var Funnel = createLucideIcon("funnel", __iconNode21);
 
   // ../../node_modules/lucide-react/dist/esm/icons/gavel.mjs
-  var __iconNode21 = [
+  var __iconNode22 = [
     ["path", { d: "m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381", key: "pgg06f" }],
     ["path", { d: "m16 16 6-6", key: "vzrcl6" }],
     ["path", { d: "m21.5 10.5-8-8", key: "a17d9x" }],
     ["path", { d: "m8 8 6-6", key: "18bi4p" }],
     ["path", { d: "m8.5 7.5 8 8", key: "1oyaui" }]
   ];
-  var Gavel = createLucideIcon("gavel", __iconNode21);
+  var Gavel = createLucideIcon("gavel", __iconNode22);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-branch.mjs
-  var __iconNode22 = [
+  var __iconNode23 = [
     ["path", { d: "M15 6a9 9 0 0 0-9 9V3", key: "1cii5b" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }]
   ];
-  var GitBranch = createLucideIcon("git-branch", __iconNode22);
+  var GitBranch = createLucideIcon("git-branch", __iconNode23);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-compare.mjs
-  var __iconNode23 = [
+  var __iconNode24 = [
     ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
     ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
     ["path", { d: "M13 6h3a2 2 0 0 1 2 2v7", key: "1yeb86" }],
     ["path", { d: "M11 18H8a2 2 0 0 1-2-2V9", key: "19pyzm" }]
   ];
-  var GitCompare = createLucideIcon("git-compare", __iconNode23);
+  var GitCompare = createLucideIcon("git-compare", __iconNode24);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-fork.mjs
-  var __iconNode24 = [
+  var __iconNode25 = [
     ["circle", { cx: "12", cy: "18", r: "3", key: "1mpf1b" }],
     ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["path", { d: "M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9", key: "1uq4wg" }],
     ["path", { d: "M12 12v3", key: "158kv8" }]
   ];
-  var GitFork = createLucideIcon("git-fork", __iconNode24);
+  var GitFork = createLucideIcon("git-fork", __iconNode25);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/house.mjs
+  var __iconNode26 = [
+    ["path", { d: "M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8", key: "5wwlr5" }],
+    [
+      "path",
+      {
+        d: "M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
+        key: "r6nss1"
+      }
+    ]
+  ];
+  var House = createLucideIcon("house", __iconNode26);
 
   // ../../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode25 = [
+  var __iconNode27 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image = createLucideIcon("image", __iconNode25);
+  var Image = createLucideIcon("image", __iconNode27);
 
   // ../../node_modules/lucide-react/dist/esm/icons/inbox.mjs
-  var __iconNode26 = [
+  var __iconNode28 = [
     ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
     [
       "path",
@@ -17263,10 +17316,10 @@
       }
     ]
   ];
-  var Inbox = createLucideIcon("inbox", __iconNode26);
+  var Inbox = createLucideIcon("inbox", __iconNode28);
 
   // ../../node_modules/lucide-react/dist/esm/icons/languages.mjs
-  var __iconNode27 = [
+  var __iconNode29 = [
     ["path", { d: "m5 8 6 6", key: "1wu5hv" }],
     ["path", { d: "m4 14 6-6 2-3", key: "1k1g8d" }],
     ["path", { d: "M2 5h12", key: "or177f" }],
@@ -17274,28 +17327,28 @@
     ["path", { d: "m22 22-5-10-5 10", key: "don7ne" }],
     ["path", { d: "M14 18h6", key: "1m8k6r" }]
   ];
-  var Languages = createLucideIcon("languages", __iconNode27);
+  var Languages = createLucideIcon("languages", __iconNode29);
 
   // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
-  var __iconNode28 = [
+  var __iconNode30 = [
     ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
     ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
     ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
     ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
   ];
-  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode28);
+  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode30);
 
   // ../../node_modules/lucide-react/dist/esm/icons/library.mjs
-  var __iconNode29 = [
+  var __iconNode31 = [
     ["path", { d: "m16 6 4 14", key: "ji33uf" }],
     ["path", { d: "M12 6v14", key: "1n7gus" }],
     ["path", { d: "M8 8v12", key: "1gg7y9" }],
     ["path", { d: "M4 4v16", key: "6qkkli" }]
   ];
-  var Library = createLucideIcon("library", __iconNode29);
+  var Library = createLucideIcon("library", __iconNode31);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lightbulb.mjs
-  var __iconNode30 = [
+  var __iconNode32 = [
     [
       "path",
       {
@@ -17306,46 +17359,46 @@
     ["path", { d: "M9 18h6", key: "x1upvd" }],
     ["path", { d: "M10 22h4", key: "ceow96" }]
   ];
-  var Lightbulb = createLucideIcon("lightbulb", __iconNode30);
+  var Lightbulb = createLucideIcon("lightbulb", __iconNode32);
 
   // ../../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode31 = [
+  var __iconNode33 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode31);
+  var Link2 = createLucideIcon("link-2", __iconNode33);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode32 = [
+  var __iconNode34 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode32);
+  var ListChecks = createLucideIcon("list-checks", __iconNode34);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-tree.mjs
-  var __iconNode33 = [
+  var __iconNode35 = [
     ["path", { d: "M8 5h13", key: "1pao27" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "M3 10a2 2 0 0 0 2 2h3", key: "1npucw" }],
     ["path", { d: "M3 5v12a2 2 0 0 0 2 2h3", key: "x1gjn2" }]
   ];
-  var ListTree = createLucideIcon("list-tree", __iconNode33);
+  var ListTree = createLucideIcon("list-tree", __iconNode35);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode34 = [
+  var __iconNode36 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode34);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode36);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode35 = [
+  var __iconNode37 = [
     [
       "path",
       {
@@ -17354,10 +17407,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode35);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode37);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode36 = [
+  var __iconNode38 = [
     [
       "path",
       {
@@ -17366,20 +17419,20 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode36);
+  var MessageSquare = createLucideIcon("message-square", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode37 = [
+  var __iconNode39 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode37);
+  var Network = createLucideIcon("network", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode38 = [
+  var __iconNode40 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -17392,10 +17445,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode38);
+  var PackageCheck = createLucideIcon("package-check", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode39 = [
+  var __iconNode41 = [
     [
       "path",
       {
@@ -17408,10 +17461,10 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode39);
+  var Palette = createLucideIcon("palette", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode40 = [
+  var __iconNode42 = [
     [
       "path",
       {
@@ -17420,17 +17473,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode40);
+  var Paperclip = createLucideIcon("paperclip", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode41 = [
+  var __iconNode43 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode41);
+  var Pause = createLucideIcon("pause", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode42 = [
+  var __iconNode44 = [
     [
       "path",
       {
@@ -17439,17 +17492,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode42);
+  var Play = createLucideIcon("play", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode43 = [
+  var __iconNode45 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode43);
+  var Plus = createLucideIcon("plus", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode44 = [
+  var __iconNode46 = [
     [
       "path",
       {
@@ -17465,34 +17518,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode44);
+  var Quote = createLucideIcon("quote", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode45 = [
+  var __iconNode47 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode45);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode46 = [
+  var __iconNode48 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode46);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode47 = [
+  var __iconNode49 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode47);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode48 = [
+  var __iconNode50 = [
     [
       "path",
       {
@@ -17503,10 +17556,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode48);
+  var Save = createLucideIcon("save", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode49 = [
+  var __iconNode51 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -17515,17 +17568,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode49);
+  var ScanText = createLucideIcon("scan-text", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode50 = [
+  var __iconNode52 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode50);
+  var Search = createLucideIcon("search", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode51 = [
+  var __iconNode53 = [
     [
       "path",
       {
@@ -17535,10 +17588,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode51);
+  var Send = createLucideIcon("send", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode52 = [
+  var __iconNode54 = [
     [
       "path",
       {
@@ -17548,20 +17601,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode52);
+  var Settings = createLucideIcon("settings", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode53 = [
+  var __iconNode55 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode53);
+  var Share2 = createLucideIcon("share-2", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode54 = [
+  var __iconNode56 = [
     [
       "path",
       {
@@ -17572,10 +17625,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode54);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode55 = [
+  var __iconNode57 = [
     [
       "path",
       {
@@ -17585,10 +17638,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode55);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode56 = [
+  var __iconNode58 = [
     [
       "path",
       {
@@ -17600,26 +17653,26 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode56);
+  var Sparkles = createLucideIcon("sparkles", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode57 = [
+  var __iconNode59 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode57);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode58 = [
+  var __iconNode60 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode58);
+  var Square = createLucideIcon("square", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode59 = [
+  var __iconNode61 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -17630,10 +17683,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode59);
+  var Stamp = createLucideIcon("stamp", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode60 = [
+  var __iconNode62 = [
     [
       "path",
       {
@@ -17642,17 +17695,17 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode60);
+  var Table2 = createLucideIcon("table-2", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode61 = [
+  var __iconNode63 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode61);
+  var Terminal = createLucideIcon("terminal", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode62 = [
+  var __iconNode64 = [
     [
       "path",
       {
@@ -17663,10 +17716,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode62);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode63 = [
+  var __iconNode65 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -17675,22 +17728,22 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode63);
+  var Waypoints = createLucideIcon("waypoints", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode64 = [
+  var __iconNode66 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode64);
+  var Workflow = createLucideIcon("workflow", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode65 = [
+  var __iconNode67 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode65);
+  var X = createLucideIcon("x", __iconNode67);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -23131,8 +23184,46 @@
     );
   }
 
-  // src/App.tsx
+  // src/components/NotFoundView.tsx
+  var import_react22 = __toESM(require_react(), 1);
   var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  function NotFoundView({ path, onGoHome }) {
+    const { t } = useTranslation();
+    const [seconds, setSeconds] = (0, import_react22.useState)(3);
+    const onGoHomeRef = (0, import_react22.useRef)(onGoHome);
+    (0, import_react22.useEffect)(() => {
+      onGoHomeRef.current = onGoHome;
+    }, [onGoHome]);
+    (0, import_react22.useEffect)(() => {
+      const countdown = window.setInterval(() => {
+        setSeconds((value) => Math.max(0, value - 1));
+      }, 1e3);
+      const redirect = window.setTimeout(() => onGoHomeRef.current(), 3e3);
+      return () => {
+        window.clearInterval(countdown);
+        window.clearTimeout(redirect);
+      };
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "not-found-path-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("code", { className: "not-found-path", children: path })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "not-found-countdown", "aria-live": "polite", children: t("notFound.redirect", { seconds }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(House, { size: 16, "aria-hidden": "true" }),
+        t("notFound.home")
+      ] })
+    ] }) });
+  }
+
+  // src/App.tsx
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
   var EMPTY_STAGES = [
     { key: "analyzing_input", labelKey: "app.thinking.readingConversation" },
     { key: "selecting_route", labelKey: "app.thinking.selectingModel" },
@@ -23149,37 +23240,38 @@
       role: "assistant",
       text: t("app.initialMessage")
     };
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       setMessages((current) => current.map((message) => message.id === "initial-assistant" ? { ...message, text: t("app.initialMessage") } : message));
     }, [locale]);
-    const [projects, setProjects] = (0, import_react22.useState)([]);
-    const [projectId, setProjectId] = (0, import_react22.useState)(null);
-    const [project, setProject] = (0, import_react22.useState)(null);
-    const [view, setView] = (0, import_react22.useState)("idea");
-    const [activeArea, setActiveArea] = (0, import_react22.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react22.useState)("overview");
-    const [health, setHealth] = (0, import_react22.useState)("connecting");
-    const [toast, setToast] = (0, import_react22.useState)(null);
-    const [messages, setMessages] = (0, import_react22.useState)([initialMessage]);
-    const [projectMessages, setProjectMessages] = (0, import_react22.useState)([]);
-    const [spec, setSpec] = (0, import_react22.useState)(null);
-    const [projectSlug, setProjectSlug] = (0, import_react22.useState)("");
-    const [specStatus, setSpecStatus] = (0, import_react22.useState)("pending_clarification");
-    const [chatBusy, setChatBusy] = (0, import_react22.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react22.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react22.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react22.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react22.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react22.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react22.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react22.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react22.useState)(false);
-    const [confirm, setConfirm] = (0, import_react22.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react22.useState)(false);
-    const chatBusyRef = (0, import_react22.useRef)(false);
-    const projectChatBusyRef = (0, import_react22.useRef)(false);
-    const sessionIdRef = (0, import_react22.useRef)(null);
-    const toastTimerRef = (0, import_react22.useRef)(null);
+    const [projects, setProjects] = (0, import_react23.useState)([]);
+    const [projectId, setProjectId] = (0, import_react23.useState)(null);
+    const [project, setProject] = (0, import_react23.useState)(null);
+    const [view, setView] = (0, import_react23.useState)("idea");
+    const [activeArea, setActiveArea] = (0, import_react23.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react23.useState)("overview");
+    const [health, setHealth] = (0, import_react23.useState)("connecting");
+    const [toast, setToast] = (0, import_react23.useState)(null);
+    const [messages, setMessages] = (0, import_react23.useState)([initialMessage]);
+    const [projectMessages, setProjectMessages] = (0, import_react23.useState)([]);
+    const [spec, setSpec] = (0, import_react23.useState)(null);
+    const [projectSlug, setProjectSlug] = (0, import_react23.useState)("");
+    const [specStatus, setSpecStatus] = (0, import_react23.useState)("pending_clarification");
+    const [chatBusy, setChatBusy] = (0, import_react23.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react23.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react23.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react23.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react23.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react23.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react23.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react23.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react23.useState)(false);
+    const [confirm, setConfirm] = (0, import_react23.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react23.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react23.useState)(null);
+    const chatBusyRef = (0, import_react23.useRef)(false);
+    const projectChatBusyRef = (0, import_react23.useRef)(false);
+    const sessionIdRef = (0, import_react23.useRef)(null);
+    const toastTimerRef = (0, import_react23.useRef)(null);
     const writeWorkspacePath = (slug, area, tab, replace = false) => {
       const next = workspacePath(slug, area, tab);
       if (window.location.pathname !== next || window.location.hash) {
@@ -23225,6 +23317,10 @@
         }
         await loadProjects();
       } catch (error) {
+        if (error instanceof ApiError && error.status === 404) {
+          setNotFoundPath(`${window.location.pathname}${window.location.search}${window.location.hash}`);
+          return;
+        }
         showToast(errorMessage(error));
       }
     };
@@ -23232,7 +23328,7 @@
       if (projectId) await openProject(projectId, { preserveTab: true });
       else await loadProjects();
     };
-    const newProject = () => {
+    const newProject = (options) => {
       setProjectId(null);
       setProject(null);
       setActiveSession(null);
@@ -23247,15 +23343,26 @@
       setThinkingSessions([]);
       setClarificationMode("automatic");
       setMobileChatOpen(false);
-      window.history.pushState(null, "", "/new");
+      setNotFoundPath(null);
+      if (options?.replace) window.history.replaceState(null, "", "/new");
+      else window.history.pushState(null, "", "/new");
       void loadProjects();
     };
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
         const location = resolveWorkspaceLocation(window.location.pathname, window.location.hash);
-        if (!location) return;
+        if (!location) {
+          const isHome = (window.location.pathname === "/" || window.location.pathname === "/new" || window.location.pathname === "/new/") && !window.location.hash;
+          if (isHome) {
+            setNotFoundPath(null);
+            return;
+          }
+          setNotFoundPath(`${window.location.pathname}${window.location.search}${window.location.hash}`);
+          return;
+        }
+        setNotFoundPath(null);
         setActiveArea(location.area);
         setActiveTab(location.tab);
         void openProject(location.projectRef, { preserveTab: true, route: { area: location.area, tab: location.tab } });
@@ -23490,8 +23597,11 @@
       const slug = project?.slug || projectId;
       if (slug) writeWorkspacePath(slug, area, tab);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+    if (notFoundPath) {
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         Sidebar,
         {
           projects,
@@ -23505,8 +23615,8 @@
           onOpenSettings: () => setSettingsOpen(true)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("main", { className: "workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
           Topbar,
           {
             title: view === "idea" ? t("app.newProject") : project?.title || t("app.researchProject"),
@@ -23519,7 +23629,7 @@
             onRefresh: () => void refreshProject()
           }
         ),
-        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
           IdeaView,
           {
             messages,
@@ -23537,7 +23647,7 @@
             thinkingSessions,
             onToggleThinking: toggleThinkingSession
           }
-        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
           ProjectView,
           {
             project,
@@ -23555,10 +23665,10 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
+        ) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         MemoryGraphModal,
         {
           open: memoryOpen,
@@ -23567,7 +23677,7 @@
           showToast
         }
       ),
-      confirm ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      confirm ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         ConfirmDialog,
         {
           title: confirm.title,
@@ -23581,15 +23691,15 @@
           onCancel: () => setConfirm(null)
         }
       ) : null,
-      toast ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Toast, { message: toast }) : null
+      toast ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Toast, { message: toast }) : null
     ] });
   }
 
   // src/main.tsx
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   var rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Missing #root mount element");
-  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime28.jsx)(App, {}));
+  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime29.jsx)(App, {}));
 })();
 /*! Bundled license information:
 
@@ -23673,6 +23783,7 @@ lucide-react/dist/esm/icons/external-link.mjs:
 lucide-react/dist/esm/icons/file-check-corner.mjs:
 lucide-react/dist/esm/icons/file-check.mjs:
 lucide-react/dist/esm/icons/file-pen-line.mjs:
+lucide-react/dist/esm/icons/file-question-mark.mjs:
 lucide-react/dist/esm/icons/file-text.mjs:
 lucide-react/dist/esm/icons/fingerprint-pattern.mjs:
 lucide-react/dist/esm/icons/flask-conical.mjs:
@@ -23681,6 +23792,7 @@ lucide-react/dist/esm/icons/gavel.mjs:
 lucide-react/dist/esm/icons/git-branch.mjs:
 lucide-react/dist/esm/icons/git-compare.mjs:
 lucide-react/dist/esm/icons/git-fork.mjs:
+lucide-react/dist/esm/icons/house.mjs:
 lucide-react/dist/esm/icons/image.mjs:
 lucide-react/dist/esm/icons/inbox.mjs:
 lucide-react/dist/esm/icons/languages.mjs:

@@ -13,11 +13,13 @@ const CHAT_ERROR_KEYS: Record<string, TranslationKey> = {
 
 export class ApiError extends Error {
   readonly code: string
+  readonly status: number
 
-  constructor(code: string, message: string, cause?: unknown) {
+  constructor(code: string, message: string, cause?: unknown, status = 0) {
     super(message)
     this.name = 'ApiError'
     this.code = code
+    this.status = status
     this.cause = cause
   }
 }
@@ -99,7 +101,7 @@ export async function api<T = unknown>(
   )
   if (!response.ok) {
     const body = await response.json().catch(() => null)
-    throw new ApiError(codeFromErrorBody(body), messageFromErrorBody(body, response.status, response.statusText))
+    throw new ApiError(codeFromErrorBody(body), messageFromErrorBody(body, response.status, response.statusText), undefined, response.status)
   }
   return (await response.json()) as T
 }
@@ -117,7 +119,7 @@ export async function uploadFile(sessionId: string, file: File): Promise<void> {
   if (!response.ok) {
     const body = await response.json().catch(() => null)
     const reason = messageFromErrorBody(body, response.status, response.statusText)
-    throw new ApiError(codeFromErrorBody(body), `${file.name}: ${reason}`)
+    throw new ApiError(codeFromErrorBody(body), `${file.name}: ${reason}`, undefined, response.status)
   }
 }
 

@@ -488,6 +488,26 @@ h1 { font-size: 20px; line-height: 1.25; }
 .loading-view {
   padding: 28px;
 }
+.not-found-shell {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  overflow: auto;
+}
+.not-found-card {
+  width: min(560px, 100%);
+  padding: 42px 36px;
+  text-align: center;
+}
+.not-found-icon { display: grid; place-items: center; margin: 0 auto 14px; }
+.not-found-badge, .not-found-code, .not-found-description, .not-found-countdown { margin: 0; }
+.not-found-code { font-size: 52px; font-weight: 800; line-height: 1; }
+.not-found-card h1 { margin: 10px 0; }
+.not-found-path-wrap { margin: 22px 0 18px; text-align: left; }
+.not-found-path-label { display: block; margin-bottom: 6px; font-size: 11px; }
+.not-found-path { display: block; overflow-wrap: anywhere; }
+.not-found-home { margin-top: 16px; }
 .confirm-panel {
   width: min(420px, 100%);
 }

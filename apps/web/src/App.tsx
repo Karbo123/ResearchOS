@@ -19,6 +19,7 @@ import { ProjectView } from './components/ProjectView'
 import { AREA_DEFAULT_TAB, TAB_AREA, normalizeTab, resolveWorkspaceLocation, workspacePath } from './navigation'
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
+import { NotFoundView } from './components/NotFoundView'
 import { ConfirmDialog, Toast } from './components/ui'
 import { useTranslation } from './i18n'
 
@@ -69,6 +70,7 @@ export function App() {
   const [memoryOpen, setMemoryOpen] = useState(false)
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null)
   const [mobileChatOpen, setMobileChatOpen] = useState(false)
+  const [notFoundPath, setNotFoundPath] = useState<string | null>(null)
 
   const chatBusyRef = useRef(false)
   const projectChatBusyRef = useRef(false)
@@ -124,6 +126,10 @@ export function App() {
       }
       await loadProjects()
     } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        setNotFoundPath(`${window.location.pathname}${window.location.search}${window.location.hash}`)
+        return
+      }
       showToast(errorMessage(error))
     }
   }
@@ -133,7 +139,7 @@ export function App() {
     else await loadProjects()
   }
 
-  const newProject = () => {
+  const newProject = (options?: { replace?: boolean }) => {
     setProjectId(null)
     setProject(null)
     setActiveSession(null)
@@ -148,7 +154,9 @@ export function App() {
     setThinkingSessions([])
     setClarificationMode('automatic')
     setMobileChatOpen(false)
-    window.history.pushState(null, '', '/new')
+    setNotFoundPath(null)
+    if (options?.replace) window.history.replaceState(null, '', '/new')
+    else window.history.pushState(null, '', '/new')
     void loadProjects()
   }
 
@@ -160,7 +168,16 @@ export function App() {
 
     const restoreWorkspace = () => {
       const location = resolveWorkspaceLocation(window.location.pathname, window.location.hash)
-      if (!location) return
+      if (!location) {
+        const isHome = (window.location.pathname === '/' || window.location.pathname === '/new' || window.location.pathname === '/new/') && !window.location.hash
+        if (isHome) {
+          setNotFoundPath(null)
+          return
+        }
+        setNotFoundPath(`${window.location.pathname}${window.location.search}${window.location.hash}`)
+        return
+      }
+      setNotFoundPath(null)
       setActiveArea(location.area)
       setActiveTab(location.tab)
       void openProject(location.projectRef, { preserveTab: true, route: { area: location.area, tab: location.tab } })
@@ -415,6 +432,10 @@ export function App() {
     setActiveTab(tab)
     const slug = project?.slug || projectId
     if (slug) writeWorkspacePath(slug, area, tab)
+  }
+
+  if (notFoundPath) {
+    return <NotFoundView key={notFoundPath} path={notFoundPath} onGoHome={() => newProject({ replace: true })} />
   }
 
   return (

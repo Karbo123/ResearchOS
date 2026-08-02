@@ -699,6 +699,19 @@ app.use('/*', async (context, next) => {
   await next()
 })
 app.use('/*', serveStatic({ root: publicRoot, rewriteRequestPath: path => path === '/' ? '/index.html' : path }))
+app.notFound(context => {
+  const requestPath = context.req.path
+  if (requestPath === '/api' || requestPath.startsWith('/api/')) {
+    return context.json({ code: 'not_found', message: '请求地址不存在。' }, 404)
+  }
+  const acceptsHtml = (context.req.header('accept') || '').includes('text/html')
+  if (context.req.method === 'GET' && acceptsHtml) {
+    context.header('Cache-Control', 'no-cache')
+    context.header('Content-Type', 'text/html; charset=UTF-8')
+    return context.body(readFileSync(resolve(publicRoot, 'index.html')))
+  }
+  return context.json({ code: 'not_found', message: '请求地址不存在。' }, 404)
+})
 
 const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
 if (!isTestRuntime) {
