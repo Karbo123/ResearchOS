@@ -129,7 +129,7 @@ export function ExperimentsTab({
               <div className="data-row" key={experiment.id}>
                 <div>
                   <h3>{experiment.experiment_type}</h3>
-                  <p>{JSON.stringify(experiment.metrics)}{experiment.run_id ? ` · Run ${experiment.run_id}` : ''}</p>
+                  <p>{JSON.stringify(experiment.metrics)}{experiment.run_id ? ` · ${t('overview.runDetail', { run: experiment.run_id })}` : ''}</p>
                 </div>
                 <div className="button-row">
                   <Badge status={experiment.status} />

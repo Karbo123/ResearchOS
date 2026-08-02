@@ -362,7 +362,7 @@ export function LiteratureTab({
           </label>
           {seedType === 'artifact_pdf' ? (
             <label>
-              PDF Artifact
+              {t('literature.pdfArtifact')}
               <select value={seedArtifactId} onChange={event => setSeedArtifactId(event.target.value)}>
                 <option value="">{t('literature.selectPdf')}</option>
                 {(project.artifacts || []).filter(artifact => artifact.mime_type === 'application/pdf' && artifact.valid !== false).map(artifact => (
@@ -508,7 +508,7 @@ export function LiteratureTab({
       ) : null}
       {provenanceCandidate ? (
         <Modal
-          eyebrow="Field provenance"
+          eyebrow={t('literature.fieldProvenance')}
           title={provenanceCandidate.title}
           description={t('literature.provenanceDescription')}
           onClose={() => setProvenanceCandidateId(null)}
@@ -529,7 +529,7 @@ export function LiteratureTab({
                         <div>
                           <strong>{field.provider || field.source_type || t('literature.sourceUnrecorded')}{field.status === 'selected' ? t('literature.selected') : ''}</strong>
                           <p>{valueLabel(field.normalized_value)}</p>
-                          <p className="muted">source_type={field.source_type || 'unknown'} · attempt={field.source_attempt_id || t('common.none')} · artifact={field.artifact_id || t('common.none')} · locator={field.locator || t('common.none')} · hash={field.raw_value_hash || t('common.none')}</p>
+                          <p className="muted">{t('literature.sourceType')}={field.source_type || t('common.unknown')} · {t('literature.attempt')}={field.source_attempt_id || t('common.none')} · {t('literature.artifactId')}={field.artifact_id || t('common.none')} · {t('literature.locator')}={field.locator || t('common.none')} · {t('literature.hash')}={field.raw_value_hash || t('common.none')}</p>
                         </div>
                         {field.status !== 'selected' && !provenanceCandidate.paper_id ? <button className="secondary compact" type="button" onClick={() => void selectCandidateField(provenanceCandidate, field)}>{t('literature.selectSource')}</button> : null}
                       </div>
@@ -548,14 +548,14 @@ export function LiteratureTab({
               <div>
                 <h3><a href={paper.source_url} target="_blank" rel="noreferrer">{paper.title}</a></h3>
                 <p>
-                  {paper.year || ''} {paper.venue || ''} · {paper.source_provider || 'unknown'} · DOI {paper.doi || t('common.notProvided')} ·
+                  {paper.year || ''} {paper.venue || ''} · {paper.source_provider || t('common.unknown')} · DOI {paper.doi || t('common.notProvided')} ·
                   {paper.verified ? t('literature.metadataVerified') : t('literature.pendingVerification')} · {t('literature.fulltextCount', { count: paper.fulltext_evidence_count || 0 })} ·
                   {t('literature.codeCandidateCount', { count: (paper.code_repositories || []).length })}
                 </p>
                 {paper.pdf_url ? <p><a href={paper.pdf_url} target="_blank" rel="noreferrer">{t('literature.openPdf')}</a></p> : null}
                 {paper.bibtex ? (
                   <details>
-                    <summary>BibTeX</summary>
+                    <summary>{t('literature.bibtex')}</summary>
                     <pre className="code-block">{paper.bibtex}</pre>
                   </details>
                 ) : null}
@@ -637,7 +637,7 @@ export function LiteratureTab({
                   <div className="data-row" key={index}>
                     <div>
                       <h3>{item.name}</h3>
-                      <p>{item.kind || 'material'} · {item.parse_status || 'unknown'} · SHA-256 {String(item.sha256 || '').slice(0, 12)}… · {t('literature.similarity', { value: String(item.similarity ?? t('common.notProvided')) })}</p>
+                      <p>{item.kind || t('common.unknown')} · {item.parse_status || t('common.unknown')} · SHA-256 {String(item.sha256 || '').slice(0, 12)}… · {t('literature.similarity', { value: String(item.similarity ?? t('common.notProvided')) })}</p>
                       <p className="muted">{item.snippet || t('literature.noSnippet')}</p>
                     </div>
                     <span className="badge pending">{t('literature.semanticCandidate')}</span>
@@ -726,7 +726,7 @@ export function LiteratureTab({
                 <div>
                   <h3><a href={item.url} target="_blank" rel="noreferrer">{item.name || item.title || item.url || t('literature.candidateResource')}</a></h3>
                   <p>
-                    {item.resource_type || 'resource'} · {item.provider || 'unknown'} · robots {item.compliance?.robots_status || 'unknown'}
+                    {item.resource_type || t('common.unknown')} · {item.provider || t('common.unknown')} · {t('literature.robotsStatus')} {item.compliance?.robots_status || t('common.unknown')}
                     {item.compliance?.terms_url ? <> · <a href={item.compliance.terms_url} target="_blank" rel="noreferrer">{t('literature.viewTerms')}</a></> : null}
                   </p>
                   {item.snippet ? <p className="muted">{item.snippet}</p> : null}
@@ -747,7 +747,7 @@ export function LiteratureTab({
                 <div>
                   <h3>{repository.source_url}</h3>
                   <p>
-                    {repository.license_spdx || t('literature.unknownLicense')} · commit {String(repository.commit_or_tag || t('literature.notPinned')).slice(0, 12)} ·
+                    {repository.license_spdx || t('literature.unknownLicense')} · {t('literature.commit')} {String(repository.commit_or_tag || t('literature.notPinned')).slice(0, 12)} ·
                     {repository.metadata?.verification?.match?.method || t('literature.notVerified')}
                   </p>
                 </div>

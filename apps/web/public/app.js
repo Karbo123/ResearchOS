@@ -12900,6 +12900,20 @@
     "spec.unset": "\u672A\u6307\u5B9A",
     "spec.confirmCreate": "\u786E\u8BA4\u5E76\u521B\u5EFA\u9879\u76EE",
     "spec.empty": "\u89C4\u683C\u5C06\u5728\u6F84\u6E05\u5B8C\u6210\u540E\u751F\u6210\u3002",
+    "spec.title": "\u7814\u7A76\u60F3\u6CD5 / \u9879\u76EE\u89C4\u683C",
+    "spec.titleField": "\u6807\u9898",
+    "spec.researchQuestion": "\u7814\u7A76\u95EE\u9898",
+    "spec.domain": "\u7814\u7A76\u9886\u57DF",
+    "spec.hypotheses": "\u7814\u7A76\u5047\u8BBE",
+    "spec.contributions": "\u9884\u671F\u8D21\u732E",
+    "spec.successCriteria": "\u6210\u529F\u6807\u51C6",
+    "spec.targetVenues": "\u76EE\u6807\u6295\u7A3F venue",
+    "spec.risks": "\u98CE\u9669",
+    "spec.openQuestions": "\u5F85\u89E3\u51B3\u95EE\u9898",
+    "spec.feasibility": "\u53EF\u884C\u6027",
+    "spec.feasibilityNotes": "\u53EF\u884C\u6027\u8BF4\u660E",
+    "spec.candidateModifications": "\u5F85\u6838\u9A8C\u4FEE\u6539\u5EFA\u8BAE",
+    "spec.approvals": "\u6240\u9700\u5BA1\u6279",
     "thinking.title": "AI \u8BF7\u6C42\u72B6\u6001",
     "chat.title": "\u9879\u76EE\u5BF9\u8BDD",
     "chat.monitoring": "\u76D1\u7763\u4E2D",
@@ -12917,6 +12931,7 @@
     "context.experimentFailed": "\u5B9E\u9A8C\u8FD0\u884C\u5931\u8D25",
     "context.reproductionFailed": "\u590D\u73B0\u6D41\u7A0B\u5931\u8D25",
     "context.reportLineageFailed": "\u62A5\u544A\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u9A8C\u8BC1",
+    "context.projectScoped": "\u9879\u76EE\u8303\u56F4\u5185",
     "md.noPreview": "\u6682\u65E0\u53EF\u9884\u89C8\u5185\u5BB9\u3002",
     "preview.noPoints": "\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6709\u6548\u70B9",
     "preview.resetView": "\u91CD\u7F6E\u89C6\u56FE",
@@ -12929,6 +12944,7 @@
     "preview.metric": "\u6307\u6807",
     "preview.points": "\u70B9\u6570",
     "preview.selectSeeds": "\u9009\u62E9\u968F\u673A\u79CD\u5B50",
+    "preview.seed": "\u968F\u673A\u79CD\u5B50",
     "preview.pointsCount": "{count} \u4E2A\u70B9",
     "preview.missingPoints": "{count} \u4E2A\u70B9\u7F3A\u5C11 {metric}\uFF0C\u5DF2\u6309\u7F3A\u5931\u503C\u4FDD\u7559\u5E76\u8DF3\u8FC7\u7ED8\u5236\u3002",
     "preview.imageNote": "\u56FE\u7247\u76F4\u63A5\u4F7F\u7528\u4E0B\u8F7D\u63A5\u53E3\u5C55\u793A\u3002",
@@ -12965,6 +12981,9 @@
     "settings.default": "\u9ED8\u8BA4",
     "settings.modelName": "\u6A21\u578B\u540D\u79F0",
     "settings.reasoningEffort": "\u63A8\u7406\u5F3A\u5EA6",
+    "settings.low": "\u4F4E",
+    "settings.medium": "\u4E2D",
+    "settings.high": "\u9AD8",
     "settings.modelUrl": "\u6A21\u578B URL",
     "settings.apiKey": "API key",
     "settings.keyKeep": "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8",
@@ -13010,6 +13029,7 @@
     "memory.graphResults": "{nodes} \u4E2A\u8282\u70B9 \xB7 {edges} \u6761\u5173\u7CFB \xB7 \u6765\u6E90\uFF1ASupermemory",
     "memory.requestFailed": "\u8BF7\u6C42\u5931\u8D25\uFF1A{error}",
     "memory.eyebrow": "\u9879\u76EE\u7EA7\u8BED\u4E49\u4E0A\u4E0B\u6587",
+    "memory.title": "Supermemory \u56FE\u8C31\u8BB0\u5FC6",
     "memory.description": "\u53EA\u663E\u793A\u5F53\u524D\u9879\u76EE\u8303\u56F4\u7684\u8BED\u4E49\u5019\u9009\u53CA\u5176\u5173\u7CFB\uFF1B\u5019\u9009\u4E0D\u7B49\u4E8E\u8BBA\u6587\u8BC1\u636E\u3002",
     "memory.viewAria": "\u8BED\u4E49\u8BB0\u5FC6\u89C6\u56FE",
     "memory.graphView": "\u5173\u7CFB\u56FE",
@@ -13099,6 +13119,7 @@
     "reports.lineageUnverifiable": "\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u590D\u6838",
     "reports.noneForPeriod": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709{period}\u3002",
     "reports.history": "\u5386\u53F2\u7248\u672C",
+    "reports.sourceSnapshot": "\u6765\u6E90\u5FEB\u7167",
     "reports.view": "\u67E5\u770B",
     "reports.viewStatus": "\u67E5\u770B\u72B6\u6001",
     "approvals.launchToast": "\u8FD0\u884C {id} \u5DF2\u63D0\u4EA4",
@@ -13171,6 +13192,8 @@
     "reproduction.dependencyManifest": "\u4F9D\u8D56\u6E05\u5355",
     "reproduction.createDependencyApproval": "\u521B\u5EFA\u4F9D\u8D56\u5B89\u88C5\u5BA1\u6279",
     "reproduction.pythonEntry": "Python \u5165\u53E3",
+    "reproduction.seeds": "\u968F\u673A\u79CD\u5B50",
+    "reproduction.run": "\u8FD0\u884C",
     "reproduction.pythonEntryPlaceholder": "\u4F8B\u5982 scripts/evaluate.py",
     "reproduction.structuredConfig": "\u7ED3\u6784\u5316\u914D\u7F6E",
     "reproduction.createRunApproval": "\u521B\u5EFA\u8FD0\u884C\u5BA1\u6279",
@@ -13362,6 +13385,8 @@
     "comparison.paper": "\u8BBA\u6587",
     "comparison.reproductionMean": "\u590D\u73B0 mean",
     "comparison.status": "\u72B6\u6001",
+    "comparison.std": "\u6807\u51C6\u5DEE",
+    "comparison.delta": "\u5DEE\u503C",
     "comparison.evidenceStatus": "\u8BC1\u636E\u72B6\u6001\uFF1A",
     "comparison.candidateId": "\u5019\u9009 ID",
     "comparison.keep": "\u4FDD\u7559",
@@ -13399,6 +13424,8 @@
     "research.datasets": "\u6570\u636E\u96C6",
     "research.metrics": "\u6307\u6807",
     "research.code": "\u4EE3\u7801",
+    "research.paper": "\u8BBA\u6587",
+    "research.unresolved": "\u672A\u89E3\u6790",
     "research.evidence": "\u8BC1\u636E",
     "research.source": "\u6765\u6E90",
     "research.noFilteredRows": "\u7B5B\u9009\u540E\u6CA1\u6709\u77E9\u9635\u884C\u3002",
@@ -13453,6 +13480,7 @@
     "graph.type": "\u7C7B\u578B",
     "graph.stableId": "\u7A33\u5B9A ID",
     "graph.source": "\u6765\u6E90",
+    "graph.provider": "\u6765\u6E90\u63D0\u4F9B\u65B9",
     "graph.evidenceStatus": "\u8BC1\u636E\u72B6\u6001",
     "graph.permission": "\u6743\u9650",
     "graph.locator": "\u5B9A\u4F4D",
@@ -13542,6 +13570,7 @@
     "literature.titleOption": "\u6807\u9898",
     "literature.urlOption": "\u6765\u6E90 URL",
     "literature.pdfOption": "\u53D7\u63A7 PDF \u4EA7\u7269",
+    "literature.pdfArtifact": "PDF \u4EA7\u7269",
     "literature.existingPaperOption": "\u5F53\u524D\u9879\u76EE\u5DF2\u6709\u8BBA\u6587",
     "literature.selectPdf": "\u9009\u62E9\u53D7\u63A7 PDF",
     "literature.selectPaper": "\u9009\u62E9\u5F53\u524D\u9879\u76EE\u8BBA\u6587",
@@ -13580,6 +13609,16 @@
     "literature.enrichFields": "\u8865\u5168\u5B57\u6BB5",
     "literature.provenanceDescription": "\u9009\u62E9\u6765\u6E90\u53EA\u4F1A\u66F4\u65B0\u5F53\u524D\u9879\u76EE\u5019\u9009\u7684\u5B57\u6BB5\u5FEB\u7167\uFF0C\u5E76\u7559\u4E0B\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u5B83\u4E0D\u4F1A\u628A\u5143\u6570\u636E\u5019\u9009\u81EA\u52A8\u53D8\u6210\u5168\u6587\u8BC1\u636E\u3002",
     "literature.field": "\u5B57\u6BB5",
+    "literature.sourceType": "\u6765\u6E90\u7C7B\u578B",
+    "literature.attempt": "\u8BF7\u6C42\u5C1D\u8BD5",
+    "literature.artifactId": "\u4EA7\u7269",
+    "literature.locator": "\u5B9A\u4F4D",
+    "literature.hash": "\u54C8\u5E0C",
+    "literature.robotsStatus": "robots \u5408\u89C4\u72B6\u6001",
+    "literature.fieldProvenance": "\u5B57\u6BB5\u6765\u6E90\u8BB0\u5F55",
+    "literature.bibtex": "BibTeX",
+    "literature.sourceUnknown": "\u6765\u6E90\u672A\u77E5",
+    "literature.commit": "\u63D0\u4EA4\u7248\u672C",
     "literature.sourceUnrecorded": "\u6765\u6E90\u672A\u8BB0\u5F55",
     "literature.selected": " \xB7 \u5DF2\u9009",
     "literature.selectSource": "\u9009\u62E9\u6B64\u6765\u6E90",
@@ -13651,6 +13690,8 @@
     "paper.bibtexRecorded": "BibTeX \u5DF2\u8BB0\u5F55",
     "paper.bibtexMissing": "BibTeX \u672A\u8BB0\u5F55",
     "paper.citationReadiness": "\u5F15\u7528\u51C6\u5907\u5EA6\uFF1A{status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.projectScoped": "\u9879\u76EE\u8303\u56F4\u5185",
+    "paper.evidenceCount": "{count} \u6761\u8BC1\u636E",
     "paper.open": "\u6253\u5F00",
     "paper.noPapers": "\u5C1A\u65E0\u9879\u76EE\u8303\u56F4\u8BBA\u6587\uFF1B\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
     "paper.openLiterature": "\u6253\u5F00\u6587\u732E\u68C0\u7D22",
@@ -13948,6 +13989,20 @@
     "spec.unset": "\u672A\u6307\u5B9A",
     "spec.confirmCreate": "\u78BA\u8A8D\u4E26\u5EFA\u7ACB\u5C08\u6848",
     "spec.empty": "\u898F\u683C\u5C07\u5728\u6F84\u6E05\u5B8C\u6210\u5F8C\u7522\u751F\u3002",
+    "spec.title": "\u7814\u7A76\u60F3\u6CD5 / \u5C08\u6848\u898F\u683C",
+    "spec.titleField": "\u6A19\u984C",
+    "spec.researchQuestion": "\u7814\u7A76\u554F\u984C",
+    "spec.domain": "\u7814\u7A76\u9818\u57DF",
+    "spec.hypotheses": "\u7814\u7A76\u5047\u8A2D",
+    "spec.contributions": "\u9810\u671F\u8CA2\u737B",
+    "spec.successCriteria": "\u6210\u529F\u6A19\u6E96",
+    "spec.targetVenues": "\u76EE\u6A19\u6295\u7A3F\u671F\u520A/\u6703\u8B70",
+    "spec.risks": "\u98A8\u96AA",
+    "spec.openQuestions": "\u5F85\u89E3\u6C7A\u554F\u984C",
+    "spec.feasibility": "\u53EF\u884C\u6027",
+    "spec.feasibilityNotes": "\u53EF\u884C\u6027\u8AAA\u660E",
+    "spec.candidateModifications": "\u5F85\u8907\u6838\u4FEE\u6539\u5EFA\u8B70",
+    "spec.approvals": "\u6240\u9700\u5BE9\u6279",
     "thinking.title": "AI \u8ACB\u6C42\u72C0\u614B",
     "chat.title": "\u5C08\u6848\u5C0D\u8A71",
     "chat.monitoring": "\u76E3\u7763\u4E2D",
@@ -13965,6 +14020,7 @@
     "context.experimentFailed": "\u5BE6\u9A57\u57F7\u884C\u5931\u6557",
     "context.reproductionFailed": "\u91CD\u73FE\u6D41\u7A0B\u5931\u6557",
     "context.reportLineageFailed": "\u5831\u544A\u4F86\u6E90\u8B5C\u7CFB\u7121\u6CD5\u9A57\u8B49",
+    "context.projectScoped": "\u5C08\u6848\u7BC4\u570D\u5167",
     "md.noPreview": "\u66AB\u7121\u53EF\u9810\u89BD\u5167\u5BB9\u3002",
     "preview.noPoints": "\u6C92\u6709\u53EF\u986F\u793A\u7684\u6709\u6548\u9EDE",
     "preview.resetView": "\u91CD\u8A2D\u6AA2\u8996",
@@ -13977,6 +14033,7 @@
     "preview.metric": "\u6307\u6A19",
     "preview.points": "\u9EDE\u6578",
     "preview.selectSeeds": "\u9078\u64C7\u96A8\u6A5F\u7A2E\u5B50",
+    "preview.seed": "\u96A8\u6A5F\u7A2E\u5B50",
     "preview.pointsCount": "{count} \u500B\u9EDE",
     "preview.missingPoints": "{count} \u500B\u9EDE\u7F3A\u5C11 {metric}\uFF0C\u5DF2\u6309\u7F3A\u5931\u503C\u4FDD\u7559\u4E26\u8DF3\u904E\u7E6A\u88FD\u3002",
     "preview.imageNote": "\u5716\u7247\u76F4\u63A5\u4F7F\u7528\u4E0B\u8F09\u4ECB\u9762\u5C55\u793A\u3002",
@@ -14013,6 +14070,9 @@
     "settings.default": "\u9810\u8A2D",
     "settings.modelName": "\u6A21\u578B\u540D\u7A31",
     "settings.reasoningEffort": "\u63A8\u7406\u5F37\u5EA6",
+    "settings.low": "\u4F4E",
+    "settings.medium": "\u4E2D",
+    "settings.high": "\u9AD8",
     "settings.modelUrl": "\u6A21\u578B URL",
     "settings.apiKey": "API key",
     "settings.keyKeep": "\u5DF2\u8A2D\u5B9A\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u8B8A",
@@ -14058,6 +14118,7 @@
     "memory.graphResults": "{nodes} \u500B\u7BC0\u9EDE \xB7 {edges} \u689D\u95DC\u4FC2 \xB7 \u4F86\u6E90\uFF1ASupermemory",
     "memory.requestFailed": "\u8ACB\u6C42\u5931\u6557\uFF1A{error}",
     "memory.eyebrow": "\u5C08\u6848\u7D1A\u8A9E\u610F\u4E0A\u4E0B\u6587",
+    "memory.title": "Supermemory \u5716\u8B5C\u8A18\u61B6",
     "memory.description": "\u53EA\u986F\u793A\u76EE\u524D\u5C08\u6848\u7BC4\u570D\u7684\u8A9E\u610F\u5019\u9078\u53CA\u5176\u95DC\u4FC2\uFF1B\u5019\u9078\u4E0D\u7B49\u65BC\u8AD6\u6587\u8B49\u64DA\u3002",
     "memory.viewAria": "\u8A9E\u610F\u8A18\u61B6\u6AA2\u8996",
     "memory.graphView": "\u95DC\u4FC2\u5716",
@@ -14147,6 +14208,7 @@
     "reports.lineageUnverifiable": "\u4F86\u6E90\u8B5C\u7CFB\u7121\u6CD5\u8907\u6838",
     "reports.noneForPeriod": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709{period}\u3002",
     "reports.history": "\u6B77\u53F2\u7248\u672C",
+    "reports.sourceSnapshot": "\u4F86\u6E90\u5FEB\u7167",
     "reports.view": "\u6AA2\u8996",
     "reports.viewStatus": "\u6AA2\u8996\u72C0\u614B",
     "approvals.launchToast": "\u57F7\u884C {id} \u5DF2\u63D0\u4EA4",
@@ -14219,6 +14281,8 @@
     "reproduction.dependencyManifest": "\u4F9D\u8CF4\u6E05\u55AE",
     "reproduction.createDependencyApproval": "\u5EFA\u7ACB\u4F9D\u8CF4\u5B89\u88DD\u5BE9\u6279",
     "reproduction.pythonEntry": "Python \u5165\u53E3",
+    "reproduction.seeds": "\u96A8\u6A5F\u7A2E\u5B50",
+    "reproduction.run": "\u57F7\u884C",
     "reproduction.pythonEntryPlaceholder": "\u4F8B\u5982 scripts/evaluate.py",
     "reproduction.structuredConfig": "\u7D50\u69CB\u5316\u8A2D\u5B9A",
     "reproduction.createRunApproval": "\u5EFA\u7ACB\u57F7\u884C\u5BE9\u6279",
@@ -14303,6 +14367,8 @@
     "comparison.paper": "\u8AD6\u6587",
     "comparison.reproductionMean": "\u91CD\u73FE mean",
     "comparison.status": "\u72C0\u614B",
+    "comparison.std": "\u6A19\u6E96\u5DEE",
+    "comparison.delta": "\u5DEE\u503C",
     "comparison.evidenceStatus": "\u8B49\u64DA\u72C0\u614B\uFF1A",
     "comparison.candidateId": "\u5019\u9078 ID",
     "comparison.keep": "\u4FDD\u7559",
@@ -14340,6 +14406,8 @@
     "research.datasets": "\u8CC7\u6599\u96C6",
     "research.metrics": "\u6307\u6A19",
     "research.code": "\u7A0B\u5F0F\u78BC",
+    "research.paper": "\u8AD6\u6587",
+    "research.unresolved": "\u672A\u89E3\u6790",
     "research.evidence": "\u8B49\u64DA",
     "research.source": "\u4F86\u6E90",
     "research.noFilteredRows": "\u7BE9\u9078\u5F8C\u6C92\u6709\u77E9\u9663\u5217\u3002",
@@ -14394,6 +14462,7 @@
     "graph.type": "\u985E\u578B",
     "graph.stableId": "\u7A69\u5B9A ID",
     "graph.source": "\u4F86\u6E90",
+    "graph.provider": "\u4F86\u6E90\u63D0\u4F9B\u65B9",
     "graph.evidenceStatus": "\u8B49\u64DA\u72C0\u614B",
     "graph.permission": "\u6B0A\u9650",
     "graph.locator": "\u5B9A\u4F4D",
@@ -14483,6 +14552,7 @@
     "literature.titleOption": "\u6A19\u984C",
     "literature.urlOption": "\u4F86\u6E90 URL",
     "literature.pdfOption": "\u53D7\u63A7 PDF \u7522\u7269",
+    "literature.pdfArtifact": "PDF \u7522\u7269",
     "literature.existingPaperOption": "\u76EE\u524D\u5C08\u6848\u5DF2\u6709\u8AD6\u6587",
     "literature.selectPdf": "\u9078\u64C7\u53D7\u63A7 PDF",
     "literature.selectPaper": "\u9078\u64C7\u76EE\u524D\u5C08\u6848\u8AD6\u6587",
@@ -14521,6 +14591,16 @@
     "literature.enrichFields": "\u88DC\u5168\u6B04\u4F4D",
     "literature.provenanceDescription": "\u9078\u64C7\u4F86\u6E90\u53EA\u6703\u66F4\u65B0\u76EE\u524D\u5C08\u6848\u5019\u9078\u7684\u6B04\u4F4D\u5FEB\u7167\uFF0C\u4E26\u7559\u4E0B\u7A3D\u6838\u8A18\u9304\uFF1B\u5B83\u4E0D\u6703\u628A\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078\u81EA\u52D5\u8B8A\u6210\u5168\u6587\u8B49\u64DA\u3002",
     "literature.field": "\u6B04\u4F4D",
+    "literature.sourceType": "\u4F86\u6E90\u985E\u578B",
+    "literature.attempt": "\u8ACB\u6C42\u5617\u8A66",
+    "literature.artifactId": "\u7522\u7269",
+    "literature.locator": "\u5B9A\u4F4D",
+    "literature.hash": "\u96DC\u6E4A",
+    "literature.robotsStatus": "robots \u5408\u898F\u72C0\u614B",
+    "literature.fieldProvenance": "\u6B04\u4F4D\u4F86\u6E90\u8A18\u9304",
+    "literature.bibtex": "BibTeX",
+    "literature.sourceUnknown": "\u4F86\u6E90\u672A\u77E5",
+    "literature.commit": "\u63D0\u4EA4\u7248\u672C",
     "literature.sourceUnrecorded": "\u4F86\u6E90\u672A\u8A18\u9304",
     "literature.selected": " \xB7 \u5DF2\u9078",
     "literature.selectSource": "\u9078\u64C7\u6B64\u4F86\u6E90",
@@ -14592,6 +14672,8 @@
     "paper.bibtexRecorded": "BibTeX \u5DF2\u8A18\u9304",
     "paper.bibtexMissing": "BibTeX \u672A\u8A18\u9304",
     "paper.citationReadiness": "\u5F15\u7528\u6E96\u5099\u5EA6\uFF1A{status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.projectScoped": "\u5C08\u6848\u7BC4\u570D\u5167",
+    "paper.evidenceCount": "{count} \u689D\u8B49\u64DA",
     "paper.open": "\u958B\u555F",
     "paper.noPapers": "\u5C1A\u7121\u5C08\u6848\u7BC4\u570D\u8AD6\u6587\uFF1B\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
     "paper.openLiterature": "\u958B\u555F\u6587\u737B\u6AA2\u7D22",
@@ -14889,6 +14971,20 @@
     "spec.unset": "Not specified",
     "spec.confirmCreate": "Confirm and create project",
     "spec.empty": "The specification will be generated after clarification.",
+    "spec.title": "Research Idea / Project Specification",
+    "spec.titleField": "Title",
+    "spec.researchQuestion": "Research question",
+    "spec.domain": "Research domain",
+    "spec.hypotheses": "Hypotheses",
+    "spec.contributions": "Expected contributions",
+    "spec.successCriteria": "Success criteria",
+    "spec.targetVenues": "Target venues",
+    "spec.risks": "Risks",
+    "spec.openQuestions": "Open questions",
+    "spec.feasibility": "Feasibility",
+    "spec.feasibilityNotes": "Feasibility notes",
+    "spec.candidateModifications": "Candidate modifications",
+    "spec.approvals": "Required approvals",
     "thinking.title": "AI request status",
     "chat.title": "Project chat",
     "chat.monitoring": "Monitoring",
@@ -14906,6 +15002,7 @@
     "context.experimentFailed": "Experiment run failed",
     "context.reproductionFailed": "Reproduction workflow failed",
     "context.reportLineageFailed": "Report source lineage cannot be verified",
+    "context.projectScoped": "Project-scoped",
     "md.noPreview": "Nothing to preview yet.",
     "preview.noPoints": "No valid points to display",
     "preview.resetView": "Reset view",
@@ -14918,6 +15015,7 @@
     "preview.metric": "Metric",
     "preview.points": "Points",
     "preview.selectSeeds": "Select random seeds",
+    "preview.seed": "Random seed",
     "preview.pointsCount": "{count} points",
     "preview.missingPoints": "{count} points are missing {metric}; they are kept as missing and skipped when plotting.",
     "preview.imageNote": "Images are shown directly through the download endpoint.",
@@ -14954,6 +15052,9 @@
     "settings.default": "Default",
     "settings.modelName": "Model name",
     "settings.reasoningEffort": "Reasoning effort",
+    "settings.low": "Low",
+    "settings.medium": "Medium",
+    "settings.high": "High",
     "settings.modelUrl": "Model URL",
     "settings.apiKey": "API key",
     "settings.keyKeep": "Configured; leave blank to keep",
@@ -14999,6 +15100,7 @@
     "memory.graphResults": "{nodes} nodes \xB7 {edges} relations \xB7 source: Supermemory",
     "memory.requestFailed": "Request failed: {error}",
     "memory.eyebrow": "Project-level semantic context",
+    "memory.title": "Supermemory Graph Memory",
     "memory.description": "Only semantic candidates and relations within the current project scope are shown; candidates are not paper evidence.",
     "memory.viewAria": "Semantic memory views",
     "memory.graphView": "Graph",
@@ -15088,6 +15190,7 @@
     "reports.lineageUnverifiable": "source lineage cannot be verified",
     "reports.noneForPeriod": "The current project has no {period} yet.",
     "reports.history": "History",
+    "reports.sourceSnapshot": "Source snapshot",
     "reports.view": "View",
     "reports.viewStatus": "View status",
     "approvals.launchToast": "Run {id} submitted",
@@ -15160,6 +15263,8 @@
     "reproduction.dependencyManifest": "Dependency manifest",
     "reproduction.createDependencyApproval": "Create dependency installation approval",
     "reproduction.pythonEntry": "Python entrypoint",
+    "reproduction.seeds": "Random seeds",
+    "reproduction.run": "Run",
     "reproduction.pythonEntryPlaceholder": "e.g. scripts/evaluate.py",
     "reproduction.structuredConfig": "Structured config",
     "reproduction.createRunApproval": "Create run approval",
@@ -15244,6 +15349,8 @@
     "comparison.paper": "Paper",
     "comparison.reproductionMean": "Reproduction mean",
     "comparison.status": "Status",
+    "comparison.std": "Std. dev.",
+    "comparison.delta": "Delta",
     "comparison.evidenceStatus": "Evidence status: ",
     "comparison.candidateId": "Candidate ID",
     "comparison.keep": "Keep",
@@ -15281,6 +15388,8 @@
     "research.datasets": "Datasets",
     "research.metrics": "Metrics",
     "research.code": "Code",
+    "research.paper": "Paper",
+    "research.unresolved": "Unresolved",
     "research.evidence": "Evidence",
     "research.source": "Source",
     "research.noFilteredRows": "No matrix rows after filtering.",
@@ -15335,6 +15444,7 @@
     "graph.type": "Type",
     "graph.stableId": "Stable ID",
     "graph.source": "Source",
+    "graph.provider": "Provider",
     "graph.evidenceStatus": "Evidence status",
     "graph.permission": "Permission",
     "graph.locator": "Locator",
@@ -15424,6 +15534,7 @@
     "literature.titleOption": "Title",
     "literature.urlOption": "Source URL",
     "literature.pdfOption": "Controlled PDF Artifact",
+    "literature.pdfArtifact": "PDF Artifact",
     "literature.existingPaperOption": "Existing project Paper",
     "literature.selectPdf": "Select controlled PDF",
     "literature.selectPaper": "Select project Paper",
@@ -15462,6 +15573,16 @@
     "literature.enrichFields": "Enrich fields",
     "literature.provenanceDescription": "Selecting a source only updates the field snapshot for the current project candidate and leaves an audit record; it never turns a metadata candidate into full-text evidence automatically.",
     "literature.field": "Field",
+    "literature.sourceType": "Source type",
+    "literature.attempt": "Attempt",
+    "literature.artifactId": "Artifact",
+    "literature.locator": "Locator",
+    "literature.hash": "Hash",
+    "literature.robotsStatus": "Robots compliance",
+    "literature.fieldProvenance": "Field provenance",
+    "literature.bibtex": "BibTeX",
+    "literature.sourceUnknown": "Source unknown",
+    "literature.commit": "Commit",
     "literature.sourceUnrecorded": "source not recorded",
     "literature.selected": " \xB7 selected",
     "literature.selectSource": "Select this source",
@@ -15533,6 +15654,8 @@
     "paper.bibtexRecorded": "BibTeX recorded",
     "paper.bibtexMissing": "BibTeX not recorded",
     "paper.citationReadiness": "Citation readiness: {status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.projectScoped": "Project-scoped",
+    "paper.evidenceCount": "{count} Evidence records",
     "paper.open": "Open",
     "paper.noPapers": "No project-scoped Papers yet; complete related-work research first.",
     "paper.openLiterature": "Open literature search",
@@ -15830,6 +15953,20 @@
     "spec.unset": "No especificado",
     "spec.confirmCreate": "Confirmar y crear proyecto",
     "spec.empty": "La especificaci\xF3n se generar\xE1 despu\xE9s de la aclaraci\xF3n.",
+    "spec.title": "Idea de investigaci\xF3n / Especificaci\xF3n del proyecto",
+    "spec.titleField": "T\xEDtulo",
+    "spec.researchQuestion": "Pregunta de investigaci\xF3n",
+    "spec.domain": "Dominio de investigaci\xF3n",
+    "spec.hypotheses": "Hip\xF3tesis",
+    "spec.contributions": "Contribuciones esperadas",
+    "spec.successCriteria": "Criterios de \xE9xito",
+    "spec.targetVenues": "Revistas o conferencias objetivo",
+    "spec.risks": "Riesgos",
+    "spec.openQuestions": "Preguntas abiertas",
+    "spec.feasibility": "Viabilidad",
+    "spec.feasibilityNotes": "Notas de viabilidad",
+    "spec.candidateModifications": "Modificaciones candidatas",
+    "spec.approvals": "Aprobaciones necesarias",
     "thinking.title": "Estado de las solicitudes de IA",
     "chat.title": "Chat del proyecto",
     "chat.monitoring": "Supervisando",
@@ -15847,6 +15984,7 @@
     "context.experimentFailed": "Ejecuci\xF3n experimental fallida",
     "context.reproductionFailed": "Flujo de reproducci\xF3n fallido",
     "context.reportLineageFailed": "No se puede verificar el linaje del informe",
+    "context.projectScoped": "Dentro del \xE1mbito del proyecto",
     "md.noPreview": "Nada que previsualizar todav\xEDa.",
     "preview.noPoints": "No hay puntos v\xE1lidos para mostrar",
     "preview.resetView": "Restablecer vista",
@@ -15859,6 +15997,7 @@
     "preview.metric": "M\xE9trica",
     "preview.points": "Puntos",
     "preview.selectSeeds": "Seleccionar semillas aleatorias",
+    "preview.seed": "Semilla aleatoria",
     "preview.pointsCount": "{count} puntos",
     "preview.missingPoints": "{count} puntos no tienen {metric}; se conservan como faltantes y se omiten al graficar.",
     "preview.imageNote": "Las im\xE1genes se muestran directamente a trav\xE9s del punto de descarga.",
@@ -15895,6 +16034,9 @@
     "settings.default": "Predeterminado",
     "settings.modelName": "Nombre del modelo",
     "settings.reasoningEffort": "Esfuerzo de razonamiento",
+    "settings.low": "Bajo",
+    "settings.medium": "Medio",
+    "settings.high": "Alto",
     "settings.modelUrl": "URL del modelo",
     "settings.apiKey": "Clave API",
     "settings.keyKeep": "Configurada; d\xE9jala en blanco para conservarla",
@@ -15940,6 +16082,7 @@
     "memory.graphResults": "{nodes} nodos \xB7 {edges} relaciones \xB7 fuente: Supermemory",
     "memory.requestFailed": "Solicitud fallida: {error}",
     "memory.eyebrow": "Contexto sem\xE1ntico del proyecto",
+    "memory.title": "Memoria gr\xE1fica de Supermemory",
     "memory.description": "Solo se muestran candidatos y relaciones sem\xE1nticas dentro del \xE1mbito actual; los candidatos no son evidencia de art\xEDculo.",
     "memory.viewAria": "Vistas de memoria sem\xE1ntica",
     "memory.graphView": "Grafo",
@@ -16029,6 +16172,7 @@
     "reports.lineageUnverifiable": "el linaje de fuentes no se puede verificar",
     "reports.noneForPeriod": "El proyecto actual a\xFAn no tiene {period}.",
     "reports.history": "Historial",
+    "reports.sourceSnapshot": "Instant\xE1nea de fuentes",
     "reports.view": "Ver",
     "reports.viewStatus": "Ver estado",
     "approvals.launchToast": "Run {id} enviado",
@@ -16101,6 +16245,8 @@
     "reproduction.dependencyManifest": "Manifiesto de dependencias",
     "reproduction.createDependencyApproval": "Crear aprobaci\xF3n de instalaci\xF3n de dependencias",
     "reproduction.pythonEntry": "Punto de entrada de Python",
+    "reproduction.seeds": "Semillas aleatorias",
+    "reproduction.run": "Ejecuci\xF3n",
     "reproduction.pythonEntryPlaceholder": "p. ej. scripts/evaluate.py",
     "reproduction.structuredConfig": "Configuraci\xF3n estructurada",
     "reproduction.createRunApproval": "Crear aprobaci\xF3n de ejecuci\xF3n",
@@ -16185,6 +16331,8 @@
     "comparison.paper": "Art\xEDculo",
     "comparison.reproductionMean": "Media de reproducci\xF3n",
     "comparison.status": "Estado",
+    "comparison.std": "Desv. est.",
+    "comparison.delta": "Diferencia",
     "comparison.evidenceStatus": "Estado de evidencia: ",
     "comparison.candidateId": "ID de candidato",
     "comparison.keep": "Conservar",
@@ -16222,6 +16370,8 @@
     "research.datasets": "Conjuntos de datos",
     "research.metrics": "M\xE9tricas",
     "research.code": "C\xF3digo",
+    "research.paper": "Art\xEDculo",
+    "research.unresolved": "Sin resolver",
     "research.evidence": "Evidencia",
     "research.source": "Fuente",
     "research.noFilteredRows": "No hay filas tras filtrar.",
@@ -16276,6 +16426,7 @@
     "graph.type": "Tipo",
     "graph.stableId": "ID estable",
     "graph.source": "Fuente",
+    "graph.provider": "Proveedor",
     "graph.evidenceStatus": "Estado de evidencia",
     "graph.permission": "Permiso",
     "graph.locator": "Localizaci\xF3n",
@@ -16365,6 +16516,7 @@
     "literature.titleOption": "T\xEDtulo",
     "literature.urlOption": "URL de fuente",
     "literature.pdfOption": "Artefacto PDF controlado",
+    "literature.pdfArtifact": "Artefacto PDF",
     "literature.existingPaperOption": "Paper existente del proyecto",
     "literature.selectPdf": "Seleccionar PDF controlado",
     "literature.selectPaper": "Seleccionar Paper del proyecto",
@@ -16403,6 +16555,16 @@
     "literature.enrichFields": "Completar campos",
     "literature.provenanceDescription": "Seleccionar una fuente solo actualiza la instant\xE1nea de campos del candidato y deja un registro de auditor\xEDa; nunca convierte autom\xE1ticamente un candidato de metadatos en evidencia de texto completo.",
     "literature.field": "Campo",
+    "literature.sourceType": "Tipo de fuente",
+    "literature.attempt": "Intento",
+    "literature.artifactId": "Artefacto",
+    "literature.locator": "Localizaci\xF3n",
+    "literature.hash": "Hash",
+    "literature.robotsStatus": "Cumplimiento de robots",
+    "literature.fieldProvenance": "Procedencia del campo",
+    "literature.bibtex": "BibTeX",
+    "literature.sourceUnknown": "Fuente desconocida",
+    "literature.commit": "Commit",
     "literature.sourceUnrecorded": "fuente no registrada",
     "literature.selected": " \xB7 seleccionado",
     "literature.selectSource": "Seleccionar esta fuente",
@@ -16474,6 +16636,8 @@
     "paper.bibtexRecorded": "BibTeX registrado",
     "paper.bibtexMissing": "BibTeX no registrado",
     "paper.citationReadiness": "Preparaci\xF3n de citas: {status} \xB7 confirmed={confirmed} \xB7 verified={verified}",
+    "paper.projectScoped": "Dentro del \xE1mbito del proyecto",
+    "paper.evidenceCount": "{count} registros de evidencia",
     "paper.open": "Abrir",
     "paper.noPapers": "A\xFAn no hay Papers del \xE1mbito del proyecto; completa primero la investigaci\xF3n de trabajo relacionado.",
     "paper.openLiterature": "Abrir b\xFAsqueda de literatura",
@@ -17631,23 +17795,23 @@
     const statusLabel3 = status === "pending_clarification" ? t("common.pendingClarify") : status === "pending_confirmation" ? t("common.pendingConfirm") : status;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "spec-pane-content", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "pane-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { children: "ResearchIdea / ProjectSpec" }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { children: t("spec.title") }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `badge ${status === "pending_confirmation" ? "pending" : "neutral"}`, children: statusLabel3 })
       ] }),
       spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: "Title", value: idea.title }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: "Research question", value: idea.research_question }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: "Domain", value: idea.domain }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Hypotheses", values: idea.hypotheses }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Contributions", values: idea.expected_contributions }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Success criteria", values: idea.success_criteria }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Target venues", values: idea.target_venues }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Risks", values: idea.risks }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Open questions", values: idea.open_questions }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: "Feasibility", value: spec.feasibility }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Feasibility notes", values: spec.feasibility_notes }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Candidate modifications", values: spec.candidate_modifications }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: "Approvals", values: spec.required_approvals }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: t("spec.titleField"), value: idea.title }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: t("spec.researchQuestion"), value: idea.research_question }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: t("spec.domain"), value: idea.domain }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.hypotheses"), values: idea.hypotheses }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.contributions"), values: idea.expected_contributions }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.successCriteria"), values: idea.success_criteria }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.targetVenues"), values: idea.target_venues }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.risks"), values: idea.risks }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.openQuestions"), values: idea.open_questions }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldText, { label: t("spec.feasibility"), value: spec.feasibility }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.feasibilityNotes"), values: spec.feasibility_notes }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.candidateModifications"), values: spec.candidate_modifications }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.approvals"), values: spec.required_approvals }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { className: "primary full", type: "button", onClick: onConfirm, children: [
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Check, { size: 17 }),
           t("spec.confirmCreate")
@@ -18671,7 +18835,7 @@
             ] })
           ] }),
           seedType === "artifact_pdf" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { children: [
-            "PDF Artifact",
+            t("literature.pdfArtifact"),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: seedArtifactId, onChange: (event) => setSeedArtifactId(event.target.value), children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "", children: t("literature.selectPdf") }),
               (project.artifacts || []).filter((artifact) => artifact.mime_type === "application/pdf" && artifact.valid !== false).map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: artifact.id, children: artifact.name }, artifact.id))
@@ -18842,7 +19006,7 @@
       provenanceCandidate ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         Modal,
         {
-          eyebrow: "Field provenance",
+          eyebrow: t("literature.fieldProvenance"),
           title: provenanceCandidate.title,
           description: t("literature.provenanceDescription"),
           onClose: () => setProvenanceCandidateId(null),
@@ -18865,15 +19029,24 @@
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: valueLabel(field.normalized_value) }),
                   /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { className: "muted", children: [
-                    "source_type=",
-                    field.source_type || "unknown",
-                    " \xB7 attempt=",
+                    t("literature.sourceType"),
+                    "=",
+                    field.source_type || t("common.unknown"),
+                    " \xB7 ",
+                    t("literature.attempt"),
+                    "=",
                     field.source_attempt_id || t("common.none"),
-                    " \xB7 artifact=",
+                    " \xB7 ",
+                    t("literature.artifactId"),
+                    "=",
                     field.artifact_id || t("common.none"),
-                    " \xB7 locator=",
+                    " \xB7 ",
+                    t("literature.locator"),
+                    "=",
                     field.locator || t("common.none"),
-                    " \xB7 hash=",
+                    " \xB7 ",
+                    t("literature.hash"),
+                    "=",
                     field.raw_value_hash || t("common.none")
                   ] })
                 ] }),
@@ -18891,7 +19064,7 @@
             " ",
             paper.venue || "",
             " \xB7 ",
-            paper.source_provider || "unknown",
+            paper.source_provider || t("common.unknown"),
             " \xB7 DOI ",
             paper.doi || t("common.notProvided"),
             " \xB7",
@@ -18903,7 +19076,7 @@
           ] }),
           paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: t("literature.openPdf") }) }) : null,
           paper.bibtex ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("details", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("summary", { children: "BibTeX" }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("summary", { children: t("literature.bibtex") }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("pre", { className: "code-block", children: paper.bibtex })
           ] }) : null
         ] }),
@@ -18982,9 +19155,9 @@
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: item.name }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
-                item.kind || "material",
+                item.kind || t("common.unknown"),
                 " \xB7 ",
-                item.parse_status || "unknown",
+                item.parse_status || t("common.unknown"),
                 " \xB7 SHA-256 ",
                 String(item.sha256 || "").slice(0, 12),
                 "\u2026 \xB7 ",
@@ -19057,11 +19230,13 @@
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: item.url, target: "_blank", rel: "noreferrer", children: item.name || item.title || item.url || t("literature.candidateResource") }) }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
-              item.resource_type || "resource",
+              item.resource_type || t("common.unknown"),
               " \xB7 ",
-              item.provider || "unknown",
-              " \xB7 robots ",
-              item.compliance?.robots_status || "unknown",
+              item.provider || t("common.unknown"),
+              " \xB7 ",
+              t("literature.robotsStatus"),
+              " ",
+              item.compliance?.robots_status || t("common.unknown"),
               item.compliance?.terms_url ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
                 " \xB7 ",
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("a", { href: item.compliance.terms_url, target: "_blank", rel: "noreferrer", children: t("literature.viewTerms") })
@@ -19079,7 +19254,9 @@
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: repository.source_url }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
               repository.license_spdx || t("literature.unknownLicense"),
-              " \xB7 commit ",
+              " \xB7 ",
+              t("literature.commit"),
+              " ",
               String(repository.commit_or_tag || t("literature.notPinned")).slice(0, 12),
               " \xB7",
               repository.metadata?.verification?.match?.method || t("literature.notVerified")
@@ -19279,7 +19456,7 @@
           )
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "timeseries-seeds", "aria-label": t("preview.selectSeeds"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "muted", children: "seed" }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "muted", children: t("preview.seed") }),
           allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "button",
             {
@@ -19349,7 +19526,8 @@
                     segmentIndex
                   )),
                   /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
-                    "seed ",
+                    t("preview.seed"),
+                    " ",
                     seed
                   ] }),
                   group.map((point, index) => {
@@ -19495,7 +19673,7 @@
         ["paper.sectionLimitations", Boolean(project.spec?.idea?.risks?.length)]
       ];
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.outlineTitle"), hint: t("paper.outlineHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.outlineTitle"), hint: t("paper.outlineHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: sections.map(([key, ready]) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t(key) }),
@@ -19511,7 +19689,7 @@
     }
     if (tab === "paper_citations") {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.citationsTitle"), hint: t("paper.citationsHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("paper.citationsTitle"), hint: t("paper.citationsHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
         project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.papers.map((paper) => {
           const evidence = paperEvidence(project, paper);
           const status = evidenceStatus(project, paper);
@@ -19520,8 +19698,8 @@
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: paper.title }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
                 paper.doi || paper.source_url || t("paper.sourcePending"),
-                " \xB7 Evidence ",
-                evidence.length,
+                " \xB7 ",
+                t("paper.evidenceCount", { count: evidence.length }),
                 " \xB7 ",
                 paper.bibtex ? t("paper.bibtexRecorded") : t("paper.bibtexMissing")
               ] }),
@@ -19938,7 +20116,7 @@
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { placeholder: t("reproduction.pythonEntryPlaceholder"), value: formFor(reproduction).entrypoint, onChange: (event) => updateForm(reproduction.id, "entrypoint", event.target.value) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
-                "Seeds",
+                t("reproduction.seeds"),
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { value: formFor(reproduction).random_seeds, onChange: (event) => updateForm(reproduction.id, "random_seeds", event.target.value) })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
@@ -19954,13 +20132,12 @@
             ] }) : null,
             reproductionRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "reproduction-runs", children: reproductionRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row compact-row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("strong", { children: [
-                  "Run ",
-                  run.id.slice(0, 8)
-                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: t("overview.runDetail", { run: run.id.slice(0, 8) }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
                   run.entrypoint,
-                  " \xB7 seeds ",
+                  " \xB7 ",
+                  t("reproduction.seeds"),
+                  " ",
                   run.random_seeds.join(", "),
                   run.error ? ` \xB7 ${localizeFailure(run.status, run.error)}` : ""
                 ] })
@@ -20139,9 +20316,10 @@
             /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("select", { value: runId, onChange: (event) => setRunId(event.target.value), children: [
               /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: "", children: t("common.select") }),
               runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("option", { value: run.id, children: [
-                "Run ",
-                run.id.slice(0, 8),
-                " \xB7 seeds ",
+                t("overview.runDetail", { run: run.id.slice(0, 8) }),
+                " \xB7 ",
+                t("reproduction.seeds"),
+                " ",
                 run.random_seeds.join(", ")
               ] }, run.id))
             ] })
@@ -20212,10 +20390,11 @@
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "comparison-card-heading", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("h3", { children: [
-            "Paper ",
+            t("comparison.paper"),
+            " ",
             comparison.paper_id.slice(0, 8),
-            " \xB7 Run ",
-            comparison.reproduction_run_id.slice(0, 8)
+            " \xB7 ",
+            t("overview.runDetail", { run: comparison.reproduction_run_id.slice(0, 8) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
             t("comparison.inputHash"),
@@ -20231,11 +20410,13 @@
       ] }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "comparison-provenance", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
-          "commit ",
+          t("literature.commit"),
+          " ",
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: String(reproduction.source_commit || t("common.unrecorded")) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
-          "seeds ",
+          t("reproduction.seeds"),
+          " ",
           Array.isArray(reproduction.random_seeds) ? reproduction.random_seeds.join(", ") : t("common.unrecorded")
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: t("comparison.artifactsCount", { count: artifacts.length }) })
@@ -20245,8 +20426,8 @@
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.metric") }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.paper") }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.reproductionMean") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "std" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: "delta" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.std") }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.delta") }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: t("comparison.status") })
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tbody", { children: metrics.map(([name, metric]) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("tr", { children: [
@@ -20290,8 +20471,8 @@
   // src/components/tabs/ResearchStatusTab.tsx
   var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
-  function listLabel(values) {
-    return values.length ? values.join(", ") : "unresolved";
+  function listLabel(values, emptyLabel) {
+    return values.length ? values.join(", ") : emptyLabel;
   }
   function evidenceLabel(status) {
     if (status === "claim_reviewed") return "research.claimReviewed";
@@ -20437,7 +20618,7 @@
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section research-status-scope", children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row compact-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: "Project scope" }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: t("context.currentScope") }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: project.id }) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: status?.permission_status || "project-scoped" })
@@ -20488,7 +20669,7 @@
           ] }) }),
           matrix.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "research-status-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("table", { className: "research-status-table", children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: "Paper" }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.paper") }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.theme") }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.method") }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("th", { children: t("research.year") }),
@@ -20502,11 +20683,11 @@
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: row.paper?.title || row.paper_id }),
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: row.paper?.doi || t("research.doiUnrecorded") })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.theme || "unresolved" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.method || "unresolved" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.year || "unresolved" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: listLabel(row.datasets) }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: listLabel(row.metrics) }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.theme || t("research.unresolved") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.method || t("research.unresolved") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: row.year || t("research.unresolved") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: listLabel(row.datasets, t("research.unresolved")) }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: listLabel(row.metrics, t("research.unresolved")) }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: row.code_availability }) }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("td", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: row.evidence_status }),
@@ -20682,7 +20863,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: experiment.experiment_type }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
               JSON.stringify(experiment.metrics),
-              experiment.run_id ? ` \xB7 Run ${experiment.run_id}` : ""
+              experiment.run_id ? ` \xB7 ${t("overview.runDetail", { run: experiment.run_id })}` : ""
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "button-row", children: [
@@ -21274,7 +21455,7 @@
     if (isAudit) {
       const relevant = auditRows.filter((row) => row.action.startsWith("human_feedback") || row.action.startsWith("proposal."));
       return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "project-scoped", children: "project_scoped" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "project-scoped", children: t("context.projectScoped") }) }),
         loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: t("reports.loadingAudit") }) : relevant.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: relevant.map((row) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: row.action }),
@@ -21305,7 +21486,9 @@
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
               report.id,
-              " \xB7 source snapshot ",
+              " \xB7 ",
+              t("reports.sourceSnapshot"),
+              " ",
               report.source_snapshot ? t("common.recorded") : t("common.missing")
             ] })
           ] }),
@@ -21542,7 +21725,7 @@
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
                 ] }),
                 selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: "Provider" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dt", { children: t("graph.provider") }),
                   /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("dd", { children: selectedGraphNode.source.provider })
                 ] }) : null,
                 selectedGraphNode.source.locator ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
@@ -21563,7 +21746,7 @@
     if (tab === "overview_progress") {
       const rows = [
         ...(project.related_work_runs || []).map((run) => ({ id: `search-${run.id}`, title: t("progress.relatedRun", { id: run.id.slice(0, 8) }), detail: t("progress.candidateCount", { count: run.discovered_count || 0, edges: run.edge_count || 0 }), status: run.status })),
-        ...(project.experiments || []).map((run) => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: `Run ${run.run_id || t("progress.runPending")}`, status: run.status })),
+        ...(project.experiments || []).map((run) => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: t("overview.runDetail", { run: run.run_id || t("progress.runPending") }), status: run.status })),
         ...(project.proposals || []).filter((item) => item.status === "pending").map((item) => ({ id: `proposal-${item.id}`, title: item.summary, detail: item.kind, status: "waiting-approval" }))
       ];
       return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
@@ -21630,7 +21813,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("code.gitBaseline") }),
                 /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
-                  workspace.branch || "detached/unknown",
+                  workspace.branch || t("common.unknown"),
                   " \xB7 ",
                   workspace.head || t("code.noCommit")
                 ] })
@@ -21670,7 +21853,7 @@
         filtered.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "data-list", children: filtered.map((item) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: item.experiment_type }),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: tab === "experiment_queue" ? `Run ${item.run_id || t("queue.runUnassigned")}` : JSON.stringify(item.metrics) })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: tab === "experiment_queue" ? t("overview.runDetail", { run: item.run_id || t("queue.runUnassigned") }) : JSON.stringify(item.metrics) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: item.status })
         ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(EmptyState, { text: tab === "experiment_queue" ? t("queue.empty") : t("metrics.empty") })
@@ -21736,7 +21919,7 @@
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(LockKeyhole, { size: 13, "aria-hidden": "true" }),
-            "project_scoped"
+            t("context.projectScoped")
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldCheck, { size: 13, "aria-hidden": "true" }),
@@ -22421,9 +22604,9 @@
                           value: item.reasoning_effort,
                           onChange: (event) => update(tier.id, "reasoning_effort", event.target.value),
                           children: [
-                            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "low", children: "low" }),
-                            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "medium", children: "medium" }),
-                            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "high", children: "high" })
+                            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "low", children: t("settings.low") }),
+                            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "medium", children: t("settings.medium") }),
+                            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "high", children: t("settings.high") })
                           ]
                         }
                       )
@@ -22594,7 +22777,7 @@
       Modal,
       {
         eyebrow: t("memory.eyebrow"),
-        title: "Supermemory Graph Memory",
+        title: t("memory.title"),
         description: t("memory.description"),
         onClose,
         wide: true,

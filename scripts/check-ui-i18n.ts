@@ -6,6 +6,64 @@ const root = resolve(import.meta.dirname, '..')
 const scanRoot = join(root, 'apps/web/src')
 const violations: string[] = []
 let scannedFiles = 0
+const visibleAttributeNames = new Set(['aria-label', 'placeholder', 'title', 'alt'])
+const obviousEnglishLabels = new Set([
+  'artifact',
+  'commit',
+  'delta',
+  'evidence',
+  'field provenance',
+  'mastra workflows',
+  'material',
+  'medium',
+  'paper',
+  'pdf artifact',
+  'project scope',
+  'project_scoped',
+  'provider',
+  'researchidea / projectspec',
+  'resource',
+  'robots',
+  'run',
+  'seed',
+  'seeds',
+  'std',
+  'unresolved',
+  'unknown',
+  'low',
+  'high',
+])
+
+function hasJsxAncestor(node: ts.Node): boolean {
+  let current: ts.Node | undefined = node.parent
+  while (current) {
+    if (ts.isJsxElement(current) || ts.isJsxFragment(current) || ts.isJsxAttribute(current)) return true
+    current = current.parent
+  }
+  return false
+}
+
+function isVisibleEnglish(text: string, node: ts.Node): boolean {
+  if (!hasJsxAncestor(node)) return false
+  const normalized = text.trim().replace(/\s+/g, ' ')
+  if (!normalized) return false
+
+  const parent = node.parent
+  if (ts.isStringLiteral(node) && ts.isJsxAttribute(parent)) {
+    const attributeName = parent.name.getText()
+    return visibleAttributeNames.has(attributeName)
+      && /[A-Za-z]{3,}/.test(normalized)
+      && !/^https?:\/\//.test(normalized)
+      && !normalized.startsWith('@')
+  }
+
+  if (ts.isJsxText(node)) {
+    const lower = normalized.toLowerCase()
+    if (obviousEnglishLabels.has(lower)) return true
+    return /[A-Za-z]{3,}\s+[A-Za-z]{3,}/.test(normalized) && !/^Research OS$/i.test(normalized)
+  }
+  return false
+}
 
 function visitDirectory(directory: string): void {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -39,7 +97,7 @@ function visitDirectory(directory: string): void {
         text = node.text
       }
 
-      if (text && /[\u4e00-\u9fff]/.test(text)) {
+      if (text && (/[一-鿿]/.test(text) || isVisibleEnglish(text, node))) {
         const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile))
         violations.push(`${relative(root, path)}:${line + 1}: hardcoded UI text "${text.trim()}"`)
       }
@@ -57,4 +115,4 @@ if (violations.length > 0) {
   process.exit(1)
 }
 
-console.log(`UI i18n check passed: scanned ${scannedFiles} files; no hardcoded Chinese in UI source.`)
+console.log(`UI i18n check passed: scanned ${scannedFiles} files; no hardcoded Chinese or obvious English UI labels.`)

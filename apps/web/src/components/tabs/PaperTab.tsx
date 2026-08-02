@@ -65,7 +65,7 @@ export function PaperTab({
       ['paper.sectionLimitations', Boolean(project.spec?.idea?.risks?.length)],
     ] as const
     return <>
-      <SectionHeading title={t('paper.outlineTitle')} hint={t('paper.outlineHint')} extra={<Badge status="project-scoped">project_scoped</Badge>} />
+      <SectionHeading title={t('paper.outlineTitle')} hint={t('paper.outlineHint')} extra={<Badge status="project-scoped">{t('paper.projectScoped')}</Badge>} />
       <div className="data-list">{sections.map(([key, ready]) => <div className="data-row" key={key}><div><h3>{t(key)}</h3><p>{ready ? t('paper.outlineReady') : t('paper.outlineMissing')}</p></div><Badge status={ready ? 'candidate' : 'blocked'}>{ready ? t('paper.candidate') : 'blocked'}</Badge></div>)}</div>
       <div className="section"><SectionHeading title={t('paper.versionRules')} /><p className="muted">{t('paper.versionRulesText')}</p></div>
     </>
@@ -73,11 +73,11 @@ export function PaperTab({
 
   if (tab === 'paper_citations') {
     return <>
-      <SectionHeading title={t('paper.citationsTitle')} hint={t('paper.citationsHint')} extra={<Badge status="project-scoped">project_scoped</Badge>} />
+      <SectionHeading title={t('paper.citationsTitle')} hint={t('paper.citationsHint')} extra={<Badge status="project-scoped">{t('paper.projectScoped')}</Badge>} />
       {project.papers?.length ? <div className="data-list">{project.papers.map(paper => {
         const evidence = paperEvidence(project, paper)
         const status = evidenceStatus(project, paper)
-        return <div className="data-row" key={paper.id}><div><h3>{paper.title}</h3><p>{paper.doi || paper.source_url || t('paper.sourcePending')} · Evidence {evidence.length} · {paper.bibtex ? t('paper.bibtexRecorded') : t('paper.bibtexMissing')}</p><p className="muted">{t('paper.citationReadiness', { status, confirmed: String(Boolean(paper.confirmed)), verified: String(Boolean(paper.verified)) })}</p></div><ButtonRow><Badge status={paper.confirmed ? 'confirmed' : 'metadata-only'} />{paper.source_url ? <a className="secondary" href={paper.source_url} target="_blank" rel="noreferrer" aria-label={`${t('paper.open')} ${paper.title}`}><ExternalLink size={14} /></a> : null}</ButtonRow></div>
+        return <div className="data-row" key={paper.id}><div><h3>{paper.title}</h3><p>{paper.doi || paper.source_url || t('paper.sourcePending')} · {t('paper.evidenceCount', { count: evidence.length })} · {paper.bibtex ? t('paper.bibtexRecorded') : t('paper.bibtexMissing')}</p><p className="muted">{t('paper.citationReadiness', { status, confirmed: String(Boolean(paper.confirmed)), verified: String(Boolean(paper.verified)) })}</p></div><ButtonRow><Badge status={paper.confirmed ? 'confirmed' : 'metadata-only'} />{paper.source_url ? <a className="secondary" href={paper.source_url} target="_blank" rel="noreferrer" aria-label={`${t('paper.open')} ${paper.title}`}><ExternalLink size={14} /></a> : null}</ButtonRow></div>
       })}</div> : <EmptyState text={t('paper.noPapers')} action={<button className="secondary" type="button" onClick={() => onNavigate('literature')}><Link2 size={14} />{t('paper.openLiterature')}</button>} />}
       <div className="section"><SectionHeading title={t('paper.evidenceGate')} /><div className="data-list"><div className="data-row"><div><h3>{t('paper.claimReviewsTitle')}</h3><p>{t('paper.acceptedReviewCount', { count: acceptedReviews })}</p></div><Badge status={acceptedReviews ? 'ready' : 'evidence-required'} /></div><div className="data-row"><div><h3>{t('paper.fulltextLocated')}</h3><p>{t('paper.locatedCount', { located: (project.evidence || []).filter(item => item.locator).length, total: evidenceCount })}</p></div><ShieldCheck size={16} className="muted" /></div></div></div>
     </>

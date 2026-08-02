@@ -125,7 +125,7 @@ export function MemoryGraphModal({
   return (
     <Modal
       eyebrow={t('memory.eyebrow')}
-      title="Supermemory Graph Memory"
+      title={t('memory.title')}
       description={t('memory.description')}
       onClose={onClose}
       wide

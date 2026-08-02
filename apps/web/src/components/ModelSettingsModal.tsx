@@ -186,9 +186,9 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
                         value={item.reasoning_effort}
                         onChange={event => update(tier.id, 'reasoning_effort', event.target.value as ReasoningEffort)}
                       >
-                        <option value="low">low</option>
-                        <option value="medium">medium</option>
-                        <option value="high">high</option>
+                        <option value="low">{t('settings.low')}</option>
+                        <option value="medium">{t('settings.medium')}</option>
+                        <option value="high">{t('settings.high')}</option>
                       </select>
                     </label>
                     <label>

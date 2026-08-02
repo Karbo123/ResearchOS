@@ -5,8 +5,8 @@ import type { ProjectDetail, ResearchStatusGapCandidate, ResearchStatusResponse 
 import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 
-function listLabel(values: string[]) {
-  return values.length ? values.join(', ') : 'unresolved'
+function listLabel(values: string[], emptyLabel: string) {
+  return values.length ? values.join(', ') : emptyLabel
 }
 
 function evidenceLabel(status: string) {
@@ -159,7 +159,7 @@ export function ResearchStatusTab({
       />
       <div className="section research-status-scope">
         <div className="data-row compact-row">
-          <div><strong>Project scope</strong><p><code>{project.id}</code></p></div>
+          <div><strong>{t('context.currentScope')}</strong><p><code>{project.id}</code></p></div>
           <Badge status={status?.permission_status || 'project-scoped'} />
         </div>
         <p className="muted">{t('research.scopeCounts', { eligible: eligibleRows.length, rows: matrix?.rows.length || 0, idea: project.current_idea_version || 1 })}</p>
@@ -183,14 +183,14 @@ export function ResearchStatusTab({
             {matrix.rows.length ? (
               <div className="research-status-table-wrap">
                 <table className="research-status-table">
-                  <thead><tr><th>Paper</th><th>{t('research.theme')}</th><th>{t('research.method')}</th><th>{t('research.year')}</th><th>{t('research.datasets')}</th><th>{t('research.metrics')}</th><th>{t('research.code')}</th><th>{t('research.evidence')}</th></tr></thead>
+                  <thead><tr><th>{t('research.paper')}</th><th>{t('research.theme')}</th><th>{t('research.method')}</th><th>{t('research.year')}</th><th>{t('research.datasets')}</th><th>{t('research.metrics')}</th><th>{t('research.code')}</th><th>{t('research.evidence')}</th></tr></thead>
                   <tbody>{matrix.rows.map(row => <tr key={row.id}>
                     <td><strong>{row.paper?.title || row.paper_id}</strong><small>{row.paper?.doi || t('research.doiUnrecorded')}</small></td>
-                    <td>{row.theme || 'unresolved'}</td>
-                    <td>{row.method || 'unresolved'}</td>
-                    <td>{row.year || 'unresolved'}</td>
-                    <td>{listLabel(row.datasets)}</td>
-                    <td>{listLabel(row.metrics)}</td>
+                    <td>{row.theme || t('research.unresolved')}</td>
+                    <td>{row.method || t('research.unresolved')}</td>
+                    <td>{row.year || t('research.unresolved')}</td>
+                    <td>{listLabel(row.datasets, t('research.unresolved'))}</td>
+                    <td>{listLabel(row.metrics, t('research.unresolved'))}</td>
                     <td><Badge status={row.code_availability} /></td>
                     <td><Badge status={row.evidence_status} /> <small>{t(evidenceLabel(row.evidence_status) as TranslationKey)}</small><details><summary>{t('research.source')}</summary><code>{row.evidence_ids.join(', ')}</code><br /><code>{row.claim_review_ids.join(', ')}</code></details></td>
                   </tr>)}</tbody>

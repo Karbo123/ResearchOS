@@ -194,7 +194,7 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
           />
         </label>
         <div className="timeseries-seeds" aria-label={t('preview.selectSeeds')}>
-          <span className="muted">seed</span>
+          <span className="muted">{t('preview.seed')}</span>
           {allSeeds.map(seed => (
             <button
               key={seed}
@@ -258,7 +258,7 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
                   strokeLinejoin="round"
                 />
               ))}
-              <text x={56 + groupIndex * 86} y={288} fill={color} fontSize="11">seed {seed}</text>
+              <text x={56 + groupIndex * 86} y={288} fill={color} fontSize="11">{t('preview.seed')} {seed}</text>
               {group.map((point, index) => {
                 const x = 48 + ((Number(point.step) - minStep) / stepSpan) * 656
                 const y = 250 - ((Number(point[metric]) - minValue) / span) * 220

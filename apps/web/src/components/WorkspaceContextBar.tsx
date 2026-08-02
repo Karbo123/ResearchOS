@@ -48,7 +48,7 @@ export function WorkspaceContextBar({ project }: { project: ProjectDetail }) {
         </div>
         <div className="workspace-context-meta">
           <span><Clock3 size={13} aria-hidden="true" />{t('context.updatedAt')} {formatDateTime(project.updated_at, locale)}</span>
-          <span><LockKeyhole size={13} aria-hidden="true" />project_scoped</span>
+          <span><LockKeyhole size={13} aria-hidden="true" />{t('context.projectScoped')}</span>
           <span><ShieldCheck size={13} aria-hidden="true" />{t('overview.checkpointVersion', { version: project.current_idea_version || 1 })}</span>
         </div>
       </div>

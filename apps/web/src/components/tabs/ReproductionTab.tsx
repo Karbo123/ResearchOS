@@ -186,12 +186,12 @@ export function ReproductionTab({
                     {reproduction.status === 'ready' ? (
                       <div className="reproduction-form">
                         <label>{t('reproduction.pythonEntry')}<input placeholder={t('reproduction.pythonEntryPlaceholder')} value={formFor(reproduction).entrypoint} onChange={event => updateForm(reproduction.id, 'entrypoint', event.target.value)} /></label>
-                        <label>Seeds<input value={formFor(reproduction).random_seeds} onChange={event => updateForm(reproduction.id, 'random_seeds', event.target.value)} /></label>
+                        <label>{t('reproduction.seeds')}<input value={formFor(reproduction).random_seeds} onChange={event => updateForm(reproduction.id, 'random_seeds', event.target.value)} /></label>
                         <label>{t('reproduction.structuredConfig')}<textarea rows={2} value={formFor(reproduction).config} onChange={event => updateForm(reproduction.id, 'config', event.target.value)} /></label>
                         <button className="secondary" type="button" disabled={busy === `run:${reproduction.id}`} onClick={() => { void requestRun(reproduction) }}><Play size={15} />{t('reproduction.createRunApproval')}</button>
                       </div>
                     ) : null}
-                    {reproductionRuns.length ? <div className="reproduction-runs">{reproductionRuns.map(run => <div className="data-row compact-row" key={run.id}><div><strong>Run {run.id.slice(0, 8)}</strong><p>{run.entrypoint} · seeds {run.random_seeds.join(', ')}{run.error ? ` · ${localizeFailure(run.status, run.error)}` : ''}</p></div><Badge status={run.status}>{t(statusText(run.status) as TranslationKey)}</Badge></div>)}</div> : null}
+                    {reproductionRuns.length ? <div className="reproduction-runs">{reproductionRuns.map(run => <div className="data-row compact-row" key={run.id}><div><strong>{t('overview.runDetail', { run: run.id.slice(0, 8) })}</strong><p>{run.entrypoint} · {t('reproduction.seeds')} {run.random_seeds.join(', ')}{run.error ? ` · ${localizeFailure(run.status, run.error)}` : ''}</p></div><Badge status={run.status}>{t(statusText(run.status) as TranslationKey)}</Badge></div>)}</div> : null}
                   </div>
                 ) : null}
               </article>

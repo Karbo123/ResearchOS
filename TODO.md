@@ -340,6 +340,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `079j` 完成后同步 `README.md`、`README.zh-CN.md`、`AGENTS.md`、架构/UI 文档和 `DOCS_SYNC_VERSION`，说明支持的语言、默认语言、术语表位置和动态内容翻译边界。
   - [x] `079k` 清理残余 UI 硬编码：`api.ts` 超时/离线/请求失败文案、App 初始助手消息、Topbar 元数据、概览状态/版本文案全部改为 i18n key；新增 `scripts/check-ui-i18n.ts`（TypeScript AST 扫描、忽略注释）并纳入 `ui:check`，确保 TS/TSX 不再散落硬编码中文。
   - [x] `079l` 窄屏 Topbar 语言/主题控件压缩，消除 390px 视口文档级横向溢出（语言/主题图标隐藏、select 限宽、标题与 meta 截断）；导航横向滚动保留为可访问的溢出容器。
+  - [x] `079m` 已迁移项目范围、Run、seed、commit、unresolved、材料/资源状态等残余应用术语到四语言字典；`scripts/check-ui-i18n.ts` 已覆盖可见英文硬编码检查。四语言桌面主屏截图复查通过，`Mastra Workflows` 已按语言显示为对应译名；窄屏/全页面截图仍归入 `079h`/`079i`。
 
 ### 4.12 三主题切换（用户新增需求）
 

@@ -215,7 +215,7 @@ export function WorkflowStageTab({
                         <div><dt>{t('graph.source')}</dt><dd>{text(selectedGraphNode.source.source_type, t)} · <code>{selectedGraphNode.source.source_id}</code></dd></div>
                         <div><dt>{t('graph.evidenceStatus')}</dt><dd>{t(graphEvidenceLabel(selectedGraphNode.evidence_status) as TranslationKey)}</dd></div>
                         <div><dt>{t('graph.permission')}</dt><dd>{statusLabel(selectedGraphNode.permission_status, t)}</dd></div>
-                        {selectedGraphNode.source.provider ? <div><dt>Provider</dt><dd>{selectedGraphNode.source.provider}</dd></div> : null}
+                        {selectedGraphNode.source.provider ? <div><dt>{t('graph.provider')}</dt><dd>{selectedGraphNode.source.provider}</dd></div> : null}
                         {selectedGraphNode.source.locator ? <div><dt>{t('graph.locator')}</dt><dd>{selectedGraphNode.source.locator}</dd></div> : null}
                       </dl>
                       {selectedGraphNode.source.url ? <a className="research-graph-source-link" href={selectedGraphNode.source.url} target="_blank" rel="noreferrer">{t('graph.openSource')} <ExternalLink size={13} /></a> : null}
@@ -233,7 +233,7 @@ export function WorkflowStageTab({
   if (tab === 'overview_progress') {
     const rows = [
       ...(project.related_work_runs || []).map(run => ({ id: `search-${run.id}`, title: t('progress.relatedRun', { id: run.id.slice(0, 8) }), detail: t('progress.candidateCount', { count: run.discovered_count || 0, edges: run.edge_count || 0 }), status: run.status })),
-      ...(project.experiments || []).map(run => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: `Run ${run.run_id || t('progress.runPending')}`, status: run.status })),
+      ...(project.experiments || []).map(run => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: t('overview.runDetail', { run: run.run_id || t('progress.runPending') }), status: run.status })),
       ...(project.proposals || []).filter(item => item.status === 'pending').map(item => ({ id: `proposal-${item.id}`, title: item.summary, detail: item.kind, status: 'waiting-approval' })),
     ]
     return (
@@ -268,7 +268,7 @@ export function WorkflowStageTab({
           <>
             <div className="data-list">
               <div className="data-row"><div><h3>{t('code.workspace')}</h3><p><code>{workspace.code_relative_path}</code></p></div><Badge status={workspace.code_directory_exists ? 'project-scoped' : 'missing'} /></div>
-              <div className="data-row"><div><h3>{t('code.gitBaseline')}</h3><p>{workspace.branch || 'detached/unknown'} · {workspace.head || t('code.noCommit')}</p></div><Badge status={workspace.dirty ? 'dirty' : 'clean'} /></div>
+              <div className="data-row"><div><h3>{t('code.gitBaseline')}</h3><p>{workspace.branch || t('common.unknown')} · {workspace.head || t('code.noCommit')}</p></div><Badge status={workspace.dirty ? 'dirty' : 'clean'} /></div>
               <div className="data-row"><div><h3>{t('code.pendingTitle')}</h3><p>{t('code.pendingCount', { count: (project.proposals || []).filter(item => ['code_patch', 'config_change', 'dependency_install', 'repository_download', 'repository_dependency_install', 'repository_reproduction_run', 'repository_artifact_write'].includes(item.kind) && item.status === 'pending').length })}</p></div><Badge status="approval-required" /></div>
             </div>
             {workspace.files?.length ? <div className="section"><SectionHeading title={t('code.fileTree')} hint={t('code.fileTreeHint', { max: workspace.limits?.max_files || 600 })} /><div className="data-list">{workspace.files.map(file => <div className="data-row compact-row" key={file.path}><code>{file.kind === 'directory' ? `${file.path}/` : file.path}</code><span className="muted">{file.size_bytes} B</span></div>)}</div></div> : <EmptyState text={t('code.emptyDir')} />}
@@ -287,7 +287,7 @@ export function WorkflowStageTab({
     return (
       <>
         <SectionHeading title={tab === 'experiment_queue' ? t('queue.title') : t('metrics.title')} hint={t('queue.hint')} extra={<Badge>{t('queue.count', { count: filtered.length })}</Badge>} />
-        {filtered.length ? <div className="data-list">{filtered.map(item => <div className="data-row" key={item.id}><div><h3>{item.experiment_type}</h3><p>{tab === 'experiment_queue' ? `Run ${item.run_id || t('queue.runUnassigned')}` : JSON.stringify(item.metrics)}</p></div><Badge status={item.status} /></div>)}</div> : <EmptyState text={tab === 'experiment_queue' ? t('queue.empty') : t('metrics.empty')} />}
+        {filtered.length ? <div className="data-list">{filtered.map(item => <div className="data-row" key={item.id}><div><h3>{item.experiment_type}</h3><p>{tab === 'experiment_queue' ? t('overview.runDetail', { run: item.run_id || t('queue.runUnassigned') }) : JSON.stringify(item.metrics)}</p></div><Badge status={item.status} /></div>)}</div> : <EmptyState text={tab === 'experiment_queue' ? t('queue.empty') : t('metrics.empty')} />}
       </>
     )
   }

@@ -174,7 +174,7 @@ export function ReportsTab({
     const relevant = auditRows.filter(row => row.action.startsWith('human_feedback') || row.action.startsWith('proposal.'))
     return (
       <>
-        <SectionHeading title={t('reports.auditTitle')} hint={t('reports.auditHint', { projectId: project.id })} extra={<Badge status="project-scoped">project_scoped</Badge>} />
+        <SectionHeading title={t('reports.auditTitle')} hint={t('reports.auditHint', { projectId: project.id })} extra={<Badge status="project-scoped">{t('context.projectScoped')}</Badge>} />
         {loading ? <EmptyState text={t('reports.loadingAudit')} /> : relevant.length ? <div className="data-list">{relevant.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatDateTime(row.created_at, locale)} · {JSON.stringify(row.details || {})}</p></div><Badge status="recorded" /></div>)}</div> : <EmptyState text={t('reports.noAudit')} />}
       </>
     )
@@ -186,7 +186,7 @@ export function ReportsTab({
       <div className={`${content ? 'report' : activeReportStatus && activeReportStatus !== 'valid' ? 'empty report-blocked' : 'empty'}`}>
         {content ? <MarkdownPreview content={content} /> : activeReportStatus && activeReportStatus !== 'valid' ? t('reports.blocked', { reason: activeReportReason || t('reports.lineageUnverifiable') }) : t('reports.noneForPeriod', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}
       </div>
-      {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatDateTime(report.created_at, locale)}</h3><p>{report.id} · source snapshot {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
+      {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatDateTime(report.created_at, locale)}</h3><p>{report.id} · {t('reports.sourceSnapshot')} {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
     </>
   )
 }

@@ -43,24 +43,24 @@ export function SpecPane({
   return (
     <div className="spec-pane-content">
       <div className="pane-heading">
-        <h2>ResearchIdea / ProjectSpec</h2>
+        <h2>{t('spec.title')}</h2>
         <span className={`badge ${status === 'pending_confirmation' ? 'pending' : 'neutral'}`}>{statusLabel}</span>
       </div>
       {spec && idea ? (
         <>
-          <FieldText label="Title" value={idea.title} />
-          <FieldText label="Research question" value={idea.research_question} />
-          <FieldText label="Domain" value={idea.domain} />
-          <FieldList label="Hypotheses" values={idea.hypotheses} />
-          <FieldList label="Contributions" values={idea.expected_contributions} />
-          <FieldList label="Success criteria" values={idea.success_criteria} />
-          <FieldList label="Target venues" values={idea.target_venues} />
-          <FieldList label="Risks" values={idea.risks} />
-          <FieldList label="Open questions" values={idea.open_questions} />
-          <FieldText label="Feasibility" value={spec.feasibility} />
-          <FieldList label="Feasibility notes" values={spec.feasibility_notes} />
-          <FieldList label="Candidate modifications" values={spec.candidate_modifications} />
-          <FieldList label="Approvals" values={spec.required_approvals} />
+          <FieldText label={t('spec.titleField')} value={idea.title} />
+          <FieldText label={t('spec.researchQuestion')} value={idea.research_question} />
+          <FieldText label={t('spec.domain')} value={idea.domain} />
+          <FieldList label={t('spec.hypotheses')} values={idea.hypotheses} />
+          <FieldList label={t('spec.contributions')} values={idea.expected_contributions} />
+          <FieldList label={t('spec.successCriteria')} values={idea.success_criteria} />
+          <FieldList label={t('spec.targetVenues')} values={idea.target_venues} />
+          <FieldList label={t('spec.risks')} values={idea.risks} />
+          <FieldList label={t('spec.openQuestions')} values={idea.open_questions} />
+          <FieldText label={t('spec.feasibility')} value={spec.feasibility} />
+          <FieldList label={t('spec.feasibilityNotes')} values={spec.feasibility_notes} />
+          <FieldList label={t('spec.candidateModifications')} values={spec.candidate_modifications} />
+          <FieldList label={t('spec.approvals')} values={spec.required_approvals} />
           <button className="primary full" type="button" onClick={onConfirm}>
             <Check size={17} />
             {t('spec.confirmCreate')}
