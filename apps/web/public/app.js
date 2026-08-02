@@ -18020,7 +18020,9 @@
             className: `project-row project-actions-${reveal}`,
             onMouseEnter: () => startProjectHover(project.id),
             onMouseLeave: () => stopProjectHover(project.id),
-            onFocus: () => revealProjectActions(project.id),
+            onFocus: (event) => {
+              if (event.target.matches(":focus-visible")) revealProjectActions(project.id);
+            },
             onBlur: (event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) stopProjectHover(project.id);
             },

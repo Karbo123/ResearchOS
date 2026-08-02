@@ -156,8 +156,7 @@ button { -webkit-font-smoothing: inherit; }
   animation: project-actions-reveal 3s var(--ease) both;
   will-change: opacity, transform;
 }
-.project-row.project-actions-full .project-actions,
-.project-row:focus-within .project-actions { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); }
+.project-row.project-actions-full .project-actions { opacity: 1; pointer-events: auto; transform: translate(0, -50%) scale(1); }
 .project-action { display: inline-flex !important; align-items: center; justify-content: center; width: 28px; min-width: 28px; height: 28px; min-height: 28px !important; padding: 5px !important; border: 1px solid transparent !important; border-radius: 9px !important; background: transparent !important; transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring); }
 .project-pin { color: var(--blue); }
 .project-pin:hover, .project-pin.pinned { background: var(--blue-soft) !important; border-color: rgba(0, 122, 255, .18) !important; box-shadow: 0 4px 10px rgba(0, 122, 255, .12); }
