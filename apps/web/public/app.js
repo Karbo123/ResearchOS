@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react23 = __toESM(require_react(), 1);
+  var import_react26 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -12824,6 +12824,19 @@
     "sidebar.mastraWorkflows": "Mastra \u5DE5\u4F5C\u6D41",
     "sidebar.memoryGraph": "\u9879\u76EE\u8BB0\u5FC6\u56FE",
     "sidebar.modelSettings": "\u6A21\u578B\u914D\u7F6E",
+    "sidebar.resize": "\u8C03\u6574\u4FA7\u680F\u5BBD\u5EA6",
+    "sidebar.deleteProjectAction": "\u5220\u9664\u9879\u76EE\uFF1A{title}",
+    "deleteProject.eyebrow": "\u9879\u76EE\u7BA1\u7406",
+    "deleteProject.title": "\u5220\u9664\u8FD9\u4E2A\u9879\u76EE\uFF1F",
+    "deleteProject.description": "\u5220\u9664\u4F1A\u79FB\u9664\u9879\u76EE\u76EE\u5F55\u3001\u6587\u4EF6\u3001\u4EA7\u7269\u3001\u8BB0\u5F55\u548C\u9879\u76EE\u7EA7\u8BED\u4E49\u8BB0\u5FC6\u3002\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002",
+    "deleteProject.projectLabel": "\u5C06\u8981\u5220\u9664\u7684\u9879\u76EE",
+    "deleteProject.nameLabel": "\u8F93\u5165\u5B8C\u6574\u9879\u76EE\u540D\u79F0",
+    "deleteProject.namePlaceholder": "\u8F93\u5165\u9879\u76EE\u540D\u79F0",
+    "deleteProject.confirmationLabel": "\u8F93\u5165\u786E\u8BA4\u8BCD",
+    "deleteProject.confirmationPlaceholder": "\u8F93\u5165 DELETE",
+    "deleteProject.warning": "\u53EA\u6709\u9879\u76EE\u540D\u79F0\u5B8C\u5168\u5339\u914D\uFF0C\u5E76\u8F93\u5165 DELETE \u540E\u624D\u80FD\u7EE7\u7EED\u3002",
+    "deleteProject.confirm": "\u6C38\u4E45\u5220\u9664\u9879\u76EE",
+    "deleteProject.deleting": "\u6B63\u5728\u5220\u9664\u2026",
     "theme.light": "\u6D45\u8272",
     "theme.dark": "\u6697\u8272",
     "projectChat": "\u9879\u76EE\u5BF9\u8BDD",
@@ -12868,6 +12881,7 @@
     "app.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
     "app.researchProject": "\u7814\u7A76\u9879\u76EE",
     "app.projectCreated": "\u9879\u76EE\u5DF2\u521B\u5EFA",
+    "app.projectDeleted": "\u9879\u76EE\u5DF2\u5220\u9664",
     "app.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\u3002",
     "app.ideaMeta": "Idea \u6F84\u6E05",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -13817,6 +13831,19 @@
     "sidebar.mastraWorkflows": "Mastra \u5DE5\u4F5C\u6D41\u7A0B",
     "sidebar.memoryGraph": "\u5C08\u6848\u8A18\u61B6\u5716",
     "sidebar.modelSettings": "\u6A21\u578B\u8A2D\u5B9A",
+    "sidebar.resize": "\u8ABF\u6574\u5074\u6B04\u5BEC\u5EA6",
+    "sidebar.deleteProjectAction": "\u522A\u9664\u5C08\u6848\uFF1A{title}",
+    "deleteProject.eyebrow": "\u5C08\u6848\u7BA1\u7406",
+    "deleteProject.title": "\u8981\u522A\u9664\u9019\u500B\u5C08\u6848\u55CE\uFF1F",
+    "deleteProject.description": "\u522A\u9664\u6703\u79FB\u9664\u5C08\u6848\u8CC7\u6599\u593E\u3001\u6A94\u6848\u3001\u7522\u7269\u3001\u8A18\u9304\u8207\u5C08\u6848\u7D1A\u8A9E\u610F\u8A18\u61B6\u3002\u6B64\u64CD\u4F5C\u7121\u6CD5\u5FA9\u539F\u3002",
+    "deleteProject.projectLabel": "\u5373\u5C07\u522A\u9664\u7684\u5C08\u6848",
+    "deleteProject.nameLabel": "\u8F38\u5165\u5B8C\u6574\u5C08\u6848\u540D\u7A31",
+    "deleteProject.namePlaceholder": "\u8F38\u5165\u5C08\u6848\u540D\u7A31",
+    "deleteProject.confirmationLabel": "\u8F38\u5165\u78BA\u8A8D\u8A5E",
+    "deleteProject.confirmationPlaceholder": "\u8F38\u5165 DELETE",
+    "deleteProject.warning": "\u53EA\u6709\u5C08\u6848\u540D\u7A31\u5B8C\u5168\u76F8\u7B26\uFF0C\u4E26\u8F38\u5165 DELETE \u5F8C\u624D\u80FD\u7E7C\u7E8C\u3002",
+    "deleteProject.confirm": "\u6C38\u4E45\u522A\u9664\u5C08\u6848",
+    "deleteProject.deleting": "\u6B63\u5728\u522A\u9664\u2026",
     "theme.light": "\u6DFA\u8272",
     "theme.dark": "\u6697\u8272",
     "projectChat": "\u5C08\u6848\u5C0D\u8A71",
@@ -13972,6 +13999,7 @@
     "app.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
     "app.researchProject": "\u7814\u7A76\u5C08\u6848",
     "app.projectCreated": "\u5C08\u6848\u5DF2\u5EFA\u7ACB",
+    "app.projectDeleted": "\u5C08\u6848\u5DF2\u522A\u9664",
     "app.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\u3002",
     "app.ideaMeta": "Idea \u6F84\u6E05",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -14810,6 +14838,19 @@
     "sidebar.mastraWorkflows": "Mastra Workflows",
     "sidebar.memoryGraph": "Project Memory Graph",
     "sidebar.modelSettings": "Model Settings",
+    "sidebar.resize": "Resize sidebar",
+    "sidebar.deleteProjectAction": "Delete project: {title}",
+    "deleteProject.eyebrow": "Project management",
+    "deleteProject.title": "Delete this project?",
+    "deleteProject.description": "This removes the project folder, files, artifacts, records, and project-scoped semantic memory. This cannot be undone.",
+    "deleteProject.projectLabel": "Project to delete",
+    "deleteProject.nameLabel": "Enter the full project name",
+    "deleteProject.namePlaceholder": "Enter project name",
+    "deleteProject.confirmationLabel": "Enter the confirmation phrase",
+    "deleteProject.confirmationPlaceholder": "Enter DELETE",
+    "deleteProject.warning": "The project name must match exactly and DELETE must be entered before continuing.",
+    "deleteProject.confirm": "Delete project permanently",
+    "deleteProject.deleting": "Deleting\u2026",
     "theme.light": "Light",
     "theme.dark": "Dark",
     "projectChat": "Project chat",
@@ -14965,6 +15006,7 @@
     "app.newProject": "New Research Project",
     "app.researchProject": "Research Project",
     "app.projectCreated": "Project created",
+    "app.projectDeleted": "Project deleted",
     "app.openProjectFirst": "Open a research project first.",
     "app.ideaMeta": "Idea clarification",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -15803,6 +15845,19 @@
     "sidebar.mastraWorkflows": "Flujos de trabajo de Mastra",
     "sidebar.memoryGraph": "Grafo de memoria del proyecto",
     "sidebar.modelSettings": "Configuraci\xF3n de modelos",
+    "sidebar.resize": "Cambiar el ancho de la barra lateral",
+    "sidebar.deleteProjectAction": "Eliminar proyecto: {title}",
+    "deleteProject.eyebrow": "Gesti\xF3n del proyecto",
+    "deleteProject.title": "\xBFEliminar este proyecto?",
+    "deleteProject.description": "Esto elimina la carpeta, los archivos, los artefactos, los registros y la memoria sem\xE1ntica del proyecto. No se puede deshacer.",
+    "deleteProject.projectLabel": "Proyecto que se eliminar\xE1",
+    "deleteProject.nameLabel": "Escribe el nombre completo del proyecto",
+    "deleteProject.namePlaceholder": "Escribe el nombre del proyecto",
+    "deleteProject.confirmationLabel": "Escribe la palabra de confirmaci\xF3n",
+    "deleteProject.confirmationPlaceholder": "Escribe DELETE",
+    "deleteProject.warning": "El nombre debe coincidir exactamente y debes escribir DELETE para continuar.",
+    "deleteProject.confirm": "Eliminar proyecto permanentemente",
+    "deleteProject.deleting": "Eliminando\u2026",
     "theme.light": "Claro",
     "theme.dark": "Oscuro",
     "projectChat": "Chat del proyecto",
@@ -15958,6 +16013,7 @@
     "app.newProject": "Nuevo proyecto de investigaci\xF3n",
     "app.researchProject": "Proyecto de investigaci\xF3n",
     "app.projectCreated": "Proyecto creado",
+    "app.projectDeleted": "Proyecto eliminado",
     "app.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n.",
     "app.ideaMeta": "Clarificaci\xF3n de la idea",
     "app.projectMeta": "{stage} \xB7 v{version} \xB7 {id}",
@@ -16914,6 +16970,9 @@
     return code ? localize("errors.apiFailure").replaceAll("{code}", code) : fallback;
   }
 
+  // src/components/Sidebar.tsx
+  var import_react5 = __toESM(require_react(), 1);
+
   // ../../node_modules/lucide-react/dist/esm/createLucideIcon.mjs
   var import_react4 = __toESM(require_react(), 1);
 
@@ -17120,16 +17179,24 @@
   ];
   var Download = createLucideIcon("download", __iconNode12);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/external-link.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/ellipsis.mjs
   var __iconNode13 = [
+    ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
+    ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
+    ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+  ];
+  var Ellipsis = createLucideIcon("ellipsis", __iconNode13);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/external-link.mjs
+  var __iconNode14 = [
     ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
     ["path", { d: "M10 14 21 3", key: "gplh6r" }],
     ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
   ];
-  var ExternalLink = createLucideIcon("external-link", __iconNode13);
+  var ExternalLink = createLucideIcon("external-link", __iconNode14);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-check-corner.mjs
-  var __iconNode14 = [
+  var __iconNode15 = [
     [
       "path",
       {
@@ -17140,10 +17207,10 @@
     ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
     ["path", { d: "m14 20 2 2 4-4", key: "15kota" }]
   ];
-  var FileCheckCorner = createLucideIcon("file-check-corner", __iconNode14);
+  var FileCheckCorner = createLucideIcon("file-check-corner", __iconNode15);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-check.mjs
-  var __iconNode15 = [
+  var __iconNode16 = [
     [
       "path",
       {
@@ -17154,10 +17221,10 @@
     ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
     ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
   ];
-  var FileCheck = createLucideIcon("file-check", __iconNode15);
+  var FileCheck = createLucideIcon("file-check", __iconNode16);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-pen-line.mjs
-  var __iconNode16 = [
+  var __iconNode17 = [
     [
       "path",
       {
@@ -17175,10 +17242,10 @@
     ],
     ["path", { d: "M8 18h1", key: "13wk12" }]
   ];
-  var FilePenLine = createLucideIcon("file-pen-line", __iconNode16);
+  var FilePenLine = createLucideIcon("file-pen-line", __iconNode17);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-question-mark.mjs
-  var __iconNode17 = [
+  var __iconNode18 = [
     [
       "path",
       {
@@ -17189,10 +17256,10 @@
     ["path", { d: "M12 17h.01", key: "p32p05" }],
     ["path", { d: "M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3", key: "mhlwft" }]
   ];
-  var FileQuestionMark = createLucideIcon("file-question-mark", __iconNode17);
+  var FileQuestionMark = createLucideIcon("file-question-mark", __iconNode18);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-text.mjs
-  var __iconNode18 = [
+  var __iconNode19 = [
     [
       "path",
       {
@@ -17205,10 +17272,10 @@
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode18);
+  var FileText = createLucideIcon("file-text", __iconNode19);
 
   // ../../node_modules/lucide-react/dist/esm/icons/fingerprint-pattern.mjs
-  var __iconNode19 = [
+  var __iconNode20 = [
     ["path", { d: "M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4", key: "1nerag" }],
     ["path", { d: "M14 13.12c0 2.38 0 6.38-1 8.88", key: "o46ks0" }],
     ["path", { d: "M17.29 21.02c.12-.6.43-2.3.5-3.02", key: "ptglia" }],
@@ -17219,10 +17286,10 @@
     ["path", { d: "M8.65 22c.21-.66.45-1.32.57-2", key: "13wd9y" }],
     ["path", { d: "M9 6.8a6 6 0 0 1 9 5.2v2", key: "1fr1j5" }]
   ];
-  var FingerprintPattern = createLucideIcon("fingerprint-pattern", __iconNode19);
+  var FingerprintPattern = createLucideIcon("fingerprint-pattern", __iconNode20);
 
   // ../../node_modules/lucide-react/dist/esm/icons/flask-conical.mjs
-  var __iconNode20 = [
+  var __iconNode21 = [
     [
       "path",
       {
@@ -17233,10 +17300,10 @@
     ["path", { d: "M6.453 15h11.094", key: "3shlmq" }],
     ["path", { d: "M8.5 2h7", key: "csnxdl" }]
   ];
-  var FlaskConical = createLucideIcon("flask-conical", __iconNode20);
+  var FlaskConical = createLucideIcon("flask-conical", __iconNode21);
 
   // ../../node_modules/lucide-react/dist/esm/icons/funnel.mjs
-  var __iconNode21 = [
+  var __iconNode22 = [
     [
       "path",
       {
@@ -17245,47 +17312,47 @@
       }
     ]
   ];
-  var Funnel = createLucideIcon("funnel", __iconNode21);
+  var Funnel = createLucideIcon("funnel", __iconNode22);
 
   // ../../node_modules/lucide-react/dist/esm/icons/gavel.mjs
-  var __iconNode22 = [
+  var __iconNode23 = [
     ["path", { d: "m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381", key: "pgg06f" }],
     ["path", { d: "m16 16 6-6", key: "vzrcl6" }],
     ["path", { d: "m21.5 10.5-8-8", key: "a17d9x" }],
     ["path", { d: "m8 8 6-6", key: "18bi4p" }],
     ["path", { d: "m8.5 7.5 8 8", key: "1oyaui" }]
   ];
-  var Gavel = createLucideIcon("gavel", __iconNode22);
+  var Gavel = createLucideIcon("gavel", __iconNode23);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-branch.mjs
-  var __iconNode23 = [
+  var __iconNode24 = [
     ["path", { d: "M15 6a9 9 0 0 0-9 9V3", key: "1cii5b" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }]
   ];
-  var GitBranch = createLucideIcon("git-branch", __iconNode23);
+  var GitBranch = createLucideIcon("git-branch", __iconNode24);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-compare.mjs
-  var __iconNode24 = [
+  var __iconNode25 = [
     ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
     ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
     ["path", { d: "M13 6h3a2 2 0 0 1 2 2v7", key: "1yeb86" }],
     ["path", { d: "M11 18H8a2 2 0 0 1-2-2V9", key: "19pyzm" }]
   ];
-  var GitCompare = createLucideIcon("git-compare", __iconNode24);
+  var GitCompare = createLucideIcon("git-compare", __iconNode25);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-fork.mjs
-  var __iconNode25 = [
+  var __iconNode26 = [
     ["circle", { cx: "12", cy: "18", r: "3", key: "1mpf1b" }],
     ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["path", { d: "M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9", key: "1uq4wg" }],
     ["path", { d: "M12 12v3", key: "158kv8" }]
   ];
-  var GitFork = createLucideIcon("git-fork", __iconNode25);
+  var GitFork = createLucideIcon("git-fork", __iconNode26);
 
   // ../../node_modules/lucide-react/dist/esm/icons/house.mjs
-  var __iconNode26 = [
+  var __iconNode27 = [
     ["path", { d: "M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8", key: "5wwlr5" }],
     [
       "path",
@@ -17295,18 +17362,18 @@
       }
     ]
   ];
-  var House = createLucideIcon("house", __iconNode26);
+  var House = createLucideIcon("house", __iconNode27);
 
   // ../../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode27 = [
+  var __iconNode28 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image = createLucideIcon("image", __iconNode27);
+  var Image = createLucideIcon("image", __iconNode28);
 
   // ../../node_modules/lucide-react/dist/esm/icons/inbox.mjs
-  var __iconNode28 = [
+  var __iconNode29 = [
     ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
     [
       "path",
@@ -17316,10 +17383,10 @@
       }
     ]
   ];
-  var Inbox = createLucideIcon("inbox", __iconNode28);
+  var Inbox = createLucideIcon("inbox", __iconNode29);
 
   // ../../node_modules/lucide-react/dist/esm/icons/languages.mjs
-  var __iconNode29 = [
+  var __iconNode30 = [
     ["path", { d: "m5 8 6 6", key: "1wu5hv" }],
     ["path", { d: "m4 14 6-6 2-3", key: "1k1g8d" }],
     ["path", { d: "M2 5h12", key: "or177f" }],
@@ -17327,28 +17394,28 @@
     ["path", { d: "m22 22-5-10-5 10", key: "don7ne" }],
     ["path", { d: "M14 18h6", key: "1m8k6r" }]
   ];
-  var Languages = createLucideIcon("languages", __iconNode29);
+  var Languages = createLucideIcon("languages", __iconNode30);
 
   // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
-  var __iconNode30 = [
+  var __iconNode31 = [
     ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
     ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
     ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
     ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
   ];
-  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode30);
+  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode31);
 
   // ../../node_modules/lucide-react/dist/esm/icons/library.mjs
-  var __iconNode31 = [
+  var __iconNode32 = [
     ["path", { d: "m16 6 4 14", key: "ji33uf" }],
     ["path", { d: "M12 6v14", key: "1n7gus" }],
     ["path", { d: "M8 8v12", key: "1gg7y9" }],
     ["path", { d: "M4 4v16", key: "6qkkli" }]
   ];
-  var Library = createLucideIcon("library", __iconNode31);
+  var Library = createLucideIcon("library", __iconNode32);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lightbulb.mjs
-  var __iconNode32 = [
+  var __iconNode33 = [
     [
       "path",
       {
@@ -17359,46 +17426,46 @@
     ["path", { d: "M9 18h6", key: "x1upvd" }],
     ["path", { d: "M10 22h4", key: "ceow96" }]
   ];
-  var Lightbulb = createLucideIcon("lightbulb", __iconNode32);
+  var Lightbulb = createLucideIcon("lightbulb", __iconNode33);
 
   // ../../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode33 = [
+  var __iconNode34 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode33);
+  var Link2 = createLucideIcon("link-2", __iconNode34);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode34 = [
+  var __iconNode35 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode34);
+  var ListChecks = createLucideIcon("list-checks", __iconNode35);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-tree.mjs
-  var __iconNode35 = [
+  var __iconNode36 = [
     ["path", { d: "M8 5h13", key: "1pao27" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "M3 10a2 2 0 0 0 2 2h3", key: "1npucw" }],
     ["path", { d: "M3 5v12a2 2 0 0 0 2 2h3", key: "x1gjn2" }]
   ];
-  var ListTree = createLucideIcon("list-tree", __iconNode35);
+  var ListTree = createLucideIcon("list-tree", __iconNode36);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode36 = [
+  var __iconNode37 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode36);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode37);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode37 = [
+  var __iconNode38 = [
     [
       "path",
       {
@@ -17407,10 +17474,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode37);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode38 = [
+  var __iconNode39 = [
     [
       "path",
       {
@@ -17419,20 +17486,20 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode38);
+  var MessageSquare = createLucideIcon("message-square", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode39 = [
+  var __iconNode40 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode39);
+  var Network = createLucideIcon("network", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode40 = [
+  var __iconNode41 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -17445,10 +17512,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode40);
+  var PackageCheck = createLucideIcon("package-check", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode41 = [
+  var __iconNode42 = [
     [
       "path",
       {
@@ -17461,10 +17528,10 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode41);
+  var Palette = createLucideIcon("palette", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode42 = [
+  var __iconNode43 = [
     [
       "path",
       {
@@ -17473,17 +17540,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode42);
+  var Paperclip = createLucideIcon("paperclip", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode43 = [
+  var __iconNode44 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode43);
+  var Pause = createLucideIcon("pause", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode44 = [
+  var __iconNode45 = [
     [
       "path",
       {
@@ -17492,17 +17559,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode44);
+  var Play = createLucideIcon("play", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode45 = [
+  var __iconNode46 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode45);
+  var Plus = createLucideIcon("plus", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode46 = [
+  var __iconNode47 = [
     [
       "path",
       {
@@ -17518,34 +17585,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode46);
+  var Quote = createLucideIcon("quote", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode47 = [
+  var __iconNode48 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode47);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode48 = [
+  var __iconNode49 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode48);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode49 = [
+  var __iconNode50 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode49);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode50 = [
+  var __iconNode51 = [
     [
       "path",
       {
@@ -17556,10 +17623,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode50);
+  var Save = createLucideIcon("save", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode51 = [
+  var __iconNode52 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -17568,17 +17635,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode51);
+  var ScanText = createLucideIcon("scan-text", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode52 = [
+  var __iconNode53 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode52);
+  var Search = createLucideIcon("search", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode53 = [
+  var __iconNode54 = [
     [
       "path",
       {
@@ -17588,10 +17655,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode53);
+  var Send = createLucideIcon("send", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode54 = [
+  var __iconNode55 = [
     [
       "path",
       {
@@ -17601,20 +17668,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode54);
+  var Settings = createLucideIcon("settings", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode55 = [
+  var __iconNode56 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode55);
+  var Share2 = createLucideIcon("share-2", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode56 = [
+  var __iconNode57 = [
     [
       "path",
       {
@@ -17625,10 +17692,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode56);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode57 = [
+  var __iconNode58 = [
     [
       "path",
       {
@@ -17638,10 +17705,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode57);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode58 = [
+  var __iconNode59 = [
     [
       "path",
       {
@@ -17653,26 +17720,26 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode58);
+  var Sparkles = createLucideIcon("sparkles", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode59 = [
+  var __iconNode60 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode59);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode60 = [
+  var __iconNode61 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode60);
+  var Square = createLucideIcon("square", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode61 = [
+  var __iconNode62 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -17683,10 +17750,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode61);
+  var Stamp = createLucideIcon("stamp", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode62 = [
+  var __iconNode63 = [
     [
       "path",
       {
@@ -17695,17 +17762,17 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode62);
+  var Table2 = createLucideIcon("table-2", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode63 = [
+  var __iconNode64 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode63);
+  var Terminal = createLucideIcon("terminal", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode64 = [
+  var __iconNode65 = [
     [
       "path",
       {
@@ -17716,10 +17783,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode64);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode65 = [
+  var __iconNode66 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -17728,22 +17795,22 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode65);
+  var Waypoints = createLucideIcon("waypoints", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode66 = [
+  var __iconNode67 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode66);
+  var Workflow = createLucideIcon("workflow", __iconNode67);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode67 = [
+  var __iconNode68 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode67);
+  var X = createLucideIcon("x", __iconNode68);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -17753,10 +17820,80 @@
     onNewProject,
     onOpenProject,
     onOpenMemory,
-    onOpenSettings
+    onOpenSettings,
+    onDeleteProject,
+    sidebarWidth,
+    onSidebarWidthChange
   }) {
     const { t } = useTranslation();
+    const [visibleActions, setVisibleActions] = (0, import_react5.useState)(/* @__PURE__ */ new Set());
+    const timers = (0, import_react5.useRef)(/* @__PURE__ */ new Map());
+    const [resizing, setResizing] = (0, import_react5.useState)(false);
+    const startProjectHover = (projectId) => {
+      const currentTimer = timers.current.get(projectId);
+      if (currentTimer !== void 0) window.clearTimeout(currentTimer);
+      const timer = window.setTimeout(() => {
+        setVisibleActions((current) => new Set(current).add(projectId));
+        timers.current.delete(projectId);
+      }, 3e3);
+      timers.current.set(projectId, timer);
+    };
+    const stopProjectHover = (projectId) => {
+      const timer = timers.current.get(projectId);
+      if (timer !== void 0) window.clearTimeout(timer);
+      timers.current.delete(projectId);
+      setVisibleActions((current) => {
+        if (!current.has(projectId)) return current;
+        const next = new Set(current);
+        next.delete(projectId);
+        return next;
+      });
+    };
+    const startResize = (event) => {
+      if (window.matchMedia("(max-width: 760px)").matches) return;
+      event.preventDefault();
+      const startX = event.clientX;
+      const startWidth = sidebarWidth;
+      setResizing(true);
+      const move = (moveEvent) => onSidebarWidthChange(startWidth + moveEvent.clientX - startX);
+      const stop = () => {
+        setResizing(false);
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", stop);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", stop, { once: true });
+    };
+    const resizeByKeyboard = (event) => {
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        onSidebarWidthChange(sidebarWidth + (event.key === "ArrowRight" ? 10 : -10));
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        onSidebarWidthChange(220);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        onSidebarWidthChange(380);
+      }
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", { className: "sidebar", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        "div",
+        {
+          className: `sidebar-resizer${resizing ? " is-resizing" : ""}`,
+          role: "separator",
+          tabIndex: 0,
+          "aria-label": t("sidebar.resize"),
+          "aria-orientation": "vertical",
+          "aria-valuemin": 220,
+          "aria-valuemax": 380,
+          "aria-valuenow": sidebarWidth,
+          onPointerDown: startResize,
+          onKeyDown: resizeByKeyboard
+        }
+      ),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "brand", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { className: "brand-mark", src: "/favicon.svg", alt: "", "aria-hidden": "true" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Research OS" })
@@ -17766,18 +17903,50 @@
         t("sidebar.newProject")
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: t("sidebar.projects") }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: projects.length ? projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-        "button",
-        {
-          type: "button",
-          className: project.id === activeProjectId ? "active" : "",
-          "aria-current": project.id === activeProjectId ? "page" : void 0,
-          title: project.title,
-          onClick: () => onOpenProject(project.id),
-          children: project.title
-        },
-        project.id
-      )) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted", style: { padding: "4px 10px" }, children: t("sidebar.noProjects") }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: projects.length ? projects.map((project) => {
+        const actionsVisible = visibleActions.has(project.id);
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "div",
+          {
+            className: "project-row",
+            onMouseEnter: () => startProjectHover(project.id),
+            onMouseLeave: () => stopProjectHover(project.id),
+            onFocus: () => setVisibleActions((current) => new Set(current).add(project.id)),
+            onBlur: (event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) stopProjectHover(project.id);
+            },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "button",
+                {
+                  type: "button",
+                  className: `project-main-button${project.id === activeProjectId ? " active" : ""}`,
+                  "aria-current": project.id === activeProjectId ? "page" : void 0,
+                  title: project.title,
+                  onClick: () => onOpenProject(project.id),
+                  children: project.title
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "button",
+                {
+                  type: "button",
+                  className: `project-more${actionsVisible ? " visible" : ""}`,
+                  "aria-label": t("sidebar.deleteProjectAction", { title: project.title }),
+                  title: t("sidebar.deleteProjectAction", { title: project.title }),
+                  tabIndex: actionsVisible ? 0 : -1,
+                  onClick: (event) => {
+                    event.stopPropagation();
+                    onDeleteProject(project);
+                  },
+                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ellipsis, { size: 17 })
+                }
+              )
+            ]
+          },
+          project.id
+        );
+      }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted", style: { padding: "4px 10px" }, children: t("sidebar.noProjects") }) }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "service-links", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", { href: "/api/mastra/open", target: "_blank", rel: "noreferrer", title: t("sidebar.mastraWorkflows"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Workflow, { size: 17 }),
@@ -17796,10 +17965,10 @@
   }
 
   // src/components/Topbar.tsx
-  var import_react6 = __toESM(require_react(), 1);
+  var import_react7 = __toESM(require_react(), 1);
 
   // src/theme.ts
-  var import_react5 = __toESM(require_react(), 1);
+  var import_react6 = __toESM(require_react(), 1);
   var THEME_OPTIONS = ["light", "dark"];
   var STORAGE_KEY2 = "researchos.theme";
   function initialTheme() {
@@ -17826,7 +17995,7 @@
     listeners2.forEach((listener) => listener());
   }
   function useTheme() {
-    return (0, import_react5.useSyncExternalStore)(subscribe2, getTheme, getTheme);
+    return (0, import_react6.useSyncExternalStore)(subscribe2, getTheme, getTheme);
   }
 
   // src/components/Topbar.tsx
@@ -17838,21 +18007,21 @@
     options,
     onChange
   }) {
-    const [open, setOpen] = (0, import_react6.useState)(false);
-    const [highlightedIndex, setHighlightedIndex] = (0, import_react6.useState)(Math.max(0, options.findIndex((option) => option.value === value)));
-    const rootRef = (0, import_react6.useRef)(null);
-    const triggerRef = (0, import_react6.useRef)(null);
-    const itemRefs = (0, import_react6.useRef)([]);
-    const menuId = (0, import_react6.useId)();
+    const [open, setOpen] = (0, import_react7.useState)(false);
+    const [highlightedIndex, setHighlightedIndex] = (0, import_react7.useState)(Math.max(0, options.findIndex((option) => option.value === value)));
+    const rootRef = (0, import_react7.useRef)(null);
+    const triggerRef = (0, import_react7.useRef)(null);
+    const itemRefs = (0, import_react7.useRef)([]);
+    const menuId = (0, import_react7.useId)();
     const currentIndex = Math.max(0, options.findIndex((option) => option.value === value));
     const currentOption = options[currentIndex] || options[0];
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       if (!open) return;
       setHighlightedIndex(currentIndex);
       const frame = window.requestAnimationFrame(() => itemRefs.current[currentIndex]?.focus());
       return () => window.cancelAnimationFrame(frame);
     }, [currentIndex, open]);
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       if (!open) return;
       const handlePointerDown = (event) => {
         if (!rootRef.current?.contains(event.target)) {
@@ -17999,7 +18168,7 @@
   }
 
   // src/components/IdeaView.tsx
-  var import_react7 = __toESM(require_react(), 1);
+  var import_react8 = __toESM(require_react(), 1);
 
   // src/components/SpecPane.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
@@ -18133,11 +18302,11 @@
   }
   function AiProgress({ project = false }) {
     const { t } = useTranslation();
-    const [elapsed, setElapsed] = (0, import_react7.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react8.useState)(0);
     const stageKeys = project ? ["idea.stage.identifyIntent", "idea.stage.checkBoundaries", "idea.stage.organizeReply", "idea.stage.stillWorking"] : IDEA_PROGRESS_STAGE_KEYS;
     const stages = stageKeys.map((key) => t(key));
-    const [stageIndex, setStageIndex] = (0, import_react7.useState)(0);
-    (0, import_react7.useEffect)(() => {
+    const [stageIndex, setStageIndex] = (0, import_react8.useState)(0);
+    (0, import_react8.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -18177,10 +18346,10 @@
     onToggleThinking
   }) {
     const { t } = useTranslation();
-    const [input, setInput] = (0, import_react7.useState)("");
-    const messagesEndRef = (0, import_react7.useRef)(null);
-    const fileInputRef = (0, import_react7.useRef)(null);
-    (0, import_react7.useEffect)(() => {
+    const [input, setInput] = (0, import_react8.useState)("");
+    const messagesEndRef = (0, import_react8.useRef)(null);
+    const fileInputRef = (0, import_react8.useRef)(null);
+    (0, import_react8.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, chatBusy]);
     const handleSubmit = (event) => {
@@ -18272,15 +18441,18 @@
     ] });
   }
 
+  // src/components/ProjectView.tsx
+  var import_react20 = __toESM(require_react(), 1);
+
   // src/components/ProjectChat.tsx
-  var import_react8 = __toESM(require_react(), 1);
+  var import_react9 = __toESM(require_react(), 1);
   var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
   function ProjectProgress() {
     const { t } = useTranslation();
-    const [elapsed, setElapsed] = (0, import_react8.useState)(0);
-    const [stageIndex, setStageIndex] = (0, import_react8.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react9.useState)(0);
+    const [stageIndex, setStageIndex] = (0, import_react9.useState)(0);
     const stages = [t("idea.stage.identifyIntent"), t("idea.stage.checkBoundaries"), t("idea.stage.organizeReply"), t("idea.stage.stillWorking")];
-    (0, import_react8.useEffect)(() => {
+    (0, import_react9.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -18311,9 +18483,9 @@
     mobileOpen
   }) {
     const { t } = useTranslation();
-    const [input, setInput] = (0, import_react8.useState)("");
-    const messagesEndRef = (0, import_react8.useRef)(null);
-    (0, import_react8.useEffect)(() => {
+    const [input, setInput] = (0, import_react9.useState)("");
+    const messagesEndRef = (0, import_react9.useRef)(null);
+    (0, import_react9.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, busy]);
     const submit = (event) => {
@@ -18373,7 +18545,7 @@
   }
 
   // src/components/ui.tsx
-  var import_react9 = __toESM(require_react(), 1);
+  var import_react10 = __toESM(require_react(), 1);
   var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
   var STATUS_KEYS = {
     accepted: "status.accepted",
@@ -18497,9 +18669,9 @@
     children,
     wide = false
   }) {
-    const closeRef = (0, import_react9.useRef)(null);
+    const closeRef = (0, import_react10.useRef)(null);
     const { t } = useTranslation();
-    (0, import_react9.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       closeRef.current?.focus();
       const onKeyDown = (event) => {
         if (event.key === "Escape") onClose();
@@ -18800,7 +18972,7 @@
   }
 
   // src/components/tabs/LiteratureTab.tsx
-  var import_react10 = __toESM(require_react(), 1);
+  var import_react11 = __toESM(require_react(), 1);
   var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
   function LiteratureTab({
     project,
@@ -18811,31 +18983,31 @@
     searchCandidates
   }) {
     const { t } = useTranslation();
-    const [materialQuery, setMaterialQuery] = (0, import_react10.useState)("");
-    const [materialLoading, setMaterialLoading] = (0, import_react10.useState)(false);
-    const [materialRows, setMaterialRows] = (0, import_react10.useState)([]);
-    const [materialTotal, setMaterialTotal] = (0, import_react10.useState)(0);
-    const [nextOffset, setNextOffset] = (0, import_react10.useState)(null);
-    const [repoInputFor, setRepoInputFor] = (0, import_react10.useState)(null);
-    const [repoUrl, setRepoUrl] = (0, import_react10.useState)("");
-    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react10.useState)({});
-    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react10.useState)(null);
-    const [claimText, setClaimText] = (0, import_react10.useState)("");
-    const [selectedEvidence, setSelectedEvidence] = (0, import_react10.useState)([]);
-    const [seedType, setSeedType] = (0, import_react10.useState)("doi");
-    const [seedValue, setSeedValue] = (0, import_react10.useState)("");
-    const [seedTitle, setSeedTitle] = (0, import_react10.useState)("");
-    const [seedArtifactId, setSeedArtifactId] = (0, import_react10.useState)("");
-    const [seedPaperId, setSeedPaperId] = (0, import_react10.useState)("");
-    const [seedLoading, setSeedLoading] = (0, import_react10.useState)(false);
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react10.useState)([]);
-    const [recursiveDepth, setRecursiveDepth] = (0, import_react10.useState)(2);
-    const [recursiveWidth, setRecursiveWidth] = (0, import_react10.useState)(5);
-    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react10.useState)(30);
-    const [recursiveProviders, setRecursiveProviders] = (0, import_react10.useState)(["crossref", "openalex", "semantic_scholar"]);
-    const [recursiveReason, setRecursiveReason] = (0, import_react10.useState)(t("literature.recursiveDefaultReason"));
-    const [recursiveLoading, setRecursiveLoading] = (0, import_react10.useState)(false);
-    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react10.useState)(null);
+    const [materialQuery, setMaterialQuery] = (0, import_react11.useState)("");
+    const [materialLoading, setMaterialLoading] = (0, import_react11.useState)(false);
+    const [materialRows, setMaterialRows] = (0, import_react11.useState)([]);
+    const [materialTotal, setMaterialTotal] = (0, import_react11.useState)(0);
+    const [nextOffset, setNextOffset] = (0, import_react11.useState)(null);
+    const [repoInputFor, setRepoInputFor] = (0, import_react11.useState)(null);
+    const [repoUrl, setRepoUrl] = (0, import_react11.useState)("");
+    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react11.useState)({});
+    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react11.useState)(null);
+    const [claimText, setClaimText] = (0, import_react11.useState)("");
+    const [selectedEvidence, setSelectedEvidence] = (0, import_react11.useState)([]);
+    const [seedType, setSeedType] = (0, import_react11.useState)("doi");
+    const [seedValue, setSeedValue] = (0, import_react11.useState)("");
+    const [seedTitle, setSeedTitle] = (0, import_react11.useState)("");
+    const [seedArtifactId, setSeedArtifactId] = (0, import_react11.useState)("");
+    const [seedPaperId, setSeedPaperId] = (0, import_react11.useState)("");
+    const [seedLoading, setSeedLoading] = (0, import_react11.useState)(false);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react11.useState)([]);
+    const [recursiveDepth, setRecursiveDepth] = (0, import_react11.useState)(2);
+    const [recursiveWidth, setRecursiveWidth] = (0, import_react11.useState)(5);
+    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react11.useState)(30);
+    const [recursiveProviders, setRecursiveProviders] = (0, import_react11.useState)(["crossref", "openalex", "semantic_scholar"]);
+    const [recursiveReason, setRecursiveReason] = (0, import_react11.useState)(t("literature.recursiveDefaultReason"));
+    const [recursiveLoading, setRecursiveLoading] = (0, import_react11.useState)(false);
+    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react11.useState)(null);
     const activeRecursiveRun = project.related_work_runs?.find((run) => ["queued", "running"].includes(run.status));
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
@@ -18897,7 +19069,7 @@
         showToast(errorMessage(error));
       }
     };
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       if (!activeRecursiveRun) return;
       const timer = window.setInterval(() => {
         void onRefresh();
@@ -19576,14 +19748,14 @@
   }
 
   // src/components/previews.tsx
-  var import_react11 = __toESM(require_react(), 1);
+  var import_react12 = __toESM(require_react(), 1);
   var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   function PointCloudPreview({ preview }) {
     const { t } = useTranslation();
-    const canvasRef = (0, import_react11.useRef)(null);
+    const canvasRef = (0, import_react12.useRef)(null);
     const points = preview.points || [];
-    const [resetKey, setResetKey] = (0, import_react11.useState)(0);
-    (0, import_react11.useEffect)(() => {
+    const [resetKey, setResetKey] = (0, import_react12.useState)(0);
+    (0, import_react12.useEffect)(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const context = canvas.getContext("2d");
@@ -19705,13 +19877,13 @@
     const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
       (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
     );
-    const [metric, setMetric] = (0, import_react11.useState)(metrics[0] || "loss");
-    const [windowSize, setWindowSize] = (0, import_react11.useState)(Math.max(10, points.length));
+    const [metric, setMetric] = (0, import_react12.useState)(metrics[0] || "loss");
+    const [windowSize, setWindowSize] = (0, import_react12.useState)(Math.max(10, points.length));
     const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react11.useState)(allSeeds);
-    const [hovered, setHovered] = (0, import_react11.useState)(null);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react12.useState)(allSeeds);
+    const [hovered, setHovered] = (0, import_react12.useState)(null);
     const seedKey = allSeeds.join("|");
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       setSelectedSeeds((current) => {
         const next = current.filter((seed) => allSeeds.includes(seed));
         return next.length ? next : allSeeds;
@@ -19883,10 +20055,10 @@
   }
   function ArtifactCard({ artifact }) {
     const { t } = useTranslation();
-    const [preview, setPreview] = (0, import_react11.useState)(null);
-    const [status, setStatus] = (0, import_react11.useState)("idle");
-    const [error, setError] = (0, import_react11.useState)("");
-    (0, import_react11.useEffect)(() => {
+    const [preview, setPreview] = (0, import_react12.useState)(null);
+    const [status, setStatus] = (0, import_react12.useState)("idle");
+    const [error, setError] = (0, import_react12.useState)("");
+    (0, import_react12.useEffect)(() => {
       if (artifact.mime_type?.startsWith("image/")) return;
       if (!artifact.preview_url) return;
       setStatus("loading");
@@ -20222,7 +20394,7 @@
   }
 
   // src/components/tabs/ReproductionTab.tsx
-  var import_react12 = __toESM(require_react(), 1);
+  var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   var defaultForm = () => ({ dependency_manifest: "requirements.txt", entrypoint: "", random_seeds: "13,37,73", config: "{}" });
   function statusText(status) {
@@ -20252,10 +20424,10 @@
     const repositories = project.repositories || [];
     const reproductions = project.reproductions || [];
     const runs = project.reproduction_runs || [];
-    const [forms, setForms] = (0, import_react12.useState)({});
-    const [busy, setBusy] = (0, import_react12.useState)(null);
-    const reproductionByRepository = (0, import_react12.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
-    const runByReproduction = (0, import_react12.useMemo)(() => {
+    const [forms, setForms] = (0, import_react13.useState)({});
+    const [busy, setBusy] = (0, import_react13.useState)(null);
+    const reproductionByRepository = (0, import_react13.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
+    const runByReproduction = (0, import_react13.useMemo)(() => {
       const map = /* @__PURE__ */ new Map();
       for (const run of runs) map.set(run.reproduction_id, [...map.get(run.reproduction_id) || [], run]);
       return map;
@@ -20460,7 +20632,7 @@
   }
 
   // src/components/tabs/ComparisonTab.tsx
-  var import_react13 = __toESM(require_react(), 1);
+  var import_react14 = __toESM(require_react(), 1);
   var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   var defaultContext = () => ({
     data_version: "",
@@ -20500,23 +20672,23 @@
   }
   function ComparisonTab({ project, onRefresh, showToast }) {
     const { t } = useTranslation();
-    const papers = (0, import_react13.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
-    const runs = (0, import_react13.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
-    const [paperId, setPaperId] = (0, import_react13.useState)("");
-    const [runId, setRunId] = (0, import_react13.useState)("");
-    const [evidenceIds, setEvidenceIds] = (0, import_react13.useState)([]);
-    const [paperMetrics, setPaperMetrics] = (0, import_react13.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
-    const [context, setContext] = (0, import_react13.useState)(defaultContext);
-    const [busy, setBusy] = (0, import_react13.useState)(false);
-    const [error, setError] = (0, import_react13.useState)(null);
+    const papers = (0, import_react14.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
+    const runs = (0, import_react14.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
+    const [paperId, setPaperId] = (0, import_react14.useState)("");
+    const [runId, setRunId] = (0, import_react14.useState)("");
+    const [evidenceIds, setEvidenceIds] = (0, import_react14.useState)([]);
+    const [paperMetrics, setPaperMetrics] = (0, import_react14.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
+    const [context, setContext] = (0, import_react14.useState)(defaultContext);
+    const [busy, setBusy] = (0, import_react14.useState)(false);
+    const [error, setError] = (0, import_react14.useState)(null);
     const selectedPaper = papers.find((paper) => paper.id === paperId) || null;
-    const paperEvidence2 = (0, import_react13.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
+    const paperEvidence2 = (0, import_react14.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
     const comparisons = project.research_comparisons || [];
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       if (!paperId && papers[0]) setPaperId(papers[0].id);
       if (!runId && runs[0]) setRunId(runs[0].id);
     }, [papers, runs, paperId, runId]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       setEvidenceIds((current) => current.filter((id) => paperEvidence2.some((evidence) => evidence.id === id)));
     }, [paperEvidence2]);
     const createComparison = async () => {
@@ -20768,7 +20940,7 @@
   }
 
   // src/components/tabs/ResearchStatusTab.tsx
-  var import_react14 = __toESM(require_react(), 1);
+  var import_react15 = __toESM(require_react(), 1);
   var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function listLabel(values, emptyLabel) {
     return values.length ? values.join(", ") : emptyLabel;
@@ -20783,15 +20955,15 @@
     showToast
   }) {
     const { t, locale } = useTranslation();
-    const [status, setStatus] = (0, import_react14.useState)(null);
-    const [loading, setLoading] = (0, import_react14.useState)(true);
-    const [working, setWorking] = (0, import_react14.useState)(false);
-    const [error, setError] = (0, import_react14.useState)(null);
-    const [theme, setTheme2] = (0, import_react14.useState)("");
-    const [method, setMethod] = (0, import_react14.useState)("");
-    const [year, setYear] = (0, import_react14.useState)("");
-    const [gapType, setGapType] = (0, import_react14.useState)("gap");
-    const [gapStatement, setGapStatement] = (0, import_react14.useState)("");
+    const [status, setStatus] = (0, import_react15.useState)(null);
+    const [loading, setLoading] = (0, import_react15.useState)(true);
+    const [working, setWorking] = (0, import_react15.useState)(false);
+    const [error, setError] = (0, import_react15.useState)(null);
+    const [theme, setTheme2] = (0, import_react15.useState)("");
+    const [method, setMethod] = (0, import_react15.useState)("");
+    const [year, setYear] = (0, import_react15.useState)("");
+    const [gapType, setGapType] = (0, import_react15.useState)("gap");
+    const [gapStatement, setGapStatement] = (0, import_react15.useState)("");
     const loadStatus = async (filters = { theme, method, year }) => {
       setLoading(true);
       setError(null);
@@ -20807,11 +20979,11 @@
         setLoading(false);
       }
     };
-    (0, import_react14.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       setStatus(null);
       void loadStatus({ theme: "", method: "", year: "" });
     }, [project.id]);
-    const eligibleRows = (0, import_react14.useMemo)(() => {
+    const eligibleRows = (0, import_react15.useMemo)(() => {
       const reviews = project.claim_reviews || [];
       return (project.papers || []).flatMap((paper) => {
         if (paper.confirmed !== true) return [];
@@ -21050,7 +21222,7 @@
   }
 
   // src/components/tabs/ExperimentsTab.tsx
-  var import_react15 = __toESM(require_react(), 1);
+  var import_react16 = __toESM(require_react(), 1);
   var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   function ExperimentsTab({
     project,
@@ -21059,8 +21231,8 @@
     onNavigate
   }) {
     const { t } = useTranslation();
-    const [diagnostics, setDiagnostics] = (0, import_react15.useState)(null);
-    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react15.useState)(false);
+    const [diagnostics, setDiagnostics] = (0, import_react16.useState)(null);
+    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react16.useState)(false);
     const createExperimentPlan = async () => {
       try {
         const result = await api(`/api/projects/${project.id}/experiment-plan`, { method: "POST" });
@@ -21329,7 +21501,7 @@
   }
 
   // src/components/tabs/PoliciesTab.tsx
-  var import_react16 = __toESM(require_react(), 1);
+  var import_react17 = __toESM(require_react(), 1);
   var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function PoliciesTab({
     project,
@@ -21338,7 +21510,7 @@
     onNavigate
   }) {
     const { t } = useTranslation();
-    const [rule, setRule] = (0, import_react16.useState)("");
+    const [rule, setRule] = (0, import_react17.useState)("");
     const addPolicy = async (event) => {
       event.preventDefault();
       if (!rule.trim()) return;
@@ -21437,7 +21609,7 @@
   }
 
   // src/components/tabs/ReportsTab.tsx
-  var import_react17 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
 
   // src/components/MarkdownPreview.tsx
   var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
@@ -21588,27 +21760,27 @@
     const isFeedback = tab === "feedback_inbox";
     const isAudit = tab === "feedback_audit";
     const period = periodForTab(tab);
-    const [content, setContent] = (0, import_react17.useState)("");
-    const [activeReportId, setActiveReportId] = (0, import_react17.useState)("");
-    const [activeReportStatus, setActiveReportStatus] = (0, import_react17.useState)("");
-    const [activeReportReason, setActiveReportReason] = (0, import_react17.useState)("");
-    const [feedback, setFeedback] = (0, import_react17.useState)("");
-    const [feedbackCategory, setFeedbackCategory] = (0, import_react17.useState)("report");
-    const [feedbackRows, setFeedbackRows] = (0, import_react17.useState)(project.feedback || []);
-    const [auditRows, setAuditRows] = (0, import_react17.useState)([]);
-    const [loading, setLoading] = (0, import_react17.useState)(false);
-    const reports = (0, import_react17.useMemo)(
+    const [content, setContent] = (0, import_react18.useState)("");
+    const [activeReportId, setActiveReportId] = (0, import_react18.useState)("");
+    const [activeReportStatus, setActiveReportStatus] = (0, import_react18.useState)("");
+    const [activeReportReason, setActiveReportReason] = (0, import_react18.useState)("");
+    const [feedback, setFeedback] = (0, import_react18.useState)("");
+    const [feedbackCategory, setFeedbackCategory] = (0, import_react18.useState)("report");
+    const [feedbackRows, setFeedbackRows] = (0, import_react18.useState)(project.feedback || []);
+    const [auditRows, setAuditRows] = (0, import_react18.useState)([]);
+    const [loading, setLoading] = (0, import_react18.useState)(false);
+    const reports = (0, import_react18.useMemo)(
       () => (project.reports || []).filter((report) => report.period === period),
       [period, project.reports]
     );
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       const latest = reports[0];
       setContent(displayable(latest) ? latest?.content || "" : "");
       setActiveReportId(latest?.id || "");
       setActiveReportStatus(latest?.status || "");
       setActiveReportReason(latest?.blocking_reason || "");
     }, [project.id, period, reports]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!isFeedback && !isAudit) return;
       setLoading(true);
       const request = isFeedback ? api(`/api/projects/${project.id}/feedback`).then((result) => setFeedbackRows(result.feedback || [])) : api(`/api/projects/${project.id}/audit`).then((result) => setAuditRows(result || []));
@@ -21801,7 +21973,7 @@
   }
 
   // src/components/tabs/WorkflowStageTab.tsx
-  var import_react18 = __toESM(require_react(), 1);
+  var import_react19 = __toESM(require_react(), 1);
   var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   function text(value, t) {
     return typeof value === "string" && value.trim() ? value : t("common.unrecorded");
@@ -21888,15 +22060,15 @@
     tab
   }) {
     const { t } = useTranslation();
-    const [workspace, setWorkspace] = (0, import_react18.useState)(null);
-    const [workspaceError, setWorkspaceError] = (0, import_react18.useState)(null);
-    const [researchStatus, setResearchStatus] = (0, import_react18.useState)(null);
-    const [researchStatusError, setResearchStatusError] = (0, import_react18.useState)(null);
-    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react18.useState)(null);
-    const graphLayout = (0, import_react18.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
-    const graphNodesById = (0, import_react18.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
+    const [workspace, setWorkspace] = (0, import_react19.useState)(null);
+    const [workspaceError, setWorkspaceError] = (0, import_react19.useState)(null);
+    const [researchStatus, setResearchStatus] = (0, import_react19.useState)(null);
+    const [researchStatusError, setResearchStatusError] = (0, import_react19.useState)(null);
+    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react19.useState)(null);
+    const graphLayout = (0, import_react19.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
+    const graphNodesById = (0, import_react19.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
     const selectedGraphNode = selectedGraphNodeId ? graphNodesById.get(selectedGraphNodeId) || null : null;
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       if (tab === "code_workspace") {
         setWorkspace(null);
         setWorkspaceError(null);
@@ -22239,6 +22411,46 @@
 
   // src/components/ProjectView.tsx
   var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  function SlidingNav({
+    className,
+    ariaLabel,
+    activeKey,
+    measurementKey,
+    children
+  }) {
+    const navRef = (0, import_react20.useRef)(null);
+    const [indicator, setIndicator] = (0, import_react20.useState)({ left: 0, width: 0, ready: false });
+    (0, import_react20.useLayoutEffect)(() => {
+      const nav = navRef.current;
+      if (!nav) return void 0;
+      const measure = () => {
+        const active = nav.querySelector('button[data-active="true"]');
+        if (!active) return;
+        setIndicator({ left: active.offsetLeft, width: active.offsetWidth, ready: true });
+      };
+      measure();
+      const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+      observer?.observe(nav);
+      window.addEventListener("resize", measure);
+      nav.addEventListener("scroll", measure, { passive: true });
+      return () => {
+        observer?.disconnect();
+        window.removeEventListener("resize", measure);
+        nav.removeEventListener("scroll", measure);
+      };
+    }, [activeKey, measurementKey, children]);
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("nav", { ref: navRef, className: `sliding-nav ${className}`, "aria-label": ariaLabel, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+        "span",
+        {
+          className: `sliding-tab-indicator${indicator.ready ? " ready" : ""}`,
+          "aria-hidden": "true",
+          style: { left: indicator.left, width: indicator.width }
+        }
+      ),
+      children
+    ] });
+  }
   var REPORT_TABS = ["daily_reports", "weekly_reports", "feedback_inbox", "feedback_audit", "reports"];
   var PAPER_TABS = ["paper", "paper_outline", "paper_citations", "paper_figures", "paper_data", "paper_compile", "paper_review"];
   var AREAS = [
@@ -22335,11 +22547,12 @@
     const area = AREAS.find((item) => item.id === activeArea) || AREAS[0];
     const activeGroup = area.groups.find((group) => group.tabs.some((tab) => tab.id === activeTab)) || area.groups[0];
     return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("section", { className: "project-view", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "tabs project-areas", "aria-label": t("nav.workspaceArea"), children: AREAS.map((area2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SlidingNav, { className: "tabs project-areas", ariaLabel: t("nav.workspaceArea"), activeKey: activeArea, measurementKey: t("nav.workspaceArea"), children: AREAS.map((area2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
         "button",
         {
           type: "button",
           className: activeArea === area2.id ? "active" : "",
+          "data-active": activeArea === area2.id ? "true" : "false",
           "aria-current": activeArea === area2.id ? "page" : void 0,
           onClick: () => onAreaChange(area2.id),
           children: [
@@ -22349,11 +22562,12 @@
         },
         area2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "tabs project-subtabs", "aria-label": t("nav.currentWorkspace"), children: area.groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SlidingNav, { className: "tabs project-subtabs", ariaLabel: t("nav.currentWorkspace"), activeKey: activeGroup.id, measurementKey: t("nav.currentWorkspace"), children: area.groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
         "button",
         {
           type: "button",
           className: activeGroup.id === group.id ? "active" : "",
+          "data-active": activeGroup.id === group.id ? "true" : "false",
           "aria-current": activeGroup.id === group.id ? "page" : void 0,
           onClick: () => onTabChange(group.tabs[0].id),
           children: [
@@ -22363,11 +22577,12 @@
         },
         group.id
       )) }),
-      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "workflow-local-nav", "aria-label": `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, children: activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SlidingNav, { className: "workflow-local-nav", ariaLabel: `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, activeKey: activeTab, measurementKey: t(activeGroup.labelKey), children: activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
         "button",
         {
           type: "button",
           className: activeTab === tab.id ? "active" : "",
+          "data-active": activeTab === tab.id ? "true" : "false",
           "aria-current": activeTab === tab.id ? "page" : void 0,
           onClick: () => onTabChange(tab.id),
           children: [
@@ -22515,20 +22730,20 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react20 = __toESM(require_react(), 1);
+  var import_react22 = __toESM(require_react(), 1);
 
   // src/components/ProjectEmbeddingSettingsForm.tsx
-  var import_react19 = __toESM(require_react(), 1);
+  var import_react21 = __toESM(require_react(), 1);
   var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react19.useState)(null);
-    const [instance, setInstance] = (0, import_react19.useState)(null);
-    const [loading, setLoading] = (0, import_react19.useState)(false);
-    const [saving, setSaving] = (0, import_react19.useState)(false);
-    const [error, setError] = (0, import_react19.useState)("");
-    const [dirty, setDirty] = (0, import_react19.useState)(false);
-    const [confirmReset, setConfirmReset] = (0, import_react19.useState)(false);
+    const [values, setValues] = (0, import_react21.useState)(null);
+    const [instance, setInstance] = (0, import_react21.useState)(null);
+    const [loading, setLoading] = (0, import_react21.useState)(false);
+    const [saving, setSaving] = (0, import_react21.useState)(false);
+    const [error, setError] = (0, import_react21.useState)("");
+    const [dirty, setDirty] = (0, import_react21.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react21.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -22551,7 +22766,7 @@
         setLoading(false);
       }
     };
-    (0, import_react19.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       if (projectId) void load();
     }, [projectId]);
     const update = (field, value) => {
@@ -22756,14 +22971,14 @@
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
     const { t } = useTranslation();
-    const [tab, setTab] = (0, import_react20.useState)("models");
-    const [values, setValues] = (0, import_react20.useState)(null);
-    const [loading, setLoading] = (0, import_react20.useState)(false);
-    const [saving, setSaving] = (0, import_react20.useState)(false);
-    const [error, setError] = (0, import_react20.useState)("");
-    const [dirty, setDirty] = (0, import_react20.useState)(false);
-    const [confirmClose, setConfirmClose] = (0, import_react20.useState)(false);
-    (0, import_react20.useEffect)(() => {
+    const [tab, setTab] = (0, import_react22.useState)("models");
+    const [values, setValues] = (0, import_react22.useState)(null);
+    const [loading, setLoading] = (0, import_react22.useState)(false);
+    const [saving, setSaving] = (0, import_react22.useState)(false);
+    const [error, setError] = (0, import_react22.useState)("");
+    const [dirty, setDirty] = (0, import_react22.useState)(false);
+    const [confirmClose, setConfirmClose] = (0, import_react22.useState)(false);
+    (0, import_react22.useEffect)(() => {
       if (!open) return;
       setTab("models");
       setLoading(true);
@@ -22994,7 +23209,7 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react21 = __toESM(require_react(), 1);
+  var import_react23 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     const { t } = useTranslation();
@@ -23037,13 +23252,13 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [view, setView] = (0, import_react21.useState)("graph");
-    const [query, setQuery] = (0, import_react21.useState)("");
-    const [status, setStatus] = (0, import_react21.useState)(t("memory.graphPrompt"));
-    const [graph, setGraph] = (0, import_react21.useState)(null);
-    const [search, setSearch] = (0, import_react21.useState)(null);
-    const [loading, setLoading] = (0, import_react21.useState)(false);
-    (0, import_react21.useEffect)(() => {
+    const [view, setView] = (0, import_react23.useState)("graph");
+    const [query, setQuery] = (0, import_react23.useState)("");
+    const [status, setStatus] = (0, import_react23.useState)(t("memory.graphPrompt"));
+    const [graph, setGraph] = (0, import_react23.useState)(null);
+    const [search, setSearch] = (0, import_react23.useState)(null);
+    const [loading, setLoading] = (0, import_react23.useState)(false);
+    (0, import_react23.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -23185,16 +23400,16 @@
   }
 
   // src/components/NotFoundView.tsx
-  var import_react22 = __toESM(require_react(), 1);
+  var import_react24 = __toESM(require_react(), 1);
   var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
   function NotFoundView({ path, onGoHome }) {
     const { t } = useTranslation();
-    const [seconds, setSeconds] = (0, import_react22.useState)(3);
-    const onGoHomeRef = (0, import_react22.useRef)(onGoHome);
-    (0, import_react22.useEffect)(() => {
+    const [seconds, setSeconds] = (0, import_react24.useState)(3);
+    const onGoHomeRef = (0, import_react24.useRef)(onGoHome);
+    (0, import_react24.useEffect)(() => {
       onGoHomeRef.current = onGoHome;
     }, [onGoHome]);
-    (0, import_react22.useEffect)(() => {
+    (0, import_react24.useEffect)(() => {
       const countdown = window.setInterval(() => {
         setSeconds((value) => Math.max(0, value - 1));
       }, 1e3);
@@ -23222,8 +23437,70 @@
     ] }) });
   }
 
-  // src/App.tsx
+  // src/components/DeleteProjectDialog.tsx
+  var import_react25 = __toESM(require_react(), 1);
   var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  function DeleteProjectDialog({
+    project,
+    busy,
+    onClose,
+    onConfirm
+  }) {
+    const { t } = useTranslation();
+    const [title, setTitle] = (0, import_react25.useState)("");
+    const [confirmation, setConfirmation] = (0, import_react25.useState)("");
+    const canDelete = title === project.title && confirmation === "DELETE" && !busy;
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      Modal,
+      {
+        eyebrow: t("deleteProject.eyebrow"),
+        title: t("deleteProject.title"),
+        description: t("deleteProject.description"),
+        onClose: busy ? () => void 0 : onClose,
+        children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "delete-project-content", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "delete-project-target", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("deleteProject.projectLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("strong", { title: project.title, children: project.title })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("label", { className: "field-label", htmlFor: "delete-project-name", children: t("deleteProject.nameLabel") }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+            "input",
+            {
+              id: "delete-project-name",
+              className: "text-input",
+              value: title,
+              disabled: busy,
+              placeholder: t("deleteProject.namePlaceholder"),
+              onChange: (event) => setTitle(event.target.value),
+              autoComplete: "off"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+            "input",
+            {
+              id: "delete-project-confirmation",
+              className: "text-input confirmation-input",
+              value: confirmation,
+              disabled: busy,
+              placeholder: t("deleteProject.confirmationPlaceholder"),
+              onChange: (event) => setConfirmation(event.target.value),
+              autoComplete: "off",
+              spellCheck: false
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "modal-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(title, confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
+          ] })
+        ] })
+      }
+    );
+  }
+
+  // src/App.tsx
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   var EMPTY_STAGES = [
     { key: "analyzing_input", labelKey: "app.thinking.readingConversation" },
     { key: "selecting_route", labelKey: "app.thinking.selectingModel" },
@@ -23240,38 +23517,48 @@
       role: "assistant",
       text: t("app.initialMessage")
     };
-    (0, import_react23.useEffect)(() => {
+    (0, import_react26.useEffect)(() => {
       setMessages((current) => current.map((message) => message.id === "initial-assistant" ? { ...message, text: t("app.initialMessage") } : message));
     }, [locale]);
-    const [projects, setProjects] = (0, import_react23.useState)([]);
-    const [projectId, setProjectId] = (0, import_react23.useState)(null);
-    const [project, setProject] = (0, import_react23.useState)(null);
-    const [view, setView] = (0, import_react23.useState)("idea");
-    const [activeArea, setActiveArea] = (0, import_react23.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react23.useState)("overview");
-    const [health, setHealth] = (0, import_react23.useState)("connecting");
-    const [toast, setToast] = (0, import_react23.useState)(null);
-    const [messages, setMessages] = (0, import_react23.useState)([initialMessage]);
-    const [projectMessages, setProjectMessages] = (0, import_react23.useState)([]);
-    const [spec, setSpec] = (0, import_react23.useState)(null);
-    const [projectSlug, setProjectSlug] = (0, import_react23.useState)("");
-    const [specStatus, setSpecStatus] = (0, import_react23.useState)("pending_clarification");
-    const [chatBusy, setChatBusy] = (0, import_react23.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react23.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react23.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react23.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react23.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react23.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react23.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react23.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react23.useState)(false);
-    const [confirm, setConfirm] = (0, import_react23.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react23.useState)(false);
-    const [notFoundPath, setNotFoundPath] = (0, import_react23.useState)(null);
-    const chatBusyRef = (0, import_react23.useRef)(false);
-    const projectChatBusyRef = (0, import_react23.useRef)(false);
-    const sessionIdRef = (0, import_react23.useRef)(null);
-    const toastTimerRef = (0, import_react23.useRef)(null);
+    const [projects, setProjects] = (0, import_react26.useState)([]);
+    const [projectId, setProjectId] = (0, import_react26.useState)(null);
+    const [project, setProject] = (0, import_react26.useState)(null);
+    const [view, setView] = (0, import_react26.useState)("idea");
+    const [activeArea, setActiveArea] = (0, import_react26.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react26.useState)("overview");
+    const [health, setHealth] = (0, import_react26.useState)("connecting");
+    const [toast, setToast] = (0, import_react26.useState)(null);
+    const [messages, setMessages] = (0, import_react26.useState)([initialMessage]);
+    const [projectMessages, setProjectMessages] = (0, import_react26.useState)([]);
+    const [spec, setSpec] = (0, import_react26.useState)(null);
+    const [projectSlug, setProjectSlug] = (0, import_react26.useState)("");
+    const [specStatus, setSpecStatus] = (0, import_react26.useState)("pending_clarification");
+    const [chatBusy, setChatBusy] = (0, import_react26.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react26.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react26.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react26.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react26.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react26.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react26.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react26.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react26.useState)(false);
+    const [confirm, setConfirm] = (0, import_react26.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react26.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react26.useState)(null);
+    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react26.useState)(null);
+    const [deleteBusy, setDeleteBusy] = (0, import_react26.useState)(false);
+    const [sidebarWidth, setSidebarWidth] = (0, import_react26.useState)(() => {
+      const stored = Number(window.localStorage.getItem("researchos.sidebarWidth"));
+      return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276;
+    });
+    const chatBusyRef = (0, import_react26.useRef)(false);
+    const projectChatBusyRef = (0, import_react26.useRef)(false);
+    const sessionIdRef = (0, import_react26.useRef)(null);
+    const toastTimerRef = (0, import_react26.useRef)(null);
+    (0, import_react26.useEffect)(() => {
+      window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
+    }, [sidebarWidth]);
+    const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
     const writeWorkspacePath = (slug, area, tab, replace = false) => {
       const next = workspacePath(slug, area, tab);
       if (window.location.pathname !== next || window.location.hash) {
@@ -23348,7 +23635,7 @@
       else window.history.pushState(null, "", "/new");
       void loadProjects();
     };
-    (0, import_react23.useEffect)(() => {
+    (0, import_react26.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
@@ -23556,6 +23843,25 @@
         showToast(errorMessage(error));
       }
     };
+    const deleteProject = async (title, confirmation) => {
+      const target = deleteProjectTarget;
+      if (!target || deleteBusy) return;
+      setDeleteBusy(true);
+      try {
+        await api(`/api/projects/${target.id}`, {
+          method: "DELETE",
+          body: JSON.stringify({ project_title: title, confirmation })
+        });
+        setDeleteProjectTarget(null);
+        if (target.id === projectId) newProject({ replace: true });
+        else await loadProjects();
+        showToast(t("app.projectDeleted"));
+      } catch (error) {
+        showToast(errorMessage(error));
+      } finally {
+        setDeleteBusy(false);
+      }
+    };
     const sendProjectChat = async (message) => {
       if (projectChatBusyRef.current || !project) return;
       projectChatBusyRef.current = true;
@@ -23598,10 +23904,10 @@
       if (slug) writeWorkspacePath(slug, area, tab);
     };
     if (notFoundPath) {
-      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
+      return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "app-shell", style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
         Sidebar,
         {
           projects,
@@ -23612,11 +23918,14 @@
             if (!projectId) showToast(t("app.openProjectFirst"));
             else setMemoryOpen(true);
           },
-          onOpenSettings: () => setSettingsOpen(true)
+          onOpenSettings: () => setSettingsOpen(true),
+          onDeleteProject: setDeleteProjectTarget,
+          sidebarWidth,
+          onSidebarWidthChange: updateSidebarWidth
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("main", { className: "workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           Topbar,
           {
             title: view === "idea" ? t("app.newProject") : project?.title || t("app.researchProject"),
@@ -23629,7 +23938,7 @@
             onRefresh: () => void refreshProject()
           }
         ),
-        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           IdeaView,
           {
             messages,
@@ -23647,7 +23956,7 @@
             thinkingSessions,
             onToggleThinking: toggleThinkingSession
           }
-        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           ProjectView,
           {
             project,
@@ -23665,10 +23974,10 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
+        ) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
         MemoryGraphModal,
         {
           open: memoryOpen,
@@ -23677,7 +23986,7 @@
           showToast
         }
       ),
-      confirm ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      confirm ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
         ConfirmDialog,
         {
           title: confirm.title,
@@ -23691,15 +24000,24 @@
           onCancel: () => setConfirm(null)
         }
       ) : null,
-      toast ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Toast, { message: toast }) : null
+      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+        DeleteProjectDialog,
+        {
+          project: deleteProjectTarget,
+          busy: deleteBusy,
+          onClose: () => setDeleteProjectTarget(null),
+          onConfirm: (title, confirmation) => void deleteProject(title, confirmation)
+        }
+      ) : null,
+      toast ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Toast, { message: toast }) : null
     ] });
   }
 
   // src/main.tsx
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
   var rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Missing #root mount element");
-  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime29.jsx)(App, {}));
+  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime30.jsx)(App, {}));
 })();
 /*! Bundled license information:
 
@@ -23779,6 +24097,7 @@ lucide-react/dist/esm/icons/circle-user-round.mjs:
 lucide-react/dist/esm/icons/clock-3.mjs:
 lucide-react/dist/esm/icons/database.mjs:
 lucide-react/dist/esm/icons/download.mjs:
+lucide-react/dist/esm/icons/ellipsis.mjs:
 lucide-react/dist/esm/icons/external-link.mjs:
 lucide-react/dist/esm/icons/file-check-corner.mjs:
 lucide-react/dist/esm/icons/file-check.mjs:

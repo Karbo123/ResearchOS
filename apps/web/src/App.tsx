@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { ApiError, api, errorMessage, uploadFile } from './api'
 import type {
   ChatMessage,
@@ -20,6 +20,7 @@ import { AREA_DEFAULT_TAB, TAB_AREA, normalizeTab, resolveWorkspaceLocation, wor
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
 import { NotFoundView } from './components/NotFoundView'
+import { DeleteProjectDialog } from './components/DeleteProjectDialog'
 import { ConfirmDialog, Toast } from './components/ui'
 import { useTranslation } from './i18n'
 
@@ -71,11 +72,23 @@ export function App() {
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null)
   const [mobileChatOpen, setMobileChatOpen] = useState(false)
   const [notFoundPath, setNotFoundPath] = useState<string | null>(null)
+  const [deleteProjectTarget, setDeleteProjectTarget] = useState<ProjectSummary | null>(null)
+  const [deleteBusy, setDeleteBusy] = useState(false)
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const stored = Number(window.localStorage.getItem('researchos.sidebarWidth'))
+    return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276
+  })
 
   const chatBusyRef = useRef(false)
   const projectChatBusyRef = useRef(false)
   const sessionIdRef = useRef<string | null>(null)
   const toastTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    window.localStorage.setItem('researchos.sidebarWidth', String(sidebarWidth))
+  }, [sidebarWidth])
+
+  const updateSidebarWidth = (width: number) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))))
 
   const writeWorkspacePath = (slug: string, area: ResearchArea, tab: TabId, replace = false) => {
     const next = workspacePath(slug, area, tab)
@@ -387,6 +400,26 @@ export function App() {
     }
   }
 
+  const deleteProject = async (title: string, confirmation: string) => {
+    const target = deleteProjectTarget
+    if (!target || deleteBusy) return
+    setDeleteBusy(true)
+    try {
+      await api(`/api/projects/${target.id}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ project_title: title, confirmation }),
+      })
+      setDeleteProjectTarget(null)
+      if (target.id === projectId) newProject({ replace: true })
+      else await loadProjects()
+      showToast(t('app.projectDeleted'))
+    } catch (error) {
+      showToast(errorMessage(error))
+    } finally {
+      setDeleteBusy(false)
+    }
+  }
+
   const sendProjectChat = async (message: string) => {
     if (projectChatBusyRef.current || !project) return
     projectChatBusyRef.current = true
@@ -439,7 +472,7 @@ export function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}>
       <Sidebar
         projects={projects}
         activeProjectId={projectId}
@@ -450,6 +483,9 @@ export function App() {
           else setMemoryOpen(true)
         }}
         onOpenSettings={() => setSettingsOpen(true)}
+        onDeleteProject={setDeleteProjectTarget}
+        sidebarWidth={sidebarWidth}
+        onSidebarWidthChange={updateSidebarWidth}
       />
       <main className="workspace">
         <Topbar
@@ -522,6 +558,14 @@ export function App() {
             void action()
           }}
           onCancel={() => setConfirm(null)}
+        />
+      ) : null}
+      {deleteProjectTarget ? (
+        <DeleteProjectDialog
+          project={deleteProjectTarget}
+          busy={deleteBusy}
+          onClose={() => setDeleteProjectTarget(null)}
+          onConfirm={(title, confirmation) => void deleteProject(title, confirmation)}
         />
       ) : null}
       {toast ? <Toast message={toast} /> : null}

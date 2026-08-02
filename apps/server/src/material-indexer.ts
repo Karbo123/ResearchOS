@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { lstatSync, readFileSync } from 'node:fs'
 import { extname } from 'node:path'
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
-import { artifactsRoot, pathInside } from './paths.js'
+import { projectFilePath } from './project-storage.js'
 
 export const MAX_MATERIAL_CHUNKS = 200
 export const MAX_MATERIAL_CHUNK_CHARS = 6_000
@@ -23,6 +23,7 @@ export class MaterialIndexError extends Error {
 
 export type MaterialFile = {
   id: string
+  project_id: string
   name: string
   relative_path: string
   mime_type: string
@@ -39,7 +40,7 @@ export type MaterialChunk = {
 }
 
 function filePath(file: MaterialFile): string {
-  const path = pathInside(artifactsRoot, file.relative_path)
+  const path = projectFilePath(file.project_id, file.relative_path)
   const stat = lstatSync(path, { throwIfNoEntry: false })
   if (!stat) throw new MaterialIndexError('uploaded_file_missing', '上传材料文件不存在。', 404)
   if (stat.isSymbolicLink() || !stat.isFile()) throw new MaterialIndexError('uploaded_file_not_regular', '上传材料必须是普通文件。')

@@ -4,7 +4,7 @@ import { Supermemory } from 'supermemory'
 import { z } from 'zod'
 import { audit, database, one, rows } from './database.js'
 import { memoryIngestRequest } from './contracts.js'
-import { artifactsRoot, pathInside } from './paths.js'
+import { projectFilePath } from './project-storage.js'
 import { GLOBAL_POOL_KEY, poolForKey, projectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, resolveProjectBaseUrl } from './supermemory-instance.js'
 
@@ -264,8 +264,9 @@ function metadataFor(input: MemoryIngestRequest, projectId: string, contentSha25
 
 function artifactPath(artifact: Record<string, unknown>): string {
   const relativePath = String(artifact.relative_path || '')
-  if (!relativePath || !artifact.id) throw new SupermemoryArtifactError('artifact_path_invalid', 'Artifact 路径无效。')
-  const path = pathInside(artifactsRoot, relativePath)
+  const projectId = String(artifact.project_id || '')
+  if (!relativePath || !artifact.id || !projectId) throw new SupermemoryArtifactError('artifact_path_invalid', 'Artifact 路径无效。')
+  const path = projectFilePath(projectId, relativePath)
   const stat = lstatSync(path, { throwIfNoEntry: false })
   if (!stat) throw new SupermemoryArtifactError('artifact_not_found', 'Artifact 文件不存在。', 404)
   if (stat.isSymbolicLink() || !stat.isFile()) throw new SupermemoryArtifactError('artifact_not_regular_file', 'Artifact 必须是普通文件。')
@@ -304,7 +305,7 @@ export async function ingestProjectMemory(projectId: string, input: MemoryIngest
       ? await client.documents.uploadFile({
           file: createReadStream(artifactPath(sourceFile)),
           containerTag: tag,
-          filepath: `/research-os/artifacts/${sourceFile.id}/${sourceFile.name}`,
+          filepath: `/research-os/projects/${projectId}/artifacts/${sourceFile.id}/${sourceFile.name}`,
           ...remoteFileType(String(sourceFile.mime_type)),
           metadata: JSON.stringify(metadata),
         })

@@ -6,7 +6,8 @@ import { once } from 'node:events'
 import type { z } from 'zod'
 import { database, audit, one } from './database.js'
 import type { experimentRequest } from './contracts.js'
-import { artifactsRoot, gitBinary, pathInside, projectsRoot } from './paths.js'
+import { gitBinary, pathInside, projectsRoot } from './paths.js'
+import { projectArtifactPath, projectArtifactRelativePath } from './project-storage.js'
 import { fingerprintValue, registerLineageDependencies, type LineageNode } from './impact-service.js'
 import { artifactMimeType, MetricsValidationError, parseMetricsJsonl, type MetricsSeries } from './metrics-service.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
@@ -115,7 +116,7 @@ async function terminateTree(child: ChildProcess): Promise<void> {
 
 async function execute(runId: string, request: ExperimentRequest): Promise<void> {
   const projectRoot = pathInside(projectsRoot, request.project_id)
-  const runDirectory = pathInside(artifactsRoot, 'runs', runId)
+  const runDirectory = projectArtifactPath(request.project_id, `runs/${runId}`)
   mkdirSync(runDirectory, { recursive: true })
   try {
     await database.query("UPDATE experiments SET status='running', run_id=$2 WHERE id=$1", [runId, runId])
@@ -138,7 +139,7 @@ async function execute(runId: string, request: ExperimentRequest): Promise<void>
     await database.query("UPDATE experiments SET status='succeeded', metrics=$2, finished_at=NOW() WHERE id=$1", [runId, metrics])
     const artifactIds: string[] = []
     for (const file of collectFiles(runDirectory)) {
-      const relativePath = relative(artifactsRoot, file).replaceAll('\\', '/')
+      const relativePath = projectArtifactRelativePath(relative(pathInside(projectsRoot, request.project_id), file).replaceAll('\\', '/'))
       const artifactId = crypto.randomUUID()
       artifactIds.push(artifactId)
       const name = basename(file)

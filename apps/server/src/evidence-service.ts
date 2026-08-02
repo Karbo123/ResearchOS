@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { audit, database, rows } from './database.js'
 import { ApiError } from './http.js'
-import { artifactsRoot, pathInside } from './paths.js'
+import { projectArtifactPath, projectArtifactRelativePath } from './project-storage.js'
 import { registerLineageDependencies } from './impact-service.js'
 import { requireProject } from './project-service.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
@@ -53,12 +53,12 @@ export async function ingestEvidence(projectId: string, limit: number) {
       const pdfUrl = String(paper.metadata.pdf_url)
       const bytes = await downloadPdf(pdfUrl)
       const sha256 = createHash('sha256').update(bytes).digest('hex')
-      const directory = pathInside(artifactsRoot, 'evidence', projectId)
-      mkdirSync(directory, { recursive: true })
-      const path = pathInside(directory, `${paper.id}.pdf`)
+      const relativePath = projectArtifactRelativePath(`evidence/${paper.id}.pdf`)
+      const path = projectArtifactPath(projectId, relativePath)
+      mkdirSync(path.slice(0, path.lastIndexOf('/')), { recursive: true })
       writeFileSync(path, bytes, { flag: 'wx' })
       const artifactId = crypto.randomUUID()
-      await database.query('INSERT INTO artifacts(id,project_id,kind,name,relative_path,mime_type,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [artifactId, projectId, 'source_pdf', `${paper.id}.pdf`, `evidence/${projectId}/${paper.id}.pdf`, 'application/pdf', sha256, { source_url: pdfUrl, paper_id: paper.id }])
+      await database.query('INSERT INTO artifacts(id,project_id,kind,name,relative_path,mime_type,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [artifactId, projectId, 'source_pdf', `${paper.id}.pdf`, relativePath, 'application/pdf', sha256, { source_url: pdfUrl, paper_id: paper.id }])
       const quotes = await pageQuotes(bytes)
       if (!quotes.length) throw new Error('pdf_text_not_extractable')
       for (const item of quotes) {

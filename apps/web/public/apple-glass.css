@@ -66,7 +66,7 @@ body { overflow: hidden; }
 button, input, textarea, select { font-family: inherit; }
 button { -webkit-font-smoothing: inherit; }
 
-.app-shell { min-height: 100dvh; grid-template-columns: 276px minmax(0, 1fr); background: var(--bg); }
+.app-shell { min-height: 100dvh; grid-template-columns: var(--sidebar-width, 276px) minmax(0, 1fr); background: var(--bg); }
 .sidebar {
   position: relative;
   z-index: 2;
@@ -97,6 +97,50 @@ button { -webkit-font-smoothing: inherit; }
 .service-links a:hover, .side-service:hover { color: var(--sidebar-ink); background: rgba(60, 60, 67, .07); transform: translateX(2px); }
 .side-settings { min-height: 40px; margin: 11px 5px 0; padding: 9px 10px; border: 1px solid var(--sidebar-line); border-radius: 12px; color: var(--sidebar-ink); background: var(--surface-2); font-size: 12px; transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--spring); }
 .side-settings:hover { color: var(--sidebar-ink); background: var(--surface-elevated); border-color: var(--line-strong); transform: translateY(-1px); }
+.sidebar-resizer {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: -5px;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+}
+.sidebar-resizer::after {
+  content: '';
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: 4px;
+  width: 2px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background .25s var(--ease), box-shadow .25s var(--ease);
+}
+.sidebar-resizer:hover::after,
+.sidebar-resizer:focus-visible::after,
+.sidebar-resizer.is-resizing::after { background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
+.sidebar-resizer:focus-visible { outline: none; }
+.project-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; min-width: 0; }
+.project-row .project-main-button { min-width: 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-row .project-more {
+  width: 30px;
+  min-height: 30px;
+  padding: 5px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: var(--sidebar-muted);
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-4px) scale(.94);
+  transition: opacity .24s var(--ease), transform .34s var(--spring), color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+.project-row .project-more.visible,
+.project-row:focus-within .project-more { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); }
+.project-row .project-more:hover { color: var(--danger-ink); background: var(--red-soft); border-color: var(--red-soft); }
+.project-row .project-main-button.active { color: var(--blue-dark); background: var(--blue-soft); border-color: rgba(0, 122, 255, .22); box-shadow: inset 3px 0 0 var(--blue), inset 0 1px 0 rgba(255, 255, 255, .06); }
 
 .workspace { min-width: 0; min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); }
 .topbar { position: relative; z-index: 30; min-height: 70px; height: auto; flex: 0 0 auto; padding: 13px 30px; overflow: visible; border-bottom: 1px solid var(--line); background: rgba(250, 250, 252, .72); box-shadow: 0 1px 0 var(--glass-highlight); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); }
@@ -252,7 +296,7 @@ button { -webkit-font-smoothing: inherit; }
 :focus-visible { outline: 3px solid rgba(0, 122, 255, .48); outline-offset: 3px; }
 
 @media (max-width: 1100px) {
-  .app-shell { grid-template-columns: 246px minmax(0, 1fr); }
+  .app-shell { grid-template-columns: var(--sidebar-width, 246px) minmax(0, 1fr); }
   .topbar { padding-left: 23px; padding-right: 23px; }
   .new-view { grid-template-columns: minmax(360px, 1.2fr) minmax(300px, .8fr); padding-left: 14px; padding-right: 14px; }
   .project-layout { padding-left: 14px; padding-right: 14px; }
@@ -339,7 +383,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   --shadow-soft: 0 8px 24px rgba(25, 25, 35, .055), 0 2px 6px rgba(25, 25, 35, .03);
 }
 
-.app-shell { grid-template-columns: 238px minmax(0, 1fr); }
+.app-shell { grid-template-columns: var(--sidebar-width, 238px) minmax(0, 1fr); }
 .sidebar {
   padding: 16px 12px 12px;
   color: var(--sidebar-ink);
@@ -420,7 +464,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .modal-actions { padding-top: 12px; }
 
 @media (max-width: 1100px) {
-  .app-shell { grid-template-columns: 224px minmax(0, 1fr); }
+  .app-shell { grid-template-columns: var(--sidebar-width, 224px) minmax(0, 1fr); }
   .new-view { grid-template-columns: minmax(350px, 1.25fr) minmax(290px, .8fr); }
 }
 
@@ -448,6 +492,28 @@ a.secondary { text-decoration: none; color: var(--ink); }
 }
 
 /* Research workspace navigation: primary stages are stronger than their contextual pages. */
+.sliding-nav { position: relative; }
+.sliding-tab-indicator {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  bottom: 4px;
+  border: 1px solid rgba(0, 122, 255, .22);
+  border-radius: 10px;
+  background: var(--blue-soft);
+  box-shadow: 0 5px 14px rgba(0, 122, 255, .14), inset 0 1px 0 var(--glass-highlight);
+  opacity: 0;
+  pointer-events: none;
+  transition: left .48s var(--spring), width .42s var(--spring), opacity .18s var(--ease);
+}
+.sliding-tab-indicator.ready { opacity: 1; }
+.sliding-nav > button { position: relative; z-index: 1; }
+.sliding-nav > button.active,
+.sliding-nav > button.active:hover {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
 .project-areas,
 .project-subtabs {
   min-width: 0;
@@ -509,7 +575,11 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .workflow-local-nav {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   gap: 4px;
   margin: 7px 18px 0;
   padding: 4px;
@@ -517,6 +587,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   border-radius: 12px;
   background: var(--surface-2);
 }
+.workflow-local-nav::-webkit-scrollbar { display: none; }
 .workflow-local-nav button {
   display: inline-flex;
   align-items: center;
@@ -537,6 +608,17 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .workflow-local-nav button:active { transform: scale(.98); }
 .workflow-local-nav button.active { color: var(--blue-dark); background: var(--surface-elevated); box-shadow: 0 2px 7px rgba(25, 25, 35, .07), inset 0 1px 0 var(--glass-highlight); }
 .workflow-local-nav button.active svg { color: var(--blue); }
+.delete-project-content { display: grid; gap: 9px; }
+.delete-project-target { display: grid; gap: 4px; padding: 12px 13px; border: 1px solid var(--red-soft); border-radius: 13px; background: var(--red-soft); color: var(--danger-ink); }
+.delete-project-target span { font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .06em; }
+.delete-project-target strong { min-width: 0; overflow-wrap: anywhere; font-size: 14px; line-height: 1.4; }
+.delete-project-content .field-label { margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 650; }
+.delete-project-content .text-input { width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 11px; outline: none; background: var(--surface-2); color: var(--ink); transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease); }
+.delete-project-content .text-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); background: var(--surface-elevated); }
+.delete-project-content .confirmation-input { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; }
+.delete-project-warning { margin: 3px 0 0; color: var(--danger-ink); font-size: 12px; line-height: 1.5; }
+.delete-project-content .modal-actions { margin-top: 7px; }
+.delete-project-content button:disabled { cursor: not-allowed; opacity: .42; transform: none; box-shadow: none; }
 .project-layout { padding-top: 12px; }
 .workspace-context {
   display: flex;

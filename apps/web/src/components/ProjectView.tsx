@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import { BarChart3, BookOpen, CalendarDays, CheckSquare, FileCheck2, FilePenLine, FileText, FlaskConical, GitBranch, GitCompare, History, Image, Inbox, LayoutDashboard, Library, LineChart, ListChecks, ListTree, MessageCircle, Network, Quote, Search, Stamp, Terminal, Waypoints } from 'lucide-react'
 import type { ChatMessage, ConfirmRequest, ProjectDetail, ResearchArea, TabId } from '../types'
 import { ProjectChat } from './ProjectChat'
@@ -19,6 +20,54 @@ import { useTranslation, type TranslationKey } from '../i18n'
 type ProjectTab = { id: TabId; labelKey: TranslationKey; icon: React.ReactNode }
 type ProjectGroup = { id: string; labelKey: TranslationKey; icon: React.ReactNode; tabs: ProjectTab[] }
 type ProjectArea = { id: ResearchArea; labelKey: TranslationKey; icon: React.ReactNode; groups: ProjectGroup[] }
+
+function SlidingNav({
+  className,
+  ariaLabel,
+  activeKey,
+  measurementKey,
+  children,
+}: {
+  className: string
+  ariaLabel: string
+  activeKey: string
+  measurementKey: string
+  children: React.ReactNode
+}) {
+  const navRef = useRef<HTMLElement>(null)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
+
+  useLayoutEffect(() => {
+    const nav = navRef.current
+    if (!nav) return undefined
+    const measure = () => {
+      const active = nav.querySelector<HTMLElement>('button[data-active="true"]')
+      if (!active) return
+      setIndicator({ left: active.offsetLeft, width: active.offsetWidth, ready: true })
+    }
+    measure()
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure)
+    observer?.observe(nav)
+    window.addEventListener('resize', measure)
+    nav.addEventListener('scroll', measure, { passive: true })
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', measure)
+      nav.removeEventListener('scroll', measure)
+    }
+  }, [activeKey, measurementKey, children])
+
+  return (
+    <nav ref={navRef} className={`sliding-nav ${className}`} aria-label={ariaLabel}>
+      <span
+        className={`sliding-tab-indicator${indicator.ready ? ' ready' : ''}`}
+        aria-hidden="true"
+        style={{ left: indicator.left, width: indicator.width }}
+      />
+      {children}
+    </nav>
+  )
+}
 
 const REPORT_TABS: TabId[] = ['daily_reports', 'weekly_reports', 'feedback_inbox', 'feedback_audit', 'reports']
 const PAPER_TABS: TabId[] = ['paper', 'paper_outline', 'paper_citations', 'paper_figures', 'paper_data', 'paper_compile', 'paper_review']
@@ -135,12 +184,13 @@ export function ProjectView({
 
   return (
     <section className="project-view">
-      <nav className="tabs project-areas" aria-label={t('nav.workspaceArea')}>
+      <SlidingNav className="tabs project-areas" ariaLabel={t('nav.workspaceArea')} activeKey={activeArea} measurementKey={t('nav.workspaceArea')}>
         {AREAS.map(area => (
           <button
             key={area.id}
             type="button"
             className={activeArea === area.id ? 'active' : ''}
+            data-active={activeArea === area.id ? 'true' : 'false'}
             aria-current={activeArea === area.id ? 'page' : undefined}
             onClick={() => onAreaChange(area.id)}
           >
@@ -148,13 +198,14 @@ export function ProjectView({
             {t(area.labelKey)}
           </button>
         ))}
-      </nav>
-      <nav className="tabs project-subtabs" aria-label={t('nav.currentWorkspace')}>
+      </SlidingNav>
+      <SlidingNav className="tabs project-subtabs" ariaLabel={t('nav.currentWorkspace')} activeKey={activeGroup.id} measurementKey={t('nav.currentWorkspace')}>
         {area.groups.map(group => (
           <button
             key={group.id}
             type="button"
             className={activeGroup.id === group.id ? 'active' : ''}
+            data-active={activeGroup.id === group.id ? 'true' : 'false'}
             aria-current={activeGroup.id === group.id ? 'page' : undefined}
             onClick={() => onTabChange(group.tabs[0].id)}
           >
@@ -162,14 +213,15 @@ export function ProjectView({
             {t(group.labelKey)}
           </button>
         ))}
-      </nav>
+      </SlidingNav>
       {activeGroup.tabs.length > 1 ? (
-        <nav className="workflow-local-nav" aria-label={`${t(activeGroup.labelKey)} · ${t('common.innerPages')}`}>
+        <SlidingNav className="workflow-local-nav" ariaLabel={`${t(activeGroup.labelKey)} · ${t('common.innerPages')}`} activeKey={activeTab} measurementKey={t(activeGroup.labelKey)}>
           {activeGroup.tabs.map(tab => (
             <button
               key={tab.id}
               type="button"
               className={activeTab === tab.id ? 'active' : ''}
+              data-active={activeTab === tab.id ? 'true' : 'false'}
               aria-current={activeTab === tab.id ? 'page' : undefined}
               onClick={() => onTabChange(tab.id)}
             >
@@ -177,7 +229,7 @@ export function ProjectView({
               {t(tab.labelKey)}
             </button>
           ))}
-        </nav>
+        </SlidingNav>
       ) : null}
       <div className="project-layout">
         <div className="tab-content">
