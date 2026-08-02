@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Send, X } from 'lucide-react'
+import { CircleUserRound, Send, Sparkles, X } from 'lucide-react'
 import type { ChatMessage } from '../types'
 import { useTranslation } from '../i18n'
 
@@ -84,7 +84,7 @@ export function ProjectChat({
           }
           return (
             <div className={`message ${message.role}`} key={message.id}>
-              <div className="avatar">{message.role === 'user' ? 'YOU' : 'AI'}</div>
+              <div className="avatar" aria-hidden="true">{message.role === 'user' ? <CircleUserRound size={16} /> : <Sparkles size={16} />}</div>
               <div className="message-content">
                 <div className="bubble">{message.text}</div>
                 {message.meta ? <div className="message-meta">{message.meta}</div> : null}

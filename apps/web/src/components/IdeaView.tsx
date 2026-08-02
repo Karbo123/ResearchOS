@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Paperclip, Send } from 'lucide-react'
+import { CircleUserRound, Paperclip, Send, Sparkles } from 'lucide-react'
 import type { ChatMessage, ResearchSpec, ThinkingSession } from '../types'
 import { SpecPane } from './SpecPane'
 import { ThinkingSessions } from './ThinkingSessions'
@@ -25,7 +25,7 @@ function MessageItem({ message }: { message: ChatMessage }) {
   }
   return (
     <div className={`message ${message.role}`}>
-      <div className="avatar">{message.role === 'user' ? 'YOU' : 'AI'}</div>
+      <div className="avatar" aria-hidden="true">{message.role === 'user' ? <CircleUserRound size={16} /> : <Sparkles size={16} />}</div>
       <div className="message-content">
         <div className="bubble">{message.text}</div>
         {message.meta ? <div className="message-meta">{message.meta}</div> : null}

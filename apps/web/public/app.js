@@ -12778,7 +12778,7 @@
     "group.overviewSpec": "\u9879\u76EE\u89C4\u683C",
     "group.overviewInnovation": "\u521B\u65B0\u4E0E\u8FB9\u754C",
     "group.overviewProgress": "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
-    "group.overviewReports": "\u65E5\u62A5/\u5468\u62A5\u4E0E\u5BFC\u5E08\u53CD\u9988",
+    "group.overviewReports": "\u65E5\u62A5/\u5468\u62A5\u4E0E\u53CD\u9988",
     "group.relatedSearch": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
     "group.relatedStatus": "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE",
     "group.implRelated": "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0",
@@ -12789,7 +12789,7 @@
     "tab.overviewProgress": "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
     "tab.dailyReports": "\u65E5\u62A5",
     "tab.weeklyReports": "\u5468\u62A5",
-    "tab.feedbackInbox": "\u5BFC\u5E08\u53CD\u9988",
+    "tab.feedbackInbox": "\u53CD\u9988",
     "tab.feedbackAudit": "\u51B3\u7B56\u4E0E\u5BA1\u8BA1",
     "tab.literature": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
     "tab.researchStatus": "\u7814\u7A76\u73B0\u72B6",
@@ -12917,7 +12917,7 @@
     "spec.projectSlugHint": "\u7559\u7A7A\u7531 AI \u6839\u636E Idea \u751F\u6210\u4E09\u4E2A\u8BED\u4E49\u8BCD\uFF1B\u624B\u52A8\u586B\u5199\u65F6\u8BF7\u4F7F\u7528\u4E09\u4E2A\u4E0D\u540C\u7684\u82F1\u6587\u5C0F\u5199\u5355\u8BCD\uFF0C\u5E76\u7528\u8FDE\u5B57\u7B26\u8FDE\u63A5\u3002",
     "thinking.title": "AI \u8BF7\u6C42\u72B6\u6001",
     "chat.title": "\u9879\u76EE\u5BF9\u8BDD",
-    "chat.monitoring": "\u76D1\u7763\u4E2D",
+    "chat.monitoring": "\u5904\u7406\u4E2D",
     "chat.closeTitle": "\u5173\u95ED\u9879\u76EE\u5BF9\u8BDD",
     "chat.placeholder": "\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u660E\u786E\u63D0\u51FA\u53D8\u66F4",
     "context.currentScope": "\u5F53\u524D\u9879\u76EE\u8303\u56F4",
@@ -13068,7 +13068,7 @@
     "overview.successCriteria": "\u6210\u529F\u6807\u51C6",
     "overview.notGenerated": "\u5C1A\u672A\u751F\u6210",
     "overview.innovationCandidates": "\u521B\u65B0\u70B9\u5019\u9009",
-    "overview.innovationHint": "\u5019\u9009\u5EFA\u8BAE\u9700\u8981\u76F8\u5173\u5DE5\u4F5C\u8BC1\u636E\u548C\u5BFC\u5E08\u786E\u8BA4\u3002",
+    "overview.innovationHint": "\u5019\u9009\u5EFA\u8BAE\u9700\u8981\u76F8\u5173\u5DE5\u4F5C\u8BC1\u636E\u548C\u786E\u8BA4\u3002",
     "overview.noInnovation": "\u5C1A\u672A\u751F\u6210\u521B\u65B0\u70B9\u5019\u9009\u3002",
     "overview.progress": "\u7814\u7A76\u8FDB\u5EA6",
     "overview.progressHint": "\u65F6\u95F4\u7EBF\u53EA\u6C47\u603B\u5DF2\u8BB0\u5F55\u7684 Proposal\u3001Checkpoint \u548C\u5B9E\u9A8C\u72B6\u6001\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B66\u7ED3\u8BBA\u3002",
@@ -13090,10 +13090,10 @@
     "reports.daily": "\u65E5\u62A5",
     "reports.weekly": "\u5468\u62A5",
     "reports.generated": "{period}\u5DF2\u751F\u6210\uFF1B\u6765\u6E90\u5FEB\u7167\u5DF2\u8BB0\u5F55",
-    "reports.feedbackRecorded": "\u5BFC\u5E08\u53CD\u9988\u5DF2\u8BB0\u5F55\uFF1B\u540E\u7EED\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u4F1A\u6267\u884C",
-    "reports.feedbackProposalSummary": "\u6839\u636E\u5BFC\u5E08\u53CD\u9988\u751F\u6210\u5F85\u5BA1\u9605\u4E0B\u4E00\u6B65\u63D0\u6848",
+    "reports.feedbackRecorded": "\u53CD\u9988\u5DF2\u8BB0\u5F55\uFF1B\u540E\u7EED\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u4F1A\u6267\u884C",
+    "reports.feedbackProposalSummary": "\u6839\u636E\u53CD\u9988\u751F\u6210\u5F85\u5BA1\u9605\u4E0B\u4E00\u6B65\u63D0\u6848",
     "reports.proposalCreated": "\u53CD\u9988\u63D0\u6848\u5DF2\u521B\u5EFA\uFF0C\u8BF7\u5728\u201C\u51B3\u7B56\u4E0E\u5BA1\u8BA1\u201D\u4E2D\u5BA1\u6279",
-    "reports.feedbackInbox": "\u5BFC\u5E08\u53CD\u9988\u6536\u4EF6\u7BB1",
+    "reports.feedbackInbox": "\u53CD\u9988\u6536\u4EF6\u7BB1",
     "reports.feedbackHint": "\u53CD\u9988\u53EA\u80FD\u4EA7\u751F\u53CD\u9988\u51B3\u7B56\u3001Proposal \u548C\u5BA1\u8BA1\u8BB0\u5F55\uFF1B\u4E0D\u4F1A\u76F4\u63A5\u6539\u4EE3\u7801\u3001\u88C5\u4F9D\u8D56\u3001\u8FD0\u884C\u5B9E\u9A8C\u6216\u63A8\u9001 Git\u3002",
     "reports.loadingFeedback": "\u6B63\u5728\u8BFB\u53D6\u5F53\u524D\u9879\u76EE\u7684\u53CD\u9988\u2026",
     "reports.reference": "\u5173\u8054",
@@ -13101,13 +13101,13 @@
     "reports.acknowledge": "\u786E\u8BA4",
     "reports.requestRevision": "\u8981\u6C42\u4FEE\u8BA2",
     "reports.createProposal": "\u751F\u6210 Proposal",
-    "reports.noFeedback": "\u5F53\u524D\u9879\u76EE\u6CA1\u6709\u5BFC\u5E08\u53CD\u9988\u3002\u6CA1\u6709\u4E8B\u4EF6\u65F6\u4FDD\u6301 empty\uFF0C\u4E0D\u751F\u6210\u6A21\u677F\u5316\u62A5\u544A\u3002",
+    "reports.noFeedback": "\u5F53\u524D\u9879\u76EE\u6CA1\u6709\u53CD\u9988\u3002\u6CA1\u6709\u4E8B\u4EF6\u65F6\u4FDD\u6301 empty\uFF0C\u4E0D\u751F\u6210\u6A21\u677F\u5316\u62A5\u544A\u3002",
     "reports.recordFeedback": "\u8BB0\u5F55\u65B0\u53CD\u9988",
     "reports.recordFeedbackHint": "\u53CD\u9988\u6587\u672C\u4F1A\u4FDD\u5B58\u5230\u5F53\u524D\u9879\u76EE\uFF1B\u8BED\u4E49\u8BB0\u5FC6\u5199\u5165\u5931\u8D25\u65F6\u76F4\u63A5\u663E\u793A\u7ED3\u6784\u5316\u9519\u8BEF\u3002",
     "reports.feedbackType": "\u53CD\u9988\u7C7B\u578B",
     "reports.forReport": "\u9488\u5BF9\u62A5\u544A",
     "reports.nextDirection": "\u4E0B\u4E00\u6B65\u65B9\u5411",
-    "reports.feedbackToAi": "\u7ED9 AI \u5B66\u751F\u7684\u53CD\u9988",
+    "reports.feedbackToAi": "\u7ED9 AI \u7684\u53CD\u9988",
     "reports.feedbackPlaceholder": "\u6307\u51FA\u9700\u8981\u4FEE\u6B63\u7684\u7ED3\u679C\u3001\u4E0B\u4E00\u6B65\u65B9\u5411\u6216\u9700\u8981\u8865\u5145\u7684\u8BC1\u636E",
     "reports.recordFeedbackAction": "\u8BB0\u5F55\u53CD\u9988",
     "reports.auditTitle": "\u53CD\u9988\u4E0E Proposal \u5BA1\u8BA1",
@@ -13201,7 +13201,7 @@
     "reproduction.empty": "\u5C1A\u65E0\u4EE3\u7801\u590D\u73B0\u5019\u9009\u3002\u8BF7\u5148\u5728\u76F8\u5173\u6587\u732E\u9875\u9762\u6DFB\u52A0\u8BBA\u6587\u4EE3\u7801\u4ED3\u5E93\u3002",
     "reproduction.openLiterature": "\u6253\u5F00\u76F8\u5173\u6587\u732E",
     "reproduction.boundaryTitle": "\u590D\u73B0\u8FB9\u754C",
-    "reproduction.boundaryHint": "\u7CFB\u7EDF\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5BF9\u5165\u53E3\u548C\u7ED3\u6784\u5316\u8BA1\u5212\uFF1B\u4E0D\u4F1A\u6267\u884C\u6A21\u578B\u4F20\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F84\u6216\u7F51\u7EDC\u547D\u4EE4\u3002\u590D\u73B0\u8FDB\u7A0B\u662F\u53D7\u76D1\u7763\u7684\u672C\u673A Linux \u8FDB\u7A0B\uFF0C\u4E0D\u7B49\u540C\u4E8E\u865A\u62DF\u673A\u9694\u79BB\u3002",
+    "reproduction.boundaryHint": "\u7CFB\u7EDF\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5BF9\u5165\u53E3\u548C\u7ED3\u6784\u5316\u8BA1\u5212\uFF1B\u4E0D\u4F1A\u6267\u884C\u6A21\u578B\u4F20\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F84\u6216\u7F51\u7EDC\u547D\u4EE4\u3002\u590D\u73B0\u8FDB\u7A0B\u662F\u53D7\u63A7\u7684\u672C\u673A Linux \u8FDB\u7A0B\uFF0C\u4E0D\u7B49\u540C\u4E8E\u865A\u62DF\u673A\u9694\u79BB\u3002",
     "experiment.toastPlan": "\u4E3B\u9898\u4E13\u5C5E\u8BA1\u5212 {id} \u5F85\u5BA1\u6279",
     "experiment.diagDone": "\u8BCA\u65AD\u5B8C\u6210\uFF0C\u5EFA\u8BAE\u9700\u5BA1\u6279\u540E\u624D\u80FD\u6267\u884C",
     "experiment.cancelled": "\u8FD0\u884C\u5DF2\u53D6\u6D88",
@@ -13364,7 +13364,7 @@
     "comparison.scopeCounts": "\u53EF\u6BD4\u8F83\u8BBA\u6587\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709\u4EA7\u7269\u7684\u590D\u73B0\uFF1A{runs} \xB7 \u5DF2\u4FDD\u5B58\u6BD4\u8F83\uFF1A{comparisons}",
     "comparison.empty": "\u521B\u5EFA\u6BD4\u8F83\u524D\uFF0C\u9700\u8981\u5DF2\u786E\u8BA4\u8BBA\u6587\uFF0C\u4EE5\u53CA\u5DF2\u5B8C\u6210\u4E14\u5DF2\u767B\u8BB0\u8F93\u51FA\u4EA7\u7269\u7684\u590D\u73B0\u8FD0\u884C\u3002",
     "comparison.createTitle": "\u521B\u5EFA\u7ED3\u6784\u5316\u6BD4\u8F83",
-    "comparison.createHint": "\u8BBA\u6587\u6307\u6807\u5FC5\u987B\u7531\u7528\u6237\u4ECE\u5DF2\u5B9A\u4F4D\u8BC1\u636E\u4E2D\u5F55\u5165\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u4ECE\u6A21\u578B\u6216\u6807\u9898\u731C\u6D4B\u6307\u6807\u3002",
+    "comparison.createHint": "\u8BBA\u6587\u6307\u6807\u5FC5\u987B\u4ECE\u5DF2\u5B9A\u4F4D\u8BC1\u636E\u4E2D\u5F55\u5165\uFF1B\u7CFB\u7EDF\u4E0D\u4F1A\u4ECE\u6A21\u578B\u6216\u6807\u9898\u731C\u6D4B\u6307\u6807\u3002",
     "comparison.confirmedPaper": "\u786E\u8BA4\u7684\u8BBA\u6587",
     "comparison.reproductionRun": "\u590D\u73B0\u8FD0\u884C",
     "comparison.paperEvidence": "\u8BBA\u6587\u8BC1\u636E",
@@ -13402,8 +13402,8 @@
     "research.eligibleRequired": "\u5F53\u524D\u6CA1\u6709\u540C\u65F6\u6EE1\u8DB3\u5DF2\u786E\u8BA4\u8BBA\u6587\u3001\u5DF2\u5B9A\u4F4D\u8BC1\u636E\u548C\u5DF2\u63A5\u53D7\u8BBA\u65AD\u5BA1\u9605\u7684\u6750\u6599\u3002",
     "research.matrixCreated": "\u7814\u7A76\u73B0\u72B6\u77E9\u9635\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8BB0\u5F55\u7684\u5B57\u6BB5\u4FDD\u6301 unresolved\u3002",
     "research.candidateRecorded": "\u5019\u9009\u5DF2\u8BB0\u5F55\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65AD\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7ED3\u8BBA\u3002",
-    "research.acceptGapReason": "\u7528\u6237\u786E\u8BA4\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\u3002",
-    "research.rejectGapReason": "\u7528\u6237\u62D2\u7EDD\u8BE5\u5F85\u6838\u9A8C\u5019\u9009\u3002",
+    "research.acceptGapReason": "\u786E\u8BA4\u4FDD\u7559\u4E3A\u5F85\u6838\u9A8C\u5019\u9009\u3002",
+    "research.rejectGapReason": "\u5DF2\u62D2\u7EDD\u8BE5\u5F85\u6838\u9A8C\u5019\u9009\u3002",
     "research.acceptedGapToast": "\u5019\u9009\u5DF2\u786E\u8BA4\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7EA7\u4E3A\u79D1\u5B66\u7ED3\u8BBA\u3002",
     "research.rejectedGapToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55\u3002",
     "research.title": "\u7814\u7A76\u73B0\u72B6\u77E9\u9635",
@@ -13533,9 +13533,9 @@
     "lineage.empty": "\u5F53\u524D\u6CA1\u6709\u53EF\u8FFD\u6EAF\u7684\u4EA7\u7269\u3002",
     "workflow.empty": "\u5F53\u524D\u5B50\u9875\u9762\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6570\u636E\u3002",
     "literature.recursiveDefaultReason": "\u6269\u5C55\u5F53\u524D\u9879\u76EE\u7684\u76F8\u5173\u5DE5\u4F5C\u5F15\u7528\u7F51\u7EDC",
-    "literature.approveReason": "\u7528\u6237\u786E\u8BA4\u8BE5\u5143\u6570\u636E\u5019\u9009\u53EF\u8FDB\u5165\u9879\u76EE\u8BBA\u6587",
-    "literature.rejectReason": "\u7528\u6237\u62D2\u7EDD\u8BE5\u5143\u6570\u636E\u5019\u9009",
-    "literature.reopenReason": "\u7528\u6237\u8981\u6C42\u91CD\u65B0\u5BA1\u9605\u8BE5 candidate",
+    "literature.approveReason": "\u786E\u8BA4\u8BE5\u5143\u6570\u636E\u5019\u9009\u53EF\u8FDB\u5165\u9879\u76EE\u8BBA\u6587",
+    "literature.rejectReason": "\u5DF2\u62D2\u7EDD\u8BE5\u5143\u6570\u636E\u5019\u9009",
+    "literature.reopenReason": "\u8981\u6C42\u91CD\u65B0\u5BA1\u9605\u8BE5\u5019\u9009",
     "literature.approvedToast": "\u5019\u9009\u5DF2\u8F6C\u6362\u4E3A\u9879\u76EE\u8BBA\u6587",
     "literature.rejectedToast": "\u5019\u9009\u5DF2\u62D2\u7EDD\u5E76\u4FDD\u7559\u5BA1\u8BA1\u8BB0\u5F55",
     "literature.reopenedToast": "\u5019\u9009\u5DF2\u91CD\u65B0\u6253\u5F00",
@@ -13549,7 +13549,7 @@
     "literature.enrichProposal": "\u5B57\u6BB5\u8865\u5168 Proposal {id} \u5F85\u5BA1\u6279",
     "literature.seedRecorded": "\u79CD\u5B50\u5DF2\u8BB0\u5F55\uFF1A{status}\uFF0C{candidates} \u4E2A\u5019\u9009\uFF1Bprovider \u5931\u8D25 {failures}",
     "literature.recursiveProposal": "\u9012\u5F52\u68C0\u7D22 Proposal {id} \u5DF2\u521B\u5EFA\uFF0C\u7B49\u5F85\u5BA1\u6279",
-    "literature.cancelRecursiveReason": "\u7528\u6237\u5728\u76F8\u5173\u5DE5\u4F5C\u9875\u9762\u53D6\u6D88\u9012\u5F52\u68C0\u7D22",
+    "literature.cancelRecursiveReason": "\u5DF2\u5728\u76F8\u5173\u5DE5\u4F5C\u9875\u9762\u53D6\u6D88\u9012\u5F52\u68C0\u7D22",
     "literature.cancelRequested": "\u9012\u5F52\u68C0\u7D22\u5DF2\u53D1\u51FA\u53D6\u6D88\u8BF7\u6C42",
     "literature.searchingSources": "\u6B63\u5728\u5E76\u884C\u68C0\u7D22\u591A\u4E2A\u5B66\u672F\u6765\u6E90\u4E0E\u8D44\u6E90\u6CE8\u518C\u8868\u2026",
     "literature.searchDone": "\u68C0\u7D22\u5B8C\u6210\uFF1B{failures} \u4E2A\u6765\u6E90\u6682\u65F6\u5931\u8D25\uFF0C{candidates} \u6761\u5019\u9009\u5F85\u6838\u9A8C",
@@ -13745,10 +13745,10 @@
     "paper.claimPageEvidence": "\u8BBA\u65AD\u4E0E\u9875\u7801\u8BC1\u636E",
     "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u590D\u6838\u7684\u8BBA\u65AD\u624D\u80FD\u4F5C\u4E3A\u8BBA\u6587\u8BBA\u8BC1\u8F93\u5165\uFF1B\u5143\u6570\u636E\u8BB0\u5F55\u4E0D\u4F1A\u81EA\u52A8\u5347\u7EA7\u4E3A\u5168\u6587\u8BC1\u636E\u3002",
     "paper.proposalCompile": "Proposal \u4E0E\u7F16\u8BD1",
-    "paper.proposalCompileText": "\u6279\u51C6\u540E\u624D\u4F1A\u4FEE\u6539\u9879\u76EE\u4E2D\u7684 paper/main.tex\uFF0C\u5E76\u7531 Linux latexmk \u76D1\u7763\u5668\u751F\u6210\u7F16\u8BD1\u4EA7\u7269\u3002",
+    "paper.proposalCompileText": "\u6279\u51C6\u540E\u624D\u4F1A\u4FEE\u6539\u9879\u76EE\u4E2D\u7684 paper/main.tex\uFF0C\u5E76\u7531 Linux latexmk \u7F16\u8BD1\u8FDB\u7A0B\u751F\u6210\u7F16\u8BD1\u4EA7\u7269\u3002",
     "paper.referenceRecords": "\u8BBA\u6587\u53C2\u8003\u8BB0\u5F55",
     "paper.noReferences": "\u5C1A\u65E0\u53EF\u5F15\u7528\u7684\u6587\u732E\u8BB0\u5F55\u3002\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
-    "comparison.reason": "\u7528\u6237\u8BF7\u6C42\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
+    "comparison.reason": "\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "\u9879\u76EE\u8BBA\u6587",
     "research.themePlaceholder": "\u4F8B\u5982 efficient adaptation",
@@ -13765,7 +13765,7 @@
     "group.overviewSpec": "\u5C08\u6848\u898F\u683C",
     "group.overviewInnovation": "\u5275\u65B0\u8207\u908A\u754C",
     "group.overviewProgress": "\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
-    "group.overviewReports": "\u65E5\u5831/\u9031\u5831\u8207\u5C0E\u5E2B\u56DE\u994B",
+    "group.overviewReports": "\u65E5\u5831/\u9031\u5831\u8207\u56DE\u994B",
     "group.relatedSearch": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
     "group.relatedStatus": "\u7814\u7A76\u73FE\u6CC1\u8207\u5F15\u7528\u5716",
     "group.implRelated": "\u76F8\u95DC\u5DE5\u4F5C\u5BE6\u4F5C",
@@ -13776,7 +13776,7 @@
     "tab.overviewProgress": "\u5C08\u6848\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
     "tab.dailyReports": "\u65E5\u5831",
     "tab.weeklyReports": "\u9031\u5831",
-    "tab.feedbackInbox": "\u5C0E\u5E2B\u56DE\u994B",
+    "tab.feedbackInbox": "\u56DE\u994B",
     "tab.feedbackAudit": "\u6C7A\u7B56\u8207\u7A3D\u6838",
     "tab.literature": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
     "tab.researchStatus": "\u7814\u7A76\u73FE\u6CC1",
@@ -14015,7 +14015,7 @@
     "spec.projectSlugHint": "\u7559\u7A7A\u7531 AI \u6839\u64DA Idea \u7522\u751F\u4E09\u500B\u8A9E\u610F\u8A5E\uFF1B\u624B\u52D5\u586B\u5BEB\u6642\u8ACB\u4F7F\u7528\u4E09\u500B\u4E0D\u540C\u7684\u82F1\u6587\u5C0F\u5BEB\u55AE\u8A5E\uFF0C\u4E26\u4EE5\u9023\u5B57\u865F\u9023\u63A5\u3002",
     "thinking.title": "AI \u8ACB\u6C42\u72C0\u614B",
     "chat.title": "\u5C08\u6848\u5C0D\u8A71",
-    "chat.monitoring": "\u76E3\u7763\u4E2D",
+    "chat.monitoring": "\u8655\u7406\u4E2D",
     "chat.closeTitle": "\u95DC\u9589\u5C08\u6848\u5C0D\u8A71",
     "chat.placeholder": "\u89E3\u91CB\u3001\u5EFA\u8B70\u6216\u660E\u78BA\u63D0\u51FA\u8B8A\u66F4",
     "context.currentScope": "\u76EE\u524D\u5C08\u6848\u7BC4\u570D",
@@ -14166,7 +14166,7 @@
     "overview.successCriteria": "\u6210\u529F\u6A19\u6E96",
     "overview.notGenerated": "\u5C1A\u672A\u7522\u751F",
     "overview.innovationCandidates": "\u5275\u65B0\u9EDE\u5019\u9078",
-    "overview.innovationHint": "\u5019\u9078\u5EFA\u8B70\u9700\u8981\u76F8\u95DC\u5DE5\u4F5C\u8B49\u64DA\u8207\u5C0E\u5E2B\u78BA\u8A8D\u3002",
+    "overview.innovationHint": "\u5019\u9078\u5EFA\u8B70\u9700\u8981\u76F8\u95DC\u5DE5\u4F5C\u8B49\u64DA\u8207\u78BA\u8A8D\u3002",
     "overview.noInnovation": "\u5C1A\u672A\u7522\u751F\u5275\u65B0\u9EDE\u5019\u9078\u3002",
     "overview.progress": "\u7814\u7A76\u9032\u5EA6",
     "overview.progressHint": "\u6642\u9593\u8EF8\u53EA\u5F59\u6574\u5DF2\u8A18\u9304\u7684 Proposal\u3001Checkpoint \u8207\u5BE6\u9A57\u72C0\u614B\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B78\u7D50\u8AD6\u3002",
@@ -14188,10 +14188,10 @@
     "reports.daily": "\u65E5\u5831",
     "reports.weekly": "\u9031\u5831",
     "reports.generated": "{period}\u5DF2\u7522\u751F\uFF1B\u4F86\u6E90\u5FEB\u7167\u5DF2\u8A18\u9304",
-    "reports.feedbackRecorded": "\u5C0E\u5E2B\u56DE\u994B\u5DF2\u8A18\u9304\uFF1B\u5F8C\u7E8C\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u6703\u57F7\u884C",
-    "reports.feedbackProposalSummary": "\u6839\u64DA\u5C0E\u5E2B\u56DE\u994B\u7522\u751F\u5F85\u5BE9\u95B1\u4E0B\u4E00\u6B65\u63D0\u6848",
+    "reports.feedbackRecorded": "\u56DE\u994B\u5DF2\u8A18\u9304\uFF1B\u5F8C\u7E8C\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u6703\u57F7\u884C",
+    "reports.feedbackProposalSummary": "\u6839\u64DA\u56DE\u994B\u7522\u751F\u5F85\u5BE9\u95B1\u4E0B\u4E00\u6B65\u63D0\u6848",
     "reports.proposalCreated": "\u56DE\u994B\u63D0\u6848\u5DF2\u5EFA\u7ACB\uFF0C\u8ACB\u5728\u300C\u6C7A\u7B56\u8207\u7A3D\u6838\u300D\u4E2D\u5BE9\u6279",
-    "reports.feedbackInbox": "\u5C0E\u5E2B\u56DE\u994B\u6536\u4EF6\u5323",
+    "reports.feedbackInbox": "\u56DE\u994B\u6536\u4EF6\u5323",
     "reports.feedbackHint": "\u56DE\u994B\u53EA\u80FD\u7522\u751F\u56DE\u994B\u6C7A\u7B56\u3001Proposal \u8207\u7A3D\u6838\u8A18\u9304\uFF1B\u4E0D\u6703\u76F4\u63A5\u6539\u7A0B\u5F0F\u78BC\u3001\u5B89\u88DD\u4F9D\u8CF4\u3001\u57F7\u884C\u5BE6\u9A57\u6216\u63A8\u9001 Git\u3002",
     "reports.loadingFeedback": "\u6B63\u5728\u8B80\u53D6\u76EE\u524D\u5C08\u6848\u7684\u56DE\u994B\u2026",
     "reports.reference": "\u95DC\u806F",
@@ -14199,13 +14199,13 @@
     "reports.acknowledge": "\u78BA\u8A8D",
     "reports.requestRevision": "\u8981\u6C42\u4FEE\u8A02",
     "reports.createProposal": "\u7522\u751F Proposal",
-    "reports.noFeedback": "\u76EE\u524D\u5C08\u6848\u6C92\u6709\u5C0E\u5E2B\u56DE\u994B\u3002\u6C92\u6709\u4E8B\u4EF6\u6642\u4FDD\u6301 empty\uFF0C\u4E0D\u7522\u751F\u6A23\u677F\u5316\u5831\u544A\u3002",
+    "reports.noFeedback": "\u76EE\u524D\u5C08\u6848\u6C92\u6709\u56DE\u994B\u3002\u6C92\u6709\u4E8B\u4EF6\u6642\u4FDD\u6301 empty\uFF0C\u4E0D\u7522\u751F\u6A23\u677F\u5316\u5831\u544A\u3002",
     "reports.recordFeedback": "\u8A18\u9304\u65B0\u56DE\u994B",
     "reports.recordFeedbackHint": "\u56DE\u994B\u6587\u5B57\u6703\u5132\u5B58\u5230\u76EE\u524D\u5C08\u6848\uFF1B\u8A9E\u610F\u8A18\u61B6\u5BEB\u5165\u5931\u6557\u6642\u76F4\u63A5\u986F\u793A\u7D50\u69CB\u5316\u932F\u8AA4\u3002",
     "reports.feedbackType": "\u56DE\u994B\u985E\u578B",
     "reports.forReport": "\u91DD\u5C0D\u5831\u544A",
     "reports.nextDirection": "\u4E0B\u4E00\u6B65\u65B9\u5411",
-    "reports.feedbackToAi": "\u7D66 AI \u5B78\u751F\u7684\u56DE\u994B",
+    "reports.feedbackToAi": "\u7D66 AI \u7684\u56DE\u994B",
     "reports.feedbackPlaceholder": "\u6307\u51FA\u9700\u8981\u4FEE\u6B63\u7684\u7D50\u679C\u3001\u4E0B\u4E00\u6B65\u65B9\u5411\u6216\u9700\u8981\u88DC\u5145\u7684\u8B49\u64DA",
     "reports.recordFeedbackAction": "\u8A18\u9304\u56DE\u994B",
     "reports.auditTitle": "\u56DE\u994B\u8207 Proposal \u7A3D\u6838",
@@ -14299,7 +14299,7 @@
     "reproduction.empty": "\u5C1A\u7121\u7A0B\u5F0F\u78BC\u91CD\u73FE\u5019\u9078\u3002\u8ACB\u5148\u5728\u76F8\u95DC\u6587\u737B\u9801\u9762\u65B0\u589E\u8AD6\u6587\u7A0B\u5F0F\u78BC\u5009\u5EAB\u3002",
     "reproduction.openLiterature": "\u958B\u555F\u76F8\u95DC\u6587\u737B",
     "reproduction.boundaryTitle": "\u91CD\u73FE\u908A\u754C",
-    "reproduction.boundaryHint": "\u7CFB\u7D71\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5C0D\u5165\u53E3\u8207\u7D50\u69CB\u5316\u8A08\u756B\uFF1B\u4E0D\u6703\u57F7\u884C\u6A21\u578B\u50B3\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F91\u6216\u7DB2\u8DEF\u547D\u4EE4\u3002\u91CD\u73FE\u7A0B\u5E8F\u662F\u53D7\u76E3\u7763\u7684\u672C\u6A5F Linux \u7A0B\u5E8F\uFF0C\u4E0D\u7B49\u540C\u65BC\u865B\u64EC\u6A5F\u5668\u9694\u96E2\u3002",
+    "reproduction.boundaryHint": "\u7CFB\u7D71\u53EA\u63A5\u53D7\u56FA\u5B9A\u7684\u76F8\u5C0D\u5165\u53E3\u8207\u7D50\u69CB\u5316\u8A08\u756B\uFF1B\u4E0D\u6703\u57F7\u884C\u6A21\u578B\u50B3\u5165\u7684 shell\u3001cwd\u3001\u4EFB\u610F\u8DEF\u5F91\u6216\u7DB2\u8DEF\u547D\u4EE4\u3002\u91CD\u73FE\u7A0B\u5E8F\u662F\u53D7\u63A7\u7684\u672C\u6A5F Linux \u7A0B\u5E8F\uFF0C\u4E0D\u7B49\u540C\u65BC\u865B\u64EC\u6A5F\u5668\u9694\u96E2\u3002",
     "experiment.toastPlan": "\u4E3B\u984C\u5C08\u5C6C\u8A08\u756B {id} \u5F85\u5BE9\u6279",
     "experiment.diagDone": "\u8A3A\u65B7\u5B8C\u6210\uFF0C\u5EFA\u8B70\u9700\u5BE9\u6279\u5F8C\u624D\u80FD\u57F7\u884C",
     "experiment.cancelled": "\u57F7\u884C\u5DF2\u53D6\u6D88",
@@ -14351,7 +14351,7 @@
     "comparison.scopeCounts": "\u53EF\u6BD4\u8F03\u8AD6\u6587\uFF1A{papers} \xB7 \u5DF2\u5B8C\u6210\u4E14\u6709\u7522\u7269\u7684\u91CD\u73FE\uFF1A{runs} \xB7 \u5DF2\u5132\u5B58\u6BD4\u8F03\uFF1A{comparisons}",
     "comparison.empty": "\u5EFA\u7ACB\u6BD4\u8F03\u524D\uFF0C\u9700\u8981\u5DF2\u78BA\u8A8D\u8AD6\u6587\uFF0C\u4EE5\u53CA\u5DF2\u5B8C\u6210\u4E14\u5DF2\u767B\u8A18\u8F38\u51FA\u7522\u7269\u7684\u91CD\u73FE\u57F7\u884C\u3002",
     "comparison.createTitle": "\u5EFA\u7ACB\u7D50\u69CB\u5316\u6BD4\u8F03",
-    "comparison.createHint": "\u8AD6\u6587\u6307\u6A19\u5FC5\u9808\u7531\u4F7F\u7528\u8005\u5F9E\u5DF2\u5B9A\u4F4D\u8B49\u64DA\u4E2D\u8F38\u5165\uFF1B\u7CFB\u7D71\u4E0D\u6703\u5F9E\u6A21\u578B\u6216\u6A19\u984C\u731C\u6E2C\u6307\u6A19\u3002",
+    "comparison.createHint": "\u8AD6\u6587\u6307\u6A19\u5FC5\u9808\u5F9E\u5DF2\u5B9A\u4F4D\u8B49\u64DA\u4E2D\u8F38\u5165\uFF1B\u7CFB\u7D71\u4E0D\u6703\u5F9E\u6A21\u578B\u6216\u6A19\u984C\u731C\u6E2C\u6307\u6A19\u3002",
     "comparison.confirmedPaper": "\u78BA\u8A8D\u7684\u8AD6\u6587",
     "comparison.reproductionRun": "\u91CD\u73FE\u57F7\u884C",
     "comparison.paperEvidence": "\u8AD6\u6587\u8B49\u64DA",
@@ -14389,8 +14389,8 @@
     "research.eligibleRequired": "\u76EE\u524D\u6C92\u6709\u540C\u6642\u6EFF\u8DB3\u5DF2\u78BA\u8A8D\u8AD6\u6587\u3001\u5DF2\u5B9A\u4F4D\u8B49\u64DA\u8207\u5DF2\u63A5\u53D7\u8AD6\u65B7\u5BE9\u95B1\u7684\u6750\u6599\u3002",
     "research.matrixCreated": "\u7814\u7A76\u73FE\u6CC1\u77E9\u9663\u5DF2\u5EFA\u7ACB\uFF0C\u672A\u8A18\u9304\u7684\u6B04\u4F4D\u4FDD\u6301 unresolved\u3002",
     "research.candidateRecorded": "\u5019\u9078\u5DF2\u8A18\u9304\uFF0C\u4ECD\u9700\u4EBA\u5DE5\u5224\u65B7\uFF0C\u4E0D\u4EE3\u8868\u7814\u7A76\u7D50\u8AD6\u3002",
-    "research.acceptGapReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u4FDD\u7559\u70BA\u5F85\u6838\u9A57\u5019\u9078\u3002",
-    "research.rejectGapReason": "\u4F7F\u7528\u8005\u62D2\u7D55\u8A72\u5F85\u6838\u9A57\u5019\u9078\u3002",
+    "research.acceptGapReason": "\u78BA\u8A8D\u4FDD\u7559\u70BA\u5F85\u6838\u9A57\u5019\u9078\u3002",
+    "research.rejectGapReason": "\u5DF2\u62D2\u7D55\u8A72\u5F85\u6838\u9A57\u5019\u9078\u3002",
     "research.acceptedGapToast": "\u5019\u9078\u5DF2\u78BA\u8A8D\u4FDD\u7559\uFF0C\u4ECD\u672A\u5347\u7D1A\u70BA\u79D1\u5B78\u7D50\u8AD6\u3002",
     "research.rejectedGapToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304\u3002",
     "research.title": "\u7814\u7A76\u73FE\u6CC1\u77E9\u9663",
@@ -14520,9 +14520,9 @@
     "lineage.empty": "\u76EE\u524D\u6C92\u6709\u53EF\u8FFD\u6EAF\u7684\u7522\u7269\u3002",
     "workflow.empty": "\u76EE\u524D\u5B50\u9801\u9762\u6C92\u6709\u53EF\u986F\u793A\u7684\u8CC7\u6599\u3002",
     "literature.recursiveDefaultReason": "\u64F4\u5145\u76EE\u524D\u5C08\u6848\u7684\u76F8\u95DC\u5DE5\u4F5C\u5F15\u7528\u7DB2\u8DEF",
-    "literature.approveReason": "\u4F7F\u7528\u8005\u78BA\u8A8D\u8A72\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078\u53EF\u9032\u5165\u5C08\u6848\u8AD6\u6587",
-    "literature.rejectReason": "\u4F7F\u7528\u8005\u62D2\u7D55\u8A72\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078",
-    "literature.reopenReason": "\u4F7F\u7528\u8005\u8981\u6C42\u91CD\u65B0\u5BE9\u95B1\u8A72 candidate",
+    "literature.approveReason": "\u78BA\u8A8D\u8A72\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078\u53EF\u9032\u5165\u5C08\u6848\u8AD6\u6587",
+    "literature.rejectReason": "\u5DF2\u62D2\u7D55\u8A72\u4E2D\u7E7C\u8CC7\u6599\u5019\u9078",
+    "literature.reopenReason": "\u8981\u6C42\u91CD\u65B0\u5BE9\u95B1\u8A72\u5019\u9078",
     "literature.approvedToast": "\u5019\u9078\u5DF2\u8F49\u63DB\u70BA\u5C08\u6848\u8AD6\u6587",
     "literature.rejectedToast": "\u5019\u9078\u5DF2\u62D2\u7D55\u4E26\u4FDD\u7559\u7A3D\u6838\u8A18\u9304",
     "literature.reopenedToast": "\u5019\u9078\u5DF2\u91CD\u65B0\u958B\u555F",
@@ -14536,7 +14536,7 @@
     "literature.enrichProposal": "\u6B04\u4F4D\u88DC\u5168 Proposal {id} \u5F85\u5BE9\u6279",
     "literature.seedRecorded": "\u7A2E\u5B50\u5DF2\u8A18\u9304\uFF1A{status}\uFF0C{candidates} \u500B\u5019\u9078\uFF1Bprovider \u5931\u6557 {failures}",
     "literature.recursiveProposal": "\u905E\u8FF4\u6AA2\u7D22 Proposal {id} \u5DF2\u5EFA\u7ACB\uFF0C\u7B49\u5F85\u5BE9\u6279",
-    "literature.cancelRecursiveReason": "\u4F7F\u7528\u8005\u5728\u76F8\u95DC\u5DE5\u4F5C\u9801\u9762\u53D6\u6D88\u905E\u8FF4\u6AA2\u7D22",
+    "literature.cancelRecursiveReason": "\u5DF2\u5728\u76F8\u95DC\u5DE5\u4F5C\u9801\u9762\u53D6\u6D88\u905E\u8FF4\u6AA2\u7D22",
     "literature.cancelRequested": "\u905E\u8FF4\u6AA2\u7D22\u5DF2\u767C\u51FA\u53D6\u6D88\u8ACB\u6C42",
     "literature.searchingSources": "\u6B63\u5728\u4E26\u884C\u6AA2\u7D22\u591A\u500B\u5B78\u8853\u4F86\u6E90\u8207\u8CC7\u6E90\u8A3B\u518A\u8868\u2026",
     "literature.searchDone": "\u6AA2\u7D22\u5B8C\u6210\uFF1B{failures} \u500B\u4F86\u6E90\u66AB\u6642\u5931\u6557\uFF0C{candidates} \u689D\u5019\u9078\u5F85\u6838\u9A57",
@@ -14732,10 +14732,10 @@
     "paper.claimPageEvidence": "\u8AD6\u65B7\u8207\u9801\u78BC\u8B49\u64DA",
     "paper.claimPageEvidenceText": "\u5DF2\u63A5\u53D7\u4EBA\u5DE5\u8907\u6838\u7684\u8AD6\u65B7\u624D\u80FD\u4F5C\u70BA\u8AD6\u6587\u8AD6\u8B49\u8F38\u5165\uFF1B\u4E2D\u7E7C\u8CC7\u6599\u8A18\u9304\u4E0D\u6703\u81EA\u52D5\u5347\u7D1A\u70BA\u5168\u6587\u8B49\u64DA\u3002",
     "paper.proposalCompile": "Proposal \u8207\u7DE8\u8B6F",
-    "paper.proposalCompileText": "\u6838\u51C6\u5F8C\u624D\u6703\u4FEE\u6539\u5C08\u6848\u4E2D\u7684 paper/main.tex\uFF0C\u4E26\u7531 Linux latexmk \u76E3\u7763\u5668\u7522\u751F\u7DE8\u8B6F\u7522\u7269\u3002",
+    "paper.proposalCompileText": "\u6838\u51C6\u5F8C\u624D\u6703\u4FEE\u6539\u5C08\u6848\u4E2D\u7684 paper/main.tex\uFF0C\u4E26\u7531 Linux latexmk \u7DE8\u8B6F\u7A0B\u5E8F\u7522\u751F\u7DE8\u8B6F\u7522\u7269\u3002",
     "paper.referenceRecords": "\u8AD6\u6587\u53C3\u8003\u8A18\u9304",
     "paper.noReferences": "\u5C1A\u7121\u53EF\u5F15\u7528\u7684\u6587\u737B\u8A18\u9304\u3002\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
-    "comparison.reason": "\u4F7F\u7528\u8005\u8ACB\u6C42\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
+    "comparison.reason": "\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "\u5C08\u6848\u8AD6\u6587",
     "research.themePlaceholder": "\u4F8B\u5982 efficient adaptation",
@@ -14752,7 +14752,7 @@
     "group.overviewSpec": "Project Specification",
     "group.overviewInnovation": "Innovation and Boundaries",
     "group.overviewProgress": "Progress and Decisions",
-    "group.overviewReports": "Reports and Mentor Feedback",
+    "group.overviewReports": "Reports and Feedback",
     "group.relatedSearch": "Seeds and Literature Search",
     "group.relatedStatus": "Research Status and Citation Graph",
     "group.implRelated": "Related Work Implementation",
@@ -14763,7 +14763,7 @@
     "tab.overviewProgress": "Progress and Decisions",
     "tab.dailyReports": "Daily Report",
     "tab.weeklyReports": "Weekly Report",
-    "tab.feedbackInbox": "Mentor Feedback",
+    "tab.feedbackInbox": "Feedback",
     "tab.feedbackAudit": "Decisions and Audit",
     "tab.literature": "Seeds and Literature Search",
     "tab.researchStatus": "Research Status",
@@ -15002,7 +15002,7 @@
     "spec.projectSlugHint": "Leave blank to let AI generate three semantic words from the Idea; manual values must use three distinct lowercase English words joined with hyphens.",
     "thinking.title": "AI request status",
     "chat.title": "Project chat",
-    "chat.monitoring": "Monitoring",
+    "chat.monitoring": "Processing",
     "chat.closeTitle": "Close project chat",
     "chat.placeholder": "Explain, suggest, or propose a change explicitly",
     "context.currentScope": "Current project scope",
@@ -15153,7 +15153,7 @@
     "overview.successCriteria": "Success criteria",
     "overview.notGenerated": "Not generated yet",
     "overview.innovationCandidates": "Innovation candidates",
-    "overview.innovationHint": "Candidate suggestions require related-work evidence and mentor confirmation.",
+    "overview.innovationHint": "Candidate suggestions require related-work evidence and confirmation.",
     "overview.noInnovation": "No innovation candidates generated yet.",
     "overview.progress": "Research progress",
     "overview.progressHint": "The timeline summarizes recorded Proposals, checkpoints, and experiment states; it is not a scientific conclusion.",
@@ -15175,10 +15175,10 @@
     "reports.daily": "Daily report",
     "reports.weekly": "Weekly report",
     "reports.generated": "{period} generated; source snapshot recorded",
-    "reports.feedbackRecorded": "Mentor feedback recorded; next steps still require a Proposal before execution",
-    "reports.feedbackProposalSummary": "Generate a reviewable next-step proposal from mentor feedback",
+    "reports.feedbackRecorded": "Feedback recorded; next steps still require a Proposal before execution",
+    "reports.feedbackProposalSummary": "Generate a reviewable next-step proposal from feedback",
     "reports.proposalCreated": "Feedback proposal created; approve it in Decisions and Audit",
-    "reports.feedbackInbox": "Mentor feedback inbox",
+    "reports.feedbackInbox": "Feedback inbox",
     "reports.feedbackHint": "Feedback only creates decisions, Proposals, and audit records; it never directly changes code, installs dependencies, runs experiments, or pushes Git.",
     "reports.loadingFeedback": "Loading feedback for the current project\u2026",
     "reports.reference": "linked",
@@ -15186,13 +15186,13 @@
     "reports.acknowledge": "Acknowledge",
     "reports.requestRevision": "Request revision",
     "reports.createProposal": "Create Proposal",
-    "reports.noFeedback": "No mentor feedback in the current project. With no events the state stays empty; no templated report is generated.",
+    "reports.noFeedback": "No feedback in the current project. With no events the state stays empty; no templated report is generated.",
     "reports.recordFeedback": "Record new feedback",
     "reports.recordFeedbackHint": "Feedback text is saved to the current project; semantic memory write failures surface as structured errors.",
     "reports.feedbackType": "Feedback type",
     "reports.forReport": "About a report",
     "reports.nextDirection": "Next direction",
-    "reports.feedbackToAi": "Feedback for the AI student",
+    "reports.feedbackToAi": "Feedback for AI",
     "reports.feedbackPlaceholder": "Point out results to fix, next directions, or evidence to add",
     "reports.recordFeedbackAction": "Record feedback",
     "reports.auditTitle": "Feedback and Proposal audit",
@@ -15286,7 +15286,7 @@
     "reproduction.empty": "No code reproduction candidates yet. Add a paper code repository from the literature page first.",
     "reproduction.openLiterature": "Open related literature",
     "reproduction.boundaryTitle": "Reproduction boundaries",
-    "reproduction.boundaryHint": "Only fixed relative entrypoints and structured plans are accepted; shell, cwd, arbitrary paths, or network commands from the model are never executed. A reproduction process is a supervised local Linux process, not VM-level isolation.",
+    "reproduction.boundaryHint": "Only fixed relative entrypoints and structured plans are accepted; shell, cwd, arbitrary paths, or network commands from the model are never executed. A reproduction process is a controlled local Linux process, not VM-level isolation.",
     "experiment.toastPlan": "Topic-specific plan {id} pending approval",
     "experiment.diagDone": "Diagnostics complete; suggestions still require approval before execution",
     "experiment.cancelled": "Run cancelled",
@@ -15338,7 +15338,7 @@
     "comparison.scopeCounts": "Comparable Papers: {papers} \xB7 completed reproductions with Artifacts: {runs} \xB7 saved comparisons: {comparisons}",
     "comparison.empty": "Before creating a comparison you need a confirmed Paper and a completed reproduction Run with registered output Artifacts.",
     "comparison.createTitle": "Create a structured comparison",
-    "comparison.createHint": "Paper metrics must be entered by the user from located Evidence; the system never guesses metrics from models or titles.",
+    "comparison.createHint": "Paper metrics must be entered from located Evidence; the system never guesses metrics from models or titles.",
     "comparison.confirmedPaper": "Confirmed Paper",
     "comparison.reproductionRun": "Reproduction Run",
     "comparison.paperEvidence": "Paper Evidence",
@@ -15376,8 +15376,8 @@
     "research.eligibleRequired": "No material currently satisfies confirmed Paper, located Evidence, and accepted ClaimReview at the same time.",
     "research.matrixCreated": "Research status matrix created; unrecorded fields remain unresolved.",
     "research.candidateRecorded": "Candidate recorded; it still requires human judgment and is not a research conclusion.",
-    "research.acceptGapReason": "The user confirmed this as a candidate to verify.",
-    "research.rejectGapReason": "The user rejected this candidate to verify.",
+    "research.acceptGapReason": "Confirmed for retention as a candidate to verify.",
+    "research.rejectGapReason": "Rejected as a candidate to verify.",
     "research.acceptedGapToast": "Candidate retained, but not promoted to a scientific conclusion.",
     "research.rejectedGapToast": "Candidate rejected and audit record retained.",
     "research.title": "Research status matrix",
@@ -15507,9 +15507,9 @@
     "lineage.empty": "No traceable Artifacts yet.",
     "workflow.empty": "No data to display on this subpage.",
     "literature.recursiveDefaultReason": "Expand the related-work citation network for the current project",
-    "literature.approveReason": "The user confirmed this metadata candidate may enter the project Paper",
-    "literature.rejectReason": "The user rejected this metadata candidate",
-    "literature.reopenReason": "The user requested to review this candidate again",
+    "literature.approveReason": "Confirmed for inclusion of this metadata candidate in the project Paper",
+    "literature.rejectReason": "Rejected this metadata candidate",
+    "literature.reopenReason": "Requested another review of this candidate",
     "literature.approvedToast": "Candidate converted to project Paper",
     "literature.rejectedToast": "Candidate rejected and audit record retained",
     "literature.reopenedToast": "Candidate reopened",
@@ -15523,7 +15523,7 @@
     "literature.enrichProposal": "Field enrichment Proposal {id} pending approval",
     "literature.seedRecorded": "Seed recorded: {status}, {candidates} candidates; {failures} provider failures",
     "literature.recursiveProposal": "Recursive search Proposal {id} created; awaiting approval",
-    "literature.cancelRecursiveReason": "The user cancelled recursive search from the related-work page",
+    "literature.cancelRecursiveReason": "Recursive search cancelled from the related-work page",
     "literature.cancelRequested": "Cancellation requested for recursive search",
     "literature.searchingSources": "Searching multiple academic sources and resource registries in parallel\u2026",
     "literature.searchDone": "Search complete; {failures} sources temporarily failed and {candidates} candidates await review",
@@ -15719,10 +15719,10 @@
     "paper.claimPageEvidence": "Claims and page evidence",
     "paper.claimPageEvidenceText": "Only Claims accepted by human review can enter paper argumentation; metadata records are never automatically promoted to full-text evidence.",
     "paper.proposalCompile": "Proposals and compilation",
-    "paper.proposalCompileText": "Only after approval is project paper/main.tex modified, and the Linux latexmk supervisor generates compilation artifacts.",
+    "paper.proposalCompileText": "Only after approval is project paper/main.tex modified, and the Linux latexmk compilation process generates compilation artifacts.",
     "paper.referenceRecords": "Paper reference records",
     "paper.noReferences": "No citable literature records yet. Complete related-work research first.",
-    "comparison.reason": "The user requested a comparison of paper-reported metrics with real reproduction output at a fixed commit",
+    "comparison.reason": "Compare paper-reported metrics with real reproduction output at a fixed commit",
     "comparison.definitionsPlaceholder": 'e.g. {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "Project Paper",
     "research.themePlaceholder": "e.g. efficient adaptation",
@@ -15739,7 +15739,7 @@
     "group.overviewSpec": "Especificaci\xF3n del proyecto",
     "group.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
     "group.overviewProgress": "Progreso y decisiones",
-    "group.overviewReports": "Informes y comentarios del tutor",
+    "group.overviewReports": "Informes y comentarios",
     "group.relatedSearch": "B\xFAsqueda de fuentes",
     "group.relatedStatus": "Estado de la investigaci\xF3n y grafo de citas",
     "group.implRelated": "Implementaci\xF3n de trabajos relacionados",
@@ -15750,7 +15750,7 @@
     "tab.overviewProgress": "Progreso y decisiones",
     "tab.dailyReports": "Informe diario",
     "tab.weeklyReports": "Informe semanal",
-    "tab.feedbackInbox": "Comentarios del tutor",
+    "tab.feedbackInbox": "Comentarios",
     "tab.feedbackAudit": "Decisiones y auditor\xEDa",
     "tab.literature": "B\xFAsqueda de fuentes",
     "tab.researchStatus": "Estado de la investigaci\xF3n",
@@ -15989,7 +15989,7 @@
     "spec.projectSlugHint": "D\xE9jalo vac\xEDo para que la IA genere tres palabras sem\xE1nticas a partir de la Idea; los valores manuales deben ser tres palabras inglesas min\xFAsculas distintas unidas con guiones.",
     "thinking.title": "Estado de las solicitudes de IA",
     "chat.title": "Chat del proyecto",
-    "chat.monitoring": "Supervisando",
+    "chat.monitoring": "Procesando",
     "chat.closeTitle": "Cerrar el chat del proyecto",
     "chat.placeholder": "Explica, sugiere o propone un cambio expl\xEDcito",
     "context.currentScope": "\xC1mbito actual del proyecto",
@@ -16140,7 +16140,7 @@
     "overview.successCriteria": "Criterios de \xE9xito",
     "overview.notGenerated": "A\xFAn no generado",
     "overview.innovationCandidates": "Candidatos de innovaci\xF3n",
-    "overview.innovationHint": "Las sugerencias requieren evidencia de trabajo relacionado y confirmaci\xF3n del tutor.",
+    "overview.innovationHint": "Las sugerencias requieren evidencia de trabajo relacionado y confirmaci\xF3n.",
     "overview.noInnovation": "A\xFAn no hay candidatos de innovaci\xF3n.",
     "overview.progress": "Progreso de investigaci\xF3n",
     "overview.progressHint": "La l\xEDnea de tiempo resume Propuestas, hitos y estados de experimento registrados; no es una conclusi\xF3n cient\xEDfica.",
@@ -16162,10 +16162,10 @@
     "reports.daily": "Informe diario",
     "reports.weekly": "Informe semanal",
     "reports.generated": "{period} generado; instant\xE1nea de fuentes registrada",
-    "reports.feedbackRecorded": "Comentarios del tutor registrados; los siguientes pasos requieren una Propuesta antes de ejecutarse",
-    "reports.feedbackProposalSummary": "Generar una propuesta revisable de siguiente paso a partir de los comentarios del tutor",
+    "reports.feedbackRecorded": "Comentarios registrados; los siguientes pasos requieren una Propuesta antes de ejecutarse",
+    "reports.feedbackProposalSummary": "Generar una propuesta revisable de siguiente paso a partir de los comentarios",
     "reports.proposalCreated": "Propuesta de comentarios creada; apru\xE9bala en Decisiones y auditor\xEDa",
-    "reports.feedbackInbox": "Bandeja de comentarios del tutor",
+    "reports.feedbackInbox": "Bandeja de comentarios",
     "reports.feedbackHint": "Los comentarios solo crean decisiones, Propuestas y registros de auditor\xEDa; nunca cambian c\xF3digo, instalan dependencias, ejecutan experimentos ni env\xEDan Git directamente.",
     "reports.loadingFeedback": "Cargando comentarios del proyecto actual\u2026",
     "reports.reference": "vinculado",
@@ -16173,13 +16173,13 @@
     "reports.acknowledge": "Reconocer",
     "reports.requestRevision": "Solicitar revisi\xF3n",
     "reports.createProposal": "Crear propuesta",
-    "reports.noFeedback": "No hay comentarios del tutor en el proyecto actual. Sin eventos el estado permanece vac\xEDo; no se genera un informe con plantilla.",
+    "reports.noFeedback": "No hay comentarios en el proyecto actual. Sin eventos el estado permanece vac\xEDo; no se genera un informe con plantilla.",
     "reports.recordFeedback": "Registrar comentario nuevo",
     "reports.recordFeedbackHint": "El texto del comentario se guarda en el proyecto actual; los fallos de escritura de memoria sem\xE1ntica aparecen como errores estructurados.",
     "reports.feedbackType": "Tipo de comentario",
     "reports.forReport": "Sobre un informe",
     "reports.nextDirection": "Pr\xF3xima direcci\xF3n",
-    "reports.feedbackToAi": "Comentario para el estudiante de IA",
+    "reports.feedbackToAi": "Comentario para la IA",
     "reports.feedbackPlaceholder": "Se\xF1ala resultados a corregir, pr\xF3ximas direcciones o evidencia que a\xF1adir",
     "reports.recordFeedbackAction": "Registrar comentario",
     "reports.auditTitle": "Auditor\xEDa de comentarios y propuestas",
@@ -16273,7 +16273,7 @@
     "reproduction.empty": "A\xFAn no hay candidatos de reproducci\xF3n de c\xF3digo. A\xF1ade primero un repositorio desde la p\xE1gina de literatura.",
     "reproduction.openLiterature": "Abrir literatura relacionada",
     "reproduction.boundaryTitle": "L\xEDmites de reproducci\xF3n",
-    "reproduction.boundaryHint": "Solo se aceptan puntos de entrada relativos fijos y planes estructurados; nunca se ejecutan shell, cwd, rutas arbitrarias ni comandos de red del modelo. El proceso de reproducci\xF3n es un proceso Linux local supervisado, no aislamiento a nivel de VM.",
+    "reproduction.boundaryHint": "Solo se aceptan puntos de entrada relativos fijos y planes estructurados; nunca se ejecutan shell, cwd, rutas arbitrarias ni comandos de red del modelo. El proceso de reproducci\xF3n es un proceso Linux local controlado, no aislamiento a nivel de VM.",
     "experiment.toastPlan": "Plan tem\xE1tico {id} pendiente de aprobaci\xF3n",
     "experiment.diagDone": "Diagn\xF3stico completado; las sugerencias requieren aprobaci\xF3n antes de ejecutarse",
     "experiment.cancelled": "Ejecuci\xF3n cancelada",
@@ -16325,7 +16325,7 @@
     "comparison.scopeCounts": "Papers comparables: {papers} \xB7 reproducciones completas con Artefactos: {runs} \xB7 comparaciones guardadas: {comparisons}",
     "comparison.empty": "Antes de crear una comparaci\xF3n necesitas un Paper confirmado y una Run de reproducci\xF3n completada con Artefactos de salida registrados.",
     "comparison.createTitle": "Crear comparaci\xF3n estructurada",
-    "comparison.createHint": "Las m\xE9tricas del art\xEDculo deben introducirlas el usuario desde Evidence con localizaci\xF3n; el sistema nunca adivina m\xE9tricas a partir del modelo o del t\xEDtulo.",
+    "comparison.createHint": "Las m\xE9tricas del art\xEDculo deben introducirse desde Evidence con localizaci\xF3n; el sistema nunca adivina m\xE9tricas a partir del modelo o del t\xEDtulo.",
     "comparison.confirmedPaper": "Paper confirmado",
     "comparison.reproductionRun": "Run de reproducci\xF3n",
     "comparison.paperEvidence": "Evidence del art\xEDculo",
@@ -16363,8 +16363,8 @@
     "research.eligibleRequired": "No hay material que cumpla a la vez Paper confirmado, Evidence con localizaci\xF3n y ClaimReview aceptada.",
     "research.matrixCreated": "Matriz de estado de investigaci\xF3n creada; los campos no registrados permanecen unresolved.",
     "research.candidateRecorded": "Candidato registrado; requiere juicio humano y no es una conclusi\xF3n de investigaci\xF3n.",
-    "research.acceptGapReason": "El usuario confirm\xF3 que se conserve como candidato a verificar.",
-    "research.rejectGapReason": "El usuario rechaz\xF3 este candidato a verificar.",
+    "research.acceptGapReason": "Confirmado para conservarlo como candidato a verificar.",
+    "research.rejectGapReason": "Rechazado como candidato a verificar.",
     "research.acceptedGapToast": "Candidato conservado, pero no promovido a conclusi\xF3n cient\xEDfica.",
     "research.rejectedGapToast": "Candidato rechazado y registro de auditor\xEDa conservado.",
     "research.title": "Matriz de estado de investigaci\xF3n",
@@ -16494,9 +16494,9 @@
     "lineage.empty": "A\xFAn no hay Artefactos trazables.",
     "workflow.empty": "No hay datos que mostrar en esta subp\xE1gina.",
     "literature.recursiveDefaultReason": "Expandir la red de citas de trabajo relacionado del proyecto actual",
-    "literature.approveReason": "El usuario confirm\xF3 que este candidato de metadatos puede entrar en el Paper del proyecto",
-    "literature.rejectReason": "El usuario rechaz\xF3 este candidato de metadatos",
-    "literature.reopenReason": "El usuario pidi\xF3 revisar este candidato de nuevo",
+    "literature.approveReason": "Confirmado para incluir este candidato de metadatos en el Paper del proyecto",
+    "literature.rejectReason": "Rechazado este candidato de metadatos",
+    "literature.reopenReason": "Solicitada otra revisi\xF3n de este candidato",
     "literature.approvedToast": "Candidato convertido en Paper del proyecto",
     "literature.rejectedToast": "Candidato rechazado y registro de auditor\xEDa conservado",
     "literature.reopenedToast": "Candidato reabierto",
@@ -16510,7 +16510,7 @@
     "literature.enrichProposal": "Propuesta de enriquecimiento de campos {id} pendiente de aprobaci\xF3n",
     "literature.seedRecorded": "Semilla registrada: {status}, {candidates} candidatos; {failures} fallos de proveedor",
     "literature.recursiveProposal": "Propuesta de b\xFAsqueda recursiva {id} creada; esperando aprobaci\xF3n",
-    "literature.cancelRecursiveReason": "El usuario cancel\xF3 la b\xFAsqueda recursiva desde la p\xE1gina de trabajo relacionado",
+    "literature.cancelRecursiveReason": "B\xFAsqueda recursiva cancelada desde la p\xE1gina de trabajo relacionado",
     "literature.cancelRequested": "Cancelaci\xF3n solicitada para la b\xFAsqueda recursiva",
     "literature.searchingSources": "Buscando en varias fuentes acad\xE9micas y registros de recursos en paralelo\u2026",
     "literature.searchDone": "B\xFAsqueda completa; {failures} fuentes fallaron temporalmente y {candidates} candidatos esperan revisi\xF3n",
@@ -16706,10 +16706,10 @@
     "paper.claimPageEvidence": "Claims y evidencia por p\xE1gina",
     "paper.claimPageEvidenceText": "Solo las Claims aceptadas por revisi\xF3n humana pueden entrar en la argumentaci\xF3n; los registros de metadatos nunca se promueven autom\xE1ticamente a evidencia de texto completo.",
     "paper.proposalCompile": "Propuestas y compilaci\xF3n",
-    "paper.proposalCompileText": "Solo tras la aprobaci\xF3n se modifica paper/main.tex y el supervisor Linux latexmk genera artefactos de compilaci\xF3n.",
+    "paper.proposalCompileText": "Solo tras la aprobaci\xF3n se modifica paper/main.tex y el proceso de compilaci\xF3n Linux latexmk genera los artefactos.",
     "paper.referenceRecords": "Registros de referencia del art\xEDculo",
     "paper.noReferences": "A\xFAn no hay registros de literatura citables. Completa primero la investigaci\xF3n de trabajo relacionado.",
-    "comparison.reason": "El usuario solicit\xF3 comparar las m\xE9tricas del art\xEDculo con la salida real de reproducci\xF3n en un commit fijo",
+    "comparison.reason": "Comparar las m\xE9tricas del art\xEDculo con la salida real de reproducci\xF3n en un commit fijo",
     "comparison.definitionsPlaceholder": 'p. ej. {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "Paper del proyecto",
     "research.themePlaceholder": "p. ej. efficient adaptation",
@@ -17063,39 +17063,47 @@
   ];
   var ChevronsDown = createLucideIcon("chevrons-down", __iconNode8);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/clock-3.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/circle-user-round.mjs
   var __iconNode9 = [
+    ["path", { d: "M17.925 20.056a6 6 0 0 0-11.851.001", key: "z69sun" }],
+    ["circle", { cx: "12", cy: "11", r: "4", key: "1gt34v" }],
+    ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]
+  ];
+  var CircleUserRound = createLucideIcon("circle-user-round", __iconNode9);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/clock-3.mjs
+  var __iconNode10 = [
     ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
     ["path", { d: "M12 6v6h4", key: "135r8i" }]
   ];
-  var Clock3 = createLucideIcon("clock-3", __iconNode9);
+  var Clock3 = createLucideIcon("clock-3", __iconNode10);
 
   // ../../node_modules/lucide-react/dist/esm/icons/database.mjs
-  var __iconNode10 = [
+  var __iconNode11 = [
     ["ellipse", { cx: "12", cy: "5", rx: "9", ry: "3", key: "msslwz" }],
     ["path", { d: "M3 5V19A9 3 0 0 0 21 19V5", key: "1wlel7" }],
     ["path", { d: "M3 12A9 3 0 0 0 21 12", key: "mv7ke4" }]
   ];
-  var Database = createLucideIcon("database", __iconNode10);
+  var Database = createLucideIcon("database", __iconNode11);
 
   // ../../node_modules/lucide-react/dist/esm/icons/download.mjs
-  var __iconNode11 = [
+  var __iconNode12 = [
     ["path", { d: "M12 15V3", key: "m9g1x1" }],
     ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
     ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
   ];
-  var Download = createLucideIcon("download", __iconNode11);
+  var Download = createLucideIcon("download", __iconNode12);
 
   // ../../node_modules/lucide-react/dist/esm/icons/external-link.mjs
-  var __iconNode12 = [
+  var __iconNode13 = [
     ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
     ["path", { d: "M10 14 21 3", key: "gplh6r" }],
     ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
   ];
-  var ExternalLink = createLucideIcon("external-link", __iconNode12);
+  var ExternalLink = createLucideIcon("external-link", __iconNode13);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-check-corner.mjs
-  var __iconNode13 = [
+  var __iconNode14 = [
     [
       "path",
       {
@@ -17106,10 +17114,10 @@
     ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
     ["path", { d: "m14 20 2 2 4-4", key: "15kota" }]
   ];
-  var FileCheckCorner = createLucideIcon("file-check-corner", __iconNode13);
+  var FileCheckCorner = createLucideIcon("file-check-corner", __iconNode14);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-check.mjs
-  var __iconNode14 = [
+  var __iconNode15 = [
     [
       "path",
       {
@@ -17120,10 +17128,10 @@
     ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
     ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
   ];
-  var FileCheck = createLucideIcon("file-check", __iconNode14);
+  var FileCheck = createLucideIcon("file-check", __iconNode15);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-pen-line.mjs
-  var __iconNode15 = [
+  var __iconNode16 = [
     [
       "path",
       {
@@ -17141,10 +17149,10 @@
     ],
     ["path", { d: "M8 18h1", key: "13wk12" }]
   ];
-  var FilePenLine = createLucideIcon("file-pen-line", __iconNode15);
+  var FilePenLine = createLucideIcon("file-pen-line", __iconNode16);
 
   // ../../node_modules/lucide-react/dist/esm/icons/file-text.mjs
-  var __iconNode16 = [
+  var __iconNode17 = [
     [
       "path",
       {
@@ -17157,10 +17165,10 @@
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode16);
+  var FileText = createLucideIcon("file-text", __iconNode17);
 
   // ../../node_modules/lucide-react/dist/esm/icons/fingerprint-pattern.mjs
-  var __iconNode17 = [
+  var __iconNode18 = [
     ["path", { d: "M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4", key: "1nerag" }],
     ["path", { d: "M14 13.12c0 2.38 0 6.38-1 8.88", key: "o46ks0" }],
     ["path", { d: "M17.29 21.02c.12-.6.43-2.3.5-3.02", key: "ptglia" }],
@@ -17171,10 +17179,10 @@
     ["path", { d: "M8.65 22c.21-.66.45-1.32.57-2", key: "13wd9y" }],
     ["path", { d: "M9 6.8a6 6 0 0 1 9 5.2v2", key: "1fr1j5" }]
   ];
-  var FingerprintPattern = createLucideIcon("fingerprint-pattern", __iconNode17);
+  var FingerprintPattern = createLucideIcon("fingerprint-pattern", __iconNode18);
 
   // ../../node_modules/lucide-react/dist/esm/icons/flask-conical.mjs
-  var __iconNode18 = [
+  var __iconNode19 = [
     [
       "path",
       {
@@ -17185,10 +17193,10 @@
     ["path", { d: "M6.453 15h11.094", key: "3shlmq" }],
     ["path", { d: "M8.5 2h7", key: "csnxdl" }]
   ];
-  var FlaskConical = createLucideIcon("flask-conical", __iconNode18);
+  var FlaskConical = createLucideIcon("flask-conical", __iconNode19);
 
   // ../../node_modules/lucide-react/dist/esm/icons/funnel.mjs
-  var __iconNode19 = [
+  var __iconNode20 = [
     [
       "path",
       {
@@ -17197,55 +17205,55 @@
       }
     ]
   ];
-  var Funnel = createLucideIcon("funnel", __iconNode19);
+  var Funnel = createLucideIcon("funnel", __iconNode20);
 
   // ../../node_modules/lucide-react/dist/esm/icons/gavel.mjs
-  var __iconNode20 = [
+  var __iconNode21 = [
     ["path", { d: "m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381", key: "pgg06f" }],
     ["path", { d: "m16 16 6-6", key: "vzrcl6" }],
     ["path", { d: "m21.5 10.5-8-8", key: "a17d9x" }],
     ["path", { d: "m8 8 6-6", key: "18bi4p" }],
     ["path", { d: "m8.5 7.5 8 8", key: "1oyaui" }]
   ];
-  var Gavel = createLucideIcon("gavel", __iconNode20);
+  var Gavel = createLucideIcon("gavel", __iconNode21);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-branch.mjs
-  var __iconNode21 = [
+  var __iconNode22 = [
     ["path", { d: "M15 6a9 9 0 0 0-9 9V3", key: "1cii5b" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }]
   ];
-  var GitBranch = createLucideIcon("git-branch", __iconNode21);
+  var GitBranch = createLucideIcon("git-branch", __iconNode22);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-compare.mjs
-  var __iconNode22 = [
+  var __iconNode23 = [
     ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
     ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
     ["path", { d: "M13 6h3a2 2 0 0 1 2 2v7", key: "1yeb86" }],
     ["path", { d: "M11 18H8a2 2 0 0 1-2-2V9", key: "19pyzm" }]
   ];
-  var GitCompare = createLucideIcon("git-compare", __iconNode22);
+  var GitCompare = createLucideIcon("git-compare", __iconNode23);
 
   // ../../node_modules/lucide-react/dist/esm/icons/git-fork.mjs
-  var __iconNode23 = [
+  var __iconNode24 = [
     ["circle", { cx: "12", cy: "18", r: "3", key: "1mpf1b" }],
     ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
     ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
     ["path", { d: "M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9", key: "1uq4wg" }],
     ["path", { d: "M12 12v3", key: "158kv8" }]
   ];
-  var GitFork = createLucideIcon("git-fork", __iconNode23);
+  var GitFork = createLucideIcon("git-fork", __iconNode24);
 
   // ../../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode24 = [
+  var __iconNode25 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image = createLucideIcon("image", __iconNode24);
+  var Image = createLucideIcon("image", __iconNode25);
 
   // ../../node_modules/lucide-react/dist/esm/icons/inbox.mjs
-  var __iconNode25 = [
+  var __iconNode26 = [
     ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
     [
       "path",
@@ -17255,10 +17263,10 @@
       }
     ]
   ];
-  var Inbox = createLucideIcon("inbox", __iconNode25);
+  var Inbox = createLucideIcon("inbox", __iconNode26);
 
   // ../../node_modules/lucide-react/dist/esm/icons/languages.mjs
-  var __iconNode26 = [
+  var __iconNode27 = [
     ["path", { d: "m5 8 6 6", key: "1wu5hv" }],
     ["path", { d: "m4 14 6-6 2-3", key: "1k1g8d" }],
     ["path", { d: "M2 5h12", key: "or177f" }],
@@ -17266,28 +17274,28 @@
     ["path", { d: "m22 22-5-10-5 10", key: "don7ne" }],
     ["path", { d: "M14 18h6", key: "1m8k6r" }]
   ];
-  var Languages = createLucideIcon("languages", __iconNode26);
+  var Languages = createLucideIcon("languages", __iconNode27);
 
   // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
-  var __iconNode27 = [
+  var __iconNode28 = [
     ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
     ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
     ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
     ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
   ];
-  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode27);
+  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode28);
 
   // ../../node_modules/lucide-react/dist/esm/icons/library.mjs
-  var __iconNode28 = [
+  var __iconNode29 = [
     ["path", { d: "m16 6 4 14", key: "ji33uf" }],
     ["path", { d: "M12 6v14", key: "1n7gus" }],
     ["path", { d: "M8 8v12", key: "1gg7y9" }],
     ["path", { d: "M4 4v16", key: "6qkkli" }]
   ];
-  var Library = createLucideIcon("library", __iconNode28);
+  var Library = createLucideIcon("library", __iconNode29);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lightbulb.mjs
-  var __iconNode29 = [
+  var __iconNode30 = [
     [
       "path",
       {
@@ -17298,46 +17306,46 @@
     ["path", { d: "M9 18h6", key: "x1upvd" }],
     ["path", { d: "M10 22h4", key: "ceow96" }]
   ];
-  var Lightbulb = createLucideIcon("lightbulb", __iconNode29);
+  var Lightbulb = createLucideIcon("lightbulb", __iconNode30);
 
   // ../../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode30 = [
+  var __iconNode31 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode30);
+  var Link2 = createLucideIcon("link-2", __iconNode31);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode31 = [
+  var __iconNode32 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode31);
+  var ListChecks = createLucideIcon("list-checks", __iconNode32);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-tree.mjs
-  var __iconNode32 = [
+  var __iconNode33 = [
     ["path", { d: "M8 5h13", key: "1pao27" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "M3 10a2 2 0 0 0 2 2h3", key: "1npucw" }],
     ["path", { d: "M3 5v12a2 2 0 0 0 2 2h3", key: "x1gjn2" }]
   ];
-  var ListTree = createLucideIcon("list-tree", __iconNode32);
+  var ListTree = createLucideIcon("list-tree", __iconNode33);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode33 = [
+  var __iconNode34 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode33);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode34);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode34 = [
+  var __iconNode35 = [
     [
       "path",
       {
@@ -17346,10 +17354,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode34);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode35);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode35 = [
+  var __iconNode36 = [
     [
       "path",
       {
@@ -17358,20 +17366,20 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode35);
+  var MessageSquare = createLucideIcon("message-square", __iconNode36);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode36 = [
+  var __iconNode37 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode36);
+  var Network = createLucideIcon("network", __iconNode37);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode37 = [
+  var __iconNode38 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -17384,10 +17392,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode37);
+  var PackageCheck = createLucideIcon("package-check", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode38 = [
+  var __iconNode39 = [
     [
       "path",
       {
@@ -17400,10 +17408,10 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode38);
+  var Palette = createLucideIcon("palette", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode39 = [
+  var __iconNode40 = [
     [
       "path",
       {
@@ -17412,17 +17420,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode39);
+  var Paperclip = createLucideIcon("paperclip", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode40 = [
+  var __iconNode41 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode40);
+  var Pause = createLucideIcon("pause", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode41 = [
+  var __iconNode42 = [
     [
       "path",
       {
@@ -17431,17 +17439,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode41);
+  var Play = createLucideIcon("play", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode42 = [
+  var __iconNode43 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode42);
+  var Plus = createLucideIcon("plus", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode43 = [
+  var __iconNode44 = [
     [
       "path",
       {
@@ -17457,34 +17465,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode43);
+  var Quote = createLucideIcon("quote", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode44 = [
+  var __iconNode45 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode44);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode45 = [
+  var __iconNode46 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode45);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode46 = [
+  var __iconNode47 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode46);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode47 = [
+  var __iconNode48 = [
     [
       "path",
       {
@@ -17495,10 +17503,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode47);
+  var Save = createLucideIcon("save", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode48 = [
+  var __iconNode49 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -17507,17 +17515,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode48);
+  var ScanText = createLucideIcon("scan-text", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode49 = [
+  var __iconNode50 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode49);
+  var Search = createLucideIcon("search", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode50 = [
+  var __iconNode51 = [
     [
       "path",
       {
@@ -17527,10 +17535,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode50);
+  var Send = createLucideIcon("send", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode51 = [
+  var __iconNode52 = [
     [
       "path",
       {
@@ -17540,20 +17548,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode51);
+  var Settings = createLucideIcon("settings", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode52 = [
+  var __iconNode53 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode52);
+  var Share2 = createLucideIcon("share-2", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode53 = [
+  var __iconNode54 = [
     [
       "path",
       {
@@ -17564,10 +17572,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode53);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode54 = [
+  var __iconNode55 = [
     [
       "path",
       {
@@ -17577,26 +17585,41 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode54);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode55);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
+  var __iconNode56 = [
+    [
+      "path",
+      {
+        d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
+        key: "1s2grr"
+      }
+    ],
+    ["path", { d: "M20 2v4", key: "1rf3ol" }],
+    ["path", { d: "M22 4h-4", key: "gwowj6" }],
+    ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
+  ];
+  var Sparkles = createLucideIcon("sparkles", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode55 = [
+  var __iconNode57 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode55);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode56 = [
+  var __iconNode58 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode56);
+  var Square = createLucideIcon("square", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode57 = [
+  var __iconNode59 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -17607,10 +17630,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode57);
+  var Stamp = createLucideIcon("stamp", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode58 = [
+  var __iconNode60 = [
     [
       "path",
       {
@@ -17619,17 +17642,17 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode58);
+  var Table2 = createLucideIcon("table-2", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode59 = [
+  var __iconNode61 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode59);
+  var Terminal = createLucideIcon("terminal", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode60 = [
+  var __iconNode62 = [
     [
       "path",
       {
@@ -17640,10 +17663,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode60);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode61 = [
+  var __iconNode63 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -17652,22 +17675,22 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode61);
+  var Waypoints = createLucideIcon("waypoints", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode62 = [
+  var __iconNode64 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode62);
+  var Workflow = createLucideIcon("workflow", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode63 = [
+  var __iconNode65 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode63);
+  var X = createLucideIcon("x", __iconNode65);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -18048,7 +18071,7 @@
       ] });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: `message ${message.role}`, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "avatar", children: message.role === "user" ? "YOU" : "AI" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "avatar", "aria-hidden": "true", children: message.role === "user" ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CircleUserRound, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Sparkles, { size: 16 }) }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "message-content", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "bubble", children: message.text }),
         message.meta ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "message-meta", children: message.meta }) : null
@@ -18264,7 +18287,7 @@
             ] }, message.id);
           }
           return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: `message ${message.role}`, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "avatar", children: message.role === "user" ? "YOU" : "AI" }),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "avatar", "aria-hidden": "true", children: message.role === "user" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(CircleUserRound, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Sparkles, { size: 16 }) }),
             /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "message-content", children: [
               /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "bubble", children: message.text }),
               message.meta ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "message-meta", children: message.meta }) : null
@@ -23606,6 +23629,7 @@ lucide-react/dist/esm/icons/chart-line.mjs:
 lucide-react/dist/esm/icons/check.mjs:
 lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevrons-down.mjs:
+lucide-react/dist/esm/icons/circle-user-round.mjs:
 lucide-react/dist/esm/icons/clock-3.mjs:
 lucide-react/dist/esm/icons/database.mjs:
 lucide-react/dist/esm/icons/download.mjs:
@@ -23652,6 +23676,7 @@ lucide-react/dist/esm/icons/settings.mjs:
 lucide-react/dist/esm/icons/share-2.mjs:
 lucide-react/dist/esm/icons/shield-alert.mjs:
 lucide-react/dist/esm/icons/shield-check.mjs:
+lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/square-check-big.mjs:
 lucide-react/dist/esm/icons/square.mjs:
 lucide-react/dist/esm/icons/stamp.mjs:
