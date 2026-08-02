@@ -457,11 +457,12 @@ a.secondary { text-decoration: none; color: var(--ink); }
   font-weight: 700;
 }
 .project-areas button.active {
-  color: var(--on-accent);
-  background: var(--ink);
-  box-shadow: 0 4px 11px rgba(25, 25, 35, .16), inset 0 1px 0 rgba(255, 255, 255, .16);
+  color: var(--blue-dark);
+  background: var(--blue-soft);
+  border-color: rgba(0, 122, 255, .20);
+  box-shadow: 0 4px 11px rgba(0, 122, 255, .12), inset 0 1px 0 var(--glass-highlight);
 }
-.project-areas button.active svg { color: var(--teal); }
+.project-areas button.active svg { color: var(--blue); }
 .project-subtabs {
   margin-top: 7px;
   padding: 3px;
@@ -774,70 +775,210 @@ a.secondary { text-decoration: none; color: var(--ink); }
 :root[data-theme='dark'] .project-areas { box-shadow: 0 7px 20px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .08); }
 :root[data-theme='dark'] .tabs { box-shadow: 0 4px 14px rgba(0, 0, 0, .32); }
 
-:root[data-theme='colorful'] {
-  --bg: #f5f7fb;
+:root[data-theme='colorful-light'] {
+  --bg: #f7f8fc;
   --bg-glow-1: rgba(0, 122, 255, .09);
-  --bg-glow-2: rgba(52, 199, 89, .07);
+  --bg-glow-2: rgba(175, 82, 222, .08);
   --surface: rgba(255, 255, 255, .80);
   --surface-solid: #ffffff;
   --surface-2: rgba(255, 255, 255, .64);
   --surface-elevated: rgba(255, 255, 255, .94);
-  --ink: #1d1d1f;
-  --muted: #62646b;
-  --line: rgba(60, 60, 67, .15);
-  --line-strong: rgba(60, 60, 67, .25);
-  --blue: #007aff;
-  --blue-dark: #0062cc;
-  --blue-soft: rgba(0, 122, 255, .13);
-  --green: #34c759;
-  --green-soft: rgba(52, 199, 89, .14);
-  --amber: #ff9500;
-  --amber-soft: rgba(255, 149, 0, .15);
-  --red: #ff3b30;
-  --red-soft: rgba(255, 59, 48, .13);
+  --ink: #1d2030;
+  --muted: #5f6475;
+  --line: rgba(62, 66, 92, .15);
+  --line-strong: rgba(62, 66, 92, .25);
+  --blue: #3478f6;
+  --blue-dark: #245bc1;
+  --blue-soft: rgba(52, 120, 246, .13);
+  --green: #2fbf71;
+  --green-soft: rgba(47, 191, 113, .14);
+  --amber: #e28b17;
+  --amber-soft: rgba(226, 139, 23, .15);
+  --red: #e0474e;
+  --red-soft: rgba(224, 71, 78, .13);
   --on-accent: #ffffff;
-  --success-ink: #0a7d52;
-  --danger-ink: #b42318;
-  --warning-ink: #8a5100;
+  --success-ink: #167044;
+  --danger-ink: #ad2630;
+  --warning-ink: #8a5407;
   --preview-chart-bg: #f7faf8;
   --preview-chart-grid: #cbd5d1;
   --preview-chart-label: #60706a;
   --preview-chart-focus: #17201d;
-  --purple: #af52de;
-  --teal: #30b0c7;
-  --indigo: #5856d6;
-  --pink: #ff2d55;
-  --sidebar: linear-gradient(180deg, rgba(248, 249, 252, .94), rgba(239, 249, 245, .94));
-  --sidebar-ink: #1d1d1f;
-  --sidebar-muted: #666970;
-  --sidebar-line: rgba(60, 60, 67, .14);
+  --purple: #8656d8;
+  --teal: #159eaf;
+  --indigo: #5f5bd4;
+  --pink: #d94d78;
+  --sidebar: linear-gradient(180deg, rgba(245, 246, 255, .96), rgba(239, 250, 247, .96));
+  --sidebar-ink: #1d2030;
+  --sidebar-muted: #626879;
+  --sidebar-line: rgba(62, 66, 92, .14);
   --glass-highlight: rgba(255, 255, 255, .86);
-  --shadow-soft: 0 12px 34px rgba(25, 25, 35, .08), 0 2px 8px rgba(25, 25, 35, .04);
-  --shadow-md: 0 18px 48px rgba(25, 25, 35, .12), 0 4px 12px rgba(25, 25, 35, .06);
-  --shadow-lg: 0 32px 88px rgba(20, 20, 30, .20), 0 8px 24px rgba(20, 20, 30, .09);
+  --shadow-soft: 0 12px 34px rgba(47, 50, 83, .10), 0 2px 8px rgba(47, 50, 83, .04);
+  --shadow-md: 0 18px 48px rgba(47, 50, 83, .14), 0 4px 12px rgba(47, 50, 83, .06);
+  --shadow-lg: 0 32px 88px rgba(47, 50, 83, .22), 0 8px 24px rgba(47, 50, 83, .09);
 }
 
-:root[data-theme='colorful'] body {
+:root[data-theme='colorful-light'] body {
   background:
-    radial-gradient(1100px 720px at 86% -12%, rgba(0, 122, 255, .10), transparent 58%),
-    radial-gradient(900px 640px at -8% 112%, rgba(52, 199, 89, .08), transparent 55%),
-    linear-gradient(135deg, #f1f6ff 0%, #ffffff 52%, #f1faf4 100%);
+    radial-gradient(900px 620px at 86% -12%, rgba(52, 120, 246, .13), transparent 58%),
+    radial-gradient(780px 560px at 4% 112%, rgba(47, 191, 113, .10), transparent 55%),
+    radial-gradient(720px 520px at 52% 34%, rgba(217, 77, 120, .06), transparent 62%),
+    linear-gradient(135deg, #f2f5ff 0%, #ffffff 52%, #f1fbf7 100%);
 }
 
-:root[data-theme='colorful'] .project-areas button.active { background: var(--blue); box-shadow: 0 5px 14px rgba(0, 122, 255, .22), inset 0 1px 0 rgba(255, 255, 255, .18); }
-:root[data-theme='colorful'] .project-subtabs button.active,
-:root[data-theme='colorful'] .workflow-local-nav button.active { color: var(--blue-dark); background: var(--surface-elevated); }
-:root[data-theme='colorful'] .primary,
-:root[data-theme='colorful'] .send-btn {
-  background: linear-gradient(135deg, #007aff, #147efb);
-  box-shadow: 0 8px 20px rgba(0, 122, 255, .22), inset 0 1px 0 rgba(255, 255, 255, .28);
+:root[data-theme='colorful-light'] .project-areas button.active {
+  background: linear-gradient(135deg, rgba(52, 120, 246, .17), rgba(134, 86, 216, .13));
+  box-shadow: 0 5px 14px rgba(52, 120, 246, .18), inset 0 1px 0 rgba(255, 255, 255, .42);
 }
-:root[data-theme='colorful'] .metric strong { color: var(--blue-dark); }
-:root[data-theme='colorful'] .tabs button.active,
-:root[data-theme='colorful'] .settings-tabs button.active,
-:root[data-theme='colorful'] .memory-view-switch button.active { background: var(--surface-elevated); box-shadow: 0 3px 10px rgba(50, 48, 110, .12), inset 0 1px 0 var(--glass-highlight); }
-:root[data-theme='colorful'] .badge.live { background: var(--green-soft); color: var(--success-ink); }
-:root[data-theme='colorful'] .badge.neutral { background: rgba(88, 86, 214, .10); }
+:root[data-theme='colorful-light'] .project-subtabs button.active,
+:root[data-theme='colorful-light'] .workflow-local-nav button.active { color: var(--purple); background: rgba(134, 86, 216, .09); }
+:root[data-theme='colorful-light'] .primary,
+:root[data-theme='colorful-light'] .send-btn {
+  background: linear-gradient(135deg, #2d65d0, #5f5bd4 58%, #8656d8);
+  box-shadow: 0 8px 20px rgba(52, 120, 246, .24), inset 0 1px 0 rgba(255, 255, 255, .30);
+}
+:root[data-theme='colorful-light'] .metric strong { color: var(--purple); }
+:root[data-theme='colorful-light'] .tabs button.active,
+:root[data-theme='colorful-light'] .settings-tabs button.active,
+:root[data-theme='colorful-light'] .memory-view-switch button.active { background: var(--surface-elevated); box-shadow: 0 3px 10px rgba(86, 79, 151, .14), inset 0 1px 0 var(--glass-highlight); }
+:root[data-theme='colorful-light'] .badge.live { background: var(--green-soft); color: var(--success-ink); }
+:root[data-theme='colorful-light'] .badge.neutral { background: rgba(134, 86, 216, .10); color: var(--purple); }
+
+:root[data-theme='colorful-dark'] {
+  --bg: #11131a;
+  --bg-glow-1: rgba(100, 168, 255, .16);
+  --bg-glow-2: rgba(99, 230, 190, .10);
+  --surface: rgba(31, 34, 45, .84);
+  --surface-solid: #1f222d;
+  --surface-2: rgba(48, 52, 66, .72);
+  --surface-elevated: rgba(65, 69, 86, .95);
+  --ink: #f4f6ff;
+  --muted: #b2b8ca;
+  --line: rgba(235, 240, 255, .16);
+  --line-strong: rgba(235, 240, 255, .28);
+  --blue: #70adff;
+  --blue-dark: #a5caff;
+  --blue-soft: rgba(112, 173, 255, .24);
+  --green: #63e6be;
+  --green-soft: rgba(99, 230, 190, .18);
+  --amber: #ffcc80;
+  --amber-soft: rgba(255, 204, 128, .18);
+  --red: #ff8178;
+  --red-soft: rgba(255, 129, 120, .18);
+  --on-accent: #121521;
+  --success-ink: #8af2cf;
+  --danger-ink: #ffaaa2;
+  --warning-ink: #ffe1a8;
+  --preview-chart-bg: #1f222d;
+  --preview-chart-grid: #596176;
+  --preview-chart-label: #dce3f5;
+  --preview-chart-focus: #ffffff;
+  --purple: #c4a2ff;
+  --teal: #72e0f2;
+  --indigo: #a49aff;
+  --pink: #ff9abb;
+  --sidebar: linear-gradient(180deg, rgba(26, 29, 42, .98), rgba(25, 40, 45, .98));
+  --sidebar-ink: #f4f6ff;
+  --sidebar-muted: #b8bfd0;
+  --sidebar-line: rgba(235, 240, 255, .15);
+  --glass-highlight: rgba(255, 255, 255, .12);
+  --shadow-soft: 0 14px 38px rgba(0, 0, 0, .34), 0 3px 10px rgba(0, 0, 0, .22);
+  --shadow-md: 0 20px 52px rgba(0, 0, 0, .42), 0 5px 14px rgba(0, 0, 0, .24);
+  --shadow-lg: 0 34px 92px rgba(0, 0, 0, .58), 0 9px 26px rgba(0, 0, 0, .32);
+  color-scheme: dark;
+}
+
+:root[data-theme='colorful-dark'] body {
+  background:
+    radial-gradient(900px 620px at 86% -12%, rgba(100, 168, 255, .16), transparent 58%),
+    radial-gradient(780px 560px at 4% 112%, rgba(99, 230, 190, .10), transparent 55%),
+    radial-gradient(720px 520px at 52% 34%, rgba(196, 162, 255, .09), transparent 62%),
+    linear-gradient(135deg, #11131a 0%, #171b29 54%, #132423 100%);
+}
+
+:root[data-theme='colorful-dark'] .sidebar,
+:root[data-theme='colorful-dark'] .topbar,
+:root[data-theme='colorful-dark'] .tabs,
+:root[data-theme='colorful-dark'] .tab-content,
+:root[data-theme='colorful-dark'] .chat-pane,
+:root[data-theme='colorful-dark'] .spec-pane,
+:root[data-theme='colorful-dark'] .project-chat,
+:root[data-theme='colorful-dark'] .composer,
+:root[data-theme='colorful-dark'] .ai-progress,
+:root[data-theme='colorful-dark'] .clarification-mode-bar,
+:root[data-theme='colorful-dark'] .thinking-session,
+:root[data-theme='colorful-dark'] .data-list,
+:root[data-theme='colorful-dark'] .artifact-card,
+:root[data-theme='colorful-dark'] .report,
+:root[data-theme='colorful-dark'] .metric,
+:root[data-theme='colorful-dark'] .modal-panel,
+:root[data-theme='colorful-dark'] .markdown-preview,
+:root[data-theme='colorful-dark'] .workflow-local-nav,
+:root[data-theme='colorful-dark'] .research-graph-details,
+:root[data-theme='colorful-dark'] .overview-card,
+:root[data-theme='colorful-dark'] .workspace-context,
+:root[data-theme='colorful-dark'] .research-status-scope,
+:root[data-theme='colorful-dark'] .research-status-filters,
+:root[data-theme='colorful-dark'] .research-status-table-wrap,
+:root[data-theme='colorful-dark'] .related-work-seed-row,
+:root[data-theme='colorful-dark'] .provider-choice label,
+:root[data-theme='colorful-dark'] .claim-review-evidence,
+:root[data-theme='colorful-dark'] .memory-graph-result,
+:root[data-theme='colorful-dark'] .memory-search-result,
+:root[data-theme='colorful-dark'] .memory-graph-canvas,
+:root[data-theme='colorful-dark'] .project-areas,
+:root[data-theme='colorful-dark'] .project-subtabs {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+:root[data-theme='colorful-dark'] .topbar { box-shadow: 0 1px 0 rgba(255, 255, 255, .08); }
+:root[data-theme='colorful-dark'] .project-areas button.active {
+  color: var(--blue-dark);
+  background: linear-gradient(135deg, rgba(112, 173, 255, .24), rgba(196, 162, 255, .19));
+  border-color: rgba(112, 173, 255, .34);
+  box-shadow: 0 6px 16px rgba(73, 128, 218, .25), inset 0 1px 0 rgba(255, 255, 255, .12);
+}
+:root[data-theme='colorful-dark'] .project-subtabs button.active,
+:root[data-theme='colorful-dark'] .workflow-local-nav button.active { color: var(--purple); background: rgba(196, 162, 255, .14); }
+:root[data-theme='colorful-dark'] .tabs button.active,
+:root[data-theme='colorful-dark'] .settings-tabs button.active,
+:root[data-theme='colorful-dark'] .memory-view-switch button.active { background: var(--surface-elevated); color: var(--ink); }
+:root[data-theme='colorful-dark'] .primary,
+:root[data-theme='colorful-dark'] .send-btn {
+  color: var(--on-accent);
+  background: linear-gradient(135deg, #70adff, #a49aff 56%, #63e6be);
+  box-shadow: 0 9px 22px rgba(76, 142, 220, .30), inset 0 1px 0 rgba(255, 255, 255, .26);
+}
+:root[data-theme='colorful-dark'] .metric strong { color: var(--purple); }
+:root[data-theme='colorful-dark'] .badge.neutral { background: rgba(196, 162, 255, .14); color: var(--purple); }
+:root[data-theme='colorful-dark'] .badge.live { background: var(--green-soft); color: var(--success-ink); }
+:root[data-theme='colorful-dark'] .bubble { background: rgba(48, 52, 66, .94); border-color: var(--line); color: var(--ink); }
+:root[data-theme='colorful-dark'] .message.user .bubble { background: rgba(112, 173, 255, .22); }
+:root[data-theme='colorful-dark'] .thinking-session-header,
+:root[data-theme='colorful-dark'] .thinking-stage,
+:root[data-theme='colorful-dark'] .settings-tabs,
+:root[data-theme='colorful-dark'] .memory-view-switch,
+:root[data-theme='colorful-dark'] .research-graph-scroll { background: rgba(48, 52, 66, .72); }
+:root[data-theme='colorful-dark'] .thinking-stage.active { background: var(--blue-soft); border-color: rgba(112, 173, 255, .36); }
+:root[data-theme='colorful-dark'] .composer textarea,
+:root[data-theme='colorful-dark'] input,
+:root[data-theme='colorful-dark'] select,
+:root[data-theme='colorful-dark'] textarea,
+:root[data-theme='colorful-dark'] .form-grid input,
+:root[data-theme='colorful-dark'] .form-grid select,
+:root[data-theme='colorful-dark'] .form-grid textarea,
+:root[data-theme='colorful-dark'] .feedback-form select,
+:root[data-theme='colorful-dark'] .feedback-form textarea { background: rgba(65, 69, 86, .86); color: var(--ink); border-color: var(--line); }
+:root[data-theme='colorful-dark'] .modal-actions { background: rgba(31, 34, 45, .96); }
+:root[data-theme='colorful-dark'] .research-graph-alert { background: var(--amber-soft); color: var(--warning-ink); }
+:root[data-theme='colorful-dark'] .workspace-context-failure,
+:root[data-theme='colorful-dark'] .error-text,
+:root[data-theme='colorful-dark'] .report-blocked,
+:root[data-theme='colorful-dark'] .request-error,
+:root[data-theme='colorful-dark'] .form-error { color: var(--danger-ink); }
+:root[data-theme='colorful-dark'] .request-error,
+:root[data-theme='colorful-dark'] .form-error { background: var(--red-soft); border-color: rgba(255, 129, 120, .30); }
 
 @media (max-width: 760px) {
   .topbar { min-height: 68px; }

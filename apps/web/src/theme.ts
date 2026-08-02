@@ -1,15 +1,17 @@
 import { useSyncExternalStore } from 'react'
 
-export type Theme = 'light' | 'dark' | 'colorful'
+export type Theme = 'light' | 'dark' | 'colorful-light' | 'colorful-dark'
 
-export const THEME_OPTIONS: Theme[] = ['light', 'dark', 'colorful']
+export const THEME_OPTIONS: Theme[] = ['light', 'dark', 'colorful-light', 'colorful-dark']
 
 const STORAGE_KEY = 'researchos.theme'
 
 function initialTheme(): Theme {
   if (typeof window === 'undefined') return 'light'
   const stored = window.localStorage.getItem(STORAGE_KEY)
-  const theme: Theme = stored === 'dark' || stored === 'colorful' ? stored : 'light'
+  const theme: Theme = stored === 'dark' || stored === 'colorful-light' || stored === 'colorful-dark'
+    ? stored
+    : stored === 'colorful' ? 'colorful-light' : 'light'
   window.document.documentElement.dataset.theme = theme
   return theme
 }

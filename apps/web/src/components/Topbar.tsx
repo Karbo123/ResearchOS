@@ -34,7 +34,15 @@ export function Topbar({
           <Palette size={15} aria-hidden="true" />
           <span className="sr-only">{t('topbar.theme')}</span>
           <select value={theme} aria-label={t('topbar.theme')} onChange={event => setTheme(event.target.value as Theme)}>
-            {THEME_OPTIONS.map(option => <option key={option} value={option}>{t(option === 'light' ? 'theme.light' : option === 'dark' ? 'theme.dark' : 'theme.colorful')}</option>)}
+            {THEME_OPTIONS.map(option => <option key={option} value={option}>{t(
+              option === 'light'
+                ? 'theme.light'
+                : option === 'dark'
+                  ? 'theme.dark'
+                  : option === 'colorful-light'
+                    ? 'theme.colorfulLight'
+                    : 'theme.colorfulDark',
+            )}</option>)}
           </select>
         </label>
         <span className={`health ${health === 'online' ? 'ok' : ''}`}>

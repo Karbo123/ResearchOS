@@ -15,5 +15,5 @@ for (const locale of ['zh-CN', 'zh-TW', 'en', 'es'] as const) {
   }
 }
 
-assert.deepEqual(THEME_OPTIONS, ['light', 'dark', 'colorful'], 'must provide light, dark, and colorful themes')
+assert.deepEqual(THEME_OPTIONS, ['light', 'dark', 'colorful-light', 'colorful-dark'], 'must provide light, dark, colorful-light, and colorful-dark themes')
 console.log('UI i18n and theme check passed')

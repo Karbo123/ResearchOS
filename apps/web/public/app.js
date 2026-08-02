@@ -12828,6 +12828,8 @@
     "theme.light": "\u6D45\u8272",
     "theme.dark": "\u6697\u8272",
     "theme.colorful": "\u5F69\u8272",
+    "theme.colorfulLight": "\u6D45\u5F69\u8272",
+    "theme.colorfulDark": "\u6DF1\u5F69\u8272",
     "projectChat": "\u9879\u76EE\u5BF9\u8BDD",
     "common.innerPages": "\u5185\u90E8\u9875\u9762",
     "common.cancel": "\u53D6\u6D88",
@@ -13810,6 +13812,8 @@
     "theme.light": "\u6DFA\u8272",
     "theme.dark": "\u6697\u8272",
     "theme.colorful": "\u5F69\u8272",
+    "theme.colorfulLight": "\u6DFA\u5F69\u8272",
+    "theme.colorfulDark": "\u6DF1\u5F69\u8272",
     "projectChat": "\u5C08\u6848\u5C0D\u8A71",
     "common.innerPages": "\u5167\u90E8\u9801\u9762",
     "common.cancel": "\u53D6\u6D88",
@@ -14792,6 +14796,8 @@
     "theme.light": "Light",
     "theme.dark": "Dark",
     "theme.colorful": "Colorful",
+    "theme.colorfulLight": "Colorful Light",
+    "theme.colorfulDark": "Colorful Dark",
     "projectChat": "Project chat",
     "common.innerPages": "Inner pages",
     "common.cancel": "Cancel",
@@ -15774,6 +15780,8 @@
     "theme.light": "Claro",
     "theme.dark": "Oscuro",
     "theme.colorful": "Colorido",
+    "theme.colorfulLight": "Colorido claro",
+    "theme.colorfulDark": "Colorido oscuro",
     "projectChat": "Chat del proyecto",
     "common.innerPages": "P\xE1ginas internas",
     "common.cancel": "Cancelar",
@@ -17701,12 +17709,12 @@
 
   // src/theme.ts
   var import_react5 = __toESM(require_react(), 1);
-  var THEME_OPTIONS = ["light", "dark", "colorful"];
+  var THEME_OPTIONS = ["light", "dark", "colorful-light", "colorful-dark"];
   var STORAGE_KEY2 = "researchos.theme";
   function initialTheme() {
     if (typeof window === "undefined") return "light";
     const stored = window.localStorage.getItem(STORAGE_KEY2);
-    const theme = stored === "dark" || stored === "colorful" ? stored : "light";
+    const theme = stored === "dark" || stored === "colorful-light" || stored === "colorful-dark" ? stored : stored === "colorful" ? "colorful-light" : "light";
     window.document.documentElement.dataset.theme = theme;
     return theme;
   }
@@ -17755,7 +17763,9 @@
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("label", { className: "control-pill", title: t("topbar.theme"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Palette, { size: 15, "aria-hidden": "true" }),
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "sr-only", children: t("topbar.theme") }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("select", { value: theme, "aria-label": t("topbar.theme"), onChange: (event) => setTheme(event.target.value), children: THEME_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: option, children: t(option === "light" ? "theme.light" : option === "dark" ? "theme.dark" : "theme.colorful") }, option)) })
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("select", { value: theme, "aria-label": t("topbar.theme"), onChange: (event) => setTheme(event.target.value), children: THEME_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: option, children: t(
+            option === "light" ? "theme.light" : option === "dark" ? "theme.dark" : option === "colorful-light" ? "theme.colorfulLight" : "theme.colorfulDark"
+          ) }, option)) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: `health ${health === "online" ? "ok" : ""}`, children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", {}),
