@@ -155,10 +155,10 @@ export function Sidebar({
         onPointerDown={startResize}
         onKeyDown={resizeByKeyboard}
       />
-      <div className="brand">
+      <button className="brand" type="button" onClick={onNewProject} aria-label={t('sidebar.goHome')} title={t('sidebar.goHome')}>
         <img className="brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
         <span>Research OS</span>
-      </div>
+      </button>
       <button className="primary full" type="button" onClick={onNewProject}>
         <Plus size={17} />
         {t('sidebar.newProject')}

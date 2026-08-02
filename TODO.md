@@ -406,6 +406,11 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `086c` 增加四语言置顶/取消置顶标签和操作反馈，适配浅色/暗色主题，避免操作按钮改变列表布局。
   - [~] `086d` 类型检查、UI 检查、完整 server 测试（29 个测试文件、108 个测试）、构建、导航/文档/语言边界检查均通过；真实浏览器截图仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞，`npm run acceptance` 另因创建项目主链返回既有 `500 internal_error` 未通过，待可用验收环境和主链修复后完成。
 
+- [~] `P0-PROJECT-UX-087` 将左上角 Research OS 品牌标识改为居中的首页入口。
+  - [x] `087a` 图标与品牌名称合并为一个可点击按钮，复用首页导航并提供四语言无障碍名称。
+  - [x] `087b` 调整浅色/暗色和窄屏样式，使品牌整体在侧栏中保持协调居中且不破坏移动端布局。
+  - [~] `087c` 类型检查、UI/i18n/主题检查、构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

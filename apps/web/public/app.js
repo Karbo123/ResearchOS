@@ -12819,6 +12819,7 @@
     "topbar.language": "\u754C\u9762\u8BED\u8A00",
     "topbar.theme": "\u754C\u9762\u4E3B\u9898",
     "sidebar.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
+    "sidebar.goHome": "\u8FD4\u56DE\u9996\u9875",
     "sidebar.projects": "\u9879\u76EE",
     "sidebar.noProjects": "\u6682\u65E0\u9879\u76EE",
     "sidebar.mastraWorkflows": "Mastra \u5DE5\u4F5C\u6D41",
@@ -13832,6 +13833,7 @@
     "topbar.language": "\u4ECB\u9762\u8A9E\u8A00",
     "topbar.theme": "\u4ECB\u9762\u4E3B\u984C",
     "sidebar.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
+    "sidebar.goHome": "\u8FD4\u56DE\u9996\u9801",
     "sidebar.projects": "\u5C08\u6848",
     "sidebar.noProjects": "\u5C1A\u7121\u5C08\u6848",
     "sidebar.mastraWorkflows": "Mastra \u5DE5\u4F5C\u6D41\u7A0B",
@@ -14845,6 +14847,7 @@
     "topbar.language": "Interface language",
     "topbar.theme": "Interface theme",
     "sidebar.newProject": "New Research Project",
+    "sidebar.goHome": "Go to home",
     "sidebar.projects": "Projects",
     "sidebar.noProjects": "No projects yet",
     "sidebar.mastraWorkflows": "Mastra Workflows",
@@ -15858,6 +15861,7 @@
     "topbar.language": "Idioma de la interfaz",
     "topbar.theme": "Tema de la interfaz",
     "sidebar.newProject": "Nuevo proyecto de investigaci\xF3n",
+    "sidebar.goHome": "Ir al inicio",
     "sidebar.projects": "Proyectos",
     "sidebar.noProjects": "A\xFAn no hay proyectos",
     "sidebar.mastraWorkflows": "Flujos de trabajo de Mastra",
@@ -18003,7 +18007,7 @@
           onKeyDown: resizeByKeyboard
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "brand", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "brand", type: "button", onClick: onNewProject, "aria-label": t("sidebar.goHome"), title: t("sidebar.goHome"), children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { className: "brand-mark", src: "/favicon.svg", alt: "", "aria-hidden": "true" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Research OS" })
       ] }),
