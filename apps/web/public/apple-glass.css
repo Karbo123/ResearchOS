@@ -77,6 +77,24 @@ button { -webkit-font-smoothing: inherit; }
 .health { min-height: 32px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 255, 255, .56); font-size: 11px; }
 .health span { width: 7px; height: 7px; background: var(--amber); box-shadow: 0 0 0 3px rgba(255, 159, 10, .12); }
 .health.ok span { background: var(--green); box-shadow: 0 0 0 3px rgba(48, 209, 88, .13); }
+.control-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 6px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .65);
+  color: var(--muted);
+  box-shadow: 0 2px 7px rgba(25, 25, 35, .04);
+  transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+}
+.control-pill:hover { border-color: rgba(10, 132, 255, .34); background: rgba(255, 255, 255, .92); box-shadow: 0 5px 14px rgba(25, 25, 35, .08); }
+.control-pill svg { color: var(--muted); flex: none; }
+.control-pill select { max-width: 128px; border: 0; background: transparent; color: var(--ink); font-size: 11px; font-weight: 650; cursor: pointer; outline: none; }
+.control-pill select:focus-visible { border-radius: 8px; box-shadow: 0 0 0 3px rgba(10, 132, 255, .18); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .icon-btn { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255, 255, 255, .65); color: var(--ink); box-shadow: 0 2px 7px rgba(25, 25, 35, .04); transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
 .icon-btn:hover { border-color: rgba(10, 132, 255, .34); background: rgba(255, 255, 255, .92); color: var(--blue); box-shadow: 0 5px 14px rgba(25, 25, 35, .08); }
 
@@ -580,6 +598,115 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .workspace-context { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 10px; padding: 9px 10px; }
   .workspace-context-actions { justify-content: flex-start; }
   .workspace-context-title code { max-width: 72vw; }
+}
+
+/* Theme switching: light is the default root palette above; dark and colorful
+   override the same semantic variables so components keep using CSS variables. */
+:root[data-theme='dark'] {
+  --bg: #000000;
+  --surface: rgba(28, 28, 30, .78);
+  --surface-solid: #1c1c1e;
+  --surface-2: rgba(44, 44, 46, .62);
+  --ink: #f5f5f7;
+  --muted: #a1a1a6;
+  --line: rgba(255, 255, 255, .14);
+  --line-strong: rgba(255, 255, 255, .26);
+  --blue: #0a84ff;
+  --blue-dark: #409cff;
+  --blue-soft: rgba(10, 132, 255, .24);
+  --green: #30d158;
+  --amber: #ff9f0a;
+  --red: #ff453a;
+  --sidebar: rgba(18, 18, 20, .98);
+  --sidebar-muted: rgba(235, 235, 245, .68);
+  --sidebar-line: rgba(255, 255, 255, .13);
+  --glass-highlight: rgba(255, 255, 255, .10);
+  --shadow-soft: 0 12px 34px rgba(0, 0, 0, .42);
+  color-scheme: dark;
+}
+
+:root[data-theme='dark'] .tabs,
+:root[data-theme='dark'] .tab-content,
+:root[data-theme='dark'] .chat-pane,
+:root[data-theme='dark'] .spec-pane,
+:root[data-theme='dark'] .project-chat,
+:root[data-theme='dark'] .composer,
+:root[data-theme='dark'] .ai-progress,
+:root[data-theme='dark'] .clarification-mode-bar,
+:root[data-theme='dark'] .thinking-session,
+:root[data-theme='dark'] .data-list,
+:root[data-theme='dark'] .artifact-card,
+:root[data-theme='dark'] .report,
+:root[data-theme='dark'] .metric,
+:root[data-theme='dark'] .modal-panel,
+:root[data-theme='dark'] .markdown-preview,
+:root[data-theme='dark'] .workflow-local-nav,
+:root[data-theme='dark'] .research-graph-details {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .tabs button.active,
+:root[data-theme='dark'] .project-subtabs button.active,
+:root[data-theme='dark'] .workflow-local-nav button.active { background: rgba(44, 44, 46, .9); color: var(--ink); }
+:root[data-theme='dark'] .health,
+:root[data-theme='dark'] .icon-btn,
+:root[data-theme='dark'] .control-pill,
+:root[data-theme='dark'] .secondary,
+:root[data-theme='dark'] .approve,
+:root[data-theme='dark'] .reject { background: rgba(44, 44, 46, .76); border-color: var(--line); color: var(--ink); }
+:root[data-theme='dark'] .secondary:hover,
+:root[data-theme='dark'] .approve:hover,
+:root[data-theme='dark'] .reject:hover,
+:root[data-theme='dark'] .icon-btn:hover,
+:root[data-theme='dark'] .control-pill:hover { background: rgba(60, 60, 62, .92); }
+:root[data-theme='dark'] .bubble { background: rgba(44, 44, 46, .92); border-color: var(--line); color: var(--ink); }
+:root[data-theme='dark'] .message.user .bubble { background: rgba(10, 132, 255, .22); }
+:root[data-theme='dark'] .composer textarea,
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] textarea { background: rgba(58, 58, 60, .82); color: var(--ink); border-color: var(--line); }
+:root[data-theme='dark'] .research-graph-node-group rect { fill: rgba(44, 44, 46, .92); stroke: var(--line-strong); }
+:root[data-theme='dark'] .research-graph-node-group:hover rect,
+:root[data-theme='dark'] .research-graph-node-group:focus-visible rect { fill: rgba(60, 60, 62, .96); }
+:root[data-theme='dark'] .research-graph-scroll,
+:root[data-theme='dark'] .related-work-recursive-controls { background: rgba(44, 44, 46, .44); }
+
+:root[data-theme='colorful'] {
+  --bg: linear-gradient(135deg, #eef4ff 0%, #fdf1f7 48%, #edfaf3 100%);
+  --surface: rgba(255, 255, 255, .78);
+  --surface-solid: #ffffff;
+  --surface-2: rgba(255, 255, 255, .60);
+  --ink: #181a2c;
+  --muted: #5d6072;
+  --line: rgba(88, 86, 214, .18);
+  --line-strong: rgba(88, 86, 214, .30);
+  --blue: #0066ff;
+  --blue-dark: #0044cc;
+  --blue-soft: rgba(0, 102, 255, .14);
+  --green: #00a862;
+  --amber: #ff9500;
+  --red: #ff3b30;
+  --sidebar: linear-gradient(180deg, rgba(24, 24, 64, .98), rgba(18, 58, 70, .98));
+  --sidebar-muted: rgba(235, 235, 245, .66);
+  --sidebar-line: rgba(255, 255, 255, .14);
+  --glass-highlight: rgba(255, 255, 255, .86);
+  --shadow-soft: 0 12px 34px rgba(50, 48, 110, .16);
+}
+
+:root[data-theme='colorful'] .project-areas button.active { background: linear-gradient(135deg, #1d4ed8, #0e7490); }
+:root[data-theme='colorful'] .project-subtabs button.active,
+:root[data-theme='colorful'] .workflow-local-nav button.active { color: var(--blue-dark); background: rgba(255, 255, 255, .92); }
+:root[data-theme='colorful'] .primary,
+:root[data-theme='colorful'] .send-btn { background: linear-gradient(135deg, #0066ff, #0e7490); }
+:root[data-theme='colorful'] .metric strong { background: linear-gradient(120deg, #0066ff, #0e7490); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+@media (max-width: 760px) {
+  .topbar { min-height: 68px; }
+  .top-actions { gap: 6px; }
+  .health { display: none; }
+  .control-pill { padding-left: 8px; }
+  .control-pill select { max-width: 92px; }
 }
 
 /* Project-scoped citation graph: a quiet, inspectable canvas rather than a decorative network. */

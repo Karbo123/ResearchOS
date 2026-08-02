@@ -1,5 +1,6 @@
 import { Plus, Settings, Share2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
+import { useTranslation } from '../i18n'
 
 export function Sidebar({
   projects,
@@ -16,6 +17,7 @@ export function Sidebar({
   onOpenMemory: () => void
   onOpenSettings: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -24,10 +26,10 @@ export function Sidebar({
       </div>
       <button className="primary full" type="button" onClick={onNewProject}>
         <Plus size={17} />
-        新研究项目
+        {t('sidebar.newProject')}
       </button>
-      <div className="side-label">项目</div>
-      <nav className="project-list" aria-label="研究项目">
+      <div className="side-label">{t('sidebar.projects')}</div>
+      <nav className="project-list" aria-label={t('sidebar.projects')}>
         {projects.length ? (
           projects.map(project => (
             <button
@@ -42,22 +44,22 @@ export function Sidebar({
             </button>
           ))
         ) : (
-          <div className="muted" style={{ padding: '4px 10px' }}>暂无项目</div>
+          <div className="muted" style={{ padding: '4px 10px' }}>{t('sidebar.noProjects')}</div>
         )}
       </nav>
       <div className="service-links">
-        <a href="/api/mastra/open" target="_blank" rel="noreferrer" title="打开 Mastra Studio 工作流图">
+        <a href="/api/mastra/open" target="_blank" rel="noreferrer" title={t('sidebar.mastraWorkflows')}>
           <Workflow size={17} />
-          Mastra Workflows
+          {t('sidebar.mastraWorkflows')}
         </a>
-        <button className="side-service" type="button" onClick={onOpenMemory} title="项目语义记忆图">
+        <button className="side-service" type="button" onClick={onOpenMemory} title={t('sidebar.memoryGraph')}>
           <Share2 size={17} />
-          <span>项目记忆图</span>
+          <span>{t('sidebar.memoryGraph')}</span>
         </button>
       </div>
-      <button className="side-settings" type="button" onClick={onOpenSettings} title="模型配置">
+      <button className="side-settings" type="button" onClick={onOpenSettings} title={t('sidebar.modelSettings')}>
         <Settings size={17} />
-        <span>模型配置</span>
+        <span>{t('sidebar.modelSettings')}</span>
       </button>
     </aside>
   )

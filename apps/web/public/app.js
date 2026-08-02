@@ -737,9 +737,9 @@
       exports.useState = function(initialState) {
         return ReactSharedInternals.H.useState(initialState);
       };
-      exports.useSyncExternalStore = function(subscribe, getSnapshot, getServerSnapshot) {
+      exports.useSyncExternalStore = function(subscribe3, getSnapshot, getServerSnapshot) {
         return ReactSharedInternals.H.useSyncExternalStore(
-          subscribe,
+          subscribe3,
           getSnapshot,
           getServerSnapshot
         );
@@ -3243,15 +3243,15 @@
         return value;
       }
       var AbortControllerLocal = "undefined" !== typeof AbortController ? AbortController : function() {
-        var listeners = [], signal = this.signal = {
+        var listeners3 = [], signal = this.signal = {
           aborted: false,
           addEventListener: function(type, listener) {
-            listeners.push(listener);
+            listeners3.push(listener);
           }
         };
         this.abort = function() {
           signal.aborted = true;
-          listeners.forEach(function(listener) {
+          listeners3.forEach(function(listener) {
             return listener();
           });
         };
@@ -3303,33 +3303,33 @@
       function pingEngtangledActionScope() {
         if (0 === --currentEntangledPendingCount && null !== currentEntangledListeners) {
           null !== currentEntangledActionThenable && (currentEntangledActionThenable.status = "fulfilled");
-          var listeners = currentEntangledListeners;
+          var listeners3 = currentEntangledListeners;
           currentEntangledListeners = null;
           currentEntangledLane = 0;
           currentEntangledActionThenable = null;
-          for (var i = 0; i < listeners.length; i++) (0, listeners[i])();
+          for (var i = 0; i < listeners3.length; i++) (0, listeners3[i])();
         }
       }
       function chainThenableValue(thenable, result) {
-        var listeners = [], thenableWithOverride = {
+        var listeners3 = [], thenableWithOverride = {
           status: "pending",
           value: null,
           reason: null,
           then: function(resolve) {
-            listeners.push(resolve);
+            listeners3.push(resolve);
           }
         };
         thenable.then(
           function() {
             thenableWithOverride.status = "fulfilled";
             thenableWithOverride.value = result;
-            for (var i = 0; i < listeners.length; i++) (0, listeners[i])(result);
+            for (var i = 0; i < listeners3.length; i++) (0, listeners3[i])(result);
           },
           function(error) {
             thenableWithOverride.status = "rejected";
             thenableWithOverride.reason = error;
-            for (error = 0; error < listeners.length; error++)
-              (0, listeners[error])(void 0);
+            for (error = 0; error < listeners3.length; error++)
+              (0, listeners3[error])(void 0);
           }
         );
         return thenableWithOverride;
@@ -4414,7 +4414,7 @@
         }
         return [newState, dispatch];
       }
-      function updateSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
+      function updateSyncExternalStore(subscribe3, getSnapshot, getServerSnapshot) {
         var fiber = currentlyRenderingFiber, hook = updateWorkInProgressHook(), isHydrating$jscomp$0 = isHydrating;
         if (isHydrating$jscomp$0) {
           if (void 0 === getServerSnapshot) throw Error(formatProdErrorMessage(407));
@@ -4426,8 +4426,8 @@
         );
         snapshotChanged && (hook.memoizedState = getServerSnapshot, didReceiveUpdate = true);
         hook = hook.queue;
-        updateEffect(subscribeToStore.bind(null, fiber, hook, subscribe), [
-          subscribe
+        updateEffect(subscribeToStore.bind(null, fiber, hook, subscribe3), [
+          subscribe3
         ]);
         if (hook.getSnapshot !== getSnapshot || snapshotChanged || null !== workInProgressHook && workInProgressHook.memoizedState.tag & 1) {
           fiber.flags |= 2048;
@@ -4459,8 +4459,8 @@
         inst.getSnapshot = getSnapshot;
         checkIfSnapshotChanged(inst) && forceStoreRerender(fiber);
       }
-      function subscribeToStore(fiber, inst, subscribe) {
-        return subscribe(function() {
+      function subscribeToStore(fiber, inst, subscribe3) {
+        return subscribe3(function() {
           checkIfSnapshotChanged(inst) && forceStoreRerender(fiber);
         });
       }
@@ -5179,7 +5179,7 @@
           mountWorkInProgressHook().memoizedState = stateHook;
           return [false, stateHook];
         },
-        useSyncExternalStore: function(subscribe, getSnapshot, getServerSnapshot) {
+        useSyncExternalStore: function(subscribe3, getSnapshot, getServerSnapshot) {
           var fiber = currentlyRenderingFiber, hook = mountWorkInProgressHook();
           if (isHydrating) {
             if (void 0 === getServerSnapshot)
@@ -5194,8 +5194,8 @@
           hook.memoizedState = getServerSnapshot;
           var inst = { value: getServerSnapshot, getSnapshot };
           hook.queue = inst;
-          mountEffect(subscribeToStore.bind(null, fiber, inst, subscribe), [
-            subscribe
+          mountEffect(subscribeToStore.bind(null, fiber, inst, subscribe3), [
+            subscribe3
           ]);
           fiber.flags |= 2048;
           pushSimpleEffect(
@@ -10340,15 +10340,15 @@
         };
       }
       function accumulateTwoPhaseListeners(targetFiber, reactName) {
-        for (var captureName = reactName + "Capture", listeners = []; null !== targetFiber; ) {
+        for (var captureName = reactName + "Capture", listeners3 = []; null !== targetFiber; ) {
           var _instance2 = targetFiber, stateNode = _instance2.stateNode;
           _instance2 = _instance2.tag;
-          5 !== _instance2 && 26 !== _instance2 && 27 !== _instance2 || null === stateNode || (_instance2 = getListener(targetFiber, captureName), null != _instance2 && listeners.unshift(
+          5 !== _instance2 && 26 !== _instance2 && 27 !== _instance2 || null === stateNode || (_instance2 = getListener(targetFiber, captureName), null != _instance2 && listeners3.unshift(
             createDispatchListener(targetFiber, _instance2, stateNode)
-          ), _instance2 = getListener(targetFiber, reactName), null != _instance2 && listeners.push(
+          ), _instance2 = getListener(targetFiber, reactName), null != _instance2 && listeners3.push(
             createDispatchListener(targetFiber, _instance2, stateNode)
           ));
-          if (3 === targetFiber.tag) return listeners;
+          if (3 === targetFiber.tag) return listeners3;
           targetFiber = targetFiber.return;
         }
         return [];
@@ -10361,18 +10361,18 @@
         return inst ? inst : null;
       }
       function accumulateEnterLeaveListenersForEvent(dispatchQueue, event, target, common, inCapturePhase) {
-        for (var registrationName = event._reactName, listeners = []; null !== target && target !== common; ) {
+        for (var registrationName = event._reactName, listeners3 = []; null !== target && target !== common; ) {
           var _instance3 = target, alternate = _instance3.alternate, stateNode = _instance3.stateNode;
           _instance3 = _instance3.tag;
           if (null !== alternate && alternate === common) break;
-          5 !== _instance3 && 26 !== _instance3 && 27 !== _instance3 || null === stateNode || (alternate = stateNode, inCapturePhase ? (stateNode = getListener(target, registrationName), null != stateNode && listeners.unshift(
+          5 !== _instance3 && 26 !== _instance3 && 27 !== _instance3 || null === stateNode || (alternate = stateNode, inCapturePhase ? (stateNode = getListener(target, registrationName), null != stateNode && listeners3.unshift(
             createDispatchListener(target, stateNode, alternate)
-          )) : inCapturePhase || (stateNode = getListener(target, registrationName), null != stateNode && listeners.push(
+          )) : inCapturePhase || (stateNode = getListener(target, registrationName), null != stateNode && listeners3.push(
             createDispatchListener(target, stateNode, alternate)
           )));
           target = target.return;
         }
-        0 !== listeners.length && dispatchQueue.push({ event, listeners });
+        0 !== listeners3.length && dispatchQueue.push({ event, listeners: listeners3 });
       }
       var NORMALIZE_NEWLINES_REGEX = /\r\n?/g;
       var NORMALIZE_NULL_AND_REPLACEMENT_REGEX = /\u0000|\uFFFD/g;
@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react19 = __toESM(require_react(), 1);
+  var import_react21 = __toESM(require_react(), 1);
 
   // src/api.ts
   var CHAT_REQUEST_TIMEOUT_MS = 3e5;
@@ -13204,26 +13204,37 @@
   ];
   var Inbox = createLucideIcon("inbox", __iconNode25);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/languages.mjs
   var __iconNode26 = [
+    ["path", { d: "m5 8 6 6", key: "1wu5hv" }],
+    ["path", { d: "m4 14 6-6 2-3", key: "1k1g8d" }],
+    ["path", { d: "M2 5h12", key: "or177f" }],
+    ["path", { d: "M7 2h1", key: "1t2jsx" }],
+    ["path", { d: "m22 22-5-10-5 10", key: "don7ne" }],
+    ["path", { d: "M14 18h6", key: "1m8k6r" }]
+  ];
+  var Languages = createLucideIcon("languages", __iconNode26);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
+  var __iconNode27 = [
     ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
     ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
     ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
     ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
   ];
-  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode26);
+  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode27);
 
   // ../../node_modules/lucide-react/dist/esm/icons/library.mjs
-  var __iconNode27 = [
+  var __iconNode28 = [
     ["path", { d: "m16 6 4 14", key: "ji33uf" }],
     ["path", { d: "M12 6v14", key: "1n7gus" }],
     ["path", { d: "M8 8v12", key: "1gg7y9" }],
     ["path", { d: "M4 4v16", key: "6qkkli" }]
   ];
-  var Library = createLucideIcon("library", __iconNode27);
+  var Library = createLucideIcon("library", __iconNode28);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lightbulb.mjs
-  var __iconNode28 = [
+  var __iconNode29 = [
     [
       "path",
       {
@@ -13234,46 +13245,46 @@
     ["path", { d: "M9 18h6", key: "x1upvd" }],
     ["path", { d: "M10 22h4", key: "ceow96" }]
   ];
-  var Lightbulb = createLucideIcon("lightbulb", __iconNode28);
+  var Lightbulb = createLucideIcon("lightbulb", __iconNode29);
 
   // ../../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode29 = [
+  var __iconNode30 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode29);
+  var Link2 = createLucideIcon("link-2", __iconNode30);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode30 = [
+  var __iconNode31 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode30);
+  var ListChecks = createLucideIcon("list-checks", __iconNode31);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-tree.mjs
-  var __iconNode31 = [
+  var __iconNode32 = [
     ["path", { d: "M8 5h13", key: "1pao27" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "M3 10a2 2 0 0 0 2 2h3", key: "1npucw" }],
     ["path", { d: "M3 5v12a2 2 0 0 0 2 2h3", key: "x1gjn2" }]
   ];
-  var ListTree = createLucideIcon("list-tree", __iconNode31);
+  var ListTree = createLucideIcon("list-tree", __iconNode32);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode32 = [
+  var __iconNode33 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode32);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode33);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode33 = [
+  var __iconNode34 = [
     [
       "path",
       {
@@ -13282,10 +13293,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode33);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode34);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode34 = [
+  var __iconNode35 = [
     [
       "path",
       {
@@ -13294,20 +13305,20 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode34);
+  var MessageSquare = createLucideIcon("message-square", __iconNode35);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode35 = [
+  var __iconNode36 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode35);
+  var Network = createLucideIcon("network", __iconNode36);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode36 = [
+  var __iconNode37 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -13320,10 +13331,26 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode36);
+  var PackageCheck = createLucideIcon("package-check", __iconNode37);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
+  var __iconNode38 = [
+    [
+      "path",
+      {
+        d: "M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z",
+        key: "e79jfc"
+      }
+    ],
+    ["circle", { cx: "13.5", cy: "6.5", r: ".5", fill: "currentColor", key: "1okk4w" }],
+    ["circle", { cx: "17.5", cy: "10.5", r: ".5", fill: "currentColor", key: "f64h9f" }],
+    ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
+    ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
+  ];
+  var Palette = createLucideIcon("palette", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode37 = [
+  var __iconNode39 = [
     [
       "path",
       {
@@ -13332,17 +13359,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode37);
+  var Paperclip = createLucideIcon("paperclip", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode38 = [
+  var __iconNode40 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode38);
+  var Pause = createLucideIcon("pause", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode39 = [
+  var __iconNode41 = [
     [
       "path",
       {
@@ -13351,17 +13378,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode39);
+  var Play = createLucideIcon("play", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode40 = [
+  var __iconNode42 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode40);
+  var Plus = createLucideIcon("plus", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode41 = [
+  var __iconNode43 = [
     [
       "path",
       {
@@ -13377,34 +13404,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode41);
+  var Quote = createLucideIcon("quote", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode42 = [
+  var __iconNode44 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode42);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode43 = [
+  var __iconNode45 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode43);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode44 = [
+  var __iconNode46 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode44);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode45 = [
+  var __iconNode47 = [
     [
       "path",
       {
@@ -13415,10 +13442,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode45);
+  var Save = createLucideIcon("save", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode46 = [
+  var __iconNode48 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -13427,17 +13454,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode46);
+  var ScanText = createLucideIcon("scan-text", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode47 = [
+  var __iconNode49 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode47);
+  var Search = createLucideIcon("search", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode48 = [
+  var __iconNode50 = [
     [
       "path",
       {
@@ -13447,10 +13474,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode48);
+  var Send = createLucideIcon("send", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode49 = [
+  var __iconNode51 = [
     [
       "path",
       {
@@ -13460,20 +13487,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode49);
+  var Settings = createLucideIcon("settings", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode50 = [
+  var __iconNode52 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode50);
+  var Share2 = createLucideIcon("share-2", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode51 = [
+  var __iconNode53 = [
     [
       "path",
       {
@@ -13484,10 +13511,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode51);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode52 = [
+  var __iconNode54 = [
     [
       "path",
       {
@@ -13497,26 +13524,26 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode52);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode53 = [
+  var __iconNode55 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode53);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode54 = [
+  var __iconNode56 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode54);
+  var Square = createLucideIcon("square", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode55 = [
+  var __iconNode57 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -13527,10 +13554,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode55);
+  var Stamp = createLucideIcon("stamp", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode56 = [
+  var __iconNode58 = [
     [
       "path",
       {
@@ -13539,17 +13566,17 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode56);
+  var Table2 = createLucideIcon("table-2", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode57 = [
+  var __iconNode59 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode57);
+  var Terminal = createLucideIcon("terminal", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode58 = [
+  var __iconNode60 = [
     [
       "path",
       {
@@ -13560,10 +13587,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode58);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode59 = [
+  var __iconNode61 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -13572,22 +13599,330 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode59);
+  var Waypoints = createLucideIcon("waypoints", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode60 = [
+  var __iconNode62 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode60);
+  var Workflow = createLucideIcon("workflow", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode61 = [
+  var __iconNode63 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode61);
+  var X = createLucideIcon("x", __iconNode63);
+
+  // src/i18n.ts
+  var import_react4 = __toESM(require_react(), 1);
+  var DEFAULT_LOCALE = "zh-CN";
+  var LOCALE_OPTIONS = [
+    { value: "zh-CN", label: "\u7B80\u4F53\u4E2D\u6587" },
+    { value: "zh-TW", label: "\u7E41\u9AD4\u4E2D\u6587" },
+    { value: "en", label: "English" },
+    { value: "es", label: "Espa\xF1ol" }
+  ];
+  var STORAGE_KEY = "researchos.locale";
+  var zhCN = {
+    "nav.overview": "\u9879\u76EE\u6982\u8FF0",
+    "nav.relatedWork": "\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814",
+    "nav.implementation": "\u5B9E\u9A8C\u5B9E\u73B0",
+    "nav.paper": "\u5B66\u672F\u8BBA\u6587\u64B0\u5199",
+    "nav.workspaceArea": "\u79D1\u7814\u5DE5\u4F5C\u533A",
+    "nav.currentWorkspace": "\u5F53\u524D\u5DE5\u4F5C\u533A\u9875\u9762",
+    "group.overviewIdea": "Idea \u8BA8\u8BBA",
+    "group.overviewSpec": "\u9879\u76EE\u89C4\u683C",
+    "group.overviewInnovation": "\u521B\u65B0\u4E0E\u8FB9\u754C",
+    "group.overviewProgress": "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
+    "group.overviewReports": "\u65E5\u62A5/\u5468\u62A5\u4E0E\u5BFC\u5E08\u53CD\u9988",
+    "group.relatedSearch": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
+    "group.relatedStatus": "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE",
+    "group.implRelated": "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0",
+    "group.implMethod": "\u672C\u65B9\u6CD5\u5B9E\u73B0",
+    "group.paperWriting": "\u8BBA\u6587\u5199\u4F5C\u4E0E\u7F16\u8BD1",
+    "tab.overview": "Idea \u8BA8\u8BBA",
+    "tab.overviewSpec": "\u9879\u76EE\u63CF\u8FF0\u4E0E\u7814\u7A76\u95EE\u9898",
+    "tab.overviewInnovation": "\u521B\u65B0\u70B9\u4E0E\u8FB9\u754C",
+    "tab.overviewProgress": "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
+    "tab.dailyReports": "\u65E5\u62A5",
+    "tab.weeklyReports": "\u5468\u62A5",
+    "tab.feedbackInbox": "\u5BFC\u5E08\u53CD\u9988",
+    "tab.feedbackAudit": "\u51B3\u7B56\u4E0E\u5BA1\u8BA1",
+    "tab.literature": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
+    "tab.researchStatus": "\u7814\u7A76\u73B0\u72B6",
+    "tab.citationGraph": "\u5F15\u7528\u56FE",
+    "tab.reproduction": "\u4EE3\u7801\u590D\u73B0",
+    "tab.comparison": "\u6548\u679C\u6BD4\u8F83",
+    "tab.methodDesign": "\u65B9\u6CD5\u8BBE\u8BA1",
+    "tab.codeWorkspace": "\u4EE3\u7801\u5DE5\u4F5C\u533A",
+    "tab.policies": "\u53D8\u66F4\u4E0E\u5BA1\u6279",
+    "tab.approvals": "Git \u4E0E\u5907\u4EFD",
+    "tab.experiments": "\u5B9E\u9A8C\u8BA1\u5212\u4E0E\u7ED3\u679C",
+    "tab.experimentQueue": "\u8FD0\u884C\u961F\u5217",
+    "tab.experimentMetrics": "\u6307\u6807\u7EDF\u8BA1",
+    "tab.artifacts": "\u7ED3\u679C\u4E0E\u53EF\u89C6\u5316",
+    "tab.lineage": "\u5B9E\u9A8C\u8C31\u7CFB",
+    "tab.paperProject": "\u8BBA\u6587\u9879\u76EE",
+    "tab.paperOutline": "\u5927\u7EB2\u4E0E\u7AE0\u8282",
+    "tab.paperCitations": "\u5F15\u7528\u4E0E BibTeX",
+    "tab.paperFigures": "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165",
+    "tab.paperData": "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528",
+    "tab.paperCompile": "LaTeX \u7F16\u8BD1",
+    "tab.paperReview": "PDF \u5448\u73B0\u4E0E\u5BA1\u9605",
+    "topbar.connected": "\u5DF2\u8FDE\u63A5",
+    "topbar.offline": "\u79BB\u7EBF",
+    "topbar.connecting": "\u8FDE\u63A5\u4E2D",
+    "topbar.refresh": "\u5237\u65B0",
+    "topbar.language": "\u754C\u9762\u8BED\u8A00",
+    "topbar.theme": "\u754C\u9762\u4E3B\u9898",
+    "sidebar.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
+    "sidebar.projects": "\u9879\u76EE",
+    "sidebar.noProjects": "\u6682\u65E0\u9879\u76EE",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "\u9879\u76EE\u8BB0\u5FC6\u56FE",
+    "sidebar.modelSettings": "\u6A21\u578B\u914D\u7F6E",
+    "theme.light": "\u6D45\u8272",
+    "theme.dark": "\u6697\u8272",
+    "theme.colorful": "\u5F69\u8272",
+    "projectChat": "\u9879\u76EE\u5BF9\u8BDD",
+    "common.innerPages": "\u5185\u90E8\u9875\u9762",
+    "common.cancel": "\u53D6\u6D88"
+  };
+  var zhTW = {
+    "nav.overview": "\u5C08\u6848\u6982\u89BD",
+    "nav.relatedWork": "\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814",
+    "nav.implementation": "\u5BE6\u9A57\u5BE6\u4F5C",
+    "nav.paper": "\u5B78\u8853\u8AD6\u6587\u64B0\u5BEB",
+    "nav.workspaceArea": "\u79D1\u7814\u5DE5\u4F5C\u5340",
+    "nav.currentWorkspace": "\u76EE\u524D\u5DE5\u4F5C\u5340\u9801\u9762",
+    "group.overviewIdea": "Idea \u8A0E\u8AD6",
+    "group.overviewSpec": "\u5C08\u6848\u898F\u683C",
+    "group.overviewInnovation": "\u5275\u65B0\u8207\u908A\u754C",
+    "group.overviewProgress": "\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
+    "group.overviewReports": "\u65E5\u5831/\u9031\u5831\u8207\u5C0E\u5E2B\u56DE\u994B",
+    "group.relatedSearch": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
+    "group.relatedStatus": "\u7814\u7A76\u73FE\u6CC1\u8207\u5F15\u7528\u5716",
+    "group.implRelated": "\u76F8\u95DC\u5DE5\u4F5C\u5BE6\u4F5C",
+    "group.implMethod": "\u672C\u65B9\u6CD5\u5BE6\u4F5C",
+    "group.paperWriting": "\u8AD6\u6587\u5BEB\u4F5C\u8207\u7DE8\u8B6F",
+    "tab.overview": "Idea \u8A0E\u8AD6",
+    "tab.overviewSpec": "\u5C08\u6848\u63CF\u8FF0\u8207\u7814\u7A76\u554F\u984C",
+    "tab.overviewInnovation": "\u5275\u65B0\u9EDE\u8207\u908A\u754C",
+    "tab.overviewProgress": "\u5C08\u6848\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
+    "tab.dailyReports": "\u65E5\u5831",
+    "tab.weeklyReports": "\u9031\u5831",
+    "tab.feedbackInbox": "\u5C0E\u5E2B\u56DE\u994B",
+    "tab.feedbackAudit": "\u6C7A\u7B56\u8207\u7A3D\u6838",
+    "tab.literature": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
+    "tab.researchStatus": "\u7814\u7A76\u73FE\u6CC1",
+    "tab.citationGraph": "\u5F15\u7528\u5716",
+    "tab.reproduction": "\u7A0B\u5F0F\u78BC\u91CD\u73FE",
+    "tab.comparison": "\u6548\u679C\u6BD4\u8F03",
+    "tab.methodDesign": "\u65B9\u6CD5\u8A2D\u8A08",
+    "tab.codeWorkspace": "\u7A0B\u5F0F\u78BC\u5DE5\u4F5C\u5340",
+    "tab.policies": "\u8B8A\u66F4\u8207\u5BE9\u6279",
+    "tab.approvals": "Git \u8207\u5099\u4EFD",
+    "tab.experiments": "\u5BE6\u9A57\u8A08\u756B\u8207\u7D50\u679C",
+    "tab.experimentQueue": "\u57F7\u884C\u4F47\u5217",
+    "tab.experimentMetrics": "\u6307\u6A19\u7D71\u8A08",
+    "tab.artifacts": "\u7D50\u679C\u8207\u8996\u89BA\u5316",
+    "tab.lineage": "\u5BE6\u9A57\u8B5C\u7CFB",
+    "tab.paperProject": "\u8AD6\u6587\u5C08\u6848",
+    "tab.paperOutline": "\u5927\u7DB1\u8207\u7AE0\u7BC0",
+    "tab.paperCitations": "\u5F15\u7528\u8207 BibTeX",
+    "tab.paperFigures": "\u5716\u8868\u9078\u64C7\u8207\u63D2\u5165",
+    "tab.paperData": "\u5BE6\u9A57\u8CC7\u6599\u9078\u64C7\u8207\u5F15\u7528",
+    "tab.paperCompile": "LaTeX \u7DE8\u8B6F",
+    "tab.paperReview": "PDF \u5448\u73FE\u8207\u5BE9\u95B1",
+    "topbar.connected": "\u5DF2\u9023\u7DDA",
+    "topbar.offline": "\u96E2\u7DDA",
+    "topbar.connecting": "\u9023\u7DDA\u4E2D",
+    "topbar.refresh": "\u91CD\u65B0\u6574\u7406",
+    "topbar.language": "\u4ECB\u9762\u8A9E\u8A00",
+    "topbar.theme": "\u4ECB\u9762\u4E3B\u984C",
+    "sidebar.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
+    "sidebar.projects": "\u5C08\u6848",
+    "sidebar.noProjects": "\u5C1A\u7121\u5C08\u6848",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "\u5C08\u6848\u8A18\u61B6\u5716",
+    "sidebar.modelSettings": "\u6A21\u578B\u8A2D\u5B9A",
+    "theme.light": "\u6DFA\u8272",
+    "theme.dark": "\u6697\u8272",
+    "theme.colorful": "\u5F69\u8272",
+    "projectChat": "\u5C08\u6848\u5C0D\u8A71",
+    "common.innerPages": "\u5167\u90E8\u9801\u9762",
+    "common.cancel": "\u53D6\u6D88"
+  };
+  var en = {
+    "nav.overview": "Project Overview",
+    "nav.relatedWork": "Related Work",
+    "nav.implementation": "Experiment Implementation",
+    "nav.paper": "Academic Paper Writing",
+    "nav.workspaceArea": "Research workspace",
+    "nav.currentWorkspace": "Current workspace pages",
+    "group.overviewIdea": "Idea Discussion",
+    "group.overviewSpec": "Project Specification",
+    "group.overviewInnovation": "Innovation and Boundaries",
+    "group.overviewProgress": "Progress and Decisions",
+    "group.overviewReports": "Reports and Mentor Feedback",
+    "group.relatedSearch": "Seeds and Literature Search",
+    "group.relatedStatus": "Research Status and Citation Graph",
+    "group.implRelated": "Related Work Implementation",
+    "group.implMethod": "Our Method Implementation",
+    "group.paperWriting": "Writing and Compilation",
+    "tab.overview": "Idea Discussion",
+    "tab.overviewSpec": "Description and Research Question",
+    "tab.overviewInnovation": "Innovation and Boundaries",
+    "tab.overviewProgress": "Progress and Decisions",
+    "tab.dailyReports": "Daily Report",
+    "tab.weeklyReports": "Weekly Report",
+    "tab.feedbackInbox": "Mentor Feedback",
+    "tab.feedbackAudit": "Decisions and Audit",
+    "tab.literature": "Seeds and Literature Search",
+    "tab.researchStatus": "Research Status",
+    "tab.citationGraph": "Citation Graph",
+    "tab.reproduction": "Code Reproduction",
+    "tab.comparison": "Effect Comparison",
+    "tab.methodDesign": "Method Design",
+    "tab.codeWorkspace": "Code Workspace",
+    "tab.policies": "Changes and Approvals",
+    "tab.approvals": "Git and Backups",
+    "tab.experiments": "Plans and Results",
+    "tab.experimentQueue": "Run Queue",
+    "tab.experimentMetrics": "Metric Statistics",
+    "tab.artifacts": "Results and Visualization",
+    "tab.lineage": "Experiment Lineage",
+    "tab.paperProject": "Paper Project",
+    "tab.paperOutline": "Outline and Chapters",
+    "tab.paperCitations": "Citations and BibTeX",
+    "tab.paperFigures": "Figure Selection and Insertion",
+    "tab.paperData": "Experiment Data Selection",
+    "tab.paperCompile": "LaTeX Compilation",
+    "tab.paperReview": "PDF Review",
+    "topbar.connected": "Connected",
+    "topbar.offline": "Offline",
+    "topbar.connecting": "Connecting",
+    "topbar.refresh": "Refresh",
+    "topbar.language": "Interface language",
+    "topbar.theme": "Interface theme",
+    "sidebar.newProject": "New Research Project",
+    "sidebar.projects": "Projects",
+    "sidebar.noProjects": "No projects yet",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "Project Memory Graph",
+    "sidebar.modelSettings": "Model Settings",
+    "theme.light": "Light",
+    "theme.dark": "Dark",
+    "theme.colorful": "Colorful",
+    "projectChat": "Project chat",
+    "common.innerPages": "Inner pages",
+    "common.cancel": "Cancel"
+  };
+  var es = {
+    "nav.overview": "Resumen del proyecto",
+    "nav.relatedWork": "Trabajo relacionado",
+    "nav.implementation": "Implementaci\xF3n experimental",
+    "nav.paper": "Redacci\xF3n acad\xE9mica",
+    "nav.workspaceArea": "Espacio de investigaci\xF3n",
+    "nav.currentWorkspace": "P\xE1ginas del espacio actual",
+    "group.overviewIdea": "Discusi\xF3n de la idea",
+    "group.overviewSpec": "Especificaci\xF3n del proyecto",
+    "group.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
+    "group.overviewProgress": "Progreso y decisiones",
+    "group.overviewReports": "Informes y comentarios del tutor",
+    "group.relatedSearch": "B\xFAsqueda de fuentes",
+    "group.relatedStatus": "Estado de la investigaci\xF3n y grafo de citas",
+    "group.implRelated": "Implementaci\xF3n de trabajos relacionados",
+    "group.implMethod": "Implementaci\xF3n de nuestro m\xE9todo",
+    "group.paperWriting": "Escritura y compilaci\xF3n",
+    "tab.overview": "Discusi\xF3n de la idea",
+    "tab.overviewSpec": "Descripci\xF3n y pregunta de investigaci\xF3n",
+    "tab.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
+    "tab.overviewProgress": "Progreso y decisiones",
+    "tab.dailyReports": "Informe diario",
+    "tab.weeklyReports": "Informe semanal",
+    "tab.feedbackInbox": "Comentarios del tutor",
+    "tab.feedbackAudit": "Decisiones y auditor\xEDa",
+    "tab.literature": "B\xFAsqueda de fuentes",
+    "tab.researchStatus": "Estado de la investigaci\xF3n",
+    "tab.citationGraph": "Grafo de citas",
+    "tab.reproduction": "Reproducci\xF3n de c\xF3digo",
+    "tab.comparison": "Comparaci\xF3n de resultados",
+    "tab.methodDesign": "Dise\xF1o del m\xE9todo",
+    "tab.codeWorkspace": "Espacio de c\xF3digo",
+    "tab.policies": "Cambios y aprobaciones",
+    "tab.approvals": "Git y copias de seguridad",
+    "tab.experiments": "Planes y resultados",
+    "tab.experimentQueue": "Cola de ejecuci\xF3n",
+    "tab.experimentMetrics": "Estad\xEDsticas de m\xE9tricas",
+    "tab.artifacts": "Resultados y visualizaci\xF3n",
+    "tab.lineage": "Linaje experimental",
+    "tab.paperProject": "Proyecto de art\xEDculo",
+    "tab.paperOutline": "Esquema y cap\xEDtulos",
+    "tab.paperCitations": "Citas y BibTeX",
+    "tab.paperFigures": "Selecci\xF3n e inserci\xF3n de figuras",
+    "tab.paperData": "Selecci\xF3n de datos experimentales",
+    "tab.paperCompile": "Compilaci\xF3n LaTeX",
+    "tab.paperReview": "Revisi\xF3n del PDF",
+    "topbar.connected": "Conectado",
+    "topbar.offline": "Sin conexi\xF3n",
+    "topbar.connecting": "Conectando",
+    "topbar.refresh": "Actualizar",
+    "topbar.language": "Idioma de la interfaz",
+    "topbar.theme": "Tema de la interfaz",
+    "sidebar.newProject": "Nuevo proyecto de investigaci\xF3n",
+    "sidebar.projects": "Proyectos",
+    "sidebar.noProjects": "A\xFAn no hay proyectos",
+    "sidebar.mastraWorkflows": "Mastra Workflows",
+    "sidebar.memoryGraph": "Grafo de memoria del proyecto",
+    "sidebar.modelSettings": "Configuraci\xF3n de modelos",
+    "theme.light": "Claro",
+    "theme.dark": "Oscuro",
+    "theme.colorful": "Colorido",
+    "projectChat": "Chat del proyecto",
+    "common.innerPages": "P\xE1ginas internas",
+    "common.cancel": "Cancelar"
+  };
+  var dictionaries = {
+    "zh-CN": zhCN,
+    "zh-TW": zhTW,
+    en,
+    es
+  };
+  function initialLocale() {
+    if (typeof window === "undefined") return "zh-CN";
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const locale = stored === "zh-TW" || stored === "en" || stored === "es" ? stored : DEFAULT_LOCALE;
+    window.document.documentElement.lang = locale;
+    return locale;
+  }
+  var currentLocale = initialLocale();
+  var listeners = /* @__PURE__ */ new Set();
+  function subscribe(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+  function getLocale() {
+    return currentLocale;
+  }
+  function setLocale(locale) {
+    if (locale === currentLocale) return;
+    currentLocale = locale;
+    window.localStorage.setItem(STORAGE_KEY, locale);
+    window.document.documentElement.lang = locale;
+    listeners.forEach((listener) => listener());
+  }
+  function useLocale() {
+    return (0, import_react4.useSyncExternalStore)(subscribe, getLocale, getLocale);
+  }
+  function useTranslation() {
+    const locale = useLocale();
+    const t = (key) => dictionaries[locale][key] ?? zhCN[key] ?? key;
+    return { locale, t, setLocale };
+  }
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -13599,6 +13934,7 @@
     onOpenMemory,
     onOpenSettings
   }) {
+    const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", { className: "sidebar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "brand", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { className: "brand-mark", src: "/favicon.svg", alt: "", "aria-hidden": "true" }),
@@ -13606,10 +13942,10 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "primary full", type: "button", onClick: onNewProject, children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { size: 17 }),
-        "\u65B0\u7814\u7A76\u9879\u76EE"
+        t("sidebar.newProject")
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: "\u9879\u76EE" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": "\u7814\u7A76\u9879\u76EE", children: projects.length ? projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: t("sidebar.projects") }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: projects.length ? projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         "button",
         {
           type: "button",
@@ -13620,22 +13956,53 @@
           children: project.title
         },
         project.id
-      )) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted", style: { padding: "4px 10px" }, children: "\u6682\u65E0\u9879\u76EE" }) }),
+      )) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted", style: { padding: "4px 10px" }, children: t("sidebar.noProjects") }) }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "service-links", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", { href: "/api/mastra/open", target: "_blank", rel: "noreferrer", title: "\u6253\u5F00 Mastra Studio \u5DE5\u4F5C\u6D41\u56FE", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", { href: "/api/mastra/open", target: "_blank", rel: "noreferrer", title: t("sidebar.mastraWorkflows"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Workflow, { size: 17 }),
-          "Mastra Workflows"
+          t("sidebar.mastraWorkflows")
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "side-service", type: "button", onClick: onOpenMemory, title: "\u9879\u76EE\u8BED\u4E49\u8BB0\u5FC6\u56FE", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "side-service", type: "button", onClick: onOpenMemory, title: t("sidebar.memoryGraph"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Share2, { size: 17 }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "\u9879\u76EE\u8BB0\u5FC6\u56FE" })
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: t("sidebar.memoryGraph") })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "side-settings", type: "button", onClick: onOpenSettings, title: "\u6A21\u578B\u914D\u7F6E", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "side-settings", type: "button", onClick: onOpenSettings, title: t("sidebar.modelSettings"), children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Settings, { size: 17 }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "\u6A21\u578B\u914D\u7F6E" })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: t("sidebar.modelSettings") })
       ] })
     ] });
+  }
+
+  // src/theme.ts
+  var import_react5 = __toESM(require_react(), 1);
+  var THEME_OPTIONS = ["light", "dark", "colorful"];
+  var STORAGE_KEY2 = "researchos.theme";
+  function initialTheme() {
+    if (typeof window === "undefined") return "light";
+    const stored = window.localStorage.getItem(STORAGE_KEY2);
+    const theme = stored === "dark" || stored === "colorful" ? stored : "light";
+    window.document.documentElement.dataset.theme = theme;
+    return theme;
+  }
+  var currentTheme = initialTheme();
+  var listeners2 = /* @__PURE__ */ new Set();
+  function subscribe2(listener) {
+    listeners2.add(listener);
+    return () => listeners2.delete(listener);
+  }
+  function getTheme() {
+    return currentTheme;
+  }
+  function setTheme(theme) {
+    if (theme === currentTheme) return;
+    currentTheme = theme;
+    window.localStorage.setItem(STORAGE_KEY2, theme);
+    window.document.documentElement.dataset.theme = theme;
+    listeners2.forEach((listener) => listener());
+  }
+  function useTheme() {
+    return (0, import_react5.useSyncExternalStore)(subscribe2, getTheme, getTheme);
   }
 
   // src/components/Topbar.tsx
@@ -13646,24 +14013,36 @@
     health,
     onRefresh
   }) {
-    const healthLabel = health === "online" ? "\u5DF2\u8FDE\u63A5" : health === "offline" ? "\u79BB\u7EBF" : "\u8FDE\u63A5\u4E2D";
+    const { locale, t, setLocale: setLocale2 } = useTranslation();
+    const theme = useTheme();
+    const healthLabel = health === "online" ? t("topbar.connected") : health === "offline" ? t("topbar.offline") : t("topbar.connecting");
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("header", { className: "topbar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h1", { children: title }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "muted", children: meta })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "top-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("label", { className: "control-pill", title: t("topbar.language"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Languages, { size: 15, "aria-hidden": "true" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "sr-only", children: t("topbar.language") }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("select", { value: locale, "aria-label": t("topbar.language"), onChange: (event) => setLocale2(event.target.value), children: LOCALE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: option.value, children: option.label }, option.value)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("label", { className: "control-pill", title: t("topbar.theme"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Palette, { size: 15, "aria-hidden": "true" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "sr-only", children: t("topbar.theme") }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("select", { value: theme, "aria-label": t("topbar.theme"), onChange: (event) => setTheme(event.target.value), children: THEME_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: option, children: t(option === "light" ? "theme.light" : option === "dark" ? "theme.dark" : "theme.colorful") }, option)) })
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: `health ${health === "online" ? "ok" : ""}`, children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", {}),
           healthLabel
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "icon-btn", type: "button", onClick: onRefresh, title: "\u5237\u65B0", "aria-label": "\u5237\u65B0", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(RefreshCw, { size: 17 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "icon-btn", type: "button", onClick: onRefresh, title: t("topbar.refresh"), "aria-label": t("topbar.refresh"), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(RefreshCw, { size: 17 }) })
       ] })
     ] });
   }
 
   // src/components/IdeaView.tsx
-  var import_react4 = __toESM(require_react(), 1);
+  var import_react6 = __toESM(require_react(), 1);
 
   // src/components/SpecPane.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
@@ -13773,10 +14152,10 @@
     ] });
   }
   function AiProgress({ project = false }) {
-    const [elapsed, setElapsed] = (0, import_react4.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react6.useState)(0);
     const stages = project ? ["\u6B63\u5728\u8BC6\u522B\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u53D8\u66F4\u610F\u56FE\u2026", "\u6B63\u5728\u68C0\u67E5\u9879\u76EE\u72B6\u6001\u4E0E\u5BA1\u6279\u8FB9\u754C\u2026", "\u6B63\u5728\u7EC4\u7EC7\u53EF\u5BA1\u9605\u7684\u56DE\u590D\u2026", "\u6A21\u578B\u4ECD\u5728\u5904\u7406\uFF0C\u8BF7\u7A0D\u5019\u2026"] : IDEA_PROGRESS_STAGES;
-    const [stageIndex, setStageIndex] = (0, import_react4.useState)(0);
-    (0, import_react4.useEffect)(() => {
+    const [stageIndex, setStageIndex] = (0, import_react6.useState)(0);
+    (0, import_react6.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -13812,10 +14191,10 @@
     thinkingSessions,
     onToggleThinking
   }) {
-    const [input, setInput] = (0, import_react4.useState)("");
-    const messagesEndRef = (0, import_react4.useRef)(null);
-    const fileInputRef = (0, import_react4.useRef)(null);
-    (0, import_react4.useEffect)(() => {
+    const [input, setInput] = (0, import_react6.useState)("");
+    const messagesEndRef = (0, import_react6.useRef)(null);
+    const fileInputRef = (0, import_react6.useRef)(null);
+    (0, import_react6.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, chatBusy]);
     const handleSubmit = (event) => {
@@ -13899,18 +14278,18 @@
   }
 
   // src/components/ProjectChat.tsx
-  var import_react5 = __toESM(require_react(), 1);
+  var import_react7 = __toESM(require_react(), 1);
   var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
   function ProjectProgress() {
-    const [elapsed, setElapsed] = (0, import_react5.useState)(0);
-    const [stageIndex, setStageIndex] = (0, import_react5.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react7.useState)(0);
+    const [stageIndex, setStageIndex] = (0, import_react7.useState)(0);
     const stages = [
       "\u6B63\u5728\u8BC6\u522B\u89E3\u91CA\u3001\u5EFA\u8BAE\u6216\u53D8\u66F4\u610F\u56FE\u2026",
       "\u6B63\u5728\u68C0\u67E5\u9879\u76EE\u72B6\u6001\u4E0E\u5BA1\u6279\u8FB9\u754C\u2026",
       "\u6B63\u5728\u7EC4\u7EC7\u53EF\u5BA1\u9605\u7684\u56DE\u590D\u2026",
       "\u6A21\u578B\u4ECD\u5728\u5904\u7406\uFF0C\u8BF7\u7A0D\u5019\u2026"
     ];
-    (0, import_react5.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -13939,9 +14318,9 @@
     onClose,
     mobileOpen
   }) {
-    const [input, setInput] = (0, import_react5.useState)("");
-    const messagesEndRef = (0, import_react5.useRef)(null);
-    (0, import_react5.useEffect)(() => {
+    const [input, setInput] = (0, import_react7.useState)("");
+    const messagesEndRef = (0, import_react7.useRef)(null);
+    (0, import_react7.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, busy]);
     const submit = (event) => {
@@ -14001,7 +14380,7 @@
   }
 
   // src/components/ui.tsx
-  var import_react6 = __toESM(require_react(), 1);
+  var import_react8 = __toESM(require_react(), 1);
   var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
   function badgeKind(status) {
     const value = String(status || "").toLowerCase();
@@ -14042,8 +14421,8 @@
     children,
     wide = false
   }) {
-    const closeRef = (0, import_react6.useRef)(null);
-    (0, import_react6.useEffect)(() => {
+    const closeRef = (0, import_react8.useRef)(null);
+    (0, import_react8.useEffect)(() => {
       closeRef.current?.focus();
       const onKeyDown = (event) => {
         if (event.key === "Escape") onClose();
@@ -14306,7 +14685,7 @@
   }
 
   // src/components/tabs/LiteratureTab.tsx
-  var import_react7 = __toESM(require_react(), 1);
+  var import_react9 = __toESM(require_react(), 1);
   var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
   function LiteratureTab({
     project,
@@ -14316,31 +14695,31 @@
     onRequestConfirm,
     searchCandidates
   }) {
-    const [materialQuery, setMaterialQuery] = (0, import_react7.useState)("");
-    const [materialLoading, setMaterialLoading] = (0, import_react7.useState)(false);
-    const [materialRows, setMaterialRows] = (0, import_react7.useState)([]);
-    const [materialTotal, setMaterialTotal] = (0, import_react7.useState)(0);
-    const [nextOffset, setNextOffset] = (0, import_react7.useState)(null);
-    const [repoInputFor, setRepoInputFor] = (0, import_react7.useState)(null);
-    const [repoUrl, setRepoUrl] = (0, import_react7.useState)("");
-    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react7.useState)({});
-    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react7.useState)(null);
-    const [claimText, setClaimText] = (0, import_react7.useState)("");
-    const [selectedEvidence, setSelectedEvidence] = (0, import_react7.useState)([]);
-    const [seedType, setSeedType] = (0, import_react7.useState)("doi");
-    const [seedValue, setSeedValue] = (0, import_react7.useState)("");
-    const [seedTitle, setSeedTitle] = (0, import_react7.useState)("");
-    const [seedArtifactId, setSeedArtifactId] = (0, import_react7.useState)("");
-    const [seedPaperId, setSeedPaperId] = (0, import_react7.useState)("");
-    const [seedLoading, setSeedLoading] = (0, import_react7.useState)(false);
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react7.useState)([]);
-    const [recursiveDepth, setRecursiveDepth] = (0, import_react7.useState)(2);
-    const [recursiveWidth, setRecursiveWidth] = (0, import_react7.useState)(5);
-    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react7.useState)(30);
-    const [recursiveProviders, setRecursiveProviders] = (0, import_react7.useState)(["crossref", "openalex", "semantic_scholar"]);
-    const [recursiveReason, setRecursiveReason] = (0, import_react7.useState)("\u6269\u5C55\u5F53\u524D\u9879\u76EE\u7684\u76F8\u5173\u5DE5\u4F5C\u5F15\u7528\u7F51\u7EDC");
-    const [recursiveLoading, setRecursiveLoading] = (0, import_react7.useState)(false);
-    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react7.useState)(null);
+    const [materialQuery, setMaterialQuery] = (0, import_react9.useState)("");
+    const [materialLoading, setMaterialLoading] = (0, import_react9.useState)(false);
+    const [materialRows, setMaterialRows] = (0, import_react9.useState)([]);
+    const [materialTotal, setMaterialTotal] = (0, import_react9.useState)(0);
+    const [nextOffset, setNextOffset] = (0, import_react9.useState)(null);
+    const [repoInputFor, setRepoInputFor] = (0, import_react9.useState)(null);
+    const [repoUrl, setRepoUrl] = (0, import_react9.useState)("");
+    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react9.useState)({});
+    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react9.useState)(null);
+    const [claimText, setClaimText] = (0, import_react9.useState)("");
+    const [selectedEvidence, setSelectedEvidence] = (0, import_react9.useState)([]);
+    const [seedType, setSeedType] = (0, import_react9.useState)("doi");
+    const [seedValue, setSeedValue] = (0, import_react9.useState)("");
+    const [seedTitle, setSeedTitle] = (0, import_react9.useState)("");
+    const [seedArtifactId, setSeedArtifactId] = (0, import_react9.useState)("");
+    const [seedPaperId, setSeedPaperId] = (0, import_react9.useState)("");
+    const [seedLoading, setSeedLoading] = (0, import_react9.useState)(false);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react9.useState)([]);
+    const [recursiveDepth, setRecursiveDepth] = (0, import_react9.useState)(2);
+    const [recursiveWidth, setRecursiveWidth] = (0, import_react9.useState)(5);
+    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react9.useState)(30);
+    const [recursiveProviders, setRecursiveProviders] = (0, import_react9.useState)(["crossref", "openalex", "semantic_scholar"]);
+    const [recursiveReason, setRecursiveReason] = (0, import_react9.useState)("\u6269\u5C55\u5F53\u524D\u9879\u76EE\u7684\u76F8\u5173\u5DE5\u4F5C\u5F15\u7528\u7F51\u7EDC");
+    const [recursiveLoading, setRecursiveLoading] = (0, import_react9.useState)(false);
+    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react9.useState)(null);
     const activeRecursiveRun = project.related_work_runs?.find((run) => ["queued", "running"].includes(run.status));
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
@@ -14402,7 +14781,7 @@
         showToast(errorMessage(error));
       }
     };
-    (0, import_react7.useEffect)(() => {
+    (0, import_react9.useEffect)(() => {
       if (!activeRecursiveRun) return;
       const timer = window.setInterval(() => {
         void onRefresh();
@@ -15079,13 +15458,13 @@
   }
 
   // src/components/previews.tsx
-  var import_react8 = __toESM(require_react(), 1);
+  var import_react10 = __toESM(require_react(), 1);
   var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   function PointCloudPreview({ preview }) {
-    const canvasRef = (0, import_react8.useRef)(null);
+    const canvasRef = (0, import_react10.useRef)(null);
     const points = preview.points || [];
-    const [resetKey, setResetKey] = (0, import_react8.useState)(0);
-    (0, import_react8.useEffect)(() => {
+    const [resetKey, setResetKey] = (0, import_react10.useState)(0);
+    (0, import_react10.useEffect)(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const context = canvas.getContext("2d");
@@ -15209,13 +15588,13 @@
     const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
       (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
     );
-    const [metric, setMetric] = (0, import_react8.useState)(metrics[0] || "loss");
-    const [windowSize, setWindowSize] = (0, import_react8.useState)(Math.max(10, points.length));
+    const [metric, setMetric] = (0, import_react10.useState)(metrics[0] || "loss");
+    const [windowSize, setWindowSize] = (0, import_react10.useState)(Math.max(10, points.length));
     const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react8.useState)(allSeeds);
-    const [hovered, setHovered] = (0, import_react8.useState)(null);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react10.useState)(allSeeds);
+    const [hovered, setHovered] = (0, import_react10.useState)(null);
     const seedKey = allSeeds.join("|");
-    (0, import_react8.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       setSelectedSeeds((current) => {
         const next = current.filter((seed) => allSeeds.includes(seed));
         return next.length ? next : allSeeds;
@@ -15389,10 +15768,10 @@
     }
   }
   function ArtifactCard({ artifact }) {
-    const [preview, setPreview] = (0, import_react8.useState)(null);
-    const [status, setStatus] = (0, import_react8.useState)("idle");
-    const [error, setError] = (0, import_react8.useState)("");
-    (0, import_react8.useEffect)(() => {
+    const [preview, setPreview] = (0, import_react10.useState)(null);
+    const [status, setStatus] = (0, import_react10.useState)("idle");
+    const [error, setError] = (0, import_react10.useState)("");
+    (0, import_react10.useEffect)(() => {
       if (artifact.mime_type?.startsWith("image/")) return;
       if (!artifact.preview_url) return;
       setStatus("loading");
@@ -15760,7 +16139,7 @@
   }
 
   // src/components/tabs/ReproductionTab.tsx
-  var import_react9 = __toESM(require_react(), 1);
+  var import_react11 = __toESM(require_react(), 1);
   var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   var defaultForm = () => ({ dependency_manifest: "requirements.txt", entrypoint: "", random_seeds: "13,37,73", config: "{}" });
   function statusText(status) {
@@ -15789,10 +16168,10 @@
     const repositories = project.repositories || [];
     const reproductions = project.reproductions || [];
     const runs = project.reproduction_runs || [];
-    const [forms, setForms] = (0, import_react9.useState)({});
-    const [busy, setBusy] = (0, import_react9.useState)(null);
-    const reproductionByRepository = (0, import_react9.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
-    const runByReproduction = (0, import_react9.useMemo)(() => {
+    const [forms, setForms] = (0, import_react11.useState)({});
+    const [busy, setBusy] = (0, import_react11.useState)(null);
+    const reproductionByRepository = (0, import_react11.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
+    const runByReproduction = (0, import_react11.useMemo)(() => {
       const map = /* @__PURE__ */ new Map();
       for (const run of runs) map.set(run.reproduction_id, [...map.get(run.reproduction_id) || [], run]);
       return map;
@@ -15998,7 +16377,7 @@
   }
 
   // src/components/tabs/ComparisonTab.tsx
-  var import_react10 = __toESM(require_react(), 1);
+  var import_react12 = __toESM(require_react(), 1);
   var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   var defaultContext = () => ({
     data_version: "",
@@ -16037,23 +16416,23 @@
     }
   }
   function ComparisonTab({ project, onRefresh, showToast }) {
-    const papers = (0, import_react10.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
-    const runs = (0, import_react10.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
-    const [paperId, setPaperId] = (0, import_react10.useState)("");
-    const [runId, setRunId] = (0, import_react10.useState)("");
-    const [evidenceIds, setEvidenceIds] = (0, import_react10.useState)([]);
-    const [paperMetrics, setPaperMetrics] = (0, import_react10.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
-    const [context, setContext] = (0, import_react10.useState)(defaultContext);
-    const [busy, setBusy] = (0, import_react10.useState)(false);
-    const [error, setError] = (0, import_react10.useState)(null);
+    const papers = (0, import_react12.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
+    const runs = (0, import_react12.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
+    const [paperId, setPaperId] = (0, import_react12.useState)("");
+    const [runId, setRunId] = (0, import_react12.useState)("");
+    const [evidenceIds, setEvidenceIds] = (0, import_react12.useState)([]);
+    const [paperMetrics, setPaperMetrics] = (0, import_react12.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
+    const [context, setContext] = (0, import_react12.useState)(defaultContext);
+    const [busy, setBusy] = (0, import_react12.useState)(false);
+    const [error, setError] = (0, import_react12.useState)(null);
     const selectedPaper = papers.find((paper) => paper.id === paperId) || null;
-    const paperEvidence2 = (0, import_react10.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
+    const paperEvidence2 = (0, import_react12.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
     const comparisons = project.research_comparisons || [];
-    (0, import_react10.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       if (!paperId && papers[0]) setPaperId(papers[0].id);
       if (!runId && runs[0]) setRunId(runs[0].id);
     }, [papers, runs, paperId, runId]);
-    (0, import_react10.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       setEvidenceIds((current) => current.filter((id) => paperEvidence2.some((evidence) => evidence.id === id)));
     }, [paperEvidence2]);
     const createComparison = async () => {
@@ -16307,7 +16686,7 @@
   }
 
   // src/components/tabs/ResearchStatusTab.tsx
-  var import_react11 = __toESM(require_react(), 1);
+  var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function listLabel(values) {
     return values.length ? values.join("\u3001") : "unresolved";
@@ -16321,15 +16700,15 @@
     project,
     showToast
   }) {
-    const [status, setStatus] = (0, import_react11.useState)(null);
-    const [loading, setLoading] = (0, import_react11.useState)(true);
-    const [working, setWorking] = (0, import_react11.useState)(false);
-    const [error, setError] = (0, import_react11.useState)(null);
-    const [theme, setTheme] = (0, import_react11.useState)("");
-    const [method, setMethod] = (0, import_react11.useState)("");
-    const [year, setYear] = (0, import_react11.useState)("");
-    const [gapType, setGapType] = (0, import_react11.useState)("gap");
-    const [gapStatement, setGapStatement] = (0, import_react11.useState)("");
+    const [status, setStatus] = (0, import_react13.useState)(null);
+    const [loading, setLoading] = (0, import_react13.useState)(true);
+    const [working, setWorking] = (0, import_react13.useState)(false);
+    const [error, setError] = (0, import_react13.useState)(null);
+    const [theme, setTheme2] = (0, import_react13.useState)("");
+    const [method, setMethod] = (0, import_react13.useState)("");
+    const [year, setYear] = (0, import_react13.useState)("");
+    const [gapType, setGapType] = (0, import_react13.useState)("gap");
+    const [gapStatement, setGapStatement] = (0, import_react13.useState)("");
     const loadStatus = async (filters = { theme, method, year }) => {
       setLoading(true);
       setError(null);
@@ -16345,11 +16724,11 @@
         setLoading(false);
       }
     };
-    (0, import_react11.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       setStatus(null);
       void loadStatus({ theme: "", method: "", year: "" });
     }, [project.id]);
-    const eligibleRows = (0, import_react11.useMemo)(() => {
+    const eligibleRows = (0, import_react13.useMemo)(() => {
       const reviews = project.claim_reviews || [];
       return (project.papers || []).flatMap((paper) => {
         if (paper.confirmed !== true) return [];
@@ -16474,7 +16853,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "form-grid three-up", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
             "\u4E3B\u9898",
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: theme, onChange: (event) => setTheme(event.target.value), placeholder: "\u4F8B\u5982 efficient adaptation" })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: theme, onChange: (event) => setTheme2(event.target.value), placeholder: "\u4F8B\u5982 efficient adaptation" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
             "\u65B9\u6CD5",
@@ -16595,7 +16974,7 @@
   }
 
   // src/components/tabs/ExperimentsTab.tsx
-  var import_react12 = __toESM(require_react(), 1);
+  var import_react14 = __toESM(require_react(), 1);
   var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   function ExperimentsTab({
     project,
@@ -16603,8 +16982,8 @@
     showToast,
     onNavigate
   }) {
-    const [diagnostics, setDiagnostics] = (0, import_react12.useState)(null);
-    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react12.useState)(false);
+    const [diagnostics, setDiagnostics] = (0, import_react14.useState)(null);
+    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react14.useState)(false);
     const createExperimentPlan = async () => {
       try {
         const result = await api(`/api/projects/${project.id}/experiment-plan`, { method: "POST" });
@@ -16870,7 +17249,7 @@
   }
 
   // src/components/tabs/PoliciesTab.tsx
-  var import_react13 = __toESM(require_react(), 1);
+  var import_react15 = __toESM(require_react(), 1);
   var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function PoliciesTab({
     project,
@@ -16878,7 +17257,7 @@
     showToast,
     onNavigate
   }) {
-    const [rule, setRule] = (0, import_react13.useState)("");
+    const [rule, setRule] = (0, import_react15.useState)("");
     const addPolicy = async (event) => {
       event.preventDefault();
       if (!rule.trim()) return;
@@ -16980,7 +17359,7 @@
   }
 
   // src/components/tabs/ReportsTab.tsx
-  var import_react14 = __toESM(require_react(), 1);
+  var import_react16 = __toESM(require_react(), 1);
 
   // src/components/MarkdownPreview.tsx
   var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
@@ -17134,27 +17513,27 @@
     const isFeedback = tab === "feedback_inbox";
     const isAudit = tab === "feedback_audit";
     const period = periodForTab(tab);
-    const [content, setContent] = (0, import_react14.useState)("");
-    const [activeReportId, setActiveReportId] = (0, import_react14.useState)("");
-    const [activeReportStatus, setActiveReportStatus] = (0, import_react14.useState)("");
-    const [activeReportReason, setActiveReportReason] = (0, import_react14.useState)("");
-    const [feedback, setFeedback] = (0, import_react14.useState)("");
-    const [feedbackCategory, setFeedbackCategory] = (0, import_react14.useState)("report");
-    const [feedbackRows, setFeedbackRows] = (0, import_react14.useState)(project.feedback || []);
-    const [auditRows, setAuditRows] = (0, import_react14.useState)([]);
-    const [loading, setLoading] = (0, import_react14.useState)(false);
-    const reports = (0, import_react14.useMemo)(
+    const [content, setContent] = (0, import_react16.useState)("");
+    const [activeReportId, setActiveReportId] = (0, import_react16.useState)("");
+    const [activeReportStatus, setActiveReportStatus] = (0, import_react16.useState)("");
+    const [activeReportReason, setActiveReportReason] = (0, import_react16.useState)("");
+    const [feedback, setFeedback] = (0, import_react16.useState)("");
+    const [feedbackCategory, setFeedbackCategory] = (0, import_react16.useState)("report");
+    const [feedbackRows, setFeedbackRows] = (0, import_react16.useState)(project.feedback || []);
+    const [auditRows, setAuditRows] = (0, import_react16.useState)([]);
+    const [loading, setLoading] = (0, import_react16.useState)(false);
+    const reports = (0, import_react16.useMemo)(
       () => (project.reports || []).filter((report) => report.period === period),
       [period, project.reports]
     );
-    (0, import_react14.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       const latest = reports[0];
       setContent(displayable(latest) ? latest?.content || "" : "");
       setActiveReportId(latest?.id || "");
       setActiveReportStatus(latest?.status || "");
       setActiveReportReason(latest?.blocking_reason || "");
     }, [project.id, period, reports]);
-    (0, import_react14.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       if (!isFeedback && !isAudit) return;
       setLoading(true);
       const request = isFeedback ? api(`/api/projects/${project.id}/feedback`).then((result) => setFeedbackRows(result.feedback || [])) : api(`/api/projects/${project.id}/audit`).then((result) => setAuditRows(result || []));
@@ -17346,7 +17725,7 @@
   }
 
   // src/components/tabs/WorkflowStageTab.tsx
-  var import_react15 = __toESM(require_react(), 1);
+  var import_react17 = __toESM(require_react(), 1);
   var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   function text(value, fallback = "\u672A\u8BB0\u5F55") {
     return typeof value === "string" && value.trim() ? value : fallback;
@@ -17432,15 +17811,15 @@
     project,
     tab
   }) {
-    const [workspace, setWorkspace] = (0, import_react15.useState)(null);
-    const [workspaceError, setWorkspaceError] = (0, import_react15.useState)(null);
-    const [researchStatus, setResearchStatus] = (0, import_react15.useState)(null);
-    const [researchStatusError, setResearchStatusError] = (0, import_react15.useState)(null);
-    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react15.useState)(null);
-    const graphLayout = (0, import_react15.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
-    const graphNodesById = (0, import_react15.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
+    const [workspace, setWorkspace] = (0, import_react17.useState)(null);
+    const [workspaceError, setWorkspaceError] = (0, import_react17.useState)(null);
+    const [researchStatus, setResearchStatus] = (0, import_react17.useState)(null);
+    const [researchStatusError, setResearchStatusError] = (0, import_react17.useState)(null);
+    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react17.useState)(null);
+    const graphLayout = (0, import_react17.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
+    const graphNodesById = (0, import_react17.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
     const selectedGraphNode = selectedGraphNodeId ? graphNodesById.get(selectedGraphNodeId) || null : null;
-    (0, import_react15.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (tab === "code_workspace") {
         setWorkspace(null);
         setWorkspaceError(null);
@@ -17805,68 +18184,68 @@
   var AREAS = [
     {
       id: "overview",
-      label: "\u9879\u76EE\u6982\u8FF0",
+      labelKey: "nav.overview",
       icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(LayoutDashboard, { size: 16 }),
       groups: [
-        { id: "overview_idea", label: "Idea \u8BA8\u8BBA", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MessageCircle, { size: 15 }), tabs: [{ id: "overview", label: "Idea \u8BA8\u8BBA", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MessageCircle, { size: 15 }) }] },
-        { id: "overview_spec", label: "\u9879\u76EE\u89C4\u683C", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }), tabs: [{ id: "overview_spec", label: "\u9879\u76EE\u63CF\u8FF0\u4E0E\u7814\u7A76\u95EE\u9898", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) }] },
-        { id: "overview_innovation", label: "\u521B\u65B0\u4E0E\u8FB9\u754C", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Search, { size: 15 }), tabs: [{ id: "overview_innovation", label: "\u521B\u65B0\u70B9\u4E0E\u8FB9\u754C", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Search, { size: 15 }) }] },
-        { id: "overview_progress", label: "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListChecks, { size: 15 }), tabs: [{ id: "overview_progress", label: "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListChecks, { size: 15 }) }] },
-        { id: "overview_reports", label: "\u65E5\u62A5/\u5468\u62A5\u4E0E\u5BFC\u5E08\u53CD\u9988", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CalendarDays, { size: 15 }), tabs: [
-          { id: "daily_reports", label: "\u65E5\u62A5", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CalendarDays, { size: 15 }) },
-          { id: "weekly_reports", label: "\u5468\u62A5", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) },
-          { id: "feedback_inbox", label: "\u5BFC\u5E08\u53CD\u9988", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Inbox, { size: 15 }) },
-          { id: "feedback_audit", label: "\u51B3\u7B56\u4E0E\u5BA1\u8BA1", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SquareCheckBig, { size: 15 }) }
+        { id: "overview_idea", labelKey: "group.overviewIdea", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MessageCircle, { size: 15 }), tabs: [{ id: "overview", labelKey: "tab.overview", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MessageCircle, { size: 15 }) }] },
+        { id: "overview_spec", labelKey: "group.overviewSpec", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }), tabs: [{ id: "overview_spec", labelKey: "tab.overviewSpec", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) }] },
+        { id: "overview_innovation", labelKey: "group.overviewInnovation", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Search, { size: 15 }), tabs: [{ id: "overview_innovation", labelKey: "tab.overviewInnovation", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Search, { size: 15 }) }] },
+        { id: "overview_progress", labelKey: "group.overviewProgress", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListChecks, { size: 15 }), tabs: [{ id: "overview_progress", labelKey: "tab.overviewProgress", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListChecks, { size: 15 }) }] },
+        { id: "overview_reports", labelKey: "group.overviewReports", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CalendarDays, { size: 15 }), tabs: [
+          { id: "daily_reports", labelKey: "tab.dailyReports", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CalendarDays, { size: 15 }) },
+          { id: "weekly_reports", labelKey: "tab.weeklyReports", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) },
+          { id: "feedback_inbox", labelKey: "tab.feedbackInbox", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Inbox, { size: 15 }) },
+          { id: "feedback_audit", labelKey: "tab.feedbackAudit", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SquareCheckBig, { size: 15 }) }
         ] }
       ]
     },
     {
       id: "related_work",
-      label: "\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814",
+      labelKey: "nav.relatedWork",
       icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Library, { size: 16 }),
       groups: [
-        { id: "related_search", label: "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(BookOpen, { size: 15 }), tabs: [{ id: "literature", label: "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(BookOpen, { size: 15 }) }] },
-        { id: "related_status", label: "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Network, { size: 15 }), tabs: [
-          { id: "research_status", label: "\u7814\u7A76\u73B0\u72B6", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Search, { size: 15 }) },
-          { id: "citation_graph", label: "\u5F15\u7528\u56FE", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Network, { size: 15 }) }
+        { id: "related_search", labelKey: "group.relatedSearch", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(BookOpen, { size: 15 }), tabs: [{ id: "literature", labelKey: "tab.literature", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(BookOpen, { size: 15 }) }] },
+        { id: "related_status", labelKey: "group.relatedStatus", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Network, { size: 15 }), tabs: [
+          { id: "research_status", labelKey: "tab.researchStatus", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Search, { size: 15 }) },
+          { id: "citation_graph", labelKey: "tab.citationGraph", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Network, { size: 15 }) }
         ] }
       ]
     },
     {
       id: "implementation",
-      label: "\u5B9E\u9A8C\u5B9E\u73B0",
+      labelKey: "nav.implementation",
       icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FlaskConical, { size: 16 }),
       groups: [
-        { id: "implementation_related", label: "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }), tabs: [
-          { id: "reproduction", label: "\u4EE3\u7801\u590D\u73B0", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }) },
-          { id: "comparison", label: "\u6548\u679C\u6BD4\u8F83", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitCompare, { size: 15 }) }
+        { id: "implementation_related", labelKey: "group.implRelated", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }), tabs: [
+          { id: "reproduction", labelKey: "tab.reproduction", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitBranch, { size: 15 }) },
+          { id: "comparison", labelKey: "tab.comparison", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(GitCompare, { size: 15 }) }
         ] },
-        { id: "implementation_method", label: "\u672C\u65B9\u6CD5\u5B9E\u73B0", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Waypoints, { size: 15 }), tabs: [
-          { id: "method_design", label: "\u65B9\u6CD5\u8BBE\u8BA1", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Waypoints, { size: 15 }) },
-          { id: "code_workspace", label: "\u4EE3\u7801\u5DE5\u4F5C\u533A", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Terminal, { size: 15 }) },
-          { id: "policies", label: "\u53D8\u66F4\u4E0E\u5BA1\u6279", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Stamp, { size: 15 }) },
-          { id: "approvals", label: "Git \u4E0E\u5907\u4EFD", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(RotateCcwClock, { size: 15 }) },
-          { id: "experiments", label: "\u5B9E\u9A8C\u8BA1\u5212\u4E0E\u7ED3\u679C", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FlaskConical, { size: 15 }) },
-          { id: "experiment_queue", label: "\u8FD0\u884C\u961F\u5217", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }) },
-          { id: "experiment_metrics", label: "\u6307\u6807\u7EDF\u8BA1", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) },
-          { id: "artifacts", label: "\u7ED3\u679C\u4E0E\u53EF\u89C6\u5316", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Image, { size: 15 }) },
-          { id: "lineage", label: "\u5B9E\u9A8C\u8C31\u7CFB", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(RotateCcwClock, { size: 15 }) }
+        { id: "implementation_method", labelKey: "group.implMethod", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Waypoints, { size: 15 }), tabs: [
+          { id: "method_design", labelKey: "tab.methodDesign", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Waypoints, { size: 15 }) },
+          { id: "code_workspace", labelKey: "tab.codeWorkspace", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Terminal, { size: 15 }) },
+          { id: "policies", labelKey: "tab.policies", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Stamp, { size: 15 }) },
+          { id: "approvals", labelKey: "tab.approvals", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(RotateCcwClock, { size: 15 }) },
+          { id: "experiments", labelKey: "tab.experiments", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FlaskConical, { size: 15 }) },
+          { id: "experiment_queue", labelKey: "tab.experimentQueue", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }) },
+          { id: "experiment_metrics", labelKey: "tab.experimentMetrics", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) },
+          { id: "artifacts", labelKey: "tab.artifacts", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Image, { size: 15 }) },
+          { id: "lineage", labelKey: "tab.lineage", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(RotateCcwClock, { size: 15 }) }
         ] }
       ]
     },
     {
       id: "paper",
-      label: "\u5B66\u672F\u8BBA\u6587\u64B0\u5199",
+      labelKey: "nav.paper",
       icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 16 }),
       groups: [
-        { id: "paper_writing", label: "\u8BBA\u6587\u5199\u4F5C\u4E0E\u7F16\u8BD1", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }), tabs: [
-          { id: "paper", label: "\u8BBA\u6587\u9879\u76EE", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }) },
-          { id: "paper_outline", label: "\u5927\u7EB2\u4E0E\u7AE0\u8282", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }) },
-          { id: "paper_citations", label: "\u5F15\u7528\u4E0E BibTeX", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Quote, { size: 15 }) },
-          { id: "paper_figures", label: "\u56FE\u8868\u9009\u62E9\u4E0E\u63D2\u5165", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartLine, { size: 15 }) },
-          { id: "paper_data", label: "\u5B9E\u9A8C\u6570\u636E\u9009\u62E9\u4E0E\u5F15\u7528", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) },
-          { id: "paper_compile", label: "LaTeX \u7F16\u8BD1", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileCheckCorner, { size: 15 }) },
-          { id: "paper_review", label: "PDF \u5448\u73B0\u4E0E\u5BA1\u9605", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) }
+        { id: "paper_writing", labelKey: "group.paperWriting", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }), tabs: [
+          { id: "paper", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FilePenLine, { size: 15 }) },
+          { id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ListTree, { size: 15 }) },
+          { id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Quote, { size: 15 }) },
+          { id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartLine, { size: 15 }) },
+          { id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChartColumn, { size: 15 }) },
+          { id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileCheckCorner, { size: 15 }) },
+          { id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }) }
         ] }
       ]
     }
@@ -17887,6 +18266,7 @@
     mobileChatOpen,
     onToggleMobileChat
   }) {
+    const { t } = useTranslation();
     const tabProps = {
       project,
       onRefresh,
@@ -17897,7 +18277,7 @@
     const area = AREAS.find((item) => item.id === activeArea) || AREAS[0];
     const activeGroup = area.groups.find((group) => group.tabs.some((tab) => tab.id === activeTab)) || area.groups[0];
     return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("section", { className: "project-view", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "tabs project-areas", "aria-label": "\u79D1\u7814\u5DE5\u4F5C\u533A", children: AREAS.map((area2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "tabs project-areas", "aria-label": t("nav.workspaceArea"), children: AREAS.map((area2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
         "button",
         {
           type: "button",
@@ -17906,12 +18286,12 @@
           onClick: () => onAreaChange(area2.id),
           children: [
             area2.icon,
-            area2.label
+            t(area2.labelKey)
           ]
         },
         area2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "tabs project-subtabs", "aria-label": "\u5F53\u524D\u5DE5\u4F5C\u533A\u9875\u9762", children: area.groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("nav", { className: "tabs project-subtabs", "aria-label": t("nav.currentWorkspace"), children: area.groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
         "button",
         {
           type: "button",
@@ -17920,7 +18300,7 @@
           onClick: () => onTabChange(group.tabs[0].id),
           children: [
             group.icon,
-            group.label
+            t(group.labelKey)
           ]
         },
         group.id
@@ -17928,8 +18308,8 @@
       /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "project-layout", children: [
         /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "tab-content", children: [
           /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(WorkspaceContextBar, { project }),
-          activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("nav", { className: "workflow-local-nav", "aria-label": `${activeGroup.label}\u5185\u90E8\u9875\u9762`, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "workflow-local-label", children: activeGroup.label }),
+          activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("nav", { className: "workflow-local-nav", "aria-label": `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "workflow-local-label", children: t(activeGroup.labelKey) }),
             activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
               "button",
               {
@@ -17939,7 +18319,7 @@
                 onClick: () => onTabChange(tab.id),
                 children: [
                   tab.icon,
-                  tab.label
+                  t(tab.labelKey)
                 ]
               },
               tab.id
@@ -17970,7 +18350,7 @@
             onClick: () => onToggleMobileChat(true),
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MessageCircle, { size: 16 }),
-              "\u9879\u76EE\u5BF9\u8BDD"
+              t("projectChat")
             ]
           }
         ),
@@ -18056,19 +18436,19 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react17 = __toESM(require_react(), 1);
+  var import_react19 = __toESM(require_react(), 1);
 
   // src/components/ProjectEmbeddingSettingsForm.tsx
-  var import_react16 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
   var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
-    const [values, setValues] = (0, import_react16.useState)(null);
-    const [instance, setInstance] = (0, import_react16.useState)(null);
-    const [loading, setLoading] = (0, import_react16.useState)(false);
-    const [saving, setSaving] = (0, import_react16.useState)(false);
-    const [error, setError] = (0, import_react16.useState)("");
-    const [dirty, setDirty] = (0, import_react16.useState)(false);
-    const [confirmReset, setConfirmReset] = (0, import_react16.useState)(false);
+    const [values, setValues] = (0, import_react18.useState)(null);
+    const [instance, setInstance] = (0, import_react18.useState)(null);
+    const [loading, setLoading] = (0, import_react18.useState)(false);
+    const [saving, setSaving] = (0, import_react18.useState)(false);
+    const [error, setError] = (0, import_react18.useState)("");
+    const [dirty, setDirty] = (0, import_react18.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react18.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -18091,7 +18471,7 @@
         setLoading(false);
       }
     };
-    (0, import_react16.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (projectId) void load();
     }, [projectId]);
     const update = (field, value) => {
@@ -18286,14 +18666,14 @@
     return value === "runtime_override" ? "\u8FD0\u884C\u65F6\u8986\u76D6" : "\u9879\u76EE .env \u9ED8\u8BA4";
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
-    const [tab, setTab] = (0, import_react17.useState)("models");
-    const [values, setValues] = (0, import_react17.useState)(null);
-    const [loading, setLoading] = (0, import_react17.useState)(false);
-    const [saving, setSaving] = (0, import_react17.useState)(false);
-    const [error, setError] = (0, import_react17.useState)("");
-    const [dirty, setDirty] = (0, import_react17.useState)(false);
-    const [confirmClose, setConfirmClose] = (0, import_react17.useState)(false);
-    (0, import_react17.useEffect)(() => {
+    const [tab, setTab] = (0, import_react19.useState)("models");
+    const [values, setValues] = (0, import_react19.useState)(null);
+    const [loading, setLoading] = (0, import_react19.useState)(false);
+    const [saving, setSaving] = (0, import_react19.useState)(false);
+    const [error, setError] = (0, import_react19.useState)("");
+    const [dirty, setDirty] = (0, import_react19.useState)(false);
+    const [confirmClose, setConfirmClose] = (0, import_react19.useState)(false);
+    (0, import_react19.useEffect)(() => {
       if (!open) return;
       setTab("models");
       setLoading(true);
@@ -18523,7 +18903,7 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react18 = __toESM(require_react(), 1);
+  var import_react20 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     if (!graph) return null;
@@ -18564,13 +18944,13 @@
     onClose,
     showToast
   }) {
-    const [view, setView] = (0, import_react18.useState)("graph");
-    const [query, setQuery] = (0, import_react18.useState)("");
-    const [status, setStatus] = (0, import_react18.useState)("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
-    const [graph, setGraph] = (0, import_react18.useState)(null);
-    const [search, setSearch] = (0, import_react18.useState)(null);
-    const [loading, setLoading] = (0, import_react18.useState)(false);
-    (0, import_react18.useEffect)(() => {
+    const [view, setView] = (0, import_react20.useState)("graph");
+    const [query, setQuery] = (0, import_react20.useState)("");
+    const [status, setStatus] = (0, import_react20.useState)("\u8F93\u5165\u67E5\u8BE2\u4EE5\u52A0\u8F7D\u5F53\u524D\u9879\u76EE\u7684 Graph Memory\u3002");
+    const [graph, setGraph] = (0, import_react20.useState)(null);
+    const [search, setSearch] = (0, import_react20.useState)(null);
+    const [loading, setLoading] = (0, import_react20.useState)(false);
+    (0, import_react20.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -18734,33 +19114,33 @@
     return `m-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
   function App() {
-    const [projects, setProjects] = (0, import_react19.useState)([]);
-    const [projectId, setProjectId] = (0, import_react19.useState)(null);
-    const [project, setProject] = (0, import_react19.useState)(null);
-    const [view, setView] = (0, import_react19.useState)("idea");
-    const [activeArea, setActiveArea] = (0, import_react19.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react19.useState)("overview");
-    const [health, setHealth] = (0, import_react19.useState)("connecting");
-    const [toast, setToast] = (0, import_react19.useState)(null);
-    const [messages, setMessages] = (0, import_react19.useState)([INITIAL_MESSAGE]);
-    const [projectMessages, setProjectMessages] = (0, import_react19.useState)([]);
-    const [spec, setSpec] = (0, import_react19.useState)(null);
-    const [specStatus, setSpecStatus] = (0, import_react19.useState)("\u5F85\u6F84\u6E05");
-    const [chatBusy, setChatBusy] = (0, import_react19.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react19.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react19.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react19.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react19.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react19.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react19.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react19.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react19.useState)(false);
-    const [confirm, setConfirm] = (0, import_react19.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react19.useState)(false);
-    const chatBusyRef = (0, import_react19.useRef)(false);
-    const projectChatBusyRef = (0, import_react19.useRef)(false);
-    const sessionIdRef = (0, import_react19.useRef)(null);
-    const toastTimerRef = (0, import_react19.useRef)(null);
+    const [projects, setProjects] = (0, import_react21.useState)([]);
+    const [projectId, setProjectId] = (0, import_react21.useState)(null);
+    const [project, setProject] = (0, import_react21.useState)(null);
+    const [view, setView] = (0, import_react21.useState)("idea");
+    const [activeArea, setActiveArea] = (0, import_react21.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react21.useState)("overview");
+    const [health, setHealth] = (0, import_react21.useState)("connecting");
+    const [toast, setToast] = (0, import_react21.useState)(null);
+    const [messages, setMessages] = (0, import_react21.useState)([INITIAL_MESSAGE]);
+    const [projectMessages, setProjectMessages] = (0, import_react21.useState)([]);
+    const [spec, setSpec] = (0, import_react21.useState)(null);
+    const [specStatus, setSpecStatus] = (0, import_react21.useState)("\u5F85\u6F84\u6E05");
+    const [chatBusy, setChatBusy] = (0, import_react21.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react21.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react21.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react21.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react21.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react21.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react21.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react21.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react21.useState)(false);
+    const [confirm, setConfirm] = (0, import_react21.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react21.useState)(false);
+    const chatBusyRef = (0, import_react21.useRef)(false);
+    const projectChatBusyRef = (0, import_react21.useRef)(false);
+    const sessionIdRef = (0, import_react21.useRef)(null);
+    const toastTimerRef = (0, import_react21.useRef)(null);
     const writeWorkspaceHash = (id, area, tab) => {
       const next = workspaceHash(id, area, tab);
       if (window.location.hash !== next) window.history.pushState(null, "", next);
@@ -18825,7 +19205,7 @@
       window.history.pushState(null, "", "#new");
       void loadProjects();
     };
-    (0, import_react19.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
@@ -19251,6 +19631,7 @@ lucide-react/dist/esm/icons/git-compare.mjs:
 lucide-react/dist/esm/icons/git-fork.mjs:
 lucide-react/dist/esm/icons/image.mjs:
 lucide-react/dist/esm/icons/inbox.mjs:
+lucide-react/dist/esm/icons/languages.mjs:
 lucide-react/dist/esm/icons/layout-dashboard.mjs:
 lucide-react/dist/esm/icons/library.mjs:
 lucide-react/dist/esm/icons/lightbulb.mjs:
@@ -19262,6 +19643,7 @@ lucide-react/dist/esm/icons/message-circle.mjs:
 lucide-react/dist/esm/icons/message-square.mjs:
 lucide-react/dist/esm/icons/network.mjs:
 lucide-react/dist/esm/icons/package-check.mjs:
+lucide-react/dist/esm/icons/palette.mjs:
 lucide-react/dist/esm/icons/paperclip.mjs:
 lucide-react/dist/esm/icons/pause.mjs:
 lucide-react/dist/esm/icons/play.mjs:

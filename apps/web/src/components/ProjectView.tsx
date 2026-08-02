@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, CalendarDays, CheckSquare, Code2, FileCheck2, FilePenLine, FileText, FlaskConical, GitBranch, GitCompare, History, Image, Inbox, LayoutDashboard, Library, LineChart, ListChecks, ListTree, MessageCircle, Network, Quote, Search, Stamp, Terminal, Waypoints } from 'lucide-react'
+import { BarChart3, BookOpen, CalendarDays, CheckSquare, FileCheck2, FilePenLine, FileText, FlaskConical, GitBranch, GitCompare, History, Image, Inbox, LayoutDashboard, Library, LineChart, ListChecks, ListTree, MessageCircle, Network, Quote, Search, Stamp, Terminal, Waypoints } from 'lucide-react'
 import type { ChatMessage, ConfirmRequest, ProjectDetail, ResearchArea, TabId } from '../types'
 import { ProjectChat } from './ProjectChat'
 import { OverviewTab } from './tabs/OverviewTab'
@@ -14,78 +14,80 @@ import { PoliciesTab } from './tabs/PoliciesTab'
 import { ReportsTab } from './tabs/ReportsTab'
 import { WorkflowStageTab } from './tabs/WorkflowStageTab'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
+import { useTranslation, type TranslationKey } from '../i18n'
 
-type ProjectTab = { id: TabId; label: string; icon: React.ReactNode }
-type ProjectGroup = { id: string; label: string; icon: React.ReactNode; tabs: ProjectTab[] }
+type ProjectTab = { id: TabId; labelKey: TranslationKey; icon: React.ReactNode }
+type ProjectGroup = { id: string; labelKey: TranslationKey; icon: React.ReactNode; tabs: ProjectTab[] }
+type ProjectArea = { id: ResearchArea; labelKey: TranslationKey; icon: React.ReactNode; groups: ProjectGroup[] }
 
 const REPORT_TABS: TabId[] = ['daily_reports', 'weekly_reports', 'feedback_inbox', 'feedback_audit', 'reports']
 const PAPER_TABS: TabId[] = ['paper', 'paper_outline', 'paper_citations', 'paper_figures', 'paper_data', 'paper_compile', 'paper_review']
 
-const AREAS: Array<{ id: ResearchArea; label: string; icon: React.ReactNode; groups: ProjectGroup[] }> = [
+const AREAS: ProjectArea[] = [
   {
     id: 'overview',
-    label: '项目概述',
+    labelKey: 'nav.overview',
     icon: <LayoutDashboard size={16} />,
     groups: [
-      { id: 'overview_idea', label: 'Idea 讨论', icon: <MessageCircle size={15} />, tabs: [{ id: 'overview', label: 'Idea 讨论', icon: <MessageCircle size={15} /> }] },
-      { id: 'overview_spec', label: '项目规格', icon: <FileText size={15} />, tabs: [{ id: 'overview_spec', label: '项目描述与研究问题', icon: <FileText size={15} /> }] },
-      { id: 'overview_innovation', label: '创新与边界', icon: <Search size={15} />, tabs: [{ id: 'overview_innovation', label: '创新点与边界', icon: <Search size={15} /> }] },
-      { id: 'overview_progress', label: '进度与待决策', icon: <ListChecks size={15} />, tabs: [{ id: 'overview_progress', label: '进度与待决策', icon: <ListChecks size={15} /> }] },
-      { id: 'overview_reports', label: '日报/周报与导师反馈', icon: <CalendarDays size={15} />, tabs: [
-        { id: 'daily_reports', label: '日报', icon: <CalendarDays size={15} /> },
-        { id: 'weekly_reports', label: '周报', icon: <FileText size={15} /> },
-        { id: 'feedback_inbox', label: '导师反馈', icon: <Inbox size={15} /> },
-        { id: 'feedback_audit', label: '决策与审计', icon: <CheckSquare size={15} /> },
+      { id: 'overview_idea', labelKey: 'group.overviewIdea', icon: <MessageCircle size={15} />, tabs: [{ id: 'overview', labelKey: 'tab.overview', icon: <MessageCircle size={15} /> }] },
+      { id: 'overview_spec', labelKey: 'group.overviewSpec', icon: <FileText size={15} />, tabs: [{ id: 'overview_spec', labelKey: 'tab.overviewSpec', icon: <FileText size={15} /> }] },
+      { id: 'overview_innovation', labelKey: 'group.overviewInnovation', icon: <Search size={15} />, tabs: [{ id: 'overview_innovation', labelKey: 'tab.overviewInnovation', icon: <Search size={15} /> }] },
+      { id: 'overview_progress', labelKey: 'group.overviewProgress', icon: <ListChecks size={15} />, tabs: [{ id: 'overview_progress', labelKey: 'tab.overviewProgress', icon: <ListChecks size={15} /> }] },
+      { id: 'overview_reports', labelKey: 'group.overviewReports', icon: <CalendarDays size={15} />, tabs: [
+        { id: 'daily_reports', labelKey: 'tab.dailyReports', icon: <CalendarDays size={15} /> },
+        { id: 'weekly_reports', labelKey: 'tab.weeklyReports', icon: <FileText size={15} /> },
+        { id: 'feedback_inbox', labelKey: 'tab.feedbackInbox', icon: <Inbox size={15} /> },
+        { id: 'feedback_audit', labelKey: 'tab.feedbackAudit', icon: <CheckSquare size={15} /> },
       ] },
     ],
   },
   {
     id: 'related_work',
-    label: '相关工作调研',
+    labelKey: 'nav.relatedWork',
     icon: <Library size={16} />,
     groups: [
-      { id: 'related_search', label: '种子与文献检索', icon: <BookOpen size={15} />, tabs: [{ id: 'literature', label: '种子与文献检索', icon: <BookOpen size={15} /> }] },
-      { id: 'related_status', label: '研究现状与引用图', icon: <Network size={15} />, tabs: [
-        { id: 'research_status', label: '研究现状', icon: <Search size={15} /> },
-        { id: 'citation_graph', label: '引用图', icon: <Network size={15} /> },
+      { id: 'related_search', labelKey: 'group.relatedSearch', icon: <BookOpen size={15} />, tabs: [{ id: 'literature', labelKey: 'tab.literature', icon: <BookOpen size={15} /> }] },
+      { id: 'related_status', labelKey: 'group.relatedStatus', icon: <Network size={15} />, tabs: [
+        { id: 'research_status', labelKey: 'tab.researchStatus', icon: <Search size={15} /> },
+        { id: 'citation_graph', labelKey: 'tab.citationGraph', icon: <Network size={15} /> },
       ] },
     ],
   },
   {
     id: 'implementation',
-    label: '实验实现',
+    labelKey: 'nav.implementation',
     icon: <FlaskConical size={16} />,
     groups: [
-      { id: 'implementation_related', label: '相关工作实现', icon: <GitBranch size={15} />, tabs: [
-        { id: 'reproduction', label: '代码复现', icon: <GitBranch size={15} /> },
-        { id: 'comparison', label: '效果比较', icon: <GitCompare size={15} /> },
+      { id: 'implementation_related', labelKey: 'group.implRelated', icon: <GitBranch size={15} />, tabs: [
+        { id: 'reproduction', labelKey: 'tab.reproduction', icon: <GitBranch size={15} /> },
+        { id: 'comparison', labelKey: 'tab.comparison', icon: <GitCompare size={15} /> },
       ] },
-      { id: 'implementation_method', label: '本方法实现', icon: <Waypoints size={15} />, tabs: [
-        { id: 'method_design', label: '方法设计', icon: <Waypoints size={15} /> },
-        { id: 'code_workspace', label: '代码工作区', icon: <Terminal size={15} /> },
-        { id: 'policies', label: '变更与审批', icon: <Stamp size={15} /> },
-        { id: 'approvals', label: 'Git 与备份', icon: <History size={15} /> },
-        { id: 'experiments', label: '实验计划与结果', icon: <FlaskConical size={15} /> },
-        { id: 'experiment_queue', label: '运行队列', icon: <ListTree size={15} /> },
-        { id: 'experiment_metrics', label: '指标统计', icon: <BarChart3 size={15} /> },
-        { id: 'artifacts', label: '结果与可视化', icon: <Image size={15} /> },
-        { id: 'lineage', label: '实验谱系', icon: <History size={15} /> },
+      { id: 'implementation_method', labelKey: 'group.implMethod', icon: <Waypoints size={15} />, tabs: [
+        { id: 'method_design', labelKey: 'tab.methodDesign', icon: <Waypoints size={15} /> },
+        { id: 'code_workspace', labelKey: 'tab.codeWorkspace', icon: <Terminal size={15} /> },
+        { id: 'policies', labelKey: 'tab.policies', icon: <Stamp size={15} /> },
+        { id: 'approvals', labelKey: 'tab.approvals', icon: <History size={15} /> },
+        { id: 'experiments', labelKey: 'tab.experiments', icon: <FlaskConical size={15} /> },
+        { id: 'experiment_queue', labelKey: 'tab.experimentQueue', icon: <ListTree size={15} /> },
+        { id: 'experiment_metrics', labelKey: 'tab.experimentMetrics', icon: <BarChart3 size={15} /> },
+        { id: 'artifacts', labelKey: 'tab.artifacts', icon: <Image size={15} /> },
+        { id: 'lineage', labelKey: 'tab.lineage', icon: <History size={15} /> },
       ] },
     ],
   },
   {
     id: 'paper',
-    label: '学术论文撰写',
+    labelKey: 'nav.paper',
     icon: <FilePenLine size={16} />,
     groups: [
-      { id: 'paper_writing', label: '论文写作与编译', icon: <FilePenLine size={15} />, tabs: [
-        { id: 'paper', label: '论文项目', icon: <FilePenLine size={15} /> },
-        { id: 'paper_outline', label: '大纲与章节', icon: <ListTree size={15} /> },
-        { id: 'paper_citations', label: '引用与 BibTeX', icon: <Quote size={15} /> },
-        { id: 'paper_figures', label: '图表选择与插入', icon: <LineChart size={15} /> },
-        { id: 'paper_data', label: '实验数据选择与引用', icon: <BarChart3 size={15} /> },
-        { id: 'paper_compile', label: 'LaTeX 编译', icon: <FileCheck2 size={15} /> },
-        { id: 'paper_review', label: 'PDF 呈现与审阅', icon: <FileText size={15} /> },
+      { id: 'paper_writing', labelKey: 'group.paperWriting', icon: <FilePenLine size={15} />, tabs: [
+        { id: 'paper', labelKey: 'tab.paperProject', icon: <FilePenLine size={15} /> },
+        { id: 'paper_outline', labelKey: 'tab.paperOutline', icon: <ListTree size={15} /> },
+        { id: 'paper_citations', labelKey: 'tab.paperCitations', icon: <Quote size={15} /> },
+        { id: 'paper_figures', labelKey: 'tab.paperFigures', icon: <LineChart size={15} /> },
+        { id: 'paper_data', labelKey: 'tab.paperData', icon: <BarChart3 size={15} /> },
+        { id: 'paper_compile', labelKey: 'tab.paperCompile', icon: <FileCheck2 size={15} /> },
+        { id: 'paper_review', labelKey: 'tab.paperReview', icon: <FileText size={15} /> },
       ] },
     ],
   },
@@ -122,6 +124,7 @@ export function ProjectView({
   mobileChatOpen: boolean
   onToggleMobileChat: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const tabProps = {
     project,
     onRefresh,
@@ -134,7 +137,7 @@ export function ProjectView({
 
   return (
     <section className="project-view">
-      <nav className="tabs project-areas" aria-label="科研工作区">
+      <nav className="tabs project-areas" aria-label={t('nav.workspaceArea')}>
         {AREAS.map(area => (
           <button
             key={area.id}
@@ -144,11 +147,11 @@ export function ProjectView({
             onClick={() => onAreaChange(area.id)}
           >
             {area.icon}
-            {area.label}
+            {t(area.labelKey)}
           </button>
         ))}
       </nav>
-      <nav className="tabs project-subtabs" aria-label="当前工作区页面">
+      <nav className="tabs project-subtabs" aria-label={t('nav.currentWorkspace')}>
         {area.groups.map(group => (
           <button
             key={group.id}
@@ -158,7 +161,7 @@ export function ProjectView({
             onClick={() => onTabChange(group.tabs[0].id)}
           >
             {group.icon}
-            {group.label}
+            {t(group.labelKey)}
           </button>
         ))}
       </nav>
@@ -166,8 +169,8 @@ export function ProjectView({
         <div className="tab-content">
           <WorkspaceContextBar project={project} />
           {activeGroup.tabs.length > 1 ? (
-            <nav className="workflow-local-nav" aria-label={`${activeGroup.label}内部页面`}>
-              <span className="workflow-local-label">{activeGroup.label}</span>
+            <nav className="workflow-local-nav" aria-label={`${t(activeGroup.labelKey)} · ${t('common.innerPages')}`}>
+              <span className="workflow-local-label">{t(activeGroup.labelKey)}</span>
               {activeGroup.tabs.map(tab => (
                 <button
                   key={tab.id}
@@ -177,7 +180,7 @@ export function ProjectView({
                   onClick={() => onTabChange(tab.id)}
                 >
                   {tab.icon}
-                  {tab.label}
+                  {t(tab.labelKey)}
                 </button>
               ))}
             </nav>
@@ -205,7 +208,7 @@ export function ProjectView({
           onClick={() => onToggleMobileChat(true)}
         >
           <MessageCircle size={16} />
-          项目对话
+          {t('projectChat')}
         </button>
         <ProjectChat
           messages={chatMessages}
