@@ -432,6 +432,10 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `092a` 使用 `requestAnimationFrame` 驱动置顶/删除图标从右侧逐帧滑入、渐显和缩放，离开时逐帧收回；键盘焦点继续立即展开。
   - [~] `092b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
 
+- [~] `P0-PROJECT-UX-093` 将项目操作图标从逐帧实现还原为纯 CSS 过渡，并缩短为立即开始、持续 1 秒的滑入效果。
+  - [x] `093a` 移除 JavaScript 逐帧动画，悬停立即设置 CSS 过渡目标，持续 1 秒从右侧滑入，离开时快速平滑收回。
+  - [~] `093b` 类型检查、UI 检查、Web 构建和差异校验均通过；真实浏览器验收仍受当前 Browser sandbox 无法访问 `/mnt/d/researchos` 阻塞。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。
