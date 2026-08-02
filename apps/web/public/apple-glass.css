@@ -99,10 +99,10 @@ button { -webkit-font-smoothing: inherit; }
 .side-settings:hover { color: var(--sidebar-ink); background: var(--surface-elevated); border-color: var(--line-strong); transform: translateY(-1px); }
 
 .workspace { min-width: 0; min-height: 100dvh; background: var(--bg); }
-.topbar { height: 82px; padding: 17px 30px; border-bottom: 1px solid var(--line); background: rgba(250, 250, 252, .72); box-shadow: 0 1px 0 var(--glass-highlight); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); }
+.topbar { position: relative; z-index: 30; height: 82px; padding: 17px 30px; overflow: visible; border-bottom: 1px solid var(--line); background: rgba(250, 250, 252, .72); box-shadow: 0 1px 0 var(--glass-highlight); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); }
 .topbar h1 { margin-bottom: 3px; color: var(--ink); font-size: 21px; font-weight: 720; letter-spacing: -.025em; }
 .topbar .muted { color: var(--muted); font-size: 12px; }
-.top-actions { gap: 10px; }
+.top-actions { position: relative; z-index: 31; gap: 10px; }
 .health { min-height: 32px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); font-size: 11px; }
 .health span { width: 7px; height: 7px; background: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
 .health.ok span { background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
@@ -120,7 +120,8 @@ button { -webkit-font-smoothing: inherit; }
   transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring);
 }
 .control-pill:hover { border-color: rgba(0, 122, 255, .34); background: var(--surface-elevated); box-shadow: 0 5px 14px rgba(25, 25, 35, .08); transform: translateY(-1px); }
-.topbar-menu { position: relative; }
+.topbar-menu { position: relative; z-index: 1; }
+.topbar-menu[data-open='true'] { z-index: 60; }
 .control-menu-trigger { min-width: 118px; justify-content: flex-start; color: var(--ink); cursor: pointer; text-align: left; }
 .control-menu-leading { display: inline-flex; color: var(--muted); flex: none; }
 .control-menu-value { min-width: 0; flex: 1; overflow: hidden; color: var(--ink); font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
