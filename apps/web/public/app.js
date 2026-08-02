@@ -17911,8 +17911,8 @@
     const theme = useTheme();
     const healthLabel = health === "online" ? t("topbar.connected") : health === "offline" ? t("topbar.offline") : t("topbar.connecting");
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("header", { className: "topbar", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h1", { children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "topbar-title", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h1", { title, children: title }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "muted", children: meta })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "top-actions", children: [

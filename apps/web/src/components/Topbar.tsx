@@ -157,8 +157,8 @@ export function Topbar({
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   return (
     <header className="topbar">
-      <div>
-        <h1>{title}</h1>
+      <div className="topbar-title">
+        <h1 title={title}>{title}</h1>
         <div className="muted">{meta}</div>
       </div>
       <div className="top-actions">
