@@ -225,10 +225,10 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
           setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? 'all') })
         }}
       >
-        <rect x="0" y="0" width="720" height="300" fill="#f7faf8" rx="8" />
-        <line x1="48" y1="18" x2="48" y2="266" stroke="#cbd5d1" />
-        <line x1="48" y1="266" x2="704" y2="266" stroke="#cbd5d1" />
-        <text x="52" y="18" fill="#60706a" fontSize="11">
+        <rect x="0" y="0" width="720" height="300" fill="var(--preview-chart-bg)" rx="8" />
+        <line x1="48" y1="18" x2="48" y2="266" stroke="var(--preview-chart-grid)" />
+        <line x1="48" y1="266" x2="704" y2="266" stroke="var(--preview-chart-grid)" />
+        <text x="52" y="18" fill="var(--preview-chart-label)" fontSize="11">
           {metric} · {minValue.toPrecision(4)}–{maxValue.toPrecision(4)}
         </text>
         {groups.map((seed, groupIndex) => {
@@ -263,7 +263,7 @@ function TimeseriesPreview({ preview }: { preview: Extract<ArtifactPreview, { ty
                 const x = 48 + ((Number(point.step) - minStep) / stepSpan) * 656
                 const y = 250 - ((Number(point[metric]) - minValue) / span) * 220
                 const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed
-                return <circle key={index} cx={x} cy={y} r={isHovered ? 6 : 3} fill={color} stroke={isHovered ? '#17201d' : 'none'} strokeWidth="2" />
+                return <circle key={index} cx={x} cy={y} r={isHovered ? 6 : 3} fill={color} stroke={isHovered ? 'var(--preview-chart-focus)' : 'none'} strokeWidth="2" />
               })}
             </g>
           )

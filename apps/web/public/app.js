@@ -19493,10 +19493,10 @@
               setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? "all") });
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "#f7faf8", rx: "8" }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "#cbd5d1" }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "#cbd5d1" }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("text", { x: "52", y: "18", fill: "#60706a", fontSize: "11", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "var(--preview-chart-bg)", rx: "8" }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "var(--preview-chart-grid)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "var(--preview-chart-grid)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("text", { x: "52", y: "18", fill: "var(--preview-chart-label)", fontSize: "11", children: [
                 metric,
                 " \xB7 ",
                 minValue.toPrecision(4),
@@ -19534,7 +19534,7 @@
                     const x = 48 + (Number(point.step) - minStep) / stepSpan * 656;
                     const y = 250 - (Number(point[metric]) - minValue) / span * 220;
                     const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed;
-                    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "#17201d" : "none", strokeWidth: "2" }, index);
+                    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "var(--preview-chart-focus)" : "none", strokeWidth: "2" }, index);
                   })
                 ] }, seed);
               })
