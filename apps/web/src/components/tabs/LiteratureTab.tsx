@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react'
-import { ChevronsDown, Download, GitBranch, ScanText, Search, ShieldCheck } from 'lucide-react'
+import { ChevronsDown, Download, GitBranch, GitFork, ScanText, Search, ShieldCheck, Square } from 'lucide-react'
 import { api, errorMessage } from '../../api'
-import type { ClaimReview, MaterialSearchResponse, NoveltyAnalysis, ProjectDetail, Repository, SearchCandidate, TabId } from '../../types'
-import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
+import type { ClaimReview, MaterialSearchResponse, ProjectDetail, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
+import { Badge, ButtonRow, EmptyState, Modal, SectionHeading } from '../ui'
 
 export function LiteratureTab({
   project,
   onRefresh,
   showToast,
   onNavigate,
+  onRequestConfirm,
   searchCandidates,
 }: {
   project: ProjectDetail
   onRefresh: () => Promise<void>
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
+  onRequestConfirm: (request: { title: string; description: string; confirmLabel: string; onConfirm: () => void }) => void
   searchCandidates: SearchCandidate[]
 }) {
-  const [novelty, setNovelty] = useState<NoveltyAnalysis | null>(null)
   const [materialQuery, setMaterialQuery] = useState('')
   const [materialLoading, setMaterialLoading] = useState(false)
   const [materialRows, setMaterialRows] = useState<Array<Record<string, any>>>([])
@@ -25,15 +26,157 @@ export function LiteratureTab({
   const [nextOffset, setNextOffset] = useState<number | null>(null)
   const [repoInputFor, setRepoInputFor] = useState<string | null>(null)
   const [repoUrl, setRepoUrl] = useState('')
+  const [repositoryDiscoveries, setRepositoryDiscoveries] = useState<Record<string, RepositoryDiscovery[]>>({})
+  const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = useState<string | null>(null)
   const [claimText, setClaimText] = useState('')
   const [selectedEvidence, setSelectedEvidence] = useState<string[]>([])
+  const [seedType, setSeedType] = useState<'doi' | 'title' | 'url' | 'bibtex' | 'artifact_pdf' | 'existing_paper'>('doi')
+  const [seedValue, setSeedValue] = useState('')
+  const [seedTitle, setSeedTitle] = useState('')
+  const [seedArtifactId, setSeedArtifactId] = useState('')
+  const [seedPaperId, setSeedPaperId] = useState('')
+  const [seedLoading, setSeedLoading] = useState(false)
+  const [selectedSeeds, setSelectedSeeds] = useState<string[]>([])
+  const [recursiveDepth, setRecursiveDepth] = useState(2)
+  const [recursiveWidth, setRecursiveWidth] = useState(5)
+  const [recursiveMaxTotal, setRecursiveMaxTotal] = useState(30)
+  const [recursiveProviders, setRecursiveProviders] = useState<string[]>(['crossref', 'openalex', 'semantic_scholar'])
+  const [recursiveReason, setRecursiveReason] = useState('扩展当前项目的相关工作引用网络')
+  const [recursiveLoading, setRecursiveLoading] = useState(false)
+  const [provenanceCandidateId, setProvenanceCandidateId] = useState<string | null>(null)
+
+  const activeRecursiveRun = project.related_work_runs?.find(run => ['queued', 'running'].includes(run.status))
+
+  const candidateProvenance = (candidateId: string) => (project.related_work_field_provenance || []).filter(item => item.candidate_id === candidateId)
+  const provenanceCandidate = project.related_work_candidates?.find(candidate => candidate.id === provenanceCandidateId) || null
+
+  const valueLabel = (value: unknown) => {
+    if (value === null || value === undefined) return '未提供'
+    if (typeof value === 'string') return value.length > 180 ? `${value.slice(0, 180)}…` : value
+    try { return JSON.stringify(value) } catch { return String(value) }
+  }
+
+  const decideCandidate = async (candidate: RelatedWorkCandidate, decision: 'approved' | 'rejected' | 'reopened') => {
+    try {
+      await api(`/api/projects/${project.id}/related-work/candidates/${candidate.id}/decision`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, reason: decision === 'approved' ? '用户确认该 metadata candidate 可进入项目 Paper' : decision === 'rejected' ? '用户拒绝该 metadata candidate' : '用户要求重新审阅该 candidate' }),
+      })
+      await onRefresh()
+      showToast(decision === 'approved' ? '候选已转换为项目 Paper' : decision === 'rejected' ? '候选已拒绝并保留审计记录' : '候选已重新打开')
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
+  const requestCandidateDecision = (candidate: RelatedWorkCandidate, decision: 'approved' | 'rejected' | 'reopened') => {
+    const labels = { approved: '确认 Paper', rejected: '拒绝候选', reopened: '重新打开' }
+    onRequestConfirm({
+      title: labels[decision],
+      description: decision === 'approved' ? '确认后会创建当前项目范围内的 Paper；它仍然不是全文证据。' : '候选不会被物理删除，决定和原因会保留在项目审计中。',
+      confirmLabel: labels[decision],
+      onConfirm: () => { void decideCandidate(candidate, decision) },
+    })
+  }
+
+  const selectCandidateField = async (candidate: RelatedWorkCandidate, field: RelatedWorkFieldProvenance) => {
+    try {
+      await api(`/api/projects/${project.id}/related-work/candidates/${candidate.id}/fields/${encodeURIComponent(field.field_name)}/select`, {
+        method: 'POST',
+        body: JSON.stringify({ provenance_id: field.id }),
+      })
+      await onRefresh()
+      showToast(`已选择 ${field.field_name} 的 ${field.provider} 来源`)
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
+  const proposeCandidateEnrichment = async (candidate: RelatedWorkCandidate) => {
+    const fields = ['title', 'authors', 'abstract', 'venue', 'doi', 'year', 'institutions', 'pdf_url', 'bibtex']
+    try {
+      const result = await api<{ proposal_id: string }>(`/api/projects/${project.id}/related-work/candidate-enrichment`, {
+        method: 'POST',
+        body: JSON.stringify({ candidate_id: candidate.id, fields, providers: ['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv'], reason: '补全当前候选缺失字段并记录多源 provenance' }),
+      })
+      await onRefresh()
+      onNavigate('approvals')
+      showToast(`字段补全 Proposal ${result.proposal_id.slice(0, 8)} 待审批`)
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
 
   useEffect(() => {
-    setNovelty(null)
-    api<NoveltyAnalysis>(`/api/projects/${project.id}/novelty`)
-      .then(setNovelty)
-      .catch(() => setNovelty(null))
-  }, [project.id])
+    if (!activeRecursiveRun) return
+    const timer = window.setInterval(() => { void onRefresh() }, 3_000)
+    return () => window.clearInterval(timer)
+  }, [activeRecursiveRun?.id, activeRecursiveRun?.status, onRefresh])
+
+  const resetSeedForm = () => {
+    setSeedValue('')
+    setSeedTitle('')
+    setSeedArtifactId('')
+    setSeedPaperId('')
+  }
+
+  const addSeed = async () => {
+    const payload: Record<string, unknown> = { source_type: seedType, providers: ['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv'] }
+    if (seedType === 'doi') payload.doi = seedValue.trim()
+    if (seedType === 'title') payload.title = seedValue.trim()
+    if (seedType === 'url') payload.url = seedValue.trim()
+    if (seedType === 'bibtex') payload.bibtex = seedValue.trim()
+    if (seedType === 'artifact_pdf') payload.artifact_id = seedArtifactId
+    if (seedType === 'existing_paper') payload.paper_id = seedPaperId
+    if (seedTitle.trim() && seedType !== 'title' && seedType !== 'existing_paper') payload.title = seedTitle.trim()
+    if (seedType === 'artifact_pdf' && seedTitle.trim()) payload.title = seedTitle.trim()
+    try {
+      setSeedLoading(true)
+      const result = await api<{ seed_id: string; status: string; candidate_ids?: string[]; attempts?: Array<{ provider: string; status: string }> }> (`/api/projects/${project.id}/related-work/seeds`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      })
+      await onRefresh()
+      resetSeedForm()
+      showToast(`种子已记录：${result.status}，${result.candidate_ids?.length || 0} 个候选；provider 失败 ${result.attempts?.filter(item => item.status !== 'succeeded').length || 0}`)
+    } catch (error) {
+      showToast(errorMessage(error))
+    } finally {
+      setSeedLoading(false)
+    }
+  }
+
+  const createRecursivePlan = async () => {
+    if (!selectedSeeds.length || !recursiveProviders.length) return
+    try {
+      setRecursiveLoading(true)
+      const result = await api<{ proposal_id: string }> (`/api/projects/${project.id}/related-work/recursive-plan`, {
+        method: 'POST',
+        body: JSON.stringify({ seed_ids: selectedSeeds, depth: recursiveDepth, width: recursiveWidth, max_total: recursiveMaxTotal, providers: recursiveProviders, reason: recursiveReason.trim() }),
+      })
+      await onRefresh()
+      onNavigate('approvals')
+      showToast(`递归检索 Proposal ${result.proposal_id.slice(0, 8)} 已创建，等待审批`)
+    } catch (error) {
+      showToast(errorMessage(error))
+    } finally {
+      setRecursiveLoading(false)
+    }
+  }
+
+  const cancelRecursiveRun = async (run: RelatedWorkRun) => {
+    try {
+      await api(`/api/projects/${project.id}/related-work/runs/${run.id}/cancel`, { method: 'POST', body: JSON.stringify({ reason: '用户在相关工作页面取消递归检索' }) })
+      await onRefresh()
+      showToast('递归检索已发出取消请求')
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
+  const toggleRecursiveProvider = (provider: string) => {
+    setRecursiveProviders(current => current.includes(provider) ? current.filter(item => item !== provider) : [...current, provider])
+  }
 
   const runSearch = async () => {
     try {
@@ -83,8 +226,8 @@ export function LiteratureTab({
     }
   }
 
-  const addRepositoryCandidate = async (paperId: string) => {
-    const sourceUrl = repoUrl.trim()
+  const addRepositoryCandidate = async (paperId: string, discoveredUrl?: string) => {
+    const sourceUrl = (discoveredUrl || repoUrl).trim()
     if (!sourceUrl) return
     try {
       await api(`/api/projects/${project.id}/repositories`, {
@@ -97,6 +240,19 @@ export function LiteratureTab({
       showToast('代码仓库候选已添加，请执行交叉验证')
     } catch (error) {
       showToast(errorMessage(error))
+    }
+  }
+
+  const discoverRepositories = async (paperId: string) => {
+    setRepositoryDiscoveryLoading(paperId)
+    try {
+      const response = await api<{ candidates: RepositoryDiscovery[] }>(`/api/projects/${project.id}/papers/${paperId}/repositories/discover`)
+      setRepositoryDiscoveries(previous => ({ ...previous, [paperId]: response.candidates }))
+      if (!response.candidates.length) showToast('论文已保存的来源中没有明确的 GitHub/GitLab 链接；不会根据标题猜仓库')
+    } catch (error) {
+      showToast(errorMessage(error))
+    } finally {
+      setRepositoryDiscoveryLoading(null)
     }
   }
 
@@ -171,23 +327,6 @@ export function LiteratureTab({
     )
   }
 
-  const noveltyList = (items?: Array<Record<string, any>>, empty = '当前没有已标记的覆盖候选。') =>
-    items && items.length ? (
-      <div className="data-list">
-        {items.map((item, index) => (
-          <div className="data-row" key={index}>
-            <div>
-              <h3>{item.title || item.target || item.statement || '候选'}</h3>
-              <p>{item.note || item.basis || item.statement || ''}</p>
-            </div>
-            <Badge status={item.status || 'candidate_only'} />
-          </div>
-        ))}
-      </div>
-    ) : (
-      <EmptyState text={empty} />
-    )
-
   return (
     <>
       <SectionHeading
@@ -205,6 +344,201 @@ export function LiteratureTab({
           </ButtonRow>
         }
       />
+      <div className="section related-work-seed-panel">
+        <SectionHeading title="项目范围种子与引用网络" hint="种子只会进入当前项目的候选池；递归扩展必须先生成 Proposal 并获得批准。metadata candidate、全文证据和已确认 Paper 始终分开。" />
+        <div className="related-work-seed-form">
+          <label>
+            种子类型
+            <select value={seedType} onChange={event => { setSeedType(event.target.value as typeof seedType); resetSeedForm() }}>
+              <option value="doi">DOI</option>
+              <option value="title">标题</option>
+              <option value="url">来源 URL</option>
+              <option value="bibtex">BibTeX</option>
+              <option value="artifact_pdf">受控 PDF Artifact</option>
+              <option value="existing_paper">当前项目已有 Paper</option>
+            </select>
+          </label>
+          {seedType === 'artifact_pdf' ? (
+            <label>
+              PDF Artifact
+              <select value={seedArtifactId} onChange={event => setSeedArtifactId(event.target.value)}>
+                <option value="">选择受控 PDF</option>
+                {(project.artifacts || []).filter(artifact => artifact.mime_type === 'application/pdf' && artifact.valid !== false).map(artifact => (
+                  <option value={artifact.id} key={artifact.id}>{artifact.name}</option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          {seedType === 'existing_paper' ? (
+            <label>
+              项目 Paper
+              <select value={seedPaperId} onChange={event => setSeedPaperId(event.target.value)}>
+                <option value="">选择当前项目 Paper</option>
+                {(project.papers || []).map(paper => <option value={paper.id} key={paper.id}>{paper.title}</option>)}
+              </select>
+            </label>
+          ) : null}
+          {seedType !== 'artifact_pdf' && seedType !== 'existing_paper' ? (
+            <label className="related-work-seed-value">
+              {seedType === 'doi' ? 'DOI' : seedType === 'title' ? '论文标题' : seedType === 'url' ? 'HTTPS 来源 URL' : 'BibTeX 条目'}
+              {seedType === 'bibtex' ? (
+                <textarea rows={5} maxLength={100_000} value={seedValue} onChange={event => setSeedValue(event.target.value)} placeholder="@article{...}" />
+              ) : (
+                <input maxLength={2_000} value={seedValue} onChange={event => setSeedValue(event.target.value)} placeholder={seedType === 'doi' ? '10.1000/example' : seedType === 'url' ? 'https://doi.org/...' : '输入论文标题'} />
+              )}
+            </label>
+          ) : null}
+          {seedType !== 'title' && seedType !== 'existing_paper' ? (
+            <label>
+              可选标题
+              <input maxLength={2_000} value={seedTitle} onChange={event => setSeedTitle(event.target.value)} placeholder="用于补充元数据解析" />
+            </label>
+          ) : null}
+          <button className="secondary" type="button" disabled={seedLoading || (seedType === 'artifact_pdf' ? !seedArtifactId : seedType === 'existing_paper' ? !seedPaperId : !seedValue.trim())} onClick={() => void addSeed()}>
+            <GitFork size={15} />
+            {seedLoading ? '正在解析…' : '添加并解析种子'}
+          </button>
+        </div>
+        {project.related_work_seeds?.length ? (
+          <div className="related-work-seeds">
+            <div className="related-work-seed-list">
+              {project.related_work_seeds.map(seed => (
+                <label className="related-work-seed-row" key={seed.id}>
+                  <input
+                    type="checkbox"
+                    checked={selectedSeeds.includes(seed.id)}
+                    onChange={event => setSelectedSeeds(current => event.target.checked ? [...current, seed.id] : current.filter(id => id !== seed.id))}
+                  />
+                  <span>
+                    <strong>{seed.input_summary}</strong>
+                    <span>{seed.source_type} · {seed.status} · {seed.created_at ? new Date(seed.created_at).toLocaleString() : '时间未知'}</span>
+                  </span>
+                  <Badge status={seed.status} />
+                </label>
+              ))}
+            </div>
+            <div className="related-work-recursive-controls">
+              <div className="control-grid">
+                <label>层数<input type="number" min={1} max={5} value={recursiveDepth} onChange={event => setRecursiveDepth(Number(event.target.value))} /></label>
+                <label>每层宽度<input type="number" min={1} max={50} value={recursiveWidth} onChange={event => setRecursiveWidth(Number(event.target.value))} /></label>
+                <label>候选上限<input type="number" min={1} max={500} value={recursiveMaxTotal} onChange={event => setRecursiveMaxTotal(Number(event.target.value))} /></label>
+              </div>
+              <label>Proposal 原因<input maxLength={2_000} value={recursiveReason} onChange={event => setRecursiveReason(event.target.value)} /></label>
+              <div className="provider-choice" aria-label="递归来源">
+                {['crossref', 'openalex', 'semantic_scholar'].map(provider => (
+                  <label key={provider}><input type="checkbox" checked={recursiveProviders.includes(provider)} onChange={() => toggleRecursiveProvider(provider)} />{provider}</label>
+                ))}
+              </div>
+              <button className="secondary" type="button" disabled={recursiveLoading || !selectedSeeds.length || !recursiveProviders.length} onClick={() => void createRecursivePlan()}>
+                <GitFork size={15} />
+                {recursiveLoading ? '正在创建…' : `为 ${selectedSeeds.length} 个种子创建递归 Proposal`}
+              </button>
+            </div>
+          </div>
+        ) : <EmptyState text="还没有项目范围种子。先添加 DOI、标题、URL、BibTeX、受控 PDF 或已有 Paper。" />}
+      </div>
+
+      {project.related_work_runs?.length ? (
+        <div className="section related-work-run-panel">
+          <SectionHeading title="引用网络运行" hint="运行状态和 provider attempt 来自真实请求；失败、取消和上限截断不会被标记为成功。" />
+          <div className="data-list">
+            {project.related_work_runs.map(run => (
+              <div className="data-row" key={run.id}>
+                <div>
+                  <h3>{run.status} · {run.discovered_count || 0} 个候选 · {run.edge_count || 0} 条引用边</h3>
+                  <p>depth {run.depth} · width {run.width} · max_total {run.max_total} · providers {run.providers.join(', ')}</p>
+                  {run.error ? <p className="error-text">{run.error}</p> : null}
+                </div>
+                <div className="button-row">
+                  <Badge status={run.status} />
+                  {['queued', 'running'].includes(run.status) ? <button className="secondary" type="button" onClick={() => void cancelRecursiveRun(run)}><Square size={14} />取消</button> : null}
+                </div>
+              </div>
+            ))}
+          </div>
+          {project.related_work_attempts?.some(attempt => attempt.status !== 'succeeded') ? (
+            <div className="related-work-failures">
+              <h3>Provider 失败与部分失败</h3>
+              {project.related_work_attempts.filter(attempt => attempt.status !== 'succeeded').slice(0, 12).map(attempt => (
+                <p key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}><strong>{attempt.provider}</strong> · {attempt.status} · {attempt.failure?.message || '未提供失败详情'}</p>
+              ))}
+            </div>
+          ) : null}
+          {project.related_work_edges?.length ? (
+            <div className="citation-edge-list">
+              <h3>引用图边（当前项目范围）</h3>
+              {project.related_work_edges.slice(0, 20).map(edge => <p key={edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`}><strong>{edge.source_title || edge.source_candidate_id}</strong> → {edge.target_title || edge.target_candidate_id} · {edge.provider} · {(edge.ranking_reasons || []).join(', ') || '无排序信号'}</p>)}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+      {project.related_work_candidates?.length ? (
+        <div className="section related-work-candidate-panel">
+          <SectionHeading title="待确认 metadata candidate" hint="这些记录来自 provider 元数据和引用网络，尚未自动升级为已确认 Paper，也不能替代 PDF 页码 quote。" />
+          <div className="data-list">
+            {project.related_work_candidates.map(candidate => (
+              <div className="data-row" key={candidate.id}>
+                <div>
+                  <h3>{candidate.title}</h3>
+                  <p>{candidate.provider} · depth {candidate.discovery_depth ?? 0} · {candidate.year || '年份未知'} · DOI {candidate.normalized_doi || '未提供'} · {candidate.source_count || 0} 个 provider 证据</p>
+                  {(() => {
+                    const provenance = candidateProvenance(candidate.id)
+                    const conflictFields = [...new Set(provenance.filter(item => item.status === 'conflict').map(item => item.field_name))]
+                    return <p className="muted">字段来源 {provenance.length} 条 · {conflictFields.length ? `冲突：${conflictFields.join('、')}` : '暂无字段冲突'}</p>
+                  })()}
+                </div>
+                <div className="button-row">
+                  <Badge status={candidate.paper_id ? 'confirmed-paper' : candidate.status || 'metadata-candidate'} />
+                  {candidateProvenance(candidate.id).length ? <button className="secondary" type="button" onClick={() => setProvenanceCandidateId(candidate.id)}>查看字段来源</button> : null}
+                  {!candidate.paper_id && candidate.status !== 'rejected' ? (
+                    <>
+                      <button className="secondary" type="button" onClick={() => void proposeCandidateEnrichment(candidate)}>补全字段</button>
+                      <button className="primary" type="button" onClick={() => requestCandidateDecision(candidate, 'approved')}>确认 Paper</button>
+                      <button className="reject" type="button" onClick={() => requestCandidateDecision(candidate, 'rejected')}>拒绝</button>
+                    </>
+                  ) : null}
+                  {!candidate.paper_id && candidate.status === 'rejected' ? <button className="secondary" type="button" onClick={() => requestCandidateDecision(candidate, 'reopened')}>重新打开</button> : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {provenanceCandidate ? (
+        <Modal
+          eyebrow="Field provenance"
+          title={provenanceCandidate.title}
+          description="选择来源只会更新当前项目候选的字段快照，并留下审计记录；它不会把 metadata candidate 自动变成全文证据。"
+          onClose={() => setProvenanceCandidateId(null)}
+          wide
+        >
+          <div className="provenance-drawer-list">
+            {[...new Set(candidateProvenance(provenanceCandidate.id).map(item => item.field_name))].sort().map(fieldName => {
+              const fields = candidateProvenance(provenanceCandidate.id).filter(item => item.field_name === fieldName)
+              return (
+                <section className="provenance-drawer-field" key={fieldName}>
+                  <div className="provenance-drawer-field-heading">
+                    <div><span className="eyebrow">字段</span><h3>{fieldName}</h3></div>
+                    <Badge status={fields.some(item => item.status === 'conflict') ? 'conflict' : fields.some(item => item.status === 'selected') ? 'selected' : 'observed'} />
+                  </div>
+                  <div className="data-list">
+                    {fields.map(field => (
+                      <div className="data-row compact-row" key={field.id}>
+                        <div>
+                          <strong>{field.provider || field.source_type || '来源未记录'}{field.status === 'selected' ? ' · 已选' : ''}</strong>
+                          <p>{valueLabel(field.normalized_value)}</p>
+                          <p className="muted">source_type={field.source_type || 'unknown'} · attempt={field.source_attempt_id || '无'} · artifact={field.artifact_id || '无'} · locator={field.locator || '无'} · hash={field.raw_value_hash || '无'}</p>
+                        </div>
+                        {field.status !== 'selected' && !provenanceCandidate.paper_id ? <button className="secondary compact" type="button" onClick={() => void selectCandidateField(provenanceCandidate, field)}>选择此来源</button> : null}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )
+            })}
+          </div>
+        </Modal>
+      ) : null}
       {project.papers?.length ? (
         <div className="data-list">
           {project.papers.map(paper => (
@@ -226,6 +560,10 @@ export function LiteratureTab({
               </div>
               <div className="button-row">
                 <Badge status={Number(paper.fulltext_evidence_count || 0) > 0 ? 'fulltext-evidence' : 'metadata-only'} />
+                <button className="secondary" type="button" disabled={repositoryDiscoveryLoading === paper.id} onClick={() => { void discoverRepositories(paper.id) }}>
+                  <Search size={15} />
+                  {repositoryDiscoveryLoading === paper.id ? '读取中…' : '查找论文中的代码链接'}
+                </button>
                 {repoInputFor === paper.id ? (
                   <span className="inline-repo-form">
                     <input
@@ -242,6 +580,21 @@ export function LiteratureTab({
                   </button>
                 )}
               </div>
+              {repositoryDiscoveries[paper.id]?.length ? (
+                <div className="repository-discovery-list">
+                  <p className="muted">以下链接来自该 Paper 已保存的 metadata/来源 URL，只是候选，仍需双源验证：</p>
+                  {repositoryDiscoveries[paper.id].map(discovery => {
+                    const exists = (paper.code_repositories || []).some(repository => repository.source_url === discovery.canonical_url)
+                    return (
+                      <div className="repository-discovery-row" key={discovery.canonical_url}>
+                        <a href={discovery.canonical_url} target="_blank" rel="noreferrer">{discovery.canonical_url}</a>
+                        <span className="muted">{discovery.locator}</span>
+                        {exists ? <Badge status="candidate-exists" /> : <button className="secondary compact" type="button" onClick={() => { void addRepositoryCandidate(paper.id, discovery.canonical_url) }}>添加候选</button>}
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
@@ -414,21 +767,6 @@ export function LiteratureTab({
         </div>
       ) : null}
 
-      {novelty ? (
-        <div className="section related-work-panel">
-          <SectionHeading title="Related Work 与证据覆盖" extra={<Badge status={novelty.assessment || 'review-required'} />} />
-          <p className="muted">{novelty.summary || ''}</p>
-          <h3>证据覆盖缺口</h3>
-          {noveltyList(novelty.research_gap_candidates)}
-          {novelty.duplicate_candidates?.length ? (
-            <>
-              <h3>重复研究候选</h3>
-              {noveltyList(novelty.duplicate_candidates)}
-            </>
-          ) : null}
-          <p className="muted">{novelty.claim_gate || ''}</p>
-        </div>
-      ) : null}
     </>
   )
 }

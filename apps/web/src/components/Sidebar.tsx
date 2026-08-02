@@ -19,7 +19,7 @@ export function Sidebar({
   return (
     <aside className="sidebar">
       <div className="brand">
-        <span className="brand-mark">R</span>
+        <img className="brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
         <span>Research OS</span>
       </div>
       <button className="primary full" type="button" onClick={onNewProject}>

@@ -452,6 +452,25 @@ h1 { font-size: 20px; line-height: 1.25; }
   background: var(--surface);
   color: var(--ink);
 }
+.repository-discovery-list {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: rgba(248, 250, 252, .72);
+}
+.repository-discovery-list p { margin: 0; }
+.repository-discovery-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+.repository-discovery-row a { overflow-wrap: anywhere; }
 .sr-only {
   position: absolute;
   width: 1px;
@@ -507,6 +526,7 @@ h1 { font-size: 20px; line-height: 1.25; }
   .inline-repo-form input {
     width: 100%;
   }
+  .repository-discovery-row { grid-template-columns: 1fr; }
   .timeseries-toolbar { align-items: flex-start; flex-direction: column; }
   .timeseries-count { margin-left: 0; }
   .timeseries-tooltip { font-size: 10px; }

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-19 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-02-18 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本、Windows Defender 上传门禁（通过 WSL interop）和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理，全部测试、构建和真实验收都在 WSL2 内通过；Windows 侧浏览器通过 mirrored 网络以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。GPU 主机验证仍是独立的后续工作。**原生 Windows 宿主不再受支持**：完整应用栈在 WSL2 内运行，Windows 只作为浏览器客户端。
+完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本、Windows Defender 上传门禁（通过 WSL interop）和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理；核心测试、TypeScript 构建和适用的本地验收已在 WSL2 内通过，依赖外部服务或被外部条件阻塞的验收仍按 `TODO.md` 如实记录。开发在 WSL2 shell 内进行（默认开发 shell 就是 WSL2，不使用 Windows cmd/PowerShell）；Windows Chrome 是调试浏览器，通过 mirrored 网络/端口转发以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。GPU 主机验证仍是独立的后续工作。**原生 Windows 宿主不再受支持**：完整应用栈在 WSL2 内运行，Windows 只作为浏览器客户端。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -23,9 +23,22 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、产物或审计状态。
 
+## 科研工作区导航
+
+项目页面使用两条横向导航栏；`实验实现` 入口再增加第三级具体页面。第一栏永远只有四个按科研顺序固定的一级入口：`项目概述`、`相关工作调研`、`实验实现`、`学术论文撰写`。界面现已渲染这些一级/二级/三级页面，旧标签只作为深链接重定向保留；`P0-NAV-078` 剩余项是多种宽度的真实浏览器验收。
+
+项目概述包含 Idea 讨论、项目描述与研究问题、创新候选与边界、进度与待决策，以及日报/周报与导师反馈；相关工作调研包含种子/检索、研究现状和引用图，代码复现与效果比较已迁入实验实现；实验实现有两个固定二级视图：`相关工作实现`（代码复现、效果比较）和 `本方法实现`（方法设计、项目代码工作区、变更审批、Git 与备份、实验计划与结果、运行队列、指标统计、结果可视化/产物、实验谱系）；学术论文撰写只包含写作相关页面（论文项目与大纲/章节、引用与 BibTeX、图表与实验数据选择、LaTeX 编译、PDF 审阅），绝不承载实验管理或可视化。
+
+四个一级入口只是导航分组，背后仍是六条独立工作流：Idea 澄清、相关工作调研、相关工作复现与比较、本方法实现、实验结果管理、日报/周报与导师反馈以及学术写作。分组不能绕过工作流门禁：论文不能消费未复核证据或未验证实验结果，实验不能消费未经审批的方法变更。每个页面都绑定当前项目，深链接能恢复项目/阶段/页面，结构化显示失败和审批状态，绝不会把外部或模型失败改成 fallback 结果。
+
+第二栏采用可读的工作区分组，而不是把技术页面全部挤成一条长标签：项目概述显示 Idea、项目规格、创新/边界、进度和报告/反馈；相关工作显示检索/证据和研究现状/引用图；实验实现显示相关工作实现和本方法实现；学术论文撰写只显示写作相关分组。一个工作区内部如果有多个技术页面，会在内容区提供紧凑的局部切换，例如矩阵/引用图、复现/比较、实验队列/指标/产物/谱系、日报/周报/反馈，以及章节/引用/编译。旧 hash 会归一且不丢失当前项目范围：`method/*` 重定向到 `implementation` 对应页面，旧论文页下的实验 hash 重定向到 `实验实现`，旧论文页下的日报/周报/反馈 hash 重定向到 `项目概述`。相关工作引擎也遵守同一边界：用户的 `D:\auto-related-work` 只作为算法、字段语义、边界案例和测试意图的只读参考，应用行为全部重写为 TypeScript，不导入或执行旧 Python 运行时。
+
+报告是带谱系的记录，不是打开历史页面时对当前数据库状态的无条件快照。新生成的日报/周报只读取其时间窗口内真实发生的对话消息、审计事件、任务、实验、Proposal、provider attempt 和导师反馈，并保存时间窗口、data cutoff、事件/来源 ID、项目 ID，以及生成内容时使用的 Paper、Evidence、Experiment、有效 Artifact 和 Proposal ID。窗口内没有事件时接口返回结构化 `report_no_events`，页面保持 `empty`，不会生成“今天完成了”之类的模板报告。读取项目时会重新校验声明的来源 ID 和项目归属；没有快照的旧报告标记为 `legacy_unverified`，项目范围不一致、跨项目来源、来源被删除或 Artifact 已失效的报告标记为 `blocked`，并且不渲染正文。这样可以防止历史报告把已经删除或失效的实验数据继续显示成当前证据。`apps/server/tests/report-lineage.test.ts` 和 `apps/server/tests/reports-api.test.ts` 覆盖谱系、无事件窗口、真实事件来源、无效 Artifact 和跨项目来源。
+
 ## 环境要求
 
 - Windows 10/11 x64 + WSL2（Ubuntu 22.04），并在 `.wslconfig` 启用 `networkingMode=mirrored`
+- WSL2 shell 作为默认开发 shell（不使用 Windows cmd/PowerShell 做开发）
 - WSL2 内的 nvm，以及仓库默认的 Node.js `26.5.1`（`package.json` 仍兼容 Node.js `>=22.13`）
 - WSL2 内的 Git
 - Python 3（含 `python3-venv`），用于科研 Python 实验
@@ -42,7 +55,7 @@ npm run build
 npm start
 ```
 
-仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。新开的非登录 WSL shell 仍可能回退到 Ubuntu 系统自带的 Node 12.x，请在执行任何命令前先运行 `source ~/.nvm/nvm.sh` 或 `nvm use 26.5.1`。仓库**只有一份**：`D:\ResearchOS` 就是 WSL2 里的 `/mnt/d/ResearchOS`（同一份文件，无需同步），所有服务都从 `/mnt/d/ResearchOS` 启动。注意 `/mnt/d`（drvfs）没有 inotify 支持，Windows 侧编辑代码后 `tsx watch` 不会自动重启，请手动重启受影响的服务。原生 Windows 宿主不再受支持，不存在 Windows 安装器；旧的 ext4 运行副本 `~/ResearchOS` 仅作备份。
+所有开发命令都在 WSL2 shell 中执行，工作目录是 `/mnt/d/ResearchOS`（它与 Windows 的 `D:\ResearchOS` 是同一份文件，无需同步）；不要用 Windows cmd/PowerShell 做开发。仓库通过 `.nvmrc` 固定开发用 Node.js 版本。请用 `nvm current` 和 `node --version` 确认当前版本；不要再使用独立的便携 Node.js 目录。新开的非登录 WSL shell 仍可能回退到 Ubuntu 系统自带的 Node 12.x，请在执行任何命令前先运行 `source ~/.nvm/nvm.sh` 或 `nvm use 26.5.1`。注意 `/mnt/d`（drvfs）没有 inotify 支持，即使在 WSL2 内编辑代码，`tsx watch` 也不会自动重启，请手动重启受影响的服务。原生 Windows 宿主不再受支持，不存在 Windows 安装器；旧的 ext4 运行副本 `~/ResearchOS` 仅作备份。
 
 默认运行数据库可从 Windows 浏览器访问 [http://127.0.0.1:8080](http://127.0.0.1:8080)（服务在 WSL2 内仅监听回环地址）。Mastra Studio 和工作流图位于 [http://127.0.0.1:4111](http://127.0.0.1:4111)，也可以从网页左下角进入。启动命令会自动加载 `.env`；`RESEARCH_RUNTIME_DIR` 是显式且可审计的运行目录选择，损坏目录单独保留。
 
@@ -57,6 +70,8 @@ npm run dev
 npm run typecheck
 npm test
 ```
+
+这些命令都在 WSL2 shell 中运行；UI 调试与验收使用 Windows Chrome，通过端口转发访问 `http://127.0.0.1:8080`（或配置的端口）。
 
 ## 模型设置
 
@@ -74,6 +89,20 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 ## Claim 与证据复核
 
 PDF 页码原文在人工创建并决定 Claim Review 前都只是证据候选。“文献”页和 `/api/projects/<project-id>/claim-reviews` 接口会强制当前项目 evidence ID、一次性终态决策、证据状态标记和审计记录。接受复核只表示人工检查过 quote，不会把元数据升级为全文证据，也不会证明科学结论。
+
+## 相关工作调研流水线
+
+相关工作现在是参考用户自己的 `D:\auto-related-work` 后全部重写的 TypeScript 科研流水线，不依赖 Python 运行时。`apps/server/src/related-work/` 已有严格 Zod 契约 `PaperCandidate`、`SourceAttempt`、`SourceFailure`、`CitationEdge`，并完成 Crossref、OpenAlex、Semantic Scholar、DBLP、arXiv 五个搜索适配器及离线 fixture 测试。每次来源尝试都会保留 provider、请求 URL、HTTP 状态、结果数、检索时间，以及超时、限流、取消和无效响应等结构化失败。
+
+当前 TypeScript 确定性内核还覆盖标题/作者规范化、标题匹配、字段完整度、缺失字段报告、有界退避，以及带确定性去重、进度、取消和非悬空引用边的 `depth/width/max_total` 递归收集。项目范围的种子和递归 API 已接入“文献”页：`POST /api/projects/<project-id>/related-work/seeds` 接受 DOI、标题、HTTPS URL、BibTeX、受控 PDF Artifact 或当前项目已有 Paper；`POST /api/projects/<project-id>/related-work/recursive-plan` 只创建待审批 Proposal；批准后会持久化 provider attempt、进度事件、候选、排序原因和引用边。Crossref、OpenAlex、Semantic Scholar 的 references API 已实现；DBLP/arXiv 目前仍是搜索适配器，待补充引用契约。候选审阅和字段 provenance 也已经是项目范围的：provider、用户输入和受控 Artifact 来源彼此区分，provider 补全必须通过 DOI/标题匹配，不匹配结果不会写入候选，字段冲突必须由用户选择，确认 Paper 仍必须人工批准。研究现状页现在只从 `confirmed` Paper、带页码/章节定位的 Evidence 和 accepted ClaimReview 建立矩阵，保存行级 provenance，支持主题/方法/年份筛选以及 JSON/CSV/Markdown 导出；引用图 API 只投影当前项目中明确保存的引用、Paper-Evidence 和 ClaimReview-Evidence 关系。研究空白、聚类和重复风险只能记录为可审计的待核验候选，不能直接当成结论。旧项目只能提供字段设计、规范化、匹配、完整度评分、缓存、排序、递归搜索思路和测试意图；Research OS 的运行模块、API、持久化、worker 和测试必须全部使用 TypeScript，不能导入或执行旧 Python 文件、虚拟环境、Google Scholar 隧道、硬编码代理、密钥、缓存或业务模块。provider 失败必须保留并显示为结构化失败，不能当作成功的空结果。
+
+Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含项目、provider、操作、规范化请求参数和当前 schema 版本；行中保留请求 URL、参数、真实响应、provider 状态、TTL、过期时间和命中次数。只有同一项目、同一请求、schema 兼容且未过期的条目才会回放。命中、未命中、过期、schema 不兼容、缓存响应损坏以及“失败保留已有成功”的写入跳过都会写入审计；失败不能覆盖已有成功，取消请求不进入缓存。默认 TTL 为 `RESEARCH_RELATED_WORK_CACHE_TTL_SECONDS=86400`。
+
+当前引用图已经是可交互的项目范围分层 SVG，而不是装饰性静态图片。候选、Paper、Evidence、ClaimReview 按固定列布局；数据库中明确保存的关系使用箭头和证据状态样式；鼠标点击或键盘选择节点后，会显示类型、状态、stable ID、provider/来源、locator、证据状态和 `project_scoped` 权限。空响应、接口失败和 partial 响应都保持真实状态显示。桌面检查以及 2026-08-02 对真实空图、窄屏横向滚动且页面主体无横向溢出、键盘选中、项目 scope 和切换项目清理旧详情的浏览器检查已通过。截图接口在设备缩放下产生重复拼接伪影，因此不把它计为视觉截图证据；加载/失败/partial fixture、研究现状矩阵的完整窄屏验收以及多种真实关系同时存在的图仍在 `TODO.md` 中，不能提前写成完成。
+
+相关工作还包括复现和比较：已验证的论文仓库只能在固定 commit 的独立 reproduction 工作区和该复现自己的 `.venv` 中运行；随后由 TypeScript 根据真实指标、数据/配置/seed、日志和 Artifact 哈希做程序化比较。Mastra 可以把这些已绑定来源的比较整理成用户可审阅的待核验创新/研究空白候选，但不能根据元数据、单次运行或模型措辞直接宣布创新、优于原文或论文结论。
+
+代码复现页面可以调用 `GET /api/projects/<project-id>/papers/<paper-id>/repositories/discover`。它只从 Paper 已保存的 metadata 或来源 URL 中提取明确的 GitHub/GitLab 链接，绝不会根据标题猜仓库。仓库验证会记录论文/仓库引用文件证据、SPDX 状态、默认分支、固定 40 位 commit，以及入口、依赖、数据获取、系统/GPU 要求和项目受控写入目录的独立 readiness 检查；任一检查未知都继续停留在候选状态。仓库归档不是科研证据，下载、环境创建、执行和结果回写必须分别经过审批；`D:\auto-related-work` 的 Python 运行时、代理隧道、Cookie、密钥和缓存都不会被导入。
 
 ## 验证证据
 
@@ -105,9 +134,9 @@ Embedding 配置是**项目级且完全隔离**的。没有覆盖的项目使用
 
 ## 仓库验证与获取
 
-“文献”页可以为论文添加 GitHub 或 GitLab HTTPS 代码仓库候选。验证会记录提供方元数据和引用文件，要求 DOI 或精确标题匹配，检查已知 SPDX 许可证，并固定 40 位 commit。下载不会自动执行，而是创建 `dependency_install` Proposal；批准时还会重新验证当前快照。
+“相关工作实现”页可以为论文添加 GitHub 或 GitLab HTTPS 代码仓库候选。验证会记录提供方元数据和引用文件，要求 DOI 或精确标题匹配，检查已知 SPDX 许可证，并固定 40 位 commit。下载不会自动执行，而是创建 `repository_download` Proposal；批准时还会重新验证当前快照。
 
-批准后的归档会执行大小、条目数、解压大小、路径穿越和链接文件检查，保存为带 SHA-256 的 Artifact，解压到 `projects/<project-id>/code/repositories/`，写入 Artifact 依赖谱系，并提交到项目 Git 工作区。这些记录证明可复现的源码获取过程，但不能单独证明仓库一定是官方实现，也不能证明代码具有科学有效性。
+批准后的归档会执行大小、条目数、解压大小、路径穿越和链接文件检查，保存为带 SHA-256 的源码 Artifact，并解压到 `projects/<project-id>/experiment/reproductions/<reproduction-id>/source`；不会进入 `code/`，也不会自动提交项目方法 Git。`POST /api/projects/<project-id>/reproductions/<reproduction-id>/dependency-plan` 会为受控的 `requirements*.txt` 创建独立 `repository_dependency_install` Proposal，批准后创建该复现自己的 `.venv`。`POST .../run-plan` 创建 `repository_reproduction_run` Proposal；Linux worker 把固定源码复制到独立运行目录，只使用 `.venv/bin/python`、相对 Python 入口、固定 seed、结构化配置、有界日志和超时。成功运行只生成待审批的 `repository_artifact_write` Proposal，批准后才把重新校验哈希的结果复制到 Artifact 账本。复现结果始终与我们的方法代码、实验和论文结论分开。
 
 ## 依赖谱系与检查点恢复
 
@@ -123,6 +152,7 @@ npm test
 npm run build
 npm run idea-cases:check
 npm run docs:check
+npm run language-boundary:check
 npm run ops:status
 npm run mastra:hitl:check
 npm run acceptance

@@ -1,4 +1,4 @@
-import { FileCheck, FilePenLine, Pause, Play, Search, Square } from 'lucide-react'
+import { FileCheck, FilePenLine, Pause, Play, Search, ShieldAlert, Square } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { ConfirmRequest, ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, SectionHeading } from '../ui'
@@ -23,6 +23,15 @@ export function OverviewTab({
   }
   const pendingCount = project.proposals?.filter(proposal => proposal.status === 'pending').length || 0
   const spec = project.spec?.idea
+  const checkpoints = project.checkpoints || []
+  const proposals = project.proposals || []
+  const experiments = project.experiments || []
+  const timeline = [
+    ...checkpoints.map(item => ({ id: `checkpoint-${item.id}`, label: item.stage, detail: `Idea v${item.idea_version ?? project.current_idea_version ?? 1}`, status: item.valid === false ? 'invalidated' : 'recorded', created_at: item.created_at })),
+    ...proposals.map(item => ({ id: `proposal-${item.id}`, label: item.summary, detail: item.reason || item.kind, status: item.status, created_at: item.created_at })),
+    ...experiments.map(item => ({ id: `experiment-${item.id}`, label: item.experiment_type, detail: item.run_id ? `Run ${item.run_id}` : '尚未分配 Run', status: item.status, created_at: item.created_at })),
+  ].sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || ''))).slice(0, 8)
+  const formatTime = (value?: string) => value ? new Date(value).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' }) : '时间待记录'
 
   const runSearch = async () => {
     try {
@@ -113,6 +122,41 @@ export function OverviewTab({
             <Badge status={project.spec?.feasibility} />
           </div>
         </div>
+      </div>
+
+      <div className="section overview-grid">
+        <div className="data-list overview-card">
+          <SectionHeading title="项目描述" hint="当前项目规格的可审阅摘要。" />
+          <div className="overview-fields">
+            <div><span>研究领域</span><strong>{spec?.domain || '尚未确认'}</strong></div>
+            <div><span>研究问题</span><strong>{spec?.research_question || '尚未确认'}</strong></div>
+            <div><span>假设</span><strong>{spec?.hypotheses?.join('；') || '尚未生成'}</strong></div>
+            <div><span>成功标准</span><strong>{spec?.success_criteria?.join('；') || '尚未生成'}</strong></div>
+          </div>
+        </div>
+        <div className="data-list overview-card">
+          <SectionHeading title="创新点候选" hint="候选建议需要相关工作证据和导师确认。" />
+          {spec?.expected_contributions?.length ? (
+            <ul className="candidate-list">
+              {spec.expected_contributions.map((item, index) => <li key={`${item}-${index}`}><ShieldAlert size={15} /><span>{item}</span><Badge status="candidate-only" /></li>)}
+            </ul>
+          ) : <p className="empty-inline">尚未生成创新点候选。</p>}
+        </div>
+      </div>
+
+      <div className="section">
+        <SectionHeading title="研究进度" hint="时间线只汇总已记录的 Proposal、Checkpoint 和实验状态，不代表科学结论。" />
+        {timeline.length ? (
+          <div className="timeline" role="list">
+            {timeline.map(item => (
+              <div className="timeline-item" role="listitem" key={item.id}>
+                <span className="timeline-dot" />
+                <div><strong>{item.label}</strong><p>{item.detail} · {formatTime(item.created_at)}</p></div>
+                <Badge status={item.status} />
+              </div>
+            ))}
+          </div>
+        ) : <div className="empty">尚无可展示的进度事件。</div>}
       </div>
 
       <div className="section">

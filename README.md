@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-01-19 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-02-18 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS is a local, auditable research-automation MVP. The application is im
 
 ## Status
 
-The full application stack now runs inside WSL2 (Ubuntu 22.04): the TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, native Linux experiment supervisor, artifact ledger, Windows Defender upload gate (through WSL interop), and Supermemory Local. Node.js 26.5.1 is managed by nvm inside WSL2 and all tests, builds, and real acceptance runs pass there; Windows browsers reach the services at `http://127.0.0.1:<port>` through mirrored networking. The default `runtime/research-os.pglite` is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. GPU-host validation remains separate open work. Native Windows hosting is not supported: the whole stack runs inside WSL2 and Windows acts only as a browser client.
+The full application stack now runs inside WSL2 (Ubuntu 22.04): the TypeScript API, embedded PostgreSQL-compatible state store, Mastra integration, persistent workflow queue, React Web UI, approval gates, native Linux experiment supervisor, artifact ledger, Windows Defender upload gate (through WSL interop), and Supermemory Local. Node.js 26.5.1 is managed by nvm inside WSL2; the core test suite, TypeScript builds, and applicable local acceptance checks pass there, while provider-dependent or externally blocked checks remain recorded in `TODO.md`. Development happens inside the WSL2 shell (the default shell, not Windows cmd/PowerShell); Windows Chrome is the debugging browser and reaches the services at `http://127.0.0.1:<port>` through mirrored networking/port forwarding. The default `runtime/research-os.pglite` is in active use (16 projects); `.env` keeps `RESEARCH_RUNTIME_DIR=runtime`. Previously corrupted directories are preserved separately for inspection and are never used automatically. GPU-host validation remains separate open work. Native Windows hosting is not supported: the whole stack runs inside WSL2 and Windows acts only as a browser client.
 
 Model failures are final structured errors. The application never substitutes a local reply, another provider, or an unrelated experiment.
 
@@ -23,9 +23,22 @@ Model failures are final structured errors. The application never substitutes a 
 
 PGlite is the durable business state source. Mastra Memory is local and does not replace project, approval, artifact, or audit state.
 
+## Research Workspace Navigation
+
+The project view uses two horizontal navigation rows, and `Experiment Implementation` adds a third row for its concrete pages. The first row has exactly four fixed research stages, in order: `Project Overview`, `Related Work`, `Experiment Implementation`, and `Academic Paper Writing`. The UI now renders these stages and keeps the legacy labels only as deep-link redirects; the remaining `P0-NAV-078` item is real-browser acceptance at multiple widths.
+
+Project Overview contains the Idea discussion, research question/specification, innovation candidates, progress, and daily/weekly reports with mentor feedback. Related Work contains seed/search, research status, and the citation graph; code reproduction and effect comparison moved to Experiment Implementation. Experiment Implementation has two fixed second-level views: `Related Work Implementation` (code reproduction and effect comparison) and `Our Method Implementation` (method design, the project code workspace, change approvals, Git and backups, experiment plans and results, run queue, metrics, result visualization/Artifacts, and experiment lineage). Academic Paper Writing contains only writing activities: paper project and outline/chapters, citations and BibTeX, figure and experiment-data selection, LaTeX compilation, and PDF review; it never hosts experiment management or visualization.
+
+These four stages group six independent workflows: Idea clarification, related-work investigation, related-work reproduction and comparison, our method implementation, experiment/result management, and daily/weekly reports with mentor feedback plus academic writing. The grouping does not bypass the workflow boundaries: a paper cannot consume unreviewed evidence or unverified experiment output, and an experiment cannot consume an unapproved method change. Every view is project-scoped, restores its project/stage/page deep link, exposes structured failures and approval states, and never turns an external or model failure into a fallback result.
+
+The visible second-row navigation is grouped so it remains understandable at a glance: Project Overview shows Idea, specification, innovation/boundary, progress, and reports/feedback; Related Work shows search/evidence and research status/citation graph; Experiment Implementation shows Related Work Implementation and Our Method Implementation; Academic Paper Writing shows writing-only groups. A group with multiple technical views exposes a compact local switcher inside the workspace: matrix/graph, reproduction/comparison, experiment queue/metrics/artifacts/lineage, report periods/feedback, and paper chapters/citations/compile. Fine-grained views remain inside those workflows and must not become a second unrelated navigation system. Legacy hashes are normalized without changing project scope: `method/*` redirect to the matching `implementation` page, the old paper-experiment hashes redirect to Experiment Implementation, and the old paper-report/feedback hashes redirect to Project Overview. The related-work engine follows the same boundary: the user's `D:\auto-related-work` project is a read-only reference for algorithms, field semantics, edge cases, and test intent; all application behavior is reimplemented in TypeScript and the old Python runtime is never imported or executed.
+
+Reports are lineage-bound records, not permanent snapshots of whatever happened to exist when an old page is opened. A newly generated daily or weekly report reads only real events in its time window (conversation messages, audit events, tasks, experiments, proposals, provider attempts, and mentor feedback); it stores the window, data cutoff, event/source IDs, project ID, and the Paper, Evidence, Experiment, valid Artifact, and Proposal IDs used to build it. A window with no events returns structured `report_no_events` and remains `empty`; it never creates a template saying that work was completed. Reading a project revalidates the declared source IDs and project ownership; a missing snapshot is `legacy_unverified`, while a scope mismatch, cross-project source, deleted source, or invalid Artifact is `blocked` and its Markdown is not rendered. This prevents a historical report from presenting deleted or invalid experiment data as current evidence. `apps/server/tests/report-lineage.test.ts` and `apps/server/tests/reports-api.test.ts` cover lineage, empty windows, real event sources, invalid artifacts, and cross-project cases.
+
 ## Requirements
 
 - Windows 10/11 x64 with WSL2 (Ubuntu 22.04) and `networkingMode=mirrored` in `.wslconfig`
+- WSL2 shell as the default development shell (Windows cmd/PowerShell is not used for development)
 - nvm with Node.js `26.5.1` inside WSL2 (the repository default; `package.json` accepts Node.js `>=22.13`)
 - Git inside WSL2
 - Python 3 (with `python3-venv`) for scientific Python experiments
@@ -42,7 +55,7 @@ npm run build
 npm start
 ```
 
-The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. A fresh non-login WSL shell may still fall back to Ubuntu's system Node (12.x), so run `source ~/.nvm/nvm.sh` or `nvm use 26.5.1` before any command. There is exactly **one** repository copy: `D:\ResearchOS` is the same filesystem as `/mnt/d/ResearchOS` inside WSL2, so no sync step is needed. All services run from `/mnt/d/ResearchOS`. Note that `/mnt/d` (drvfs) has no inotify support, so edits made on the Windows side do not trigger `tsx watch` restarts; restart the affected service manually after code changes. Native Windows hosting is not supported and there is no Windows installer. The former ext4 runtime copy (`~/ResearchOS`) is kept only as a backup.
+Run all development commands inside the WSL2 shell with the repository at `/mnt/d/ResearchOS` (the same filesystem as Windows `D:\ResearchOS`, so no sync step is needed); do not use Windows cmd/PowerShell for development. The repository pins the development Node.js version in `.nvmrc`. Verify the active version with `nvm current` and `node --version`; do not use a separate portable Node.js directory. A fresh non-login WSL shell may still fall back to Ubuntu's system Node (12.x), so run `source ~/.nvm/nvm.sh` or `nvm use 26.5.1` before any command. Note that `/mnt/d` (drvfs) has no inotify support, so `tsx watch` will not notice file changes even when editing through WSL2; restart the affected service manually after code changes. Native Windows hosting is not supported and there is no Windows installer. The former ext4 runtime copy (`~/ResearchOS`) is kept only as a backup.
 
 The default runtime database is available from the Windows browser at [http://127.0.0.1:8080](http://127.0.0.1:8080) (the service listens only on loopback inside WSL2). Mastra Studio and workflow graphs run at [http://127.0.0.1:4111](http://127.0.0.1:4111) and are linked from the lower-left navigation. Startup commands load `.env` automatically; `RESEARCH_RUNTIME_DIR` is an explicit, auditable runtime selection and corrupted directories are preserved separately.
 
@@ -57,6 +70,8 @@ npm run dev
 npm run typecheck
 npm test
 ```
+
+Run these in the WSL2 shell. Debug and verify the UI in Windows Chrome at `http://127.0.0.1:8080` (or the configured port) through port forwarding.
 
 ## Model Settings
 
@@ -74,6 +89,20 @@ HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC19
 ## Claim Review and Evidence
 
 Page-level PDF passages remain evidence candidates until a human creates and decides a Claim Review. The Literature tab and `/api/projects/<project-id>/claim-reviews` endpoints enforce project-scoped evidence IDs, one terminal decision, evidence-status labels, and audit events. An accepted review records that a quote was reviewed; it does not turn metadata into full-text evidence or establish a scientific conclusion.
+
+## Related Work Pipeline
+
+The related-work implementation is a TypeScript rewrite of the deterministic and auditable parts of the user's `D:\auto-related-work` project, not a Python runtime dependency. The adapter layer in `apps/server/src/related-work/` has strict Zod contracts for `PaperCandidate`, `SourceAttempt`, `SourceFailure`, and `CitationEdge`, plus offline-tested Crossref, OpenAlex, Semantic Scholar, DBLP, and arXiv search adapters. Each attempt retains its provider, request URL, HTTP status, result count, retrieval time, and structured timeout/rate-limit/cancellation/invalid-response failure.
+
+The deterministic TypeScript core now also covers title/author normalization, title matching, field completeness, missing-field reporting, bounded backoff, and depth/width/max-total recursive collection with deterministic deduplication, progress, cancellation, and non-dangling citation edges. Project-scoped seed and recursion APIs are now wired into the Literature page: `POST /api/projects/<project-id>/related-work/seeds` accepts DOI, title, HTTPS URL, BibTeX, a controlled PDF Artifact, or an existing project Paper; `POST /api/projects/<project-id>/related-work/recursive-plan` creates an approval-gated Proposal; approved runs persist provider attempts, progress events, candidates, ranking reasons, and citation edges. Crossref, OpenAlex, and Semantic Scholar reference APIs are implemented; DBLP/arXiv remain search-only until their reference contracts are added. Candidate review and field provenance are also project-scoped: provider, user input, and controlled Artifact sources are distinct, DOI/title matching rejects unrelated enrichment results, conflicts require an explicit field selection, and confirmed Paper creation remains human-gated. The Research Status page now creates a matrix only from `confirmed` Papers, located Evidence, and accepted ClaimReviews, stores row-level provenance, supports theme/method/year filtering and JSON/CSV/Markdown export through `/api/projects/<project-id>/research-status`, and renders a project-scoped graph containing only explicit citation, Paper-Evidence, and ClaimReview-Evidence relations. Gap, cluster, and duplicate-risk entries remain auditable candidates rather than conclusions. The rewrite may reuse the old project's field design, normalization, matching, completeness scoring, caching, ranking, recursive-search ideas, and test intent, but all runtime modules, API, persistence, workers, and tests in Research OS are TypeScript. The old Python files, virtual environment, Google Scholar tunnel, hard-coded proxy, keys, caches, and business modules are never imported or executed. A provider failure remains visible and structured; it is never treated as a successful empty result.
+
+Provider responses now use a project-scoped PGlite request cache. Its key contains the project, provider, operation, canonical request parameters, and the current cache schema version; the row retains the request URL, parameters, response, provider status, TTL, expiry, and hit count. Only an unexpired compatible entry for the same project and request is replayed. Cache misses, hits, expiry, schema mismatch, invalid stored responses, and failure-preserving writes are audited. A failed provider response cannot overwrite a prior successful cache entry, and a cancelled request is never cached. The default TTL is `RESEARCH_RELATED_WORK_CACHE_TTL_SECONDS=86400`.
+
+The citation graph is currently an interactive, project-scoped layered SVG view rather than a decorative static image. Candidate, Paper, Evidence, and ClaimReview nodes are placed in deterministic columns; stored relations receive arrows and evidence-state styling; selecting a node by mouse or keyboard exposes its type, status, stable ID, provider/source, locator, evidence state, and `project_scoped` permission. Empty, API failure, and partial responses remain visible as their actual states. Desktop inspection and the 2026-08-02 browser checks for the empty graph, narrow-screen scrolling without body overflow, keyboard selection, project scope, and project-switch cleanup have passed. The browser screenshot endpoint produced a device-scale tiling artifact and is not counted as visual screenshot evidence; loading/error/partial fixtures, complete matrix narrow-screen verification, and a real graph with multiple relation types remain open acceptance items tracked in `TODO.md`.
+
+Related work continues after discovery: a verified paper repository may be reproduced in its own fixed-commit workspace and project `.venv`; TypeScript then compares real metrics, data/configuration/seed conditions, logs, and Artifact hashes against the paper evidence. Mastra may turn that bound comparison into an auditable, user-reviewable innovation or research-gap candidate, but it cannot declare novelty, superiority, or a paper conclusion from metadata, a single run, or model prose.
+
+For code reproduction, the Related Work Implementation page can query `GET /api/projects/<project-id>/papers/<paper-id>/repositories/discover`. This only extracts explicit GitHub/GitLab links already present in the Paper metadata or source URL; it never guesses a repository from the title. Repository verification records paper/repository citation evidence, SPDX status, default branch, a fixed 40-character commit, and separate readiness checks for entrypoint, dependencies, data access, system/GPU requirements, and the project-contained write directory. Any unknown check keeps the repository as a candidate. The repository archive is not scientific evidence, and download, environment creation, execution, and result write-back remain separately approval-gated work; the older `D:\auto-related-work` Python runtime, proxy tunnel, cookies, keys, and cache are not imported.
 
 ## Verification Evidence
 
@@ -105,9 +134,9 @@ Each scientific Python project uses its own `.venv`; dependencies are never inst
 
 ## Repository Verification and Acquisition
 
-The Literature tab accepts GitHub or GitLab HTTPS repository candidates linked to a paper. Verification records the provider metadata and citation files, requires a DOI or exact-title match, checks a known SPDX license, and pins the candidate to a 40-character commit. Download is never automatic: it creates a `dependency_install` Proposal and approval revalidates the snapshot before downloading.
+The Related Work Implementation page accepts GitHub or GitLab HTTPS repository candidates linked to a paper. Verification records the provider metadata and citation files, requires a DOI or exact-title match, checks a known SPDX license, and pins the candidate to a 40-character commit. Download is never automatic: it creates a `repository_download` Proposal and approval revalidates the snapshot before downloading.
 
-The approved archive is bounded, checked for path traversal and link entries, stored as a SHA-256 Artifact, extracted beneath `projects/<project-id>/code/repositories/`, linked in the Artifact dependency ledger, and committed to the project Git workspace. These records document reproducible source acquisition; they do not by themselves prove that a repository is an official implementation or that its code is scientifically valid.
+The approved archive is bounded, checked for path traversal and link entries, stored as a SHA-256 source Artifact, and extracted beneath `projects/<project-id>/experiment/reproductions/<reproduction-id>/source`. It never enters `code/` and never creates a commit in the project's method repository. `POST /api/projects/<project-id>/reproductions/<reproduction-id>/dependency-plan` creates a separate `repository_dependency_install` Proposal for an allowlisted `requirements*.txt`; approval creates that reproduction's `.venv`. `POST .../run-plan` creates a `repository_reproduction_run` Proposal; the Linux worker copies the pinned source into an isolated run workspace, uses only the fixed `.venv/bin/python` entrypoint, bounded logs, fixed seeds, structured config, and a timeout. A successful run creates a `repository_artifact_write` Proposal, and only its approval copies hash-verified outputs into the Artifact ledger. Reproduction outputs remain separate from our method code, experiments, and paper claims.
 
 ## Dependency Lineage and Checkpoint Recovery
 
@@ -123,6 +152,7 @@ npm test
 npm run build
 npm run idea-cases:check
 npm run docs:check
+npm run language-boundary:check
 npm run ops:status
 npm run mastra:hitl:check
 npm run acceptance

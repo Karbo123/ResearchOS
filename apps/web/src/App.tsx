@@ -5,6 +5,7 @@ import type {
   ConfirmRequest,
   ProjectDetail,
   ProjectSummary,
+  ResearchArea,
   ResearchSpec,
   SearchCandidate,
   TabId,
@@ -15,6 +16,7 @@ import { Sidebar } from './components/Sidebar'
 import { Topbar } from './components/Topbar'
 import { IdeaView } from './components/IdeaView'
 import { ProjectView } from './components/ProjectView'
+import { AREA_DEFAULT_TAB, TAB_AREA, normalizeTab, resolveWorkspaceHash, workspaceHash } from './navigation'
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
 import { ConfirmDialog, Toast } from './components/ui'
@@ -41,6 +43,7 @@ export function App() {
   const [projectId, setProjectId] = useState<string | null>(null)
   const [project, setProject] = useState<ProjectDetail | null>(null)
   const [view, setView] = useState<'idea' | 'project'>('idea')
+  const [activeArea, setActiveArea] = useState<ResearchArea>('overview')
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const [health, setHealth] = useState<'connecting' | 'online' | 'offline'>('connecting')
   const [toast, setToast] = useState<string | null>(null)
@@ -65,6 +68,11 @@ export function App() {
   const sessionIdRef = useRef<string | null>(null)
   const toastTimerRef = useRef<number | null>(null)
 
+  const writeWorkspaceHash = (id: string, area: ResearchArea, tab: TabId) => {
+    const next = workspaceHash(id, area, tab)
+    if (window.location.hash !== next) window.history.pushState(null, '', next)
+  }
+
   const showToast = (message: string) => {
     setToast(message)
     if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current)
@@ -88,12 +96,20 @@ export function App() {
   const openProject = async (id: string, options?: { preserveTab?: boolean }) => {
     try {
       const detail = await api<ProjectDetail>(`/api/projects/${id}`)
-      if (projectId !== id) setSearchCandidates([])
+      if (projectId !== id) {
+        setSearchCandidates([])
+        setProjectMessages([])
+        setMobileChatOpen(false)
+      }
       setProjectId(id)
       setProject(detail)
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
-      if (!options?.preserveTab) setActiveTab('overview')
+      if (!options?.preserveTab) {
+        setActiveArea('overview')
+        setActiveTab('overview')
+        writeWorkspaceHash(id, 'overview', 'overview')
+      }
       await loadProjects()
     } catch (error) {
       showToast(errorMessage(error))
@@ -110,13 +126,16 @@ export function App() {
     setProject(null)
     setActiveSession(null)
     setView('idea')
+    setActiveArea('overview')
     setSpec(null)
     setSpecStatus('待澄清')
     setMessages([INITIAL_MESSAGE])
+    setProjectMessages([])
     setQueuedFiles([])
     setThinkingSessions([])
     setClarificationMode('automatic')
     setMobileChatOpen(false)
+    window.history.pushState(null, '', '#new')
     void loadProjects()
   }
 
@@ -125,6 +144,23 @@ export function App() {
     api<{ status: string }>('/api/health')
       .then(() => setHealth('online'))
       .catch(() => setHealth('offline'))
+
+    const restoreWorkspace = () => {
+      const hash = resolveWorkspaceHash()
+      if (!hash) return
+      setActiveArea(hash.area)
+      setActiveTab(hash.tab)
+      const normalizedHash = workspaceHash(hash.projectId, hash.area, hash.tab)
+      if (window.location.hash !== normalizedHash) window.history.replaceState(null, '', normalizedHash)
+      if (projectId !== hash.projectId) void openProject(hash.projectId, { preserveTab: true })
+    }
+    restoreWorkspace()
+    window.addEventListener('popstate', restoreWorkspace)
+    window.addEventListener('hashchange', restoreWorkspace)
+    return () => {
+      window.removeEventListener('popstate', restoreWorkspace)
+      window.removeEventListener('hashchange', restoreWorkspace)
+    }
   }, [])
 
   const setThinkingStage = (session: ThinkingSession, key: ThinkingStage['key'], state: ThinkingStage['state'], label?: string, detail?: string) => {
@@ -353,6 +389,21 @@ export function App() {
 
   const requestConfirm = (request: ConfirmRequest) => setConfirm(request)
 
+  const navigateTab = (tab: TabId) => {
+    const normalizedTab = normalizeTab(tab)
+    setActiveTab(normalizedTab)
+    const area = TAB_AREA[normalizedTab]
+    setActiveArea(area)
+    if (projectId) writeWorkspaceHash(projectId, area, normalizedTab)
+  }
+
+  const navigateArea = (area: ResearchArea) => {
+    const tab = AREA_DEFAULT_TAB[area]
+    setActiveArea(area)
+    setActiveTab(tab)
+    if (projectId) writeWorkspaceHash(projectId, area, tab)
+  }
+
   return (
     <div className="app-shell">
       <Sidebar
@@ -393,8 +444,10 @@ export function App() {
         ) : project ? (
           <ProjectView
             project={project}
+            activeArea={activeArea}
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onAreaChange={navigateArea}
+            onTabChange={navigateTab}
             onRefresh={refreshProject}
             showToast={showToast}
             onRequestConfirm={requestConfirm}
