@@ -323,6 +323,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `078k` 更新 `ProjectView.tsx`、`types.ts`、`App.tsx` 和相关 Tab 组件；删除不再使用的旧分组/空壳；同步 `README.md`、`README.zh-CN.md`、`AGENTS.md`、架构/安全文档和 `DOCS_SYNC_VERSION`，避免旧的一级入口/职责描述残留。
   - [ ] `078l` 浏览器验收：Windows Chrome 访问 WSL2 服务，100% 桌面、窄桌面和移动宽度截图；验证 `实验实现` 二级/三级导航、`学术论文撰写` 无实验管理内容、`项目概述` 含报告/反馈入口、项目列表独立滚动和无重叠/溢出。
   - [x] `078m` 将论文撰写的页面 Tab 直接提升为 `学术论文撰写` 的二级导航；移除“论文写作与编译”单一分组及正文内重复导航，保留页面 ID、hash 深链接、默认页和四语言文案。已通过类型检查、导航检查、UI 检查、Web 构建、文档同步检查和测试。
+  - [x] `078n` 将项目工作区地址改为无 `#` 的 History API 路径 `/project/<semantic-slug>/<area>/<tab>`；项目 slug 默认由 Mastra 根据已确认 Idea 生成三个语义词，用户可手动填写，服务器负责规范化、冲突处理、旧 UUID/hash 兼容和 clean URL 回写。URL 中的 Idea 页面使用 `overview/idea`，已通过 slug、导航、SPA 直达、类型、构建和测试检查。
 
 ### 4.11 多语言支持与中文文案母语化（用户新增需求）
 
@@ -330,7 +331,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
 
 - [~] `P0-UI-I18N-079` 多语言基础设施、右上角语言切换和中文文案母语化审核。
   - [x] `079a` 在 `Topbar` 的 `.top-actions` 区域增加语言切换下拉，提供 `简体中文（zh-CN）`、`繁体中文（zh-TW）`、`英语（en）`、`西班牙语（es）` 四个选项，默认 `zh-CN`；切换立即重渲染全部界面文案，不刷新页面，不改变当前 project/area/tab。
-  - [x] `079b` 语言选择持久化到 `localStorage`（如 `researchos.locale`），刷新、前进/后退、重新打开页面保持；不把语言代码写入深链接 hash，避免污染 `#project/<id>/<area>/<tab>` 解析；读取优先级为 localStorage > 默认 `zh-CN`。
+  - [x] `079b` 语言选择持久化到 `localStorage`（如 `researchos.locale`），刷新、前进/后退、重新打开页面保持；不把语言代码写入深链接路径或旧 hash，避免污染项目/区域/页面解析；读取优先级为 localStorage > 默认 `zh-CN`。
   - [x] `079c` 采用轻量、类型安全的 i18n 方案（例如 `i18next`，或自建 `dictionaries/*.ts` + `t(key, params)` hook），所有 UI 文案迁移为 key；禁止继续在 TSX 中散落硬编码中文。四个语言各一份字典，统一通过 key 读取。
   - [x] `079d` 四份字典的校对要求：`zh-CN` 按汉语母语习惯逐句审核；`zh-TW` 不能机械逐字转码，必须按繁体中文使用习惯校对；`en`、`es` 需人工或模型审核润色，保证自然、无歧义、术语一致。
   - [x] `079e` 中文母语化全面审核：逐个审核 `apps/web/src/**/*.tsx`（`Sidebar`、`Topbar`、`ProjectView`、`IdeaView`、`ProjectChat`、`ModelSettingsModal`、`MemoryGraphModal`、全部 Tab 组件、`previews.tsx`、`ui.tsx` 等）中所有呈现给用户的中文，从小白/初次使用者视角确认一眼可懂、直截了当；同一概念全站统一译名，不混用中英混排；对 `Idea`、`规格`、`证据`、`Claim`、`谱系`、`审批`、`候选`、`partial`、`blocked`、`failure`、`provenance` 等专业词汇建立统一术语表，术语表与用户确认后作为唯一翻译来源。

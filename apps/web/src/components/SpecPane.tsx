@@ -31,10 +31,14 @@ function FieldText({ label, value }: { label: string; value?: string }) {
 export function SpecPane({
   spec,
   status,
+  projectSlug,
+  onProjectSlugChange,
   onConfirm,
 }: {
   spec: ResearchSpec | null
   status: string
+  projectSlug: string
+  onProjectSlugChange: (value: string) => void
   onConfirm: () => void
 }) {
   const { t } = useTranslation()
@@ -61,6 +65,18 @@ export function SpecPane({
           <FieldList label={t('spec.feasibilityNotes')} values={spec.feasibility_notes} />
           <FieldList label={t('spec.candidateModifications')} values={spec.candidate_modifications} />
           <FieldList label={t('spec.approvals')} values={spec.required_approvals} />
+          <div className="spec-group">
+            <label htmlFor="projectSlug">{t('spec.projectSlug')}</label>
+            <input
+              id="projectSlug"
+              value={projectSlug}
+              maxLength={120}
+              placeholder={t('spec.projectSlugPlaceholder')}
+              aria-describedby="projectSlugHint"
+              onChange={event => onProjectSlugChange(event.target.value)}
+            />
+            <small id="projectSlugHint">{t('spec.projectSlugHint')}</small>
+          </div>
           <button className="primary full" type="button" onClick={onConfirm}>
             <Check size={17} />
             {t('spec.confirmCreate')}

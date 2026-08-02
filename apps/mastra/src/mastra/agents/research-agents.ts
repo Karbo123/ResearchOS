@@ -3,7 +3,7 @@ import { Memory } from '@mastra/memory'
 import { agentRequestContextSchema, type ModelTier } from '../contracts.js'
 import { modelId } from '../model-config.js'
 import { loadModelConfig } from '../model-config.js'
-import { experimentPlanningSkill, ideaClarificationSkill, supervisionIntentSkill } from '../skills/research-skills.js'
+import { experimentPlanningSkill, ideaClarificationSkill, projectSlugSkill, supervisionIntentSkill } from '../skills/research-skills.js'
 import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
 const ideaMemory = new Memory({ options: { lastMessages: 12 } })
@@ -27,6 +27,15 @@ export const ideaClarificationAgent = new Agent({
   memory: ideaMemory,
   skills: [ideaClarificationSkill],
   tools: { inspectIdeaDraftTool },
+})
+
+export const projectSlugAgent = new Agent({
+  id: 'semantic-project-slug-agent',
+  name: 'Semantic Project Slug Agent',
+  requestContextSchema: agentRequestContextSchema,
+  instructions: projectSlugSkill.instructions,
+  model: () => configuredModel('medium'),
+  skills: [projectSlugSkill],
 })
 
 export const supervisionIntentAgent = new Agent({

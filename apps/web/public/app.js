@@ -12912,6 +12912,9 @@
     "spec.feasibilityNotes": "\u53EF\u884C\u6027\u8BF4\u660E",
     "spec.candidateModifications": "\u5F85\u6838\u9A8C\u4FEE\u6539\u5EFA\u8BAE",
     "spec.approvals": "\u6240\u9700\u5BA1\u6279",
+    "spec.projectSlug": "\u9879\u76EE\u5730\u5740\u6807\u8BC6",
+    "spec.projectSlugPlaceholder": "\u4F8B\u5982 mnist-cnn-example",
+    "spec.projectSlugHint": "\u7559\u7A7A\u7531 AI \u6839\u636E Idea \u751F\u6210\u4E09\u4E2A\u8BED\u4E49\u8BCD\uFF1B\u624B\u52A8\u586B\u5199\u65F6\u8BF7\u4F7F\u7528\u4E09\u4E2A\u4E0D\u540C\u7684\u82F1\u6587\u5C0F\u5199\u5355\u8BCD\uFF0C\u5E76\u7528\u8FDE\u5B57\u7B26\u8FDE\u63A5\u3002",
     "thinking.title": "AI \u8BF7\u6C42\u72B6\u6001",
     "chat.title": "\u9879\u76EE\u5BF9\u8BDD",
     "chat.monitoring": "\u76D1\u7763\u4E2D",
@@ -13243,6 +13246,10 @@
     "apiError.project_cancelled": "\u5DF2\u53D6\u6D88\u9879\u76EE\u4E0D\u80FD\u6062\u590D\u3002",
     "apiError.project_not_active": "\u9879\u76EE\u5F53\u524D\u4E0D\u53EF\u6267\u884C\u8BE5\u64CD\u4F5C\u3002",
     "apiError.project_not_found": "\u9879\u76EE\u4E0D\u5B58\u5728\u3002",
+    "apiError.project_slug_conflict": "\u8FD9\u4E2A\u9879\u76EE\u5730\u5740\u6807\u8BC6\u5DF2\u7ECF\u88AB\u4F7F\u7528\uFF0C\u8BF7\u6362\u4E09\u4E2A\u8BCD\u3002",
+    "apiError.project_slug_invalid": "\u9879\u76EE\u5730\u5740\u6807\u8BC6\u5FC5\u987B\u7531\u4E09\u4E2A\u4E0D\u540C\u7684\u82F1\u6587\u5C0F\u5199\u5355\u8BCD\u7EC4\u6210\uFF0C\u5E76\u7528\u8FDE\u5B57\u7B26\u8FDE\u63A5\u3002",
+    "apiError.project_slug_generation_failed": "\u6A21\u578B\u751F\u6210\u7684\u9879\u76EE\u5730\u5740\u6807\u8BC6\u4E0D\u7B26\u5408\u4E09\u4E2A\u8BED\u4E49\u8BCD\u7684\u683C\u5F0F\u3002",
+    "apiError.project_slug_unavailable": "\u6682\u65F6\u65E0\u6CD5\u751F\u6210\u552F\u4E00\u7684\u9879\u76EE\u5730\u5740\u6807\u8BC6\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
     "apiError.proposal_not_found": "Proposal \u4E0D\u5B58\u5728\u3002",
     "apiError.related_work_run_not_found": "\u76F8\u5173\u5DE5\u4F5C\u9012\u5F52\u8FD0\u884C\u4E0D\u5B58\u5728\u3002",
     "apiError.report_no_events": "\u5F53\u524D\u7A97\u53E3\u6CA1\u6709\u771F\u5B9E\u9879\u76EE\u4E8B\u4EF6\uFF0C\u62A5\u544A\u4FDD\u6301\u4E3A\u7A7A\u3002",
@@ -13862,6 +13869,10 @@
     "apiError.project_cancelled": "\u5DF2\u53D6\u6D88\u5C08\u6848\u4E0D\u80FD\u6062\u5FA9\u3002",
     "apiError.project_not_active": "\u5C08\u6848\u76EE\u524D\u4E0D\u53EF\u57F7\u884C\u8A72\u64CD\u4F5C\u3002",
     "apiError.project_not_found": "\u5C08\u6848\u4E0D\u5B58\u5728\u3002",
+    "apiError.project_slug_conflict": "\u9019\u500B\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\u5DF2\u88AB\u4F7F\u7528\uFF0C\u8ACB\u66F4\u63DB\u4E09\u500B\u8A5E\u3002",
+    "apiError.project_slug_invalid": "\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\u5FC5\u9808\u7531\u4E09\u500B\u4E0D\u540C\u7684\u82F1\u6587\u5C0F\u5BEB\u55AE\u8A5E\u7D44\u6210\uFF0C\u4E26\u4EE5\u9023\u5B57\u865F\u9023\u63A5\u3002",
+    "apiError.project_slug_generation_failed": "\u6A21\u578B\u7522\u751F\u7684\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\u4E0D\u7B26\u5408\u4E09\u500B\u8A9E\u610F\u8A5E\u7684\u683C\u5F0F\u3002",
+    "apiError.project_slug_unavailable": "\u66AB\u6642\u7121\u6CD5\u7522\u751F\u552F\u4E00\u7684\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
     "apiError.proposal_not_found": "Proposal \u4E0D\u5B58\u5728\u3002",
     "apiError.related_work_run_not_found": "\u76F8\u95DC\u5DE5\u4F5C\u905E\u8FF4\u57F7\u884C\u4E0D\u5B58\u5728\u3002",
     "apiError.report_no_events": "\u76EE\u524D\u6642\u9593\u5340\u9593\u6C92\u6709\u771F\u5BE6\u5C08\u6848\u4E8B\u4EF6\uFF0C\u5831\u544A\u4FDD\u6301\u70BA\u7A7A\u3002",
@@ -13999,6 +14010,9 @@
     "spec.feasibilityNotes": "\u53EF\u884C\u6027\u8AAA\u660E",
     "spec.candidateModifications": "\u5F85\u8907\u6838\u4FEE\u6539\u5EFA\u8B70",
     "spec.approvals": "\u6240\u9700\u5BE9\u6279",
+    "spec.projectSlug": "\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC",
+    "spec.projectSlugPlaceholder": "\u4F8B\u5982 mnist-cnn-example",
+    "spec.projectSlugHint": "\u7559\u7A7A\u7531 AI \u6839\u64DA Idea \u7522\u751F\u4E09\u500B\u8A9E\u610F\u8A5E\uFF1B\u624B\u52D5\u586B\u5BEB\u6642\u8ACB\u4F7F\u7528\u4E09\u500B\u4E0D\u540C\u7684\u82F1\u6587\u5C0F\u5BEB\u55AE\u8A5E\uFF0C\u4E26\u4EE5\u9023\u5B57\u865F\u9023\u63A5\u3002",
     "thinking.title": "AI \u8ACB\u6C42\u72C0\u614B",
     "chat.title": "\u5C08\u6848\u5C0D\u8A71",
     "chat.monitoring": "\u76E3\u7763\u4E2D",
@@ -14842,6 +14856,10 @@
     "apiError.project_cancelled": "A cancelled project cannot be resumed.",
     "apiError.project_not_active": "The project cannot perform this action right now.",
     "apiError.project_not_found": "Project not found.",
+    "apiError.project_slug_conflict": "That project URL identifier is already in use. Choose three different words.",
+    "apiError.project_slug_invalid": "The project URL identifier must contain three distinct lowercase English words joined with hyphens.",
+    "apiError.project_slug_generation_failed": "The model-generated project URL identifier did not match the three-word format.",
+    "apiError.project_slug_unavailable": "A unique project URL identifier could not be generated. Please try again later.",
     "apiError.proposal_not_found": "Proposal not found.",
     "apiError.related_work_run_not_found": "Related-work recursive run not found.",
     "apiError.report_no_events": "No real project events exist in this window, so the report stays empty.",
@@ -14979,6 +14997,9 @@
     "spec.feasibilityNotes": "Feasibility notes",
     "spec.candidateModifications": "Candidate modifications",
     "spec.approvals": "Required approvals",
+    "spec.projectSlug": "Project URL identifier",
+    "spec.projectSlugPlaceholder": "For example, mnist-cnn-example",
+    "spec.projectSlugHint": "Leave blank to let AI generate three semantic words from the Idea; manual values must use three distinct lowercase English words joined with hyphens.",
     "thinking.title": "AI request status",
     "chat.title": "Project chat",
     "chat.monitoring": "Monitoring",
@@ -15822,6 +15843,10 @@
     "apiError.project_cancelled": "Un proyecto cancelado no se puede reanudar.",
     "apiError.project_not_active": "El proyecto no puede realizar esta acci\xF3n en este momento.",
     "apiError.project_not_found": "Proyecto no encontrado.",
+    "apiError.project_slug_conflict": "Ese identificador de URL ya est\xE1 en uso. Elige tres palabras diferentes.",
+    "apiError.project_slug_invalid": "El identificador de URL debe contener tres palabras inglesas min\xFAsculas distintas unidas con guiones.",
+    "apiError.project_slug_generation_failed": "El identificador generado por el modelo no cumple el formato de tres palabras.",
+    "apiError.project_slug_unavailable": "No se pudo generar un identificador de URL \xFAnico. Int\xE9ntalo de nuevo m\xE1s tarde.",
     "apiError.proposal_not_found": "Propuesta no encontrada.",
     "apiError.related_work_run_not_found": "Ejecuci\xF3n recursiva de trabajos relacionados no encontrada.",
     "apiError.report_no_events": "No hay eventos reales del proyecto en este intervalo, por lo que el informe permanece vac\xEDo.",
@@ -15959,6 +15984,9 @@
     "spec.feasibilityNotes": "Notas de viabilidad",
     "spec.candidateModifications": "Modificaciones candidatas",
     "spec.approvals": "Aprobaciones necesarias",
+    "spec.projectSlug": "Identificador de URL del proyecto",
+    "spec.projectSlugPlaceholder": "Por ejemplo, mnist-cnn-example",
+    "spec.projectSlugHint": "D\xE9jalo vac\xEDo para que la IA genere tres palabras sem\xE1nticas a partir de la Idea; los valores manuales deben ser tres palabras inglesas min\xFAsculas distintas unidas con guiones.",
     "thinking.title": "Estado de las solicitudes de IA",
     "chat.title": "Chat del proyecto",
     "chat.monitoring": "Supervisando",
@@ -17916,6 +17944,8 @@
   function SpecPane({
     spec,
     status,
+    projectSlug,
+    onProjectSlugChange,
     onConfirm
   }) {
     const { t } = useTranslation();
@@ -17940,6 +17970,21 @@
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.feasibilityNotes"), values: spec.feasibility_notes }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.candidateModifications"), values: spec.candidate_modifications }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(FieldList, { label: t("spec.approvals"), values: spec.required_approvals }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "spec-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "projectSlug", children: t("spec.projectSlug") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            "input",
+            {
+              id: "projectSlug",
+              value: projectSlug,
+              maxLength: 120,
+              placeholder: t("spec.projectSlugPlaceholder"),
+              "aria-describedby": "projectSlugHint",
+              onChange: (event) => onProjectSlugChange(event.target.value)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("small", { id: "projectSlugHint", children: t("spec.projectSlugHint") })
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { className: "primary full", type: "button", onClick: onConfirm, children: [
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Check, { size: 17 }),
           t("spec.confirmCreate")
@@ -18049,6 +18094,8 @@
     onFilesChange,
     spec,
     specStatus,
+    projectSlug,
+    onProjectSlugChange,
     onConfirmProject,
     thinkingSessions,
     onToggleThinking
@@ -18134,7 +18181,16 @@
         queuedFiles.length ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "file-queue", children: queuedFiles.map((file) => file.name).join(" \xB7 ") }) : null
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "spec-pane", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(SpecPane, { spec, status: specStatus, onConfirm: onConfirmProject }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          SpecPane,
+          {
+            spec,
+            status: specStatus,
+            projectSlug,
+            onProjectSlugChange,
+            onConfirm: onConfirmProject
+          }
+        ),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(ThinkingSessions, { sessions: thinkingSessions, onToggle: onToggleThinking })
       ] })
     ] });
@@ -22304,8 +22360,14 @@
   function normalizeTab(tab) {
     return LEGACY_TAB_REDIRECT[tab] || tab;
   }
-  function workspaceHash(projectId, area, tab) {
-    return `#project/${encodeURIComponent(projectId)}/${area}/${tab}`;
+  var URL_TAB_ALIASES = {
+    idea: "overview"
+  };
+  function tabPathSegment(tab) {
+    return tab === "overview" ? "idea" : tab;
+  }
+  function workspacePath(projectSlug, area, tab) {
+    return `/project/${encodeURIComponent(projectSlug)}/${area}/${tabPathSegment(tab)}`;
   }
   function resolveWorkspaceParts(hash) {
     const match = hash.match(/^#project\/([^/]+)\/([^/]+)\/([^/]+)$/);
@@ -22318,8 +22380,26 @@
     const area = LEGACY_AREA_REDIRECT[rawArea] || TAB_AREA[tab];
     return { projectId, area, tab };
   }
-  function resolveWorkspaceHash() {
-    return resolveWorkspaceParts(window.location.hash);
+  function resolveWorkspacePath(pathname) {
+    const match = pathname.match(/^\/project\/([^/]+)\/([^/]+)\/([^/]+)\/?$/);
+    if (!match) return null;
+    let projectRef;
+    try {
+      projectRef = decodeURIComponent(match[1] || "");
+    } catch {
+      return null;
+    }
+    const rawArea = match[2] || "";
+    const rawTab = match[3] || "";
+    const tab = normalizeTab(URL_TAB_ALIASES[rawTab] || rawTab);
+    if (!projectRef || !TAB_AREA[tab] || !RESEARCH_AREAS.includes(rawArea)) return null;
+    return { projectRef, area: LEGACY_AREA_REDIRECT[rawArea] || TAB_AREA[tab], tab, legacyHash: false };
+  }
+  function resolveWorkspaceLocation(pathname, hash) {
+    const path = resolveWorkspacePath(pathname);
+    if (path) return path;
+    const legacy = resolveWorkspaceParts(hash);
+    return legacy ? { projectRef: legacy.projectId, area: legacy.area, tab: legacy.tab, legacyHash: true } : null;
   }
 
   // src/components/ModelSettingsModal.tsx
@@ -23024,6 +23104,7 @@
     const [messages, setMessages] = (0, import_react22.useState)([initialMessage]);
     const [projectMessages, setProjectMessages] = (0, import_react22.useState)([]);
     const [spec, setSpec] = (0, import_react22.useState)(null);
+    const [projectSlug, setProjectSlug] = (0, import_react22.useState)("");
     const [specStatus, setSpecStatus] = (0, import_react22.useState)("pending_clarification");
     const [chatBusy, setChatBusy] = (0, import_react22.useState)(false);
     const [projectChatBusy, setProjectChatBusy] = (0, import_react22.useState)(false);
@@ -23040,9 +23121,12 @@
     const projectChatBusyRef = (0, import_react22.useRef)(false);
     const sessionIdRef = (0, import_react22.useRef)(null);
     const toastTimerRef = (0, import_react22.useRef)(null);
-    const writeWorkspaceHash = (id, area, tab) => {
-      const next = workspaceHash(id, area, tab);
-      if (window.location.hash !== next) window.history.pushState(null, "", next);
+    const writeWorkspacePath = (slug, area, tab, replace = false) => {
+      const next = workspacePath(slug, area, tab);
+      if (window.location.pathname !== next || window.location.hash) {
+        if (replace) window.history.replaceState(null, "", next);
+        else window.history.pushState(null, "", next);
+      }
     };
     const showToast = (message) => {
       setToast(message);
@@ -23061,22 +23145,24 @@
       sessionIdRef.current = id;
       setSessionId(id);
     };
-    const openProject = async (id, options) => {
+    const openProject = async (reference, options) => {
       try {
-        const detail = await api(`/api/projects/${id}`);
-        if (projectId !== id) {
+        const detail = await api(`/api/projects/${encodeURIComponent(reference)}`);
+        if (projectId !== detail.id) {
           setSearchCandidates([]);
           setProjectMessages([]);
           setMobileChatOpen(false);
         }
-        setProjectId(id);
+        setProjectId(detail.id);
         setProject(detail);
         setActiveSession(detail.session_id || sessionIdRef.current);
         setView("project");
         if (!options?.preserveTab) {
           setActiveArea("overview");
           setActiveTab("overview");
-          writeWorkspaceHash(id, "overview", "overview");
+          writeWorkspacePath(detail.slug || detail.id, "overview", "overview");
+        } else if (options.route) {
+          writeWorkspacePath(detail.slug || detail.id, options.route.area, options.route.tab, true);
         }
         await loadProjects();
       } catch (error) {
@@ -23094,6 +23180,7 @@
       setView("idea");
       setActiveArea("overview");
       setSpec(null);
+      setProjectSlug("");
       setSpecStatus("pending_clarification");
       setMessages([initialMessage]);
       setProjectMessages([]);
@@ -23101,20 +23188,18 @@
       setThinkingSessions([]);
       setClarificationMode("automatic");
       setMobileChatOpen(false);
-      window.history.pushState(null, "", "#new");
+      window.history.pushState(null, "", "/new");
       void loadProjects();
     };
     (0, import_react22.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
-        const hash = resolveWorkspaceHash();
-        if (!hash) return;
-        setActiveArea(hash.area);
-        setActiveTab(hash.tab);
-        const normalizedHash = workspaceHash(hash.projectId, hash.area, hash.tab);
-        if (window.location.hash !== normalizedHash) window.history.replaceState(null, "", normalizedHash);
-        if (projectId !== hash.projectId) void openProject(hash.projectId, { preserveTab: true });
+        const location = resolveWorkspaceLocation(window.location.pathname, window.location.hash);
+        if (!location) return;
+        setActiveArea(location.area);
+        setActiveTab(location.tab);
+        void openProject(location.projectRef, { preserveTab: true, route: { area: location.area, tab: location.tab } });
       };
       restoreWorkspace();
       window.addEventListener("popstate", restoreWorkspace);
@@ -23297,7 +23382,7 @@
       try {
         const result = await api("/api/projects", {
           method: "POST",
-          body: JSON.stringify({ session_id: sessionIdRef.current, confirmed: true })
+          body: JSON.stringify({ session_id: sessionIdRef.current, confirmed: true, slug: projectSlug.trim() || null })
         });
         showToast(t("app.projectCreated"));
         await openProject(result.project.id);
@@ -23336,13 +23421,15 @@
       setActiveTab(normalizedTab);
       const area = TAB_AREA[normalizedTab];
       setActiveArea(area);
-      if (projectId) writeWorkspaceHash(projectId, area, normalizedTab);
+      const slug = project?.slug || projectId;
+      if (slug) writeWorkspacePath(slug, area, normalizedTab);
     };
     const navigateArea = (area) => {
       const tab = AREA_DEFAULT_TAB[area];
       setActiveArea(area);
       setActiveTab(tab);
-      if (projectId) writeWorkspaceHash(projectId, area, tab);
+      const slug = project?.slug || projectId;
+      if (slug) writeWorkspacePath(slug, area, tab);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "app-shell", children: [
       /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
@@ -23367,7 +23454,7 @@
             meta: view === "idea" ? t("app.ideaMeta") : t("app.projectMeta", {
               stage: project?.current_stage === "initialized" ? t("overview.stageInitialized") : project?.current_stage || t("overview.stageUnknown"),
               version: project?.current_idea_version ?? 1,
-              id: String(projectId || "").slice(0, 8)
+              id: project?.slug || String(projectId || "").slice(0, 8)
             }),
             health,
             onRefresh: () => void refreshProject()
@@ -23385,6 +23472,8 @@
             onFilesChange: setQueuedFiles,
             spec,
             specStatus,
+            projectSlug,
+            onProjectSlugChange: setProjectSlug,
             onConfirmProject: () => void confirmProject(),
             thinkingSessions,
             onToggleThinking: toggleThinkingSession

@@ -63,8 +63,27 @@ export interface ResolvedWorkspaceHash {
   tab: TabId
 }
 
+export interface ResolvedWorkspaceLocation {
+  projectRef: string
+  area: ResearchArea
+  tab: TabId
+  legacyHash: boolean
+}
+
 export function normalizeTab(tab: TabId): TabId {
   return LEGACY_TAB_REDIRECT[tab] || tab
+}
+
+const URL_TAB_ALIASES: Record<string, TabId> = {
+  idea: 'overview',
+}
+
+function tabPathSegment(tab: TabId): string {
+  return tab === 'overview' ? 'idea' : tab
+}
+
+export function workspacePath(projectSlug: string, area: ResearchArea, tab: TabId): string {
+  return `/project/${encodeURIComponent(projectSlug)}/${area}/${tabPathSegment(tab)}`
 }
 
 export function workspaceHash(projectId: string, area: ResearchArea, tab: TabId): string {
@@ -85,4 +104,23 @@ export function resolveWorkspaceParts(hash: string): ResolvedWorkspaceHash | nul
 
 export function resolveWorkspaceHash(): ResolvedWorkspaceHash | null {
   return resolveWorkspaceParts(window.location.hash)
+}
+
+export function resolveWorkspacePath(pathname: string): ResolvedWorkspaceLocation | null {
+  const match = pathname.match(/^\/project\/([^/]+)\/([^/]+)\/([^/]+)\/?$/)
+  if (!match) return null
+  let projectRef: string
+  try { projectRef = decodeURIComponent(match[1] || '') } catch { return null }
+  const rawArea = match[2] || ''
+  const rawTab = match[3] || ''
+  const tab = normalizeTab(URL_TAB_ALIASES[rawTab] || rawTab as TabId)
+  if (!projectRef || !TAB_AREA[tab] || !RESEARCH_AREAS.includes(rawArea as ResearchArea)) return null
+  return { projectRef, area: LEGACY_AREA_REDIRECT[rawArea] || TAB_AREA[tab], tab, legacyHash: false }
+}
+
+export function resolveWorkspaceLocation(pathname: string, hash: string): ResolvedWorkspaceLocation | null {
+  const path = resolveWorkspacePath(pathname)
+  if (path) return path
+  const legacy = resolveWorkspaceParts(hash)
+  return legacy ? { projectRef: legacy.projectId, area: legacy.area, tab: legacy.tab, legacyHash: true } : null
 }

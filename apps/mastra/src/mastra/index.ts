@@ -8,10 +8,10 @@ import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mas
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, experimentPlanningAgent, ideaClarificationAgent, researchCoordinatorAgent, supervisionIntentAgent,
+  configuredModel, experimentPlanningAgent, ideaClarificationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent,
 } from './agents/research-agents.js'
 import {
-  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema,
+  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, projectSlugRequestSchema, projectSlugResultSchema,
   approvalGateRequestSchema, approvalGateResumeRequestSchema, coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
   supervisionIntentSchema, supervisionRequestSchema, type ModelTier,
 } from './contracts.js'
@@ -136,6 +136,25 @@ const apiRoutes = [
         return c.json({ result, route: { tier: body.tier, model: config.model, reasoning_effort: config.reasoningEffort } })
       } catch (error) {
         const failure = routeError(error, 'Idea 澄清模型调用')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/agents/project-slug', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, projectSlugRequestSchema)
+        const context = requestContext(body.tier)
+        const response = await projectSlugAgent.generate(JSON.stringify({ confirmed_idea: body.idea }), {
+          ...generationOptions(context),
+          structuredOutput: { schema: projectSlugResultSchema, errorStrategy: 'strict' },
+        })
+        const result = projectSlugResultSchema.parse(response.object)
+        const config = context.get('modelConfig')
+        return c.json({ result, route: { tier: body.tier, model: config.model, reasoning_effort: config.reasoningEffort } })
+      } catch (error) {
+        const failure = routeError(error, '项目语义标识模型调用')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },
@@ -309,7 +328,7 @@ export const mastra = new Mastra({
   storage,
   observability,
   logger: false,
-  agents: { ideaClarificationAgent, supervisionIntentAgent, experimentPlanningAgent, researchCoordinatorAgent },
+  agents: { ideaClarificationAgent, projectSlugAgent, supervisionIntentAgent, experimentPlanningAgent, researchCoordinatorAgent },
   scorers: { ideaClarificationContractScorer },
   tools: { inspectIdeaDraftTool },
   workflows: { researchBootstrapWorkflow, projectChatWorkflow, supervisionReportsWorkflow, approvalGateWorkflow },

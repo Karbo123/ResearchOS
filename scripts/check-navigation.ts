@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { AREA_DEFAULT_TAB, AREA_TABS, TAB_AREA, resolveWorkspaceParts } from '../apps/web/src/navigation.js'
+import { AREA_DEFAULT_TAB, AREA_TABS, TAB_AREA, resolveWorkspaceLocation, resolveWorkspaceParts, resolveWorkspacePath, workspacePath } from '../apps/web/src/navigation.js'
 
 const experimentTabs = ['experiments', 'experiment_queue', 'experiment_metrics', 'artifacts', 'lineage']
 const reportTabs = ['daily_reports', 'weekly_reports', 'feedback_inbox', 'feedback_audit', 'reports']
@@ -41,6 +41,17 @@ assert.deepEqual(legacyReportsAlias, { projectId: 'p1', area: 'overview', tab: '
 
 const writingDeepLink = resolveWorkspaceParts('#project/p1/paper/paper_outline')
 assert.deepEqual(writingDeepLink, { projectId: 'p1', area: 'paper', tab: 'paper_outline' })
+
+assert.equal(workspacePath('mnist-cnn-example', 'overview', 'overview'), '/project/mnist-cnn-example/overview/idea')
+assert.deepEqual(resolveWorkspacePath('/project/mnist-cnn-example/overview/idea'), {
+  projectRef: 'mnist-cnn-example', area: 'overview', tab: 'overview', legacyHash: false,
+})
+assert.deepEqual(resolveWorkspaceLocation('/project/mnist-cnn-example/overview/idea', ''), {
+  projectRef: 'mnist-cnn-example', area: 'overview', tab: 'overview', legacyHash: false,
+})
+assert.deepEqual(resolveWorkspaceLocation('/', '#project/p1/overview/overview'), {
+  projectRef: 'p1', area: 'overview', tab: 'overview', legacyHash: true,
+})
 
 assert.equal(resolveWorkspaceParts('#project/p1/paper/not_a_tab'), null)
 assert.equal(resolveWorkspaceParts('#project/p1/unknown/overview'), null)

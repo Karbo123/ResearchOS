@@ -177,6 +177,9 @@ button { -webkit-font-smoothing: inherit; }
 .pane-heading h2 { font-size: 15px; font-weight: 700; letter-spacing: -.015em; }
 .spec-empty, .empty { border: 1px dashed var(--line-strong); border-radius: 14px; background: var(--surface-2); color: var(--muted); }
 .spec-group { padding: 13px 0; border-bottom: 1px solid rgba(60, 60, 67, .10); }
+.spec-group input { width: 100%; min-width: 0; margin-top: 7px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--ink); font-size: 12px; }
+.spec-group input:focus { outline: 0; border-color: rgba(0, 122, 255, .46); background: var(--surface-solid); box-shadow: 0 0 0 4px var(--blue-soft); }
+.spec-group small { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; line-height: 1.45; }
 .spec-group:last-child { border-bottom: 0; }
 .thinking-session, .data-list, .metric, .artifact-card, .report { border: 1px solid var(--line); border-radius: 15px; background: var(--surface); box-shadow: 0 5px 18px rgba(25, 25, 35, .05); }
 .thinking-session { overflow: hidden; }

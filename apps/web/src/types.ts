@@ -47,6 +47,7 @@ export interface ConfirmRequest {
 
 export interface ProjectSummary {
   id: string
+  slug: string
   title: string
   status?: string
 }

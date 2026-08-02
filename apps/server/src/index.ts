@@ -20,6 +20,7 @@ import { privateModelSettings, publicModelSettings, saveModelSettings } from './
 import { tierFor } from './model-routing.js'
 import { artifactsRoot, pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, enqueue, projectDetail, requireProject, type ProjectRow } from './project-service.js'
+import { nextAvailableProjectSlug, normalizeProjectSlug, normalizeProjectSlugKeywords } from './project-slug.js'
 import { createOperationalReport, diagnostics, noveltyAnalysis, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal } from './paper-service.js'
@@ -50,6 +51,16 @@ app.onError((error, context) => {
   return errorResponse(error, context)
 })
 app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
+
+async function projectIdForReference(reference: string): Promise<string> {
+  let decoded: string
+  try { decoded = decodeURIComponent(reference) } catch { throw new ApiError(404, 'project_not_found', '项目不存在。') }
+  const parsed = uuid.safeParse(decoded)
+  if (parsed.success) return parsed.data
+  const project = await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1', [decoded])
+  if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')
+  return project.id
+}
 
 async function sessionFor(input: z.infer<typeof chatRequest>): Promise<SessionRow> {
   if (input.session_id) {
@@ -241,7 +252,19 @@ app.post('/api/projects', async context => {
   if (session.phase !== 'ready_for_confirmation') throw new ApiError(409, 'idea_not_ready', '研究 Idea 尚未达到可确认状态。')
   const id = crypto.randomUUID()
   const title = typeof session.draft.title === 'string' ? session.draft.title : 'Untitled Research Project'
-  const slug = `research-${id.slice(0, 8)}`
+  let slug: string
+  if (body.slug?.trim()) {
+    try { slug = normalizeProjectSlug(body.slug) }
+    catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由三个不同的英文小写单词组成，并用连字符连接。') }
+    if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换三个词。')
+  } else {
+    const slugResult = await mastraJson<{ result: { keywords: string[] } }>('/internal/agents/project-slug', { idea: session.draft, tier: 'medium' })
+    try { slug = await nextAvailableProjectSlug(normalizeProjectSlugKeywords(slugResult.result.keywords)) }
+    catch (error) {
+      if (error instanceof Error && error.message === 'project_slug_invalid') throw new ApiError(422, 'project_slug_generation_failed', '模型生成的项目地址标识不符合三个语义词的格式。')
+      throw new ApiError(503, 'project_slug_unavailable', '暂时无法生成唯一的项目地址标识，请稍后重试。')
+    }
+  }
   await database.transaction(async transaction => {
     await transaction.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [id, slug, title])
     await transaction.query('INSERT INTO idea_versions(id,project_id,version,spec) VALUES ($1,$2,1,$3)', [crypto.randomUUID(), id, { schema_version: '1.0', idea: session.draft }])
@@ -270,7 +293,7 @@ app.get('/api/projects', async context => {
   if (status && !['active', 'paused', 'cancelled'].includes(status)) throw new ApiError(422, 'invalid_project_status', '项目状态筛选无效。')
   return context.json(await rows<ProjectRow>(`SELECT * FROM projects${status ? ' WHERE status=$1' : ''} ORDER BY updated_at DESC`, status ? [status] : []))
 })
-app.get('/api/projects/:projectId', async context => context.json(await projectDetail(uuid.parse(context.req.param('projectId')))))
+app.get('/api/projects/:projectRef', async context => context.json(await projectDetail(await projectIdForReference(context.req.param('projectRef')))))
 
 app.post('/api/search', async context => {
   const body = await jsonBody(context, z.object({ project_id: uuid, query: z.string().max(500).nullable().optional(), limit: z.number().int().min(1).max(30).default(8) }).strict())
@@ -662,6 +685,11 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context
   context.header('content-type', artifact.mime_type)
   context.header('content-disposition', `attachment; filename="${artifact.name.replaceAll('"', '')}"`)
   return context.body(readFileSync(path))
+})
+
+app.get('/project/*', context => {
+  const path = pathInside(publicRoot, 'index.html')
+  return context.html(readFileSync(path, 'utf8'))
 })
 
 // HTML must always revalidate so UI/CSS fixes reach browsers immediately;

@@ -16,7 +16,7 @@ import { Sidebar } from './components/Sidebar'
 import { Topbar } from './components/Topbar'
 import { IdeaView } from './components/IdeaView'
 import { ProjectView } from './components/ProjectView'
-import { AREA_DEFAULT_TAB, TAB_AREA, normalizeTab, resolveWorkspaceHash, workspaceHash } from './navigation'
+import { AREA_DEFAULT_TAB, TAB_AREA, normalizeTab, resolveWorkspaceLocation, workspacePath } from './navigation'
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
 import { ConfirmDialog, Toast } from './components/ui'
@@ -56,6 +56,7 @@ export function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage])
   const [projectMessages, setProjectMessages] = useState<ChatMessage[]>([])
   const [spec, setSpec] = useState<ResearchSpec | null>(null)
+  const [projectSlug, setProjectSlug] = useState('')
   const [specStatus, setSpecStatus] = useState('pending_clarification')
   const [chatBusy, setChatBusy] = useState(false)
   const [projectChatBusy, setProjectChatBusy] = useState(false)
@@ -74,9 +75,12 @@ export function App() {
   const sessionIdRef = useRef<string | null>(null)
   const toastTimerRef = useRef<number | null>(null)
 
-  const writeWorkspaceHash = (id: string, area: ResearchArea, tab: TabId) => {
-    const next = workspaceHash(id, area, tab)
-    if (window.location.hash !== next) window.history.pushState(null, '', next)
+  const writeWorkspacePath = (slug: string, area: ResearchArea, tab: TabId, replace = false) => {
+    const next = workspacePath(slug, area, tab)
+    if (window.location.pathname !== next || window.location.hash) {
+      if (replace) window.history.replaceState(null, '', next)
+      else window.history.pushState(null, '', next)
+    }
   }
 
   const showToast = (message: string) => {
@@ -99,22 +103,24 @@ export function App() {
     setSessionId(id)
   }
 
-  const openProject = async (id: string, options?: { preserveTab?: boolean }) => {
+  const openProject = async (reference: string, options?: { preserveTab?: boolean; route?: { area: ResearchArea; tab: TabId } }) => {
     try {
-      const detail = await api<ProjectDetail>(`/api/projects/${id}`)
-      if (projectId !== id) {
+      const detail = await api<ProjectDetail>(`/api/projects/${encodeURIComponent(reference)}`)
+      if (projectId !== detail.id) {
         setSearchCandidates([])
         setProjectMessages([])
         setMobileChatOpen(false)
       }
-      setProjectId(id)
+      setProjectId(detail.id)
       setProject(detail)
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
       if (!options?.preserveTab) {
         setActiveArea('overview')
         setActiveTab('overview')
-        writeWorkspaceHash(id, 'overview', 'overview')
+        writeWorkspacePath(detail.slug || detail.id, 'overview', 'overview')
+      } else if (options.route) {
+        writeWorkspacePath(detail.slug || detail.id, options.route.area, options.route.tab, true)
       }
       await loadProjects()
     } catch (error) {
@@ -134,6 +140,7 @@ export function App() {
     setView('idea')
     setActiveArea('overview')
     setSpec(null)
+    setProjectSlug('')
     setSpecStatus('pending_clarification')
     setMessages([initialMessage])
     setProjectMessages([])
@@ -141,7 +148,7 @@ export function App() {
     setThinkingSessions([])
     setClarificationMode('automatic')
     setMobileChatOpen(false)
-    window.history.pushState(null, '', '#new')
+    window.history.pushState(null, '', '/new')
     void loadProjects()
   }
 
@@ -152,13 +159,11 @@ export function App() {
       .catch(() => setHealth('offline'))
 
     const restoreWorkspace = () => {
-      const hash = resolveWorkspaceHash()
-      if (!hash) return
-      setActiveArea(hash.area)
-      setActiveTab(hash.tab)
-      const normalizedHash = workspaceHash(hash.projectId, hash.area, hash.tab)
-      if (window.location.hash !== normalizedHash) window.history.replaceState(null, '', normalizedHash)
-      if (projectId !== hash.projectId) void openProject(hash.projectId, { preserveTab: true })
+      const location = resolveWorkspaceLocation(window.location.pathname, window.location.hash)
+      if (!location) return
+      setActiveArea(location.area)
+      setActiveTab(location.tab)
+      void openProject(location.projectRef, { preserveTab: true, route: { area: location.area, tab: location.tab } })
     }
     restoreWorkspace()
     window.addEventListener('popstate', restoreWorkspace)
@@ -354,9 +359,9 @@ export function App() {
   const confirmProject = async () => {
     if (!sessionIdRef.current) return
     try {
-      const result = await api<{ project: { id: string } }>('/api/projects', {
+      const result = await api<{ project: { id: string; slug: string } }>('/api/projects', {
         method: 'POST',
-        body: JSON.stringify({ session_id: sessionIdRef.current, confirmed: true }),
+        body: JSON.stringify({ session_id: sessionIdRef.current, confirmed: true, slug: projectSlug.trim() || null }),
       })
       showToast(t('app.projectCreated'))
       await openProject(result.project.id)
@@ -400,14 +405,16 @@ export function App() {
     setActiveTab(normalizedTab)
     const area = TAB_AREA[normalizedTab]
     setActiveArea(area)
-    if (projectId) writeWorkspaceHash(projectId, area, normalizedTab)
+    const slug = project?.slug || projectId
+    if (slug) writeWorkspacePath(slug, area, normalizedTab)
   }
 
   const navigateArea = (area: ResearchArea) => {
     const tab = AREA_DEFAULT_TAB[area]
     setActiveArea(area)
     setActiveTab(tab)
-    if (projectId) writeWorkspaceHash(projectId, area, tab)
+    const slug = project?.slug || projectId
+    if (slug) writeWorkspacePath(slug, area, tab)
   }
 
   return (
@@ -433,7 +440,7 @@ export function App() {
                   ? t('overview.stageInitialized')
                   : project?.current_stage || t('overview.stageUnknown'),
                 version: project?.current_idea_version ?? 1,
-                id: String(projectId || '').slice(0, 8),
+                id: project?.slug || String(projectId || '').slice(0, 8),
               })}
           health={health}
           onRefresh={() => void refreshProject()}
@@ -449,6 +456,8 @@ export function App() {
             onFilesChange={setQueuedFiles}
             spec={spec}
             specStatus={specStatus}
+            projectSlug={projectSlug}
+            onProjectSlugChange={setProjectSlug}
             onConfirmProject={() => void confirmProject()}
             thinkingSessions={thinkingSessions}
             onToggleThinking={toggleThinkingSession}

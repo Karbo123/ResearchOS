@@ -52,6 +52,15 @@ export const adaptiveClarificationResultSchema = z.object({
   risk_flags: z.array(z.string()).max(12),
 }).strict()
 
+export const projectSlugRequestSchema = z.object({
+  idea: researchIdeaDraftSchema,
+  tier: modelTierSchema,
+}).strict()
+
+export const projectSlugResultSchema = z.object({
+  keywords: z.array(z.string().trim().min(2).max(32)).length(3),
+}).strict()
+
 export const supervisionIntentSchema = z.object({
   intent: z.enum([
     'explanation', 'advice', 'change_request', 'policy_change',

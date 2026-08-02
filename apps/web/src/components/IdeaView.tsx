@@ -78,6 +78,8 @@ export function IdeaView({
   onFilesChange,
   spec,
   specStatus,
+  projectSlug,
+  onProjectSlugChange,
   onConfirmProject,
   thinkingSessions,
   onToggleThinking,
@@ -91,6 +93,8 @@ export function IdeaView({
   onFilesChange: (files: File[]) => void
   spec: ResearchSpec | null
   specStatus: string
+  projectSlug: string
+  onProjectSlugChange: (value: string) => void
   onConfirmProject: () => void
   thinkingSessions: ThinkingSession[]
   onToggleThinking: (id: string) => void
@@ -179,7 +183,13 @@ export function IdeaView({
         ) : null}
       </div>
       <div className="spec-pane">
-        <SpecPane spec={spec} status={specStatus} onConfirm={onConfirmProject} />
+        <SpecPane
+          spec={spec}
+          status={specStatus}
+          projectSlug={projectSlug}
+          onProjectSlugChange={onProjectSlugChange}
+          onConfirm={onConfirmProject}
+        />
         <ThinkingSessions sessions={thinkingSessions} onToggle={onToggleThinking} />
       </div>
     </section>

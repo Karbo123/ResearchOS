@@ -36,7 +36,11 @@ export const chatRequest = z.object({
   clarification_mode: clarificationMode.default('automatic'),
 }).strict()
 
-export const projectCreateRequest = z.object({ session_id: uuid, confirmed: z.literal(true) }).strict()
+export const projectCreateRequest = z.object({
+  session_id: uuid,
+  confirmed: z.literal(true),
+  slug: z.string().trim().max(120).nullable().optional(),
+}).strict()
 export const modelTierSettings = z.object({
   model: z.string().trim().min(1).max(200),
   url: z.string().url().max(500),
