@@ -169,7 +169,7 @@ button { -webkit-font-smoothing: inherit; }
   overflow: clip;
   pointer-events: none;
   transform: translateY(-50%);
-  z-index: 1;
+  z-index: 5;
 }
 .project-actions-track {
   display: flex;

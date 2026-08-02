@@ -13,7 +13,7 @@ const uploadId = crypto.randomUUID()
 describe('project deletion isolation', () => {
   beforeAll(async () => {
     await migrate()
-    await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [projectId, `delete-test-${projectId.slice(0, 8)}`, 'Delete me'])
+    await database.query('INSERT INTO projects(id,slug,title,pinned,sidebar_order) VALUES ($1,$2,$3,FALSE,0)', [projectId, `delete-test-${projectId.slice(0, 8)}`, 'Delete me'])
     await database.query('INSERT INTO conversation_sessions(id,project_id,phase,draft) VALUES ($1,$2,$3,$4)', [sessionId, projectId, 'supervising', {}])
     const artifactPath = projectArtifactPath(projectId, 'test-result.txt')
     const uploadPath = projectArtifactPath(projectId, `uploads/${uploadId}.txt`)
@@ -39,7 +39,15 @@ describe('project deletion isolation', () => {
     expect(existsSync(projectRoot(projectId))).toBe(true)
   })
 
-  it('removes project records, files, and the project directory', async () => {
+  it('removes pinned project records, files, and the project directory', async () => {
+    const pinResponse = await app.request(`/api/projects/${projectId}/pin`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ pinned: true }),
+    })
+    expect(pinResponse.status).toBe(200)
+    expect((await pinResponse.json()) as { pinned: boolean }).toMatchObject({ pinned: true })
+
     const response = await app.request(`/api/projects/${projectId}`, {
       method: 'DELETE',
       headers: { 'content-type': 'application/json' },

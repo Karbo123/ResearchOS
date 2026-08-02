@@ -405,11 +405,16 @@ export function App() {
     if (!target || deleteBusy) return
     setDeleteBusy(true)
     try {
+      // Pinning reorders the sidebar and can leave an open dialog holding an old
+      // list snapshot. Read the current project title before the strict delete
+      // request so the confirmation always matches the server's current row.
+      const current = await api<Pick<ProjectDetail, 'id' | 'title'>>(`/api/projects/${encodeURIComponent(target.id)}`)
       await api(`/api/projects/${target.id}`, {
         method: 'DELETE',
-        body: JSON.stringify({ project_title: target.title, confirmation }),
+        body: JSON.stringify({ project_title: current.title, confirmation }),
       })
       setDeleteProjectTarget(null)
+      setProjects(previous => previous.filter(project => project.id !== target.id))
       if (target.id === projectId) newProject({ replace: true })
       else await loadProjects()
       showToast(t('app.projectDeleted'))
@@ -431,6 +436,11 @@ export function App() {
     } catch (error) {
       showToast(errorMessage(error))
     }
+  }
+
+  const requestDeleteProject = (target: ProjectSummary) => {
+    const current = projects.find(project => project.id === target.id)
+    setDeleteProjectTarget(current || target)
   }
 
   const reorderProjects = async (projectIds: string[]) => {
@@ -510,7 +520,7 @@ export function App() {
           else setMemoryOpen(true)
         }}
         onOpenSettings={() => setSettingsOpen(true)}
-        onDeleteProject={setDeleteProjectTarget}
+        onDeleteProject={requestDeleteProject}
         onPinProject={project => void pinProject(project)}
         onReorderProjects={reorderProjects}
         sidebarWidth={sidebarWidth}
@@ -592,6 +602,7 @@ export function App() {
       ) : null}
       {deleteProjectTarget ? (
         <DeleteProjectDialog
+          key={deleteProjectTarget.id}
           project={deleteProjectTarget}
           busy={deleteBusy}
           onClose={() => setDeleteProjectTarget(null)}

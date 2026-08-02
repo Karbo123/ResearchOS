@@ -295,7 +295,7 @@ export function Sidebar({
                   <span className="project-title-text">{project.title}</span>
                   {project.pinned ? <Pin className="project-pinned-indicator" size={13} strokeWidth={2.2} aria-hidden="true" /> : null}
                 </button>
-                <div className="project-actions">
+                <div className="project-actions" onPointerDown={event => event.stopPropagation()}>
                   <div className="project-actions-track">
                     <button
                       type="button"
@@ -304,6 +304,7 @@ export function Sidebar({
                       title={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
                       aria-pressed={project.pinned === true}
                       tabIndex={0}
+                      onPointerDown={event => event.stopPropagation()}
                       onClick={event => {
                         event.stopPropagation()
                         onPinProject(project)
@@ -317,6 +318,7 @@ export function Sidebar({
                       aria-label={t('sidebar.deleteProjectAction', { title: project.title })}
                       title={t('sidebar.deleteProjectAction', { title: project.title })}
                       tabIndex={0}
+                      onPointerDown={event => event.stopPropagation()}
                       onClick={event => {
                         event.stopPropagation()
                         onDeleteProject(project)

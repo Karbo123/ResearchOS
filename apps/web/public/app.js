@@ -18133,7 +18133,7 @@
                   ]
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "project-actions", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions-track", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "project-actions", onPointerDown: (event) => event.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions-track", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "button",
                   {
@@ -18143,6 +18143,7 @@
                     title: t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
                     "aria-pressed": project.pinned === true,
                     tabIndex: 0,
+                    onPointerDown: (event) => event.stopPropagation(),
                     onClick: (event) => {
                       event.stopPropagation();
                       onPinProject(project);
@@ -18158,6 +18159,7 @@
                     "aria-label": t("sidebar.deleteProjectAction", { title: project.title }),
                     title: t("sidebar.deleteProjectAction", { title: project.title }),
                     tabIndex: 0,
+                    onPointerDown: (event) => event.stopPropagation(),
                     onClick: (event) => {
                       event.stopPropagation();
                       onDeleteProject(project);
@@ -24234,11 +24236,13 @@
       if (!target || deleteBusy) return;
       setDeleteBusy(true);
       try {
+        const current = await api(`/api/projects/${encodeURIComponent(target.id)}`);
         await api(`/api/projects/${target.id}`, {
           method: "DELETE",
-          body: JSON.stringify({ project_title: target.title, confirmation })
+          body: JSON.stringify({ project_title: current.title, confirmation })
         });
         setDeleteProjectTarget(null);
+        setProjects((previous) => previous.filter((project2) => project2.id !== target.id));
         if (target.id === projectId) newProject({ replace: true });
         else await loadProjects();
         showToast(t("app.projectDeleted"));
@@ -24259,6 +24263,10 @@
       } catch (error) {
         showToast(errorMessage(error));
       }
+    };
+    const requestDeleteProject = (target) => {
+      const current = projects.find((project2) => project2.id === target.id);
+      setDeleteProjectTarget(current || target);
     };
     const reorderProjects = async (projectIds) => {
       try {
@@ -24330,7 +24338,7 @@
             else setMemoryOpen(true);
           },
           onOpenSettings: () => setSettingsOpen(true),
-          onDeleteProject: setDeleteProjectTarget,
+          onDeleteProject: requestDeleteProject,
           onPinProject: (project2) => void pinProject(project2),
           onReorderProjects: reorderProjects,
           sidebarWidth,
@@ -24421,7 +24429,8 @@
           busy: deleteBusy,
           onClose: () => setDeleteProjectTarget(null),
           onConfirm: (confirmation) => void deleteProject(confirmation)
-        }
+        },
+        deleteProjectTarget.id
       ) : null,
       toast ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Toast, { message: toast }) : null
     ] });
