@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-03-02 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-03-03 -->
 
 # Research OS
 
@@ -87,18 +87,25 @@ npm test
 
 ## 模型设置
 
-Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和 reasoning effort。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
+左下角设置面板按用途组织：一级 `通用`（语言、主题、全局代理）与 `模型`；`模型` 内使用二级标签栏 `代码模型`、`文档文本`、`Embedding`、`语音识别`。
 
-项目 `.env` 当前将三档默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
+代码模型内部使用 `simple` / `medium` / `complex` 三档。界面只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`，但 UI 永远不会显示这些名字。运行时覆盖保存在 `runtime/model-settings.json`；设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
-- Luna（`gpt-5.6-luna`）：`RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_URL_SIMPLE`、`RESEARCH_MODEL_KEY_SIMPLE`、`RESEARCH_REASONING_SIMPLE`
-- Terra（`gpt-5.6-terra`）：`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM`
-- Sol（`gpt-5.6-sol`）：`RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX`
+项目 `.env` 当前将代码模型默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
+
+- `simple`：`RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_URL_SIMPLE`、`RESEARCH_MODEL_KEY_SIMPLE`、`RESEARCH_REASONING_SIMPLE`
+- `medium`：`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM`
+- `complex`：`RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX`
+- `document`：`RESEARCH_DOCUMENT_MODEL`（默认 `deepseek-v4-flash`）、`RESEARCH_DOCUMENT_MODEL_URL`（默认 `http://127.0.0.1:3000/v1`）、`RESEARCH_DOCUMENT_MODEL_KEY`（留空回退到 `RESEARCH_MODEL_KEY_MEDIUM`）
 - 共享请求时限：`MODEL_REQUEST_TIMEOUT_SECONDS`
+
+`document` 模型用于生成可读的聊天解释和文档式文本。默认 `deepseek-v4-flash` 在当前固定网关会返回 403（`The latest version of this model is only available hosted in China and requires explicit opt in`）。这是上游模型/网关可用性错误，不是请求格式问题；在设置面板配置可用文档模型前，聊天保持失败关闭。该阻塞已登记为 TODO 的 `[!] DOC-MODEL-107`。
+
+`通用` 页还提供全局代理开关。开启时 URL 输入框与开关同一行显示，并控制 Mastra、Supermemory bridge、语音转写和远程 Embedding 出口；关闭时全部直连。回环与 RFC1918 私有地址始终绕过代理。
 
 系统接受 HTTPS 端点；HTTP 只允许回环地址和 RFC1918 私有地址，包括本地 OpenAI-compatible 服务。
 
-所有生产 Mastra Agent、子 Agent 委派、提示注入检测器和实验计划请求都使用 OpenAI Responses provider。结构化输出统一使用严格的 `text.format.type=json_schema` 业务 schema，不发送旧的 `response_format` 字段，也不发送会触发当前错误的 `json_object`。provider HTTP 错误、超时、鉴权失败、非法响应和 schema 错误都会返回结构化错误；系统不会生成默认助手回复、空成功结果、隐式切换 provider 或无关实验 fallback。外部 Supermemory 二进制只接收同一个不带操作后缀的 base URL 来执行它自己的 LLM 抽取；其内部 API 实现不在本仓库内，不能被误称为 Research OS 已控制的 Responses 请求。
+所有生产 Mastra Agent、子 Agent 委派、提示注入检测器和实验计划请求都使用 OpenAI Responses provider。结构化输出统一使用严格的 `text.format.type=json_schema` 业务 schema，不发送旧的 `response_format` 字段，也不发送会触发当前错误的 `json_object`。provider HTTP 错误、超时、鉴权失败、非法响应和 schema 错误都会返回结构化错误；系统不会生成默认助手回复、空成功结果、隐式切换 provider 或无关实验 fallback。当前 Supermemory 二进制的内部模型路径仍可能使用 Chat 兼容协议，因此 `npm run supermemory:start` 会把它指向只监听回环地址的 TypeScript bridge。bridge 只向固定网关发送 `/responses` 请求，加入必要的 JSON 指令，把有效响应转换回二进制需要的格式，并在每个错误处失败关闭。
 
 ## Claim 与证据复核
 
@@ -120,7 +127,7 @@ Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含
 
 ## 验证证据
 
-当前 Web UI 已经重写为 React + TypeScript 组件应用，不再使用原生 DOM/HTML 实现，并已在真实浏览器中检查。桌面和移动端的新 Idea 输入、项目概览、文献/材料检索、产物图库、模型设置、项目对话和 Mastra 入口均已覆盖；移动端没有横向溢出，控制台没有错误。模型设置截图显示三档配置、正确的 `/v1` 地址、推理强度和 key 状态；不会显示任何 key 内容。
+当前 Web UI 已经重写为 React + TypeScript 组件应用，不再使用原生 DOM/HTML 实现，并已在真实浏览器中检查。桌面和移动端的新 Idea 输入、项目概览、文献/材料检索、产物图库、模型设置、项目对话和 Mastra 入口均已覆盖；移动端没有横向溢出，控制台没有错误。模型设置流程使用 `通用 / 模型` 两级面板和按用途划分的模型区块；浏览器检查已覆盖滑动标签、代理 URL 显隐，以及只显示 key 状态、绝不显示 key 内容。
 
 ![Research OS 总览](docs/assets/research-os-overview.jpg)
 
@@ -130,7 +137,7 @@ Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含
 
 ## 项目语义记忆
 
-Supermemory 默认通过本机自托管的 Supermemory Local 服务 `http://127.0.0.1:6767` 运行。Supermemory Local 将加密数据库保存在本机，并提供 Memory API、hybrid 语义检索、Graph 上下文和文档摄取，不依赖 Supermemory 云端服务。安装官方自托管二进制后，`npm run supermemory:start` 会用 `.env` 中配置的模型端点和 key 以后台隐藏方式启动它，日志写入 `runtime/` 并等待健康端点；`npm run supermemory:stop` 停止该记录的进程。本机回环请求可以使用 Supermemory Local 的自动认证；如果使用非回环地址，则必须配置显式 `SUPERMEMORY_API_KEY`。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
+Supermemory 默认通过本机自托管的 Supermemory Local 服务 `http://127.0.0.1:6767` 运行。Supermemory Local 将加密数据库保存在本机，并提供 Memory API、hybrid 语义检索、Graph 上下文和文档摄取，不依赖 Supermemory 云端服务。安装官方自托管二进制后，`npm run supermemory:start` 会先启动只监听回环地址的模型 bridge（默认 `127.0.0.1:3010`），再把 bridge 的 base 和 `.env` 中配置的 key 以后台隐藏方式传给 Supermemory；日志写入 `runtime/` 并等待健康端点；`npm run supermemory:stop` 停止记录的 Supermemory 进程和 bridge。当前二进制请保持 `SUPERMEMORY_MODEL_BRIDGE_ENABLED=true`，端口可用 `SUPERMEMORY_MODEL_BRIDGE_PORT` 调整。本机回环请求可以使用 Supermemory Local 的自动认证；如果使用非回环地址，则必须配置显式 `SUPERMEMORY_API_KEY`。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
 
 Embedding 通过 `.env` 中的 `SUPERMEMORY_EMBEDDING_PROVIDER`、`SUPERMEMORY_EMBEDDING_MODEL`、`SUPERMEMORY_EMBEDDING_DIMENSIONS`、`SUPERMEMORY_EMBEDDING_BASE_URL` 和项目保留的 `SUPERMEMORY_EMBEDDING_API_KEY` 配置。默认 provider 是 `local`，使用多语言 ONNX 模型 `Xenova/bge-m3`（1024 维）。远程 embedding（OpenAI / OpenAI-compatible / Gemini）只在官方 `server-v0.0.5` build 中实现；`server-v0.0.6` 与 `0.0.7-rc.2` 已回退到其内置的本地 ONNX worker（`Xenova/bge-base-en-v1.5`，768 维，仅英语；2026-08-01 已对 v0.0.6 与 rc.2 两个二进制隔离启动+摄入复核）。WSL2 运行副本固定使用 `server-v0.0.5` linux-x64 二进制：配置 `SUPERMEMORY_EMBEDDING_PROVIDER=openai` 时运行 `Qwen3-Embedding-8B`（1024 维，`https://ai.gitee.com/v1`），默认 `local` 时运行 `Xenova/bge-m3`（1024 维，多语言）；`scripts/start-supermemory.ts` 在配置远程 provider 时会拒绝启动非 v0.0.5 二进制，API 守卫也会以 `supermemory_embedding_unsupported` 失败关闭，绝不静默使用本地向量。2026-08-01 实测：配置可用 `SUPERMEMORY_EMBEDDING_API_KEY` 后，摄入会真实发起 `POST /v1/embeddings` 并成功 upsert 向量（1024 维）。用户要求的 2000 维仍被一个上游硬限制挡住（详见 TODO 053-C）：服务端 pgvector HNSW 在向量 upsert 阶段有约 1024 维上限（隔离实测 1024 维端到端可用；1536 维与 2000 维均报 `Failed to upsert chunk embeddings`，API 已正确返回对应维度向量，失败发生在索引写入），因此 1024 维是已验证可用配置，二进制补丁无法解决该限制；另一个 800ms 搜索超时限制（v0.0.5 二进制中 query embedding 超时硬编码 `interactive:800ms`，`/v4/search` 写死 interactive profile，schema 不接受 profile，官方配置无超时项，常规配置无法绕过，而 `ai.gitee.com` 实测 0.65-1.1s）已由补丁解除。**经用户批准，2026-08-01 已部署字节级补丁**：该常量在二进制偏移约 220680316 处以明文 JS 存在，将 `sdk:800` 等长替换为 `sdk:20000` 后二进制可正常启动；3s 延迟 embedding 端点搜索实测成功（timing 3026ms、score 1），生产环境对 `ai.gitee.com` 实测成功（timing 4398ms、score 0.79）。补丁不改变 `--version`（仍报 0.0.5），不解决 2000 维 HNSW 上限。原版二进制备份：`/home/karbo/bin/supermemory-server-linux-x64.v0.0.5-orig.bak`（sha256 `b2fccca3ff2b5607ce41028c759f375c4ecf5461adc9f3306f41c2757edaf375`）；在用补丁版 sha256 `7d19ddadf484a0539dd813227c2e24ad0e191b8e5db291c2caf2c1ef63a2e7d6`。为什么打补丁：Supermemory 服务端源码为闭源（公开 monorepo 不含 server），v0.0.5 之后没有任何官方 build 实现远程 embedding，API 无超时覆盖项，而摄入与 `/v3/search` 链路实测完整可用——要让语义搜索在延迟 >800ms 的端点（如 `ai.gitee.com` 0.65-1.1s）上工作，唯一现实路径就是补丁二进制。切换模型或维度必须使用全新的 Supermemory 数据目录或完整重索引。
 

@@ -159,7 +159,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
 
 #### 4.2 多语言、主题与 404 页面
 
-- [x] `P0-SETTINGS-106` 重新设计左下角配置面板为“通用 / 模型”两级入口：模型页内使用第二级标签栏（代码模型、文档文本、Embedding、语音识别）；代码模型只使用“轻量级/通用/最强大”三个通用档位，不再显示 Luna/Terra/Sol 品牌名；新增文档文本模型（默认 `deepseek-v4-flash`、`http://127.0.0.1:3000/v1`），并用于聊天中的解释性回复；全局代理关闭时不显示 URL 输入框，开启时与开关同一行展示输入框。
+- [x] `P0-SETTINGS-106` 重新设计左下角配置面板为“通用 / 模型”两级入口：模型页内使用第二级标签栏（代码模型、文档文本、Embedding、语音识别）；代码模型只使用“轻量级/通用/最强大”三个通用档位，不再显示 Luna/Terra/Sol 品牌名；新增文档文本模型（默认 `deepseek-v4-flash`、`http://127.0.0.1:3000/v1`），并接入聊天中的解释性回复链路；全局代理关闭时不显示 URL 输入框，开启时与开关同一行展示输入框。界面、API 与代理交互已完成浏览器与测试验收；默认文档模型在本机网关的 403 可用性问题单独登记为 `DOC-MODEL-107`。
 - [x] `P0-SETTINGS-105` 重新设计左下角配置面板：按“通用 / 模型 / 语音 / Embedding”分组，把主题、语言、全局代理归入通用设置；语音识别支持任意 OpenAI 兼容接口 URL，不再只面向 Groq；修复 Groq/兼容 API 录音转写返回空文本的问题。已完成 Web 类型检查与构建、145 项服务端测试、docs 与语言边界检查，并在 Windows Chrome 中验证四栏布局、通用语言/主题/代理、语音 API 模式与代理从模型页移除。
 - [x] `P0-VOICE-KEY-104` Groq 语音识别支持在界面配置 API key：默认读取 `.env` 的 `GROQ_API_KEY`，留空保留现有 key，读取接口只返回 `key_configured`，运行时 key 以 0600 权限写入 `runtime/voice-settings.json`。已通过 Web 类型检查与构建、UI/i18n、docs 检查和完整服务端测试（142 项）。
 - [x] `P0-MODEL-PROXY-103` 模型配置增加全局代理开关（`enabled` + `url`），运行时控制 Mastra、模型桥接与 Groq 转写出口，关闭则直连、回环/私网目标始终直连；浏览器语音识别不再显示 Groq 模型/URL 配置。已通过代理直连/HTTP/HTTPS CONNECT 实测、Web 类型检查与构建、UI/i18n、docs 检查和完整服务端测试（141 项）。
@@ -282,6 +282,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
 - [x] `P0-RUNTIME-101` 2026-08-03 用户明确同意直接使用已验证的恢复候选库（测试阶段，无真实科研数据），`.env` 的 `RESEARCH_RUNTIME_DIR` 已切到 `runtime/restore-pglite-model-check-20260803`，8080 API 健康检查、语音设置与 Groq 真实转写均已通过。
 - [!] `P0-RUNNER-007` 目标 WSL2 主机的真实 GPU/CUDA 资源尚未验收；CPU supervisor 测试不能代表 GPU 通过。
 - [!] `P0-DEPS-056` 当前 Mastra/deployer 依赖链的上游 Hono advisory 需等待兼容修复；不能用破坏性降级掩盖。
+- [!] `DOC-MODEL-107` 默认文档文本模型 `deepseek-v4-flash` 在固定网关 `http://127.0.0.1:3000/v1` 返回 403（`The latest version of this model is only available hosted in China and requires explicit opt in`）。已确认为上游模型/网关 RegionError，不是请求格式问题；解除条件：用户在设置面板配置一个可用且已授权的文档模型，并用真实聊天请求完成端到端验收。
 
 ## 6. 执行顺序
 
