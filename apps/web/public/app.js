@@ -13224,8 +13224,68 @@
     "overview.innovationHint": "\u5019\u9009\u5EFA\u8BAE\u9700\u8981\u76F8\u5173\u5DE5\u4F5C\u8BC1\u636E\u548C\u786E\u8BA4\u3002",
     "overview.noInnovation": "\u5C1A\u672A\u751F\u6210\u521B\u65B0\u70B9\u5019\u9009\u3002",
     "overview.progress": "\u7814\u7A76\u8FDB\u5EA6",
-    "overview.progressHint": "\u65F6\u95F4\u7EBF\u53EA\u6C47\u603B\u5DF2\u8BB0\u5F55\u7684 Proposal\u3001Checkpoint \u548C\u5B9E\u9A8C\u72B6\u6001\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B66\u7ED3\u8BBA\u3002",
+    "overview.progressHint": "\u65F6\u95F4\u7EBF\u6C47\u603B\u5BA1\u8BA1\u4E8B\u4EF6\u4E0E\u9879\u76EE\u8BB0\u5F55\uFF08\u641C\u7D22\u3001\u590D\u73B0\u3001\u4EA7\u7269\u3001\u62A5\u544A\u3001\u53CD\u9988\u3001\u5BA1\u6279\u3001\u6682\u505C/\u53D6\u6D88\u3001\u4E0A\u6E38\u5931\u6548\u7B49\uFF09\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B66\u7ED3\u8BBA\u3002",
     "overview.noTimeline": "\u5C1A\u65E0\u53EF\u5C55\u793A\u7684\u8FDB\u5EA6\u4E8B\u4EF6\u3002",
+    "timeline.proposalId": "Proposal {id}",
+    "timeline.reportId": "\u6C47\u62A5 {id}",
+    "timeline.eventDetailFallback": "\u5DF2\u8BB0\u5F55\u5BA1\u8BA1\u4E8B\u4EF6",
+    "timeline.depth": "\u6DF1\u5EA6 {depth}",
+    "timeline.artifactCount": "{count} \u4E2A\u6587\u4EF6",
+    "timeline.projectCreated": "\u9879\u76EE\u5DF2\u521B\u5EFA",
+    "timeline.workspaceCreated": "\u9879\u76EE\u5DE5\u4F5C\u533A\u5DF2\u521B\u5EFA",
+    "timeline.projectPaused": "\u9879\u76EE\u5DF2\u6682\u505C",
+    "timeline.projectResumed": "\u9879\u76EE\u5DF2\u6062\u590D",
+    "timeline.projectCancelled": "\u9879\u76EE\u5DF2\u53D6\u6D88",
+    "timeline.proposalCreated": "\u53D8\u66F4\u63D0\u6848\u5DF2\u521B\u5EFA",
+    "timeline.proposalApproved": "\u53D8\u66F4\u63D0\u6848\u5DF2\u6279\u51C6",
+    "timeline.proposalRejected": "\u53D8\u66F4\u63D0\u6848\u5DF2\u62D2\u7EDD",
+    "timeline.proposalDecision": "\u53D8\u66F4\u63D0\u6848\u5DF2\u51B3\u7B56",
+    "timeline.experimentSubmitted": "\u5B9E\u9A8C\u5DF2\u63D0\u4EA4",
+    "timeline.experimentSucceeded": "\u5B9E\u9A8C\u5DF2\u6210\u529F",
+    "timeline.experimentFailed": "\u5B9E\u9A8C\u5931\u8D25",
+    "timeline.experimentCancelled": "\u5B9E\u9A8C\u5DF2\u53D6\u6D88",
+    "timeline.reproductionDownloaded": "\u590D\u73B0\u6E90\u7801\u5DF2\u4E0B\u8F7D",
+    "timeline.reproductionDependenciesInstalled": "\u590D\u73B0\u4F9D\u8D56\u5DF2\u5B89\u88C5",
+    "timeline.reproductionDependenciesFailed": "\u590D\u73B0\u4F9D\u8D56\u5B89\u88C5\u5931\u8D25",
+    "timeline.reproductionStarted": "\u590D\u73B0\u8FD0\u884C\u5DF2\u5F00\u59CB",
+    "timeline.reproductionSucceeded": "\u590D\u73B0\u8FD0\u884C\u5DF2\u6210\u529F",
+    "timeline.reproductionFailed": "\u590D\u73B0\u8FD0\u884C\u5931\u8D25",
+    "timeline.reproductionArtifactsRegistered": "\u590D\u73B0\u4EA7\u7269\u5DF2\u767B\u8BB0",
+    "timeline.reproductionArtifactsRejected": "\u590D\u73B0\u4EA7\u7269\u5DF2\u88AB\u62D2\u7EDD",
+    "timeline.relatedWorkStarted": "\u9012\u5F52\u68C0\u7D22\u5DF2\u5F00\u59CB",
+    "timeline.relatedWorkSucceeded": "\u9012\u5F52\u68C0\u7D22\u5DF2\u6210\u529F",
+    "timeline.relatedWorkFailed": "\u9012\u5F52\u68C0\u7D22\u5931\u8D25",
+    "timeline.relatedWorkCancelled": "\u9012\u5F52\u68C0\u7D22\u5DF2\u53D6\u6D88",
+    "timeline.seedCreated": "\u79CD\u5B50\u6587\u732E\u5DF2\u6DFB\u52A0",
+    "timeline.candidateApproved": "\u6587\u732E\u5019\u9009\u5DF2\u786E\u8BA4",
+    "timeline.candidateRejected": "\u6587\u732E\u5019\u9009\u5DF2\u62D2\u7EDD",
+    "timeline.relatedWorkDecision": "\u6587\u732E\u5019\u9009\u5DF2\u51B3\u7B56",
+    "timeline.cacheHit": "\u68C0\u7D22\u7F13\u5B58\u547D\u4E2D",
+    "timeline.cacheMiss": "\u68C0\u7D22\u7F13\u5B58\u672A\u547D\u4E2D",
+    "timeline.fieldEnrichment": "\u5B57\u6BB5\u8865\u5168\u5DF2\u5B8C\u6210",
+    "timeline.searchCompleted": "\u6587\u732E\u68C0\u7D22\u5DF2\u5B8C\u6210",
+    "timeline.noveltyAnalysis": "\u521B\u65B0\u70B9\u5206\u6790\u5DF2\u751F\u6210",
+    "timeline.reportGenerated": "\u6C47\u62A5\u5DF2\u751F\u6210",
+    "timeline.feedbackCreated": "\u53CD\u9988\u5DF2\u63D0\u4EA4",
+    "timeline.feedbackProposalCreated": "\u53CD\u9988\u5DF2\u8F6C\u4E3A\u63D0\u6848",
+    "timeline.feedbackDecided": "\u53CD\u9988\u5DF2\u51B3\u7B56",
+    "timeline.claimReviewCreated": "\u58F0\u660E\u5BA1\u9605\u5DF2\u521B\u5EFA",
+    "timeline.claimReviewDecided": "\u58F0\u660E\u5BA1\u9605\u5DF2\u51B3\u7B56",
+    "timeline.evidenceIngested": "\u8BC1\u636E\u5DF2\u6444\u53D6",
+    "timeline.memoryIngested": "\u8BED\u4E49\u8BB0\u5FC6\u5DF2\u5199\u5165",
+    "timeline.memoryRevoked": "\u8BED\u4E49\u8BB0\u5FC6\u5DF2\u64A4\u9500",
+    "timeline.paperUpdated": "\u8BBA\u6587\u5185\u5BB9\u5DF2\u66F4\u65B0",
+    "timeline.paperCompileProposed": "\u8BBA\u6587\u7F16\u8BD1\u8BA1\u5212\u5DF2\u521B\u5EFA",
+    "timeline.researchStatusUpdated": "\u7814\u7A76\u73B0\u72B6\u5DF2\u66F4\u65B0",
+    "timeline.comparisonCreated": "\u6548\u679C\u6BD4\u8F83\u5DF2\u521B\u5EFA",
+    "timeline.comparisonCandidateDecided": "\u6BD4\u8F83\u5019\u9009\u5DF2\u51B3\u7B56",
+    "timeline.lineageInvalidated": "\u4E0A\u6E38\u4F9D\u8D56\u5DF2\u5931\u6548",
+    "timeline.workflowTriggered": "\u5DE5\u4F5C\u6D41\u5DF2\u89E6\u53D1",
+    "timeline.systemEvent": "\u7CFB\u7EDF\u4E8B\u4EF6",
+    "timeline.artifactCreated": "\u4EA7\u7269\u5DF2\u767B\u8BB0",
+    "timeline.taskFailed": "\u540E\u53F0\u4EFB\u52A1\u5931\u8D25",
+    "timeline.checkpointRecorded": "\u68C0\u67E5\u70B9\u5DF2\u8BB0\u5F55",
+    "timeline.checkpointInvalidated": "\u68C0\u67E5\u70B9\u5DF2\u5931\u6548",
     "overview.projectStatus": "\u9879\u76EE\u72B6\u6001",
     "overview.stageInitialized": "\u5DF2\u521D\u59CB\u5316",
     "overview.stageUnknown": "\u672A\u77E5\u9636\u6BB5",
@@ -14703,8 +14763,68 @@
     "overview.innovationHint": "\u5019\u9078\u5EFA\u8B70\u9700\u8981\u76F8\u95DC\u5DE5\u4F5C\u8B49\u64DA\u8207\u78BA\u8A8D\u3002",
     "overview.noInnovation": "\u5C1A\u672A\u7522\u751F\u5275\u65B0\u9EDE\u5019\u9078\u3002",
     "overview.progress": "\u7814\u7A76\u9032\u5EA6",
-    "overview.progressHint": "\u6642\u9593\u8EF8\u53EA\u5F59\u6574\u5DF2\u8A18\u9304\u7684 Proposal\u3001Checkpoint \u8207\u5BE6\u9A57\u72C0\u614B\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B78\u7D50\u8AD6\u3002",
+    "overview.progressHint": "\u6642\u9593\u8EF8\u5F59\u6574\u7A3D\u6838\u4E8B\u4EF6\u8207\u5C08\u6848\u8A18\u9304\uFF08\u641C\u5C0B\u3001\u5FA9\u73FE\u3001\u7522\u7269\u3001\u5831\u544A\u3001\u56DE\u994B\u3001\u5BE9\u6279\u3001\u66AB\u505C/\u53D6\u6D88\u3001\u4E0A\u6E38\u5931\u6548\u7B49\uFF09\uFF0C\u4E0D\u4EE3\u8868\u79D1\u5B78\u7D50\u8AD6\u3002",
     "overview.noTimeline": "\u5C1A\u7121\u53EF\u5C55\u793A\u7684\u9032\u5EA6\u4E8B\u4EF6\u3002",
+    "timeline.proposalId": "Proposal {id}",
+    "timeline.reportId": "\u5F59\u5831 {id}",
+    "timeline.eventDetailFallback": "\u5DF2\u8A18\u9304\u7A3D\u6838\u4E8B\u4EF6",
+    "timeline.depth": "\u6DF1\u5EA6 {depth}",
+    "timeline.artifactCount": "{count} \u500B\u6A94\u6848",
+    "timeline.projectCreated": "\u5C08\u6848\u5DF2\u5EFA\u7ACB",
+    "timeline.workspaceCreated": "\u5C08\u6848\u5DE5\u4F5C\u5340\u5DF2\u5EFA\u7ACB",
+    "timeline.projectPaused": "\u5C08\u6848\u5DF2\u66AB\u505C",
+    "timeline.projectResumed": "\u5C08\u6848\u5DF2\u6062\u5FA9",
+    "timeline.projectCancelled": "\u5C08\u6848\u5DF2\u53D6\u6D88",
+    "timeline.proposalCreated": "\u8B8A\u66F4\u63D0\u6848\u5DF2\u5EFA\u7ACB",
+    "timeline.proposalApproved": "\u8B8A\u66F4\u63D0\u6848\u5DF2\u6838\u51C6",
+    "timeline.proposalRejected": "\u8B8A\u66F4\u63D0\u6848\u5DF2\u62D2\u7D55",
+    "timeline.proposalDecision": "\u8B8A\u66F4\u63D0\u6848\u5DF2\u6C7A\u7B56",
+    "timeline.experimentSubmitted": "\u5BE6\u9A57\u5DF2\u63D0\u4EA4",
+    "timeline.experimentSucceeded": "\u5BE6\u9A57\u5DF2\u6210\u529F",
+    "timeline.experimentFailed": "\u5BE6\u9A57\u5931\u6557",
+    "timeline.experimentCancelled": "\u5BE6\u9A57\u5DF2\u53D6\u6D88",
+    "timeline.reproductionDownloaded": "\u5FA9\u73FE\u539F\u59CB\u78BC\u5DF2\u4E0B\u8F09",
+    "timeline.reproductionDependenciesInstalled": "\u5FA9\u73FE\u4F9D\u8CF4\u5DF2\u5B89\u88DD",
+    "timeline.reproductionDependenciesFailed": "\u5FA9\u73FE\u4F9D\u8CF4\u5B89\u88DD\u5931\u6557",
+    "timeline.reproductionStarted": "\u5FA9\u73FE\u57F7\u884C\u5DF2\u958B\u59CB",
+    "timeline.reproductionSucceeded": "\u5FA9\u73FE\u57F7\u884C\u5DF2\u6210\u529F",
+    "timeline.reproductionFailed": "\u5FA9\u73FE\u57F7\u884C\u5931\u6557",
+    "timeline.reproductionArtifactsRegistered": "\u5FA9\u73FE\u7522\u7269\u5DF2\u767B\u8A18",
+    "timeline.reproductionArtifactsRejected": "\u5FA9\u73FE\u7522\u7269\u5DF2\u88AB\u62D2\u7D55",
+    "timeline.relatedWorkStarted": "\u905E\u8FF4\u6AA2\u7D22\u5DF2\u958B\u59CB",
+    "timeline.relatedWorkSucceeded": "\u905E\u8FF4\u6AA2\u7D22\u5DF2\u6210\u529F",
+    "timeline.relatedWorkFailed": "\u905E\u8FF4\u6AA2\u7D22\u5931\u6557",
+    "timeline.relatedWorkCancelled": "\u905E\u8FF4\u6AA2\u7D22\u5DF2\u53D6\u6D88",
+    "timeline.seedCreated": "\u7A2E\u5B50\u6587\u737B\u5DF2\u52A0\u5165",
+    "timeline.candidateApproved": "\u6587\u737B\u5019\u9078\u5DF2\u78BA\u8A8D",
+    "timeline.candidateRejected": "\u6587\u737B\u5019\u9078\u5DF2\u62D2\u7D55",
+    "timeline.relatedWorkDecision": "\u6587\u737B\u5019\u9078\u5DF2\u6C7A\u7B56",
+    "timeline.cacheHit": "\u6AA2\u7D22\u5FEB\u53D6\u547D\u4E2D",
+    "timeline.cacheMiss": "\u6AA2\u7D22\u5FEB\u53D6\u672A\u547D\u4E2D",
+    "timeline.fieldEnrichment": "\u6B04\u4F4D\u88DC\u5168\u5DF2\u5B8C\u6210",
+    "timeline.searchCompleted": "\u6587\u737B\u6AA2\u7D22\u5DF2\u5B8C\u6210",
+    "timeline.noveltyAnalysis": "\u5275\u65B0\u9EDE\u5206\u6790\u5DF2\u7522\u751F",
+    "timeline.reportGenerated": "\u5F59\u5831\u5DF2\u7522\u751F",
+    "timeline.feedbackCreated": "\u56DE\u994B\u5DF2\u63D0\u4EA4",
+    "timeline.feedbackProposalCreated": "\u56DE\u994B\u5DF2\u8F49\u70BA\u63D0\u6848",
+    "timeline.feedbackDecided": "\u56DE\u994B\u5DF2\u6C7A\u7B56",
+    "timeline.claimReviewCreated": "\u8072\u660E\u5BE9\u95B1\u5DF2\u5EFA\u7ACB",
+    "timeline.claimReviewDecided": "\u8072\u660E\u5BE9\u95B1\u5DF2\u6C7A\u7B56",
+    "timeline.evidenceIngested": "\u8B49\u64DA\u5DF2\u651D\u53D6",
+    "timeline.memoryIngested": "\u8A9E\u610F\u8A18\u61B6\u5DF2\u5BEB\u5165",
+    "timeline.memoryRevoked": "\u8A9E\u610F\u8A18\u61B6\u5DF2\u64A4\u92B7",
+    "timeline.paperUpdated": "\u8AD6\u6587\u5167\u5BB9\u5DF2\u66F4\u65B0",
+    "timeline.paperCompileProposed": "\u8AD6\u6587\u7DE8\u8B6F\u8A08\u756B\u5DF2\u5EFA\u7ACB",
+    "timeline.researchStatusUpdated": "\u7814\u7A76\u73FE\u72C0\u5DF2\u66F4\u65B0",
+    "timeline.comparisonCreated": "\u6548\u679C\u6BD4\u8F03\u5DF2\u5EFA\u7ACB",
+    "timeline.comparisonCandidateDecided": "\u6BD4\u8F03\u5019\u9078\u5DF2\u6C7A\u7B56",
+    "timeline.lineageInvalidated": "\u4E0A\u6E38\u4F9D\u8CF4\u5DF2\u5931\u6548",
+    "timeline.workflowTriggered": "\u5DE5\u4F5C\u6D41\u7A0B\u5DF2\u89F8\u767C",
+    "timeline.systemEvent": "\u7CFB\u7D71\u4E8B\u4EF6",
+    "timeline.artifactCreated": "\u7522\u7269\u5DF2\u767B\u8A18",
+    "timeline.taskFailed": "\u80CC\u666F\u4EFB\u52D9\u5931\u6557",
+    "timeline.checkpointRecorded": "\u6AA2\u67E5\u9EDE\u5DF2\u8A18\u9304",
+    "timeline.checkpointInvalidated": "\u6AA2\u67E5\u9EDE\u5DF2\u5931\u6548",
     "overview.projectStatus": "\u5C08\u6848\u72C0\u614B",
     "overview.stageInitialized": "\u5DF2\u521D\u59CB\u5316",
     "overview.stageUnknown": "\u672A\u77E5\u968E\u6BB5",
@@ -16059,8 +16179,68 @@
     "overview.innovationHint": "Candidate suggestions require related-work evidence and confirmation.",
     "overview.noInnovation": "No innovation candidates generated yet.",
     "overview.progress": "Research progress",
-    "overview.progressHint": "The timeline summarizes recorded Proposals, checkpoints, and experiment states; it is not a scientific conclusion.",
+    "overview.progressHint": "The timeline combines audit events and project records (search, reproduction, Artifacts, reports, feedback, approvals, pause/cancel, upstream invalidation); it is not a scientific conclusion.",
     "overview.noTimeline": "No progress events to show yet.",
+    "timeline.proposalId": "Proposal {id}",
+    "timeline.reportId": "Report {id}",
+    "timeline.eventDetailFallback": "Audited event recorded",
+    "timeline.depth": "Depth {depth}",
+    "timeline.artifactCount": "{count} files",
+    "timeline.projectCreated": "Project created",
+    "timeline.workspaceCreated": "Project workspace created",
+    "timeline.projectPaused": "Project paused",
+    "timeline.projectResumed": "Project resumed",
+    "timeline.projectCancelled": "Project cancelled",
+    "timeline.proposalCreated": "Change proposal created",
+    "timeline.proposalApproved": "Change proposal approved",
+    "timeline.proposalRejected": "Change proposal rejected",
+    "timeline.proposalDecision": "Change proposal decided",
+    "timeline.experimentSubmitted": "Experiment submitted",
+    "timeline.experimentSucceeded": "Experiment succeeded",
+    "timeline.experimentFailed": "Experiment failed",
+    "timeline.experimentCancelled": "Experiment cancelled",
+    "timeline.reproductionDownloaded": "Reproduction source downloaded",
+    "timeline.reproductionDependenciesInstalled": "Reproduction dependencies installed",
+    "timeline.reproductionDependenciesFailed": "Reproduction dependency install failed",
+    "timeline.reproductionStarted": "Reproduction run started",
+    "timeline.reproductionSucceeded": "Reproduction run succeeded",
+    "timeline.reproductionFailed": "Reproduction run failed",
+    "timeline.reproductionArtifactsRegistered": "Reproduction Artifacts registered",
+    "timeline.reproductionArtifactsRejected": "Reproduction Artifacts rejected",
+    "timeline.relatedWorkStarted": "Recursive search started",
+    "timeline.relatedWorkSucceeded": "Recursive search succeeded",
+    "timeline.relatedWorkFailed": "Recursive search failed",
+    "timeline.relatedWorkCancelled": "Recursive search cancelled",
+    "timeline.seedCreated": "Seed paper added",
+    "timeline.candidateApproved": "Paper candidate confirmed",
+    "timeline.candidateRejected": "Paper candidate rejected",
+    "timeline.relatedWorkDecision": "Paper candidate decided",
+    "timeline.cacheHit": "Search cache hit",
+    "timeline.cacheMiss": "Search cache miss",
+    "timeline.fieldEnrichment": "Field enrichment completed",
+    "timeline.searchCompleted": "Literature search completed",
+    "timeline.noveltyAnalysis": "Novelty analysis generated",
+    "timeline.reportGenerated": "Report generated",
+    "timeline.feedbackCreated": "Feedback submitted",
+    "timeline.feedbackProposalCreated": "Feedback turned into a proposal",
+    "timeline.feedbackDecided": "Feedback decided",
+    "timeline.claimReviewCreated": "Claim review created",
+    "timeline.claimReviewDecided": "Claim review decided",
+    "timeline.evidenceIngested": "Evidence ingested",
+    "timeline.memoryIngested": "Semantic memory written",
+    "timeline.memoryRevoked": "Semantic memory revoked",
+    "timeline.paperUpdated": "Paper content updated",
+    "timeline.paperCompileProposed": "Paper compile plan created",
+    "timeline.researchStatusUpdated": "Research status updated",
+    "timeline.comparisonCreated": "Effect comparison created",
+    "timeline.comparisonCandidateDecided": "Comparison candidate decided",
+    "timeline.lineageInvalidated": "Upstream dependency invalidated",
+    "timeline.workflowTriggered": "Workflow triggered",
+    "timeline.systemEvent": "System event",
+    "timeline.artifactCreated": "Artifact registered",
+    "timeline.taskFailed": "Background task failed",
+    "timeline.checkpointRecorded": "Checkpoint recorded",
+    "timeline.checkpointInvalidated": "Checkpoint invalidated",
     "overview.projectStatus": "Project status",
     "overview.stageInitialized": "Initialized",
     "overview.stageUnknown": "Unknown stage",
@@ -17415,8 +17595,68 @@
     "overview.innovationHint": "Las sugerencias requieren evidencia de trabajo relacionado y confirmaci\xF3n.",
     "overview.noInnovation": "A\xFAn no hay candidatos de innovaci\xF3n.",
     "overview.progress": "Progreso de investigaci\xF3n",
-    "overview.progressHint": "La l\xEDnea de tiempo resume Propuestas, hitos y estados de experimento registrados; no es una conclusi\xF3n cient\xEDfica.",
+    "overview.progressHint": "La l\xEDnea de tiempo combina eventos auditados y registros del proyecto (b\xFAsqueda, reproducci\xF3n, artefactos, informes, comentarios, aprobaciones, pausa/cancelaci\xF3n, invalidaci\xF3n ascendente); no es una conclusi\xF3n cient\xEDfica.",
     "overview.noTimeline": "A\xFAn no hay eventos de progreso.",
+    "timeline.proposalId": "Propuesta {id}",
+    "timeline.reportId": "Informe {id}",
+    "timeline.eventDetailFallback": "Evento auditado registrado",
+    "timeline.depth": "Profundidad {depth}",
+    "timeline.artifactCount": "{count} archivos",
+    "timeline.projectCreated": "Proyecto creado",
+    "timeline.workspaceCreated": "Espacio de trabajo del proyecto creado",
+    "timeline.projectPaused": "Proyecto en pausa",
+    "timeline.projectResumed": "Proyecto reanudado",
+    "timeline.projectCancelled": "Proyecto cancelado",
+    "timeline.proposalCreated": "Propuesta de cambio creada",
+    "timeline.proposalApproved": "Propuesta de cambio aprobada",
+    "timeline.proposalRejected": "Propuesta de cambio rechazada",
+    "timeline.proposalDecision": "Propuesta de cambio decidida",
+    "timeline.experimentSubmitted": "Experimento enviado",
+    "timeline.experimentSucceeded": "Experimento completado con \xE9xito",
+    "timeline.experimentFailed": "Experimento fallido",
+    "timeline.experimentCancelled": "Experimento cancelado",
+    "timeline.reproductionDownloaded": "C\xF3digo de reproducci\xF3n descargado",
+    "timeline.reproductionDependenciesInstalled": "Dependencias de reproducci\xF3n instaladas",
+    "timeline.reproductionDependenciesFailed": "Fall\xF3 la instalaci\xF3n de dependencias",
+    "timeline.reproductionStarted": "Ejecuci\xF3n de reproducci\xF3n iniciada",
+    "timeline.reproductionSucceeded": "Ejecuci\xF3n de reproducci\xF3n completada",
+    "timeline.reproductionFailed": "Ejecuci\xF3n de reproducci\xF3n fallida",
+    "timeline.reproductionArtifactsRegistered": "Artefactos de reproducci\xF3n registrados",
+    "timeline.reproductionArtifactsRejected": "Artefactos de reproducci\xF3n rechazados",
+    "timeline.relatedWorkStarted": "B\xFAsqueda recursiva iniciada",
+    "timeline.relatedWorkSucceeded": "B\xFAsqueda recursiva completada",
+    "timeline.relatedWorkFailed": "B\xFAsqueda recursiva fallida",
+    "timeline.relatedWorkCancelled": "B\xFAsqueda recursiva cancelada",
+    "timeline.seedCreated": "Paper semilla a\xF1adido",
+    "timeline.candidateApproved": "Candidato de paper confirmado",
+    "timeline.candidateRejected": "Candidato de paper rechazado",
+    "timeline.relatedWorkDecision": "Candidato de paper decidido",
+    "timeline.cacheHit": "Acierto de cach\xE9 de b\xFAsqueda",
+    "timeline.cacheMiss": "Fallo de cach\xE9 de b\xFAsqueda",
+    "timeline.fieldEnrichment": "Enriquecimiento de campos completado",
+    "timeline.searchCompleted": "B\xFAsqueda de literatura completada",
+    "timeline.noveltyAnalysis": "An\xE1lisis de novedad generado",
+    "timeline.reportGenerated": "Informe generado",
+    "timeline.feedbackCreated": "Comentario enviado",
+    "timeline.feedbackProposalCreated": "Comentario convertido en propuesta",
+    "timeline.feedbackDecided": "Comentario decidido",
+    "timeline.claimReviewCreated": "Revisi\xF3n de afirmaci\xF3n creada",
+    "timeline.claimReviewDecided": "Revisi\xF3n de afirmaci\xF3n decidida",
+    "timeline.evidenceIngested": "Evidencia incorporada",
+    "timeline.memoryIngested": "Memoria sem\xE1ntica escrita",
+    "timeline.memoryRevoked": "Memoria sem\xE1ntica revocada",
+    "timeline.paperUpdated": "Contenido del art\xEDculo actualizado",
+    "timeline.paperCompileProposed": "Plan de compilaci\xF3n del art\xEDculo creado",
+    "timeline.researchStatusUpdated": "Estado de la investigaci\xF3n actualizado",
+    "timeline.comparisonCreated": "Comparaci\xF3n de efectos creada",
+    "timeline.comparisonCandidateDecided": "Candidato de comparaci\xF3n decidido",
+    "timeline.lineageInvalidated": "Dependencia ascendente invalidada",
+    "timeline.workflowTriggered": "Flujo de trabajo activado",
+    "timeline.systemEvent": "Evento del sistema",
+    "timeline.artifactCreated": "Artefacto registrado",
+    "timeline.taskFailed": "Tarea en segundo plano fallida",
+    "timeline.checkpointRecorded": "Punto de control registrado",
+    "timeline.checkpointInvalidated": "Punto de control invalidado",
     "overview.projectStatus": "Estado del proyecto",
     "overview.stageInitialized": "Inicializado",
     "overview.stageUnknown": "Fase desconocida",
@@ -21135,6 +21375,198 @@
     available_data: "spec.availableData",
     ethics_and_compliance: "spec.ethicsAndCompliance"
   };
+  var TIMELINE_IGNORED_AUDIT_ACTIONS = /* @__PURE__ */ new Set([
+    "project.reordered",
+    "project.pinned",
+    "project.unpinned",
+    "project.slugs_migrated",
+    "project.artifact_files_migrated",
+    "embedding.settings_updated",
+    "memory.revoke_proposal_created"
+  ]);
+  function shortId(value) {
+    return value.length > 8 ? value.slice(0, 8) : value;
+  }
+  function cleanText(value, max = 140) {
+    const cleaned = value.replace(/\s+/g, " ").trim();
+    return cleaned.length > max ? `${cleaned.slice(0, max - 1)}\u2026` : cleaned;
+  }
+  function auditEventMeta(action, details) {
+    const value = action.toLowerCase();
+    const detailStatus = typeof details?.status === "string" ? details.status : void 0;
+    if (value === "project.created") return { category: "project", titleKey: "timeline.projectCreated", status: "active" };
+    if (value === "project.workspace_created") return { category: "project", titleKey: "timeline.workspaceCreated", status: "active" };
+    if (value === "project.paused" || value === "project.pause.requested" || value === "project.pause.completed") return { category: "pause", titleKey: "timeline.projectPaused", status: "paused" };
+    if (value === "project.resumed" || value === "project.resume.requested" || value === "project.resume.completed") return { category: "pause", titleKey: "timeline.projectResumed", status: "active" };
+    if (value === "project.cancelled" || value === "project.cancel.requested" || value === "project.cancel.completed") return { category: "cancel", titleKey: "timeline.projectCancelled", status: "cancelled" };
+    if (value.startsWith("proposal.")) {
+      if (value === "proposal.created") return { category: "proposal", titleKey: "timeline.proposalCreated", status: "pending" };
+      if (value === "proposal.approved") return { category: "approval", titleKey: "timeline.proposalApproved", status: "approved" };
+      if (value === "proposal.rejected") return { category: "approval", titleKey: "timeline.proposalRejected", status: "rejected" };
+      return { category: "proposal", titleKey: "timeline.proposalDecision", status: value.split(".")[1] || "pending" };
+    }
+    if (value.startsWith("experiment.")) {
+      if (value === "experiment.failed") return { category: "failure", titleKey: "timeline.experimentFailed", status: "failed" };
+      if (value === "experiment.cancelled") return { category: "cancel", titleKey: "timeline.experimentCancelled", status: "cancelled" };
+      if (value === "experiment.succeeded" || value === "experiment.synced" && detailStatus === "succeeded") return { category: "experiment", titleKey: "timeline.experimentSucceeded", status: "succeeded" };
+      if (value === "experiment.synced" && detailStatus === "failed") return { category: "failure", titleKey: "timeline.experimentFailed", status: "failed" };
+      return { category: "experiment", titleKey: "timeline.experimentSubmitted", status: detailStatus || "queued" };
+    }
+    if (value === "repository.reproduction_downloaded") return { category: "reproduction", titleKey: "timeline.reproductionDownloaded", status: "source_downloaded" };
+    if (value === "repository.reproduction_dependencies_installed") return { category: "reproduction", titleKey: "timeline.reproductionDependenciesInstalled", status: "ready" };
+    if (value === "repository.reproduction_dependencies_failed") return { category: "failure", titleKey: "timeline.reproductionDependenciesFailed", status: "dependency_failed" };
+    if (value === "repository.reproduction_succeeded_waiting_artifact") return { category: "reproduction", titleKey: "timeline.reproductionSucceeded", status: "awaiting_artifact_approval" };
+    if (value === "repository.reproduction_failed") return { category: "failure", titleKey: "timeline.reproductionFailed", status: "failed" };
+    if (value === "repository.reproduction_artifacts_registered") return { category: "artifact", titleKey: "timeline.reproductionArtifactsRegistered", status: "valid" };
+    if (value === "repository.reproduction_artifacts_rejected") return { category: "failure", titleKey: "timeline.reproductionArtifactsRejected", status: "rejected" };
+    if (value.startsWith("related_work.recursive")) {
+      if (value === "related_work.recursive_started") return { category: "search", titleKey: "timeline.relatedWorkStarted", status: "running" };
+      if (value === "related_work.recursive_failed") return { category: "failure", titleKey: "timeline.relatedWorkFailed", status: "failed" };
+      if (value === "related_work.recursive_cancel_requested" || value === "related_work.recursive_cancelled") return { category: "cancel", titleKey: "timeline.relatedWorkCancelled", status: "cancelled" };
+      return { category: "search", titleKey: "timeline.relatedWorkSucceeded", status: "succeeded" };
+    }
+    if (value === "related_work.seed_created") return { category: "search", titleKey: "timeline.seedCreated", status: "resolved" };
+    if (value.startsWith("related_work.candidate_")) {
+      if (value === "related_work.candidate_approved") return { category: "approval", titleKey: "timeline.candidateApproved", status: "approved" };
+      if (value === "related_work.candidate_rejected") return { category: "approval", titleKey: "timeline.candidateRejected", status: "rejected" };
+      return { category: "search", titleKey: "timeline.relatedWorkDecision", status: value.split("_").pop() || "pending" };
+    }
+    if (value === "related_work.cache_hit") return { category: "search", titleKey: "timeline.cacheHit", status: "cache_hit" };
+    if (value === "related_work.cache_miss") return { category: "search", titleKey: "timeline.cacheMiss", status: "cache_miss" };
+    if (value.startsWith("related_work.field_enrichment_")) return { category: "search", titleKey: "timeline.fieldEnrichment", status: value.split("_").pop() || "pending" };
+    if (value === "literature.searched") return { category: "search", titleKey: "timeline.searchCompleted", status: "completed" };
+    if (value === "novelty.analysis_generated") return { category: "related", titleKey: "timeline.noveltyAnalysis", status: "ready" };
+    if (value === "report.generated") return { category: "report", titleKey: "timeline.reportGenerated", status: "valid" };
+    if (value === "human_feedback.created") return { category: "feedback", titleKey: "timeline.feedbackCreated", status: "open" };
+    if (value === "human_feedback.proposal_created") return { category: "feedback", titleKey: "timeline.feedbackProposalCreated", status: "proposal_created" };
+    if (value.startsWith("human_feedback.")) return { category: "feedback", titleKey: "timeline.feedbackDecided", status: value.split(".")[1] || "open" };
+    if (value.startsWith("claim_review.")) {
+      if (value === "claim_review.created") return { category: "evidence", titleKey: "timeline.claimReviewCreated", status: "pending" };
+      return { category: "evidence", titleKey: "timeline.claimReviewDecided", status: value.split(".")[1] || "pending" };
+    }
+    if (value.startsWith("evidence.")) return { category: "evidence", titleKey: "timeline.evidenceIngested", status: "valid" };
+    if (value.startsWith("memory.")) return { category: "memory", titleKey: value.includes("revok") ? "timeline.memoryRevoked" : "timeline.memoryIngested", status: value.includes("revok") ? "revoked" : "active" };
+    if (value.startsWith("paper.") || value.startsWith("latex_compile.")) return { category: "paper", titleKey: value.startsWith("paper.") ? "timeline.paperUpdated" : "timeline.paperCompileProposed", status: "pending" };
+    if (value.startsWith("research_status.")) return { category: "comparison", titleKey: "timeline.researchStatusUpdated", status: value.split(".").pop() || "pending" };
+    if (value.startsWith("research_comparison.")) return { category: "comparison", titleKey: value.includes("candidate") ? "timeline.comparisonCandidateDecided" : "timeline.comparisonCreated", status: value.split(".").pop() || "pending" };
+    if (value === "lineage.invalidated") return { category: "invalidation", titleKey: "timeline.lineageInvalidated", status: "invalidated" };
+    if (value === "change.proposed") return { category: "proposal", titleKey: "timeline.proposalCreated", status: "pending" };
+    if (value === "workflow.triggered") return { category: "system", titleKey: "timeline.workflowTriggered", status: detailStatus || "succeeded" };
+    return { category: "system", titleKey: "timeline.systemEvent", status: detailStatus };
+  }
+  function auditEventDetail(event, t) {
+    const details = event.details || {};
+    const parts = [];
+    if (typeof details.reason === "string" && details.reason.trim()) parts.push(cleanText(details.reason, 160));
+    if (typeof details.kind === "string" && details.kind.trim()) parts.push(details.kind);
+    if (typeof details.experiment_type === "string" && details.experiment_type.trim()) parts.push(details.experiment_type);
+    if (typeof details.run_id === "string") parts.push(t("overview.runDetail", { run: shortId(details.run_id) }));
+    if (typeof details.proposal_id === "string") parts.push(t("timeline.proposalId", { id: shortId(details.proposal_id) }));
+    if (typeof details.report_id === "string") parts.push(t("timeline.reportId", { id: shortId(details.report_id) }));
+    if (typeof details.period === "string") parts.push(details.period === "daily" ? t("reports.daily") : details.period === "weekly" ? t("reports.weekly") : details.period);
+    if (typeof details.query === "string" && details.query.trim()) parts.push(cleanText(details.query));
+    if (typeof details.provider === "string") parts.push(details.provider);
+    if (typeof details.commit === "string") parts.push(shortId(details.commit));
+    if (typeof details.status === "string" && !["succeeded", "failed"].includes(details.status) && details.status.trim()) parts.push(details.status);
+    return parts.length ? parts.join(" \xB7 ") : t("timeline.eventDetailFallback");
+  }
+  function auditEntityKey(event) {
+    const details = event.details || {};
+    if (typeof details.proposal_id === "string") return `proposal:${details.proposal_id}`;
+    if (event.action.startsWith("report.") && typeof details.report_id === "string") return `report:${details.report_id}`;
+    if (event.action.startsWith("human_feedback.") && typeof details.feedback_id === "string") return `feedback:${details.feedback_id}`;
+    if (typeof details.reproduction_run_id === "string") return `reproduction_run:${details.reproduction_run_id}`;
+    if (typeof details.reproduction_id === "string") return `reproduction:${details.reproduction_id}`;
+    if (event.action.startsWith("related_work.recursive") && typeof details.run_id === "string") return `related_run:${details.run_id}`;
+    return null;
+  }
+  function artifactGroupKey(artifact) {
+    const lineage = artifact.metadata?.lineage;
+    if (typeof lineage?.run_id === "string" && lineage.run_id.trim()) return lineage.run_id;
+    if (typeof artifact.run_id === "string" && artifact.run_id.trim()) return artifact.run_id;
+    if (artifact.experiment_id) return artifact.experiment_id;
+    return artifact.id;
+  }
+  function artifactTimelineItems(artifacts, t) {
+    const groups = /* @__PURE__ */ new Map();
+    for (const artifact of artifacts) {
+      const key = artifactGroupKey(artifact);
+      const existing = groups.get(key);
+      if (existing) {
+        existing.count += 1;
+        existing.valid = existing.valid && artifact.valid !== false;
+        if (existing.names.length < 3 && !existing.names.includes(artifact.name)) existing.names.push(artifact.name);
+        if (!existing.at && artifact.created_at) existing.at = artifact.created_at;
+      } else {
+        groups.set(key, { id: `artifact-${key}`, at: artifact.created_at, count: 1, names: [artifact.name], valid: artifact.valid !== false });
+      }
+    }
+    return Array.from(groups.values()).map((group) => {
+      const detail = [group.names.join("\u3001"), group.count > group.names.length ? t("timeline.artifactCount", { count: group.count }) : ""].filter(Boolean).join(" \xB7 ");
+      return { id: group.id, at: group.at, category: "artifact", titleKey: "timeline.artifactCreated", detail, status: group.valid ? "valid" : "invalidated" };
+    });
+  }
+  function failedTaskTimelineItems(tasks) {
+    return tasks.filter((task) => ["failed", "timed_out", "rate_limited"].includes(String(task.status).toLowerCase())).map((task) => ({
+      id: `task-${task.id}`,
+      at: task.updated_at || task.created_at,
+      category: "failure",
+      titleKey: "timeline.taskFailed",
+      detail: [task.kind, task.error ? cleanText(task.error, 160) : ""].filter(Boolean).join(" \xB7 "),
+      status: task.status
+    }));
+  }
+  function reportTimelineItem(report, t) {
+    const period = report.period === "daily" ? t("reports.daily") : report.period === "weekly" ? t("reports.weekly") : report.period;
+    return { id: `report-${report.id}`, at: report.created_at, category: "report", titleKey: "timeline.reportGenerated", detail: period, status: report.status || "valid" };
+  }
+  function feedbackTimelineItem(feedback, t) {
+    const decided = Boolean(feedback.decided_at) || feedback.status !== "open";
+    return {
+      id: `feedback-${feedback.id}`,
+      at: feedback.decided_at || feedback.created_at,
+      category: "feedback",
+      titleKey: decided ? "timeline.feedbackDecided" : "timeline.feedbackCreated",
+      detail: cleanText(feedback.instruction, 160),
+      status: feedback.status
+    };
+  }
+  function checkpointTimelineItem(checkpoint, t) {
+    const invalidated = checkpoint.valid === false;
+    return {
+      id: `checkpoint-${checkpoint.id}`,
+      at: invalidated ? checkpoint.invalidated_at || checkpoint.created_at : checkpoint.created_at,
+      category: invalidated ? "invalidation" : "checkpoint",
+      titleKey: invalidated ? "timeline.checkpointInvalidated" : "timeline.checkpointRecorded",
+      detail: `${checkpoint.stage} \xB7 ${t("overview.checkpointVersion", { version: checkpoint.idea_version ?? 1 })}`,
+      status: invalidated ? "invalidated" : "recorded"
+    };
+  }
+  function relatedWorkRunTimelineItem(run, t) {
+    const status = String(run.status || "").toLowerCase();
+    const failed = status === "failed";
+    const cancelled = status.includes("cancel");
+    return {
+      id: `related-run-${run.id}`,
+      at: run.finished_at || run.started_at || run.created_at,
+      category: failed ? "failure" : cancelled ? "cancel" : "search",
+      titleKey: failed ? "timeline.relatedWorkFailed" : cancelled ? "timeline.relatedWorkCancelled" : status === "succeeded" || status === "completed" ? "timeline.relatedWorkSucceeded" : "timeline.relatedWorkStarted",
+      detail: [run.providers?.join(" + "), run.depth ? t("timeline.depth", { depth: run.depth }) : ""].filter(Boolean).join(" \xB7 "),
+      status: run.status
+    };
+  }
+  function reproductionRunTimelineItem(run) {
+    const status = String(run.status || "").toLowerCase();
+    const failed = status === "failed" || status === "artifact_rejected";
+    return {
+      id: `reproduction-run-${run.id}`,
+      at: run.finished_at || run.started_at || run.created_at,
+      category: failed ? "failure" : "reproduction",
+      titleKey: failed ? "timeline.reproductionFailed" : status === "awaiting_artifact_approval" ? "timeline.reproductionSucceeded" : "timeline.reproductionStarted",
+      detail: run.entrypoint || run.source_commit || run.id,
+      status: run.status
+    };
+  }
   function FieldStatusPill({ status }) {
     const { t } = useTranslation();
     const kind = status?.status || "unresolved";
@@ -21249,13 +21681,25 @@
     const fieldStatus = project.spec_field_status || {};
     const blockedFields = CORE_FIELDS.filter((field) => fieldStatus[field]?.status !== "user_confirmed");
     const checkpoints = project.checkpoints || [];
-    const proposals = project.proposals || [];
-    const experiments = project.experiments || [];
+    const auditEvents = project.audit_events || [];
+    const auditKeys = /* @__PURE__ */ new Set();
+    for (const event of auditEvents) {
+      const key = auditEntityKey(event);
+      if (key) auditKeys.add(key);
+    }
     const timeline = [
-      ...checkpoints.map((item) => ({ id: `checkpoint-${item.id}`, label: item.stage, detail: t("overview.checkpointVersion", { version: item.idea_version ?? project.current_idea_version ?? 1 }), status: item.valid === false ? "invalidated" : "recorded", created_at: item.created_at })),
-      ...proposals.map((item) => ({ id: `proposal-${item.id}`, label: item.summary, detail: item.reason || item.kind, status: item.status, created_at: item.created_at })),
-      ...experiments.map((item) => ({ id: `experiment-${item.id}`, label: item.experiment_type, detail: item.run_id ? t("overview.runDetail", { run: item.run_id }) : t("overview.runPending"), status: item.status, created_at: item.created_at }))
-    ].sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || ""))).slice(0, 8);
+      ...auditEvents.filter((event) => !TIMELINE_IGNORED_AUDIT_ACTIONS.has(event.action)).map((event) => {
+        const meta = auditEventMeta(event.action, event.details);
+        return { id: `audit-${event.id}`, at: event.created_at, category: meta.category, titleKey: meta.titleKey, detail: auditEventDetail(event, t), status: meta.status };
+      }),
+      ...artifactTimelineItems(project.artifacts || [], t),
+      ...failedTaskTimelineItems(project.tasks || []),
+      ...(project.reports || []).filter((report) => !auditKeys.has(`report:${report.id}`)).map((report) => reportTimelineItem(report, t)),
+      ...(project.feedback || []).filter((item) => !auditKeys.has(`feedback:${item.id}`)).map((item) => feedbackTimelineItem(item, t)),
+      ...(project.related_work_runs || []).filter((run) => !auditKeys.has(`related_run:${run.id}`)).map((run) => relatedWorkRunTimelineItem(run, t)),
+      ...(project.reproduction_runs || []).filter((run) => !auditKeys.has(`reproduction_run:${run.id}`)).map((run) => reproductionRunTimelineItem(run)),
+      ...checkpoints.filter((checkpoint) => !checkpoint.stage?.startsWith("project_")).map((checkpoint) => checkpointTimelineItem(checkpoint, t))
+    ].filter((item) => item.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 14);
     const runSearch = async () => {
       try {
         showToast(t("overview.toastSearching"));
@@ -21391,14 +21835,14 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "section", children: [
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SectionHeading, { title: t("overview.progress"), hint: t("overview.progressHint") }),
-        timeline.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "timeline", role: "list", children: timeline.map((item) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "timeline-item", role: "listitem", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "timeline-dot" }),
+        timeline.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "timeline", role: "list", children: timeline.map((item) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: `timeline-item timeline-category-${item.category}`, role: "listitem", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "timeline-dot", "aria-hidden": "true" }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: item.label }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t(item.titleKey) }),
             /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { children: [
               item.detail,
               " \xB7 ",
-              formatDateTime(item.created_at, locale)
+              formatDateTime(item.at, locale)
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: item.status })

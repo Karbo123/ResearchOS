@@ -187,7 +187,7 @@ export function ensureProjectGit(projectId: string): string {
 export async function projectDetail(projectId: string) {
   const project = await requireProject(projectId)
   const lineage = await reconcileProjectLineage(projectId)
-  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews, feedback, reproductions, reproductionRuns, relatedWorkSeeds, relatedWorkCandidates, relatedWorkRuns, relatedWorkAttempts, relatedWorkEdges, relatedWorkFieldProvenance, relatedWorkCandidateReviews, researchComparisons, researchComparisonCandidates] = await Promise.all([
+  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews, feedback, reproductions, reproductionRuns, relatedWorkSeeds, relatedWorkCandidates, relatedWorkRuns, relatedWorkAttempts, relatedWorkEdges, relatedWorkFieldProvenance, relatedWorkCandidateReviews, researchComparisons, researchComparisonCandidates, auditEvents] = await Promise.all([
     rows('SELECT * FROM idea_versions WHERE project_id=$1 ORDER BY version DESC', [projectId]),
     rows('SELECT * FROM papers WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM evidence WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
@@ -221,6 +221,7 @@ export async function projectDetail(projectId: string) {
     rows('SELECT * FROM related_work_candidate_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM research_comparisons WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM research_comparison_candidates WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT id,project_id,actor,action,details,created_at FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC LIMIT 300', [projectId]),
   ])
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 ORDER BY updated_at DESC LIMIT 1', [projectId])
   const currentSpec = (ideas[0] as Record<string, unknown> | undefined)?.spec as Record<string, unknown> | null | undefined
@@ -288,6 +289,7 @@ export async function projectDetail(projectId: string) {
       ...comparison,
       candidates: (researchComparisonCandidates as Array<Record<string, unknown>>).filter(candidate => candidate.comparison_id === comparison.id),
     })),
+    audit_events: auditEvents,
     lineage,
   }
 }

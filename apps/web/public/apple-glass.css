@@ -347,6 +347,8 @@ button { -webkit-font-smoothing: inherit; }
 .badge { border-radius: 999px; padding: 5px 9px; font-size: 10px; font-weight: 650; letter-spacing: .01em; }
 .badge.neutral { background: rgba(60, 60, 67, .09); color: var(--muted); }
 .badge.live { background: var(--green-soft); color: var(--success-ink); }
+.badge.pending { background: var(--amber-soft); color: var(--warning-ink); }
+.badge.failed { background: var(--red-soft); color: var(--danger-ink); }
 
 .project-view { flex: 1 1 auto; min-height: 0; height: auto; padding-top: 2px; }
 .tabs { margin: 14px 18px 0; padding: 5px; gap: 2px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-2); box-shadow: 0 4px 14px rgba(25, 25, 35, .04); }
@@ -1134,12 +1136,36 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .candidate-list svg { color: var(--amber); margin-top: 2px; }
 .empty-inline { margin: 0; color: var(--muted); font-size: 12px; }
 .timeline { display: grid; gap: 0; padding: 4px 0; }
-.timeline-item { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 11px; align-items: start; min-height: 58px; position: relative; }
-.timeline-item::before { content: ''; position: absolute; top: 14px; bottom: -9px; left: 5px; width: 1px; background: rgba(60, 60, 67, .16); }
+.timeline-item { --timeline-accent: var(--blue); display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 11px; align-items: start; min-height: 58px; position: relative; }
+.timeline-item::before { content: ''; position: absolute; top: 14px; bottom: -9px; left: 5px; width: 1px; background: color-mix(in srgb, var(--timeline-accent) 22%, transparent); }
 .timeline-item:last-child::before { display: none; }
-.timeline-dot { width: 11px; height: 11px; margin-top: 3px; border: 3px solid rgba(10, 132, 255, .20); border-radius: 50%; background: var(--blue); z-index: 1; }
-.timeline-item strong { display: block; font-size: 12px; line-height: 1.4; }
-.timeline-item p { margin: 3px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.timeline-dot { width: 11px; height: 11px; margin-top: 3px; border: 3px solid color-mix(in srgb, var(--timeline-accent) 24%, transparent); border-radius: 50%; background: var(--timeline-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--timeline-accent) 12%, transparent); z-index: 1; }
+.timeline-item strong { display: block; min-width: 0; overflow-wrap: anywhere; font-size: 12px; line-height: 1.4; }
+.timeline-item p { margin: 3px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+.timeline-category-search { --timeline-accent: var(--blue); }
+.timeline-category-reproduction { --timeline-accent: var(--indigo); }
+.timeline-category-artifact { --timeline-accent: var(--teal); }
+.timeline-category-report { --timeline-accent: var(--green); }
+.timeline-category-feedback { --timeline-accent: var(--pink); }
+.timeline-category-failure { --timeline-accent: var(--red); }
+.timeline-category-cancel { --timeline-accent: var(--red); }
+.timeline-category-pause { --timeline-accent: var(--amber); }
+.timeline-category-approval { --timeline-accent: var(--green); }
+.timeline-category-invalidation { --timeline-accent: var(--red); }
+.timeline-category-experiment { --timeline-accent: var(--blue); }
+.timeline-category-proposal { --timeline-accent: var(--amber); }
+.timeline-category-checkpoint { --timeline-accent: var(--indigo); }
+.timeline-category-project { --timeline-accent: var(--muted); }
+.timeline-category-memory { --timeline-accent: var(--purple); }
+.timeline-category-evidence { --timeline-accent: var(--teal); }
+.timeline-category-paper { --timeline-accent: var(--indigo); }
+.timeline-category-comparison { --timeline-accent: var(--pink); }
+.timeline-category-related { --timeline-accent: var(--teal); }
+.timeline-category-system { --timeline-accent: var(--muted); }
+@media (max-width: 760px) {
+  .timeline-item { grid-template-columns: 12px minmax(0, 1fr); }
+  .timeline-item .badge { grid-column: 2; justify-self: start; margin-top: 2px; }
+}
 .markdown-preview { padding: 21px 23px; color: var(--ink); line-height: 1.65; font-size: 13px; }
 .markdown-preview h1, .markdown-preview h2, .markdown-preview h3 { margin: 0 0 10px; line-height: 1.3; }
 .markdown-preview h1 { font-size: 20px; }

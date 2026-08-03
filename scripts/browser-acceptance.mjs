@@ -200,6 +200,25 @@ if (!specFieldState.hasConfirmed || !specFieldState.hasIdeaVersion || specFieldS
   throw new Error(`Specification field status markers missing: ${JSON.stringify(specFieldState)}`)
 }
 
+await navigate(`${appBase}/project/${projectSlug}/overview/overview`, 'en', 'light')
+const timelineState = await evaluate(`(() => {
+  const items = Array.from(document.querySelectorAll('.timeline-item')).map(node => ({
+    text: node.textContent?.replace(/\\s+/g, ' ').trim() || null,
+    category: [...node.classList].find(cls => cls.startsWith('timeline-category-'))?.replace('timeline-category-', '') || null,
+    badge: node.querySelector('.badge')?.textContent?.trim() || null,
+  }))
+  return {
+    count: items.length,
+    categories: [...new Set(items.map(item => item.category).filter(Boolean))],
+    hasTimestamp: items.some(item => /\\d{1,2}\\/\\d{1,2}\\/\\d{2,4}/.test(item.text || '')),
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-timeline.png')
+if (timelineState.count < 3 || !timelineState.hasTimestamp || timelineState.overflowX || timelineState.categories.length < 2) {
+  throw new Error(`Rich progress timeline missing: ${JSON.stringify(timelineState)}`)
+}
+
 await navigate(homeUrl, 'en', 'dark')
 const darkHome = await checkOverflow()
 await capture('108h-home-dark.png')
@@ -746,5 +765,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState, timelineState }, null, 2))
 socket.close()

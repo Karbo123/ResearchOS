@@ -194,6 +194,7 @@ export interface ProjectDetail {
   related_work_field_provenance?: RelatedWorkFieldProvenance[]
   related_work_candidate_reviews?: RelatedWorkCandidateReview[]
   research_comparisons?: ResearchComparison[]
+  audit_events?: AuditEvent[]
   counts?: {
     papers?: number
     experiments?: number
@@ -580,6 +581,7 @@ export interface Proposal {
   payload?: Record<string, any>
   estimated_cost_usd?: number
   created_at?: string
+  decided_at?: string | null
 }
 
 export interface Experiment {
@@ -610,6 +612,7 @@ export interface Artifact {
   preview_url?: string
   download_url?: string
   url?: string
+  created_at?: string
 }
 
 export interface Policy {
@@ -661,6 +664,7 @@ export interface Checkpoint {
   state?: Record<string, any>
   valid?: boolean
   created_at?: string
+  invalidated_at?: string | null
 }
 
 export interface PolicyEnforcement {

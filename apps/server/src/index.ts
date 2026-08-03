@@ -897,7 +897,7 @@ app.post('/api/projects/:projectId/claim-reviews/:reviewId/decision', async cont
   await audit(`claim_review.${body.decision}`, projectId, { claim_review_id: reviewId, comment: body.comment ?? null, evidence_status: 'page_quote_requires_claim_review' }, body.actor)
   return context.json({ id: reviewId, project_id: projectId, status: body.decision, evidence_status: 'page_quote_requires_claim_review' })
 })
-app.get('/api/projects/:projectId/audit', async context => context.json(await rows('SELECT * FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC', [uuid.parse(context.req.param('projectId'))])))
+app.get('/api/projects/:projectId/audit', async context => context.json(await rows('SELECT * FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC', [await projectIdForReference(context.req.param('projectId'))])))
 app.post('/api/projects/:projectId/state', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const body = await jsonBody(context, projectStateRequest)
