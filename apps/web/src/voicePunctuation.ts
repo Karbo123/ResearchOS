@@ -7,6 +7,83 @@ const EN_QUESTION_WORDS = new Set([
 const ES_QUESTION_WORDS = new Set(['cómo', 'cuál', 'cuáles', 'cuándo', 'dónde', 'por qué', 'qué', 'quién', 'quiénes'])
 const END_PUNCTUATION = new Set(['。', '！', '？', '.', '!', '?', '…'])
 
+function isAsciiLetter(char: string | undefined): boolean {
+  return Boolean(char && /[a-zA-Z]/.test(char))
+}
+
+function isAsciiWord(char: string | undefined): boolean {
+  return Boolean(char && /[a-zA-Z0-9]/.test(char))
+}
+
+function isAsciiDigit(char: string | undefined): boolean {
+  return Boolean(char && /[0-9]/.test(char))
+}
+
+function hasChineseCharacters(value: string): boolean {
+  return /[\u3400-\u9fff]/.test(value)
+}
+
+export function localizeTranscriptPunctuation(text: string, locale: string): string {
+  if (locale !== 'zh-CN' && locale !== 'zh-TW') return text
+  if (!hasChineseCharacters(text)) return text
+
+  let doubleQuoteOpen = false
+  let singleQuoteOpen = false
+  const value = text.replace(/\.{3,}/g, '……')
+  let result = ''
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index]
+    const prev = value[index - 1]
+    const next = value[index + 1]
+    switch (char) {
+      case ',':
+        result += isAsciiDigit(prev) && isAsciiDigit(next) ? char : '，'
+        break
+      case '.':
+        result += isAsciiWord(prev) && isAsciiWord(next) ? char : '。'
+        break
+      case '?':
+        result += '？'
+        break
+      case '!':
+        result += '！'
+        break
+      case ';':
+        result += '；'
+        break
+      case ':':
+        result += '：'
+        break
+      case '(':
+        result += '（'
+        break
+      case ')':
+        result += '）'
+        break
+      case '"':
+        if (isAsciiWord(prev) && isAsciiWord(next)) {
+          result += char
+        } else {
+          result += doubleQuoteOpen ? '\u201D' : '\u201C'
+          doubleQuoteOpen = !doubleQuoteOpen
+        }
+        break
+      case "'":
+        if (isAsciiLetter(prev) && isAsciiLetter(next)) {
+          result += char
+        } else {
+          result += singleQuoteOpen ? '\u2019' : '\u2018'
+          singleQuoteOpen = !singleQuoteOpen
+        }
+        break
+      default:
+        result += char
+        break
+    }
+  }
+  return result
+}
+
 function addConnectorPunctuation(value: string): string {
   let next = value
   for (const connector of ZH_CONNECTORS) {
@@ -31,5 +108,5 @@ function addEndPunctuation(value: string, locale: string): string {
 export function punctuateTranscript(text: string, locale: string): string {
   const value = text.trim().replace(/\s+/g, ' ')
   if (!value) return ''
-  return addEndPunctuation(addConnectorPunctuation(value), locale)
+  return localizeTranscriptPunctuation(addEndPunctuation(addConnectorPunctuation(value), locale), locale)
 }

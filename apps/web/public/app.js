@@ -19038,6 +19038,77 @@
   ]);
   var ES_QUESTION_WORDS = /* @__PURE__ */ new Set(["c\xF3mo", "cu\xE1l", "cu\xE1les", "cu\xE1ndo", "d\xF3nde", "por qu\xE9", "qu\xE9", "qui\xE9n", "qui\xE9nes"]);
   var END_PUNCTUATION = /* @__PURE__ */ new Set(["\u3002", "\uFF01", "\uFF1F", ".", "!", "?", "\u2026"]);
+  function isAsciiLetter(char) {
+    return Boolean(char && /[a-zA-Z]/.test(char));
+  }
+  function isAsciiWord(char) {
+    return Boolean(char && /[a-zA-Z0-9]/.test(char));
+  }
+  function isAsciiDigit(char) {
+    return Boolean(char && /[0-9]/.test(char));
+  }
+  function hasChineseCharacters(value) {
+    return /[\u3400-\u9fff]/.test(value);
+  }
+  function localizeTranscriptPunctuation(text2, locale) {
+    if (locale !== "zh-CN" && locale !== "zh-TW") return text2;
+    if (!hasChineseCharacters(text2)) return text2;
+    let doubleQuoteOpen = false;
+    let singleQuoteOpen = false;
+    const value = text2.replace(/\.{3,}/g, "\u2026\u2026");
+    let result = "";
+    for (let index = 0; index < value.length; index += 1) {
+      const char = value[index];
+      const prev = value[index - 1];
+      const next = value[index + 1];
+      switch (char) {
+        case ",":
+          result += isAsciiDigit(prev) && isAsciiDigit(next) ? char : "\uFF0C";
+          break;
+        case ".":
+          result += isAsciiWord(prev) && isAsciiWord(next) ? char : "\u3002";
+          break;
+        case "?":
+          result += "\uFF1F";
+          break;
+        case "!":
+          result += "\uFF01";
+          break;
+        case ";":
+          result += "\uFF1B";
+          break;
+        case ":":
+          result += "\uFF1A";
+          break;
+        case "(":
+          result += "\uFF08";
+          break;
+        case ")":
+          result += "\uFF09";
+          break;
+        case '"':
+          if (isAsciiWord(prev) && isAsciiWord(next)) {
+            result += char;
+          } else {
+            result += doubleQuoteOpen ? "\u201D" : "\u201C";
+            doubleQuoteOpen = !doubleQuoteOpen;
+          }
+          break;
+        case "'":
+          if (isAsciiLetter(prev) && isAsciiLetter(next)) {
+            result += char;
+          } else {
+            result += singleQuoteOpen ? "\u2019" : "\u2018";
+            singleQuoteOpen = !singleQuoteOpen;
+          }
+          break;
+        default:
+          result += char;
+          break;
+      }
+    }
+    return result;
+  }
   function addConnectorPunctuation(value) {
     let next = value;
     for (const connector of ZH_CONNECTORS) {
@@ -19060,7 +19131,7 @@
   function punctuateTranscript(text2, locale) {
     const value = text2.trim().replace(/\s+/g, " ");
     if (!value) return "";
-    return addEndPunctuation(addConnectorPunctuation(value), locale);
+    return localizeTranscriptPunctuation(addEndPunctuation(addConnectorPunctuation(value), locale), locale);
   }
 
   // src/components/VoiceInputButton.tsx
@@ -19277,7 +19348,7 @@
         }
         const body = await response.json();
         if (typeof body.text !== "string" || !body.text.trim()) throw new ApiError("voice_provider_empty", "Voice recognition returned no content.");
-        onTextRef.current(body.text.trim());
+        onTextRef.current(localizeTranscriptPunctuation(body.text.trim(), localeRef.current));
         setErrorKey(null);
       } catch (error) {
         const key = voiceApiErrorKey(error);

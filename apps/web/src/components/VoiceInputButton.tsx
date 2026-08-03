@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { LoaderCircle, Mic, Square } from 'lucide-react'
 import { ApiError, fetchWithTimeout } from '../api'
 import { useLocale, useTranslation, type TranslationKey } from '../i18n'
-import { punctuateTranscript } from '../voicePunctuation'
+import { localizeTranscriptPunctuation, punctuateTranscript } from '../voicePunctuation'
 import type { VoiceProvider, VoiceSettingsResponse } from '../types'
 
 interface SpeechRecognitionResultLike {
@@ -267,7 +267,7 @@ export function VoiceInputButton({
       }
       const body = await response.json() as { text?: unknown }
       if (typeof body.text !== 'string' || !body.text.trim()) throw new ApiError('voice_provider_empty', 'Voice recognition returned no content.')
-      onTextRef.current(body.text.trim())
+      onTextRef.current(localizeTranscriptPunctuation(body.text.trim(), localeRef.current))
       setErrorKey(null)
     } catch (error) {
       const key = voiceApiErrorKey(error)
