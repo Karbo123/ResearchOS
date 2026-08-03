@@ -89,6 +89,49 @@ async function wait(ms) {
   await new Promise(resolveTimeout => setTimeout(resolveTimeout, ms))
 }
 
+async function elementCenter(selector) {
+  return evaluate(`(() => {
+    const element = document.querySelector(${JSON.stringify(selector)})
+    if (!element) return null
+    const rect = element.getBoundingClientRect()
+    return {
+      x: Math.round(rect.left + rect.width / 2),
+      y: Math.round(rect.top + rect.height / 2),
+      left: Math.round(rect.left),
+      top: Math.round(rect.top),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height),
+    }
+  })()`)
+}
+
+async function computedStyles(selector) {
+  return evaluate(`(() => {
+    const element = document.querySelector(${JSON.stringify(selector)})
+    if (!element) return null
+    const style = getComputedStyle(element)
+    return {
+      transform: style.transform,
+      left: style.left,
+      width: style.width,
+      paddingRight: style.paddingRight,
+      transitionProperty: style.transitionProperty,
+      transitionDuration: style.transitionDuration,
+      transitionTimingFunction: style.transitionTimingFunction,
+      backgroundColor: style.backgroundColor,
+      color: style.color,
+      zIndex: style.zIndex,
+      backdropFilter: style.backdropFilter,
+      webkitBackdropFilter: style.webkitBackdropFilter,
+    }
+  })()`)
+}
+
+async function pressKey(key, code, keyCode) {
+  await send('Input.dispatchKeyEvent', { type: 'rawKeyDown', key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode })
+  await send('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode })
+}
+
 const homeUrl = `${appBase}/`
 const projectUrl = `${appBase}/project/${projectSlug}/overview/overview`
 
@@ -218,26 +261,52 @@ await capture('108h-settings-mobile.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
 await navigate(homeUrl, 'en', 'light')
+const deleteHover = await elementCenter('.home-delete-action')
+if (deleteHover) {
+  await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: deleteHover.x, y: deleteHover.y, button: 'none' })
+  await wait(240)
+  deleteHover.style = await computedStyles('.home-delete-action')
+}
 await evaluate(`document.querySelector('.home-delete-action')?.click()`)
 await wait(600)
 const deleteLight = await evaluate(`(() => {
   const input = document.getElementById('delete-project-confirmation')
   const dialog = input?.closest('.modal-panel') || null
+  const modal = document.querySelector('.modal')
+  const topbar = document.querySelector('.topbar')
+  const modalRect = modal?.getBoundingClientRect()
+  const topbarRect = topbar?.getBoundingClientRect()
   return {
     visible: !!dialog,
     ariaLabel: dialog?.getAttribute('aria-label') || null,
     hasConfirmationInput: !!document.getElementById('delete-project-confirmation'),
     warning: document.querySelector('.delete-project-warning')?.textContent || null,
+    maskCoversTopbar: modalRect && topbarRect
+      ? modalRect.top <= topbarRect.top && modalRect.bottom >= topbarRect.bottom && modalRect.left <= topbarRect.left && modalRect.right >= topbarRect.right
+      : false,
   }
 })()`)
+deleteLight.mask = await computedStyles('.modal')
+deleteLight.panel = await computedStyles('.modal-panel')
 await capture('108h-delete-light.png')
 await navigate(homeUrl, 'en', 'dark')
 await evaluate(`document.querySelector('.home-delete-action')?.click()`)
 await wait(600)
 const deleteDark = await evaluate(`(() => {
   const input = document.getElementById('delete-project-confirmation')
-  return !!input?.closest('.modal-panel') && document.documentElement.dataset.theme === 'dark'
+  const modal = document.querySelector('.modal')
+  const topbar = document.querySelector('.topbar')
+  const modalRect = modal?.getBoundingClientRect()
+  const topbarRect = topbar?.getBoundingClientRect()
+  return {
+    visible: !!input?.closest('.modal-panel'),
+    theme: document.documentElement.dataset.theme,
+    maskCoversTopbar: modalRect && topbarRect
+      ? modalRect.top <= topbarRect.top && modalRect.bottom >= topbarRect.bottom && modalRect.left <= topbarRect.left && modalRect.right >= topbarRect.right
+      : false,
+  }
 })()`)
+deleteDark.mask = await computedStyles('.modal')
 await capture('108h-delete-dark.png')
 
 await navigate(projectUrl, 'en', 'light')
@@ -306,16 +375,114 @@ const longContent = await evaluate(`(() => {
 await capture('108h-long-content.png')
 
 await navigate(homeUrl, 'en', 'light')
-const actionMotion = await evaluate(`(() => {
+const actionRow = await elementCenter('.project-row')
+const actionMotion = {
+  rowFound: !!actionRow,
+  initial: await computedStyles('.project-actions-track'),
+  samples: [],
+}
+if (actionRow) {
+  await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: actionRow.x, y: actionRow.y, button: 'none' })
+  for (const delay of [0, 80, 220, 520]) {
+    if (delay) await wait(delay)
+    actionMotion.samples.push({ delay, ...(await computedStyles('.project-actions-track')) })
+  }
+  await capture('108h-action-hover.png')
+  actionMotion.mainButton = await computedStyles('.project-main-button')
+  actionMotion.pin = await computedStyles('.project-pin')
+  actionMotion.deleteAction = await computedStyles('.project-delete')
+  await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 1400, y: 50 })
+  await wait(620)
+  actionMotion.afterLeave = await computedStyles('.project-actions-track')
+}
+
+await navigate(homeUrl, 'en', 'light')
+await evaluate(`document.querySelector('.side-settings')?.click()`)
+await wait(650)
+await pressKey('Escape', 'Escape', 27)
+await wait(350)
+const programmaticFocus = await evaluate(`(() => {
+  const main = document.querySelector('.project-main-button')
+  main?.focus({ preventScroll: true })
   const track = document.querySelector('.project-actions-track')
-  const row = document.querySelector('.project-row')
   return {
-    exists: !!track,
-    transitionProperty: track ? getComputedStyle(track).transitionProperty : null,
-    transitionDuration: track ? getComputedStyle(track).transitionDuration : null,
-    rowHoverTransition: row ? getComputedStyle(row).transitionDuration : null,
+    activeTag: document.activeElement?.tagName || null,
+    activeClass: String(document.activeElement?.className || ''),
+    focusVisible: !!document.activeElement?.matches(':focus-visible'),
+    transform: track ? getComputedStyle(track).transform : null,
   }
 })()`)
+programmaticFocus.settled = await computedStyles('.project-actions-track')
+await evaluate(`document.activeElement?.blur?.()`)
+let keyboardFocus = null
+for (let attempt = 0; attempt < 40; attempt += 1) {
+  await pressKey('Tab', 'Tab', 9)
+  await wait(90)
+  keyboardFocus = await evaluate(`(() => {
+    const active = document.activeElement
+    const row = active?.closest('.project-row')
+    const track = document.querySelector('.project-actions-track')
+    return {
+      activeTag: active?.tagName || null,
+      activeClass: String(active?.className || ''),
+      isProjectRow: !!row,
+      focusVisible: active ? active.matches(':focus-visible') : false,
+      transform: track ? getComputedStyle(track).transform : null,
+    }
+  })()`)
+  if (keyboardFocus?.isProjectRow) break
+}
+if (keyboardFocus?.isProjectRow) {
+  await wait(280)
+  keyboardFocus.settledTransform = (await computedStyles('.project-actions-track'))?.transform
+  keyboardFocus.paddingRight = (await computedStyles('.project-main-button'))?.paddingRight
+}
+actionMotion.programmaticFocus = programmaticFocus
+actionMotion.keyboardFocus = keyboardFocus
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, themePersist, longContent, actionMotion }, null, 2))
+await navigate(projectUrl, 'en', 'light')
+const tabMotion = await evaluate(`(() => {
+  const nav = document.querySelector('.project-areas')
+  const indicator = nav?.querySelector('.sliding-tab-indicator')
+  return {
+    exists: !!indicator,
+    ready: indicator?.classList.contains('ready') || false,
+    activeLabel: nav?.querySelector('button[data-active="true"]')?.textContent?.trim() || null,
+    nextLabel: nav?.querySelector('button[data-active="false"]')?.textContent?.trim() || null,
+  }
+})()`)
+if (tabMotion.exists) {
+  tabMotion.before = await computedStyles('.project-areas .sliding-tab-indicator')
+  await evaluate(`document.querySelector('.project-areas button[data-active="false"]')?.click()`)
+  tabMotion.samples = []
+  for (const delay of [0, 80, 220, 560]) {
+    if (delay) await wait(delay)
+    tabMotion.samples.push({ delay, ...(await computedStyles('.project-areas .sliding-tab-indicator')) })
+  }
+  tabMotion.after = await computedStyles('.project-areas .sliding-tab-indicator')
+}
+
+await navigate(homeUrl, 'en', 'light')
+const sidebarResize = await evaluate(`(() => {
+  const resizer = document.querySelector('.sidebar-resizer')
+  const shell = document.querySelector('.app-shell')
+  return {
+    exists: !!resizer,
+    ariaMin: resizer?.getAttribute('aria-valuemin') || null,
+    ariaMax: resizer?.getAttribute('aria-valuemax') || null,
+    ariaNow: resizer?.getAttribute('aria-valuenow') || null,
+    width: shell?.style.getPropertyValue('--sidebar-width') || null,
+  }
+})()`)
+sidebarResize.originalWidth = sidebarResize.width ? Number.parseFloat(sidebarResize.width) : 276
+const resizeKey = sidebarResize.width === '380px' ? 'ArrowLeft' : 'ArrowRight'
+sidebarResize.usedKey = resizeKey
+await evaluate(`document.querySelector('.sidebar-resizer')?.focus()`)
+await pressKey(resizeKey, resizeKey, resizeKey === 'ArrowLeft' ? 37 : 39)
+await wait(320)
+sidebarResize.afterWidth = await evaluate(`document.querySelector('.app-shell')?.style.getPropertyValue('--sidebar-width') || null`)
+sidebarResize.changed = sidebarResize.width !== sidebarResize.afterWidth && sidebarResize.afterWidth !== null
+await evaluate(`localStorage.setItem('researchos.sidebarWidth', ${JSON.stringify(String(sidebarResize.originalWidth))})`)
+
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, themePersist, longContent, actionMotion, tabMotion, sidebarResize }, null, 2))
 socket.close()
