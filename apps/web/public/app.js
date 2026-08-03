@@ -13237,6 +13237,28 @@
     "reports.daily": "\u65E5\u62A5",
     "reports.title": "\u5B9A\u671F\u6C47\u62A5\u4E0E\u53CD\u9988",
     "reports.hint": "\u62A5\u544A\u3001\u53CD\u9988\u548C\u5BA1\u8BA1\u90FD\u53EA\u6765\u81EA\u5F53\u524D\u9879\u76EE\u771F\u5B9E\u8BB0\u5F55\u7684\u4E8B\u4EF6\u3002",
+    "reports.stateLegend": "\u72B6\u6001\u56FE\u4F8B",
+    "reports.scopeLabel": "\u5F53\u524D\u9879\u76EE\u8303\u56F4\uFF1A{slug}",
+    "reports.scopeHint": "\u672C\u9875\u62A5\u544A\u3001\u53CD\u9988\u4E0E\u5BA1\u8BA1\u53EA\u6765\u81EA\u5F53\u524D\u9879\u76EE\uFF0C\u4E0D\u6DF7\u5165\u5176\u4ED6\u9879\u76EE\u8BB0\u5F55\u3002",
+    "reports.state.completedFact": "\u5DF2\u5B8C\u6210\u4E8B\u5B9E",
+    "reports.state.structuralFailure": "\u7ED3\u6784\u5316\u5931\u8D25",
+    "reports.state.waitingDecision": "\u7B49\u5F85\u51B3\u5B9A",
+    "reports.state.modelSuggestion": "\u6A21\u578B\u5EFA\u8BAE",
+    "reports.state.unverifiedCandidate": "\u672A\u6838\u9A8C\u5019\u9009",
+    "reports.state.externalBlocker": "\u5916\u90E8\u963B\u585E",
+    "reports.state.empty": "\u7A7A\u72B6\u6001",
+    "reports.state.recorded": "\u5DF2\u8BB0\u5F55",
+    "reports.next.completedFact": "\u62A5\u544A\u6765\u6E90\u771F\u5B9E\u4E14\u72B6\u6001\u6709\u6548\uFF0C\u53EF\u5F15\u7528\uFF1B\u5982\u9700\u4FEE\u6539\u8BF7\u8BB0\u5F55\u53CD\u9988\u6216\u751F\u6210 Proposal\u3002",
+    "reports.next.structuralFailure": "\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u590D\u6838\u6216\u751F\u6210\u5931\u8D25\uFF0C\u4FEE\u590D\u6765\u6E90\u7F3A\u53E3\u540E\u91CD\u65B0\u751F\u6210\u5F53\u524D\u7A97\u53E3\u62A5\u544A\u3002",
+    "reports.next.waitingDecision": "\u7B49\u5F85\u4F60\u7684\u51B3\u5B9A\uFF1A\u786E\u8BA4\u3001\u8981\u6C42\u4FEE\u8BA2\u6216\u62D2\u7EDD\uFF1B\u6267\u884C\u524D\u4ECD\u9700\u8981 Proposal \u5BA1\u6279\u3002",
+    "reports.next.modelSuggestion": "\u8FD9\u662F\u5F85\u5BA1\u9605\u7684\u5EFA\u8BAE\u6216\u5019\u9009\uFF0C\u672A\u7ECF\u5BA1\u6279\u4E0D\u89C6\u4E3A\u5DF2\u6267\u884C\u4E8B\u5B9E\u3002",
+    "reports.next.unverifiedCandidate": "\u7F3A\u5C11\u53EF\u9A8C\u8BC1\u6765\u6E90\u5FEB\u7167\uFF0C\u4E0D\u80FD\u4F5C\u4E3A\u5DF2\u6838\u5B9E\u4E8B\u5B9E\uFF1B\u8865\u9F50\u6765\u6E90\u540E\u91CD\u65B0\u751F\u6210\u3002",
+    "reports.next.externalBlocker": "\u5916\u90E8\u6A21\u578B\u6216\u670D\u52A1\u4E0D\u53EF\u7528\uFF0C\u5148\u89E3\u51B3\u5916\u90E8\u963B\u585E\u540E\u91CD\u65B0\u751F\u6210\uFF0C\u4E0D\u9759\u9ED8\u964D\u7EA7\u3002",
+    "reports.next.empty": "\u5F53\u524D\u7A97\u53E3\u6CA1\u6709\u771F\u5B9E\u4E8B\u4EF6\uFF0C\u4FDD\u6301\u7A7A\u72B6\u6001\uFF1B\u4EA7\u751F\u4E8B\u4EF6\u540E\u53EF\u751F\u6210\u62A5\u544A\u3002",
+    "reports.next.recorded": "\u8BE5\u8BB0\u5F55\u5DF2\u4FDD\u5B58\u5E76\u8FDB\u5165\u5BA1\u8BA1\uFF0C\u4E0D\u4F5C\u4E3A\u79D1\u5B66\u7ED3\u8BBA\u3002",
+    "reports.sourceCounts": "\u6765\u6E90\u5FEB\u7167\uFF1A\u8BBA\u6587 {papers} \xB7 \u8BC1\u636E {evidence} \xB7 \u5B9E\u9A8C {experiments} \xB7 \u4EA7\u7269 {artifacts} \xB7 Proposal {proposals}",
+    "reports.missingSources": "\u6765\u6E90\u7F3A\u53E3\uFF1A{ids}",
+    "reports.noSourceSnapshot": "\u672A\u8BB0\u5F55\u6765\u6E90\u5FEB\u7167",
     "reports.periodLabel": "\u6C47\u62A5\u5468\u671F",
     "reports.weekly": "\u5468\u62A5",
     "reports.generated": "{period}\u5DF2\u751F\u6210\uFF1B\u6765\u6E90\u5FEB\u7167\u5DF2\u8BB0\u5F55",
@@ -14664,6 +14686,28 @@
     "reports.daily": "\u65E5\u5831",
     "reports.title": "\u5B9A\u671F\u5F59\u5831\u8207\u56DE\u994B",
     "reports.hint": "\u5831\u544A\u3001\u56DE\u994B\u8207\u7A3D\u6838\u90FD\u53EA\u4F86\u81EA\u76EE\u524D\u5C08\u6848\u771F\u5BE6\u8A18\u9304\u7684\u4E8B\u4EF6\u3002",
+    "reports.stateLegend": "\u72C0\u614B\u5716\u4F8B",
+    "reports.scopeLabel": "\u76EE\u524D\u5C08\u6848\u7BC4\u570D\uFF1A{slug}",
+    "reports.scopeHint": "\u672C\u9801\u5831\u544A\u3001\u56DE\u994B\u8207\u7A3D\u6838\u53EA\u4F86\u81EA\u76EE\u524D\u5C08\u6848\uFF0C\u4E0D\u6703\u6DF7\u5165\u5176\u4ED6\u5C08\u6848\u8A18\u9304\u3002",
+    "reports.state.completedFact": "\u5DF2\u5B8C\u6210\u4E8B\u5BE6",
+    "reports.state.structuralFailure": "\u7D50\u69CB\u5316\u5931\u6557",
+    "reports.state.waitingDecision": "\u7B49\u5F85\u6C7A\u5B9A",
+    "reports.state.modelSuggestion": "\u6A21\u578B\u5EFA\u8B70",
+    "reports.state.unverifiedCandidate": "\u672A\u6838\u9A57\u5019\u9078",
+    "reports.state.externalBlocker": "\u5916\u90E8\u963B\u585E",
+    "reports.state.empty": "\u7A7A\u72C0\u614B",
+    "reports.state.recorded": "\u5DF2\u8A18\u9304",
+    "reports.next.completedFact": "\u5831\u544A\u4F86\u6E90\u771F\u5BE6\u4E14\u72C0\u614B\u6709\u6548\uFF0C\u53EF\u5F15\u7528\uFF1B\u5982\u9700\u4FEE\u6539\u8ACB\u8A18\u9304\u56DE\u994B\u6216\u7522\u751F Proposal\u3002",
+    "reports.next.structuralFailure": "\u4F86\u6E90\u8B5C\u7CFB\u7121\u6CD5\u8907\u6838\u6216\u7522\u751F\u5931\u6557\uFF0C\u4FEE\u5FA9\u4F86\u6E90\u7F3A\u53E3\u5F8C\u91CD\u65B0\u7522\u751F\u76EE\u524D\u8996\u7A97\u5831\u544A\u3002",
+    "reports.next.waitingDecision": "\u7B49\u5F85\u4F60\u7684\u6C7A\u5B9A\uFF1A\u78BA\u8A8D\u3001\u8981\u6C42\u4FEE\u8A02\u6216\u62D2\u7D55\uFF1B\u57F7\u884C\u524D\u4ECD\u9700\u8981 Proposal \u5BE9\u6279\u3002",
+    "reports.next.modelSuggestion": "\u9019\u662F\u5F85\u5BE9\u95B1\u7684\u5EFA\u8B70\u6216\u5019\u9078\uFF0C\u672A\u7D93\u5BE9\u6279\u4E0D\u8996\u70BA\u5DF2\u57F7\u884C\u4E8B\u5BE6\u3002",
+    "reports.next.unverifiedCandidate": "\u7F3A\u5C11\u53EF\u9A57\u8B49\u4F86\u6E90\u5FEB\u7167\uFF0C\u4E0D\u80FD\u4F5C\u70BA\u5DF2\u6838\u5BE6\u4E8B\u5BE6\uFF1B\u88DC\u9F4A\u4F86\u6E90\u5F8C\u91CD\u65B0\u7522\u751F\u3002",
+    "reports.next.externalBlocker": "\u5916\u90E8\u6A21\u578B\u6216\u670D\u52D9\u4E0D\u53EF\u7528\uFF0C\u5148\u89E3\u6C7A\u5916\u90E8\u963B\u585E\u5F8C\u91CD\u65B0\u7522\u751F\uFF0C\u4E0D\u975C\u9ED8\u964D\u7D1A\u3002",
+    "reports.next.empty": "\u76EE\u524D\u8996\u7A97\u6C92\u6709\u771F\u5BE6\u4E8B\u4EF6\uFF0C\u4FDD\u6301\u7A7A\u72C0\u614B\uFF1B\u7522\u751F\u4E8B\u4EF6\u5F8C\u53EF\u7522\u751F\u5831\u544A\u3002",
+    "reports.next.recorded": "\u8A72\u8A18\u9304\u5DF2\u5132\u5B58\u4E26\u9032\u5165\u7A3D\u6838\uFF0C\u4E0D\u4F5C\u70BA\u79D1\u5B78\u7D50\u8AD6\u3002",
+    "reports.sourceCounts": "\u4F86\u6E90\u5FEB\u7167\uFF1A\u8AD6\u6587 {papers} \xB7 \u8B49\u64DA {evidence} \xB7 \u5BE6\u9A57 {experiments} \xB7 \u7522\u7269 {artifacts} \xB7 Proposal {proposals}",
+    "reports.missingSources": "\u4F86\u6E90\u7F3A\u53E3\uFF1A{ids}",
+    "reports.noSourceSnapshot": "\u672A\u8A18\u9304\u4F86\u6E90\u5FEB\u7167",
     "reports.periodLabel": "\u5F59\u5831\u9031\u671F",
     "reports.weekly": "\u9031\u5831",
     "reports.generated": "{period}\u5DF2\u7522\u751F\uFF1B\u4F86\u6E90\u5FEB\u7167\u5DF2\u8A18\u9304",
@@ -15968,6 +16012,28 @@
     "reports.daily": "Daily report",
     "reports.title": "Periodic reports and feedback",
     "reports.hint": "Reports, feedback, and audit only come from events actually recorded in the current project.",
+    "reports.stateLegend": "State legend",
+    "reports.scopeLabel": "Current project scope: {slug}",
+    "reports.scopeHint": "Reports, feedback, and audit on this page come only from the current project, never from other projects.",
+    "reports.state.completedFact": "Completed fact",
+    "reports.state.structuralFailure": "Structural failure",
+    "reports.state.waitingDecision": "Waiting decision",
+    "reports.state.modelSuggestion": "Model suggestion",
+    "reports.state.unverifiedCandidate": "Unverified candidate",
+    "reports.state.externalBlocker": "External blocker",
+    "reports.state.empty": "Empty state",
+    "reports.state.recorded": "Recorded",
+    "reports.next.completedFact": "The report has real, valid sources and can be cited; record feedback or create a Proposal to request changes.",
+    "reports.next.structuralFailure": "Source lineage cannot be verified or generation failed; fix the source gap and regenerate the current window.",
+    "reports.next.waitingDecision": "Waiting for your decision: acknowledge, request revision, or reject; execution still requires Proposal approval.",
+    "reports.next.modelSuggestion": "This is a reviewable suggestion or candidate; it is not an executed fact until approved.",
+    "reports.next.unverifiedCandidate": "A verifiable source snapshot is missing, so this cannot be treated as confirmed fact; regenerate after filling the source gap.",
+    "reports.next.externalBlocker": "An external model or service is unavailable; resolve the external blocker and regenerate without silent fallback.",
+    "reports.next.empty": "The current window has no real events, so the state stays empty; generate a report after events exist.",
+    "reports.next.recorded": "This record is saved to the audit trail and is not a scientific conclusion by itself.",
+    "reports.sourceCounts": "Source snapshot: papers {papers} \xB7 evidence {evidence} \xB7 experiments {experiments} \xB7 artifacts {artifacts} \xB7 Proposals {proposals}",
+    "reports.missingSources": "Source gap: {ids}",
+    "reports.noSourceSnapshot": "No source snapshot recorded",
     "reports.periodLabel": "Report period",
     "reports.weekly": "Weekly report",
     "reports.generated": "{period} generated; source snapshot recorded",
@@ -17272,6 +17338,28 @@
     "reports.daily": "Informe diario",
     "reports.title": "Informes peri\xF3dicos y comentarios",
     "reports.hint": "Los informes, comentarios y auditor\xEDas solo provienen de eventos realmente registrados en el proyecto actual.",
+    "reports.stateLegend": "Leyenda de estados",
+    "reports.scopeLabel": "\xC1mbito del proyecto actual: {slug}",
+    "reports.scopeHint": "Los informes, comentarios y auditor\xEDas de esta p\xE1gina provienen solo del proyecto actual, nunca de otros proyectos.",
+    "reports.state.completedFact": "Hecho completado",
+    "reports.state.structuralFailure": "Fallo estructural",
+    "reports.state.waitingDecision": "Esperando decisi\xF3n",
+    "reports.state.modelSuggestion": "Sugerencia del modelo",
+    "reports.state.unverifiedCandidate": "Candidato sin verificar",
+    "reports.state.externalBlocker": "Bloqueo externo",
+    "reports.state.empty": "Estado vac\xEDo",
+    "reports.state.recorded": "Registrado",
+    "reports.next.completedFact": "El informe tiene fuentes reales y v\xE1lidas y se puede citar; registra comentarios o crea una Propuesta para solicitar cambios.",
+    "reports.next.structuralFailure": "El linaje de fuentes no se puede verificar o la generaci\xF3n fall\xF3; corrige la falta de fuentes y regenera la ventana actual.",
+    "reports.next.waitingDecision": "Esperando tu decisi\xF3n: reconocer, solicitar revisi\xF3n o rechazar; la ejecuci\xF3n a\xFAn requiere aprobaci\xF3n de la Propuesta.",
+    "reports.next.modelSuggestion": "Es una sugerencia o candidato revisable; no es un hecho ejecutado hasta que se apruebe.",
+    "reports.next.unverifiedCandidate": "Falta una instant\xE1nea de fuentes verificable, as\xED que no se puede tratar como hecho confirmado; regenera tras cubrir el vac\xEDo de fuentes.",
+    "reports.next.externalBlocker": "Un modelo o servicio externo no est\xE1 disponible; resuelve el bloqueo externo y regenera sin degradaci\xF3n silenciosa.",
+    "reports.next.empty": "La ventana actual no tiene eventos reales, as\xED que el estado permanece vac\xEDo; genera un informe despu\xE9s de que existan eventos.",
+    "reports.next.recorded": "Este registro se guarda en la auditor\xEDa y no es una conclusi\xF3n cient\xEDfica por s\xED solo.",
+    "reports.sourceCounts": "Instant\xE1nea de fuentes: art\xEDculos {papers} \xB7 evidencia {evidence} \xB7 experimentos {experiments} \xB7 artefactos {artifacts} \xB7 Propuestas {proposals}",
+    "reports.missingSources": "Falta de fuentes: {ids}",
+    "reports.noSourceSnapshot": "No se registr\xF3 una instant\xE1nea de fuentes",
     "reports.periodLabel": "Periodo del informe",
     "reports.weekly": "Informe semanal",
     "reports.generated": "{period} generado; instant\xE1nea de fuentes registrada",
@@ -22700,6 +22788,96 @@
   function displayable(report) {
     return report?.status === "valid";
   }
+  var REPORT_STATE_CATEGORIES = [
+    "completedFact",
+    "structuralFailure",
+    "waitingDecision",
+    "modelSuggestion",
+    "unverifiedCandidate",
+    "externalBlocker",
+    "empty",
+    "recorded"
+  ];
+  function reportStateLabel(category, t) {
+    switch (category) {
+      case "completedFact":
+        return t("reports.state.completedFact");
+      case "structuralFailure":
+        return t("reports.state.structuralFailure");
+      case "waitingDecision":
+        return t("reports.state.waitingDecision");
+      case "modelSuggestion":
+        return t("reports.state.modelSuggestion");
+      case "unverifiedCandidate":
+        return t("reports.state.unverifiedCandidate");
+      case "externalBlocker":
+        return t("reports.state.externalBlocker");
+      case "empty":
+        return t("reports.state.empty");
+      case "recorded":
+        return t("reports.state.recorded");
+    }
+  }
+  function reportStateNext(category, t) {
+    switch (category) {
+      case "completedFact":
+        return t("reports.next.completedFact");
+      case "structuralFailure":
+        return t("reports.next.structuralFailure");
+      case "waitingDecision":
+        return t("reports.next.waitingDecision");
+      case "modelSuggestion":
+        return t("reports.next.modelSuggestion");
+      case "unverifiedCandidate":
+        return t("reports.next.unverifiedCandidate");
+      case "externalBlocker":
+        return t("reports.next.externalBlocker");
+      case "empty":
+        return t("reports.next.empty");
+      case "recorded":
+        return t("reports.next.recorded");
+    }
+  }
+  function reportCategory(report) {
+    const status = String(report?.status || "").toLowerCase();
+    if (status === "valid") return "completedFact";
+    if (status === "legacy_unverified") return "unverifiedCandidate";
+    if (["blocked", "failed", "invalid_response"].includes(status)) {
+      const reason = `${report?.blocking_reason || ""} ${JSON.stringify(report?.source_snapshot || {})}`.toLowerCase();
+      if (/(external|provider|region|model|timeout|rate_limit|unavailable|503)/.test(reason)) return "externalBlocker";
+      return "structuralFailure";
+    }
+    return "empty";
+  }
+  function categoryForFeedback(row) {
+    const status = String(row.status || "").toLowerCase();
+    if (status === "rejected") return "recorded";
+    if (status === "acknowledged" || status === "proposal_created") return "modelSuggestion";
+    if (status === "open" || status === "revision_requested") return "waitingDecision";
+    return "recorded";
+  }
+  function auditCategory(action) {
+    if (action.startsWith("proposal.") && !/(approved|rejected|cancelled)/.test(action)) return "waitingDecision";
+    return "recorded";
+  }
+  function sourceSnapshotSummary(report, t) {
+    const snapshot = report.source_snapshot;
+    if (!snapshot || Object.keys(snapshot).length === 0) return t("reports.noSourceSnapshot");
+    const papers = Array.isArray(snapshot.paper_ids) ? snapshot.paper_ids.length : 0;
+    const evidence = Array.isArray(snapshot.evidence_ids) ? snapshot.evidence_ids.length : 0;
+    const experiments = Array.isArray(snapshot.experiment_ids) ? snapshot.experiment_ids.length : 0;
+    const artifacts = Array.isArray(snapshot.artifact_ids) ? snapshot.artifact_ids.length : 0;
+    const proposals = Array.isArray(snapshot.proposal_ids) ? snapshot.proposal_ids.length : 0;
+    return t("reports.sourceCounts", { papers, evidence, experiments, artifacts, proposals });
+  }
+  function StateBadge({ category }) {
+    const { t } = useTranslation();
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: `report-state-badge state-${category}`, title: reportStateNext(category, t), children: reportStateLabel(category, t) });
+  }
+  function NextStep({ category }) {
+    const { t } = useTranslation();
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-next-step", children: reportStateNext(category, t) });
+  }
   function ReportsTab({
     project,
     onRefresh,
@@ -22805,8 +22983,22 @@
       }
     };
     const relevantAudit = auditRows.filter((row) => row.action.startsWith("human_feedback") || row.action.startsWith("proposal."));
+    const selectedReport = reports.find((report) => report.id === activeReportId) || reports[0];
+    const activeCategory = content ? "completedFact" : reportCategory(selectedReport);
+    const activeSourceReport = content ? reports.find((report) => report.id === activeReportId) : selectedReport;
+    const scopeLabel = project.slug || project.id.slice(0, 8);
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("reports.title"), hint: t("reports.hint") }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "report-state-legend", "aria-label": t("reports.stateLegend"), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "report-state-legend-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "report-scope-chip", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ShieldCheck, { size: 14, "aria-hidden": "true" }),
+            t("reports.scopeLabel", { slug: scopeLabel })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "muted", children: t("reports.scopeHint") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "report-state-legend-grid", children: REPORT_STATE_CATEGORIES.map((category) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: `report-state-chip state-${category}`, title: reportStateNext(category, t), children: reportStateLabel(category, t) }, category)) })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "settings-segmented reports-period-switch", role: "radiogroup", "aria-label": t("reports.periodLabel"), children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "daily", className: period === "daily" ? "active" : "", onClick: () => setPeriod("daily"), children: t("reports.daily") }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "weekly", className: period === "weekly" ? "active" : "", onClick: () => setPeriod("weekly"), children: t("reports.weekly") })
@@ -22825,19 +23017,35 @@
             ] }) })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: [
+          content ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "report-state-meta", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(StateBadge, { category: activeCategory }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NextStep, { category: activeCategory }),
+            activeSourceReport ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line", children: sourceSnapshotSummary(activeSourceReport, t) }),
+              activeSourceReport.missing_source_ids?.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line report-source-missing", children: t("reports.missingSources", { ids: activeSourceReport.missing_source_ids.join(", ") }) }) : null
+            ] }) : null
+          ] })
+        ] }),
         reports.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("reports.history") }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row report-history-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "report-row-title-line", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(StateBadge, { category: reportCategory(report) })
+              ] }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
                 report.id,
                 " \xB7 ",
                 t("reports.sourceSnapshot"),
                 " ",
                 report.source_snapshot ? t("common.recorded") : t("common.missing")
-              ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line", children: sourceSnapshotSummary(report, t) }),
+              report.missing_source_ids?.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line report-source-missing", children: t("reports.missingSources", { ids: report.missing_source_ids.join(", ") }) }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NextStep, { category: reportCategory(report) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: report.status || "legacy_unverified" }),
@@ -22857,6 +23065,8 @@
               formatDateTime(row.created_at, locale),
               row.reference_id ? ` \xB7 ${t("reports.reference")} ${row.reference_id.slice(0, 8)}` : ""
             ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(StateBadge, { category: categoryForFeedback(row) }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NextStep, { category: categoryForFeedback(row) }),
             row.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { className: "muted", children: [
               t("reports.decisionComment"),
               row.decision_comment
@@ -22931,7 +23141,9 @@
               formatDateTime(row.created_at, locale),
               " \xB7 ",
               JSON.stringify(row.details || {})
-            ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(StateBadge, { category: auditCategory(row.action) }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NextStep, { category: auditCategory(row.action) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "recorded" })
         ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("reports.noAudit") })

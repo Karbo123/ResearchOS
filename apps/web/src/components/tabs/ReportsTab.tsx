@@ -1,13 +1,110 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, FileText, Gavel, MessageSquare, RefreshCw, Send, X } from 'lucide-react'
+import { Check, FileText, Gavel, MessageSquare, RefreshCw, Send, ShieldCheck, X } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { AuditEvent, HumanFeedback, ProjectDetail, Report } from '../../types'
 import { MarkdownPreview } from '../MarkdownPreview'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
-import { formatDateTime, useTranslation } from '../../i18n'
+import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 
 function displayable(report: Report | undefined): boolean {
   return report?.status === 'valid'
+}
+
+type ReportStateCategory =
+  | 'completedFact'
+  | 'structuralFailure'
+  | 'waitingDecision'
+  | 'modelSuggestion'
+  | 'unverifiedCandidate'
+  | 'externalBlocker'
+  | 'empty'
+  | 'recorded'
+
+const REPORT_STATE_CATEGORIES: ReportStateCategory[] = [
+  'completedFact',
+  'structuralFailure',
+  'waitingDecision',
+  'modelSuggestion',
+  'unverifiedCandidate',
+  'externalBlocker',
+  'empty',
+  'recorded',
+]
+
+function reportStateLabel(category: ReportStateCategory, t: (key: TranslationKey) => string): string {
+  switch (category) {
+    case 'completedFact': return t('reports.state.completedFact')
+    case 'structuralFailure': return t('reports.state.structuralFailure')
+    case 'waitingDecision': return t('reports.state.waitingDecision')
+    case 'modelSuggestion': return t('reports.state.modelSuggestion')
+    case 'unverifiedCandidate': return t('reports.state.unverifiedCandidate')
+    case 'externalBlocker': return t('reports.state.externalBlocker')
+    case 'empty': return t('reports.state.empty')
+    case 'recorded': return t('reports.state.recorded')
+  }
+}
+
+function reportStateNext(category: ReportStateCategory, t: (key: TranslationKey) => string): string {
+  switch (category) {
+    case 'completedFact': return t('reports.next.completedFact')
+    case 'structuralFailure': return t('reports.next.structuralFailure')
+    case 'waitingDecision': return t('reports.next.waitingDecision')
+    case 'modelSuggestion': return t('reports.next.modelSuggestion')
+    case 'unverifiedCandidate': return t('reports.next.unverifiedCandidate')
+    case 'externalBlocker': return t('reports.next.externalBlocker')
+    case 'empty': return t('reports.next.empty')
+    case 'recorded': return t('reports.next.recorded')
+  }
+}
+
+function reportCategory(report: Report | undefined): ReportStateCategory {
+  const status = String(report?.status || '').toLowerCase()
+  if (status === 'valid') return 'completedFact'
+  if (status === 'legacy_unverified') return 'unverifiedCandidate'
+  if (['blocked', 'failed', 'invalid_response'].includes(status)) {
+    const reason = `${report?.blocking_reason || ''} ${JSON.stringify(report?.source_snapshot || {})}`.toLowerCase()
+    if (/(external|provider|region|model|timeout|rate_limit|unavailable|503)/.test(reason)) return 'externalBlocker'
+    return 'structuralFailure'
+  }
+  return 'empty'
+}
+
+function categoryForFeedback(row: HumanFeedback): ReportStateCategory {
+  const status = String(row.status || '').toLowerCase()
+  if (status === 'rejected') return 'recorded'
+  if (status === 'acknowledged' || status === 'proposal_created') return 'modelSuggestion'
+  if (status === 'open' || status === 'revision_requested') return 'waitingDecision'
+  return 'recorded'
+}
+
+function auditCategory(action: string): ReportStateCategory {
+  if (action.startsWith('proposal.') && !/(approved|rejected|cancelled)/.test(action)) return 'waitingDecision'
+  return 'recorded'
+}
+
+function sourceSnapshotSummary(report: Report, t: (key: TranslationKey, params?: Record<string, string | number>) => string): string {
+  const snapshot = report.source_snapshot
+  if (!snapshot || Object.keys(snapshot).length === 0) return t('reports.noSourceSnapshot')
+  const papers = Array.isArray(snapshot.paper_ids) ? snapshot.paper_ids.length : 0
+  const evidence = Array.isArray(snapshot.evidence_ids) ? snapshot.evidence_ids.length : 0
+  const experiments = Array.isArray(snapshot.experiment_ids) ? snapshot.experiment_ids.length : 0
+  const artifacts = Array.isArray(snapshot.artifact_ids) ? snapshot.artifact_ids.length : 0
+  const proposals = Array.isArray(snapshot.proposal_ids) ? snapshot.proposal_ids.length : 0
+  return t('reports.sourceCounts', { papers, evidence, experiments, artifacts, proposals })
+}
+
+function StateBadge({ category }: { category: ReportStateCategory }) {
+  const { t } = useTranslation()
+  return (
+    <span className={`report-state-badge state-${category}`} title={reportStateNext(category, t)}>
+      {reportStateLabel(category, t)}
+    </span>
+  )
+}
+
+function NextStep({ category }: { category: ReportStateCategory }) {
+  const { t } = useTranslation()
+  return <p className="report-next-step">{reportStateNext(category, t)}</p>
 }
 
 export function ReportsTab({
@@ -134,10 +231,27 @@ export function ReportsTab({
   }
 
   const relevantAudit = auditRows.filter(row => row.action.startsWith('human_feedback') || row.action.startsWith('proposal.'))
+  const selectedReport = reports.find(report => report.id === activeReportId) || reports[0]
+  const activeCategory: ReportStateCategory = content ? 'completedFact' : reportCategory(selectedReport)
+  const activeSourceReport = content ? reports.find(report => report.id === activeReportId) : selectedReport
+  const scopeLabel = project.slug || project.id.slice(0, 8)
 
   return (
     <>
       <SectionHeading title={t('reports.title')} hint={t('reports.hint')} />
+      <div className="report-state-legend" aria-label={t('reports.stateLegend')}>
+        <div className="report-state-legend-head">
+          <span className="report-scope-chip"><ShieldCheck size={14} aria-hidden="true" />{t('reports.scopeLabel', { slug: scopeLabel })}</span>
+          <span className="muted">{t('reports.scopeHint')}</span>
+        </div>
+        <div className="report-state-legend-grid">
+          {REPORT_STATE_CATEGORIES.map(category => (
+            <span className={`report-state-chip state-${category}`} key={category} title={reportStateNext(category, t)}>
+              {reportStateLabel(category, t)}
+            </span>
+          ))}
+        </div>
+      </div>
       <div className="settings-segmented reports-period-switch" role="radiogroup" aria-label={t('reports.periodLabel')}>
         <button type="button" role="radio" aria-checked={period === 'daily'} className={period === 'daily' ? 'active' : ''} onClick={() => setPeriod('daily')}>
           {t('reports.daily')}
@@ -155,8 +269,18 @@ export function ReportsTab({
         />
         <div className={`${content ? 'report' : activeReportStatus && activeReportStatus !== 'valid' ? 'empty report-blocked' : 'empty'}`}>
           {content ? <MarkdownPreview content={content} /> : activeReportStatus && activeReportStatus !== 'valid' ? t('reports.blocked', { reason: activeReportReason || t('reports.lineageUnverifiable') }) : t('reports.noneForPeriod', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}
+          <div className="report-state-meta">
+            <StateBadge category={activeCategory} />
+            <NextStep category={activeCategory} />
+            {activeSourceReport ? (
+              <>
+                <p className="report-source-line">{sourceSnapshotSummary(activeSourceReport, t)}</p>
+                {activeSourceReport.missing_source_ids?.length ? <p className="report-source-line report-source-missing">{t('reports.missingSources', { ids: activeSourceReport.missing_source_ids.join(', ') })}</p> : null}
+              </>
+            ) : null}
+          </div>
         </div>
-        {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatDateTime(report.created_at, locale)}</h3><p>{report.id} · {t('reports.sourceSnapshot')} {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
+        {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row report-history-row" key={report.id}><div><div className="report-row-title-line"><h3>{formatDateTime(report.created_at, locale)}</h3><StateBadge category={reportCategory(report)} /></div><p>{report.id} · {t('reports.sourceSnapshot')} {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p><p className="report-source-line">{sourceSnapshotSummary(report, t)}</p>{report.missing_source_ids?.length ? <p className="report-source-line report-source-missing">{t('reports.missingSources', { ids: report.missing_source_ids.join(', ') })}</p> : null}<NextStep category={reportCategory(report)} /></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
       </div>
 
       <div className="section">
@@ -168,6 +292,8 @@ export function ReportsTab({
                 <div>
                   <h3>{row.instruction}</h3>
                   <p>{row.category} · {formatDateTime(row.created_at, locale)}{row.reference_id ? ` · ${t('reports.reference')} ${row.reference_id.slice(0, 8)}` : ''}</p>
+                  <StateBadge category={categoryForFeedback(row)} />
+                  <NextStep category={categoryForFeedback(row)} />
                   {row.decision_comment ? <p className="muted">{t('reports.decisionComment')}{row.decision_comment}</p> : null}
                 </div>
                 <div className="button-row">
@@ -195,7 +321,7 @@ export function ReportsTab({
 
       <div className="section">
         <SectionHeading title={t('reports.auditTitle')} hint={t('reports.auditHint', { projectId: project.id })} extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void onRefresh() }}><RefreshCw size={15} />{t('topbar.refresh')}</button></ButtonRow>} />
-        {loadingAudit ? <EmptyState text={t('reports.loadingAudit')} /> : relevantAudit.length ? <div className="data-list">{relevantAudit.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatDateTime(row.created_at, locale)} · {JSON.stringify(row.details || {})}</p></div><Badge status="recorded" /></div>)}</div> : <EmptyState text={t('reports.noAudit')} />}
+        {loadingAudit ? <EmptyState text={t('reports.loadingAudit')} /> : relevantAudit.length ? <div className="data-list">{relevantAudit.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatDateTime(row.created_at, locale)} · {JSON.stringify(row.details || {})}</p><StateBadge category={auditCategory(row.action)} /><NextStep category={auditCategory(row.action)} /></div><Badge status="recorded" /></div>)}</div> : <EmptyState text={t('reports.noAudit')} />}
       </div>
     </>
   )

@@ -434,6 +434,36 @@ const contextSwitch = {
 }
 await capture('108h-context-switch.png')
 
+const reportUrl = `${appBase}/project/${projectSlug}/overview/reports`
+await navigate(reportUrl, 'en', 'light')
+const reportStates = await evaluate(`(() => {
+  const legend = document.querySelector('.report-state-legend')
+  const scope = document.querySelector('.report-scope-chip')
+  const activeBadge = document.querySelector('.report-state-meta .report-state-badge')
+  const sourceLine = document.querySelector('.report-source-line')
+  const feedbackBadge = document.querySelector('.feedback-row .report-state-badge')
+  const auditBadge = document.querySelector('.data-row:not(.feedback-row):not(.report-history-row) .report-state-badge')
+  return {
+    legendExists: !!legend,
+    legendChips: document.querySelectorAll('.report-state-chip').length,
+    scopeText: scope?.textContent?.trim() || null,
+    activeBadge: activeBadge?.textContent?.trim() || null,
+    activeNextStep: document.querySelector('.report-state-meta .report-next-step')?.textContent?.trim() || null,
+    sourceLine: sourceLine?.textContent?.trim() || null,
+    feedbackBadge: feedbackBadge?.textContent?.trim() || null,
+    auditBadge: auditBadge?.textContent?.trim() || null,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-report-states.png')
+await navigate(reportUrl, 'en', 'dark')
+const reportStatesDark = await evaluate(`({
+  legendVisible: !!document.querySelector('.report-state-legend'),
+  theme: document.documentElement.dataset.theme,
+  overflowX: document.documentElement.scrollWidth > window.innerWidth,
+})`)
+await capture('108h-report-states-dark.png')
+
 const paperUrl = `${appBase}/project/${projectSlug}/paper/introduction`
 await navigate(paperUrl, 'en', 'light')
 const longContent = await evaluate(`(() => {
@@ -686,5 +716,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
 socket.close()
