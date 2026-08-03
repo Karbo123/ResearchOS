@@ -1,9 +1,11 @@
 import crypto from 'node:crypto'
+import { rmSync } from 'node:fs'
 import { describe, expect, it, afterAll, beforeAll } from 'vitest'
 import { database, migrate } from '../src/database.js'
 import { isCurrentProjectSlug, nextAvailableProjectSlug, normalizeProjectSlug, normalizeProjectSlugKeywords } from '../src/project-slug.js'
 import { migrateProjectSlugs } from '../src/project-slug-migration.js'
 import { app } from '../src/index.js'
+import { projectRoot } from '../src/project-storage.js'
 
 const projectId = crypto.randomUUID()
 const newProjectId = crypto.randomUUID()
@@ -22,12 +24,36 @@ describe('project URL slugs', () => {
   })
 
   afterAll(async () => {
+    await database.query('DELETE FROM idea_versions WHERE project_id=ANY($1::uuid[])', [[projectId, newProjectId, collisionProjectId, migrationProjectId]])
     await database.query('DELETE FROM projects WHERE id=ANY($1::uuid[])', [[projectId, newProjectId, collisionProjectId, migrationProjectId]])
   })
 
   it('normalizes exactly two English words and a four-character suffix', () => {
     expect(normalizeProjectSlug(' CNN_minimal_2Q95 ')).toBe('cnn-minimal-2q95')
     expect(normalizeProjectSlugKeywords(['ViT', 'satellite'])).toBe('vit-satellite')
+  })
+
+  it('creates a project from strict slug and title without an Idea session', async () => {
+    const slug = `create-test-${projectId.slice(0, 4)}`
+    const response = await app.request('/api/projects', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ slug, title: 'Lightweight creation test' }),
+    })
+    expect(response.status).toBe(201)
+    const created = await response.json() as { project_id: string; project: { slug: string; title: string } }
+    expect(created.project).toMatchObject({ slug, title: 'Lightweight creation test' })
+
+    const listed = await app.request('/api/projects')
+    expect(listed.status).toBe(200)
+    const summaries = await listed.json() as Array<Record<string, unknown>>
+    const row = summaries.find(project => project.id === created.project_id)
+    expect(row).toMatchObject({ slug, title: 'Lightweight creation test', experiment_total: 0, pending_approvals: 0 })
+
+    await database.query('DELETE FROM audit_events WHERE project_id=$1', [created.project_id])
+    await database.query('DELETE FROM idea_versions WHERE project_id=$1', [created.project_id])
+    await database.query('DELETE FROM projects WHERE id=$1', [created.project_id])
+    rmSync(projectRoot(created.project_id), { recursive: true, force: true })
   })
 
   it('rejects missing, repeated, extra, or malformed slug parts', () => {

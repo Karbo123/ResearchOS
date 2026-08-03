@@ -20,6 +20,33 @@ export async function moveSessionUploadsIntoProject(projectId: string, sessionId
 
 export type ProjectRow = { id: string; slug: string; title: string; status: string; pinned: boolean; sidebar_order: number; current_idea_version: number; current_stage: string; created_at: string; updated_at: string }
 
+export type ProjectSummaryRow = ProjectRow & {
+  experiment_total: number
+  experiment_running: number
+  experiment_completed: number
+  pending_approvals: number
+  paper_count: number
+  related_work_count: number
+  paper_draft_count: number
+}
+
+export async function listProjectSummaries(status?: string): Promise<ProjectSummaryRow[]> {
+  const where = status ? 'WHERE p.status=$1' : ''
+  return rows<ProjectSummaryRow>(`
+    SELECT p.*,
+      (SELECT COUNT(*)::integer FROM experiments e WHERE e.project_id=p.id) AS experiment_total,
+      (SELECT COUNT(*)::integer FROM experiments e WHERE e.project_id=p.id AND e.status='running') AS experiment_running,
+      (SELECT COUNT(*)::integer FROM experiments e WHERE e.project_id=p.id AND e.status='completed') AS experiment_completed,
+      (SELECT COUNT(*)::integer FROM proposals q WHERE q.project_id=p.id AND q.status='pending') AS pending_approvals,
+      (SELECT COUNT(*)::integer FROM papers w WHERE w.project_id=p.id) AS paper_count,
+      (SELECT COUNT(*)::integer FROM related_work_candidates r WHERE r.project_id=p.id) AS related_work_count,
+      (SELECT COUNT(*)::integer FROM proposals pd WHERE pd.project_id=p.id AND pd.kind='code_patch' AND pd.payload->>'patch_kind'='latex') AS paper_draft_count
+    FROM projects p
+    ${where}
+    ORDER BY p.pinned DESC,p.sidebar_order ASC,p.updated_at DESC,p.created_at DESC,p.id
+  `, status ? [status] : [])
+}
+
 export async function reorderProjectGroup(projectIds: string[]): Promise<ProjectRow[]> {
   return database.transaction(async transaction => {
     const found = (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE id=ANY($1::uuid[])', [projectIds])).rows

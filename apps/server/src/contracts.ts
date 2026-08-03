@@ -38,9 +38,8 @@ export const chatRequest = z.object({
 }).strict()
 
 export const projectCreateRequest = z.object({
-  session_id: uuid,
-  confirmed: z.literal(true),
-  slug: z.string().trim().max(120).nullable().optional(),
+  slug: z.string().trim().min(1).max(120),
+  title: z.string().trim().min(1).max(240),
 }).strict()
 export const projectDeleteRequest = z.object({
   project_title: z.string().trim().min(1).max(240),

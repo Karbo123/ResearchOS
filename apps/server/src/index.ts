@@ -21,8 +21,8 @@ import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeVoice } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
-import { createProjectWorkspace, enqueue, moveSessionUploadsIntoProject, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
-import { nextAvailableProjectSlug, normalizeProjectSlug, normalizeProjectSlugKeywords } from './project-slug.js'
+import { createProjectWorkspace, enqueue, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
+import { normalizeProjectSlug } from './project-slug.js'
 import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal } from './paper-service.js'
@@ -32,7 +32,7 @@ import { scanFile } from './malware-scanner.js'
 import { canonicalRepositoryUrl, discoverRepositoryCandidates, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
 import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
-import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
+import { applyMemoryRevocation, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
 import { computedEmbeddingSettings, projectEmbeddingSettings, publicProjectEmbeddingSettings, saveProjectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, stopPoolInstance } from './supermemory-instance.js'
 import { buildArtifactPreview, verifyArtifactFile } from './artifact-preview-service.js'
@@ -307,57 +307,30 @@ app.post('/api/chat/stream', async context => {
 
 app.post('/api/projects', async context => {
   const body = await jsonBody(context, projectCreateRequest)
-  const session = await one<SessionRow>('SELECT * FROM conversation_sessions WHERE id=$1', [body.session_id])
-  if (!session) throw new ApiError(404, 'session_not_found', '对话会话不存在。')
-  if (session.phase !== 'ready_for_confirmation') throw new ApiError(409, 'idea_not_ready', '研究 Idea 尚未达到可确认状态。')
   const id = crypto.randomUUID()
-  const title = typeof session.draft.title === 'string' ? session.draft.title : 'Untitled Research Project'
+  const title = body.title
   let slug: string
-  if (body.slug?.trim()) {
-    try { slug = normalizeProjectSlug(body.slug) }
-    catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由两个英文小写单词和四位小写字母或数字组成，并用连字符连接。') }
-    if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换两个词和四位后缀。')
-  } else {
-    const slugResult = await mastraJson<{ result: { keywords: string[] } }>('/internal/agents/project-slug', { idea: session.draft, tier: 'medium' })
-    try { slug = await nextAvailableProjectSlug(normalizeProjectSlugKeywords(slugResult.result.keywords)) }
-    catch (error) {
-      if (error instanceof Error && error.message === 'project_slug_invalid') throw new ApiError(422, 'project_slug_generation_failed', '模型生成的项目地址标识未提供严格的两个语义词格式。')
-      throw new ApiError(503, 'project_slug_unavailable', '暂时无法生成唯一的项目地址标识，请稍后重试。')
-    }
-  }
+  try { slug = normalizeProjectSlug(body.slug) }
+  catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由两个英文小写单词和四位小写字母或数字组成，并用连字符连接。') }
+  if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换两个词和四位后缀。')
+  const spec = { schema_version: '1.0', idea: { title } }
   await database.transaction(async transaction => {
     const nextOrder = (await transaction.query<{ next_order: number }>('SELECT COALESCE(MAX(sidebar_order),-1)+1 AS next_order FROM projects WHERE pinned=FALSE')).rows[0]?.next_order || 0
     await transaction.query('INSERT INTO projects(id,slug,title,sidebar_order) VALUES ($1,$2,$3,$4)', [id, slug, title, nextOrder])
-    await transaction.query('INSERT INTO idea_versions(id,project_id,version,spec) VALUES ($1,$2,1,$3)', [crypto.randomUUID(), id, { schema_version: '1.0', idea: session.draft }])
-    await transaction.query("UPDATE conversation_sessions SET project_id=$2,phase='supervising',updated_at=NOW() WHERE id=$1", [session.id, id])
-    await transaction.query('UPDATE uploaded_files SET project_id=$2 WHERE session_id=$1 AND project_id IS NULL', [session.id, id])
+    await transaction.query('INSERT INTO idea_versions(id,project_id,version,spec) VALUES ($1,$2,1,$3)', [crypto.randomUUID(), id, spec])
   })
-  try { await createProjectWorkspace(id, slug, { schema_version: '1.0', idea: session.draft }) }
+  await audit('project.created', id, { slug, title })
+  try { await createProjectWorkspace(id, slug, spec) }
   catch (error) {
     await database.query('DELETE FROM projects WHERE id=$1', [id])
     throw error
   }
-  try { await moveSessionUploadsIntoProject(id, session.id) }
-  catch (error) {
-    await database.query('DELETE FROM projects WHERE id=$1', [id]).catch(() => undefined)
-    throw new ApiError(500, 'project_upload_migration_failed', error instanceof Error ? error.message : '项目上传文件迁移失败。')
-  }
-  if (supermemoryEnabled()) {
-    try { await ingestConversationMemory(id, session.id) }
-    catch (error) {
-      if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) throw new ApiError(error.status, error.code, error.message)
-      throw error
-    }
-    const uploadedFiles = await rows<{ id: string }>('SELECT id FROM uploaded_files WHERE session_id=$1 AND project_id=$2 ORDER BY created_at,id', [session.id, id])
-    for (const uploadedFile of uploadedFiles) await enqueue(id, 'material_index', { uploaded_file_id: uploadedFile.id }, `material-index:${uploadedFile.id}`)
-  }
-  await enqueue(id, 'research_bootstrap', { project_id: id }, `research-bootstrap:${id}:v1`)
   return context.json({ project_id: id, project: { id, slug, title, status: 'active' } }, 201)
 })
 app.get('/api/projects', async context => {
   const status = context.req.query('status')
   if (status && !['active', 'paused', 'cancelled'].includes(status)) throw new ApiError(422, 'invalid_project_status', '项目状态筛选无效。')
-  return context.json(await rows<ProjectRow>(`SELECT * FROM projects${status ? ' WHERE status=$1' : ''} ORDER BY pinned DESC,sidebar_order ASC,updated_at DESC,created_at DESC,id`, status ? [status] : []))
+  return context.json(await listProjectSummaries(status || undefined))
 })
 app.patch('/api/projects/order', async context => {
   const body = await jsonBody(context, projectOrderRequest)

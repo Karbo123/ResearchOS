@@ -38,6 +38,17 @@ export interface ProjectSummary {
   status?: string
   pinned?: boolean
   sidebar_order?: number
+  current_idea_version?: number
+  current_stage?: string
+  created_at?: string
+  updated_at?: string
+  experiment_total?: number
+  experiment_running?: number
+  experiment_completed?: number
+  pending_approvals?: number
+  paper_count?: number
+  related_work_count?: number
+  paper_draft_count?: number
 }
 
 export interface IdeaSpec {
