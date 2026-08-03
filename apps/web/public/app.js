@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react27 = __toESM(require_react(), 1);
+  var import_react28 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -12857,6 +12857,14 @@
     "common.reject": "\u62D2\u7EDD",
     "common.send": "\u53D1\u9001",
     "common.sendShortcutHint": "Enter \u6362\u884C \xB7 Ctrl+Enter \u53D1\u9001",
+    "voice.start": "\u8BED\u97F3\u8F93\u5165",
+    "voice.stop": "\u505C\u6B62\u8BED\u97F3\u8F93\u5165",
+    "voice.listening": "\u6B63\u5728\u8046\u542C\u2026",
+    "voice.unsupported": "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8F93\u5165",
+    "voice.permissionDenied": "\u65E0\u6CD5\u4F7F\u7528\u9EA6\u514B\u98CE\uFF0C\u8BF7\u5728\u6D4F\u89C8\u5668\u4E2D\u5141\u8BB8\u9EA6\u514B\u98CE\u6743\u9650",
+    "voice.noSpeech": "\u6CA1\u6709\u542C\u5230\u8BED\u97F3\uFF0C\u8BF7\u91CD\u8BD5",
+    "voice.audioError": "\u9EA6\u514B\u98CE\u4E0D\u53EF\u7528\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u5907",
+    "voice.error": "\u8BED\u97F3\u8BC6\u522B\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5",
     "common.loadingProject": "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u5173\u95ED",
@@ -13871,6 +13879,14 @@
     "common.reject": "\u62D2\u7D55",
     "common.send": "\u50B3\u9001",
     "common.sendShortcutHint": "Enter \u63DB\u884C \xB7 Ctrl+Enter \u50B3\u9001",
+    "voice.start": "\u8A9E\u97F3\u8F38\u5165",
+    "voice.stop": "\u505C\u6B62\u8A9E\u97F3\u8F38\u5165",
+    "voice.listening": "\u6B63\u5728\u8046\u807D\u2026",
+    "voice.unsupported": "\u76EE\u524D\u700F\u89BD\u5668\u4E0D\u652F\u63F4\u8A9E\u97F3\u8F38\u5165",
+    "voice.permissionDenied": "\u7121\u6CD5\u4F7F\u7528\u9EA5\u514B\u98A8\uFF0C\u8ACB\u5728\u700F\u89BD\u5668\u4E2D\u5141\u8A31\u9EA5\u514B\u98A8\u6B0A\u9650",
+    "voice.noSpeech": "\u6C92\u6709\u807D\u5230\u8A9E\u97F3\uFF0C\u8ACB\u91CD\u8A66",
+    "voice.audioError": "\u9EA5\u514B\u98A8\u4E0D\u53EF\u7528\uFF0C\u8ACB\u6AA2\u67E5\u88DD\u7F6E",
+    "voice.error": "\u8A9E\u97F3\u8FA8\u8B58\u5931\u6557\uFF0C\u8ACB\u91CD\u8A66",
     "common.loadingProject": "\u6B63\u5728\u8F09\u5165\u5C08\u6848\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u95DC\u9589",
@@ -14885,6 +14901,14 @@
     "common.reject": "Reject",
     "common.send": "Send",
     "common.sendShortcutHint": "Enter for a new line \xB7 Ctrl+Enter to send",
+    "voice.start": "Voice input",
+    "voice.stop": "Stop voice input",
+    "voice.listening": "Listening\u2026",
+    "voice.unsupported": "This browser does not support voice input",
+    "voice.permissionDenied": "Microphone access is blocked. Allow the microphone in your browser and try again.",
+    "voice.noSpeech": "No speech detected. Please try again.",
+    "voice.audioError": "Microphone unavailable. Check your device.",
+    "voice.error": "Voice recognition failed. Please try again.",
     "common.loadingProject": "Loading project\u2026",
     "common.seconds": "sec",
     "common.close": "Close",
@@ -15899,6 +15923,14 @@
     "common.reject": "Rechazar",
     "common.send": "Enviar",
     "common.sendShortcutHint": "Enter para una l\xEDnea nueva \xB7 Ctrl+Enter para enviar",
+    "voice.start": "Entrada por voz",
+    "voice.stop": "Detener entrada por voz",
+    "voice.listening": "Escuchando\u2026",
+    "voice.unsupported": "Este navegador no admite entrada por voz",
+    "voice.permissionDenied": "No se puede usar el micr\xF3fono. Permite el acceso al micr\xF3fono en el navegador.",
+    "voice.noSpeech": "No se detect\xF3 voz. Int\xE9ntalo de nuevo.",
+    "voice.audioError": "Micr\xF3fono no disponible. Revisa tu dispositivo.",
+    "voice.error": "El reconocimiento de voz fall\xF3. Int\xE9ntalo de nuevo.",
     "common.loadingProject": "Cargando proyecto\u2026",
     "common.seconds": "seg",
     "common.close": "Cerrar",
@@ -17508,18 +17540,26 @@
   ];
   var MessageSquare = createLucideIcon("message-square", __iconNode38);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/mic.mjs
   var __iconNode39 = [
+    ["path", { d: "M12 19v3", key: "npa21l" }],
+    ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
+    ["rect", { x: "9", y: "2", width: "6", height: "13", rx: "3", key: "s6n7sd" }]
+  ];
+  var Mic = createLucideIcon("mic", __iconNode39);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
+  var __iconNode40 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode39);
+  var Network = createLucideIcon("network", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode40 = [
+  var __iconNode41 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -17532,10 +17572,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode40);
+  var PackageCheck = createLucideIcon("package-check", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode41 = [
+  var __iconNode42 = [
     [
       "path",
       {
@@ -17548,10 +17588,10 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode41);
+  var Palette = createLucideIcon("palette", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode42 = [
+  var __iconNode43 = [
     [
       "path",
       {
@@ -17560,17 +17600,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode42);
+  var Paperclip = createLucideIcon("paperclip", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode43 = [
+  var __iconNode44 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode43);
+  var Pause = createLucideIcon("pause", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin-off.mjs
-  var __iconNode44 = [
+  var __iconNode45 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     ["path", { d: "M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89", key: "znwnzq" }],
     ["path", { d: "m2 2 20 20", key: "1ooewy" }],
@@ -17582,10 +17622,10 @@
       }
     ]
   ];
-  var PinOff = createLucideIcon("pin-off", __iconNode44);
+  var PinOff = createLucideIcon("pin-off", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin.mjs
-  var __iconNode45 = [
+  var __iconNode46 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     [
       "path",
@@ -17595,10 +17635,10 @@
       }
     ]
   ];
-  var Pin = createLucideIcon("pin", __iconNode45);
+  var Pin = createLucideIcon("pin", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode46 = [
+  var __iconNode47 = [
     [
       "path",
       {
@@ -17607,17 +17647,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode46);
+  var Play = createLucideIcon("play", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode47 = [
+  var __iconNode48 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode47);
+  var Plus = createLucideIcon("plus", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode48 = [
+  var __iconNode49 = [
     [
       "path",
       {
@@ -17633,34 +17673,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode48);
+  var Quote = createLucideIcon("quote", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode49 = [
+  var __iconNode50 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode49);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode50 = [
+  var __iconNode51 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode50);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode51 = [
+  var __iconNode52 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode51);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode52 = [
+  var __iconNode53 = [
     [
       "path",
       {
@@ -17671,10 +17711,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode52);
+  var Save = createLucideIcon("save", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode53 = [
+  var __iconNode54 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -17683,17 +17723,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode53);
+  var ScanText = createLucideIcon("scan-text", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode54 = [
+  var __iconNode55 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode54);
+  var Search = createLucideIcon("search", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode55 = [
+  var __iconNode56 = [
     [
       "path",
       {
@@ -17703,10 +17743,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode55);
+  var Send = createLucideIcon("send", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode56 = [
+  var __iconNode57 = [
     [
       "path",
       {
@@ -17716,20 +17756,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode56);
+  var Settings = createLucideIcon("settings", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode57 = [
+  var __iconNode58 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode57);
+  var Share2 = createLucideIcon("share-2", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode58 = [
+  var __iconNode59 = [
     [
       "path",
       {
@@ -17740,10 +17780,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode58);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode59 = [
+  var __iconNode60 = [
     [
       "path",
       {
@@ -17753,10 +17793,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode59);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode60 = [
+  var __iconNode61 = [
     [
       "path",
       {
@@ -17768,26 +17808,26 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode60);
+  var Sparkles = createLucideIcon("sparkles", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode61 = [
+  var __iconNode62 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode61);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode62 = [
+  var __iconNode63 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode62);
+  var Square = createLucideIcon("square", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode63 = [
+  var __iconNode64 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -17798,10 +17838,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode63);
+  var Stamp = createLucideIcon("stamp", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode64 = [
+  var __iconNode65 = [
     [
       "path",
       {
@@ -17810,27 +17850,27 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode64);
+  var Table2 = createLucideIcon("table-2", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode65 = [
+  var __iconNode66 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode65);
+  var Terminal = createLucideIcon("terminal", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode66 = [
+  var __iconNode67 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode66);
+  var Trash2 = createLucideIcon("trash-2", __iconNode67);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode67 = [
+  var __iconNode68 = [
     [
       "path",
       {
@@ -17841,10 +17881,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode67);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode68);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode68 = [
+  var __iconNode69 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -17853,22 +17893,22 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode68);
+  var Waypoints = createLucideIcon("waypoints", __iconNode69);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode69 = [
+  var __iconNode70 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode69);
+  var Workflow = createLucideIcon("workflow", __iconNode70);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode70 = [
+  var __iconNode71 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode70);
+  var X = createLucideIcon("x", __iconNode71);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -18635,7 +18675,7 @@
   }
 
   // src/components/IdeaView.tsx
-  var import_react10 = __toESM(require_react(), 1);
+  var import_react11 = __toESM(require_react(), 1);
 
   // src/components/SpecPane.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
@@ -18841,8 +18881,126 @@
     );
   }
 
-  // src/components/IdeaView.tsx
+  // src/components/VoiceInputButton.tsx
+  var import_react10 = __toESM(require_react(), 1);
   var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  function recognitionLanguage(locale) {
+    if (locale === "zh-TW") return "zh-TW";
+    if (locale === "en") return "en-US";
+    if (locale === "es") return "es-ES";
+    return "zh-CN";
+  }
+  function createRecognition() {
+    if (typeof window === "undefined") return null;
+    const browserWindow = window;
+    const Constructor = browserWindow.SpeechRecognition ?? browserWindow.webkitSpeechRecognition;
+    return Constructor ? new Constructor() : null;
+  }
+  function errorTranslation(event) {
+    if (event.error === "not-allowed" || event.error === "service-not-allowed") return "voice.permissionDenied";
+    if (event.error === "no-speech") return "voice.noSpeech";
+    if (event.error === "audio-capture") return "voice.audioError";
+    return "voice.error";
+  }
+  function VoiceInputButton({
+    disabled = false,
+    onText,
+    onError
+  }) {
+    const { t } = useTranslation();
+    const locale = useLocale();
+    const [listening, setListening] = (0, import_react10.useState)(false);
+    const [errorKey, setErrorKey] = (0, import_react10.useState)(null);
+    const recognitionRef = (0, import_react10.useRef)(null);
+    const onTextRef = (0, import_react10.useRef)(onText);
+    const onErrorRef = (0, import_react10.useRef)(onError);
+    (0, import_react10.useEffect)(() => {
+      onTextRef.current = onText;
+      onErrorRef.current = onError;
+    });
+    (0, import_react10.useEffect)(() => {
+      const recognition = createRecognition();
+      if (!recognition) return;
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+      recognition.lang = recognitionLanguage(locale);
+      recognition.onstart = () => {
+        setListening(true);
+        setErrorKey(null);
+      };
+      recognition.onend = () => setListening(false);
+      recognition.onerror = (event) => {
+        setListening(false);
+        const key = errorTranslation(event);
+        setErrorKey(key);
+        onErrorRef.current?.(key);
+      };
+      recognition.onresult = (event) => {
+        let final = "";
+        let interim = "";
+        for (let index = 0; index < event.results.length; index += 1) {
+          const item = event.results[index];
+          const transcript = item[0]?.transcript ?? "";
+          if (item.isFinal) final += transcript;
+          else interim += transcript;
+        }
+        const text2 = `${final}${interim}`.trim();
+        if (text2) onTextRef.current(text2);
+      };
+      recognitionRef.current = recognition;
+      return () => {
+        recognition.onstart = null;
+        recognition.onend = null;
+        recognition.onerror = null;
+        recognition.onresult = null;
+        recognition.abort();
+        recognitionRef.current = null;
+      };
+    }, []);
+    (0, import_react10.useEffect)(() => {
+      if (recognitionRef.current) recognitionRef.current.lang = recognitionLanguage(locale);
+    }, [locale]);
+    const supported = recognitionRef.current !== null;
+    const label = !supported ? t("voice.unsupported") : listening ? t("voice.stop") : t("voice.start");
+    const title = errorKey ? t(errorKey) : label;
+    const toggle = () => {
+      const recognition = recognitionRef.current;
+      if (!recognition || disabled) return;
+      if (listening) {
+        recognition.stop();
+        return;
+      }
+      setErrorKey(null);
+      recognition.lang = recognitionLanguage(locale);
+      try {
+        recognition.start();
+      } catch {
+        setErrorKey("voice.error");
+        onErrorRef.current?.("voice.error");
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+      "button",
+      {
+        type: "button",
+        className: "voice-btn",
+        "data-state": listening ? "listening" : "idle",
+        disabled: disabled || !supported,
+        title,
+        "aria-label": label,
+        "aria-pressed": listening,
+        onClick: toggle,
+        children: [
+          listening ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Square, { size: 17, fill: "currentColor" }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Mic, { size: 17 }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "sr-only", role: "status", "aria-live": "polite", children: listening ? t("voice.listening") : errorKey ? t(errorKey) : "" })
+        ]
+      }
+    );
+  }
+
+  // src/components/IdeaView.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
   var IDEA_PROGRESS_STAGE_KEYS = [
     "idea.stage.understand",
     "idea.stage.selectModel",
@@ -18856,26 +19014,26 @@
   function MessageItem({ message }) {
     const { t } = useTranslation();
     if (message.role === "error") {
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "request-error", role: "alert", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("idea.errorTitle") }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: message.text })
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "request-error", role: "alert", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t("idea.errorTitle") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: message.text })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: `message ${message.role}`, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "avatar", "aria-hidden": "true", children: message.role === "user" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(CircleUserRound, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Sparkles, { size: 16 }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "message-content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "bubble", children: message.text }),
-        message.meta ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "message-meta", children: message.meta }) : null
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: `message ${message.role}`, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "avatar", "aria-hidden": "true", children: message.role === "user" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CircleUserRound, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Sparkles, { size: 16 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "message-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "bubble", children: message.text }),
+        message.meta ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "message-meta", children: message.meta }) : null
       ] })
     ] });
   }
   function AiProgress({ project = false }) {
     const { t } = useTranslation();
-    const [elapsed, setElapsed] = (0, import_react10.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react11.useState)(0);
     const stageKeys = project ? ["idea.stage.identifyIntent", "idea.stage.checkBoundaries", "idea.stage.organizeReply", "idea.stage.stillWorking"] : IDEA_PROGRESS_STAGE_KEYS;
     const stages = stageKeys.map((key) => t(key));
-    const [stageIndex, setStageIndex] = (0, import_react10.useState)(0);
-    (0, import_react10.useEffect)(() => {
+    const [stageIndex, setStageIndex] = (0, import_react11.useState)(0);
+    (0, import_react11.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -18884,18 +19042,18 @@
       }, 500);
       return () => window.clearInterval(timer);
     }, [stages.length]);
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "ai-progress", role: "status", "aria-live": "polite", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "ai-progress-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "thinking-dot" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("idea.progressTitle") }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("span", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "ai-progress", role: "status", "aria-live": "polite", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "ai-progress-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "thinking-dot" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t("idea.progressTitle") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
           elapsed,
           " ",
           t("common.seconds")
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "ai-progress-track", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "ai-progress-stage", children: stages[stageIndex] })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "ai-progress-track", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "ai-progress-stage", children: stages[stageIndex] })
     ] });
   }
   function IdeaView({
@@ -18915,18 +19073,18 @@
     onToggleThinking
   }) {
     const { t } = useTranslation();
-    const [input, setInput] = (0, import_react10.useState)("");
-    const messagesEndRef = (0, import_react10.useRef)(null);
-    const fileInputRef = (0, import_react10.useRef)(null);
-    const newViewRef = (0, import_react10.useRef)(null);
-    const [specWidth, setSpecWidth] = (0, import_react10.useState)(() => {
+    const [input, setInput] = (0, import_react11.useState)("");
+    const messagesEndRef = (0, import_react11.useRef)(null);
+    const fileInputRef = (0, import_react11.useRef)(null);
+    const newViewRef = (0, import_react11.useRef)(null);
+    const [specWidth, setSpecWidth] = (0, import_react11.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.specWidth"));
       return Number.isFinite(stored) ? Math.min(IDEA_SPEC_MAX_WIDTH, Math.max(IDEA_SPEC_MIN_WIDTH, stored)) : IDEA_SPEC_DEFAULT_WIDTH;
     });
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       window.localStorage.setItem("researchos.specWidth", String(specWidth));
     }, [specWidth]);
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, chatBusy]);
     const handleSubmit = (event) => {
@@ -18943,21 +19101,21 @@
       }
     };
     const automatic = clarificationMode === "automatic";
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
       "section",
       {
         ref: newViewRef,
         className: "new-view",
         style: { "--spec-width": `${specWidth}px` },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "chat-pane", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "messages", children: [
-              messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(MessageItem, { message }, message.id)),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { ref: messagesEndRef })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "chat-pane", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "messages", children: [
+              messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(MessageItem, { message }, message.id)),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { ref: messagesEndRef })
             ] }),
-            chatBusy ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AiProgress, {}) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "clarification-mode-bar", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("label", { className: "mode-switch", htmlFor: "clarificationMode", title: t("idea.toggleDepthTitle"), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            chatBusy ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(AiProgress, {}) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "clarification-mode-bar", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "mode-switch", htmlFor: "clarificationMode", title: t("idea.toggleDepthTitle"), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
                 "input",
                 {
                   id: "clarificationMode",
@@ -18969,16 +19127,16 @@
                   onChange: (event) => onClarificationModeChange(event.target.checked ? "automatic" : "detailed")
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", {}) }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("span", { className: "mode-copy", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: automatic ? t("app.mode.automatic") : t("app.mode.detailed") }),
-                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("small", { id: "clarificationModeHint", children: automatic ? t("idea.modeHint.automatic") : t("idea.modeHint.detailed") })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", {}) }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "mode-copy", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: automatic ? t("app.mode.automatic") : t("app.mode.detailed") }),
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("small", { id: "clarificationModeHint", children: automatic ? t("idea.modeHint.automatic") : t("idea.modeHint.detailed") })
               ] })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("form", { className: "composer", onSubmit: handleSubmit, "aria-busy": chatBusy, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("label", { className: "attach-btn", title: t("idea.attachTitle"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Paperclip, { size: 17 }),
-                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("form", { className: "composer", onSubmit: handleSubmit, "aria-busy": chatBusy, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "attach-btn", title: t("idea.attachTitle"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Paperclip, { size: 17 }),
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
                   "input",
                   {
                     ref: fileInputRef,
@@ -18993,7 +19151,7 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
                 "textarea",
                 {
                   value: input,
@@ -19004,12 +19162,13 @@
                   onKeyDown: handleKeyDown
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: chatBusy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Send, { size: 17 }) })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(VoiceInputButton, { disabled: chatBusy, onText: setInput }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: chatBusy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Send, { size: 17 }) })
             ] }),
-            input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "composer-hint", "aria-live": "polite", children: t("common.sendShortcutHint") }) : null,
-            queuedFiles.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "file-queue", children: queuedFiles.map((file) => file.name).join(" \xB7 ") }) : null
+            input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "composer-hint", "aria-live": "polite", children: t("common.sendShortcutHint") }) : null,
+            queuedFiles.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "file-queue", children: queuedFiles.map((file) => file.name).join(" \xB7 ") }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             ResizableDivider,
             {
               value: specWidth,
@@ -19023,8 +19182,8 @@
               onCommit: setSpecWidth
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "spec-pane", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "spec-pane", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               SpecPane,
               {
                 spec,
@@ -19034,7 +19193,7 @@
                 onConfirm: onConfirmProject
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ThinkingSessions, { sessions: thinkingSessions, onToggle: onToggleThinking })
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ThinkingSessions, { sessions: thinkingSessions, onToggle: onToggleThinking })
           ] })
         ]
       }
@@ -19042,17 +19201,17 @@
   }
 
   // src/components/ProjectView.tsx
-  var import_react21 = __toESM(require_react(), 1);
+  var import_react22 = __toESM(require_react(), 1);
 
   // src/components/ProjectChat.tsx
-  var import_react11 = __toESM(require_react(), 1);
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var import_react12 = __toESM(require_react(), 1);
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   function ProjectProgress() {
     const { t } = useTranslation();
-    const [elapsed, setElapsed] = (0, import_react11.useState)(0);
-    const [stageIndex, setStageIndex] = (0, import_react11.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react12.useState)(0);
+    const [stageIndex, setStageIndex] = (0, import_react12.useState)(0);
     const stages = [t("idea.stage.identifyIntent"), t("idea.stage.checkBoundaries"), t("idea.stage.organizeReply"), t("idea.stage.stillWorking")];
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -19061,18 +19220,18 @@
       }, 500);
       return () => window.clearInterval(timer);
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "ai-progress compact", role: "status", "aria-live": "polite", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "ai-progress-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "thinking-dot" }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t("idea.progressTitle") }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "ai-progress compact", role: "status", "aria-live": "polite", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "ai-progress-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "thinking-dot" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: t("idea.progressTitle") }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
           elapsed,
           " ",
           t("common.seconds")
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "ai-progress-track", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "ai-progress-stage", children: stages[stageIndex] })
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "ai-progress-track", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "ai-progress-stage", children: stages[stageIndex] })
     ] });
   }
   function ProjectChat({
@@ -19083,9 +19242,9 @@
     mobileOpen
   }) {
     const { t } = useTranslation();
-    const [input, setInput] = (0, import_react11.useState)("");
-    const messagesEndRef = (0, import_react11.useRef)(null);
-    (0, import_react11.useEffect)(() => {
+    const [input, setInput] = (0, import_react12.useState)("");
+    const messagesEndRef = (0, import_react12.useRef)(null);
+    (0, import_react12.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, busy]);
     const submit = (event) => {
@@ -19095,35 +19254,35 @@
       setInput("");
       void onSend(message);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("aside", { className: `project-chat ${mobileOpen ? "mobile-open" : ""}`, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "pane-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { children: t("chat.title") }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "chat-heading-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "badge live", children: t("chat.monitoring") }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "icon-btn mobile-chat-close", type: "button", onClick: onClose, title: t("chat.closeTitle"), "aria-label": t("chat.closeTitle"), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(X, { size: 17 }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("aside", { className: `project-chat ${mobileOpen ? "mobile-open" : ""}`, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "pane-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { children: t("chat.title") }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "chat-heading-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "badge live", children: t("chat.monitoring") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "icon-btn mobile-chat-close", type: "button", onClick: onClose, title: t("chat.closeTitle"), "aria-label": t("chat.closeTitle"), children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(X, { size: 17 }) })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "messages compact", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "messages compact", children: [
         messages.map((message) => {
           if (message.role === "error") {
-            return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "request-error", role: "alert", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t("idea.errorTitle") }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: message.text })
+            return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "request-error", role: "alert", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: t("idea.errorTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: message.text })
             ] }, message.id);
           }
-          return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: `message ${message.role}`, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "avatar", "aria-hidden": "true", children: message.role === "user" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CircleUserRound, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Sparkles, { size: 16 }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "message-content", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "bubble", children: message.text }),
-              message.meta ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "message-meta", children: message.meta }) : null
+          return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: `message ${message.role}`, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "avatar", "aria-hidden": "true", children: message.role === "user" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(CircleUserRound, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Sparkles, { size: 16 }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "message-content", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "bubble", children: message.text }),
+              message.meta ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "message-meta", children: message.meta }) : null
             ] })
           ] }, message.id);
         }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { ref: messagesEndRef })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { ref: messagesEndRef })
       ] }),
-      busy ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ProjectProgress, {}) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("form", { className: "composer compact", onSubmit: submit, "aria-busy": busy, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      busy ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ProjectProgress, {}) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("form", { className: "composer compact", onSubmit: submit, "aria-busy": busy, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
           "textarea",
           {
             value: input,
@@ -19139,19 +19298,20 @@
             }
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: busy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Send, { size: 17 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(VoiceInputButton, { disabled: busy, onText: setInput }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: busy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Send, { size: 17 }) })
       ] }),
-      input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "composer-hint", "aria-live": "polite", children: t("common.sendShortcutHint") }) : null
+      input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "composer-hint", "aria-live": "polite", children: t("common.sendShortcutHint") }) : null
     ] });
   }
 
   // src/components/tabs/OverviewTab.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
   function SpecificationField({ label, value, emptyLabel }) {
     const values = Array.isArray(value) ? value.filter((item) => item.trim()) : value?.trim() ? [value.trim()] : [];
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "spec-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { children: label }),
-      values.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("ul", { children: values.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("li", { children: item }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { children: values[0] || emptyLabel })
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "spec-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("label", { children: label }),
+      values.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("ul", { children: values.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("li", { children: item }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { children: values[0] || emptyLabel })
     ] });
   }
   function ProjectSpecificationTab({ project }) {
@@ -19159,29 +19319,29 @@
     const spec = project.spec;
     const idea = spec?.idea;
     const emptyLabel = t("common.notConfirmed");
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "pane-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { children: t("tab.overviewSpec") }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "muted", children: t("overview.descriptionHint") })
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "pane-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h2", { children: t("tab.overviewSpec") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("overview.descriptionHint") })
         ] }),
-        spec?.feasibility ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: spec.feasibility }) : null
+        spec?.feasibility ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: spec.feasibility }) : null
       ] }),
-      spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "project-spec-details", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.titleField"), value: idea.title, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.researchQuestion"), value: idea.research_question, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.domain"), value: idea.domain, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.hypotheses"), value: idea.hypotheses, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.contributions"), value: idea.expected_contributions, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.successCriteria"), value: idea.success_criteria, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.targetVenues"), value: idea.target_venues, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.risks"), value: idea.risks, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.openQuestions"), value: idea.open_questions, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.feasibility"), value: spec.feasibility, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.feasibilityNotes"), value: spec.feasibility_notes, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.candidateModifications"), value: spec.candidate_modifications, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SpecificationField, { label: t("spec.approvals"), value: spec.required_approvals, emptyLabel })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "empty", children: t("spec.empty") })
+      spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "project-spec-details", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.titleField"), value: idea.title, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.researchQuestion"), value: idea.research_question, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.domain"), value: idea.domain, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.hypotheses"), value: idea.hypotheses, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.contributions"), value: idea.expected_contributions, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.successCriteria"), value: idea.success_criteria, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.targetVenues"), value: idea.target_venues, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.risks"), value: idea.risks, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.openQuestions"), value: idea.open_questions, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.feasibility"), value: spec.feasibility, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.feasibilityNotes"), value: spec.feasibility_notes, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.candidateModifications"), value: spec.candidate_modifications, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SpecificationField, { label: t("spec.approvals"), value: spec.required_approvals, emptyLabel })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "empty", children: t("spec.empty") })
     ] });
   }
   function OverviewTab({
@@ -19193,7 +19353,7 @@
     tab = "overview"
   }) {
     const { t, locale } = useTranslation();
-    if (tab === "overview_spec") return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ProjectSpecificationTab, { project });
+    if (tab === "overview_spec") return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ProjectSpecificationTab, { project });
     const counts = project.counts || {
       papers: project.papers?.length || 0,
       experiments: project.experiments?.length || 0,
@@ -19251,157 +19411,157 @@
     };
     const isActive = project.status === "active";
     const executionDisabled = !isActive;
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "metric-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.papers") }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: counts.papers ?? 0 })
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.papers") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: counts.papers ?? 0 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.experiments") }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: counts.experiments ?? 0 })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.experiments") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: counts.experiments ?? 0 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.artifacts") }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: counts.artifacts ?? 0 })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.artifacts") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: counts.artifacts ?? 0 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("common.pendingApproval") }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: pendingCount })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("common.pendingApproval") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: pendingCount })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           SectionHeading,
           {
             title: t("overview.spec"),
-            extra: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: runSearch, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Search, { size: 15 }),
+            extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: runSearch, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Search, { size: 15 }),
                 t("overview.searchLiterature")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createPaperDraft, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(FilePenLine, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createPaperDraft, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FilePenLine, { size: 15 }),
                 t("overview.paperDraft")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createCompilePlan, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(FileCheck, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createCompilePlan, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 15 }),
                 t("overview.compilePaper")
               ] })
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: spec?.research_question || t("overview.noSpec") }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: spec?.research_question || t("overview.noSpec") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
               spec?.domain,
               " \xB7 ",
               (spec?.keywords || []).join(", ")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: project.spec?.feasibility })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: project.spec?.feasibility })
         ] }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section overview-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-list overview-card", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("overview.projectDescription"), hint: t("overview.descriptionHint") }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "overview-fields", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.domain") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: spec?.domain || t("common.notConfirmed") })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section overview-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-list overview-card", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("overview.projectDescription"), hint: t("overview.descriptionHint") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "overview-fields", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.domain") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: spec?.domain || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.question") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: spec?.research_question || t("common.notConfirmed") })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.question") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: spec?.research_question || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.hypotheses") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: spec?.hypotheses?.join("\uFF1B") || t("overview.notGenerated") })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.hypotheses") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: spec?.hypotheses?.join("\uFF1B") || t("overview.notGenerated") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("overview.successCriteria") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: spec?.success_criteria?.join("\uFF1B") || t("overview.notGenerated") })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("overview.successCriteria") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: spec?.success_criteria?.join("\uFF1B") || t("overview.notGenerated") })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-list overview-card", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("overview.innovationCandidates"), hint: t("overview.innovationHint") }),
-          spec?.expected_contributions?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("ul", { className: "candidate-list", children: spec.expected_contributions.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("li", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ShieldAlert, { size: 15 }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: item }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: "candidate-only" })
-          ] }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "empty-inline", children: t("overview.noInnovation") })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-list overview-card", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("overview.innovationCandidates"), hint: t("overview.innovationHint") }),
+          spec?.expected_contributions?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("ul", { className: "candidate-list", children: spec.expected_contributions.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("li", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ShieldAlert, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: item }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "candidate-only" })
+          ] }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "empty-inline", children: t("overview.noInnovation") })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("overview.progress"), hint: t("overview.progressHint") }),
-        timeline.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "timeline", role: "list", children: timeline.map((item) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "timeline-item", role: "listitem", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "timeline-dot" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: item.label }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("overview.progress"), hint: t("overview.progressHint") }),
+        timeline.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "timeline", role: "list", children: timeline.map((item) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeline-item", role: "listitem", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "timeline-dot" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: item.label }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
               item.detail,
               " \xB7 ",
               formatDateTime(item.created_at, locale)
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: item.status })
-        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "empty", children: t("overview.noTimeline") })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: item.status })
+        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "empty", children: t("overview.noTimeline") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           SectionHeading,
           {
             title: t("overview.projectStatus"),
-            extra: project.status === "active" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", onClick: () => changeState("pause"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Pause, { size: 15 }),
+            extra: project.status === "active" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => changeState("pause"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Pause, { size: 15 }),
                 t("overview.pause")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "reject", type: "button", onClick: () => onRequestConfirm({
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "reject", type: "button", onClick: () => onRequestConfirm({
                 title: t("overview.cancelProject"),
                 description: t("overview.cancelConfirmDescription"),
                 confirmLabel: t("overview.confirmCancel"),
                 onConfirm: () => changeState("cancel")
               }), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Square, { size: 15 }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Square, { size: 15 }),
                 t("overview.cancelProject")
               ] })
-            ] }) : project.status === "paused" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "approve", type: "button", onClick: () => changeState("resume"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Play, { size: 15 }),
+            ] }) : project.status === "paused" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "approve", type: "button", onClick: () => changeState("resume"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Play, { size: 15 }),
                 t("overview.resume")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "reject", type: "button", onClick: () => onRequestConfirm({
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "reject", type: "button", onClick: () => onRequestConfirm({
                 title: t("overview.cancelProject"),
                 description: t("overview.cancelConfirmDescription"),
                 confirmLabel: t("overview.confirmCancel"),
                 onConfirm: () => changeState("cancel")
               }), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Square, { size: 15 }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Square, { size: 15 }),
                 t("overview.cancelProject")
               ] })
             ] }) : null
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: project.current_stage === "initialized" ? t("overview.stageInitialized") : project.current_stage || t("overview.stageUnknown") }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { children: t("overview.ideaVersion", {
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: project.current_stage === "initialized" ? t("overview.stageInitialized") : project.current_stage || t("overview.stageUnknown") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: t("overview.ideaVersion", {
               version: project.current_idea_version ?? 1,
               status: project.status === "active" ? t("overview.statusActive") : project.status === "paused" ? t("overview.statusPaused") : project.status === "cancelled" ? t("overview.statusCancelled") : project.status
             }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: project.status })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: project.status })
         ] }) })
       ] })
     ] });
   }
 
   // src/components/tabs/LiteratureTab.tsx
-  var import_react12 = __toESM(require_react(), 1);
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+  var import_react13 = __toESM(require_react(), 1);
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   function LiteratureTab({
     project,
     onRefresh,
@@ -19411,31 +19571,31 @@
     searchCandidates
   }) {
     const { t } = useTranslation();
-    const [materialQuery, setMaterialQuery] = (0, import_react12.useState)("");
-    const [materialLoading, setMaterialLoading] = (0, import_react12.useState)(false);
-    const [materialRows, setMaterialRows] = (0, import_react12.useState)([]);
-    const [materialTotal, setMaterialTotal] = (0, import_react12.useState)(0);
-    const [nextOffset, setNextOffset] = (0, import_react12.useState)(null);
-    const [repoInputFor, setRepoInputFor] = (0, import_react12.useState)(null);
-    const [repoUrl, setRepoUrl] = (0, import_react12.useState)("");
-    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react12.useState)({});
-    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react12.useState)(null);
-    const [claimText, setClaimText] = (0, import_react12.useState)("");
-    const [selectedEvidence, setSelectedEvidence] = (0, import_react12.useState)([]);
-    const [seedType, setSeedType] = (0, import_react12.useState)("doi");
-    const [seedValue, setSeedValue] = (0, import_react12.useState)("");
-    const [seedTitle, setSeedTitle] = (0, import_react12.useState)("");
-    const [seedArtifactId, setSeedArtifactId] = (0, import_react12.useState)("");
-    const [seedPaperId, setSeedPaperId] = (0, import_react12.useState)("");
-    const [seedLoading, setSeedLoading] = (0, import_react12.useState)(false);
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react12.useState)([]);
-    const [recursiveDepth, setRecursiveDepth] = (0, import_react12.useState)(2);
-    const [recursiveWidth, setRecursiveWidth] = (0, import_react12.useState)(5);
-    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react12.useState)(30);
-    const [recursiveProviders, setRecursiveProviders] = (0, import_react12.useState)(["crossref", "openalex", "semantic_scholar"]);
-    const [recursiveReason, setRecursiveReason] = (0, import_react12.useState)(t("literature.recursiveDefaultReason"));
-    const [recursiveLoading, setRecursiveLoading] = (0, import_react12.useState)(false);
-    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react12.useState)(null);
+    const [materialQuery, setMaterialQuery] = (0, import_react13.useState)("");
+    const [materialLoading, setMaterialLoading] = (0, import_react13.useState)(false);
+    const [materialRows, setMaterialRows] = (0, import_react13.useState)([]);
+    const [materialTotal, setMaterialTotal] = (0, import_react13.useState)(0);
+    const [nextOffset, setNextOffset] = (0, import_react13.useState)(null);
+    const [repoInputFor, setRepoInputFor] = (0, import_react13.useState)(null);
+    const [repoUrl, setRepoUrl] = (0, import_react13.useState)("");
+    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react13.useState)({});
+    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react13.useState)(null);
+    const [claimText, setClaimText] = (0, import_react13.useState)("");
+    const [selectedEvidence, setSelectedEvidence] = (0, import_react13.useState)([]);
+    const [seedType, setSeedType] = (0, import_react13.useState)("doi");
+    const [seedValue, setSeedValue] = (0, import_react13.useState)("");
+    const [seedTitle, setSeedTitle] = (0, import_react13.useState)("");
+    const [seedArtifactId, setSeedArtifactId] = (0, import_react13.useState)("");
+    const [seedPaperId, setSeedPaperId] = (0, import_react13.useState)("");
+    const [seedLoading, setSeedLoading] = (0, import_react13.useState)(false);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react13.useState)([]);
+    const [recursiveDepth, setRecursiveDepth] = (0, import_react13.useState)(2);
+    const [recursiveWidth, setRecursiveWidth] = (0, import_react13.useState)(5);
+    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react13.useState)(30);
+    const [recursiveProviders, setRecursiveProviders] = (0, import_react13.useState)(["crossref", "openalex", "semantic_scholar"]);
+    const [recursiveReason, setRecursiveReason] = (0, import_react13.useState)(t("literature.recursiveDefaultReason"));
+    const [recursiveLoading, setRecursiveLoading] = (0, import_react13.useState)(false);
+    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react13.useState)(null);
     const activeRecursiveRun = project.related_work_runs?.find((run) => ["queued", "running"].includes(run.status));
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
@@ -19497,7 +19657,7 @@
         showToast(errorMessage(error));
       }
     };
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       if (!activeRecursiveRun) return;
       const timer = window.setInterval(() => {
         void onRefresh();
@@ -19689,80 +19849,80 @@
       const download = repository.metadata?.download;
       const knownSpdx = verification.license_status === "known_spdx";
       if (repository.verified_official && knownSpdx) {
-        return download ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "muted", children: t("literature.downloadedTo", { path: download.relative_path || t("literature.projectCodeDir") }) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeRepositoryDownload(repository.id), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Download, { size: 15 }),
+        return download ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "muted", children: t("literature.downloadedTo", { path: download.relative_path || t("literature.projectCodeDir") }) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeRepositoryDownload(repository.id), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Download, { size: 15 }),
           t("literature.proposeDownload")
         ] });
       }
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => verifyRepository(repository.id), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ShieldCheck, { size: 15 }),
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => verifyRepository(repository.id), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ShieldCheck, { size: 15 }),
         t("literature.crossVerify")
       ] });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         SectionHeading,
         {
           title: t("literature.title"),
-          extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: runSearch, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Search, { size: 15 }),
+          extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: runSearch, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Search, { size: 15 }),
               t("literature.updateSearch")
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: ingestEvidence, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ScanText, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: ingestEvidence, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ScanText, { size: 15 }),
               t("literature.extractEvidence")
             ] })
           ] })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section related-work-seed-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.seedTitle"), hint: t("literature.seedHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "related-work-seed-form", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section related-work-seed-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.seedTitle"), hint: t("literature.seedHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "related-work-seed-form", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
             t("literature.seedType"),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("select", { value: seedType, onChange: (event) => {
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("select", { value: seedType, onChange: (event) => {
               setSeedType(event.target.value);
               resetSeedForm();
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "doi", children: "DOI" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "title", children: t("literature.titleOption") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "url", children: t("literature.urlOption") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "bibtex", children: "BibTeX" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "artifact_pdf", children: t("literature.pdfOption") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "existing_paper", children: t("literature.existingPaperOption") })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "doi", children: "DOI" }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "title", children: t("literature.titleOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "url", children: t("literature.urlOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "bibtex", children: "BibTeX" }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "artifact_pdf", children: t("literature.pdfOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "existing_paper", children: t("literature.existingPaperOption") })
             ] })
           ] }),
-          seedType === "artifact_pdf" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+          seedType === "artifact_pdf" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
             t("literature.pdfArtifact"),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("select", { value: seedArtifactId, onChange: (event) => setSeedArtifactId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "", children: t("literature.selectPdf") }),
-              (project.artifacts || []).filter((artifact) => artifact.mime_type === "application/pdf" && artifact.valid !== false).map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: artifact.id, children: artifact.name }, artifact.id))
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("select", { value: seedArtifactId, onChange: (event) => setSeedArtifactId(event.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "", children: t("literature.selectPdf") }),
+              (project.artifacts || []).filter((artifact) => artifact.mime_type === "application/pdf" && artifact.valid !== false).map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: artifact.id, children: artifact.name }, artifact.id))
             ] })
           ] }) : null,
-          seedType === "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+          seedType === "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
             t("literature.projectPaper"),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("select", { value: seedPaperId, onChange: (event) => setSeedPaperId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "", children: t("literature.selectPaper") }),
-              (project.papers || []).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("select", { value: seedPaperId, onChange: (event) => setSeedPaperId(event.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "", children: t("literature.selectPaper") }),
+              (project.papers || []).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
             ] })
           ] }) : null,
-          seedType !== "artifact_pdf" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "related-work-seed-value", children: [
+          seedType !== "artifact_pdf" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { className: "related-work-seed-value", children: [
             seedType === "doi" ? "DOI" : seedType === "title" ? t("literature.paperTitle") : seedType === "url" ? t("literature.httpsUrl") : t("literature.bibtexEntry"),
-            seedType === "bibtex" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("textarea", { rows: 5, maxLength: 1e5, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: "@article{...}" }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { maxLength: 2e3, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: seedType === "doi" ? "10.1000/example" : seedType === "url" ? "https://doi.org/..." : t("literature.enterTitle") })
+            seedType === "bibtex" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("textarea", { rows: 5, maxLength: 1e5, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: "@article{...}" }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { maxLength: 2e3, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: seedType === "doi" ? "10.1000/example" : seedType === "url" ? "https://doi.org/..." : t("literature.enterTitle") })
           ] }) : null,
-          seedType !== "title" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+          seedType !== "title" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
             t("literature.optionalTitle"),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { maxLength: 2e3, value: seedTitle, onChange: (event) => setSeedTitle(event.target.value), placeholder: t("literature.optionalTitlePlaceholder") })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { maxLength: 2e3, value: seedTitle, onChange: (event) => setSeedTitle(event.target.value), placeholder: t("literature.optionalTitlePlaceholder") })
           ] }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: seedLoading || (seedType === "artifact_pdf" ? !seedArtifactId : seedType === "existing_paper" ? !seedPaperId : !seedValue.trim()), onClick: () => void addSeed(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(GitFork, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: seedLoading || (seedType === "artifact_pdf" ? !seedArtifactId : seedType === "existing_paper" ? !seedPaperId : !seedValue.trim()), onClick: () => void addSeed(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(GitFork, { size: 15 }),
             seedLoading ? t("literature.parsing") : t("literature.addSeed")
           ] })
         ] }),
-        project.related_work_seeds?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "related-work-seeds", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "related-work-seed-list", children: project.related_work_seeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "related-work-seed-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        project.related_work_seeds?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "related-work-seeds", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "related-work-seed-list", children: project.related_work_seeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { className: "related-work-seed-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "checkbox",
@@ -19770,9 +19930,9 @@
                 onChange: (event) => setSelectedSeeds((current) => event.target.checked ? [...current, seed.id] : current.filter((id) => id !== seed.id))
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: seed.input_summary }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: seed.input_summary }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
                 seed.source_type,
                 " \xB7 ",
                 statusLabel(seed.status, t),
@@ -19780,48 +19940,48 @@
                 seed.created_at ? new Date(seed.created_at).toLocaleString() : t("literature.timeUnknown")
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: seed.status })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: seed.status })
           ] }, seed.id)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "related-work-recursive-controls", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "control-grid", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "related-work-recursive-controls", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "control-grid", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
                 t("literature.depth"),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "number", min: 1, max: 5, value: recursiveDepth, onChange: (event) => setRecursiveDepth(Number(event.target.value)) })
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { type: "number", min: 1, max: 5, value: recursiveDepth, onChange: (event) => setRecursiveDepth(Number(event.target.value)) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
                 t("literature.width"),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "number", min: 1, max: 50, value: recursiveWidth, onChange: (event) => setRecursiveWidth(Number(event.target.value)) })
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { type: "number", min: 1, max: 50, value: recursiveWidth, onChange: (event) => setRecursiveWidth(Number(event.target.value)) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
                 t("literature.maxTotal"),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "number", min: 1, max: 500, value: recursiveMaxTotal, onChange: (event) => setRecursiveMaxTotal(Number(event.target.value)) })
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { type: "number", min: 1, max: 500, value: recursiveMaxTotal, onChange: (event) => setRecursiveMaxTotal(Number(event.target.value)) })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
               t("literature.proposalReason"),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { maxLength: 2e3, value: recursiveReason, onChange: (event) => setRecursiveReason(event.target.value) })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { maxLength: 2e3, value: recursiveReason, onChange: (event) => setRecursiveReason(event.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "provider-choice", "aria-label": t("literature.recursiveProviders"), children: ["crossref", "openalex", "semantic_scholar"].map((provider) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "checkbox", checked: recursiveProviders.includes(provider), onChange: () => toggleRecursiveProvider(provider) }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "provider-choice", "aria-label": t("literature.recursiveProviders"), children: ["crossref", "openalex", "semantic_scholar"].map((provider) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { type: "checkbox", checked: recursiveProviders.includes(provider), onChange: () => toggleRecursiveProvider(provider) }),
               provider
             ] }, provider)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: recursiveLoading || !selectedSeeds.length || !recursiveProviders.length, onClick: () => void createRecursivePlan(), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(GitFork, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: recursiveLoading || !selectedSeeds.length || !recursiveProviders.length, onClick: () => void createRecursivePlan(), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(GitFork, { size: 15 }),
               recursiveLoading ? t("literature.creating") : t("literature.createRecursiveProposal", { count: selectedSeeds.length })
             ] })
           ] })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("literature.noSeeds") })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("literature.noSeeds") })
       ] }),
-      project.related_work_runs?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section related-work-run-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.runsTitle"), hint: t("literature.runsHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("h3", { children: [
+      project.related_work_runs?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section related-work-run-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.runsTitle"), hint: t("literature.runsHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("h3", { children: [
               statusLabel(run.status, t),
               " \xB7 ",
               t("literature.runCandidates", { count: run.discovered_count || 0, edges: run.edge_count || 0 })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               "depth ",
               run.depth,
               " \xB7 width ",
@@ -19831,30 +19991,30 @@
               " \xB7 providers ",
               run.providers.join(", ")
             ] }),
-            run.error ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null
+            run.error ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: run.status }),
-            ["queued", "running"].includes(run.status) ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => void cancelRecursiveRun(run), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Square, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: run.status }),
+            ["queued", "running"].includes(run.status) ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => void cancelRecursiveRun(run), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Square, { size: 14 }),
               t("common.cancel")
             ] }) : null
           ] })
         ] }, run.id)) }),
-        project.related_work_attempts?.some((attempt) => attempt.status !== "succeeded") ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "related-work-failures", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("literature.providerFailures") }),
-          project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: attempt.provider }),
+        project.related_work_attempts?.some((attempt) => attempt.status !== "succeeded") ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "related-work-failures", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("literature.providerFailures") }),
+          project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: attempt.provider }),
             " \xB7 ",
             statusLabel(attempt.status, t),
             " \xB7 ",
             attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t("literature.noFailureDetail")
           ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`))
         ] }) : null,
-        project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "citation-edge-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("literature.edgeTitle") }),
-          project.related_work_edges.slice(0, 20).map((edge) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: edge.source_title || edge.source_candidate_id }),
+        project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "citation-edge-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("literature.edgeTitle") }),
+          project.related_work_edges.slice(0, 20).map((edge) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: edge.source_title || edge.source_candidate_id }),
             " \u2192 ",
             edge.target_title || edge.target_candidate_id,
             " \xB7 ",
@@ -19864,12 +20024,12 @@
           ] }, edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`))
         ] }) : null
       ] }) : null,
-      project.related_work_candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section related-work-candidate-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.candidatesTitle"), hint: t("literature.candidatesHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.related_work_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: candidate.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+      project.related_work_candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section related-work-candidate-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.candidatesTitle"), hint: t("literature.candidatesHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.related_work_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: candidate.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               candidate.provider,
               " \xB7 depth ",
               candidate.discovery_depth ?? 0,
@@ -19883,26 +20043,26 @@
             (() => {
               const provenance = candidateProvenance(candidate.id);
               const conflictFields = [...new Set(provenance.filter((item) => item.status === "conflict").map((item) => item.field_name))];
-              return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
+              return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { className: "muted", children: [
                 t("literature.fieldProvenanceCount", { count: provenance.length }),
                 " \xB7 ",
                 conflictFields.length ? t("literature.conflicts", { fields: conflictFields.join(", ") }) : t("literature.noConflicts")
               ] });
             })()
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: candidate.paper_id ? "confirmed-paper" : candidate.status || "metadata-candidate" }),
-            candidateProvenance(candidate.id).length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => setProvenanceCandidateId(candidate.id), children: t("literature.viewFieldProvenance") }) : null,
-            !candidate.paper_id && candidate.status !== "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => void proposeCandidateEnrichment(candidate), children: t("literature.enrichFields") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "primary", type: "button", onClick: () => requestCandidateDecision(candidate, "approved"), children: t("literature.confirmPaper") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "reject", type: "button", onClick: () => requestCandidateDecision(candidate, "rejected"), children: t("common.reject") })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: candidate.paper_id ? "confirmed-paper" : candidate.status || "metadata-candidate" }),
+            candidateProvenance(candidate.id).length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", onClick: () => setProvenanceCandidateId(candidate.id), children: t("literature.viewFieldProvenance") }) : null,
+            !candidate.paper_id && candidate.status !== "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", onClick: () => void proposeCandidateEnrichment(candidate), children: t("literature.enrichFields") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "primary", type: "button", onClick: () => requestCandidateDecision(candidate, "approved"), children: t("literature.confirmPaper") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "reject", type: "button", onClick: () => requestCandidateDecision(candidate, "rejected"), children: t("common.reject") })
             ] }) : null,
-            !candidate.paper_id && candidate.status === "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => requestCandidateDecision(candidate, "reopened"), children: t("literature.reopen") }) : null
+            !candidate.paper_id && candidate.status === "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", onClick: () => requestCandidateDecision(candidate, "reopened"), children: t("literature.reopen") }) : null
           ] })
         ] }, candidate.id)) })
       ] }) : null,
-      provenanceCandidate ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      provenanceCandidate ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         Modal,
         {
           eyebrow: t("literature.fieldProvenance"),
@@ -19910,24 +20070,24 @@
           description: t("literature.provenanceDescription"),
           onClose: () => setProvenanceCandidateId(null),
           wide: true,
-          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "provenance-drawer-list", children: [...new Set(candidateProvenance(provenanceCandidate.id).map((item) => item.field_name))].sort().map((fieldName) => {
+          children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "provenance-drawer-list", children: [...new Set(candidateProvenance(provenanceCandidate.id).map((item) => item.field_name))].sort().map((fieldName) => {
             const fields = candidateProvenance(provenanceCandidate.id).filter((item) => item.field_name === fieldName);
-            return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { className: "provenance-drawer-field", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "provenance-drawer-field-heading", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "eyebrow", children: t("literature.field") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: fieldName })
+            return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "provenance-drawer-field", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "provenance-drawer-field-heading", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "eyebrow", children: t("literature.field") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: fieldName })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: fields.some((item) => item.status === "conflict") ? "conflict" : fields.some((item) => item.status === "selected") ? "selected" : "observed" })
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: fields.some((item) => item.status === "conflict") ? "conflict" : fields.some((item) => item.status === "selected") ? "selected" : "observed" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: fields.map((field) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row compact-row", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("strong", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: fields.map((field) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row compact-row", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("strong", { children: [
                     field.provider || field.source_type || t("literature.sourceUnrecorded"),
                     field.status === "selected" ? t("literature.selected") : ""
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: valueLabel(field.normalized_value) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: valueLabel(field.normalized_value) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { className: "muted", children: [
                     t("literature.sourceType"),
                     "=",
                     field.source_type || t("common.unknown"),
@@ -19949,16 +20109,16 @@
                     field.raw_value_hash || t("common.none")
                   ] })
                 ] }),
-                field.status !== "selected" && !provenanceCandidate.paper_id ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary compact", type: "button", onClick: () => void selectCandidateField(provenanceCandidate, field), children: t("literature.selectSource") }) : null
+                field.status !== "selected" && !provenanceCandidate.paper_id ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary compact", type: "button", onClick: () => void selectCandidateField(provenanceCandidate, field), children: t("literature.selectSource") }) : null
               ] }, field.id)) })
             ] }, fieldName);
           }) })
         }
       ) : null,
-      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: paper.source_url, target: "_blank", rel: "noreferrer", children: paper.title }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: paper.source_url, target: "_blank", rel: "noreferrer", children: paper.title }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
             paper.year || "",
             " ",
             paper.venue || "",
@@ -19973,22 +20133,22 @@
             " \xB7",
             t("literature.codeCandidateCount", { count: (paper.code_repositories || []).length })
           ] }),
-          paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: t("literature.openPdf") }) }) : null,
-          paper.bibtex ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("details", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("summary", { children: t("literature.bibtex") }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("pre", { className: "code-block", children: paper.bibtex })
+          paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: t("literature.openPdf") }) }) : null,
+          paper.bibtex ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("details", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("summary", { children: t("literature.bibtex") }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("pre", { className: "code-block", children: paper.bibtex })
           ] }) : null
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "button-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: Number(paper.fulltext_evidence_count || 0) > 0 ? "fulltext-evidence" : "metadata-only" }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: repositoryDiscoveryLoading === paper.id, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: Number(paper.fulltext_evidence_count || 0) > 0 ? "fulltext-evidence" : "metadata-only" }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", disabled: repositoryDiscoveryLoading === paper.id, onClick: () => {
             void discoverRepositories(paper.id);
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Search, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Search, { size: 15 }),
             repositoryDiscoveryLoading === paper.id ? t("literature.loadingRepos") : t("literature.findRepoLinks")
           ] }),
-          repoInputFor === paper.id ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "inline-repo-form", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          repoInputFor === paper.id ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "inline-repo-form", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 value: repoUrl,
@@ -19996,32 +20156,32 @@
                 onChange: (event) => setRepoUrl(event.target.value)
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => addRepositoryCandidate(paper.id), children: t("literature.add") })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", onClick: () => addRepositoryCandidate(paper.id), children: t("literature.add") })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
             setRepoInputFor(paper.id);
             setRepoUrl("");
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(GitBranch, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(GitBranch, { size: 15 }),
             t("literature.addRepository")
           ] })
         ] }),
-        repositoryDiscoveries[paper.id]?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "repository-discovery-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("literature.discoveryHint") }),
+        repositoryDiscoveries[paper.id]?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "repository-discovery-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("literature.discoveryHint") }),
           repositoryDiscoveries[paper.id].map((discovery) => {
             const exists = (paper.code_repositories || []).some((repository) => repository.source_url === discovery.canonical_url);
-            return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "repository-discovery-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: discovery.canonical_url, target: "_blank", rel: "noreferrer", children: discovery.canonical_url }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "muted", children: discovery.locator }),
-              exists ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "candidate-exists" }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary compact", type: "button", onClick: () => {
+            return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "repository-discovery-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: discovery.canonical_url, target: "_blank", rel: "noreferrer", children: discovery.canonical_url }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "muted", children: discovery.locator }),
+              exists ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: "candidate-exists" }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary compact", type: "button", onClick: () => {
                 void addRepositoryCandidate(paper.id, discovery.canonical_url);
               }, children: t("literature.addCandidate") })
             ] }, discovery.canonical_url);
           })
         ] }) : null
-      ] }, paper.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("literature.noPapers") }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section material-search-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.materialsTitle"), hint: t("literature.materialsHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+      ] }, paper.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("literature.noPapers") }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section material-search-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.materialsTitle"), hint: t("literature.materialsHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
           "form",
           {
             className: "material-search-form",
@@ -20030,8 +20190,8 @@
               void searchMaterials(0, false);
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("label", { className: "sr-only", htmlFor: "materialSearchQuery", children: t("literature.searchMaterials") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("label", { className: "sr-only", htmlFor: "materialSearchQuery", children: t("literature.searchMaterials") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
                 "input",
                 {
                   id: "materialSearchQuery",
@@ -20041,19 +20201,19 @@
                   onChange: (event) => setMaterialQuery(event.target.value)
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "submit", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Search, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "submit", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Search, { size: 15 }),
                 t("literature.searchMaterials")
               ] })
             ]
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "material-search-results", children: materialLoading ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("literature.searchingMaterials") }) : materialRows.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("literature.materialTotal", { count: materialTotal }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: materialRows.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: item.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "material-search-results", children: materialLoading ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("literature.searchingMaterials") }) : materialRows.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("literature.materialTotal", { count: materialTotal }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: materialRows.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: item.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
                 item.kind || t("common.unknown"),
                 " \xB7 ",
                 item.parse_status || t("common.unknown"),
@@ -20062,22 +20222,22 @@
                 "\u2026 \xB7 ",
                 t("literature.similarity", { value: String(item.similarity ?? t("common.notProvided")) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: item.snippet || t("literature.noSnippet") })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: item.snippet || t("literature.noSnippet") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "badge pending", children: t("literature.semanticCandidate") })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "badge pending", children: t("literature.semanticCandidate") })
           ] }, index)) }),
-          nextOffset != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary material-search-more", type: "button", onClick: () => searchMaterials(nextOffset, true), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ChevronsDown, { size: 15 }),
+          nextOffset != null ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary material-search-more", type: "button", onClick: () => searchMaterials(nextOffset, true), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ChevronsDown, { size: 15 }),
             t("literature.loadMore")
           ] }) : null
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("literature.materialsEmpty") }) })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("literature.materialsEmpty") }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section claim-review-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.claimTitle"), hint: t("literature.claimHint") }),
-        project.evidence?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "claim-review-input", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section claim-review-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.claimTitle"), hint: t("literature.claimHint") }),
+        project.evidence?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { className: "claim-review-input", children: [
             t("literature.claimToReview"),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "textarea",
               {
                 value: claimText,
@@ -20088,8 +20248,8 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "claim-review-evidence-list", children: project.evidence.map((evidence) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "claim-review-evidence", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "claim-review-evidence-list", children: project.evidence.map((evidence) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { className: "claim-review-evidence", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "checkbox",
@@ -20097,38 +20257,38 @@
                 onChange: (event) => setSelectedEvidence((current) => event.target.checked ? [...current, evidence.id] : current.filter((id) => id !== evidence.id))
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: evidence.locator || t("literature.noLocator") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: evidence.quote || t("literature.noQuote") })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: evidence.locator || t("literature.noLocator") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: evidence.quote || t("literature.noQuote") })
             ] })
           ] }, evidence.id)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", disabled: !claimText.trim() || !selectedEvidence.length, onClick: () => void createClaimReview(), children: t("literature.submitReview") })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("literature.evidenceFirst") }),
-        project.claim_reviews?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list claim-review-list", children: project.claim_reviews.map((review) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: review.claim }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", disabled: !claimText.trim() || !selectedEvidence.length, onClick: () => void createClaimReview(), children: t("literature.submitReview") })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("literature.evidenceFirst") }),
+        project.claim_reviews?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list claim-review-list", children: project.claim_reviews.map((review) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: review.claim }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               t("literature.quoteCount", { count: review.evidence_ids.length }),
               " \xB7 ",
               statusLabel(review.evidence_status, t)
             ] }),
-            review.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: review.decision_comment }) : null
+            review.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: review.decision_comment }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: review.status }),
-            review.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "accepted"), children: t("literature.acceptReview") }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "rejected"), children: t("literature.rejectReview") })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: review.status }),
+            review.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "accepted"), children: t("literature.acceptReview") }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "secondary", type: "button", onClick: () => void decideClaimReview(review, "rejected"), children: t("literature.rejectReview") })
             ] }) : null
           ] })
         ] }, review.id)) }) : null
       ] }),
-      searchCandidates.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section search-candidates", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.externalCandidates"), hint: t("literature.externalHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { children: t("literature.count", { count: searchCandidates.length }) }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: searchCandidates.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: item.url, target: "_blank", rel: "noreferrer", children: item.name || item.title || item.url || t("literature.candidateResource") }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+      searchCandidates.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section search-candidates", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.externalCandidates"), hint: t("literature.externalHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { children: t("literature.count", { count: searchCandidates.length }) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: searchCandidates.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: item.url, target: "_blank", rel: "noreferrer", children: item.name || item.title || item.url || t("literature.candidateResource") }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               item.resource_type || t("common.unknown"),
               " \xB7 ",
               item.provider || t("common.unknown"),
@@ -20136,22 +20296,22 @@
               t("literature.robotsStatus"),
               " ",
               item.compliance?.robots_status || t("common.unknown"),
-              item.compliance?.terms_url ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
+              item.compliance?.terms_url ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
                 " \xB7 ",
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: item.compliance.terms_url, target: "_blank", rel: "noreferrer", children: t("literature.viewTerms") })
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: item.compliance.terms_url, target: "_blank", rel: "noreferrer", children: t("literature.viewTerms") })
               ] }) : null
             ] }),
-            item.snippet ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: item.snippet }) : null
+            item.snippet ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: item.snippet }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "badge pending", children: t("literature.toVerify") })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "badge pending", children: t("literature.toVerify") })
         ] }, index)) })
       ] }) : null,
-      project.repositories?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SectionHeading, { title: t("literature.repositoriesTitle"), hint: t("literature.repositoriesHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list", children: project.repositories.map((repository) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: repository.source_url }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+      project.repositories?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("literature.repositoriesTitle"), hint: t("literature.repositoriesHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.repositories.map((repository) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: repository.source_url }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               repository.license_spdx || t("literature.unknownLicense"),
               " \xB7 ",
               t("literature.commit"),
@@ -20161,8 +20321,8 @@
               repository.metadata?.verification?.match?.method || t("literature.notVerified")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               Badge,
               {
                 status: repository.verified_official ? repository.metadata?.verification?.license_status === "known_spdx" ? "verified" : "license-review-required" : "candidate-only"
@@ -20176,14 +20336,14 @@
   }
 
   // src/components/previews.tsx
-  var import_react13 = __toESM(require_react(), 1);
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+  var import_react14 = __toESM(require_react(), 1);
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function PointCloudPreview({ preview }) {
     const { t } = useTranslation();
-    const canvasRef = (0, import_react13.useRef)(null);
+    const canvasRef = (0, import_react14.useRef)(null);
     const points = preview.points || [];
-    const [resetKey, setResetKey] = (0, import_react13.useState)(0);
-    (0, import_react13.useEffect)(() => {
+    const [resetKey, setResetKey] = (0, import_react14.useState)(0);
+    (0, import_react14.useEffect)(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const context = canvas.getContext("2d");
@@ -20281,9 +20441,9 @@
     const reset = () => {
       setResetKey((key) => key + 1);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "artifact-preview", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "point-cloud-tools", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "muted", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "artifact-preview", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "point-cloud-tools", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "muted", children: [
           String(preview.format || "ply").toUpperCase(),
           " \xB7 ",
           points.length,
@@ -20293,10 +20453,10 @@
           t("preview.pointCount", { count: "" }),
           preview.sampled ? t("preview.sampled") : ""
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "icon-btn point-reset", type: "button", title: t("preview.resetView"), "aria-label": t("preview.resetView"), onClick: reset, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(RotateCcw, { size: 15 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "icon-btn point-reset", type: "button", title: t("preview.resetView"), "aria-label": t("preview.resetView"), onClick: reset, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RotateCcw, { size: 15 }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("canvas", { ref: canvasRef, className: "point-cloud-canvas", width: "640", height: "420", "aria-label": t("preview.pointCloud") }),
-      preview.faces?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-footnote", children: t("preview.loadedFaces", { count: preview.faces.length }) }) : null
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("canvas", { ref: canvasRef, className: "point-cloud-canvas", width: "640", height: "420", "aria-label": t("preview.pointCloud") }),
+      preview.faces?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-footnote", children: t("preview.loadedFaces", { count: preview.faces.length }) }) : null
     ] });
   }
   function TimeseriesPreview({ preview }) {
@@ -20305,26 +20465,26 @@
     const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
       (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
     );
-    const [metric, setMetric] = (0, import_react13.useState)(metrics[0] || "loss");
-    const [windowSize, setWindowSize] = (0, import_react13.useState)(Math.max(10, points.length));
+    const [metric, setMetric] = (0, import_react14.useState)(metrics[0] || "loss");
+    const [windowSize, setWindowSize] = (0, import_react14.useState)(Math.max(10, points.length));
     const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react13.useState)(allSeeds);
-    const [hovered, setHovered] = (0, import_react13.useState)(null);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react14.useState)(allSeeds);
+    const [hovered, setHovered] = (0, import_react14.useState)(null);
     const seedKey = allSeeds.join("|");
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       setSelectedSeeds((current) => {
         const next = current.filter((seed) => allSeeds.includes(seed));
         return next.length ? next : allSeeds;
       });
     }, [seedKey]);
     if (!points.length || !metrics.length) {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-error", children: t("preview.noFiniteMetrics") });
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-error", children: t("preview.noFiniteMetrics") });
     }
     const visible = points.slice(-windowSize);
     const numeric = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && Number.isFinite(Number(point[metric])));
     const missingCount = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && !Number.isFinite(Number(point[metric]))).length;
     if (!numeric.length) {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-error", children: t("preview.selectionNoFinite") });
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-error", children: t("preview.selectionNoFinite") });
     }
     const steps = numeric.map((point) => Number(point.step));
     const minStep = Math.min(...steps);
@@ -20335,15 +20495,15 @@
     const span = Math.max(maxValue - minValue, 1e-12);
     const groups = [...new Set(numeric.map((point) => String(point.seed ?? "all")))];
     const colors = ["#16856b", "#d97706", "#2563eb", "#be123c", "#7c3aed", "#0f766e"];
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "artifact-preview", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "timeseries-toolbar", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "artifact-preview", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "timeseries-toolbar", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
           t("preview.metric"),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("select", { value: metric, onChange: (event) => setMetric(event.target.value), children: metrics.map((name) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: name, children: name }, name)) })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("select", { value: metric, onChange: (event) => setMetric(event.target.value), children: metrics.map((name) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: name, children: name }, name)) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
           t("preview.points"),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             "input",
             {
               type: "range",
@@ -20354,9 +20514,9 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "timeseries-seeds", "aria-label": t("preview.selectSeeds"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "muted", children: t("preview.seed") }),
-          allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "timeseries-seeds", "aria-label": t("preview.selectSeeds"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "muted", children: t("preview.seed") }),
+          allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             "button",
             {
               className: selectedSeeds.includes(seed) ? "seed-toggle active" : "seed-toggle",
@@ -20367,7 +20527,7 @@
             seed
           ))
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "muted timeseries-count", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "muted timeseries-count", children: [
           numeric.length,
           "/",
           points.length,
@@ -20375,8 +20535,8 @@
           t("preview.pointsCount", { count: "" })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "timeseries-chart-wrap", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "timeseries-chart-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
           "svg",
           {
             className: "timeseries-chart",
@@ -20392,10 +20552,10 @@
               setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? "all") });
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "var(--preview-chart-bg)", rx: "8" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "var(--preview-chart-grid)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "var(--preview-chart-grid)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("text", { x: "52", y: "18", fill: "var(--preview-chart-label)", fontSize: "11", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "var(--preview-chart-bg)", rx: "8" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "var(--preview-chart-grid)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "var(--preview-chart-grid)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("text", { x: "52", y: "18", fill: "var(--preview-chart-label)", fontSize: "11", children: [
                 metric,
                 " \xB7 ",
                 minValue.toPrecision(4),
@@ -20412,8 +20572,8 @@
                   else segments.push([point]);
                 });
                 const color = colors[groupIndex % colors.length];
-                return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("g", { children: [
-                  segments.map((segment, segmentIndex) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("g", { children: [
+                  segments.map((segment, segmentIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
                     "polyline",
                     {
                       points: segment.map((point) => `${48 + (Number(point.step) - minStep) / stepSpan * 656},${250 - (Number(point[metric]) - minValue) / span * 220}`).join(" "),
@@ -20424,7 +20584,7 @@
                     },
                     segmentIndex
                   )),
-                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
                     t("preview.seed"),
                     " ",
                     seed
@@ -20433,14 +20593,14 @@
                     const x = 48 + (Number(point.step) - minStep) / stepSpan * 656;
                     const y = 250 - (Number(point[metric]) - minValue) / span * 220;
                     const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed;
-                    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "var(--preview-chart-focus)" : "none", strokeWidth: "2" }, index);
+                    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "var(--preview-chart-focus)" : "none", strokeWidth: "2" }, index);
                   })
                 ] }, seed);
               })
             ]
           }
         ),
-        hovered ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "timeseries-tooltip", children: [
+        hovered ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "timeseries-tooltip", children: [
           "step ",
           hovered.step,
           " \xB7 seed ",
@@ -20451,42 +20611,42 @@
           hovered.value.toPrecision(6)
         ] }) : null
       ] }),
-      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-footnote", children: t("preview.missingPoints", { count: missingCount, metric }) }) : null
+      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-footnote", children: t("preview.missingPoints", { count: missingCount, metric }) }) : null
     ] });
   }
   function PreviewBody({ preview }) {
     const { t } = useTranslation();
     switch (preview.type) {
       case "point_cloud":
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(PointCloudPreview, { preview });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(PointCloudPreview, { preview });
       case "timeseries":
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TimeseriesPreview, { preview });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(TimeseriesPreview, { preview });
       case "video":
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("video", { className: "artifact-video", controls: true, preload: "metadata", src: preview.download_url });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("video", { className: "artifact-video", controls: true, preload: "metadata", src: preview.download_url });
       case "image":
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-footnote", children: t("preview.imageNote") });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-footnote", children: t("preview.imageNote") });
       case "json": {
         const value = typeof preview.value === "string" ? preview.value : JSON.stringify(preview.value, null, 2);
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("pre", { className: "preview-text", children: value });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("pre", { className: "preview-text", children: value });
       }
       case "pdf": {
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("pre", { className: "preview-text", children: preview.text || "" });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("pre", { className: "preview-text", children: preview.text || "" });
       }
       case "table":
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "table-preview", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("table", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tbody", { children: preview.rows.map((row, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tr", { children: row.map((cell, cellIndex) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("td", { children: String(cell) }, cellIndex)) }, index)) }) }) });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "table-preview", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("table", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tbody", { children: preview.rows.map((row, index) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tr", { children: row.map((cell, cellIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: String(cell) }, cellIndex)) }, index)) }) }) });
       case "html_text":
       case "text":
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("pre", { className: "preview-text", children: preview.text || "" });
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("pre", { className: "preview-text", children: preview.text || "" });
       default:
         return null;
     }
   }
   function ArtifactCard({ artifact }) {
     const { t } = useTranslation();
-    const [preview, setPreview] = (0, import_react13.useState)(null);
-    const [status, setStatus] = (0, import_react13.useState)("idle");
-    const [error, setError] = (0, import_react13.useState)("");
-    (0, import_react13.useEffect)(() => {
+    const [preview, setPreview] = (0, import_react14.useState)(null);
+    const [status, setStatus] = (0, import_react14.useState)("idle");
+    const [error, setError] = (0, import_react14.useState)("");
+    (0, import_react14.useEffect)(() => {
       if (artifact.mime_type?.startsWith("image/")) return;
       if (!artifact.preview_url) return;
       setStatus("loading");
@@ -20498,28 +20658,28 @@
         setStatus("error");
       });
     }, [artifact.preview_url, artifact.mime_type]);
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("article", { className: "artifact-card", children: [
-      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: statusLabel(artifact.experiment_status, t) }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(PreviewBody, { preview }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "artifact-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: artifact.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { className: "muted", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("article", { className: "artifact-card", children: [
+      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: statusLabel(artifact.experiment_status, t) }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(PreviewBody, { preview }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "artifact-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: artifact.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { className: "muted", children: [
           artifact.kind,
           " \xB7 ",
           artifact.valid ? t("common.valid") : t("common.invalid"),
           artifact.experiment_status ? ` \xB7 ${t("preview.runStatus", { status: statusLabel(artifact.experiment_status, t) })}` : ""
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? t("preview.lineage", {
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? t("preview.lineage", {
           run: String(artifact.metadata.lineage.run_id || t("preview.lineageUnbound")),
           idea: String(artifact.metadata.lineage.idea_version || t("preview.lineageUnknown")),
           data: String(artifact.metadata.lineage.data_version || t("preview.lineageNotDeclared"))
         }) : t("preview.lineageMissing") }),
-        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: t("preview.download") }) : null
+        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: t("preview.download") }) : null
       ] })
     ] });
   }
 
   // src/components/tabs/PaperTab.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function paperEvidence(project, paper) {
     return (project.evidence || []).filter((evidence) => evidence.paper_id === paper.id);
   }
@@ -20571,64 +20731,64 @@
         ["paper.sectionResults", (project.experiments || []).some((experiment) => experiment.status === "succeeded")],
         ["paper.sectionLimitations", Boolean(project.spec?.idea?.risks?.length)]
       ];
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.outlineTitle"), hint: t("paper.outlineHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: sections.map(([key, ready]) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t(key) }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: ready ? t("paper.outlineReady") : t("paper.outlineMissing") })
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.outlineTitle"), hint: t("paper.outlineHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: sections.map(([key, ready]) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t(key) }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: ready ? t("paper.outlineReady") : t("paper.outlineMissing") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: ready ? "candidate" : "blocked", children: ready ? t("paper.candidate") : "blocked" })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: ready ? "candidate" : "blocked", children: ready ? t("paper.candidate") : "blocked" })
         ] }, key)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.versionRules") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("paper.versionRulesText") })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.versionRules") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "muted", children: t("paper.versionRulesText") })
         ] })
       ] });
     }
     if (tab === "paper_citations") {
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.citationsTitle"), hint: t("paper.citationsHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
-        project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: project.papers.map((paper) => {
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.citationsTitle"), hint: t("paper.citationsHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
+        project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: project.papers.map((paper) => {
           const evidence = paperEvidence(project, paper);
           const status = evidenceStatus(project, paper);
-          return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: paper.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+          return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: paper.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
                 paper.doi || paper.source_url || t("paper.sourcePending"),
                 " \xB7 ",
                 t("paper.evidenceCount", { count: evidence.length }),
                 " \xB7 ",
                 paper.bibtex ? t("paper.bibtexRecorded") : t("paper.bibtexMissing")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("paper.citationReadiness", { status, confirmed: String(Boolean(paper.confirmed)), verified: String(Boolean(paper.verified)) }) })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "muted", children: t("paper.citationReadiness", { status, confirmed: String(Boolean(paper.confirmed)), verified: String(Boolean(paper.verified)) }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" }),
-              paper.source_url ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { className: "secondary", href: paper.source_url, target: "_blank", rel: "noreferrer", "aria-label": `${t("paper.open")} ${paper.title}`, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ExternalLink, { size: 14 }) }) : null
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" }),
+              paper.source_url ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("a", { className: "secondary", href: paper.source_url, target: "_blank", rel: "noreferrer", "aria-label": `${t("paper.open")} ${paper.title}`, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ExternalLink, { size: 14 }) }) : null
             ] })
           ] }, paper.id);
-        }) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("paper.noPapers"), action: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Link2, { size: 14 }),
+        }) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("paper.noPapers"), action: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Link2, { size: 14 }),
           t("paper.openLiterature")
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-list", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("paper.claimReviewsTitle") }),
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: t("paper.acceptedReviewCount", { count: acceptedReviews }) })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-list", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("paper.claimReviewsTitle") }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: t("paper.acceptedReviewCount", { count: acceptedReviews }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: acceptedReviews ? "ready" : "evidence-required" })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: acceptedReviews ? "ready" : "evidence-required" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("paper.fulltextLocated") }),
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: t("paper.locatedCount", { located: (project.evidence || []).filter((item) => item.locator).length, total: evidenceCount }) })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("paper.fulltextLocated") }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: t("paper.locatedCount", { located: (project.evidence || []).filter((item) => item.locator).length, total: evidenceCount }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ShieldCheck, { size: 16, className: "muted" })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ShieldCheck, { size: 16, className: "muted" })
             ] })
           ] })
         ] })
@@ -20636,178 +20796,178 @@
     }
     if (tab === "paper_figures") {
       const figures = validArtifacts.filter((artifact) => /image|plot|chart|png|jpe?g|svg|pdf|ply|mesh/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.figuresTitle"), hint: t("paper.figuresHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: "project-scoped", children: t("paper.figureCount", { count: figures.length }) }) }),
-        figures.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "artifact-grid", children: figures.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("paper.noFigures"), action: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Image, { size: 14 }),
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.figuresTitle"), hint: t("paper.figuresHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "project-scoped", children: t("paper.figureCount", { count: figures.length }) }) }),
+        figures.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "artifact-grid", children: figures.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("paper.noFigures"), action: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Image, { size: 14 }),
           t("paper.viewArtifacts")
         ] }) })
       ] });
     }
     if (tab === "paper_data") {
       const dataArtifacts = validArtifacts.filter((artifact) => /json|csv|tsv|table|metric|loss|data|timeseries/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.dataTitle"), hint: t("paper.dataHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: "project-scoped", children: t("paper.dataCount", { count: dataArtifacts.length }) }) }),
-        dataArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: dataArtifacts.map((artifact) => {
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.dataTitle"), hint: t("paper.dataHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "project-scoped", children: t("paper.dataCount", { count: dataArtifacts.length }) }) }),
+        dataArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: dataArtifacts.map((artifact) => {
           const lineage = artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? artifact.metadata.lineage : {};
-          return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: artifact.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+          return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: artifact.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
                 artifact.kind,
                 " \xB7 ",
                 artifact.mime_type || t("paper.typePending")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("paper.dataLineage", { run: String(lineage.run_id || t("preview.lineageUnbound")), idea: String(lineage.idea_version || t("preview.lineageUnknown")), data: String(lineage.data_version || t("preview.lineageNotDeclared")) }) })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "muted", children: t("paper.dataLineage", { run: String(lineage.run_id || t("preview.lineageUnbound")), idea: String(lineage.idea_version || t("preview.lineageUnknown")), data: String(lineage.data_version || t("preview.lineageNotDeclared")) }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
           ] }, artifact.id);
-        }) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("paper.noData"), action: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Image, { size: 14 }),
+        }) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("paper.noData"), action: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("artifacts"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Image, { size: 14 }),
           t("paper.viewArtifacts")
         ] }) })
       ] });
     }
     if (tab === "paper_compile") {
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.compileTitle"), hint: t("paper.compileHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.compileTitle"), hint: t("paper.compileHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void createCompilePlan();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FileCheck, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FileCheck, { size: 15 }),
           t("paper.createCompileProposal")
         ] }) }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("paper.sourceFile") }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("code", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("paper.sourceFile") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("code", { children: [
                 "projects/",
                 project.id,
                 "/paper/main.tex"
               ] }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: compileProposals.length ? "candidate" : "blocked", children: compileProposals.length ? t("paper.compileProposalExists") : t("paper.notProposed") })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: compileProposals.length ? "candidate" : "blocked", children: compileProposals.length ? t("paper.compileProposalExists") : t("paper.notProposed") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("paper.compileRuns") }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: compileRuns.length ? t("paper.compileRunCount", { count: compileRuns.length }) : t("paper.noCompileRuns") })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("paper.compileRuns") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: compileRuns.length ? t("paper.compileRunCount", { count: compileRuns.length }) : t("paper.noCompileRuns") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: compileRuns.some((item) => item.status === "succeeded") ? "succeeded" : compileRuns.length ? compileRuns[0].status : "empty" })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: compileRuns.some((item) => item.status === "succeeded") ? "succeeded" : compileRuns.length ? compileRuns[0].status : "empty" })
           ] })
         ] }),
-        compileRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.compileRunRecords") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: compileRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: run.run_id || run.id }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: run.error ? localizeFailure(run.status, run.error) : JSON.stringify(run.metrics || {}) })
+        compileRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.compileRunRecords") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: compileRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: run.run_id || run.id }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: run.error ? localizeFailure(run.status, run.error) : JSON.stringify(run.metrics || {}) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: run.status })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: run.status })
           ] }, run.id)) })
         ] }) : null,
-        compileProposals.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.compileApprovals") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: compileProposals.map((proposal) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: proposal.summary }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+        compileProposals.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.compileApprovals") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: compileProposals.map((proposal) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: proposal.summary }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
                 proposal.reason || t("paper.noReason"),
                 " \xB7 ",
                 proposal.created_at || t("common.timePending")
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: proposal.status })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: proposal.status })
           ] }, proposal.id)) })
         ] }) : null
       ] });
     }
     if (tab === "paper_review") {
       const pdfArtifacts = validArtifacts.filter((artifact) => /pdf/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.pdfTitle"), hint: t("paper.pdfHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: "project-scoped", children: t("paper.pdfCount", { count: pdfArtifacts.length }) }) }),
-        pdfArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: pdfArtifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: artifact.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.pdfTitle"), hint: t("paper.pdfHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "project-scoped", children: t("paper.pdfCount", { count: pdfArtifacts.length }) }) }),
+        pdfArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: pdfArtifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: artifact.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
               artifact.mime_type || "application/pdf",
               " \xB7 SHA-256 ",
               artifact.sha256 ? artifact.sha256.slice(0, 12) : t("common.unrecorded"),
               "\u2026"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" }),
-            artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("a", { className: "secondary", href: artifact.download_url || artifact.url, target: "_blank", rel: "noreferrer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" }),
+            artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("a", { className: "secondary", href: artifact.download_url || artifact.url, target: "_blank", rel: "noreferrer", children: [
               t("paper.openPdf"),
               " ",
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ExternalLink, { size: 14 })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ExternalLink, { size: 14 })
             ] }) : null
           ] })
-        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("paper.noPdf"), action: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("paper_compile"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FileCheck, { size: 14 }),
+        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("paper.noPdf"), action: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("paper_compile"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FileCheck, { size: 14 }),
           t("paper.goCompile")
         ] }) })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.projectTitle"), hint: t("paper.projectHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(ButtonRow, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.projectTitle"), hint: t("paper.projectHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void createPaperDraft();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FilePenLine, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FilePenLine, { size: 15 }),
           t("paper.createDraftProposal")
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void createCompilePlan();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FileCheck, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FileCheck, { size: 15 }),
           t("paper.proposeCompile")
         ] })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "metric-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: t("paper.literatureCount") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: project.papers?.length || 0 })
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "metric-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: t("paper.literatureCount") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: project.papers?.length || 0 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: t("paper.evidenceCandidates") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: evidenceCount })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: t("paper.evidenceCandidates") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: evidenceCount })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: t("paper.acceptedClaims") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: acceptedReviews })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: t("paper.acceptedClaims") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: acceptedReviews })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: t("paper.validArtifacts") }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: validArtifacts.length })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "metric", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: t("paper.validArtifacts") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: validArtifacts.length })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("paper.claimPageEvidence") }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: t("paper.claimPageEvidenceText") })
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("paper.claimPageEvidence") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: t("paper.claimPageEvidenceText") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: acceptedReviews > 0 ? "ready" : "evidence-required" })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: acceptedReviews > 0 ? "ready" : "evidence-required" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("paper.proposalCompile") }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: t("paper.proposalCompileText") })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("paper.proposalCompile") }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: t("paper.proposalCompileText") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ShieldCheck, { size: 16, className: "muted" })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ShieldCheck, { size: 16, className: "muted" })
           ] })
         ] })
       ] }),
-      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("paper.referenceRecords") }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: project.papers.slice(0, 8).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: paper.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("paper.referenceRecords") }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: project.papers.slice(0, 8).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: paper.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
               paper.year || t("literature.yearUnknown"),
               " \xB7 ",
               paper.venue || paper.source_provider || t("paper.sourcePending"),
@@ -20815,15 +20975,15 @@
               paper.doi || t("common.notProvided")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" })
         ] }, paper.id)) })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("paper.noReferences") })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("paper.noReferences") })
     ] });
   }
 
   // src/components/tabs/ReproductionTab.tsx
-  var import_react14 = __toESM(require_react(), 1);
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  var import_react15 = __toESM(require_react(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   var defaultForm = () => ({ dependency_manifest: "requirements.txt", entrypoint: "", random_seeds: "13,37,73", config: "{}" });
   function statusText(status) {
     const labels = {
@@ -20852,10 +21012,10 @@
     const repositories = project.repositories || [];
     const reproductions = project.reproductions || [];
     const runs = project.reproduction_runs || [];
-    const [forms, setForms] = (0, import_react14.useState)({});
-    const [busy, setBusy] = (0, import_react14.useState)(null);
-    const reproductionByRepository = (0, import_react14.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
-    const runByReproduction = (0, import_react14.useMemo)(() => {
+    const [forms, setForms] = (0, import_react15.useState)({});
+    const [busy, setBusy] = (0, import_react15.useState)(null);
+    const reproductionByRepository = (0, import_react15.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
+    const runByReproduction = (0, import_react15.useMemo)(() => {
       const map = /* @__PURE__ */ new Map();
       for (const run of runs) map.set(run.reproduction_id, [...map.get(run.reproduction_id) || [], run]);
       return map;
@@ -20934,105 +21094,105 @@
     const updateForm = (reproductionId, field, value) => {
       setForms((current) => ({ ...current, [reproductionId]: { ...formFor(reproductions.find((item) => item.id === reproductionId)), [field]: value } }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         SectionHeading,
         {
           title: t("reproduction.title"),
           hint: t("reproduction.hint"),
-          extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(GitBranch, { size: 15 }),
+          extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(GitBranch, { size: 15 }),
             t("reproduction.addFromLiterature")
           ] }) })
         }
       ),
-      repositories.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: repositories.map((repository) => {
+      repositories.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: repositories.map((repository) => {
         const download = repository.metadata?.download;
         const verification = repository.metadata?.verification || {};
         const reproduction = reproductionByRepository.get(repository.id);
         const reproductionRuns = reproduction ? runByReproduction.get(reproduction.id) || [] : [];
-        return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("article", { className: "data-row reproduction-card", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "reproduction-main", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("a", { href: repository.source_url, target: "_blank", rel: "noreferrer", children: repository.source_url }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ExternalLink, { size: 13, "aria-hidden": "true" })
+        return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("article", { className: "data-row reproduction-card", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "reproduction-main", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("a", { href: repository.source_url, target: "_blank", rel: "noreferrer", children: repository.source_url }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ExternalLink, { size: 13, "aria-hidden": "true" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
               repository.commit_or_tag || t("reproduction.commitUnlocked"),
               " \xB7 ",
               repository.license_spdx || verification.license_status || t("reproduction.licensePending"),
               " \xB7",
               download?.source_relative_path ? ` ${t("reproduction.entered")} ${download.source_relative_path}` : ` ${t("reproduction.notDownloaded")}`
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "button-row reproduction-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: repository.verified_official ? "verified" : "review-required", children: repository.verified_official ? t("reproduction.verified") : t("reproduction.pendingVerification") }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `verify:${repository.id}`, onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "button-row reproduction-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: repository.verified_official ? "verified" : "review-required", children: repository.verified_official ? t("reproduction.verified") : t("reproduction.pendingVerification") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `verify:${repository.id}`, onClick: () => {
                 void verifyRepository(repository);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RefreshCw, { size: 15 }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { size: 15 }),
                 t("reproduction.reverify")
               ] }),
-              repository.verified_official && !reproduction ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `download:${repository.id}`, onClick: () => {
+              repository.verified_official && !reproduction ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `download:${repository.id}`, onClick: () => {
                 void requestDownload(repository);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Download, { size: 15 }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Download, { size: 15 }),
                 t("reproduction.createDownloadApproval")
               ] }) : null
             ] })
           ] }),
-          reproduction ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "reproduction-detail", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row compact-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: t("reproduction.environment") }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: reproduction.repository_relative_path }),
+          reproduction ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "reproduction-detail", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row compact-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: t("reproduction.environment") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: reproduction.repository_relative_path }),
                   " \xB7 ",
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: reproduction.venv_relative_path })
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: reproduction.venv_relative_path })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: reproduction.status, children: t(statusText(reproduction.status)) })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: reproduction.status, children: t(statusText(reproduction.status)) })
             ] }),
-            reproduction.error ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "inline-warning", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(TriangleAlert, { size: 15 }),
+            reproduction.error ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "inline-warning", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(TriangleAlert, { size: 15 }),
               " ",
               localizeFailure(reproduction.status, reproduction.error)
             ] }) : null,
-            ["source_downloaded", "dependency_failed"].includes(reproduction.status) ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "reproduction-form", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+            ["source_downloaded", "dependency_failed"].includes(reproduction.status) ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "reproduction-form", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
                 t("reproduction.dependencyManifest"),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: formFor(reproduction).dependency_manifest, onChange: (event) => updateForm(reproduction.id, "dependency_manifest", event.target.value) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { value: formFor(reproduction).dependency_manifest, onChange: (event) => updateForm(reproduction.id, "dependency_manifest", event.target.value) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `dependency:${reproduction.id}`, onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `dependency:${reproduction.id}`, onClick: () => {
                 void requestDependencies(reproduction);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(PackageCheck, { size: 15 }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(PackageCheck, { size: 15 }),
                 t("reproduction.createDependencyApproval")
               ] })
             ] }) : null,
-            reproduction.status === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "reproduction-form", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+            reproduction.status === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "reproduction-form", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
                 t("reproduction.pythonEntry"),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { placeholder: t("reproduction.pythonEntryPlaceholder"), value: formFor(reproduction).entrypoint, onChange: (event) => updateForm(reproduction.id, "entrypoint", event.target.value) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { placeholder: t("reproduction.pythonEntryPlaceholder"), value: formFor(reproduction).entrypoint, onChange: (event) => updateForm(reproduction.id, "entrypoint", event.target.value) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
                 t("reproduction.seeds"),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { value: formFor(reproduction).random_seeds, onChange: (event) => updateForm(reproduction.id, "random_seeds", event.target.value) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { value: formFor(reproduction).random_seeds, onChange: (event) => updateForm(reproduction.id, "random_seeds", event.target.value) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
                 t("reproduction.structuredConfig"),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("textarea", { rows: 2, value: formFor(reproduction).config, onChange: (event) => updateForm(reproduction.id, "config", event.target.value) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { rows: 2, value: formFor(reproduction).config, onChange: (event) => updateForm(reproduction.id, "config", event.target.value) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `run:${reproduction.id}`, onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `run:${reproduction.id}`, onClick: () => {
                 void requestRun(reproduction);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Play, { size: 15 }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Play, { size: 15 }),
                 t("reproduction.createRunApproval")
               ] })
             ] }) : null,
-            reproductionRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "reproduction-runs", children: reproductionRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row compact-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: t("overview.runDetail", { run: run.id.slice(0, 8) }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
+            reproductionRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "reproduction-runs", children: reproductionRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row compact-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: t("overview.runDetail", { run: run.id.slice(0, 8) }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
                   run.entrypoint,
                   " \xB7 ",
                   t("reproduction.seeds"),
@@ -21041,27 +21201,27 @@
                   run.error ? ` \xB7 ${localizeFailure(run.status, run.error)}` : ""
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: run.status, children: t(statusText(run.status)) })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: run.status, children: t(statusText(run.status)) })
             ] }, run.id)) }) : null
           ] }) : null
         ] }, repository.id);
-      }) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         EmptyState,
         {
           text: t("reproduction.empty"),
-          action: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(GitBranch, { size: 15 }),
+          action: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(GitBranch, { size: 15 }),
             t("reproduction.openLiterature")
           ] })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "section", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("reproduction.boundaryTitle"), hint: t("reproduction.boundaryHint") }) })
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "section", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("reproduction.boundaryTitle"), hint: t("reproduction.boundaryHint") }) })
     ] });
   }
 
   // src/components/tabs/ComparisonTab.tsx
-  var import_react15 = __toESM(require_react(), 1);
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var import_react16 = __toESM(require_react(), 1);
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
   var defaultContext = () => ({
     data_version: "",
     datasets: "[]",
@@ -21100,23 +21260,23 @@
   }
   function ComparisonTab({ project, onRefresh, showToast }) {
     const { t } = useTranslation();
-    const papers = (0, import_react15.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
-    const runs = (0, import_react15.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
-    const [paperId, setPaperId] = (0, import_react15.useState)("");
-    const [runId, setRunId] = (0, import_react15.useState)("");
-    const [evidenceIds, setEvidenceIds] = (0, import_react15.useState)([]);
-    const [paperMetrics, setPaperMetrics] = (0, import_react15.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
-    const [context, setContext] = (0, import_react15.useState)(defaultContext);
-    const [busy, setBusy] = (0, import_react15.useState)(false);
-    const [error, setError] = (0, import_react15.useState)(null);
+    const papers = (0, import_react16.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
+    const runs = (0, import_react16.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
+    const [paperId, setPaperId] = (0, import_react16.useState)("");
+    const [runId, setRunId] = (0, import_react16.useState)("");
+    const [evidenceIds, setEvidenceIds] = (0, import_react16.useState)([]);
+    const [paperMetrics, setPaperMetrics] = (0, import_react16.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
+    const [context, setContext] = (0, import_react16.useState)(defaultContext);
+    const [busy, setBusy] = (0, import_react16.useState)(false);
+    const [error, setError] = (0, import_react16.useState)(null);
     const selectedPaper = papers.find((paper) => paper.id === paperId) || null;
-    const paperEvidence2 = (0, import_react15.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
+    const paperEvidence2 = (0, import_react16.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
     const comparisons = project.research_comparisons || [];
-    (0, import_react15.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       if (!paperId && papers[0]) setPaperId(papers[0].id);
       if (!runId && runs[0]) setRunId(runs[0].id);
     }, [papers, runs, paperId, runId]);
-    (0, import_react15.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       setEvidenceIds((current) => current.filter((id) => paperEvidence2.some((evidence) => evidence.id === id)));
     }, [paperEvidence2]);
     const createComparison = async () => {
@@ -21172,49 +21332,49 @@
       }
     };
     const toggleEvidence = (id) => setEvidenceIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         SectionHeading,
         {
           title: t("comparison.title"),
           hint: t("comparison.hint"),
-          extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
+          extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
             void onRefresh();
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(RefreshCw, { size: 15 }),
             t("topbar.refresh")
           ] }) })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section comparison-scope", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row compact-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: t("comparison.projectScope") }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: project.id }) })
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section comparison-scope", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row compact-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: t("comparison.projectScope") }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: project.id }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: "project-scoped" })
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: "project-scoped" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "muted", children: t("comparison.scopeCounts", { papers: papers.length, runs: runs.length, comparisons: comparisons.length }) })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "muted", children: t("comparison.scopeCounts", { papers: papers.length, runs: runs.length, comparisons: comparisons.length }) })
       ] }),
-      !papers.length || !runs.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("comparison.empty") }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section comparison-form-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("comparison.createTitle"), hint: t("comparison.createHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(GitCompare, { size: 16, className: "muted" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "form-grid two-up", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+      !papers.length || !runs.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("comparison.empty") }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section comparison-form-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("comparison.createTitle"), hint: t("comparison.createHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(GitCompare, { size: 16, className: "muted" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "form-grid two-up", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
             t("comparison.confirmedPaper"),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { value: paperId, onChange: (event) => {
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("select", { value: paperId, onChange: (event) => {
               setPaperId(event.target.value);
               setEvidenceIds([]);
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: t("common.select") }),
-              papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "", children: t("common.select") }),
+              papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
             t("comparison.reproductionRun"),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { value: runId, onChange: (event) => setRunId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: t("common.select") }),
-              runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("option", { value: run.id, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("select", { value: runId, onChange: (event) => setRunId(event.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "", children: t("common.select") }),
+              runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("option", { value: run.id, children: [
                 t("overview.runDetail", { run: run.id.slice(0, 8) }),
                 " \xB7 ",
                 t("reproduction.seeds"),
@@ -21224,58 +21384,58 @@
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "comparison-evidence-picker", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: t("comparison.paperEvidence") }),
-          selectedPaper && paperEvidence2.length ? paperEvidence2.map((evidence) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "comparison-evidence-option", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "checkbox", checked: evidenceIds.includes(evidence.id), onChange: () => toggleEvidence(evidence.id) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "comparison-evidence-picker", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: t("comparison.paperEvidence") }),
+          selectedPaper && paperEvidence2.length ? paperEvidence2.map((evidence) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "comparison-evidence-option", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { type: "checkbox", checked: evidenceIds.includes(evidence.id), onChange: () => toggleEvidence(evidence.id) }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { children: [
               evidence.locator,
               " \xB7 ",
               evidence.claim || t("comparison.unnamedClaim"),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: evidence.metadata?.pdf_sha256 ? `SHA-256 ${String(evidence.metadata.pdf_sha256).slice(0, 12)}\u2026` : t("comparison.missingPdfHash") })
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("small", { children: evidence.metadata?.pdf_sha256 ? `SHA-256 ${String(evidence.metadata.pdf_sha256).slice(0, 12)}\u2026` : t("comparison.missingPdfHash") })
             ] })
-          ] }, evidence.id)) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "muted", children: t("comparison.noLocatedEvidence") })
+          ] }, evidence.id)) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "muted", children: t("comparison.noLocatedEvidence") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
           t("comparison.paperMetricsJson"),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { rows: 7, value: paperMetrics, onChange: (event) => setPaperMetrics(event.target.value) })
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { rows: 7, value: paperMetrics, onChange: (event) => setPaperMetrics(event.target.value) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "form-grid two-up", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "form-grid two-up", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
             t("comparison.dataVersion"),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { value: context.data_version, onChange: (event) => setContext((current) => ({ ...current, data_version: event.target.value })), placeholder: t("comparison.dataVersionPlaceholder") })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { value: context.data_version, onChange: (event) => setContext((current) => ({ ...current, data_version: event.target.value })), placeholder: t("comparison.dataVersionPlaceholder") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
             t("comparison.configFingerprint"),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { value: context.config_fingerprint, onChange: (event) => setContext((current) => ({ ...current, config_fingerprint: event.target.value })), placeholder: t("comparison.configPlaceholder") })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { value: context.config_fingerprint, onChange: (event) => setContext((current) => ({ ...current, config_fingerprint: event.target.value })), placeholder: t("comparison.configPlaceholder") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
             t("comparison.datasetsJson"),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { value: context.datasets, onChange: (event) => setContext((current) => ({ ...current, datasets: event.target.value })) })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { value: context.datasets, onChange: (event) => setContext((current) => ({ ...current, datasets: event.target.value })) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
             t("comparison.seedsLabel"),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { value: context.seeds, onChange: (event) => setContext((current) => ({ ...current, seeds: event.target.value })), placeholder: t("comparison.seedsPlaceholder") })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { value: context.seeds, onChange: (event) => setContext((current) => ({ ...current, seeds: event.target.value })), placeholder: t("comparison.seedsPlaceholder") })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
           t("comparison.definitionsJson"),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { rows: 3, value: context.metric_definitions, onChange: (event) => setContext((current) => ({ ...current, metric_definitions: event.target.value })), placeholder: t("comparison.definitionsPlaceholder") })
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { rows: 3, value: context.metric_definitions, onChange: (event) => setContext((current) => ({ ...current, metric_definitions: event.target.value })), placeholder: t("comparison.definitionsPlaceholder") })
         ] }),
-        error ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "inline-warning", role: "alert", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(TriangleAlert, { size: 15 }),
+        error ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "inline-warning", role: "alert", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(TriangleAlert, { size: 15 }),
           error
         ] }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "primary", type: "button", disabled: busy || !papers.length || !runs.length, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "primary", type: "button", disabled: busy || !papers.length || !runs.length, onClick: () => {
           void createComparison();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ShieldCheck, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ShieldCheck, { size: 15 }),
           t("comparison.save")
         ] }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section comparison-results", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("comparison.savedTitle"), hint: t("comparison.savedHint") }),
-        comparisons.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: comparisons.map((comparison) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ComparisonCard, { comparison, busy, onDecide: decideCandidate }, comparison.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("comparison.savedEmpty") })
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section comparison-results", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("comparison.savedTitle"), hint: t("comparison.savedHint") }),
+        comparisons.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "data-list", children: comparisons.map((comparison) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ComparisonCard, { comparison, busy, onDecide: decideCandidate }, comparison.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("comparison.savedEmpty") })
       ] })
     ] });
   }
@@ -21285,91 +21445,91 @@
     const snapshot = comparison.source_snapshot || {};
     const reproduction = snapshot.reproduction_run || {};
     const artifacts = Array.isArray(snapshot.artifacts) ? snapshot.artifacts : [];
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("article", { className: "data-row comparison-card", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "comparison-card-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("h3", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("article", { className: "data-row comparison-card", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "comparison-card-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("h3", { children: [
             t("comparison.paper"),
             " ",
             comparison.paper_id.slice(0, 8),
             " \xB7 ",
             t("overview.runDetail", { run: comparison.reproduction_run_id.slice(0, 8) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { children: [
             t("comparison.inputHash"),
             " ",
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: comparison.input_hash || t("common.unrecorded") })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: comparison.input_hash || t("common.unrecorded") })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: comparison.status, children: t(statusLabel2(comparison.status)) })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: comparison.status, children: t(statusLabel2(comparison.status)) })
       ] }),
-      comparison.blocking_reasons?.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "inline-warning", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(TriangleAlert, { size: 15 }),
+      comparison.blocking_reasons?.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "inline-warning", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(TriangleAlert, { size: 15 }),
         comparison.blocking_reasons.join(", ")
       ] }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "comparison-provenance", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "comparison-provenance", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { children: [
           t("literature.commit"),
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: String(reproduction.source_commit || t("common.unrecorded")) })
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: String(reproduction.source_commit || t("common.unrecorded")) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { children: [
           t("reproduction.seeds"),
           " ",
           Array.isArray(reproduction.random_seeds) ? reproduction.random_seeds.join(", ") : t("common.unrecorded")
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: t("comparison.artifactsCount", { count: artifacts.length }) })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: t("comparison.artifactsCount", { count: artifacts.length }) })
       ] }),
-      metrics.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "comparison-metrics", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("table", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("comparison.metric") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("comparison.paper") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("comparison.reproductionMean") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("comparison.std") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("comparison.delta") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("comparison.status") })
+      metrics.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "comparison-metrics", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("table", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("comparison.metric") }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("comparison.paper") }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("comparison.reproductionMean") }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("comparison.std") }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("comparison.delta") }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("comparison.status") })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("tbody", { children: metrics.map(([name, metric]) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: name }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: t(metricNumber(metric.paper_value)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: t(metricNumber(metric.reproduction_mean)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: t(metricNumber(metric.reproduction_population_std)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: t(metricNumber(metric.delta)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: metric.status, children: t(statusLabel2(metric.status)) }) })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("tbody", { children: metrics.map(([name, metric]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: name }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: t(metricNumber(metric.paper_value)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: t(metricNumber(metric.reproduction_mean)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: t(metricNumber(metric.reproduction_population_std)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: t(metricNumber(metric.delta)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: metric.status, children: t(statusLabel2(metric.status)) }) })
         ] }, name)) })
       ] }) }) : null,
-      comparison.candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "comparison-candidates", children: comparison.candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row compact-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: t(candidateLabel(candidate.candidate_type)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: candidate.statement }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("small", { children: [
+      comparison.candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "comparison-candidates", children: comparison.candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row compact-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: t(candidateLabel(candidate.candidate_type)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: candidate.statement }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("small", { children: [
             t("comparison.evidenceStatus"),
             " ",
             statusLabel(candidate.evidence_status, t),
             " \xB7 ",
             t("comparison.candidateId"),
             " ",
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: candidate.id.slice(0, 8) })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: candidate.id.slice(0, 8) })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(ButtonRow, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: candidate.status, children: t(statusLabel2(candidate.status)) }),
-          candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(ButtonRow, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: candidate.status, children: t(statusLabel2(candidate.status)) }),
+          candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
               void onDecide(comparison.id, candidate.id, "accepted");
             }, children: t("comparison.keep") }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: () => {
               void onDecide(comparison.id, candidate.id, "rejected");
             }, children: t("common.reject") })
           ] }) : null
         ] })
-      ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "muted", children: t("comparison.noCandidates") })
+      ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "muted", children: t("comparison.noCandidates") })
     ] });
   }
 
   // src/components/tabs/ResearchStatusTab.tsx
-  var import_react16 = __toESM(require_react(), 1);
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var import_react17 = __toESM(require_react(), 1);
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
   function listLabel(values, emptyLabel) {
     return values.length ? values.join(", ") : emptyLabel;
   }
@@ -21383,15 +21543,15 @@
     showToast
   }) {
     const { t, locale } = useTranslation();
-    const [status, setStatus] = (0, import_react16.useState)(null);
-    const [loading, setLoading] = (0, import_react16.useState)(true);
-    const [working, setWorking] = (0, import_react16.useState)(false);
-    const [error, setError] = (0, import_react16.useState)(null);
-    const [theme, setTheme2] = (0, import_react16.useState)("");
-    const [method, setMethod] = (0, import_react16.useState)("");
-    const [year, setYear] = (0, import_react16.useState)("");
-    const [gapType, setGapType] = (0, import_react16.useState)("gap");
-    const [gapStatement, setGapStatement] = (0, import_react16.useState)("");
+    const [status, setStatus] = (0, import_react17.useState)(null);
+    const [loading, setLoading] = (0, import_react17.useState)(true);
+    const [working, setWorking] = (0, import_react17.useState)(false);
+    const [error, setError] = (0, import_react17.useState)(null);
+    const [theme, setTheme2] = (0, import_react17.useState)("");
+    const [method, setMethod] = (0, import_react17.useState)("");
+    const [year, setYear] = (0, import_react17.useState)("");
+    const [gapType, setGapType] = (0, import_react17.useState)("gap");
+    const [gapStatement, setGapStatement] = (0, import_react17.useState)("");
     const loadStatus = async (filters = { theme, method, year }) => {
       setLoading(true);
       setError(null);
@@ -21407,11 +21567,11 @@
         setLoading(false);
       }
     };
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       setStatus(null);
       void loadStatus({ theme: "", method: "", year: "" });
     }, [project.id]);
-    const eligibleRows = (0, import_react16.useMemo)(() => {
+    const eligibleRows = (0, import_react17.useMemo)(() => {
       const reviews = project.claim_reviews || [];
       return (project.papers || []).flatMap((paper) => {
         if (paper.confirmed !== true) return [];
@@ -21491,140 +21651,140 @@
     };
     const matrix = status?.matrix;
     const exportUrl = (format) => matrix ? `/api/projects/${project.id}/research-status/export?format=${format}&matrix_id=${matrix.id}` : "#";
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         SectionHeading,
         {
           title: t("research.title"),
           hint: t("research.hint"),
-          extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(ButtonRow, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "secondary", type: "button", disabled: loading || working, onClick: () => {
+          extra: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "secondary", type: "button", disabled: loading || working, onClick: () => {
               void loadStatus();
               showToast(t("research.refreshing"));
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(RefreshCw, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(RefreshCw, { size: 15 }),
               t("topbar.refresh")
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "primary", type: "button", disabled: working || Boolean(matrix), onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "primary", type: "button", disabled: working || Boolean(matrix), onClick: () => {
               void createMatrix();
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Table2, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Table2, { size: 15 }),
               matrix ? t("research.matrixReady") : t("research.createMatrix")
             ] })
           ] })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section research-status-scope", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row compact-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: t("context.currentScope") }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: project.id }) })
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section research-status-scope", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row compact-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("strong", { children: t("context.currentScope") }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("code", { children: project.id }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: status?.permission_status || "project-scoped" })
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: status?.permission_status || "project-scoped" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "muted", children: t("research.scopeCounts", { eligible: eligibleRows.length, rows: matrix?.rows.length || 0, idea: project.current_idea_version || 1 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "muted", children: t("research.scopeCounts", { eligible: eligibleRows.length, rows: matrix?.rows.length || 0, idea: project.current_idea_version || 1 }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section research-status-filters", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("research.filtersTitle"), hint: t("research.filtersHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Funnel, { size: 16, className: "muted" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "form-grid three-up", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section research-status-filters", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SectionHeading, { title: t("research.filtersTitle"), hint: t("research.filtersHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Funnel, { size: 16, className: "muted" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "form-grid three-up", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
             t("research.theme"),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { value: theme, onChange: (event) => setTheme2(event.target.value), placeholder: t("research.themePlaceholder") })
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("input", { value: theme, onChange: (event) => setTheme2(event.target.value), placeholder: t("research.themePlaceholder") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
             t("research.method"),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { value: method, onChange: (event) => setMethod(event.target.value), placeholder: t("research.methodPlaceholder") })
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("input", { value: method, onChange: (event) => setMethod(event.target.value), placeholder: t("research.methodPlaceholder") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
             t("research.year"),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { inputMode: "numeric", value: year, onChange: (event) => setYear(event.target.value), placeholder: "2024" })
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("input", { inputMode: "numeric", value: year, onChange: (event) => setYear(event.target.value), placeholder: "2024" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: loading, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", disabled: loading, onClick: () => {
           void loadStatus();
           showToast(t("research.filtersApplied"));
         }, children: t("research.applyFilters") }) })
       ] }),
-      loading ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("research.loading") }) : null,
-      error ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("research.requestFailed", { error }) }) : null,
-      !loading && !error && status && !matrix ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: status.limitations[0] || t("research.noMatrix"), action: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: working || !eligibleRows.length, onClick: () => {
+      loading ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("research.loading") }) : null,
+      error ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("research.requestFailed", { error }) }) : null,
+      !loading && !error && status && !matrix ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: status.limitations[0] || t("research.noMatrix"), action: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", disabled: working || !eligibleRows.length, onClick: () => {
         void createMatrix();
       }, children: t("research.createFromReviewed") }) }) : null,
-      !loading && !error && matrix ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section research-status-matrix-panel", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("research.matrixVersion", { version: matrix.idea_version }), hint: t("research.matrixMeta", { creator: matrix.created_by, time: formatDateTime(matrix.created_at, locale) }), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(ButtonRow, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("a", { className: "secondary", href: exportUrl("csv"), download: true, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Download, { size: 15 }),
+      !loading && !error && matrix ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section research-status-matrix-panel", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SectionHeading, { title: t("research.matrixVersion", { version: matrix.idea_version }), hint: t("research.matrixMeta", { creator: matrix.created_by, time: formatDateTime(matrix.created_at, locale) }), extra: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("a", { className: "secondary", href: exportUrl("csv"), download: true, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Download, { size: 15 }),
               "CSV"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("a", { className: "secondary", href: exportUrl("markdown"), download: true, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Download, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("a", { className: "secondary", href: exportUrl("markdown"), download: true, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Download, { size: 15 }),
               "Markdown"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("a", { className: "secondary", href: exportUrl("json"), download: true, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Download, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("a", { className: "secondary", href: exportUrl("json"), download: true, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Download, { size: 15 }),
               "JSON"
             ] })
           ] }) }),
-          matrix.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "research-status-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("table", { className: "research-status-table", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.paper") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.theme") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.method") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.year") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.datasets") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.metrics") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.code") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: t("research.evidence") })
+          matrix.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "research-status-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("table", { className: "research-status-table", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.paper") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.theme") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.method") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.year") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.datasets") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.metrics") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.code") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("th", { children: t("research.evidence") })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("tbody", { children: matrix.rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("td", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: row.paper?.title || row.paper_id }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("small", { children: row.paper?.doi || t("research.doiUnrecorded") })
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("tbody", { children: matrix.rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("td", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("strong", { children: row.paper?.title || row.paper_id }),
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: row.paper?.doi || t("research.doiUnrecorded") })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: row.theme || t("research.unresolved") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: row.method || t("research.unresolved") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: row.year || t("research.unresolved") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: listLabel(row.datasets, t("research.unresolved")) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: listLabel(row.metrics, t("research.unresolved")) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: row.code_availability }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("td", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: row.evidence_status }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("td", { children: row.theme || t("research.unresolved") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("td", { children: row.method || t("research.unresolved") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("td", { children: row.year || t("research.unresolved") }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("td", { children: listLabel(row.datasets, t("research.unresolved")) }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("td", { children: listLabel(row.metrics, t("research.unresolved")) }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: row.code_availability }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("td", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: row.evidence_status }),
                 " ",
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("small", { children: t(evidenceLabel(row.evidence_status)) }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("details", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("summary", { children: t("research.source") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: row.evidence_ids.join(", ") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("br", {}),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: row.claim_review_ids.join(", ") })
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: t(evidenceLabel(row.evidence_status)) }),
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("details", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("summary", { children: t("research.source") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("code", { children: row.evidence_ids.join(", ") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("br", {}),
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("code", { children: row.claim_review_ids.join(", ") })
                 ] })
               ] })
             ] }, row.id)) })
-          ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("research.noFilteredRows") })
+          ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("research.noFilteredRows") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section research-gap-panel", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("research.gapTitle"), hint: t("research.gapHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Lightbulb, { size: 16, className: "muted" }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "form-grid gap-candidate-form", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section research-gap-panel", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SectionHeading, { title: t("research.gapTitle"), hint: t("research.gapHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Lightbulb, { size: 16, className: "muted" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "form-grid gap-candidate-form", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
               t("research.candidateType"),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("select", { value: gapType, onChange: (event) => setGapType(event.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "gap", children: t("research.gap") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "cluster", children: t("research.cluster") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "duplicate_risk", children: t("research.duplicateRisk") })
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("select", { value: gapType, onChange: (event) => setGapType(event.target.value), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "gap", children: t("research.gap") }),
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "cluster", children: t("research.cluster") }),
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "duplicate_risk", children: t("research.duplicateRisk") })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "wide-field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "wide-field", children: [
               t("research.candidateStatement"),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { value: gapStatement, onChange: (event) => setGapStatement(event.target.value), placeholder: t("research.candidatePlaceholder"), rows: 3 })
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { value: gapStatement, onChange: (event) => setGapStatement(event.target.value), placeholder: t("research.candidatePlaceholder"), rows: 3 })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: working || !gapStatement.trim(), onClick: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", disabled: working || !gapStatement.trim(), onClick: () => {
             void createGapCandidate();
           }, children: t("research.recordCandidate") }) }),
-          status.gap_candidates.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "data-list", children: status.gap_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: candidate.statement }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { children: [
+          status.gap_candidates.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "data-list", children: status.gap_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: candidate.statement }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
                 candidate.candidate_type,
                 " \xB7 ",
                 t("research.rowsCount", { count: candidate.row_ids.length }),
@@ -21632,26 +21792,26 @@
                 statusLabel(candidate.evidence_status, t)
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: candidate.status }),
-              candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: working, onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: candidate.status }),
+              candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", disabled: working, onClick: () => {
                   void decideGap(candidate, "accepted");
                 }, children: t("research.keepCandidate") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "secondary", type: "button", disabled: working, onClick: () => {
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "secondary", type: "button", disabled: working, onClick: () => {
                   void decideGap(candidate, "rejected");
                 }, children: t("common.reject") })
               ] }) : null
             ] })
-          ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("research.noCandidates") })
+          ] }, candidate.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("research.noCandidates") })
         ] })
       ] }) : null
     ] });
   }
 
   // src/components/tabs/ExperimentsTab.tsx
-  var import_react17 = __toESM(require_react(), 1);
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  var import_react18 = __toESM(require_react(), 1);
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function ExperimentsTab({
     project,
     onRefresh,
@@ -21659,8 +21819,8 @@
     onNavigate
   }) {
     const { t } = useTranslation();
-    const [diagnostics, setDiagnostics] = (0, import_react17.useState)(null);
-    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react17.useState)(false);
+    const [diagnostics, setDiagnostics] = (0, import_react18.useState)(null);
+    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react18.useState)(false);
     const createExperimentPlan = async () => {
       try {
         const result = await api(`/api/projects/${project.id}/experiment-plan`, { method: "POST" });
@@ -21720,10 +21880,10 @@
         showToast(errorMessage(error));
       }
     };
-    const metricRows = diagnostics ? Object.entries(diagnostics.metrics || {}).map(([name, value]) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: name }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
+    const metricRows = diagnostics ? Object.entries(diagnostics.metrics || {}).map(([name, value]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: name }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
           "n=",
           value.count,
           " \xB7 mean=",
@@ -21736,112 +21896,112 @@
           Number(value.max).toPrecision(6)
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: "calculated" })
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: "calculated" })
     ] }, name)) : [];
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         SectionHeading,
         {
           title: t("experiment.title"),
-          extra: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(ButtonRow, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "secondary", type: "button", onClick: createExperimentPlan, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ListChecks, { size: 15 }),
+          extra: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "secondary", type: "button", onClick: createExperimentPlan, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ListChecks, { size: 15 }),
               t("experiment.plan")
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "secondary", type: "button", disabled: diagnosticsLoading, onClick: runDiagnostics, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Activity, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "secondary", type: "button", disabled: diagnosticsLoading, onClick: runDiagnostics, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Activity, { size: 15 }),
               t("experiment.diagnostics")
             ] })
           ] })
         }
       ),
-      project.experiments?.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "data-list", children: project.experiments.map((experiment) => {
+      project.experiments?.length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "data-list", children: project.experiments.map((experiment) => {
         const checkpoint = checkpointForExperiment(experiment);
-        return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: experiment.experiment_type }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
+        return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: experiment.experiment_type }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
               JSON.stringify(experiment.metrics),
               experiment.run_id ? ` \xB7 ${t("overview.runDetail", { run: experiment.run_id })}` : ""
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: experiment.status }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "secondary", type: "button", onClick: () => syncRun(experiment.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(RefreshCw, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: experiment.status }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "secondary", type: "button", onClick: () => syncRun(experiment.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RefreshCw, { size: 15 }),
               t("experiment.sync")
             ] }),
-            ["queued", "running"].includes(experiment.status) ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "reject", type: "button", onClick: () => cancelRun(experiment.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Square, { size: 15 }),
+            ["queued", "running"].includes(experiment.status) ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "reject", type: "button", onClick: () => cancelRun(experiment.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Square, { size: 15 }),
               t("common.cancel")
             ] }) : null,
-            checkpoint ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeCheckpointRerun(checkpoint.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(RotateCcw, { size: 15 }),
+            checkpoint ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "secondary", type: "button", onClick: () => proposeCheckpointRerun(checkpoint.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RotateCcw, { size: 15 }),
               t("experiment.rerun")
             ] }) : null
           ] })
         ] }, experiment.id);
-      }) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("experiment.empty") }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SectionHeading, { title: t("experiment.diagnosticsTitle") }),
-        diagnosticsLoading ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("experiment.loadingDiagnostics") }) : diagnostics ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section-head", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: t("experiment.numericSummary") }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "muted", children: t("experiment.runCount", { count: diagnostics.run_count ?? 0 }) })
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(EmptyState, { text: t("experiment.empty") }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SectionHeading, { title: t("experiment.diagnosticsTitle") }),
+        diagnosticsLoading ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(EmptyState, { text: t("experiment.loadingDiagnostics") }) : diagnostics ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: t("experiment.numericSummary") }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "muted", children: t("experiment.runCount", { count: diagnostics.run_count ?? 0 }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "data-list", children: metricRows.length ? metricRows : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("experiment.noMetrics") }) }),
-          diagnostics.failures?.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-head", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: t("experiment.failureDiagnostics") }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "data-list", children: diagnostics.failures.map((failure, index) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: failure.experiment_id.slice(0, 8) }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "data-list", children: metricRows.length ? metricRows : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(EmptyState, { text: t("experiment.noMetrics") }) }),
+          diagnostics.failures?.length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "section-head", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: t("experiment.failureDiagnostics") }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "data-list", children: diagnostics.failures.map((failure, index) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: failure.experiment_id.slice(0, 8) }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
                   statusLabel(failure.status, t),
                   " \xB7 ",
                   failure.error_code
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { status: "failed" })
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: "failed" })
             ] }, index)) })
           ] }) : null,
-          diagnostics.suggestions?.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "section-head", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: t("experiment.suggestions") }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "badge pending", children: [
+          diagnostics.suggestions?.length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: t("experiment.suggestions") }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "badge pending", children: [
                 "Proposal ",
                 String(diagnostics.proposal_id || "").slice(0, 8)
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "data-list", children: diagnostics.suggestions.map((suggestion, index) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: suggestion.title }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: suggestion.reason }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "muted", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "data-list", children: diagnostics.suggestions.map((suggestion, index) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: suggestion.title }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: suggestion.reason }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "muted", children: [
                   t("experiment.evidenceRuns"),
                   " ",
                   (suggestion.evidence_experiment_ids || []).map((id) => id.slice(0, 8)).join(", ")
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "badge pending", children: t("common.pendingApproval") })
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "badge pending", children: t("common.pendingApproval") })
             ] }, index)) })
           ] }) : null
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("experiment.diagnosticsEmpty") })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(EmptyState, { text: t("experiment.diagnosticsEmpty") })
       ] })
     ] });
   }
 
   // src/components/tabs/ArtifactsTab.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
   function ArtifactsTab({ project }) {
     const { t } = useTranslation();
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SectionHeading, { title: t("artifacts.title"), hint: t("artifacts.hint") }),
-      project.artifacts?.length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "artifact-grid", children: project.artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(EmptyState, { text: t("artifacts.empty") })
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(SectionHeading, { title: t("artifacts.title"), hint: t("artifacts.hint") }),
+      project.artifacts?.length ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "artifact-grid", children: project.artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(EmptyState, { text: t("artifacts.empty") })
     ] });
   }
 
   // src/components/tabs/ApprovalsTab.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   function ApprovalsTab({
     project,
     onRefresh,
@@ -21882,55 +22042,55 @@
         showToast(errorMessage(error));
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(SectionHeading, { title: t("approvals.title"), hint: t("approvals.hint") }),
-      project.proposals?.length ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "data-list", children: project.proposals.map((proposal) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("approvals.title"), hint: t("approvals.hint") }),
+      project.proposals?.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: project.proposals.map((proposal) => {
         const execution = proposal.impact?.automatic_execution || {};
         const rerunStatus = proposal.kind === "experiment_rerun" && proposal.status === "approved" ? execution.status === "failed" ? t("approvals.rerunFailed") : execution.run_id ? t("approvals.rerunSubmitted", { id: String(execution.run_id).slice(0, 8) }) : t("approvals.rerunPending") : null;
         const canLaunch = proposal.status === "approved" && proposal.kind === "experiment_plan";
-        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { children: proposal.summary }),
-            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
+        return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: proposal.summary }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
               proposal.reason,
               " \xB7 ",
               t("approvals.estimatedCost"),
               " $",
               Number(proposal.estimated_cost_usd || 0).toFixed(2)
             ] }),
-            proposal.diff ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("pre", { className: "code-block", children: proposal.diff }) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
+            proposal.diff ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("pre", { className: "code-block", children: proposal.diff }) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
               t("approvals.impact"),
               " ",
               JSON.stringify(proposal.impact)
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Badge, { status: proposal.status }),
-            proposal.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "approve", type: "button", onClick: () => decide(proposal.id, "approved"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Check, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: proposal.status }),
+            proposal.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "approve", type: "button", onClick: () => decide(proposal.id, "approved"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Check, { size: 15 }),
                 t("approvals.approve")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "reject", type: "button", onClick: () => decide(proposal.id, "rejected"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "reject", type: "button", onClick: () => decide(proposal.id, "rejected"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(X, { size: 15 }),
                 t("approvals.reject")
               ] })
             ] }) : null,
-            canLaunch ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "secondary", type: "button", onClick: () => launch(proposal), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Play, { size: 15 }),
+            canLaunch ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "secondary", type: "button", onClick: () => launch(proposal), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Play, { size: 15 }),
               proposal.payload?.plan_type === "topic_specific" ? t("approvals.runTopicPlan") : t("approvals.execute")
             ] }) : null,
-            rerunStatus ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "muted", children: rerunStatus }) : null
+            rerunStatus ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "muted", children: rerunStatus }) : null
           ] })
         ] }, proposal.id);
-      }) }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(EmptyState, { text: t("approvals.empty") })
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(EmptyState, { text: t("approvals.empty") })
     ] });
   }
 
   // src/components/tabs/PoliciesTab.tsx
-  var import_react18 = __toESM(require_react(), 1);
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  var import_react19 = __toESM(require_react(), 1);
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   function PoliciesTab({
     project,
     onRefresh,
@@ -21938,7 +22098,7 @@
     onNavigate
   }) {
     const { t } = useTranslation();
-    const [rule, setRule] = (0, import_react18.useState)("");
+    const [rule, setRule] = (0, import_react19.useState)("");
     const addPolicy = async (event) => {
       event.preventDefault();
       if (!rule.trim()) return;
@@ -21963,9 +22123,9 @@
       citation_readiness: {}
     };
     const citation = enforcement.citation_readiness || {};
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("form", { className: "policy-form", onSubmit: addPolicy, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("form", { className: "policy-form", onSubmit: addPolicy, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
           "input",
           {
             value: rule,
@@ -21974,25 +22134,25 @@
             onChange: (event) => setRule(event.target.value)
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("button", { className: "primary", type: "submit", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ShieldCheck, { size: 16 }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("button", { className: "primary", type: "submit", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(ShieldCheck, { size: 16 }),
           t("policies.propose")
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("policies.executionStatus"), extra: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: enforcement.status || "unknown" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: t("policies.seedTitle") }),
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { children: t("policies.seedText", { count: Number(enforcement.minimum_random_seed_count || 1) }) })
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("policies.executionStatus"), extra: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: enforcement.status || "unknown" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("policies.seedTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: t("policies.seedText", { count: Number(enforcement.minimum_random_seed_count || 1) }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: enforcement.runner_compatible === false ? "unsupported" : "enforced" })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: enforcement.runner_compatible === false ? "unsupported" : "enforced" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: t("policies.citationTitle") }),
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("policies.citationTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
                 t("policies.citationCount", { value: Number(citation.records_with_doi_or_source_url || 0), total: Number(citation.paper_records || 0) }),
                 " \xB7",
                 t("policies.quotedCount", { count: Number(citation.page_or_section_quoted_evidence || 0) }),
@@ -22000,12 +22160,12 @@
                 t("policies.metadataNotFulltext")
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: citation.quoted_evidence_requirement_satisfied ? "ready" : "evidence-required" })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: citation.quoted_evidence_requirement_satisfied ? "ready" : "evidence-required" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: t("policies.approvalTitle") }),
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: t("policies.approvalTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
                 t("policies.highCost"),
                 " ",
                 enforcement.approval?.high_cost_actions ? t("policies.forced") : t("policies.notConfigured"),
@@ -22015,32 +22175,32 @@
                 enforcement.approval?.external_actions ? t("policies.forced") : t("policies.notConfigured")
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: "enforced" })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: "enforced" })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(SectionHeading, { title: t("policies.activeTitle") }),
-        project.policies?.length ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "data-list", children: project.policies.map((policy) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: policy.rule }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SectionHeading, { title: t("policies.activeTitle") }),
+        project.policies?.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "data-list", children: project.policies.map((policy) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { children: policy.rule }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { children: [
               (policy.enforced_requirements || []).join(" \xB7 ") || t("policies.notRecognized"),
               " \xB7",
               policy.rationale || t("policies.projectPolicy")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { status: policy.recognized ? "enforced" : "manual" })
-        ] }, policy.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "empty", children: t("policies.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Badge, { status: policy.recognized ? "enforced" : "manual" })
+        ] }, policy.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "empty", children: t("policies.empty") })
       ] })
     ] });
   }
 
   // src/components/tabs/ReportsTab.tsx
-  var import_react19 = __toESM(require_react(), 1);
+  var import_react20 = __toESM(require_react(), 1);
 
   // src/components/MarkdownPreview.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
   function inlineNodes(value, prefix) {
     const pattern = /(`[^`]+`|\*\*[^*]+\*\*|_[^_]+_|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g;
     const nodes = [];
@@ -22051,16 +22211,16 @@
       if (match.index > cursor) nodes.push(value.slice(cursor, match.index));
       const token = match[0];
       if (token.startsWith("`")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: token.slice(1, -1) }, `${prefix}-code-${index}`));
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime22.jsx)("code", { children: token.slice(1, -1) }, `${prefix}-code-${index}`));
       } else if (token.startsWith("**")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime21.jsx)("strong", { children: token.slice(2, -2) }, `${prefix}-strong-${index}`));
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime22.jsx)("strong", { children: token.slice(2, -2) }, `${prefix}-strong-${index}`));
       } else if (token.startsWith("_")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime21.jsx)("em", { children: token.slice(1, -1) }, `${prefix}-em-${index}`));
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime22.jsx)("em", { children: token.slice(1, -1) }, `${prefix}-em-${index}`));
       } else {
         const link = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
         if (link) {
           nodes.push(
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("a", { href: link[2], target: "_blank", rel: "noreferrer", children: link[1] }, `${prefix}-link-${index}`)
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("a", { href: link[2], target: "_blank", rel: "noreferrer", children: link[1] }, `${prefix}-link-${index}`)
           );
         } else {
           nodes.push(token);
@@ -22151,27 +22311,27 @@
   function MarkdownPreview({ content }) {
     const { t } = useTranslation();
     const blocks = parseBlocks(content);
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("article", { className: "markdown-preview", "aria-label": t("md.previewLabel"), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("article", { className: "markdown-preview", "aria-label": t("md.previewLabel"), children: [
       blocks.map((block, index) => {
         const key = `markdown-${index}`;
         if (block.kind === "heading") {
           const Heading = block.level === 1 ? "h1" : block.level === 2 ? "h2" : "h3";
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Heading, { children: inlineNodes(block.text, key) }, key);
+          return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Heading, { children: inlineNodes(block.text, key) }, key);
         }
         if (block.kind === "unordered" || block.kind === "ordered") {
           const List = block.kind === "unordered" ? "ul" : "ol";
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(List, { children: block.items.map((item, itemIndex) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("li", { children: inlineNodes(item, `${key}-${itemIndex}`) }, `${key}-${itemIndex}`)) }, key);
+          return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(List, { children: block.items.map((item, itemIndex) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("li", { children: inlineNodes(item, `${key}-${itemIndex}`) }, `${key}-${itemIndex}`)) }, key);
         }
-        if (block.kind === "quote") return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("blockquote", { children: inlineNodes(block.text, key) }, key);
-        if (block.kind === "code") return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("pre", { "data-language": block.language || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("code", { children: block.text }) }, key);
-        return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { children: inlineNodes(block.text, key) }, key);
+        if (block.kind === "quote") return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("blockquote", { children: inlineNodes(block.text, key) }, key);
+        if (block.kind === "code") return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("pre", { "data-language": block.language || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("code", { children: block.text }) }, key);
+        return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { children: inlineNodes(block.text, key) }, key);
       }),
-      !blocks.length ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "muted", children: t("md.noPreview") }) : null
+      !blocks.length ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "muted", children: t("md.noPreview") }) : null
     ] });
   }
 
   // src/components/tabs/ReportsTab.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
   function displayable(report) {
     return report?.status === "valid";
   }
@@ -22188,27 +22348,27 @@
     const isFeedback = tab === "feedback_inbox";
     const isAudit = tab === "feedback_audit";
     const period = periodForTab(tab);
-    const [content, setContent] = (0, import_react19.useState)("");
-    const [activeReportId, setActiveReportId] = (0, import_react19.useState)("");
-    const [activeReportStatus, setActiveReportStatus] = (0, import_react19.useState)("");
-    const [activeReportReason, setActiveReportReason] = (0, import_react19.useState)("");
-    const [feedback, setFeedback] = (0, import_react19.useState)("");
-    const [feedbackCategory, setFeedbackCategory] = (0, import_react19.useState)("report");
-    const [feedbackRows, setFeedbackRows] = (0, import_react19.useState)(project.feedback || []);
-    const [auditRows, setAuditRows] = (0, import_react19.useState)([]);
-    const [loading, setLoading] = (0, import_react19.useState)(false);
-    const reports = (0, import_react19.useMemo)(
+    const [content, setContent] = (0, import_react20.useState)("");
+    const [activeReportId, setActiveReportId] = (0, import_react20.useState)("");
+    const [activeReportStatus, setActiveReportStatus] = (0, import_react20.useState)("");
+    const [activeReportReason, setActiveReportReason] = (0, import_react20.useState)("");
+    const [feedback, setFeedback] = (0, import_react20.useState)("");
+    const [feedbackCategory, setFeedbackCategory] = (0, import_react20.useState)("report");
+    const [feedbackRows, setFeedbackRows] = (0, import_react20.useState)(project.feedback || []);
+    const [auditRows, setAuditRows] = (0, import_react20.useState)([]);
+    const [loading, setLoading] = (0, import_react20.useState)(false);
+    const reports = (0, import_react20.useMemo)(
       () => (project.reports || []).filter((report) => report.period === period),
       [period, project.reports]
     );
-    (0, import_react19.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       const latest = reports[0];
       setContent(displayable(latest) ? latest?.content || "" : "");
       setActiveReportId(latest?.id || "");
       setActiveReportStatus(latest?.status || "");
       setActiveReportReason(latest?.blocking_reason || "");
     }, [project.id, period, reports]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       if (!isFeedback && !isAudit) return;
       setLoading(true);
       const request = isFeedback ? api(`/api/projects/${project.id}/feedback`).then((result) => setFeedbackRows(result.feedback || [])) : api(`/api/projects/${project.id}/audit`).then((result) => setAuditRows(result || []));
@@ -22281,70 +22441,70 @@
       }
     };
     if (isFeedback) {
-      return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(SectionHeading, { title: t("reports.feedbackInbox"), hint: t("reports.feedbackHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: "project-scoped", children: project.id.slice(0, 8) }) }),
-        loading ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(EmptyState, { text: t("reports.loadingFeedback") }) : feedbackRows.length ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "data-list", children: feedbackRows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("article", { className: "data-row feedback-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { children: row.instruction }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { children: [
+      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("reports.feedbackInbox"), hint: t("reports.feedbackHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: "project-scoped", children: project.id.slice(0, 8) }) }),
+        loading ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("reports.loadingFeedback") }) : feedbackRows.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: feedbackRows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("article", { className: "data-row feedback-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: row.instruction }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { children: [
               row.category,
               " \xB7 ",
               formatDateTime(row.created_at, locale),
               row.reference_id ? ` \xB7 ${t("reports.reference")} ${row.reference_id.slice(0, 8)}` : ""
             ] }),
-            row.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "muted", children: [
+            row.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { className: "muted", children: [
               t("reports.decisionComment"),
               row.decision_comment
             ] }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: row.status }),
-            row.status === "open" ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "approve", type: "button", onClick: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: row.status }),
+            row.status === "open" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "approve", type: "button", onClick: () => {
                 void decideFeedback(row.id, "acknowledged");
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Check, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Check, { size: 14 }),
                 t("reports.acknowledge")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
                 void decideFeedback(row.id, "revision_requested");
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(MessageSquare, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MessageSquare, { size: 14 }),
                 t("reports.requestRevision")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "reject", type: "button", onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "reject", type: "button", onClick: () => {
                 void decideFeedback(row.id, "rejected");
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(X, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(X, { size: 14 }),
                 t("common.reject")
               ] })
             ] }) : null,
-            row.status !== "rejected" && row.status !== "proposal_created" ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+            row.status !== "rejected" && row.status !== "proposal_created" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
               void createFeedbackProposal(row);
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Gavel, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Gavel, { size: 14 }),
               t("reports.createProposal")
             ] }) : null
           ] })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(EmptyState, { text: t("reports.noFeedback") }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "section report-feedback", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(SectionHeading, { title: t("reports.recordFeedback"), hint: t("reports.recordFeedbackHint") }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "feedback-form", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { children: [
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("reports.noFeedback") }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "section report-feedback", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("reports.recordFeedback"), hint: t("reports.recordFeedbackHint") }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "feedback-form", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
               t("reports.feedbackType"),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("select", { value: feedbackCategory, onChange: (event) => setFeedbackCategory(event.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("option", { value: "report", children: t("reports.forReport") }),
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("option", { value: "general", children: t("reports.nextDirection") })
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("select", { value: feedbackCategory, onChange: (event) => setFeedbackCategory(event.target.value), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "report", children: t("reports.forReport") }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "general", children: t("reports.nextDirection") })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
               t("reports.feedbackToAi"),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("textarea", { maxLength: 8e3, value: feedback, placeholder: t("reports.feedbackPlaceholder"), onChange: (event) => setFeedback(event.target.value) })
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("textarea", { maxLength: 8e3, value: feedback, placeholder: t("reports.feedbackPlaceholder"), onChange: (event) => setFeedback(event.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "secondary", type: "button", disabled: !feedback.trim(), onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "secondary", type: "button", disabled: !feedback.trim(), onClick: () => {
               void submitFeedback();
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Send, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Send, { size: 15 }),
               t("reports.recordFeedbackAction")
             ] })
           ] })
@@ -22353,12 +22513,12 @@
     }
     if (isAudit) {
       const relevant = auditRows.filter((row) => row.action.startsWith("human_feedback") || row.action.startsWith("proposal."));
-      return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: "project-scoped", children: t("context.projectScoped") }) }),
-        loading ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(EmptyState, { text: t("reports.loadingAudit") }) : relevant.length ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "data-list", children: relevant.map((row) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { children: row.action }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { children: [
+      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: "project-scoped", children: t("context.projectScoped") }) }),
+        loading ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("reports.loadingAudit") }) : relevant.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: relevant.map((row) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: row.action }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { children: [
               row.actor,
               " \xB7 ",
               formatDateTime(row.created_at, locale),
@@ -22366,24 +22526,24 @@
               JSON.stringify(row.details || {})
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: "recorded" })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(EmptyState, { text: t("reports.noAudit") })
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: "recorded" })
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("reports.noAudit") })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(SectionHeading, { title: period === "daily" ? t("reports.daily") : t("reports.weekly"), hint: t("reports.periodHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: period === "daily" ? t("reports.daily") : t("reports.weekly"), hint: t("reports.periodHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
         void generateReport();
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(FileText, { size: 15 }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { size: 15 }),
         t("reports.generate", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") })
       ] }) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }) }),
-      reports.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { children: t("reports.history") }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }) }),
+      reports.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("reports.history") }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { children: [
               report.id,
               " \xB7 ",
               t("reports.sourceSnapshot"),
@@ -22391,9 +22551,9 @@
               report.source_snapshot ? t("common.recorded") : t("common.missing")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(ButtonRow, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { status: report.status || "legacy_unverified" }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("button", { className: "secondary", type: "button", onClick: () => selectReport(report), children: report.status === "valid" ? t("reports.view") : t("reports.viewStatus") })
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: report.status || "legacy_unverified" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { className: "secondary", type: "button", onClick: () => selectReport(report), children: report.status === "valid" ? t("reports.view") : t("reports.viewStatus") })
           ] })
         ] }, report.id)) })
       ] }) : null
@@ -22401,8 +22561,8 @@
   }
 
   // src/components/tabs/WorkflowStageTab.tsx
-  var import_react20 = __toESM(require_react(), 1);
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  var import_react21 = __toESM(require_react(), 1);
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function text(value, t) {
     return typeof value === "string" && value.trim() ? value : t("common.unrecorded");
   }
@@ -22488,15 +22648,15 @@
     tab
   }) {
     const { t } = useTranslation();
-    const [workspace, setWorkspace] = (0, import_react20.useState)(null);
-    const [workspaceError, setWorkspaceError] = (0, import_react20.useState)(null);
-    const [researchStatus, setResearchStatus] = (0, import_react20.useState)(null);
-    const [researchStatusError, setResearchStatusError] = (0, import_react20.useState)(null);
-    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react20.useState)(null);
-    const graphLayout = (0, import_react20.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
-    const graphNodesById = (0, import_react20.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
+    const [workspace, setWorkspace] = (0, import_react21.useState)(null);
+    const [workspaceError, setWorkspaceError] = (0, import_react21.useState)(null);
+    const [researchStatus, setResearchStatus] = (0, import_react21.useState)(null);
+    const [researchStatusError, setResearchStatusError] = (0, import_react21.useState)(null);
+    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react21.useState)(null);
+    const graphLayout = (0, import_react21.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
+    const graphNodesById = (0, import_react21.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
     const selectedGraphNode = selectedGraphNodeId ? graphNodesById.get(selectedGraphNodeId) || null : null;
-    (0, import_react20.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       if (tab === "code_workspace") {
         setWorkspace(null);
         setWorkspaceError(null);
@@ -22510,55 +22670,55 @@
       }
     }, [project.id, tab]);
     if (tab === "citation_graph") {
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("graph.title"), hint: t("graph.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { children: t("graph.edgeCount", { count: researchStatus?.graph.edges.length || 0 }) }) }),
-        researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("graph.requestFailed", { error: researchStatusError }) }) : null,
-        !researchStatus && !researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("graph.loading") }) : null,
-        researchStatus ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-list", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("graph.permissionScope") }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("code", { children: researchStatus.project_id }) })
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("graph.title"), hint: t("graph.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { children: t("graph.edgeCount", { count: researchStatus?.graph.edges.length || 0 }) }) }),
+        researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("graph.requestFailed", { error: researchStatusError }) }) : null,
+        !researchStatus && !researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("graph.loading") }) : null,
+        researchStatus ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-list", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("graph.permissionScope") }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("code", { children: researchStatus.project_id }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: researchStatus.permission_status })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: researchStatus.permission_status })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("graph.state") }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: researchStatus.graph_status === "partial" ? t("graph.partial") : researchStatus.graph_status === "empty" ? t("graph.empty") : t("graph.onlySaved") })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("graph.state") }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: researchStatus.graph_status === "partial" ? t("graph.partial") : researchStatus.graph_status === "empty" ? t("graph.empty") : t("graph.onlySaved") })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: researchStatus.graph_status })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: researchStatus.graph_status })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("graph.scale") }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: t("graph.scaleText", { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length }) })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("graph.scale") }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: t("graph.scaleText", { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Network, { size: 16, className: "muted" })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Network, { size: 16, className: "muted" })
             ] })
           ] }),
-          researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
-          graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "research-graph-panel", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [
-              GRAPH_KINDS.map((kind) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: `research-graph-legend-item kind-${kind}`, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("i", { "aria-hidden": "true" }),
+          researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
+          graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "research-graph-panel", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [
+              GRAPH_KINDS.map((kind) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { className: `research-graph-legend-item kind-${kind}`, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("i", { "aria-hidden": "true" }),
                 t(GRAPH_KIND_LABELS[kind])
               ] }, kind)),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "research-graph-legend-note", children: t("graph.legendNote") })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "research-graph-legend-note", children: t("graph.legendNote") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": t("graph.aria", { projectId: researchStatus.project_id }), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("title", { children: t("graph.titleShort") }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("marker", { id: "research-graph-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("path", { d: "M 0 0 L 8 4 L 0 8 z" }) }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: GRAPH_KINDS.map((kind, index) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("text", { x: GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP), y: "27", children: t(GRAPH_KIND_LABELS[kind]) }, kind)) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": t("graph.aria", { projectId: researchStatus.project_id }), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("title", { children: t("graph.titleShort") }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("marker", { id: "research-graph-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("path", { d: "M 0 0 L 8 4 L 0 8 z" }) }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: GRAPH_KINDS.map((kind, index) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("text", { x: GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP), y: "27", children: t(GRAPH_KIND_LABELS[kind]) }, kind)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
                 const path = graphEdgePath(edge, graphNodesById);
-                return path ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${statusLabel(edge.evidence_status, t)} \xB7 ${statusLabel(edge.permission_status, t)}` }, edge.id) : null;
+                return path ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${statusLabel(edge.evidence_status, t)} \xB7 ${statusLabel(edge.permission_status, t)}` }, edge.id) : null;
               }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("g", { className: "research-graph-nodes", "aria-label": t("graph.nodesAria"), children: graphLayout.nodes.map((node) => {
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("g", { className: "research-graph-nodes", "aria-label": t("graph.nodesAria"), children: graphLayout.nodes.map((node) => {
                 const selected = selectedGraphNodeId === node.id;
                 const selectNode = () => setSelectedGraphNodeId(node.id);
-                return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
                   "g",
                   {
                     className: `research-graph-node-group kind-${node.kind}${selected ? " selected" : ""}`,
@@ -22574,12 +22734,12 @@
                       }
                     },
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("title", { children: `${node.label} \xB7 ${node.id}` }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("rect", { x: node.x, y: node.y, width: GRAPH_NODE_WIDTH, height: GRAPH_NODE_HEIGHT, rx: "14" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + GRAPH_NODE_HEIGHT - 12 }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: t(GRAPH_KIND_LABELS[node.kind]) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label, t) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("text", { className: "research-graph-node-status", x: node.x + 15, y: node.y + 66, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("title", { children: `${node.label} \xB7 ${node.id}` }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("rect", { x: node.x, y: node.y, width: GRAPH_NODE_WIDTH, height: GRAPH_NODE_HEIGHT, rx: "14" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + GRAPH_NODE_HEIGHT - 12 }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: t(GRAPH_KIND_LABELS[node.kind]) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label, t) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("text", { className: "research-graph-node-status", x: node.x + 15, y: node.y + 66, children: [
                         t(graphStatusLabel(node.status)),
                         " \xB7 ",
                         t(graphEvidenceLabel(node.evidence_status))
@@ -22590,55 +22750,55 @@
                 );
               }) })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "research-graph-details", "aria-live": "polite", children: selectedGraphNode ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "research-graph-details-heading", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "eyebrow", children: t("graph.selectedNode") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: selectedGraphNode.label })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "research-graph-details", "aria-live": "polite", children: selectedGraphNode ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "research-graph-details-heading", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "eyebrow", children: t("graph.selectedNode") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: selectedGraphNode.label })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: selectedGraphNode.status, children: t(graphStatusLabel(selectedGraphNode.status)) })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: selectedGraphNode.status, children: t(graphStatusLabel(selectedGraphNode.status)) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("dl", { className: "research-graph-details-list", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.type") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dd", { children: t(GRAPH_KIND_LABELS[selectedGraphNode.kind]) })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("dl", { className: "research-graph-details-list", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.type") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dd", { children: t(GRAPH_KIND_LABELS[selectedGraphNode.kind]) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.stableId") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("code", { children: text(selectedGraphNode.source.stable_id, t) || selectedGraphNode.id }) })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.stableId") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("code", { children: text(selectedGraphNode.source.stable_id, t) || selectedGraphNode.id }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.source") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("dd", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.source") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("dd", { children: [
                     text(selectedGraphNode.source.source_type, t),
                     " \xB7 ",
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("code", { children: selectedGraphNode.source.source_id })
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("code", { children: selectedGraphNode.source.source_id })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.evidenceStatus") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dd", { children: t(graphEvidenceLabel(selectedGraphNode.evidence_status)) })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.evidenceStatus") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dd", { children: t(graphEvidenceLabel(selectedGraphNode.evidence_status)) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.permission") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.permission") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
                 ] }),
-                selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.provider") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dd", { children: selectedGraphNode.source.provider })
+                selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.provider") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dd", { children: selectedGraphNode.source.provider })
                 ] }) : null,
-                selectedGraphNode.source.locator ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dt", { children: t("graph.locator") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("dd", { children: selectedGraphNode.source.locator })
+                selectedGraphNode.source.locator ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dt", { children: t("graph.locator") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("dd", { children: selectedGraphNode.source.locator })
                 ] }) : null
               ] }),
-              selectedGraphNode.source.url ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("a", { className: "research-graph-source-link", href: selectedGraphNode.source.url, target: "_blank", rel: "noreferrer", children: [
+              selectedGraphNode.source.url ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("a", { className: "research-graph-source-link", href: selectedGraphNode.source.url, target: "_blank", rel: "noreferrer", children: [
                 t("graph.openSource"),
                 " ",
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ExternalLink, { size: 13 })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ExternalLink, { size: 13 })
               ] }) : null
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "muted", children: t("graph.selectHint") }) })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("graph.empty") })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "muted", children: t("graph.selectHint") }) })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("graph.empty") })
         ] }) : null
       ] });
     }
@@ -22648,134 +22808,134 @@
         ...(project.experiments || []).map((run) => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: t("overview.runDetail", { run: run.run_id || t("progress.runPending") }), status: run.status })),
         ...(project.proposals || []).filter((item) => item.status === "pending").map((item) => ({ id: `proposal-${item.id}`, title: item.summary, detail: item.kind, status: "waiting-approval" }))
       ];
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("progress.title"), hint: t("progress.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { children: t("progress.count", { count: rows.length }) }) }),
-        rows.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: row.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: row.detail })
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("progress.title"), hint: t("progress.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { children: t("progress.count", { count: rows.length }) }) }),
+        rows.length ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "data-list", children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: row.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: row.detail })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: row.status })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("progress.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: row.status })
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("progress.empty") })
       ] });
     }
     if (tab === "method_design") {
       const idea = project.spec?.idea;
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("method.title"), hint: t("method.hint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("method.question") }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: text(idea?.research_question, t) || t("common.notConfirmed") })
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("method.title"), hint: t("method.hint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("method.question") }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: text(idea?.research_question, t) || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: idea?.research_question ? "recorded" : "unresolved" })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: idea?.research_question ? "recorded" : "unresolved" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("method.hypotheses") }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: idea?.hypotheses?.join("\uFF1B") || t("common.notConfirmed") })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("method.hypotheses") }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: idea?.hypotheses?.join("\uFF1B") || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: idea?.hypotheses?.length ? "recorded" : "unresolved" })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: idea?.hypotheses?.length ? "recorded" : "unresolved" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("method.contributions") }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: idea?.expected_contributions?.join("\uFF1B") || t("common.notConfirmed") })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("method.contributions") }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: idea?.expected_contributions?.join("\uFF1B") || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: idea?.expected_contributions?.length ? "candidate" : "unresolved" })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: idea?.expected_contributions?.length ? "candidate" : "unresolved" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("method.relatedEvidence") }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: t("method.verifiedCount", { verified: (project.papers || []).filter((paper) => paper.verified).length, total: project.papers?.length || 0 }) })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("method.relatedEvidence") }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: t("method.verifiedCount", { verified: (project.papers || []).filter((paper) => paper.verified).length, total: project.papers?.length || 0 }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ShieldCheck, { size: 16, className: "muted" })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ShieldCheck, { size: 16, className: "muted" })
           ] })
         ] })
       ] });
     }
     if (tab === "code_workspace") {
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("code.title"), hint: t("code.hint") }),
-        workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("code.error", { error: workspaceError }) }) : null,
-        workspace ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-list", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("code.workspace") }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("code", { children: workspace.code_relative_path }) })
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("code.title"), hint: t("code.hint") }),
+        workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("code.error", { error: workspaceError }) }) : null,
+        workspace ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-list", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("code.workspace") }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("code", { children: workspace.code_relative_path }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: workspace.code_directory_exists ? "project-scoped" : "missing" })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: workspace.code_directory_exists ? "project-scoped" : "missing" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("code.gitBaseline") }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("code.gitBaseline") }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { children: [
                   workspace.branch || t("common.unknown"),
                   " \xB7 ",
                   workspace.head || t("code.noCommit")
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: workspace.dirty ? "dirty" : "clean" })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: workspace.dirty ? "dirty" : "clean" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("code.pendingTitle") }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: t("code.pendingCount", { count: (project.proposals || []).filter((item) => ["code_patch", "config_change", "dependency_install", "repository_download", "repository_dependency_install", "repository_reproduction_run", "repository_artifact_write"].includes(item.kind) && item.status === "pending").length }) })
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("code.pendingTitle") }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: t("code.pendingCount", { count: (project.proposals || []).filter((item) => ["code_patch", "config_change", "dependency_install", "repository_download", "repository_dependency_install", "repository_reproduction_run", "repository_artifact_write"].includes(item.kind) && item.status === "pending").length }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: "approval-required" })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: "approval-required" })
             ] })
           ] }),
-          workspace.files?.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("code.fileTree"), hint: t("code.fileTreeHint", { max: workspace.limits?.max_files || 600 }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: workspace.files.map((file) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row compact-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("code", { children: file.kind === "directory" ? `${file.path}/` : file.path }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "muted", children: [
+          workspace.files?.length ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("code.fileTree"), hint: t("code.fileTreeHint", { max: workspace.limits?.max_files || 600 }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "data-list", children: workspace.files.map((file) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row compact-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("code", { children: file.kind === "directory" ? `${file.path}/` : file.path }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { className: "muted", children: [
                 file.size_bytes,
                 " B"
               ] })
             ] }, file.path)) })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("code.emptyDir") }),
-          workspace.diff ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("code.currentDiff"), hint: workspace.diff_truncated ? t("code.diffTruncated") : t("code.diffReadonly") }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("pre", { className: "code-block workspace-diff", children: workspace.diff })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("code.emptyDir") }),
+          workspace.diff ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("code.currentDiff"), hint: workspace.diff_truncated ? t("code.diffTruncated") : t("code.diffReadonly") }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("pre", { className: "code-block workspace-diff", children: workspace.diff })
           ] }) : null
-        ] }) : !workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("code.loading") }) : null
+        ] }) : !workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("code.loading") }) : null
       ] });
     }
     if (tab === "experiment_queue" || tab === "experiment_metrics") {
       const experiments = project.experiments || [];
       const filtered = tab === "experiment_queue" ? experiments.filter((item) => ["queued", "running", "paused", "cancelled", "waiting-approval"].includes(item.status)) : experiments.filter((item) => Object.keys(item.metrics || {}).length > 0);
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: tab === "experiment_queue" ? t("queue.title") : t("metrics.title"), hint: t("queue.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { children: t("queue.count", { count: filtered.length }) }) }),
-        filtered.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: filtered.map((item) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: item.experiment_type }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: tab === "experiment_queue" ? t("overview.runDetail", { run: item.run_id || t("queue.runUnassigned") }) : JSON.stringify(item.metrics) })
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: tab === "experiment_queue" ? t("queue.title") : t("metrics.title"), hint: t("queue.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { children: t("queue.count", { count: filtered.length }) }) }),
+        filtered.length ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "data-list", children: filtered.map((item) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: item.experiment_type }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: tab === "experiment_queue" ? t("overview.runDetail", { run: item.run_id || t("queue.runUnassigned") }) : JSON.stringify(item.metrics) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: item.status })
-        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: tab === "experiment_queue" ? t("queue.empty") : t("metrics.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: item.status })
+        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: tab === "experiment_queue" ? t("queue.empty") : t("metrics.empty") })
       ] });
     }
     if (tab === "lineage") {
       const artifacts = project.artifacts || [];
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SectionHeading, { title: t("lineage.title"), hint: t("lineage.hint") }),
-        artifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "data-list", children: artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: artifact.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { children: artifact.metadata?.lineage ? JSON.stringify(artifact.metadata.lineage) : t("lineage.missingMeta") })
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SectionHeading, { title: t("lineage.title"), hint: t("lineage.hint") }),
+        artifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "data-list", children: artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: artifact.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: artifact.metadata?.lineage ? JSON.stringify(artifact.metadata.lineage) : t("lineage.missingMeta") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
-        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("lineage.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
+        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("lineage.empty") })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(EmptyState, { text: t("workflow.empty") });
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(EmptyState, { text: t("workflow.empty") });
   }
 
   // src/components/ProjectView.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
   function SlidingNav({
     className,
     ariaLabel,
@@ -22783,9 +22943,9 @@
     measurementKey,
     children
   }) {
-    const navRef = (0, import_react21.useRef)(null);
-    const [indicator, setIndicator] = (0, import_react21.useState)({ left: 0, width: 0, ready: false });
-    (0, import_react21.useLayoutEffect)(() => {
+    const navRef = (0, import_react22.useRef)(null);
+    const [indicator, setIndicator] = (0, import_react22.useState)({ left: 0, width: 0, ready: false });
+    (0, import_react22.useLayoutEffect)(() => {
       const nav = navRef.current;
       if (!nav) return void 0;
       const measure = () => {
@@ -22804,8 +22964,8 @@
         nav.removeEventListener("scroll", measure);
       };
     }, [activeKey, measurementKey, children]);
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("nav", { ref: navRef, className: `sliding-nav ${className}`, "aria-label": ariaLabel, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("nav", { ref: navRef, className: `sliding-nav ${className}`, "aria-label": ariaLabel, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         "span",
         {
           className: `sliding-tab-indicator${indicator.ready ? " ready" : ""}`,
@@ -22825,66 +22985,66 @@
     {
       id: "overview",
       labelKey: "nav.overview",
-      icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(LayoutDashboard, { size: 16 }),
+      icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LayoutDashboard, { size: 16 }),
       groups: [
-        { id: "overview_idea", labelKey: "group.overviewIdea", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(MessageCircle, { size: 15 }), tabs: [{ id: "overview", labelKey: "tab.overview", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(MessageCircle, { size: 15 }) }] },
-        { id: "overview_spec", labelKey: "group.overviewSpec", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileText, { size: 15 }), tabs: [{ id: "overview_spec", labelKey: "tab.overviewSpec", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileText, { size: 15 }) }] },
-        { id: "overview_innovation", labelKey: "group.overviewInnovation", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Search, { size: 15 }), tabs: [{ id: "overview_innovation", labelKey: "tab.overviewInnovation", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Search, { size: 15 }) }] },
-        { id: "overview_progress", labelKey: "group.overviewProgress", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ListChecks, { size: 15 }), tabs: [{ id: "overview_progress", labelKey: "tab.overviewProgress", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ListChecks, { size: 15 }) }] },
-        { id: "overview_reports", labelKey: "group.overviewReports", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(CalendarDays, { size: 15 }), tabs: [
-          { id: "daily_reports", labelKey: "tab.dailyReports", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(CalendarDays, { size: 15 }) },
-          { id: "weekly_reports", labelKey: "tab.weeklyReports", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileText, { size: 15 }) },
-          { id: "feedback_inbox", labelKey: "tab.feedbackInbox", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Inbox, { size: 15 }) },
-          { id: "feedback_audit", labelKey: "tab.feedbackAudit", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SquareCheckBig, { size: 15 }) }
+        { id: "overview_idea", labelKey: "group.overviewIdea", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(MessageCircle, { size: 15 }), tabs: [{ id: "overview", labelKey: "tab.overview", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(MessageCircle, { size: 15 }) }] },
+        { id: "overview_spec", labelKey: "group.overviewSpec", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileText, { size: 15 }), tabs: [{ id: "overview_spec", labelKey: "tab.overviewSpec", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileText, { size: 15 }) }] },
+        { id: "overview_innovation", labelKey: "group.overviewInnovation", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Search, { size: 15 }), tabs: [{ id: "overview_innovation", labelKey: "tab.overviewInnovation", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Search, { size: 15 }) }] },
+        { id: "overview_progress", labelKey: "group.overviewProgress", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ListChecks, { size: 15 }), tabs: [{ id: "overview_progress", labelKey: "tab.overviewProgress", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ListChecks, { size: 15 }) }] },
+        { id: "overview_reports", labelKey: "group.overviewReports", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CalendarDays, { size: 15 }), tabs: [
+          { id: "daily_reports", labelKey: "tab.dailyReports", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CalendarDays, { size: 15 }) },
+          { id: "weekly_reports", labelKey: "tab.weeklyReports", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileText, { size: 15 }) },
+          { id: "feedback_inbox", labelKey: "tab.feedbackInbox", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Inbox, { size: 15 }) },
+          { id: "feedback_audit", labelKey: "tab.feedbackAudit", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SquareCheckBig, { size: 15 }) }
         ] }
       ]
     },
     {
       id: "related_work",
       labelKey: "nav.relatedWork",
-      icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Library, { size: 16 }),
+      icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Library, { size: 16 }),
       groups: [
-        { id: "related_search", labelKey: "group.relatedSearch", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(BookOpen, { size: 15 }), tabs: [{ id: "literature", labelKey: "tab.literature", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(BookOpen, { size: 15 }) }] },
-        { id: "related_status", labelKey: "group.relatedStatus", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Network, { size: 15 }), tabs: [
-          { id: "research_status", labelKey: "tab.researchStatus", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Search, { size: 15 }) },
-          { id: "citation_graph", labelKey: "tab.citationGraph", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Network, { size: 15 }) }
+        { id: "related_search", labelKey: "group.relatedSearch", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(BookOpen, { size: 15 }), tabs: [{ id: "literature", labelKey: "tab.literature", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(BookOpen, { size: 15 }) }] },
+        { id: "related_status", labelKey: "group.relatedStatus", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Network, { size: 15 }), tabs: [
+          { id: "research_status", labelKey: "tab.researchStatus", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Search, { size: 15 }) },
+          { id: "citation_graph", labelKey: "tab.citationGraph", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Network, { size: 15 }) }
         ] }
       ]
     },
     {
       id: "implementation",
       labelKey: "nav.implementation",
-      icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FlaskConical, { size: 16 }),
+      icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FlaskConical, { size: 16 }),
       groups: [
-        { id: "implementation_method", labelKey: "group.implMethod", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Waypoints, { size: 15 }), tabs: [
-          { id: "method_design", labelKey: "tab.methodDesign", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Waypoints, { size: 15 }) },
-          { id: "code_workspace", labelKey: "tab.codeWorkspace", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Terminal, { size: 15 }) },
-          { id: "policies", labelKey: "tab.policies", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Stamp, { size: 15 }) },
-          { id: "approvals", labelKey: "tab.approvals", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(RotateCcwClock, { size: 15 }) },
-          { id: "experiments", labelKey: "tab.experiments", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FlaskConical, { size: 15 }) },
-          { id: "experiment_queue", labelKey: "tab.experimentQueue", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ListTree, { size: 15 }) },
-          { id: "experiment_metrics", labelKey: "tab.experimentMetrics", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ChartColumn, { size: 15 }) },
-          { id: "artifacts", labelKey: "tab.artifacts", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Image, { size: 15 }) },
-          { id: "lineage", labelKey: "tab.lineage", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(RotateCcwClock, { size: 15 }) }
+        { id: "implementation_method", labelKey: "group.implMethod", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Waypoints, { size: 15 }), tabs: [
+          { id: "method_design", labelKey: "tab.methodDesign", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Waypoints, { size: 15 }) },
+          { id: "code_workspace", labelKey: "tab.codeWorkspace", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Terminal, { size: 15 }) },
+          { id: "policies", labelKey: "tab.policies", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Stamp, { size: 15 }) },
+          { id: "approvals", labelKey: "tab.approvals", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(RotateCcwClock, { size: 15 }) },
+          { id: "experiments", labelKey: "tab.experiments", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FlaskConical, { size: 15 }) },
+          { id: "experiment_queue", labelKey: "tab.experimentQueue", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ListTree, { size: 15 }) },
+          { id: "experiment_metrics", labelKey: "tab.experimentMetrics", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ChartColumn, { size: 15 }) },
+          { id: "artifacts", labelKey: "tab.artifacts", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Image, { size: 15 }) },
+          { id: "lineage", labelKey: "tab.lineage", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(RotateCcwClock, { size: 15 }) }
         ] },
-        { id: "implementation_related", labelKey: "group.implRelated", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(GitBranch, { size: 15 }), tabs: [
-          { id: "reproduction", labelKey: "tab.reproduction", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(GitBranch, { size: 15 }) },
-          { id: "comparison", labelKey: "tab.comparison", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(GitCompare, { size: 15 }) }
+        { id: "implementation_related", labelKey: "group.implRelated", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(GitBranch, { size: 15 }), tabs: [
+          { id: "reproduction", labelKey: "tab.reproduction", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(GitBranch, { size: 15 }) },
+          { id: "comparison", labelKey: "tab.comparison", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(GitCompare, { size: 15 }) }
         ] }
       ]
     },
     {
       id: "paper",
       labelKey: "nav.paper",
-      icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FilePenLine, { size: 16 }),
+      icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FilePenLine, { size: 16 }),
       groups: [
-        { id: "paper_project", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FilePenLine, { size: 15 }), tabs: [{ id: "paper", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FilePenLine, { size: 15 }) }] },
-        { id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ListTree, { size: 15 }), tabs: [{ id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ListTree, { size: 15 }) }] },
-        { id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Quote, { size: 15 }), tabs: [{ id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Quote, { size: 15 }) }] },
-        { id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ChartLine, { size: 15 }), tabs: [{ id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ChartLine, { size: 15 }) }] },
-        { id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ChartColumn, { size: 15 }), tabs: [{ id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ChartColumn, { size: 15 }) }] },
-        { id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileCheckCorner, { size: 15 }), tabs: [{ id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileCheckCorner, { size: 15 }) }] },
-        { id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileText, { size: 15 }), tabs: [{ id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileText, { size: 15 }) }] }
+        { id: "paper_project", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FilePenLine, { size: 15 }), tabs: [{ id: "paper", labelKey: "tab.paperProject", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FilePenLine, { size: 15 }) }] },
+        { id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ListTree, { size: 15 }), tabs: [{ id: "paper_outline", labelKey: "tab.paperOutline", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ListTree, { size: 15 }) }] },
+        { id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Quote, { size: 15 }), tabs: [{ id: "paper_citations", labelKey: "tab.paperCitations", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Quote, { size: 15 }) }] },
+        { id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ChartLine, { size: 15 }), tabs: [{ id: "paper_figures", labelKey: "tab.paperFigures", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ChartLine, { size: 15 }) }] },
+        { id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ChartColumn, { size: 15 }), tabs: [{ id: "paper_data", labelKey: "tab.paperData", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ChartColumn, { size: 15 }) }] },
+        { id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileCheckCorner, { size: 15 }), tabs: [{ id: "paper_compile", labelKey: "tab.paperCompile", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileCheckCorner, { size: 15 }) }] },
+        { id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileText, { size: 15 }), tabs: [{ id: "paper_review", labelKey: "tab.paperReview", icon: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileText, { size: 15 }) }] }
       ]
     }
   ];
@@ -22905,12 +23065,12 @@
     onToggleMobileChat
   }) {
     const { t } = useTranslation();
-    const [projectChatWidth, setProjectChatWidth] = (0, import_react21.useState)(() => {
+    const [projectChatWidth, setProjectChatWidth] = (0, import_react22.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.projectChatWidth"));
       return Number.isFinite(stored) ? Math.min(PROJECT_CHAT_MAX_WIDTH, Math.max(PROJECT_CHAT_MIN_WIDTH, stored)) : PROJECT_CHAT_DEFAULT_WIDTH;
     });
-    const projectLayoutRef = (0, import_react21.useRef)(null);
-    (0, import_react21.useEffect)(() => {
+    const projectLayoutRef = (0, import_react22.useRef)(null);
+    (0, import_react22.useEffect)(() => {
       window.localStorage.setItem("researchos.projectChatWidth", String(projectChatWidth));
     }, [projectChatWidth]);
     const tabProps = {
@@ -22922,8 +23082,8 @@
     };
     const area = AREAS.find((item) => item.id === activeArea) || AREAS[0];
     const activeGroup = area.groups.find((group) => group.tabs.some((tab) => tab.id === activeTab)) || area.groups[0];
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { className: "project-view", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SlidingNav, { className: "tabs project-areas", ariaLabel: t("nav.workspaceArea"), activeKey: activeArea, measurementKey: t("nav.workspaceArea"), children: AREAS.map((area2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { className: "project-view", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SlidingNav, { className: "tabs project-areas", ariaLabel: t("nav.workspaceArea"), activeKey: activeArea, measurementKey: t("nav.workspaceArea"), children: AREAS.map((area2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
         "button",
         {
           type: "button",
@@ -22938,7 +23098,7 @@
         },
         area2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SlidingNav, { className: "tabs project-subtabs", ariaLabel: t("nav.currentWorkspace"), activeKey: activeGroup.id, measurementKey: t("nav.currentWorkspace"), children: area.groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SlidingNav, { className: "tabs project-subtabs", ariaLabel: t("nav.currentWorkspace"), activeKey: activeGroup.id, measurementKey: t("nav.currentWorkspace"), children: area.groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
         "button",
         {
           type: "button",
@@ -22953,7 +23113,7 @@
         },
         group.id
       )) }),
-      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SlidingNav, { className: "workflow-local-nav", ariaLabel: `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, activeKey: activeTab, measurementKey: t(activeGroup.labelKey), children: activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+      activeGroup.tabs.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SlidingNav, { className: "workflow-local-nav", ariaLabel: `${t(activeGroup.labelKey)} \xB7 ${t("common.innerPages")}`, activeKey: activeTab, measurementKey: t(activeGroup.labelKey), children: activeGroup.tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
         "button",
         {
           type: "button",
@@ -22968,44 +23128,44 @@
         },
         tab.id
       )) }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
         "div",
         {
           ref: projectLayoutRef,
           className: "project-layout",
           style: { "--project-chat-width": `${projectChatWidth}px` },
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tab-content", children: [
-              activeTab === "overview" || activeTab === "overview_spec" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(OverviewTab, { ...tabProps, tab: activeTab }) : null,
-              activeTab === "overview_innovation" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ResearchStatusTab, { project, showToast }) : null,
-              activeTab === "overview_progress" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
-              activeTab === "literature" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(LiteratureTab, { ...tabProps, searchCandidates }) : null,
-              activeTab === "research_status" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ResearchStatusTab, { project, showToast }) : null,
-              activeTab === "citation_graph" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
-              activeTab === "reproduction" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ReproductionTab, { project, onNavigate: onTabChange, onRefresh, showToast }) : null,
-              activeTab === "comparison" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ComparisonTab, { project, onRefresh, showToast }) : null,
-              activeTab === "method_design" || activeTab === "code_workspace" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
-              activeTab === "policies" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(PoliciesTab, { ...tabProps }) : null,
-              activeTab === "approvals" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ApprovalsTab, { ...tabProps }) : null,
-              activeTab === "experiments" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ExperimentsTab, { ...tabProps }) : null,
-              activeTab === "experiment_queue" || activeTab === "experiment_metrics" || activeTab === "lineage" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
-              activeTab === "artifacts" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ArtifactsTab, { project }) : null,
-              REPORT_TABS.includes(activeTab) ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ReportsTab, { ...tabProps, tab: activeTab }) : null,
-              PAPER_TABS.includes(activeTab) ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(PaperTab, { project, tab: activeTab, onNavigate: onTabChange, onRefresh, showToast }) : null
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "tab-content", children: [
+              activeTab === "overview" || activeTab === "overview_spec" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(OverviewTab, { ...tabProps, tab: activeTab }) : null,
+              activeTab === "overview_innovation" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ResearchStatusTab, { project, showToast }) : null,
+              activeTab === "overview_progress" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
+              activeTab === "literature" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LiteratureTab, { ...tabProps, searchCandidates }) : null,
+              activeTab === "research_status" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ResearchStatusTab, { project, showToast }) : null,
+              activeTab === "citation_graph" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
+              activeTab === "reproduction" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ReproductionTab, { project, onNavigate: onTabChange, onRefresh, showToast }) : null,
+              activeTab === "comparison" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ComparisonTab, { project, onRefresh, showToast }) : null,
+              activeTab === "method_design" || activeTab === "code_workspace" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
+              activeTab === "policies" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(PoliciesTab, { ...tabProps }) : null,
+              activeTab === "approvals" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ApprovalsTab, { ...tabProps }) : null,
+              activeTab === "experiments" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ExperimentsTab, { ...tabProps }) : null,
+              activeTab === "experiment_queue" || activeTab === "experiment_metrics" || activeTab === "lineage" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
+              activeTab === "artifacts" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ArtifactsTab, { project }) : null,
+              REPORT_TABS.includes(activeTab) ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ReportsTab, { ...tabProps, tab: activeTab }) : null,
+              PAPER_TABS.includes(activeTab) ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(PaperTab, { project, tab: activeTab, onNavigate: onTabChange, onRefresh, showToast }) : null
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
               "button",
               {
                 className: "secondary mobile-chat-toggle",
                 type: "button",
                 onClick: () => onToggleMobileChat(true),
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(MessageCircle, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(MessageCircle, { size: 16 }),
                   t("projectChat")
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               ResizableDivider,
               {
                 value: projectChatWidth,
@@ -23019,7 +23179,7 @@
                 onCommit: setProjectChatWidth
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               ProjectChat,
               {
                 messages: chatMessages,
@@ -23127,20 +23287,20 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react23 = __toESM(require_react(), 1);
+  var import_react24 = __toESM(require_react(), 1);
 
   // src/components/ProjectEmbeddingSettingsForm.tsx
-  var import_react22 = __toESM(require_react(), 1);
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
+  var import_react23 = __toESM(require_react(), 1);
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
   function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react22.useState)(null);
-    const [instance, setInstance] = (0, import_react22.useState)(null);
-    const [loading, setLoading] = (0, import_react22.useState)(false);
-    const [saving, setSaving] = (0, import_react22.useState)(false);
-    const [error, setError] = (0, import_react22.useState)("");
-    const [dirty, setDirty] = (0, import_react22.useState)(false);
-    const [confirmReset, setConfirmReset] = (0, import_react22.useState)(false);
+    const [values, setValues] = (0, import_react23.useState)(null);
+    const [instance, setInstance] = (0, import_react23.useState)(null);
+    const [loading, setLoading] = (0, import_react23.useState)(false);
+    const [saving, setSaving] = (0, import_react23.useState)(false);
+    const [error, setError] = (0, import_react23.useState)("");
+    const [dirty, setDirty] = (0, import_react23.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react23.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -23163,7 +23323,7 @@
         setLoading(false);
       }
     };
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       if (projectId) void load();
     }, [projectId]);
     const update = (field, value) => {
@@ -23203,26 +23363,26 @@
         setSaving(false);
       }
     };
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "empty", children: t("embedding.loading") });
-    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "empty", children: t("embedding.loading") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
     const custom = values.mode === "custom";
     const remote = custom && values.provider !== "local";
     const ready = custom && (values.provider === "local" || Boolean(values.base_url && (values.key || values.key_configured)));
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("form", { className: "model-settings-form", onSubmit: (event) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("form", { className: "model-settings-form", onSubmit: (event) => {
         event.preventDefault();
         void save(false);
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { className: "model-tier", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "model-tier-heading", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h3", { children: t("embedding.providerTitle") }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "tier-status", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(StatusDot, { ready }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: "model-tier", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: t("embedding.providerTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "tier-status", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(StatusDot, { ready }),
                 values.mode === "global" ? t("embedding.globalDefault") : values.provider === "local" ? t("embedding.localOnnx") : t("embedding.remoteApi")
               ] })
             ] }),
-            instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { className: "tier-default", children: [
+            instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "tier-default", children: [
               t("embedding.instance"),
               " :",
               instance.port,
@@ -23230,48 +23390,48 @@
               instance.shared_projects > 1 ? t("embedding.sharedProjects", { count: instance.shared_projects }) : ""
             ] }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "model-tier-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
               t("embedding.mode"),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
                 "select",
                 {
                   value: values.mode,
                   onChange: (event) => update("mode", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "global", children: t("embedding.modeGlobal") }),
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "custom", children: t("embedding.modeCustom") })
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "global", children: t("embedding.modeGlobal") }),
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "custom", children: t("embedding.modeCustom") })
                   ]
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
               t("embedding.provider"),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
                 "select",
                 {
                   value: values.provider,
                   disabled: !custom,
                   onChange: (event) => update("provider", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("option", { value: "local", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("option", { value: "local", children: [
                       "local (",
                       t("embedding.localOnnx"),
                       ")"
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("option", { value: "openai", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("option", { value: "openai", children: [
                       "openai (",
                       t("embedding.openaiCompatible"),
                       ")"
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "gemini", children: "gemini" })
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "gemini", children: "gemini" })
                   ]
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
               t("embedding.model"),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                 "input",
                 {
                   value: values.model,
@@ -23282,9 +23442,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
               t("embedding.dimensions"),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                 "input",
                 {
                   type: "number",
@@ -23296,10 +23456,10 @@
                 }
               )
             ] }),
-            remote ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
+            remote ? /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
                 t("embedding.baseUrl"),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                   "input",
                   {
                     value: values.base_url,
@@ -23309,9 +23469,9 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
                 t("settings.apiKey"),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                   "input",
                   {
                     type: "password",
@@ -23325,25 +23485,25 @@
               ] })
             ] }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Database, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: t("embedding.poolNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Database, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("embedding.poolNote") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ShieldCheck, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: t("embedding.securityNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ShieldCheck, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("embedding.securityNote") })
           ] })
         ] }),
-        error ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "modal-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Save, { size: 16 }),
+        error ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "modal-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Save, { size: 16 }),
             t("settings.save")
           ] })
         ] })
       ] }),
-      confirmReset ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      confirmReset ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         ConfirmDialog,
         {
           title: t("embedding.resetTitle"),
@@ -23357,7 +23517,7 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
   var TIERS = [
     { id: "simple", label: "Luna", defaultEffort: "low" },
     { id: "medium", label: "Terra", defaultEffort: "medium" },
@@ -23368,14 +23528,14 @@
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
     const { t } = useTranslation();
-    const [tab, setTab] = (0, import_react23.useState)("models");
-    const [values, setValues] = (0, import_react23.useState)(null);
-    const [loading, setLoading] = (0, import_react23.useState)(false);
-    const [saving, setSaving] = (0, import_react23.useState)(false);
-    const [error, setError] = (0, import_react23.useState)("");
-    const [dirty, setDirty] = (0, import_react23.useState)(false);
-    const [confirmClose, setConfirmClose] = (0, import_react23.useState)(false);
-    (0, import_react23.useEffect)(() => {
+    const [tab, setTab] = (0, import_react24.useState)("models");
+    const [values, setValues] = (0, import_react24.useState)(null);
+    const [loading, setLoading] = (0, import_react24.useState)(false);
+    const [saving, setSaving] = (0, import_react24.useState)(false);
+    const [error, setError] = (0, import_react24.useState)("");
+    const [dirty, setDirty] = (0, import_react24.useState)(false);
+    const [confirmClose, setConfirmClose] = (0, import_react24.useState)(false);
+    (0, import_react24.useEffect)(() => {
       if (!open) return;
       setTab("models");
       setLoading(true);
@@ -23461,8 +23621,8 @@
         setSaving(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
         Modal,
         {
           eyebrow: t("settings.eyebrow"),
@@ -23470,53 +23630,53 @@
           description: tab === "models" ? t("settings.modelsDescription") : t("settings.embeddingDescription"),
           onClose: requestClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "settings-tabs", role: "tablist", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: t("settings.modelsTab") }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: t("settings.embeddingTab") })
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "settings-tabs", role: "tablist", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: t("settings.modelsTab") }),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: t("settings.embeddingTab") })
             ] }),
-            tab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+            tab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
               ProjectEmbeddingSettingsForm,
               {
                 projectId,
                 onChanged: () => setDirty(false)
               }
-            ) : /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "empty", children: t("settings.loadingModels") }) : values ? /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+            ) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("settings.loadingModels") }) : values ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
               TIERS.map((tier) => {
                 const item = values[tier.id];
-                return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: "model-tier", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-heading", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("h3", { children: [
+                return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "model-tier", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-heading", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("h3", { children: [
                         tier.label,
-                        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "badge neutral", children: tier.id })
+                        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "badge neutral", children: tier.id })
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "tier-status", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-status", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
                         item.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
                         " \xB7 ",
                         item.url ? t("settings.urlReady") : t("settings.urlPending")
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "tier-sources", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-sources", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { children: [
                           "URL\uFF1A",
                           t(sourceLabelKey(item.sources?.url))
                         ] }),
-                        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { children: [
                           "key\uFF1A",
                           t(sourceLabelKey(item.sources?.key))
                         ] })
                       ] })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "tier-default", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
                       t("settings.default"),
                       " ",
                       tier.defaultEffort
                     ] })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-grid", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
                       t("settings.modelName"),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
                         "input",
                         {
                           value: item.model,
@@ -23526,24 +23686,24 @@
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
                       t("settings.reasoningEffort"),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
                         "select",
                         {
                           value: item.reasoning_effort,
                           onChange: (event) => update(tier.id, "reasoning_effort", event.target.value),
                           children: [
-                            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "low", children: t("settings.low") }),
-                            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "medium", children: t("settings.medium") }),
-                            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "high", children: t("settings.high") })
+                            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "low", children: t("settings.low") }),
+                            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "medium", children: t("settings.medium") }),
+                            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "high", children: t("settings.high") })
                           ]
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
                       t("settings.modelUrl"),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
                         "input",
                         {
                           type: "url",
@@ -23555,9 +23715,9 @@
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
                       t("settings.apiKey"),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
                         "input",
                         {
                           type: "password",
@@ -23572,23 +23732,23 @@
                   ] })
                 ] }, tier.id);
               }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { className: "settings-note", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ShieldCheck, { size: 16 }),
-                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("settings.securityNote") })
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("settings.securityNote") })
               ] }),
-              error ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "modal-actions", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: t("common.cancel") }),
-                /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Save, { size: 16 }),
+              error ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "modal-actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: t("common.cancel") }),
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Save, { size: 16 }),
                   t("settings.save")
                 ] })
               ] })
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") })
           ]
         }
       ),
-      confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+      confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
         ConfirmDialog,
         {
           title: t("settings.discardTitle"),
@@ -23606,8 +23766,8 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react24 = __toESM(require_react(), 1);
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  var import_react25 = __toESM(require_react(), 1);
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     const { t } = useTranslation();
     if (!graph) return null;
@@ -23617,27 +23777,27 @@
       x: 80 + index % 5 * 150,
       y: 70 + Math.floor(index / 5) * 120
     }]));
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
       edges.map((edge) => {
         const source = positions.get(edge.source);
         const target = positions.get(edge.target);
-        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
+        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
       }),
       nodes.map((node) => {
         const position = positions.get(node.id);
         if (!position) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("g", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("g", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
             "circle",
             {
               className: `memory-graph-node ${node.kind !== "memory" ? "related" : ""}`,
               cx: position.x,
               cy: position.y,
               r: "18",
-              children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("title", { children: node.label })
+              children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("title", { children: node.label })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
         ] }, node.id);
       })
     ] });
@@ -23649,13 +23809,13 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [view, setView] = (0, import_react24.useState)("graph");
-    const [query, setQuery] = (0, import_react24.useState)("");
-    const [status, setStatus] = (0, import_react24.useState)(t("memory.graphPrompt"));
-    const [graph, setGraph] = (0, import_react24.useState)(null);
-    const [search, setSearch] = (0, import_react24.useState)(null);
-    const [loading, setLoading] = (0, import_react24.useState)(false);
-    (0, import_react24.useEffect)(() => {
+    const [view, setView] = (0, import_react25.useState)("graph");
+    const [query, setQuery] = (0, import_react25.useState)("");
+    const [status, setStatus] = (0, import_react25.useState)(t("memory.graphPrompt"));
+    const [graph, setGraph] = (0, import_react25.useState)(null);
+    const [search, setSearch] = (0, import_react25.useState)(null);
+    const [loading, setLoading] = (0, import_react25.useState)(false);
+    (0, import_react25.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -23703,7 +23863,7 @@
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
       Modal,
       {
         eyebrow: t("memory.eyebrow"),
@@ -23712,8 +23872,8 @@
         onClose,
         wide: true,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
               "button",
               {
                 className: view === "graph" ? "active" : "",
@@ -23725,12 +23885,12 @@
                   setStatus(t("memory.graphPrompt"));
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Share2, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Share2, { size: 16 }),
                   t("memory.graphView")
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
               "button",
               {
                 className: view === "search" ? "active" : "",
@@ -23742,16 +23902,16 @@
                   setStatus(t("memory.searchPrompt"));
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Search, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Search, { size: 16 }),
                   t("memory.searchView")
                 ]
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "memory-graph-query", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "memory-graph-query", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                 "input",
                 {
                   id: "memoryGraphQuery",
@@ -23762,29 +23922,29 @@
                   onChange: (event) => setQuery(event.target.value)
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Search, { size: 16 }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Search, { size: 16 }),
                 t("memory.search")
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
-          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(GraphCanvas, { graph }),
-            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("article", { className: "memory-graph-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("strong", { children: node.label }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
+          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(GraphCanvas, { graph }),
+            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("article", { className: "memory-graph-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("strong", { children: node.label }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
             ] }, node.id)) }) : null
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
             const source = item.source_type ? `${item.source_type}${item.source_id ? ` \xB7 ${item.source_id}` : ""}` : "Supermemory semantic result";
-            return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("article", { className: "memory-search-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("article", { className: "memory-search-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { children: [
                 t("memory.similarity", { value: String(item.similarity ?? t("common.notProvided")) }),
                 " \xB7 ",
                 t("memory.source", { source })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { children: [
                 t("memory.artifact", { value: String(item.artifact_id || item.metadata?.artifact_id || t("common.none")) }),
                 " \xB7 ",
                 t("memory.evidenceStatus", { value: String(item.evidence_status || "semantic_candidate") })
@@ -23797,16 +23957,16 @@
   }
 
   // src/components/NotFoundView.tsx
-  var import_react25 = __toESM(require_react(), 1);
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  var import_react26 = __toESM(require_react(), 1);
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   function NotFoundView({ path, onGoHome }) {
     const { t } = useTranslation();
-    const [seconds, setSeconds] = (0, import_react25.useState)(3);
-    const onGoHomeRef = (0, import_react25.useRef)(onGoHome);
-    (0, import_react25.useEffect)(() => {
+    const [seconds, setSeconds] = (0, import_react26.useState)(3);
+    const onGoHomeRef = (0, import_react26.useRef)(onGoHome);
+    (0, import_react26.useEffect)(() => {
       onGoHomeRef.current = onGoHome;
     }, [onGoHome]);
-    (0, import_react25.useEffect)(() => {
+    (0, import_react26.useEffect)(() => {
       const countdown = window.setInterval(() => {
         setSeconds((value) => Math.max(0, value - 1));
       }, 1e3);
@@ -23816,27 +23976,27 @@
         window.clearTimeout(redirect);
       };
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "not-found-path-wrap", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("code", { className: "not-found-path", children: path })
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "not-found-path-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("code", { className: "not-found-path", children: path })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { className: "not-found-countdown", "aria-live": "polite", children: t("notFound.redirect", { seconds }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(House, { size: 16, "aria-hidden": "true" }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-countdown", "aria-live": "polite", children: t("notFound.redirect", { seconds }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(House, { size: 16, "aria-hidden": "true" }),
         t("notFound.home")
       ] })
     ] }) });
   }
 
   // src/components/DeleteProjectDialog.tsx
-  var import_react26 = __toESM(require_react(), 1);
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var import_react27 = __toESM(require_react(), 1);
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
   function DeleteProjectDialog({
     project,
     busy,
@@ -23844,22 +24004,22 @@
     onConfirm
   }) {
     const { t } = useTranslation();
-    const [confirmation, setConfirmation] = (0, import_react26.useState)("");
+    const [confirmation, setConfirmation] = (0, import_react27.useState)("");
     const canDelete = confirmation === "DELETE" && !busy;
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
       Modal,
       {
         eyebrow: t("deleteProject.eyebrow"),
         title: t("deleteProject.title"),
         description: t("deleteProject.description"),
         onClose: busy ? () => void 0 : onClose,
-        children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "delete-project-content", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "delete-project-target", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { children: t("deleteProject.projectLabel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("strong", { title: project.title, children: project.title })
+        children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "delete-project-content", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "delete-project-target", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: t("deleteProject.projectLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("strong", { title: project.title, children: project.title })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
             "input",
             {
               id: "delete-project-confirmation",
@@ -23877,10 +24037,10 @@
               autoFocus: true
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "modal-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "modal-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
           ] })
         ] })
       }
@@ -23888,7 +24048,7 @@
   }
 
   // src/App.tsx
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
   var EMPTY_STAGES = [
     { key: "analyzing_input", labelKey: "app.thinking.readingConversation" },
     { key: "selecting_route", labelKey: "app.thinking.selectingModel" },
@@ -23905,45 +24065,45 @@
       role: "assistant",
       text: t("app.initialMessage")
     };
-    (0, import_react27.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       setMessages((current) => current.map((message) => message.id === "initial-assistant" ? { ...message, text: t("app.initialMessage") } : message));
     }, [locale]);
-    const [projects, setProjects] = (0, import_react27.useState)([]);
-    const [projectId, setProjectId] = (0, import_react27.useState)(null);
-    const [project, setProject] = (0, import_react27.useState)(null);
-    const [view, setView] = (0, import_react27.useState)("idea");
-    const [activeArea, setActiveArea] = (0, import_react27.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react27.useState)("overview");
-    const [health, setHealth] = (0, import_react27.useState)("connecting");
-    const [toast, setToast] = (0, import_react27.useState)(null);
-    const [messages, setMessages] = (0, import_react27.useState)([initialMessage]);
-    const [projectMessages, setProjectMessages] = (0, import_react27.useState)([]);
-    const [spec, setSpec] = (0, import_react27.useState)(null);
-    const [projectSlug, setProjectSlug] = (0, import_react27.useState)("");
-    const [specStatus, setSpecStatus] = (0, import_react27.useState)("pending_clarification");
-    const [chatBusy, setChatBusy] = (0, import_react27.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react27.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react27.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react27.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react27.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react27.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react27.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react27.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react27.useState)(false);
-    const [confirm, setConfirm] = (0, import_react27.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react27.useState)(false);
-    const [notFoundPath, setNotFoundPath] = (0, import_react27.useState)(null);
-    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react27.useState)(null);
-    const [deleteBusy, setDeleteBusy] = (0, import_react27.useState)(false);
-    const [sidebarWidth, setSidebarWidth] = (0, import_react27.useState)(() => {
+    const [projects, setProjects] = (0, import_react28.useState)([]);
+    const [projectId, setProjectId] = (0, import_react28.useState)(null);
+    const [project, setProject] = (0, import_react28.useState)(null);
+    const [view, setView] = (0, import_react28.useState)("idea");
+    const [activeArea, setActiveArea] = (0, import_react28.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react28.useState)("overview");
+    const [health, setHealth] = (0, import_react28.useState)("connecting");
+    const [toast, setToast] = (0, import_react28.useState)(null);
+    const [messages, setMessages] = (0, import_react28.useState)([initialMessage]);
+    const [projectMessages, setProjectMessages] = (0, import_react28.useState)([]);
+    const [spec, setSpec] = (0, import_react28.useState)(null);
+    const [projectSlug, setProjectSlug] = (0, import_react28.useState)("");
+    const [specStatus, setSpecStatus] = (0, import_react28.useState)("pending_clarification");
+    const [chatBusy, setChatBusy] = (0, import_react28.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react28.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react28.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react28.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react28.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react28.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react28.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react28.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react28.useState)(false);
+    const [confirm, setConfirm] = (0, import_react28.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react28.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react28.useState)(null);
+    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react28.useState)(null);
+    const [deleteBusy, setDeleteBusy] = (0, import_react28.useState)(false);
+    const [sidebarWidth, setSidebarWidth] = (0, import_react28.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.sidebarWidth"));
       return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276;
     });
-    const chatBusyRef = (0, import_react27.useRef)(false);
-    const projectChatBusyRef = (0, import_react27.useRef)(false);
-    const sessionIdRef = (0, import_react27.useRef)(null);
-    const toastTimerRef = (0, import_react27.useRef)(null);
-    (0, import_react27.useEffect)(() => {
+    const chatBusyRef = (0, import_react28.useRef)(false);
+    const projectChatBusyRef = (0, import_react28.useRef)(false);
+    const sessionIdRef = (0, import_react28.useRef)(null);
+    const toastTimerRef = (0, import_react28.useRef)(null);
+    (0, import_react28.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
     const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
@@ -24023,7 +24183,7 @@
       else window.history.pushState(null, "", "/new");
       void loadProjects();
     };
-    (0, import_react27.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
@@ -24323,10 +24483,10 @@
       if (slug) writeWorkspacePath(slug, area, tab);
     };
     if (notFoundPath) {
-      return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
+      return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "app-shell", style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "app-shell", style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
         Sidebar,
         {
           projects,
@@ -24345,8 +24505,8 @@
           onSidebarWidthChange: updateSidebarWidth
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("main", { className: "workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
           Topbar,
           {
             title: view === "idea" ? t("app.newProject") : project?.title || t("app.researchProject"),
@@ -24360,7 +24520,7 @@
             project: view === "project" ? project : null
           }
         ),
-        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
           IdeaView,
           {
             messages,
@@ -24378,7 +24538,7 @@
             thinkingSessions,
             onToggleThinking: toggleThinkingSession
           }
-        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
           ProjectView,
           {
             project,
@@ -24396,10 +24556,10 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
+        ) : /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
         MemoryGraphModal,
         {
           open: memoryOpen,
@@ -24408,7 +24568,7 @@
           showToast
         }
       ),
-      confirm ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      confirm ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
         ConfirmDialog,
         {
           title: confirm.title,
@@ -24422,7 +24582,7 @@
           onCancel: () => setConfirm(null)
         }
       ) : null,
-      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
         DeleteProjectDialog,
         {
           project: deleteProjectTarget,
@@ -24432,15 +24592,15 @@
         },
         deleteProjectTarget.id
       ) : null,
-      toast ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Toast, { message: toast }) : null
+      toast ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Toast, { message: toast }) : null
     ] });
   }
 
   // src/main.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
   var rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Missing #root mount element");
-  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime31.jsx)(App, {}));
+  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime32.jsx)(App, {}));
 })();
 /*! Bundled license information:
 
@@ -24546,6 +24706,7 @@ lucide-react/dist/esm/icons/list-tree.mjs:
 lucide-react/dist/esm/icons/lock-keyhole.mjs:
 lucide-react/dist/esm/icons/message-circle.mjs:
 lucide-react/dist/esm/icons/message-square.mjs:
+lucide-react/dist/esm/icons/mic.mjs:
 lucide-react/dist/esm/icons/network.mjs:
 lucide-react/dist/esm/icons/package-check.mjs:
 lucide-react/dist/esm/icons/palette.mjs:

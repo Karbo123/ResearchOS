@@ -484,6 +484,10 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
 
 - [x] `P0-MODEL-API-102` 将“仅结构化输出请求才在 input 消息注入 `json` 字样，普通自由文本请求禁止注入”的规则固化到 AGENTS.md；已逐处复核 Mastra 的 6 个 `generate` 调用点、Mastra workflows/evals/skills/tools 和 Supermemory Responses bridge，确认所有生产请求只在 `structuredOutput`/`response_format` 存在时注入。定向 18 项请求体契约测试通过，未发现全量注入、Chat Completions 残留或 `json_object` 请求。
 
+- [x] `P0-UI-VOICE-103` 为所有聊天文本输入（Idea 讨论与项目对话）添加免费的浏览器内置语音输入，使用 Web Speech API，不依赖后端或第三方服务。
+  - [x] `103a` 新增可复用 `VoiceInputButton`，支持开始/停止、实时转写、语言跟随界面、权限/无语音/设备错误提示和减少动画偏好；浏览器不支持时显示禁用状态。
+  - [x] `103b` 接入 Idea 讨论与项目对话两个 composer，并更新四语言文案、明暗主题样式和移动端三列/四列网格；Web 类型检查、构建、UI/i18n、语言边界检查和真实 Chrome DOM/布局回归通过。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

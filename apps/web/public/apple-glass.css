@@ -89,7 +89,7 @@ button { -webkit-font-smoothing: inherit; }
 .brand-mark { width: 30px; height: 30px; border-radius: 10px; background: var(--ink); color: var(--on-accent); box-shadow: 0 1px 0 var(--glass-highlight), 0 5px 16px rgba(25, 25, 35, .16); }
 .primary { min-height: 42px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 13px; background: var(--blue); box-shadow: 0 8px 20px rgba(0, 122, 255, .22), inset 0 1px 0 rgba(255, 255, 255, .28); font-size: 13px; font-weight: 650; transition: transform .24s var(--spring), background .24s var(--ease), box-shadow .24s var(--ease); }
 .primary:hover { background: #248bff; box-shadow: 0 11px 26px rgba(0, 122, 255, .28), inset 0 1px 0 rgba(255, 255, 255, .30); transform: translateY(-1px); }
-.primary:active, .send-btn:active, .secondary:active, .icon-btn:active { transform: scale(.97); }
+.primary:active, .send-btn:active, .voice-btn:active, .secondary:active, .icon-btn:active { transform: scale(.97); }
 .side-label { margin: 27px 9px 8px; color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .10em; text-transform: uppercase; }
 .project-list { gap: 4px; padding: 0 2px 0 0; overflow-x: clip; scrollbar-color: rgba(60, 60, 67, .24) transparent; }
 .project-list::-webkit-scrollbar { width: 7px; }
@@ -298,9 +298,14 @@ button { -webkit-font-smoothing: inherit; }
 .composer { margin: 0 18px 18px; padding: 10px; gap: 9px; border: 1px solid var(--line-strong); border-radius: 17px; background: var(--surface); box-shadow: 0 9px 24px rgba(25, 25, 35, .08), inset 0 1px 0 var(--glass-highlight); }
 .composer textarea { min-height: 40px; padding: 10px 12px; border: 1px solid transparent; border-radius: 11px; background: rgba(242, 242, 247, .76); color: var(--ink); transition: background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease); }
 .composer textarea:focus { border-color: rgba(0, 122, 255, .42); background: var(--surface-solid); box-shadow: 0 0 0 4px var(--blue-soft); }
-.attach-btn, .send-btn { width: 40px; height: 40px; border-radius: 12px; transition: transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease); }
+.attach-btn, .send-btn, .voice-btn { width: 40px; height: 40px; border-radius: 12px; transition: transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease); }
 .attach-btn { border-color: var(--line); background: var(--surface-2); color: var(--muted); }
 .attach-btn:hover { background: var(--surface-solid); color: var(--blue); border-color: rgba(0, 122, 255, .30); }
+.voice-btn { border-color: var(--line); background: var(--surface-2); color: var(--muted); }
+.voice-btn:hover:not(:disabled) { background: var(--surface-solid); color: var(--blue); border-color: rgba(0, 122, 255, .30); }
+.voice-btn:disabled { opacity: .45; cursor: not-allowed; }
+.voice-btn[data-state='listening'] { color: var(--on-accent); background: var(--red); border-color: var(--red); box-shadow: 0 6px 16px rgba(255, 59, 48, .26), 0 0 0 4px var(--red-soft); animation: voice-listening 1.3s var(--ease) infinite; }
+@keyframes voice-listening { 0%, 100% { box-shadow: 0 6px 16px rgba(255, 59, 48, .26), 0 0 0 4px var(--red-soft); } 50% { box-shadow: 0 8px 22px rgba(255, 59, 48, .34), 0 0 0 8px transparent; } }
 .send-btn { background: var(--blue); box-shadow: 0 6px 14px rgba(0, 122, 255, .22); }
 .send-btn:hover { background: #248bff; box-shadow: 0 8px 19px rgba(0, 122, 255, .28); transform: translateY(-1px); }
 .file-queue { margin: -18px 18px 0; padding: 0 12px 10px; background: transparent; color: var(--muted); }
@@ -512,7 +517,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .clarification-mode-bar { min-height: 52px; margin: 0 14px 8px; padding: 8px 11px; border-radius: 13px; }
 .composer { margin: 0 14px 14px; padding: 8px; border-radius: 14px; }
 .composer textarea { min-height: 36px; padding: 8px 10px; border-radius: 10px; font-size: 13px; }
-.attach-btn, .send-btn { width: 36px; height: 36px; border-radius: 10px; }
+.attach-btn, .send-btn, .voice-btn { width: 36px; height: 36px; border-radius: 10px; }
 .file-queue { margin: -14px 14px 0; padding: 0 10px 8px; }
 .spec-pane { padding: 18px; }
 .pane-heading { margin-bottom: 12px; }
@@ -1270,6 +1275,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   .not-found-card,
   .not-found-icon { animation: none; }
+  .voice-btn[data-state='listening'] { animation: none; }
   /* Keep this small user-requested reveal visible when Windows disables broader motion. */
   .project-row .project-main-button {
     transition-property: padding-right !important;

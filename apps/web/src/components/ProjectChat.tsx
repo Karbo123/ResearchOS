@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CircleUserRound, Send, Sparkles, X } from 'lucide-react'
 import type { ChatMessage } from '../types'
 import { useTranslation } from '../i18n'
+import { VoiceInputButton } from './VoiceInputButton'
 
 function ProjectProgress() {
   const { t } = useTranslation()
@@ -109,6 +110,7 @@ export function ProjectChat({
             }
           }}
         />
+        <VoiceInputButton disabled={busy} onText={setInput} />
         <button className="send-btn" type="submit" title={t('common.send')} aria-label={t('common.send')} disabled={busy || !input.trim()}>
           <Send size={17} />
         </button>

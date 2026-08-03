@@ -85,11 +85,15 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .mode-copy small { color: var(--muted); font-size: 10px; }
 @keyframes thinking-pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
 @keyframes thinking-slide { 0% { transform: translateX(-110%); } 50% { transform: translateX(95%); } 100% { transform: translateX(300%); } }
-.composer { background: var(--surface); border-top: 1px solid var(--line); padding: 14px 20px; display: grid; grid-template-columns: 36px minmax(0, 1fr) 38px; gap: 10px; align-items: end; }
+.composer { background: var(--surface); border-top: 1px solid var(--line); padding: 14px 20px; display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px 38px; gap: 10px; align-items: end; }
 .composer textarea { resize: none; width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 11px; outline: none; max-height: 130px; background: var(--surface-2); }
 .composer textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px var(--green-soft); }
-.attach-btn, .send-btn { width: 36px; height: 36px; border: 0; border-radius: 8px; display: grid; place-items: center; cursor: pointer; }
-.attach-btn { background: var(--surface-2); border: 1px solid var(--line); }
+.attach-btn, .send-btn, .voice-btn { width: 36px; height: 36px; border: 0; border-radius: 8px; display: grid; place-items: center; cursor: pointer; }
+.attach-btn, .voice-btn { background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); }
+.voice-btn:hover:not(:disabled) { color: var(--blue); border-color: #b7cef4; }
+.voice-btn:disabled { opacity: .45; cursor: not-allowed; }
+.voice-btn[data-state='listening'] { color: #fff; background: var(--red); border-color: var(--red); box-shadow: 0 0 0 4px rgba(181, 61, 61, .16); animation: voice-listening 1.2s ease-in-out infinite; }
+@keyframes voice-listening { 0%, 100% { box-shadow: 0 0 0 0 rgba(181, 61, 61, .24); } 50% { box-shadow: 0 0 0 6px transparent; } }
 .attach-btn input { display: none; }
 .send-btn { background: var(--green); color: white; }
 .send-btn:disabled, .attach-btn.busy { opacity: .45; cursor: wait; }
@@ -138,7 +142,7 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .project-chat .pane-heading { padding: 0 16px; }
 .messages.compact { padding: 12px 16px; gap: 12px; }
 .messages.compact .bubble { font-size: 13px; }
-.composer.compact { padding: 12px; grid-template-columns: minmax(0, 1fr) 36px; }
+.composer.compact { padding: 12px; grid-template-columns: minmax(0, 1fr) 36px 36px; }
 .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
 .metric { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 14px; box-shadow: 0 4px 16px #1d243306; }
 .metric span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 6px; }
@@ -237,11 +241,11 @@ h3 { font-size: 14px; margin-bottom: 10px; }
   .sidebar .service-links { display: flex; margin: 0 0 0 8px; padding: 0; border: 0; }
   .sidebar .service-links a, .sidebar .service-links .side-service { width: 38px; height: 38px; padding: 10px; justify-content: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); font-size: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .thinking-dot, .ai-progress-track span { animation-duration: 4s; } }
+@media (prefers-reduced-motion: reduce) { .thinking-dot, .ai-progress-track span { animation-duration: 4s; }.voice-btn[data-state='listening'] { animation: none; } }
 
 /* Shared interaction language: quiet surfaces, clear focus, and stable controls. */
 :focus-visible { outline: 3px solid #9ec5ff; outline-offset: 2px; }
-.primary, .secondary, .approve, .reject, .icon-btn, .send-btn, .attach-btn, .side-settings { transition: transform .16s ease, opacity .16s ease; }
+.primary, .secondary, .approve, .reject, .icon-btn, .send-btn, .attach-btn, .voice-btn, .side-settings { transition: transform .16s ease, opacity .16s ease; }
 .primary:hover, .send-btn:hover { box-shadow: 0 5px 14px #2675e82e; transform: translateY(-1px); }
 .secondary:hover, .approve:hover, .reject:hover { background: var(--surface-2); border-color: #b7cef4; }
 .chat-heading-actions { display: flex; align-items: center; gap: 8px; }
@@ -321,10 +325,10 @@ h1 { font-size: 20px; line-height: 1.25; }
 .clarification-mode-bar { min-height: 55px; }
 .switch-track { background: #a8b2ac; }
 .mode-switch input:checked + .switch-track { background: var(--blue); }
-.composer { padding: 14px 20px; grid-template-columns: 38px minmax(0, 1fr) 40px; }
+.composer { padding: 14px 20px; grid-template-columns: 38px minmax(0, 1fr) 38px 40px; }
 .composer textarea { border-radius: 6px; background: var(--surface-2); }
 .composer textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--green-soft); }
-.attach-btn, .send-btn { width: 38px; height: 38px; border-radius: 6px; }
+.attach-btn, .send-btn, .voice-btn { width: 38px; height: 38px; border-radius: 6px; }
 .send-btn { background: var(--blue); }
 .send-btn:hover { background: var(--green-dark); }
 .spec-pane { padding: 24px; }
@@ -368,7 +372,7 @@ h1 { font-size: 20px; line-height: 1.25; }
 .memory-graph-node.related { fill: #24805e; }
 .memory-graph-result, .memory-search-result { border-radius: 10px; background: var(--surface-2); }
 .toast { right: 24px; bottom: 24px; border-radius: 10px; background: var(--sidebar); box-shadow: 0 10px 28px rgba(23,33,29,.18); }
-.primary, .secondary, .approve, .reject, .icon-btn, .send-btn, .attach-btn, .side-settings { transition: transform .16s ease, opacity .16s ease; }
+.primary, .secondary, .approve, .reject, .icon-btn, .send-btn, .attach-btn, .voice-btn, .side-settings { transition: transform .16s ease, opacity .16s ease; }
 .primary:hover, .send-btn:hover { box-shadow: 0 5px 14px rgba(40,104,215,.18); transform: translateY(-1px); }
 
 @media (max-width: 1100px) {
@@ -406,6 +410,7 @@ h1 { font-size: 20px; line-height: 1.25; }
 }
 @media (prefers-reduced-motion: reduce) {
   .thinking-dot, .ai-progress-track span, .thinking-stage.active .stage-icon { animation: none; }
+  .voice-btn[data-state='listening'] { animation: none; }
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
 

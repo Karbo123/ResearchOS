@@ -5,6 +5,7 @@ import { SpecPane } from './SpecPane'
 import { ThinkingSessions } from './ThinkingSessions'
 import { ResizableDivider } from './ResizableDivider'
 import { useTranslation } from '../i18n'
+import { VoiceInputButton } from './VoiceInputButton'
 
 const IDEA_PROGRESS_STAGE_KEYS = [
   'idea.stage.understand',
@@ -191,6 +192,7 @@ export function IdeaView({
             onChange={event => setInput(event.target.value)}
             onKeyDown={handleKeyDown}
           />
+          <VoiceInputButton disabled={chatBusy} onText={setInput} />
           <button className="send-btn" type="submit" title={t('common.send')} aria-label={t('common.send')} disabled={chatBusy || !input.trim()}>
             <Send size={17} />
           </button>
