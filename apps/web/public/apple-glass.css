@@ -2036,11 +2036,10 @@ a.secondary { text-decoration: none; color: var(--ink); }
   place-items: center;
   width: 18px;
   min-width: 18px;
-  height: 56px;
-  min-height: 56px;
+  height: 72px;
+  min-height: 72px;
   padding: 0;
   border: 0;
-  border-left: 1px solid var(--line);
   border-radius: 0;
   background: transparent;
   color: var(--muted);
@@ -2048,24 +2047,38 @@ a.secondary { text-decoration: none; color: var(--ink); }
   pointer-events: auto;
   cursor: pointer;
   transform: translateY(-50%);
-  transition: left .52s var(--spring), color .2s var(--ease), border-color .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
+  transition: left .52s var(--spring), color .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
 }
 .project-drawer-toggle:hover {
   color: var(--blue);
-  border-color: rgba(0, 122, 255, .32);
 }
 .project-drawer-toggle:focus-visible {
   outline: 2px solid var(--blue);
-  outline-offset: -3px;
+  outline-offset: -2px;
   color: var(--blue);
 }
 .project-drawer-toggle:active {
   transform: translateY(-50%) scale(.92);
 }
-.project-drawer-toggle svg {
-  width: 12px;
-  height: 12px;
-  stroke-width: 3;
+.project-drawer-arrow {
+  display: grid;
+  place-items: center;
+  transition: transform .36s var(--spring);
+}
+.project-drawer-toggle:hover .project-drawer-arrow {
+  transform: translateX(1.5px);
+}
+.project-drawer-toggle:active .project-drawer-arrow {
+  transform: translateX(2.5px) scale(.9);
+}
+.project-drawer-region.open .project-drawer-arrow {
+  transform: rotate(180deg);
+}
+.project-drawer-region.open .project-drawer-toggle:hover .project-drawer-arrow {
+  transform: translateX(-1.5px) rotate(180deg);
+}
+.project-drawer-region.open .project-drawer-toggle:active .project-drawer-arrow {
+  transform: translateX(-2.5px) rotate(180deg) scale(.9);
 }
 .project-drawer-region.open .project-drawer-toggle {
   left: min(var(--sidebar-width, 276px), calc(100vw - 18px));
@@ -2100,7 +2113,6 @@ a.secondary { text-decoration: none; color: var(--ink); }
     height: 48px;
     min-height: 48px;
     border-radius: 0;
-    border-left-width: 1px;
     transform: none;
   }
   .project-drawer-toggle:active {
@@ -2116,6 +2128,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   .project-drawer-shell,
   .project-drawer-toggle,
+  .project-drawer-arrow,
   .project-drawer-scrim,
   .refresh-btn.is-refreshing svg {
     transition-duration: .01ms !important;

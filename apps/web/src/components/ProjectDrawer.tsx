@@ -1,8 +1,24 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 import { Sidebar } from './Sidebar'
+
+function DrawerArrow() {
+  return (
+    <span className="project-drawer-arrow" aria-hidden="true">
+      <svg width="14" height="18" viewBox="0 0 14 18" focusable="false">
+        <path
+          d="M4.3 4.4 L10 9 L4.3 13.6 Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  )
+}
 
 export function ProjectDrawer({
   open,
@@ -54,7 +70,7 @@ export function ProjectDrawer({
         title={label}
         onClick={() => onOpenChange(!open)}
       >
-        {open ? <ChevronLeft size={17} aria-hidden="true" /> : <ChevronRight size={17} aria-hidden="true" />}
+        <DrawerArrow />
       </button>
     </div>
   )
