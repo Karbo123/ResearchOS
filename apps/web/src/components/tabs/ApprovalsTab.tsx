@@ -2,7 +2,7 @@ import { Check, Play, X } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { ProjectDetail, Proposal, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
-import { useTranslation } from '../../i18n'
+import { formatDateTime, useTranslation } from '../../i18n'
 
 export function ApprovalsTab({
   project,
@@ -15,7 +15,7 @@ export function ApprovalsTab({
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
 }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const decide = async (proposalId: string, decision: 'approved' | 'rejected') => {
     try {
       await api(`/api/proposals/${proposalId}/decision`, {
@@ -103,6 +103,40 @@ export function ApprovalsTab({
       ) : (
         <EmptyState text={t('approvals.empty')} />
       )}
+      <section className="section">
+        <SectionHeading title={t('approvals.revisionOpinions')} hint={t('approvals.revisionHint')} />
+        {project.idea_versions?.length ? (
+          <div className="data-list">
+            {project.idea_versions.map(version => (
+              <div className="data-row" key={version.id}>
+                <div>
+                  <h3>{t('approvals.versionLabel', { version: version.version })}</h3>
+                  <p>{version.change_reason || t('approvals.noChangeReason')} · {formatDateTime(version.created_at, locale)}</p>
+                  {version.supersedes_id ? <p className="muted">{t('approvals.supersedes', { id: version.supersedes_id.slice(0, 8) })}</p> : null}
+                </div>
+                <Badge status={version.version === project.current_idea_version ? 'current' : 'superseded'} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState text={t('approvals.noRevisions')} />
+        )}
+      </section>
+      <section className="section">
+        <SectionHeading title={t('approvals.policiesTitle')} hint={t('approvals.policiesHint')} />
+        {project.policies?.length ? (
+          <div className="data-list">
+            {project.policies.map(policy => (
+              <div className="data-row" key={policy.id}>
+                <div><h3>{policy.rule}</h3>{policy.rationale ? <p>{policy.rationale}</p> : null}</div>
+                <Badge status={policy.recognized ? 'enforced' : 'candidate'} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState text={t('approvals.noPolicies')} />
+        )}
+      </section>
     </>
   )
 }

@@ -201,7 +201,7 @@ export function ProjectView({
         <div className="tab-content">
           {activeTab === 'overview' || activeTab === 'idea' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
           {activeTab === 'approvals' ? <ApprovalsTab {...tabProps} /> : null}
-          {activeTab === 'reports' ? <ReportsTab {...tabProps} tab={activeTab} /> : null}
+          {activeTab === 'reports' ? <ReportsTab {...tabProps} /> : null}
           {activeTab === 'literature' || activeTab === 'seed_expansion' ? <LiteratureTab {...tabProps} searchCandidates={searchCandidates} /> : null}
           {activeTab === 'visualization' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}
           {activeTab === 'method' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}

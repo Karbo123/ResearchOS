@@ -3,6 +3,7 @@ import { api, errorMessage } from '../../api'
 import type { ConfirmRequest, ProjectDetail, TabId } from '../../types'
 import { Badge, ButtonRow, SectionHeading } from '../ui'
 import { formatDateTime, useTranslation } from '../../i18n'
+import { NoveltyExplorer } from '../NoveltyExplorer'
 
 function SpecificationField({ label, value, emptyLabel }: { label: string; value?: string | string[]; emptyLabel: string }) {
   const values = Array.isArray(value) ? value.filter(item => item.trim()) : value?.trim() ? [value.trim()] : []
@@ -65,7 +66,28 @@ export function OverviewTab({
   tab?: 'overview' | 'idea'
 }) {
   const { t, locale } = useTranslation()
-  if (tab === 'idea') return <ProjectSpecificationTab project={project} />
+  if (tab === 'idea') {
+    const idea = project.spec?.idea
+    return (
+      <>
+        <ProjectSpecificationTab project={project} />
+        <div className="section overview-grid">
+          <div className="data-list overview-card">
+            <SectionHeading title={t('overview.boundariesTitle')} hint={t('overview.boundariesHint')} />
+            <div className="overview-fields">
+              <div><span>{t('overview.risks')}</span><strong>{idea?.risks?.join('；') || t('common.notConfirmed')}</strong></div>
+              <div><span>{t('overview.openQuestions')}</span><strong>{idea?.open_questions?.join('；') || t('common.notConfirmed')}</strong></div>
+            </div>
+          </div>
+          <div className="data-list overview-card">
+            <SectionHeading title={t('overview.ideaConversation')} hint={t('overview.ideaConversationHint')} />
+            <p className="muted">{t('overview.ideaConversationLive')}</p>
+          </div>
+        </div>
+        <NoveltyExplorer project={project} showToast={showToast} />
+      </>
+    )
+  }
   const counts = project.counts || {
     papers: project.papers?.length || 0,
     experiments: project.experiments?.length || 0,

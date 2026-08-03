@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, FileText, Gavel, MessageSquare, Send, X } from 'lucide-react'
+import { Check, FileText, Gavel, MessageSquare, RefreshCw, Send, X } from 'lucide-react'
 import { api, errorMessage } from '../../api'
-import type { AuditEvent, HumanFeedback, ProjectDetail, Report, TabId } from '../../types'
+import type { AuditEvent, HumanFeedback, ProjectDetail, Report } from '../../types'
 import { MarkdownPreview } from '../MarkdownPreview'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
 import { formatDateTime, useTranslation } from '../../i18n'
@@ -10,25 +10,17 @@ function displayable(report: Report | undefined): boolean {
   return report?.status === 'valid'
 }
 
-function periodForTab(tab: TabId): 'daily' | 'weekly' {
-  return tab === 'reports' ? 'daily' : 'daily'
-}
-
 export function ReportsTab({
   project,
-  tab,
   onRefresh,
   showToast,
 }: {
   project: ProjectDetail
-  tab: TabId
   onRefresh: () => Promise<void>
   showToast: (message: string) => void
 }) {
   const { t, locale } = useTranslation()
-  const isFeedback = false
-  const isAudit = false
-  const period = periodForTab(tab)
+  const [period, setPeriod] = useState<'daily' | 'weekly'>('daily')
   const [content, setContent] = useState('')
   const [activeReportId, setActiveReportId] = useState('')
   const [activeReportStatus, setActiveReportStatus] = useState('')
@@ -37,7 +29,8 @@ export function ReportsTab({
   const [feedbackCategory, setFeedbackCategory] = useState<'report' | 'general'>('report')
   const [feedbackRows, setFeedbackRows] = useState<HumanFeedback[]>(project.feedback || [])
   const [auditRows, setAuditRows] = useState<AuditEvent[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loadingFeedback, setLoadingFeedback] = useState(false)
+  const [loadingAudit, setLoadingAudit] = useState(false)
 
   const reports = useMemo(
     () => (project.reports || []).filter(report => report.period === period),
@@ -53,13 +46,21 @@ export function ReportsTab({
   }, [project.id, period, reports])
 
   useEffect(() => {
-    if (!isFeedback && !isAudit) return
-    setLoading(true)
-    const request = isFeedback
-      ? api<{ feedback: HumanFeedback[] }>(`/api/projects/${project.id}/feedback`).then(result => setFeedbackRows(result.feedback || []))
-      : api<AuditEvent[]>(`/api/projects/${project.id}/audit`).then(result => setAuditRows(result || []))
-    request.catch(error => showToast(errorMessage(error))).finally(() => setLoading(false))
-  }, [isAudit, isFeedback, project.id])
+    setLoadingFeedback(true)
+    setLoadingAudit(true)
+    const feedbackRequest = api<{ feedback: HumanFeedback[] }>(`/api/projects/${project.id}/feedback`)
+      .then(result => setFeedbackRows(result.feedback || []))
+      .catch(error => showToast(errorMessage(error)))
+      .finally(() => setLoadingFeedback(false))
+    const auditRequest = api<AuditEvent[]>(`/api/projects/${project.id}/audit`)
+      .then(result => setAuditRows(result || []))
+      .catch(error => showToast(errorMessage(error)))
+      .finally(() => setLoadingAudit(false))
+    return () => {
+      void feedbackRequest
+      void auditRequest
+    }
+  }, [project.id])
 
   const generateReport = async () => {
     try {
@@ -132,11 +133,35 @@ export function ReportsTab({
     }
   }
 
-  if (isFeedback) {
-    return (
-      <>
-        <SectionHeading title={t('reports.feedbackInbox')} hint={t('reports.feedbackHint')} extra={<Badge status="project-scoped">{project.id.slice(0, 8)}</Badge>} />
-        {loading ? <EmptyState text={t('reports.loadingFeedback')} /> : feedbackRows.length ? (
+  const relevantAudit = auditRows.filter(row => row.action.startsWith('human_feedback') || row.action.startsWith('proposal.'))
+
+  return (
+    <>
+      <SectionHeading title={t('reports.title')} hint={t('reports.hint')} />
+      <div className="settings-segmented reports-period-switch" role="radiogroup" aria-label={t('reports.periodLabel')}>
+        <button type="button" role="radio" aria-checked={period === 'daily'} className={period === 'daily' ? 'active' : ''} onClick={() => setPeriod('daily')}>
+          {t('reports.daily')}
+        </button>
+        <button type="button" role="radio" aria-checked={period === 'weekly'} className={period === 'weekly' ? 'active' : ''} onClick={() => setPeriod('weekly')}>
+          {t('reports.weekly')}
+        </button>
+      </div>
+
+      <div className="section">
+        <SectionHeading
+          title={period === 'daily' ? t('reports.daily') : t('reports.weekly')}
+          hint={t('reports.periodHint')}
+          extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void generateReport() }}><FileText size={15} />{t('reports.generate', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}</button></ButtonRow>}
+        />
+        <div className={`${content ? 'report' : activeReportStatus && activeReportStatus !== 'valid' ? 'empty report-blocked' : 'empty'}`}>
+          {content ? <MarkdownPreview content={content} /> : activeReportStatus && activeReportStatus !== 'valid' ? t('reports.blocked', { reason: activeReportReason || t('reports.lineageUnverifiable') }) : t('reports.noneForPeriod', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}
+        </div>
+        {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatDateTime(report.created_at, locale)}</h3><p>{report.id} · {t('reports.sourceSnapshot')} {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
+      </div>
+
+      <div className="section">
+        <SectionHeading title={t('reports.feedbackInbox')} hint={t('reports.feedbackHint')} />
+        {loadingFeedback ? <EmptyState text={t('reports.loadingFeedback')} /> : feedbackRows.length ? (
           <div className="data-list">
             {feedbackRows.map(row => (
               <article className="data-row feedback-row" key={row.id}>
@@ -166,27 +191,12 @@ export function ReportsTab({
             <button className="secondary" type="button" disabled={!feedback.trim()} onClick={() => { void submitFeedback() }}><Send size={15} />{t('reports.recordFeedbackAction')}</button>
           </div>
         </div>
-      </>
-    )
-  }
-
-  if (isAudit) {
-    const relevant = auditRows.filter(row => row.action.startsWith('human_feedback') || row.action.startsWith('proposal.'))
-    return (
-      <>
-        <SectionHeading title={t('reports.auditTitle')} hint={t('reports.auditHint', { projectId: project.id })} extra={<Badge status="project-scoped">{t('context.projectScoped')}</Badge>} />
-        {loading ? <EmptyState text={t('reports.loadingAudit')} /> : relevant.length ? <div className="data-list">{relevant.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatDateTime(row.created_at, locale)} · {JSON.stringify(row.details || {})}</p></div><Badge status="recorded" /></div>)}</div> : <EmptyState text={t('reports.noAudit')} />}
-      </>
-    )
-  }
-
-  return (
-    <>
-      <SectionHeading title={period === 'daily' ? t('reports.daily') : t('reports.weekly')} hint={t('reports.periodHint')} extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void generateReport() }}><FileText size={15} />{t('reports.generate', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}</button></ButtonRow>} />
-      <div className={`${content ? 'report' : activeReportStatus && activeReportStatus !== 'valid' ? 'empty report-blocked' : 'empty'}`}>
-        {content ? <MarkdownPreview content={content} /> : activeReportStatus && activeReportStatus !== 'valid' ? t('reports.blocked', { reason: activeReportReason || t('reports.lineageUnverifiable') }) : t('reports.noneForPeriod', { period: period === 'daily' ? t('reports.daily') : t('reports.weekly') })}
       </div>
-      {reports.length > 1 ? <div className="section"><h3>{t('reports.history')}</h3><div className="data-list">{reports.slice(1).map(report => <div className="data-row" key={report.id}><div><h3>{formatDateTime(report.created_at, locale)}</h3><p>{report.id} · {t('reports.sourceSnapshot')} {report.source_snapshot ? t('common.recorded') : t('common.missing')}</p></div><ButtonRow><Badge status={report.status || 'legacy_unverified'} /><button className="secondary" type="button" onClick={() => selectReport(report)}>{report.status === 'valid' ? t('reports.view') : t('reports.viewStatus')}</button></ButtonRow></div>)}</div></div> : null}
+
+      <div className="section">
+        <SectionHeading title={t('reports.auditTitle')} hint={t('reports.auditHint', { projectId: project.id })} extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void onRefresh() }}><RefreshCw size={15} />{t('topbar.refresh')}</button></ButtonRow>} />
+        {loadingAudit ? <EmptyState text={t('reports.loadingAudit')} /> : relevantAudit.length ? <div className="data-list">{relevantAudit.map(row => <div className="data-row" key={row.id}><div><h3>{row.action}</h3><p>{row.actor} · {formatDateTime(row.created_at, locale)} · {JSON.stringify(row.details || {})}</p></div><Badge status="recorded" /></div>)}</div> : <EmptyState text={t('reports.noAudit')} />}
+      </div>
     </>
   )
 }
