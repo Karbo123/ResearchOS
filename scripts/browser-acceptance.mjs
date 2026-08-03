@@ -137,6 +137,22 @@ const projectUrl = `${appBase}/project/${projectSlug}/overview/overview`
 const projectList = await fetch(`${appBase}/api/projects`).then(response => response.json()).catch(() => [])
 const secondProject = Array.isArray(projectList) ? projectList.find(project => project.slug !== projectSlug) : null
 const projectBUrl = secondProject ? `${appBase}/project/${secondProject.slug}/overview/overview` : projectUrl
+const projectTabPaths = [
+  ['overview', 'overview'],
+  ['overview', 'idea'],
+  ['overview', 'approvals'],
+  ['overview', 'reports'],
+  ['related_work', 'literature'],
+  ['related_work', 'visualization'],
+  ['related_work', 'seed-expansion'],
+  ['implementation', 'method'],
+  ['implementation', 'reproduction'],
+  ['paper', 'introduction'],
+  ['paper', 'related-work'],
+  ['paper', 'paper-method'],
+  ['paper', 'paper-experiments'],
+  ['paper', 'conclusion'],
+]
 
 await send('Page.enable')
 await send('Runtime.enable')
@@ -151,6 +167,14 @@ for (const locale of ['zh-CN', 'zh-TW', 'en', 'es']) {
   const projectState = await checkOverflow()
   await capture(`108h-project-${locale}.png`)
   results.push({ locale, homeState, projectState })
+}
+
+const projectTabsDesktop = []
+for (const [area, tab] of projectTabPaths) {
+  await navigate(`${appBase}/project/${projectSlug}/${area}/${tab}`, 'en', 'light')
+  const state = await checkOverflow()
+  projectTabsDesktop.push({ area, tab, ...state })
+  await capture(`108h-tab-${area}-${tab}.png`)
 }
 
 await navigate(homeUrl, 'en', 'dark')
@@ -168,6 +192,13 @@ await capture('108h-home-mobile-zh-CN.png')
 await navigate(projectUrl, 'zh-CN', 'light')
 const mobileProject = await checkOverflow()
 await capture('108h-project-mobile-zh-CN.png')
+const projectTabsMobile = []
+for (const [area, tab] of projectTabPaths) {
+  await navigate(`${appBase}/project/${projectSlug}/${area}/${tab}`, 'zh-CN', 'light')
+  const state = await checkOverflow()
+  projectTabsMobile.push({ area, tab, ...state })
+  await capture(`108h-tab-mobile-${area}-${tab}.png`)
+}
 
 await send('Emulation.setDeviceMetricsOverride', { width: 1024, height: 768, deviceScaleFactor: 1, mobile: false })
 await navigate(homeUrl, 'en', 'light')
@@ -621,5 +652,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, themePersist, contextSwitch, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, themePersist, contextSwitch, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
 socket.close()
