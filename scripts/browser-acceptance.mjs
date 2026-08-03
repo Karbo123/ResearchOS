@@ -134,6 +134,9 @@ async function pressKey(key, code, keyCode) {
 
 const homeUrl = `${appBase}/`
 const projectUrl = `${appBase}/project/${projectSlug}/overview/overview`
+const projectList = await fetch(`${appBase}/api/projects`).then(response => response.json()).catch(() => [])
+const secondProject = Array.isArray(projectList) ? projectList.find(project => project.slug !== projectSlug) : null
+const projectBUrl = secondProject ? `${appBase}/project/${secondProject.slug}/overview/overview` : projectUrl
 
 await send('Page.enable')
 await send('Runtime.enable')
@@ -368,6 +371,38 @@ const themePersist = await evaluate(`({
 })`)
 await capture('108h-theme-persist.png')
 
+const contextA = await evaluate(`(() => {
+  const bar = document.querySelector('.workspace-context')
+  return {
+    exists: !!bar,
+    scope: bar?.querySelector('.workspace-context-title code')?.textContent?.trim() || null,
+    meta: bar?.querySelector('.workspace-context-meta')?.textContent?.trim() || null,
+    projectScoped: Boolean(bar?.textContent?.includes('Project-scoped')),
+    pending: bar?.querySelector('.workspace-context-actions')?.textContent?.trim() || null,
+    failure: bar?.querySelector('.workspace-context-failure')?.textContent?.trim() || bar?.querySelector('.workspace-context-ok')?.textContent?.trim() || null,
+    title: document.querySelector('.topbar h1')?.textContent?.trim() || null,
+  }
+})()`)
+await navigate(projectBUrl, 'en', 'light')
+const contextB = await evaluate(`(() => {
+  const bar = document.querySelector('.workspace-context')
+  return {
+    scope: bar?.querySelector('.workspace-context-title code')?.textContent?.trim() || null,
+    meta: bar?.querySelector('.workspace-context-meta')?.textContent?.trim() || null,
+    projectScoped: Boolean(bar?.textContent?.includes('Project-scoped')),
+    pending: bar?.querySelector('.workspace-context-actions')?.textContent?.trim() || null,
+    failure: bar?.querySelector('.workspace-context-failure')?.textContent?.trim() || bar?.querySelector('.workspace-context-ok')?.textContent?.trim() || null,
+    title: document.querySelector('.topbar h1')?.textContent?.trim() || null,
+  }
+})()`)
+const contextSwitch = {
+  a: contextA,
+  b: contextB,
+  scopeChanged: contextA.scope !== contextB.scope,
+  titleChanged: contextA.title !== contextB.title,
+}
+await capture('108h-context-switch.png')
+
 const paperUrl = `${appBase}/project/${projectSlug}/paper/introduction`
 await navigate(paperUrl, 'en', 'light')
 const longContent = await evaluate(`(() => {
@@ -586,5 +621,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, themePersist, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, themePersist, contextSwitch, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
 socket.close()
