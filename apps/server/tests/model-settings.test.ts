@@ -46,4 +46,18 @@ describe('public model settings', () => {
     const { loadModelConfig, ModelConfigurationError } = await import('../../mastra/src/mastra/model-config.ts')
     expect(() => loadModelConfig('simple')).toThrow(ModelConfigurationError)
   })
+
+  it('persists the global proxy setting without exposing it as a tier key', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-model-settings-${process.pid}`)
+    vi.resetModules()
+    const { saveModelSettings, publicProxySettings } = await import('../src/model-settings.js')
+    const tier = (model: string) => ({ model, url: 'http://127.0.0.1:3000/v1', key: 'secret', reasoning_effort: 'low' as const })
+    saveModelSettings({
+      simple: tier('luna'),
+      medium: { ...tier('terra'), reasoning_effort: 'medium' },
+      complex: { ...tier('sol'), reasoning_effort: 'high' },
+      proxy: { enabled: true, url: 'http://127.0.0.1:7890' },
+    })
+    expect(publicProxySettings()).toEqual({ enabled: true, url: 'http://127.0.0.1:7890' })
+  })
 })

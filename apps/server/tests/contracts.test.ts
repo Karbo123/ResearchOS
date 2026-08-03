@@ -36,4 +36,10 @@ describe('strict application contracts', () => {
     const tier = (url: string) => ({ model: 'model', url, key: 'secret', reasoning_effort: 'low' as const })
     expect(() => modelSettingsRequest.parse({ simple: tier('file:///tmp/model'), medium: tier('http://127.0.0.1:3000/v1'), complex: tier('http://127.0.0.1:3000/v1') })).toThrow()
   })
+  it('requires an HTTP(S) proxy URL when the proxy is enabled', () => {
+    const tier = (model: string) => ({ model, url: 'http://127.0.0.1:3000/v1', key: 'secret', reasoning_effort: 'low' as const })
+    const base = { simple: tier('luna'), medium: tier('terra'), complex: tier('sol') }
+    expect(() => modelSettingsRequest.parse({ ...base, proxy: { enabled: true, url: 'socks5://127.0.0.1:1080' } })).toThrow(/proxy URL/)
+    expect(modelSettingsRequest.parse({ ...base, proxy: { enabled: true, url: 'http://127.0.0.1:7890' } }).proxy).toMatchObject({ enabled: true, url: 'http://127.0.0.1:7890' })
+  })
 })

@@ -213,6 +213,8 @@ h3 { font-size: 14px; margin-bottom: 10px; }
 .tier-default { color: var(--muted); background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; font-size: 10px; white-space: nowrap; }
 .model-tier-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .model-tier label { display: grid; gap: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.model-tier label.proxy-toggle { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 13px; font-weight: 600; cursor: pointer; }
+.model-tier label.proxy-toggle input { width: auto; accent-color: var(--green); }
 .model-tier input, .model-tier select { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 8px 9px; color: var(--ink); background: var(--surface-2); }
 .model-tier input:focus, .model-tier select:focus { outline: 2px solid var(--green-soft); border-color: var(--green); }
 .settings-note { color: var(--muted); font-size: 12px; margin: 0; display: flex; align-items: flex-start; gap: 7px; line-height: 1.45; }

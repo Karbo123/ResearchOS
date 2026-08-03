@@ -95,7 +95,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
               {groq ? (values.key_configured ? t('voice.keyConfigured') : t('voice.keyPending')) : t('voice.providerBrowser')}
             </div>
           </div>
-          <span className="tier-default">{t('settings.default')} {t('voice.providerGroq')}</span>
+          <span className="tier-default">{t('settings.default')} {groq ? t('voice.providerGroq') : t('voice.providerBrowser')}</span>
         </div>
         <div className="model-tier-grid">
           <label>
@@ -108,36 +108,42 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
               <option value="groq">{t('voice.providerGroq')}</option>
             </select>
           </label>
-          <label>
-            {t('voice.model')}
-            <input
-              value={values.model}
-              disabled={!groq}
-              maxLength={200}
-              placeholder={t('voice.modelPlaceholder')}
-              onChange={event => update('model', event.target.value)}
-            />
-          </label>
-          <label>
-            {t('voice.url')}
-            <input
-              type="url"
-              value={values.url}
-              disabled={!groq}
-              maxLength={500}
-              placeholder={t('voice.urlPlaceholder')}
-              onChange={event => update('url', event.target.value)}
-            />
-          </label>
+          {groq ? (
+            <>
+              <label>
+                {t('voice.model')}
+                <input
+                  value={values.model}
+                  maxLength={200}
+                  placeholder={t('voice.modelPlaceholder')}
+                  onChange={event => update('model', event.target.value)}
+                />
+              </label>
+              <label>
+                {t('voice.url')}
+                <input
+                  type="url"
+                  value={values.url}
+                  maxLength={500}
+                  placeholder={t('voice.urlPlaceholder')}
+                  onChange={event => update('url', event.target.value)}
+                />
+              </label>
+            </>
+          ) : null}
         </div>
-        <p className="settings-note">
-          <Mic size={16} />
-          <span>{t('voice.securityNote')}</span>
-        </p>
-        <p className="settings-note">
-          <ShieldCheck size={16} />
-          <span>{t('voice.keyNote')}</span>
-        </p>
+        {groq ? (
+          <>
+            <p className="settings-note">
+              <Mic size={16} />
+              <span>{t('voice.securityNote')}</span>
+            </p>
+            <p className="settings-note">
+              <ShieldCheck size={16} />
+              <span>{t('voice.keyNote')}</span>
+            </p>
+          </>
+        ) : null}
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">

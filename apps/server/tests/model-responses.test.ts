@@ -1,5 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
+vi.mock('../../mastra/src/mastra/proxy-fetch.ts', () => ({
+  proxyFetch: () => globalThis.fetch as typeof fetch,
+}))
+
 const savedEnvironment = new Map<string, string | undefined>()
 const modelEnvironment = {
   RESEARCH_ROOT: '/mnt/d/researchos',

@@ -25,6 +25,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
   const { t } = useTranslation()
   const [tab, setTab] = useState<'models' | 'embedding' | 'voice'>('models')
   const [values, setValues] = useState<Record<TierId, TierFormValues> | null>(null)
+  const [proxy, setProxy] = useState<{ enabled: boolean; url: string }>({ enabled: false, url: '' })
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -52,6 +53,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           }
         }
         setValues(next)
+        setProxy(result.proxy || { enabled: false, url: '' })
       })
       .catch(err => setError(errorMessage(err)))
       .finally(() => setLoading(false))
@@ -64,6 +66,11 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
       ...previous,
       [tier]: { ...previous[tier], [field]: value },
     } : previous)
+    setDirty(true)
+  }
+
+  const updateProxy = (field: 'enabled' | 'url', value: boolean | string) => {
+    setProxy(previous => ({ ...previous, [field]: value }))
     setDirty(true)
   }
 
@@ -102,7 +109,13 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
       }
       const result = await api<ModelSettingsResponse>('/api/settings/models', {
         method: 'PUT',
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          proxy: {
+            enabled: proxy.enabled,
+            url: proxy.url.trim(),
+          },
+        }),
       })
       const next = {} as Record<TierId, TierFormValues>
       for (const tier of TIERS) {
@@ -117,6 +130,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
         }
       }
       setValues(next)
+      setProxy(result.proxy || { enabled: false, url: '' })
       setDirty(false)
       onClose()
     } catch (err) {
@@ -158,6 +172,43 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           <div className="empty">{t('settings.loadingModels')}</div>
         ) : values ? (
           <form className="model-settings-form" onSubmit={save}>
+            <section className="model-tier">
+              <div className="model-tier-heading">
+                <div>
+                  <h3>{t('settings.proxyTitle')}</h3>
+                  <div className="tier-status">
+                    <StatusDot ready={!proxy.enabled || Boolean(proxy.url)} />
+                    {proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}
+                  </div>
+                </div>
+                <span className="tier-default">{t('settings.default')} {proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}</span>
+              </div>
+              <div className="model-tier-grid">
+                <label className="proxy-toggle">
+                  <input
+                    type="checkbox"
+                    checked={proxy.enabled}
+                    onChange={event => updateProxy('enabled', event.target.checked)}
+                  />
+                  <span>{t('settings.proxyEnabled')}</span>
+                </label>
+                <label>
+                  {t('settings.proxyUrl')}
+                  <input
+                    type="url"
+                    value={proxy.url}
+                    disabled={!proxy.enabled}
+                    maxLength={500}
+                    placeholder="http://127.0.0.1:7890"
+                    onChange={event => updateProxy('url', event.target.value)}
+                  />
+                </label>
+              </div>
+              <p className="settings-note">
+                <ShieldCheck size={16} />
+                <span>{t('settings.proxyNote')}</span>
+              </p>
+            </section>
             {TIERS.map(tier => {
               const item = values[tier.id]
               return (

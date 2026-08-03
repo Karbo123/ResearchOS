@@ -16,7 +16,7 @@ import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
-import { privateModelSettings, publicModelSettings, saveModelSettings } from './model-settings.js'
+import { privateModelSettings, publicModelSettings, publicProxySettings, saveModelSettings } from './model-settings.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeWithGroq } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
@@ -156,10 +156,10 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
 }
 
 app.get('/api/health', async context => context.json({ status: 'ok', runtime: 'native-typescript', database: 'pglite', container_runtime_required: false, secrets_exposed: false }))
-app.get('/api/settings/models', context => context.json({ tiers: publicModelSettings() }))
+app.get('/api/settings/models', context => context.json({ tiers: publicModelSettings(), proxy: publicProxySettings() }))
 app.put('/api/settings/models', async context => {
   const body = await jsonBody(context, modelSettingsRequest)
-  return context.json({ tiers: saveModelSettings(body) })
+  return context.json({ tiers: saveModelSettings(body), proxy: publicProxySettings() })
 })
 app.get('/api/settings/voice', context => context.json(publicVoiceSettings()))
 app.put('/api/settings/voice', async context => {

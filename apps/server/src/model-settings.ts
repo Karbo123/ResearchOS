@@ -3,11 +3,26 @@ import { resolve } from 'node:path'
 import { modelSettingsRequest, type ModelTier } from './contracts.js'
 import { runtimeRoot } from './paths.js'
 
+interface TierSettings {
+  model: string
+  url: string
+  key: string
+  reasoning_effort: 'low' | 'medium' | 'high'
+}
+
+interface ProxySettings {
+  enabled: boolean
+  url: string
+}
+
+type ModelSettings = Record<ModelTier, TierSettings> & { proxy: ProxySettings }
+
 const settingsPath = resolve(runtimeRoot, 'model-settings.json')
-const defaults: Record<ModelTier, { model: string; url: string; key: string; reasoning_effort: 'low' | 'medium' | 'high' }> = {
+const defaults: ModelSettings = {
   simple: envTier('SIMPLE', 'gpt-5.6-luna', 'low'),
   medium: envTier('MEDIUM', 'gpt-5.6-terra', 'medium'),
   complex: envTier('COMPLEX', 'gpt-5.6-sol', 'high'),
+  proxy: envProxy(),
 }
 
 function envTier(suffix: string, model: string, effort: 'low' | 'medium' | 'high') {
@@ -19,6 +34,11 @@ function envTier(suffix: string, model: string, effort: 'low' | 'medium' | 'high
   }
 }
 
+function envProxy(): ProxySettings {
+  const url = (process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy || '').trim()
+  return { enabled: Boolean(url), url }
+}
+
 export function privateModelSettings() {
   const merged = structuredClone(defaults)
   if (!existsSync(settingsPath)) return merged
@@ -27,6 +47,10 @@ export function privateModelSettings() {
     const item = saved[tier]
     if (!item) continue
     for (const field of ['model', 'url', 'key', 'reasoning_effort'] as const) if (item[field]) merged[tier][field] = item[field] as never
+  }
+  const savedProxy = saved.proxy
+  if (savedProxy && typeof savedProxy.enabled === 'boolean' && typeof savedProxy.url === 'string') {
+    merged.proxy = { enabled: savedProxy.enabled, url: savedProxy.url }
   }
   return merged
 }
@@ -42,11 +66,21 @@ export function publicModelSettings() {
   }]))
 }
 
+export function publicProxySettings() {
+  return privateModelSettings().proxy
+}
+
 export function saveModelSettings(input: unknown) {
   const parsed = modelSettingsRequest.parse(input)
   const current = privateModelSettings()
   for (const tier of ['simple', 'medium', 'complex'] as const) {
     current[tier] = { ...parsed[tier], key: parsed[tier].key.trim() || current[tier].key }
+  }
+  if (parsed.proxy) {
+    current.proxy = {
+      enabled: parsed.proxy.enabled,
+      url: parsed.proxy.url.trim(),
+    }
   }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })

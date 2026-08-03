@@ -89,8 +89,14 @@ export interface ModelTierSettings {
   }
 }
 
+export interface ProxySettings {
+  enabled: boolean
+  url: string
+}
+
 export interface ModelSettingsResponse {
   tiers: Record<TierId, ModelTierSettings>
+  proxy?: ProxySettings
 }
 
 export interface VoiceSettingsResponse {

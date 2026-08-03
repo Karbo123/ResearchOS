@@ -13033,6 +13033,11 @@
     "settings.urlReady": "URL \u5DF2\u5C31\u7EEA",
     "settings.urlPending": "\u5F85\u914D\u7F6E URL",
     "settings.default": "\u9ED8\u8BA4",
+    "settings.proxyTitle": "\u5168\u5C40\u4EE3\u7406",
+    "settings.proxyEnabled": "\u542F\u7528\u4EE3\u7406",
+    "settings.proxyDisabled": "\u76F4\u8FDE",
+    "settings.proxyUrl": "\u4EE3\u7406 URL",
+    "settings.proxyNote": "\u5F00\u542F\u540E\uFF0C\u6A21\u578B\u4E0E\u8BED\u97F3\u8BC6\u522B\u8BF7\u6C42\u90FD\u901A\u8FC7\u8BE5\u4EE3\u7406\uFF1B\u5173\u95ED\u540E\u5168\u90E8\u76F4\u8FDE\uFF0C\u4E0D\u518D\u53D7\u542F\u52A8\u65F6\u73AF\u5883\u53D8\u91CF\u5F71\u54CD\u3002",
     "settings.modelName": "\u6A21\u578B\u540D\u79F0",
     "settings.reasoningEffort": "\u63A8\u7406\u5F3A\u5EA6",
     "settings.low": "\u4F4E",
@@ -14208,6 +14213,11 @@
     "settings.urlReady": "URL \u5DF2\u5C31\u7DD2",
     "settings.urlPending": "\u5F85\u8A2D\u5B9A URL",
     "settings.default": "\u9810\u8A2D",
+    "settings.proxyTitle": "\u5168\u57DF\u4EE3\u7406",
+    "settings.proxyEnabled": "\u555F\u7528\u4EE3\u7406",
+    "settings.proxyDisabled": "\u76F4\u9023",
+    "settings.proxyUrl": "\u4EE3\u7406 URL",
+    "settings.proxyNote": "\u958B\u555F\u5F8C\uFF0C\u6A21\u578B\u8207\u8A9E\u97F3\u8FA8\u8B58\u8ACB\u6C42\u90FD\u6703\u900F\u904E\u8A72\u4EE3\u7406\uFF1B\u95DC\u9589\u5F8C\u5168\u90E8\u76F4\u9023\uFF0C\u4E0D\u518D\u53D7\u555F\u52D5\u6642\u74B0\u5883\u8B8A\u6578\u5F71\u97FF\u3002",
     "settings.modelName": "\u6A21\u578B\u540D\u7A31",
     "settings.reasoningEffort": "\u63A8\u7406\u5F37\u5EA6",
     "settings.low": "\u4F4E",
@@ -15260,6 +15270,11 @@
     "settings.urlReady": "URL ready",
     "settings.urlPending": "URL pending",
     "settings.default": "Default",
+    "settings.proxyTitle": "Global proxy",
+    "settings.proxyEnabled": "Use proxy",
+    "settings.proxyDisabled": "Direct connection",
+    "settings.proxyUrl": "Proxy URL",
+    "settings.proxyNote": "When enabled, model and speech recognition requests go through this proxy; when disabled they connect directly, ignoring startup proxy environment variables.",
     "settings.modelName": "Model name",
     "settings.reasoningEffort": "Reasoning effort",
     "settings.low": "Low",
@@ -16312,6 +16327,11 @@
     "settings.urlReady": "URL lista",
     "settings.urlPending": "URL pendiente",
     "settings.default": "Predeterminado",
+    "settings.proxyTitle": "Proxy global",
+    "settings.proxyEnabled": "Usar proxy",
+    "settings.proxyDisabled": "Conexi\xF3n directa",
+    "settings.proxyUrl": "URL del proxy",
+    "settings.proxyNote": "Cuando est\xE1 activado, las solicitudes de modelos y reconocimiento de voz pasan por este proxy; cuando est\xE1 desactivado se conectan directamente, ignorando las variables de proxy del entorno al iniciar.",
     "settings.modelName": "Nombre del modelo",
     "settings.reasoningEffort": "Esfuerzo de razonamiento",
     "settings.low": "Bajo",
@@ -24186,7 +24206,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
             t("settings.default"),
             " ",
-            t("voice.providerGroq")
+            groq ? t("voice.providerGroq") : t("voice.providerBrowser")
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
@@ -24204,42 +24224,44 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
-            t("voice.model"),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-              "input",
-              {
-                value: values.model,
-                disabled: !groq,
-                maxLength: 200,
-                placeholder: t("voice.modelPlaceholder"),
-                onChange: (event) => update("model", event.target.value)
-              }
-            )
+          groq ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+              t("voice.model"),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                "input",
+                {
+                  value: values.model,
+                  maxLength: 200,
+                  placeholder: t("voice.modelPlaceholder"),
+                  onChange: (event) => update("model", event.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+              t("voice.url"),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                "input",
+                {
+                  type: "url",
+                  value: values.url,
+                  maxLength: 500,
+                  placeholder: t("voice.urlPlaceholder"),
+                  onChange: (event) => update("url", event.target.value)
+                }
+              )
+            ] })
+          ] }) : null
+        ] }),
+        groq ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Mic, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("voice.securityNote") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
-            t("voice.url"),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-              "input",
-              {
-                type: "url",
-                value: values.url,
-                disabled: !groq,
-                maxLength: 500,
-                placeholder: t("voice.urlPlaceholder"),
-                onChange: (event) => update("url", event.target.value)
-              }
-            )
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("voice.keyNote") })
           ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Mic, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("voice.securityNote") })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("voice.keyNote") })
-        ] })
+        ] }) : null
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "modal-actions", children: [
@@ -24266,6 +24288,7 @@
     const { t } = useTranslation();
     const [tab, setTab] = (0, import_react26.useState)("models");
     const [values, setValues] = (0, import_react26.useState)(null);
+    const [proxy, setProxy] = (0, import_react26.useState)({ enabled: false, url: "" });
     const [loading, setLoading] = (0, import_react26.useState)(false);
     const [saving, setSaving] = (0, import_react26.useState)(false);
     const [error, setError] = (0, import_react26.useState)("");
@@ -24291,6 +24314,7 @@
           };
         }
         setValues(next);
+        setProxy(result.proxy || { enabled: false, url: "" });
       }).catch((err) => setError(errorMessage(err))).finally(() => setLoading(false));
     }, [open]);
     if (!open) return null;
@@ -24299,6 +24323,10 @@
         ...previous,
         [tier]: { ...previous[tier], [field]: value }
       } : previous);
+      setDirty(true);
+    };
+    const updateProxy = (field, value) => {
+      setProxy((previous) => ({ ...previous, [field]: value }));
       setDirty(true);
     };
     const requestClose = () => {
@@ -24334,7 +24362,13 @@
         }
         const result = await api("/api/settings/models", {
           method: "PUT",
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            ...payload,
+            proxy: {
+              enabled: proxy.enabled,
+              url: proxy.url.trim()
+            }
+          })
         });
         const next = {};
         for (const tier of TIERS) {
@@ -24349,6 +24383,7 @@
           };
         }
         setValues(next);
+        setProxy(result.proxy || { enabled: false, url: "" });
         setDirty(false);
         onClose();
       } catch (err) {
@@ -24378,6 +24413,53 @@
                 onChanged: () => setDirty(false)
               }
             ) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : tab === "voice" ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(VoiceSettingsForm, { onChanged: () => setDirty(false) }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("settings.loadingModels") }) : values ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "model-tier", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-heading", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h3", { children: t("settings.proxyTitle") }),
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "tier-status", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(StatusDot, { ready: !proxy.enabled || Boolean(proxy.url) }),
+                      proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "tier-default", children: [
+                    t("settings.default"),
+                    " ",
+                    proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-grid", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { className: "proxy-toggle", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+                      "input",
+                      {
+                        type: "checkbox",
+                        checked: proxy.enabled,
+                        onChange: (event) => updateProxy("enabled", event.target.checked)
+                      }
+                    ),
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("settings.proxyEnabled") })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
+                    t("settings.proxyUrl"),
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+                      "input",
+                      {
+                        type: "url",
+                        value: proxy.url,
+                        disabled: !proxy.enabled,
+                        maxLength: 500,
+                        placeholder: "http://127.0.0.1:7890",
+                        onChange: (event) => updateProxy("url", event.target.value)
+                      }
+                    )
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ShieldCheck, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("settings.proxyNote") })
+                ] })
+              ] }),
               TIERS.map((tier) => {
                 const item = values[tier.id];
                 return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "model-tier", children: [

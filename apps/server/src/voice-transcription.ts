@@ -1,4 +1,5 @@
 import { ApiError } from './http.js'
+import { proxyFetch } from './proxy-fetch.js'
 import { privateVoiceSettings } from './voice-settings.js'
 
 const TRANSCRIPTION_TIMEOUT_MS = 60_000
@@ -34,7 +35,7 @@ export async function transcribeWithGroq(file: UploadedAudio, language?: string)
 
   let response: Response
   try {
-    response = await fetch(`${baseUrl}/audio/transcriptions`, {
+    response = await proxyFetch()(`${baseUrl}/audio/transcriptions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${settings.key}` },
       body: form,

@@ -11,6 +11,11 @@ const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'med
 }
 export class ModelConfigurationError extends Error {}
 
+export interface ProxyConfig {
+  enabled: boolean
+  url: string
+}
+
 export function isResponsesBaseUrl(value: string): boolean {
   try {
     const url = new URL(value)
@@ -49,6 +54,30 @@ function environmentSettings(tier: ModelTier): ModelConfig {
       process.env[`RESEARCH_REASONING_${suffix}`] || DEFAULTS[tier].reasoningEffort
     ).trim() as ModelConfig['reasoningEffort'],
   }
+}
+
+function environmentProxy(): ProxyConfig {
+  const url = (process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy || '').trim()
+  return { enabled: Boolean(url), url }
+}
+
+export function loadProxyConfig(): ProxyConfig {
+  const result = environmentProxy()
+  const path = process.env.MODEL_SETTINGS_PATH || resolve(researchRoot, 'runtime', 'model-settings.json')
+  try {
+    const parsed = JSON.parse(readFileSync(path, 'utf8')) as { proxy?: Partial<ProxyConfig> }
+    const savedProxy = parsed.proxy
+    if (savedProxy && typeof savedProxy.enabled === 'boolean' && typeof savedProxy.url === 'string') {
+      result.enabled = savedProxy.enabled
+      result.url = savedProxy.url.trim()
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      if (error instanceof SyntaxError) throw new ModelConfigurationError('model settings file is invalid')
+      throw error
+    }
+  }
+  return result
 }
 
 export function loadModelConfig(tier: ModelTier): ModelConfig {
