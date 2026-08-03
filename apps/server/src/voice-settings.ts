@@ -48,7 +48,7 @@ export function privateVoiceSettings(): VoiceSettings {
     provider: voiceProvider.safeParse(saved.provider).success ? (saved.provider as VoiceProvider) : defaults.provider,
     model: String(saved.model || defaults.model),
     url: String(saved.url || defaults.url),
-    key: defaults.key,
+    key: typeof saved.key === 'string' && saved.key ? saved.key : defaults.key,
   }
 }
 
@@ -70,7 +70,7 @@ export function saveVoiceSettings(input: unknown) {
     provider: parsed.provider,
     model: parsed.model.trim() || current.model,
     url: parsed.url.trim() || current.url,
-    key: current.key,
+    key: parsed.key.trim() || current.key,
   }
   atomicWrite(settingsPath, next)
   return publicVoiceSettings()

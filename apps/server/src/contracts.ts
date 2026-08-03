@@ -83,6 +83,7 @@ export const voiceSettingsRequest = z.object({
   model: z.string().trim().max(200).default(''),
   url: z.string().trim().max(500).default('')
     .refine(value => !value || isAllowedModelUrl(value), 'voice URL must be HTTPS or loopback/private HTTP'),
+  key: z.string().max(1000).default(''),
 }).strict()
 export type VoiceSettingsRequest = z.infer<typeof voiceSettingsRequest>
 

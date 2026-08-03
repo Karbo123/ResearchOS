@@ -12874,9 +12874,12 @@
     "voice.modelPlaceholder": "whisper-large-v3-turbo",
     "voice.url": "API \u5730\u5740",
     "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.key": "API key",
+    "voice.keyKeep": "\u5DF2\u914D\u7F6E\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u53D8",
+    "voice.keyPlaceholder": "\u8F93\u5165 Groq API key",
     "voice.keyConfigured": "Groq key \u5DF2\u914D\u7F6E",
-    "voice.keyPending": "\u672A\u68C0\u6D4B\u5230 Groq key\uFF08\u8BF7\u5728 .env \u8BBE\u7F6E GROQ_API_KEY\uFF09",
-    "voice.keyNote": "Groq key \u53EA\u4ECE\u9879\u76EE .env \u7684 GROQ_API_KEY \u8BFB\u53D6\uFF0C\u4E0D\u4F1A\u5199\u5165\u8FD0\u884C\u65F6\u6587\u4EF6\u6216\u8FD4\u56DE\u7ED9\u524D\u7AEF\uFF1B\u4FEE\u6539\u540E\u9700\u8981\u91CD\u542F API \u670D\u52A1\u3002",
+    "voice.keyPending": "\u672A\u68C0\u6D4B\u5230 Groq key\uFF08\u53EF\u5728\u6B64\u586B\u5199\uFF0C\u6216\u5728 .env \u8BBE\u7F6E GROQ_API_KEY\uFF09",
+    "voice.keyNote": "\u672A\u586B\u5199\u65F6\u4F7F\u7528 .env \u7684 GROQ_API_KEY\uFF1B\u7559\u7A7A\u5DF2\u914D\u7F6E\u7684 key \u4F1A\u4FDD\u6301\u4E0D\u53D8\uFF0C\u8BFB\u53D6\u63A5\u53E3\u4E0D\u4F1A\u8FD4\u56DE key\u3002",
     "voice.securityNote": "Groq \u6A21\u5F0F\u4F1A\u628A\u672C\u6B21\u5F55\u97F3\u97F3\u9891\u53D1\u9001\u7ED9\u6240\u9009 API\uFF1B\u6D4F\u89C8\u5668\u6A21\u5F0F\u4E0D\u4F1A\u4E0A\u4F20\u97F3\u9891\u3002",
     "voice.processing": "\u6B63\u5728\u8BC6\u522B\u2026",
     "voice.groqUnsupported": "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u5F55\u97F3\u4E0A\u4F20\uFF0C\u8BF7\u6539\u7528\u6D4F\u89C8\u5668\u8BED\u97F3\u8BC6\u522B",
@@ -13025,7 +13028,7 @@
     "settings.modelsTab": "\u6A21\u578B \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 \u8BED\u4E49\u8BB0\u5FC6",
     "settings.voiceTab": "\u8BED\u97F3\u8BC6\u522B \xB7 Web Speech / Groq",
-    "settings.voiceDescription": "\u9009\u62E9\u8BED\u97F3\u8BC6\u522B\u5F15\u64CE\u3002Groq Whisper \u4F1A\u81EA\u52A8\u8865\u5168\u53E5\u4E2D\u6807\u70B9\uFF1Bkey \u53EA\u4ECE .env \u7684 GROQ_API_KEY \u8BFB\u53D6\u3002",
+    "settings.voiceDescription": "\u9009\u62E9\u8BED\u97F3\u8BC6\u522B\u5F15\u64CE\u3002Groq Whisper \u4F1A\u81EA\u52A8\u8865\u5168\u53E5\u4E2D\u6807\u70B9\uFF1Bkey \u9ED8\u8BA4\u8BFB\u53D6 .env \u7684 GROQ_API_KEY\uFF0C\u4E5F\u53EF\u5728\u6B64\u8986\u76D6\u3002",
     "settings.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF0C\u518D\u914D\u7F6E\u9879\u76EE\u7EA7 Embedding\u3002",
     "settings.loadingModels": "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026",
     "settings.keyConfigured": "\u5DF2\u914D\u7F6E key",
@@ -13931,9 +13934,12 @@
     "voice.modelPlaceholder": "whisper-large-v3-turbo",
     "voice.url": "API \u5730\u5740",
     "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.key": "API key",
+    "voice.keyKeep": "\u5DF2\u8A2D\u5B9A\uFF0C\u7559\u7A7A\u4FDD\u6301\u4E0D\u8B8A",
+    "voice.keyPlaceholder": "\u8F38\u5165 Groq API key",
     "voice.keyConfigured": "Groq key \u5DF2\u8A2D\u5B9A",
-    "voice.keyPending": "\u672A\u5075\u6E2C\u5230 Groq key\uFF08\u8ACB\u5728 .env \u8A2D\u5B9A GROQ_API_KEY\uFF09",
-    "voice.keyNote": "Groq key \u53EA\u5F9E\u5C08\u6848 .env \u7684 GROQ_API_KEY \u8B80\u53D6\uFF0C\u4E0D\u6703\u5BEB\u5165\u57F7\u884C\u968E\u6BB5\u6A94\u6848\u6216\u56DE\u50B3\u7D66\u524D\u7AEF\uFF1B\u4FEE\u6539\u5F8C\u9700\u8981\u91CD\u65B0\u555F\u52D5 API \u670D\u52D9\u3002",
+    "voice.keyPending": "\u672A\u5075\u6E2C\u5230 Groq key\uFF08\u53EF\u5728\u6B64\u586B\u5BEB\uFF0C\u6216\u5728 .env \u8A2D\u5B9A GROQ_API_KEY\uFF09",
+    "voice.keyNote": "\u672A\u586B\u5BEB\u6642\u4F7F\u7528 .env \u7684 GROQ_API_KEY\uFF1B\u7559\u7A7A\u5DF2\u8A2D\u5B9A\u7684 key \u6703\u4FDD\u6301\u4E0D\u8B8A\uFF0C\u8B80\u53D6\u4ECB\u9762\u4E0D\u6703\u56DE\u50B3 key\u3002",
     "voice.securityNote": "Groq \u6A21\u5F0F\u6703\u628A\u672C\u6B21\u9304\u97F3\u97F3\u8A0A\u50B3\u9001\u7D66\u6240\u9078 API\uFF1B\u700F\u89BD\u5668\u6A21\u5F0F\u4E0D\u6703\u4E0A\u50B3\u97F3\u8A0A\u3002",
     "voice.processing": "\u6B63\u5728\u8FA8\u8B58\u2026",
     "voice.groqUnsupported": "\u76EE\u524D\u700F\u89BD\u5668\u4E0D\u652F\u63F4\u9304\u97F3\u4E0A\u50B3\uFF0C\u8ACB\u6539\u7528\u700F\u89BD\u5668\u8A9E\u97F3\u8FA8\u8B58",
@@ -14205,7 +14211,7 @@
     "settings.modelsTab": "\u6A21\u578B \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 \u8A9E\u610F\u8A18\u61B6",
     "settings.voiceTab": "\u8A9E\u97F3\u8FA8\u8B58 \xB7 Web Speech / Groq",
-    "settings.voiceDescription": "\u9078\u64C7\u8A9E\u97F3\u8FA8\u8B58\u5F15\u64CE\u3002Groq Whisper \u6703\u81EA\u52D5\u88DC\u5168\u53E5\u4E2D\u6A19\u9EDE\uFF1Bkey \u53EA\u5F9E .env \u7684 GROQ_API_KEY \u8B80\u53D6\u3002",
+    "settings.voiceDescription": "\u9078\u64C7\u8A9E\u97F3\u8FA8\u8B58\u5F15\u64CE\u3002Groq Whisper \u6703\u81EA\u52D5\u88DC\u5168\u53E5\u4E2D\u6A19\u9EDE\uFF1Bkey \u9810\u8A2D\u8B80\u53D6 .env \u7684 GROQ_API_KEY\uFF0C\u4E5F\u53EF\u5728\u6B64\u8986\u84CB\u3002",
     "settings.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\uFF0C\u518D\u8A2D\u5B9A\u5C08\u6848\u7D1A Embedding\u3002",
     "settings.loadingModels": "\u6B63\u5728\u8B80\u53D6\u6A21\u578B\u8A2D\u5B9A\u2026",
     "settings.keyConfigured": "\u5DF2\u8A2D\u5B9A key",
@@ -14988,9 +14994,12 @@
     "voice.modelPlaceholder": "whisper-large-v3-turbo",
     "voice.url": "API URL",
     "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.key": "API key",
+    "voice.keyKeep": "Configured; leave blank to keep",
+    "voice.keyPlaceholder": "Enter Groq API key",
     "voice.keyConfigured": "Groq key configured",
-    "voice.keyPending": "Groq key not found (set GROQ_API_KEY in .env)",
-    "voice.keyNote": "The Groq key is read only from GROQ_API_KEY in the project .env. It is never written to runtime files or returned to the frontend; restart the API after changing it.",
+    "voice.keyPending": "Groq key not found (enter one below or set GROQ_API_KEY in .env)",
+    "voice.keyNote": "When blank, GROQ_API_KEY from .env is used; a configured key is kept when left blank and is never returned by read endpoints.",
     "voice.securityNote": "Groq mode sends the recorded audio to the selected API; browser mode never uploads audio.",
     "voice.processing": "Recognizing\u2026",
     "voice.groqUnsupported": "This browser cannot record audio for upload. Switch back to browser speech recognition",
@@ -15262,7 +15271,7 @@
     "settings.modelsTab": "Models \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 Semantic memory",
     "settings.voiceTab": "Voice \xB7 Web Speech / Groq",
-    "settings.voiceDescription": "Choose the speech recognition engine. Groq Whisper adds natural punctuation inside sentences; the key is read only from GROQ_API_KEY in .env.",
+    "settings.voiceDescription": "Choose the speech recognition engine. Groq Whisper adds natural punctuation inside sentences; the key defaults to GROQ_API_KEY in .env and can be overridden here.",
     "settings.openProjectFirst": "Open a research project first to configure project-level Embedding.",
     "settings.loadingModels": "Loading model settings\u2026",
     "settings.keyConfigured": "Key configured",
@@ -16045,9 +16054,12 @@
     "voice.modelPlaceholder": "whisper-large-v3-turbo",
     "voice.url": "URL de la API",
     "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.key": "Clave API",
+    "voice.keyKeep": "Configurada; d\xE9jala en blanco para conservarla",
+    "voice.keyPlaceholder": "Introduce la clave API de Groq",
     "voice.keyConfigured": "Clave de Groq configurada",
-    "voice.keyPending": "No se encontr\xF3 la clave de Groq (define GROQ_API_KEY en .env)",
-    "voice.keyNote": "La clave de Groq solo se lee de GROQ_API_KEY en el .env del proyecto. Nunca se escribe en archivos de runtime ni se devuelve al frontend; reinicia la API despu\xE9s de cambiarla.",
+    "voice.keyPending": "No se encontr\xF3 la clave de Groq (introd\xFAcela abajo o define GROQ_API_KEY en .env)",
+    "voice.keyNote": "Si est\xE1 en blanco, se usa GROQ_API_KEY del .env; una clave configurada se conserva si se deja en blanco y nunca se devuelve por los puntos de lectura.",
     "voice.securityNote": "El modo Groq env\xEDa el audio grabado a la API seleccionada; el modo navegador nunca sube audio.",
     "voice.processing": "Reconociendo\u2026",
     "voice.groqUnsupported": "Este navegador no puede grabar audio para subirlo. Vuelve al reconocimiento de voz del navegador",
@@ -16319,7 +16331,7 @@
     "settings.modelsTab": "Modelos \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 Memoria sem\xE1ntica",
     "settings.voiceTab": "Voz \xB7 Web Speech / Groq",
-    "settings.voiceDescription": "Elige el motor de reconocimiento de voz. Groq Whisper a\xF1ade puntuaci\xF3n natural dentro de las frases; la clave solo se lee de GROQ_API_KEY en .env.",
+    "settings.voiceDescription": "Elige el motor de reconocimiento de voz. Groq Whisper a\xF1ade puntuaci\xF3n natural dentro de las frases; la clave usa GROQ_API_KEY del .env por defecto y se puede sobrescribir aqu\xED.",
     "settings.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n para configurar el Embedding del proyecto.",
     "settings.loadingModels": "Cargando configuraci\xF3n de modelos\u2026",
     "settings.keyConfigured": "Clave configurada",
@@ -24149,6 +24161,7 @@
           provider: result.provider,
           model: result.model,
           url: result.url,
+          key: "",
           key_configured: result.key_configured
         });
         setDirty(false);
@@ -24176,10 +24189,11 @@
           body: JSON.stringify({
             provider: values.provider,
             model: values.model.trim(),
-            url: values.url.trim()
+            url: values.url.trim(),
+            key: values.key
           })
         });
-        setValues((previous) => previous ? { ...previous, ...result, key_configured: result.key_configured } : previous);
+        setValues((previous) => previous ? { ...previous, ...result, key: "", key_configured: result.key_configured } : previous);
         setDirty(false);
         onChanged();
         window.dispatchEvent(new Event("researchos:voice-settings-changed"));
@@ -24247,6 +24261,20 @@
                   maxLength: 500,
                   placeholder: t("voice.urlPlaceholder"),
                   onChange: (event) => update("url", event.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+              t("voice.key"),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                "input",
+                {
+                  type: "password",
+                  value: values.key,
+                  placeholder: values.key_configured ? t("voice.keyKeep") : t("voice.keyPlaceholder"),
+                  autoComplete: "new-password",
+                  maxLength: 1e3,
+                  onChange: (event) => update("key", event.target.value)
                 }
               )
             ] })

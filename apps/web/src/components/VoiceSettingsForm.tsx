@@ -9,6 +9,7 @@ interface FormValues {
   provider: VoiceProvider
   model: string
   url: string
+  key: string
   key_configured: boolean
 }
 
@@ -33,6 +34,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
         provider: result.provider,
         model: result.model,
         url: result.url,
+        key: '',
         key_configured: result.key_configured,
       })
       setDirty(false)
@@ -65,9 +67,10 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
           provider: values.provider,
           model: values.model.trim(),
           url: values.url.trim(),
+          key: values.key,
         }),
       })
-      setValues(previous => previous ? { ...previous, ...result, key_configured: result.key_configured } : previous)
+      setValues(previous => previous ? { ...previous, ...result, key: '', key_configured: result.key_configured } : previous)
       setDirty(false)
       onChanged()
       window.dispatchEvent(new Event('researchos:voice-settings-changed'))
@@ -127,6 +130,17 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
                   maxLength={500}
                   placeholder={t('voice.urlPlaceholder')}
                   onChange={event => update('url', event.target.value)}
+                />
+              </label>
+              <label>
+                {t('voice.key')}
+                <input
+                  type="password"
+                  value={values.key}
+                  placeholder={values.key_configured ? t('voice.keyKeep') : t('voice.keyPlaceholder')}
+                  autoComplete="new-password"
+                  maxLength={1000}
+                  onChange={event => update('key', event.target.value)}
                 />
               </label>
             </>

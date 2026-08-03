@@ -33,7 +33,7 @@ describe('voice settings', () => {
     expect(publicVoiceSettings()).toMatchObject({ provider: 'groq', key_configured: true })
   })
 
-  it('persists provider/model/url without writing the key to runtime', async () => {
+  it('persists provider/model/url and never returns the key', async () => {
     setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-settings-${process.pid}`)
     setEnvironment('RESEARCH_VOICE_PROVIDER', 'browser')
     setEnvironment('GROQ_API_KEY', 'gsk-test-key')
@@ -47,11 +47,35 @@ describe('voice settings', () => {
     expect(saved).toMatchObject({ provider: 'groq', model: 'whisper-large-v3-turbo', key_configured: true })
     expect(publicVoiceSettings()).not.toHaveProperty('key')
   })
+
+  it('overrides the default Groq key and keeps a blank one unchanged', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-settings-key-${process.pid}`)
+    setEnvironment('RESEARCH_VOICE_PROVIDER', 'groq')
+    setEnvironment('GROQ_API_KEY', 'gsk-env-key')
+    vi.resetModules()
+    const { saveVoiceSettings, privateVoiceSettings, publicVoiceSettings } = await import('../src/voice-settings.js')
+    saveVoiceSettings({
+      provider: 'groq',
+      model: 'whisper-large-v3-turbo',
+      url: 'https://api.groq.com/openai/v1',
+      key: 'gsk-runtime-key',
+    })
+    expect(privateVoiceSettings().key).toBe('gsk-runtime-key')
+    expect(publicVoiceSettings()).not.toHaveProperty('key')
+
+    saveVoiceSettings({
+      provider: 'groq',
+      model: 'whisper-large-v3-turbo',
+      url: 'https://api.groq.com/openai/v1',
+      key: '',
+    })
+    expect(privateVoiceSettings().key).toBe('gsk-runtime-key')
+  })
 })
 
 describe('Groq voice transcription', () => {
   it('calls the OpenAI-compatible transcriptions endpoint and returns text', async () => {
-    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-settings-${process.pid}`)
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-transcribe-${process.pid}`)
     setEnvironment('RESEARCH_VOICE_PROVIDER', 'groq')
     setEnvironment('RESEARCH_VOICE_GROQ_MODEL', 'whisper-large-v3-turbo')
     setEnvironment('RESEARCH_VOICE_GROQ_URL', 'https://api.groq.com/openai/v1')
@@ -80,7 +104,7 @@ describe('Groq voice transcription', () => {
   })
 
   it('fails closed when the Groq key is missing', async () => {
-    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-settings-${process.pid}`)
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-key-missing-${process.pid}`)
     setEnvironment('RESEARCH_VOICE_PROVIDER', 'groq')
     setEnvironment('GROQ_API_KEY', '')
     vi.resetModules()
@@ -94,7 +118,7 @@ describe('Groq voice transcription', () => {
   })
 
   it('maps upstream auth and invalid responses to structured failures', async () => {
-    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-settings-${process.pid}`)
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-voice-errors-${process.pid}`)
     setEnvironment('RESEARCH_VOICE_PROVIDER', 'groq')
     setEnvironment('GROQ_API_KEY', 'gsk-test-key')
     vi.resetModules()
