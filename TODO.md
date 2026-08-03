@@ -469,15 +469,18 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `099e` 已完成类型检查、110 项服务端测试、slug/API 定向测试、UI/i18n 检查、Web/Server/Mastra 构建、文档/语言边界/导航检查、真实 API 迁移验证和差异检查；本任务相关文件可独立提交。
 
 - [x] `P0-MODEL-API-100` 全量审计并迁移 Research OS 的大模型请求到 OpenAI Responses API，修复结构化 JSON 请求契约并移除模型失败后的所有成功型 fallback。
-  - [x] `100a` 逐处核对 Mastra Agent、子 Agent 委派、Tools/Workflows/Evals 和服务端 Mastra client；Research OS 的所有生产模型请求都通过 `@ai-sdk/openai` 的 `responses()` 使用 `/responses`，没有 provider 自动切换回 `/chat/completions` 或旧 completions。Supermemory 闭源子进程不属于本仓库可改写的模型 provider，Research OS 只向它传递经过校验的 base URL，内部行为仍按 `P0-SUPERMEMORY-LOCAL-053` 记录。
+  - [x] `100a` 逐处核对 Mastra Agent、子 Agent 委派、Tools/Workflows/Evals 和服务端 Mastra client；Research OS 自有生产模型请求都通过 `@ai-sdk/openai` 的 `responses()` 使用 `/responses`。Supermemory 闭源子进程仍只能按其兼容 Chat 接口发起内部请求，但现在统一被本地 loopback TypeScript bridge 接收并转换到固定网关的 `/responses`，因此固定网关不再收到旧 Chat 请求；桥接失败直接结构化失败，不切换 provider 或生成 fallback。
   - [x] `100b` 所有结构化调用使用 Responses Structured Outputs 的 `text.format.type=json_schema` 和严格业务 schema；请求不发送 `json_object` 或互斥的旧 `response_format` 字段，Agent/Skill 提示明确要求 JSON。
   - [x] `100c` 模型配置 URL 统一作为 Responses API base URL 处理，拒绝包含 `/chat/completions`、`/completions` 或 `/responses` 的操作地址，并限制为 HTTPS 或回环/私有 HTTP；Luna/Terra/Sol 保持独立的 model、URL、key 和 reasoning effort，key 不进入返回值、日志或审计。
   - [x] `100d` provider HTTP、超时、鉴权、schema、拒绝和空/不完整响应全部失败关闭，返回稳定结构化错误；没有默认助手消息、空成功结果、伪造项目 slug/计划或隐式换 provider。Guardrail detector provider 失败同样直接阻断请求。
   - [x] `100e` 增加可捕获请求 URL/body 的 Responses 契约测试、4xx/5xx/超时/非法结构化响应、guardrail 失败关闭和 Mastra client 非 JSON 测试；已通过 typecheck、127 项全量服务端测试、build、Mastra HITL/evals、Idea/navigation/UI 检查和主链真实验收（2 次真实模型调用）。本轮补充的 `model-failure:check` 在正常首轮请求处收到模型网关 HTTP 502，未伪造通过；失败关闭由 Responses provider/guardrail/mastra-client 契约测试覆盖。Supermemory 真实验收已尝试但远端文档保持 `queued`，按既有 `P0-SUPERMEMORY-LOCAL-053` 外部阻塞记录，未伪造通过。
 
 - [~] `P0-MODEL-API-101` 2026-08-03 用户在上游模型控制面板看到 `Response input messages must contain the word 'json' ... json_object`；当前仓库源码、Responses 构建产物和契约测试均确认 Research OS 自有 Agent/Guardrail 请求不再发送 `json_object`、`response_format` 或 `/chat/completions`。旧的 `runtime/mastra.err.log` 仍保留 2026-08-01 迁移前的旧请求；另有闭源 Supermemory 子进程可能按自身实现调用兼容 Chat API，无法由本仓库改写。
-  - [x] `101a` 为所有 Research OS 自有结构化调用的实际 `input` 文本显式加入 JSON 输出指令，并增加兼容性测试；捕获的最终 Agent 请求确认使用 `/v1/responses`、`text.format.type=json_schema` 且 `input` 含 `json`，即使上游把 schema 兼容降级为 `json_object` 也不会因缺少提示词而拒绝。全量 129 项测试和完整构建通过。
-  - [!] `101b` 外部控制面板报错的最终来源仍需从请求时间、路径和 request-id 确认；若来自 Supermemory，需支持 Responses 的新 build 或经批准的兼容适配层，不能把本地源码测试冒充为全链路迁移。
+  - [x] `101a` 为所有 Research OS 自有结构化调用的实际 `input` 文本显式加入 JSON 输出指令，并增加兼容性测试；捕获的最终 Agent 请求确认使用 `/v1/responses`、`text.format.type=json_schema` 且 `input` 含 `json`，即使上游把 schema 兼容降级为 `json_object` 也不会因缺少提示词而拒绝。全量 134 项测试和完整构建通过。
+  - [!] `101b` 外部控制面板报错的最终来源仍需从请求时间、路径和 request-id 确认；当前仓库无法读取该控制面板。旧的 `runtime/mastra.err.log` 已确认迁移前 Mastra 的 Chat 请求，新的真实桥接探针已收到固定网关 HTTP 200；外部面板仍需提供 request-id 才能把历史告警与当前进程逐条对应。
+  - [x] `101c` 增加只监听 `127.0.0.1` 的 TypeScript Responses bridge，严格校验 Supermemory Chat body，将 `response_format=json_schema/json_object` 转为 `text.format.type=json_schema`，在 `input` 消息中加入 JSON 指令，并将有效 Responses 文本/工具调用转换回 Chat 响应；上游错误、超时、流式请求和无效响应均失败关闭。桥接契约 5 项、进程级转换探针和固定网关真实 HTTP 200 已通过。
+  - [x] `101e` 修复固定网关不支持 Responses `item_reference` 导致的 Agent 502：所有 Mastra Responses 请求显式使用 `store:false`，将 Skills/Tools 的历史展开为完整 `function_call`/`function_call_output` 输入；保留严格 `text.format.type=json_schema`、JSON 指令和失败关闭。真实 `/api/chat`、带 Skill 的内部 Agent 探针、`model-failure:check` 和主链验收（2 次真实模型调用）均已通过固定网关；guardrail 契约测试覆盖 `store:false`。完整 typecheck、134 项服务端测试、Web/Server/Mastra 构建、docs/language-boundary/navigation/ui/idea-cases 检查均通过。
+  - [~] `101d` 重启全局 Supermemory 和已发现的 embedding pool 后，两个运行实例的 `OPENAI_BASE_URL` 已核对为 `http://127.0.0.1:3010/v1`；隔离 Supermemory 文本 `add` 仍保持 `queued`、没有触发 memory-agent，因此未把“Supermemory 内部请求已真实捕获”冒充为完成。下一步仅需在有可处理的真实文档/LLM-agent 队列时确认 bridge 收到的原始请求形状。
 
 ## 5. 平台任务和外部阻塞
 

@@ -64,7 +64,9 @@ function generationOptions(context: RequestContext<z.infer<typeof agentRequestCo
     requestContext: context,
     model: configuredModel(context.get('tier')),
     modelSettings: { maxRetries: 0 },
-    providerOptions: { openai: { reasoningEffort: config.reasoningEffort, strictJsonSchema: true } },
+    // The fixed gateway does not resolve server-side Responses item references.
+    // Expand tool history into ordinary input items so every request is self-contained.
+    providerOptions: { openai: { reasoningEffort: config.reasoningEffort, strictJsonSchema: true, store: false } },
     inputProcessors: [...guardrails.inputProcessors, ...(memory.inputProcessors || [])],
     outputProcessors: [...guardrails.outputProcessors, ...(memory.outputProcessors || [])],
   }

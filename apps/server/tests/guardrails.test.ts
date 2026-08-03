@@ -70,6 +70,7 @@ describe('strict guardrail failure boundary', () => {
     expect(requests).toHaveLength(1)
     expect(requests[0]?.url).toBe('http://127.0.0.1:3000/v1/responses')
     expect(requests[0]?.body.text?.format).toMatchObject({ type: 'json_schema', strict: true })
+    expect(requests[0]?.body.store).toBe(false)
     expect(requests[0]?.body).not.toHaveProperty('response_format')
     expect(JSON.stringify(requests[0]?.body)).not.toContain('json_object')
   })
