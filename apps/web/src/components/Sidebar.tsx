@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Pin, PinOff, Settings, Share2, Trash2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
@@ -72,6 +72,49 @@ export function Sidebar({
   const dragStateRef = useRef<ProjectPointerState | null>(null)
   const dragPreviewRef = useRef<ProjectSummary[] | null>(null)
   const suppressProjectClickRef = useRef(false)
+  const projectListRef = useRef<HTMLElement | null>(null)
+  const rowPositionsRef = useRef<Map<string, number> | null>(null)
+
+  useLayoutEffect(() => {
+    const container = projectListRef.current
+    if (!container) return
+    const rows = Array.from(container.querySelectorAll<HTMLElement>('[data-project-id]'))
+    const nextPositions = new Map<string, number>()
+    for (const row of rows) {
+      const id = row.dataset.projectId
+      if (id) nextPositions.set(id, row.getBoundingClientRect().top)
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      rowPositionsRef.current = nextPositions
+      return
+    }
+    const previousPositions = rowPositionsRef.current
+    if (previousPositions && previousPositions.size) {
+      const frame = window.requestAnimationFrame(() => {
+        for (const row of rows) {
+          const id = row.dataset.projectId
+          if (!id) continue
+          const from = previousPositions.get(id)
+          const to = row.getBoundingClientRect().top
+          if (from === undefined || Math.abs(from - to) < 0.5) continue
+          row.style.transition = 'none'
+          row.style.transform = `translateY(${from - to}px)`
+          row.style.willChange = 'transform'
+          window.requestAnimationFrame(() => {
+            row.style.transition = 'transform .5s var(--spring)'
+            row.style.transform = ''
+            row.style.willChange = ''
+            window.setTimeout(() => {
+              row.style.transition = ''
+            }, 560)
+          })
+        }
+      })
+      rowPositionsRef.current = nextPositions
+      return () => window.cancelAnimationFrame(frame)
+    }
+    rowPositionsRef.current = nextPositions
+  }, [projects])
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -261,7 +304,7 @@ export function Sidebar({
         <span>Research OS</span>
       </button>
       <div className="side-label">{t('sidebar.projects')}</div>
-      <nav className="project-list" aria-label={t('sidebar.projects')}>
+      <nav className="project-list" ref={projectListRef} aria-label={t('sidebar.projects')}>
         {visibleProjects.length ? (
           visibleProjects.map(project => {
             return (

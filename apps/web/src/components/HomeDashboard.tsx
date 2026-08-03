@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   ArrowUpRight,
   BookOpen,
@@ -74,6 +74,49 @@ export function HomeDashboard({
   const [dragOverId, setDragOverId] = useState<string | null>(null)
   const dragSourceRef = useRef<string | null>(null)
   const [reorderBusy, setReorderBusy] = useState(false)
+  const homeRowsRef = useRef<HTMLDivElement | null>(null)
+  const rowPositionsRef = useRef<Map<string, number> | null>(null)
+
+  useLayoutEffect(() => {
+    const container = homeRowsRef.current
+    if (!container) return
+    const rows = Array.from(container.querySelectorAll<HTMLElement>('[data-project-id]'))
+    const nextPositions = new Map<string, number>()
+    for (const row of rows) {
+      const id = row.dataset.projectId
+      if (id) nextPositions.set(id, row.getBoundingClientRect().top)
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      rowPositionsRef.current = nextPositions
+      return
+    }
+    const previousPositions = rowPositionsRef.current
+    if (previousPositions && previousPositions.size) {
+      const frame = window.requestAnimationFrame(() => {
+        for (const row of rows) {
+          const id = row.dataset.projectId
+          if (!id) continue
+          const from = previousPositions.get(id)
+          const to = row.getBoundingClientRect().top
+          if (from === undefined || Math.abs(from - to) < 0.5) continue
+          row.style.transition = 'none'
+          row.style.transform = `translateY(${from - to}px)`
+          row.style.willChange = 'transform'
+          window.requestAnimationFrame(() => {
+            row.style.transition = 'transform .56s var(--spring)'
+            row.style.transform = ''
+            row.style.willChange = ''
+            window.setTimeout(() => {
+              row.style.transition = ''
+            }, 620)
+          })
+        }
+      })
+      rowPositionsRef.current = nextPositions
+      return () => window.cancelAnimationFrame(frame)
+    }
+    rowPositionsRef.current = nextPositions
+  }, [projects])
 
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -262,13 +305,14 @@ export function HomeDashboard({
             <span>{t('home.updated')}</span>
             <span>{t('home.actions')}</span>
           </div>
-          <div className="home-project-rows" aria-label={t('sidebar.projects')}>
+          <div className="home-project-rows" ref={homeRowsRef} aria-label={t('sidebar.projects')}>
             {projects.map(project => {
               const running = project.experiment_running ?? 0
               const completed = project.experiment_completed ?? 0
               return (
                 <article
                   key={project.id}
+                  data-project-id={project.id}
                   className={`home-project-row${draggingId === project.id ? ' is-dragging' : ''}`}
                   data-drag-over={dragOverId === project.id && draggingId !== project.id ? 'true' : 'false'}
                   draggable={!reorderBusy}

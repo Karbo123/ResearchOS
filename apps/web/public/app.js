@@ -19051,6 +19051,48 @@
     const dragStateRef = (0, import_react5.useRef)(null);
     const dragPreviewRef = (0, import_react5.useRef)(null);
     const suppressProjectClickRef = (0, import_react5.useRef)(false);
+    const projectListRef = (0, import_react5.useRef)(null);
+    const rowPositionsRef = (0, import_react5.useRef)(null);
+    (0, import_react5.useLayoutEffect)(() => {
+      const container = projectListRef.current;
+      if (!container) return;
+      const rows = Array.from(container.querySelectorAll("[data-project-id]"));
+      const nextPositions = /* @__PURE__ */ new Map();
+      for (const row of rows) {
+        const id = row.dataset.projectId;
+        if (id) nextPositions.set(id, row.getBoundingClientRect().top);
+      }
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        rowPositionsRef.current = nextPositions;
+        return;
+      }
+      const previousPositions = rowPositionsRef.current;
+      if (previousPositions && previousPositions.size) {
+        const frame = window.requestAnimationFrame(() => {
+          for (const row of rows) {
+            const id = row.dataset.projectId;
+            if (!id) continue;
+            const from = previousPositions.get(id);
+            const to = row.getBoundingClientRect().top;
+            if (from === void 0 || Math.abs(from - to) < 0.5) continue;
+            row.style.transition = "none";
+            row.style.transform = `translateY(${from - to}px)`;
+            row.style.willChange = "transform";
+            window.requestAnimationFrame(() => {
+              row.style.transition = "transform .5s var(--spring)";
+              row.style.transform = "";
+              row.style.willChange = "";
+              window.setTimeout(() => {
+                row.style.transition = "";
+              }, 560);
+            });
+          }
+        });
+        rowPositionsRef.current = nextPositions;
+        return () => window.cancelAnimationFrame(frame);
+      }
+      rowPositionsRef.current = nextPositions;
+    }, [projects]);
     const startResize = (event) => {
       if (window.matchMedia("(max-width: 760px)").matches) return;
       event.preventDefault();
@@ -19233,7 +19275,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Research OS" })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: t("sidebar.projects") }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: visibleProjects.length ? visibleProjects.map((project) => {
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", ref: projectListRef, "aria-label": t("sidebar.projects"), children: visibleProjects.length ? visibleProjects.map((project) => {
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
@@ -19649,6 +19691,48 @@
     const [dragOverId, setDragOverId] = (0, import_react7.useState)(null);
     const dragSourceRef = (0, import_react7.useRef)(null);
     const [reorderBusy, setReorderBusy] = (0, import_react7.useState)(false);
+    const homeRowsRef = (0, import_react7.useRef)(null);
+    const rowPositionsRef = (0, import_react7.useRef)(null);
+    (0, import_react7.useLayoutEffect)(() => {
+      const container = homeRowsRef.current;
+      if (!container) return;
+      const rows = Array.from(container.querySelectorAll("[data-project-id]"));
+      const nextPositions = /* @__PURE__ */ new Map();
+      for (const row of rows) {
+        const id = row.dataset.projectId;
+        if (id) nextPositions.set(id, row.getBoundingClientRect().top);
+      }
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        rowPositionsRef.current = nextPositions;
+        return;
+      }
+      const previousPositions = rowPositionsRef.current;
+      if (previousPositions && previousPositions.size) {
+        const frame = window.requestAnimationFrame(() => {
+          for (const row of rows) {
+            const id = row.dataset.projectId;
+            if (!id) continue;
+            const from = previousPositions.get(id);
+            const to = row.getBoundingClientRect().top;
+            if (from === void 0 || Math.abs(from - to) < 0.5) continue;
+            row.style.transition = "none";
+            row.style.transform = `translateY(${from - to}px)`;
+            row.style.willChange = "transform";
+            window.requestAnimationFrame(() => {
+              row.style.transition = "transform .56s var(--spring)";
+              row.style.transform = "";
+              row.style.willChange = "";
+              window.setTimeout(() => {
+                row.style.transition = "";
+              }, 620);
+            });
+          }
+        });
+        rowPositionsRef.current = nextPositions;
+        return () => window.cancelAnimationFrame(frame);
+      }
+      rowPositionsRef.current = nextPositions;
+    }, [projects]);
     const handleCreate = async (event) => {
       event.preventDefault();
       if (submitting) return;
@@ -19817,12 +19901,13 @@
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("home.updated") }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("home.actions") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "home-project-rows", "aria-label": t("sidebar.projects"), children: projects.map((project) => {
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "home-project-rows", ref: homeRowsRef, "aria-label": t("sidebar.projects"), children: projects.map((project) => {
           const running = project.experiment_running ?? 0;
           const completed = project.experiment_completed ?? 0;
           return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
             "article",
             {
+              "data-project-id": project.id,
               className: `home-project-row${draggingId === project.id ? " is-dragging" : ""}`,
               "data-drag-over": dragOverId === project.id && draggingId !== project.id ? "true" : "false",
               draggable: !reorderBusy,
@@ -26258,9 +26343,13 @@
     const sessionIdRef = (0, import_react30.useRef)(null);
     const toastTimerRef = (0, import_react30.useRef)(null);
     const pinningProjectIdsRef = (0, import_react30.useRef)(/* @__PURE__ */ new Set());
+    const projectsRef = (0, import_react30.useRef)([]);
     (0, import_react30.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
+    (0, import_react30.useEffect)(() => {
+      projectsRef.current = projects;
+    }, [projects]);
     const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
     const writeWorkspacePath = (slug, area, tab, replace = false) => {
       const next = workspacePath(slug, area, tab);
@@ -26376,22 +26465,26 @@
     const pinProject = async (target) => {
       if (pinningProjectIdsRef.current.has(target.id)) return;
       pinningProjectIdsRef.current.add(target.id);
+      const previousProjects = projectsRef.current;
+      const desiredPinned = !target.pinned;
+      const applyPinned = (current, projectId2, pinned, sidebarOrder) => {
+        const currentProject = current.find((project2) => project2.id === projectId2);
+        if (!currentProject) return current;
+        const changed = { ...currentProject, pinned, sidebar_order: sidebarOrder ?? -1 };
+        const pinnedProjects = current.filter((project2) => project2.pinned && project2.id !== projectId2);
+        const unpinnedProjects = current.filter((project2) => !project2.pinned && project2.id !== projectId2);
+        return pinned ? [...pinnedProjects, changed, ...unpinnedProjects] : [...pinnedProjects, ...unpinnedProjects, changed];
+      };
+      setProjects((current) => applyPinned(current, target.id, desiredPinned));
       try {
         const updated = await api(`/api/projects/${target.id}/pin`, {
           method: "PATCH",
           body: JSON.stringify({ pinned: !target.pinned })
         });
-        setProjects((previous) => {
-          const current = previous.find((project2) => project2.id === target.id);
-          if (!current) return previous;
-          const changed = { ...current, pinned: updated.pinned, sidebar_order: updated.sidebar_order };
-          const pinned = previous.filter((project2) => project2.pinned && project2.id !== target.id);
-          const unpinned = previous.filter((project2) => !project2.pinned && project2.id !== target.id);
-          return updated.pinned ? [...pinned, changed, ...unpinned] : [...pinned, ...unpinned, changed];
-        });
+        setProjects((current) => applyPinned(current, target.id, updated.pinned, updated.sidebar_order));
         showToast(t(target.pinned ? "app.projectUnpinned" : "app.projectPinned"));
       } catch (error) {
-        await loadProjects();
+        setProjects(previousProjects);
         showToast(errorMessage(error));
       } finally {
         pinningProjectIdsRef.current.delete(target.id);
@@ -26401,24 +26494,27 @@
       setDeleteProjectTarget(projects.find((project2) => project2.id === target.id) || target);
     };
     const reorderProjects = async (projectIds) => {
+      const previousProjects = projectsRef.current;
+      const applyOrder = (current, ids) => {
+        const movedIds = new Set(ids);
+        const moved = ids.map((id) => current.find((project2) => project2.id === id)).filter((project2) => Boolean(project2));
+        if (moved.length !== ids.length) return current;
+        const pinned = moved[0]?.pinned ?? false;
+        if (pinned) return [...moved, ...current.filter((project2) => !movedIds.has(project2.id))];
+        const pinnedProjects = current.filter((project2) => project2.pinned);
+        const unpinnedRest = current.filter((project2) => !project2.pinned && !movedIds.has(project2.id));
+        return [...pinnedProjects, ...moved, ...unpinnedRest];
+      };
+      setProjects((current) => applyOrder(current, projectIds));
       try {
         await api("/api/projects/order", {
           method: "PATCH",
           body: JSON.stringify({ project_ids: projectIds })
         });
-        setProjects((previous) => {
-          const movedIds = new Set(projectIds);
-          const moved = projectIds.map((id) => previous.find((project2) => project2.id === id)).filter((project2) => Boolean(project2));
-          if (moved.length !== projectIds.length) return previous;
-          const pinned = moved[0]?.pinned ?? false;
-          if (pinned) return [...moved, ...previous.filter((project2) => !movedIds.has(project2.id))];
-          const pinnedProjects = previous.filter((project2) => project2.pinned);
-          const unpinnedRest = previous.filter((project2) => !project2.pinned && !movedIds.has(project2.id));
-          return [...pinnedProjects, ...moved, ...unpinnedRest];
-        });
+        setProjects((current) => applyOrder(current, projectIds));
         showToast(t("app.projectOrderUpdated"));
       } catch (error) {
-        await loadProjects();
+        setProjects(previousProjects);
         showToast(errorMessage(error));
       }
     };

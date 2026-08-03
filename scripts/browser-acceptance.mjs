@@ -464,6 +464,40 @@ const homeUi = await evaluate(`(() => {
     })),
   }
 })()`)
+const pinMotionTargetId = await evaluate(`(() => {
+  const buttons = document.querySelectorAll('.home-pin-action[aria-pressed="false"]')
+  const button = buttons[buttons.length - 1]
+  return button?.closest('.home-project-row')?.dataset.projectId || null
+})()`)
+const pinMotion = {
+  target: pinMotionTargetId,
+  reducedMotion: await evaluate(`matchMedia('(prefers-reduced-motion: reduce)').matches`),
+  initialCount: await evaluate(`document.querySelectorAll('.home-project-row').length`),
+  samples: [],
+}
+if (pinMotionTargetId) {
+  await evaluate(`document.querySelector('.home-project-row[data-project-id="${pinMotionTargetId}"] .home-pin-action')?.click()`)
+  for (const delay of [0, 40, 120, 300]) {
+    if (delay) await wait(delay)
+    pinMotion.samples.push(await evaluate(`(() => {
+      const row = document.querySelector('.home-project-row[data-project-id="${pinMotionTargetId}"]')
+      return {
+        delay: ${JSON.stringify(delay)},
+        loading: !!document.querySelector('.home-loading'),
+        path: window.location.pathname,
+        navigationEntries: performance.getEntriesByType('navigation').length,
+        pinned: row?.querySelector('.home-pin-action')?.getAttribute('aria-pressed') || null,
+        transform: row ? getComputedStyle(row).transform : null,
+        transitionDuration: row ? getComputedStyle(row).transitionDuration : null,
+      }
+    })()`))
+  }
+  await wait(650)
+  pinMotion.restored = await evaluate(`document.querySelector('.home-project-row[data-project-id="${pinMotionTargetId}"] .home-pin-action')?.getAttribute('aria-pressed')`)
+  await evaluate(`document.querySelector('.home-project-row[data-project-id="${pinMotionTargetId}"] .home-pin-action')?.click()`)
+  await wait(650)
+  pinMotion.finalCount = await evaluate(`document.querySelectorAll('.home-project-row').length`)
+}
 const actionRow = await elementCenter('.project-row')
 const actionMotion = {
   rowFound: !!actionRow,
@@ -652,5 +686,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, themePersist, contextSwitch, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
 socket.close()
