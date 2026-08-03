@@ -220,6 +220,20 @@ export function saveProjectEmbeddingSettings(projectId: string, input: ProjectEm
   return { released_pool_keys: released }
 }
 
+export function removeProjectEmbeddingSettings(projectId: string): { released_pool_keys: string[] } {
+  const overrides = readProjectOverrides()
+  const previous = overrides[projectId]
+  if (!previous) return { released_pool_keys: [] }
+  delete overrides[projectId]
+  writeProjectOverrides(overrides)
+  if (previous.pool_key === GLOBAL_POOL_KEY || projectsUsingPool(previous.pool_key).length > 0) return { released_pool_keys: [] }
+  const pools = readPools()
+  if (!pools[previous.pool_key]) return { released_pool_keys: [] }
+  delete pools[previous.pool_key]
+  writePools(pools)
+  return { released_pool_keys: [previous.pool_key] }
+}
+
 export function usedProjectEmbeddingPorts(): number[] {
   return Object.values(readPools()).map(pool => pool.port)
 }

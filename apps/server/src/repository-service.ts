@@ -4,7 +4,7 @@ import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { extract } from 'tar'
 import { ApiError } from './http.js'
-import { pathInside, projectsRoot } from './paths.js'
+import { pathInside } from './paths.js'
 
 export const repositoryHosts = new Set(['github.com', 'gitlab.com'])
 const archiveHosts = new Set(['github.com', 'codeload.github.com', 'gitlab.com'])
@@ -27,6 +27,12 @@ export class RepositoryServiceError extends ApiError {
 
 export type RepositoryIdentity = { host: string; namespace: string; name: string; path: string }
 
+export type RepositoryDiscovery = {
+  canonical_url: string
+  source_type: 'paper_metadata' | 'paper_source_url'
+  locator: string
+}
+
 export function parseRepositoryUrl(value: string): RepositoryIdentity {
   let url: URL
   try { url = new URL(value.trim()) } catch { throw new RepositoryServiceError('repository_url_invalid', '仓库地址不是有效 URL。') }
@@ -41,6 +47,43 @@ export function parseRepositoryUrl(value: string): RepositoryIdentity {
 }
 
 export function canonicalRepositoryUrl(identity: RepositoryIdentity): string { return `https://${identity.host}/${identity.path}` }
+
+function repositoryUrlFromText(value: string): string | null {
+  const matches = value.match(/https:\/\/(?:www\.)?(?:github\.com|gitlab\.com)\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+(?:\.git)?/gi) || []
+  for (const candidate of matches) {
+    try { return canonicalRepositoryUrl(parseRepositoryUrl(candidate)) } catch { /* Ignore non-repository links. */ }
+  }
+  return null
+}
+
+function collectRepositoryLinks(value: unknown, locator: string, output: RepositoryDiscovery[], seen: Set<string>, depth = 0): void {
+  if (depth > 6 || output.length >= 100) return
+  if (typeof value === 'string') {
+    const direct = value.trim()
+    const candidates = [direct, ...(direct.match(/https:\/\/[^\s"'<>]+/gi) || [])]
+    for (const candidate of candidates) {
+      const canonical = repositoryUrlFromText(candidate)
+      if (!canonical || seen.has(canonical)) continue
+      seen.add(canonical)
+      output.push({ canonical_url: canonical, source_type: locator === 'source_url' ? 'paper_source_url' : 'paper_metadata', locator })
+    }
+    return
+  }
+  if (Array.isArray(value)) {
+    value.slice(0, 100).forEach((item, index) => collectRepositoryLinks(item, `${locator}[${index}]`, output, seen, depth + 1))
+    return
+  }
+  if (!value || typeof value !== 'object') return
+  Object.entries(value as Record<string, unknown>).slice(0, 200).forEach(([key, item]) => collectRepositoryLinks(item, locator ? `${locator}.${key}` : key, output, seen, depth + 1))
+}
+
+export function discoverRepositoryCandidates(paper: { source_url: string; metadata?: unknown }): RepositoryDiscovery[] {
+  const output: RepositoryDiscovery[] = []
+  const seen = new Set<string>()
+  collectRepositoryLinks(paper.metadata, 'metadata', output, seen)
+  collectRepositoryLinks(paper.source_url, 'source_url', output, seen)
+  return output
+}
 
 function normalizedText(value: string): string { return value.normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g, '') }
 
@@ -71,16 +114,42 @@ async function providerJson(url: string, token?: string): Promise<Record<string,
   return value as Record<string, unknown>
 }
 
-async function repositoryFile(identity: RepositoryIdentity, branch: string, path: string, token?: string): Promise<string> {
+async function repositoryFile(identity: RepositoryIdentity, branch: string, path: string, token?: string): Promise<string | null> {
   const url = identity.host === 'github.com'
     ? `${providerApi(identity)}/contents/${path.split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(branch)}`
     : `${providerApi(identity)}/repository/files/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`
   const payload = await providerJson(url, token)
-  if (typeof payload.content !== 'string') return ''
+  if (typeof payload.content !== 'string') return null
   try {
     const content = Buffer.from(payload.content.replace(/\s/g, ''), 'base64').toString('utf8')
     return content.slice(0, maxCitationBytes)
-  } catch { return '' }
+  } catch { return null }
+}
+
+export type RepositoryReadiness = {
+  entrypoint_status: 'declared' | 'unknown'
+  dependency_status: 'declared' | 'unknown'
+  data_requirements_status: 'declared' | 'unknown'
+  system_requirements_status: 'declared' | 'unknown'
+  writable_directory_status: 'project_contained'
+  evidence_files: string[]
+}
+
+export function repositoryReadinessFromFiles(files: Map<string, string>): RepositoryReadiness {
+  const names = new Set(files.keys())
+  const allText = [...files.values()].join('\n').slice(0, 6_000_000)
+  const dependencyFiles = ['requirements.txt', 'requirements-dev.txt', 'pyproject.toml', 'environment.yml', 'environment.yaml', 'package.json', 'poetry.lock', 'Pipfile', 'Cargo.toml'].filter(name => names.has(name))
+  const entrypointDeclared = dependencyFiles.length > 0 || /(^|\n)\s*(usage|quick start|getting started|running|train|evaluation|inference)\b|python\s+[^\n]{1,160}\.(?:py|sh)|npm\s+(?:run|start)|make\s+(?:run|train|test)/i.test(allText)
+  const dataDeclared = /\b(?:dataset|data\s+(?:download|preparation|preprocessing)|download(?:ing)?\s+(?:the\s+)?data|preprocess(?:ing)?|benchmark|evaluation protocol)\b/i.test(allText)
+  const systemDeclared = /\b(?:cuda|gpu|cpu|python\s*>=?|node(?:\.js)?\s*>=?|linux|windows|macos|system requirements?)\b/i.test(allText)
+  return {
+    entrypoint_status: entrypointDeclared ? 'declared' : 'unknown',
+    dependency_status: dependencyFiles.length || /\b(?:install|dependencies|requirements)\b/i.test(allText) ? 'declared' : 'unknown',
+    data_requirements_status: dataDeclared ? 'declared' : 'unknown',
+    system_requirements_status: systemDeclared ? 'declared' : 'unknown',
+    writable_directory_status: 'project_contained',
+    evidence_files: [...files.keys()],
+  }
 }
 
 export async function verifyRepositoryCandidate(repositoryUrl: string, paperTitle: string, paperDoi: string | null): Promise<Record<string, unknown>> {
@@ -104,17 +173,19 @@ export async function verifyRepositoryCandidate(repositoryUrl: string, paperTitl
     const licenseValue = license.license && typeof license.license === 'object' ? (license.license as Record<string, unknown>).key : license.key
     licenseSpdx = licenseValue ? String(licenseValue) : null
   }
-  const citationFiles: string[] = []
-  const citationContents: string[] = []
-  for (const path of ['CITATION.cff', 'citation.cff', 'README.md', 'README.rst']) {
-    const content = await repositoryFile(identity, branch, path, token).catch(() => '')
-    if (content) { citationFiles.push(path); citationContents.push(content) }
+  const files = new Map<string, string>()
+  for (const path of ['CITATION.cff', 'citation.cff', 'README.md', 'README.rst', 'requirements.txt', 'requirements-dev.txt', 'pyproject.toml', 'environment.yml', 'environment.yaml', 'package.json', 'Makefile', 'Cargo.toml']) {
+    const content = await repositoryFile(identity, branch, path, token).catch(() => null)
+    if (content !== null) files.set(path, content)
   }
+  const citationFiles = [...files.keys()].filter(path => ['CITATION.cff', 'citation.cff', 'README.md', 'README.rst'].includes(path))
+  const citationContents = citationFiles.map(path => files.get(path) || '')
   const match = citationMatch(paperTitle, paperDoi, citationContents.join('\n'))
   const licenseStatus = licenseSpdx && knownSpdx.has(licenseSpdx) ? 'known_spdx' : 'unknown'
+  const readiness = repositoryReadinessFromFiles(files)
   return {
     canonical_url: canonicalRepositoryUrl(identity), host: identity.host, namespace: identity.namespace, name: identity.name,
-    default_branch: branch, commit, license_spdx: licenseSpdx, license_status: licenseStatus,
+    default_branch: branch, commit, license_spdx: licenseSpdx, license_status: licenseStatus, readiness,
     official_match: match.matched, match, citation_files: citationFiles,
     verification_sources: [
       { source: 'paper_record', paper_title: paperTitle, paper_doi: paperDoi },
@@ -132,6 +203,16 @@ export function validateDownloadGate(repository: { verified_official: boolean; l
   const commit = String(repository.commit_or_tag || '').toLowerCase()
   if (!/^[0-9a-f]{40}$/.test(commit)) throw new RepositoryServiceError('repository_commit_unpinned', '仓库没有固定的 40 位 commit，不能下载。')
   if (commit !== String(verification.commit || '').toLowerCase() || (requestedCommit && commit !== requestedCommit.toLowerCase())) throw new RepositoryServiceError('repository_verification_stale', '仓库验证结果或固定 commit 已变化，请重新验证。')
+  const readiness = (verification.readiness || {}) as Record<string, unknown>
+  for (const [field, message] of [
+    ['entrypoint_status', '仓库没有声明可复现入口，不能下载。'],
+    ['dependency_status', '仓库没有声明依赖清单或安装方式，不能下载。'],
+    ['data_requirements_status', '仓库没有声明数据获取或预处理要求，不能下载。'],
+    ['system_requirements_status', '仓库没有声明系统或资源要求，不能下载。'],
+  ] as const) {
+    if (readiness[field] !== 'declared') throw new RepositoryServiceError(`repository_${field}_unknown`, message)
+  }
+  if (readiness.writable_directory_status !== 'project_contained') throw new RepositoryServiceError('repository_write_directory_invalid', '仓库写入目录不在当前项目受控范围内。')
   return commit
 }
 
@@ -224,5 +305,3 @@ export function repositoryDirectoryName(repositoryUrl: string, commit: string): 
   const identity = parseRepositoryUrl(repositoryUrl)
   return `${identity.host.split('.')[0]}-${identity.namespace.replaceAll('/', '-')}-${identity.name}-${commit.slice(0, 12)}`.replace(/[^A-Za-z0-9_.-]+/g, '-').slice(0, 180)
 }
-
-export function projectRepositoryRoot(projectId: string): string { return pathInside(projectsRoot, projectId, 'code', 'repositories') }

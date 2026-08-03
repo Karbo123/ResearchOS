@@ -59,18 +59,6 @@ export async function searchLiterature(projectId: string, query: string, limit: 
   return { papers: unique, resource_candidates: unique, provider_errors: errors, evidence_status: 'metadata_candidates_only' }
 }
 
-export async function noveltyAnalysis(projectId: string) {
-  await requireProject(projectId)
-  const paperRows = await rows<{ id: string; title: string; verified: boolean }>('SELECT id,title,verified FROM papers WHERE project_id=$1', [projectId])
-  const evidenceCount = Number((await one<{ count: string }>('SELECT COUNT(*)::text AS count FROM evidence WHERE project_id=$1', [projectId]))?.count || 0)
-  return {
-    conclusion: evidenceCount > 0 ? 'candidate_review_required' : 'insufficient_fulltext_evidence',
-    metadata_candidates: paperRows.length,
-    verified_evidence_count: evidenceCount,
-    warning: 'Metadata and title matches cannot establish novelty or duplicate research claims.',
-  }
-}
-
 export async function diagnostics(projectId: string) {
   await requireProject(projectId)
   const experiments = await rows<{ id: string; status: string; metrics: Record<string, unknown>; error: string | null }>('SELECT id,status,metrics,error FROM experiments WHERE project_id=$1', [projectId])
@@ -89,15 +77,133 @@ export async function diagnostics(projectId: string) {
 
 export async function createOperationalReport(projectId: string, period: string) {
   const project = await requireProject(projectId)
-  const counts = await one<Record<string, string>>(`SELECT
-    (SELECT COUNT(*) FROM papers WHERE project_id=$1)::text AS papers,
-    (SELECT COUNT(*) FROM evidence WHERE project_id=$1)::text AS evidence,
-    (SELECT COUNT(*) FROM experiments WHERE project_id=$1)::text AS experiments,
-    (SELECT COUNT(*) FROM proposals WHERE project_id=$1 AND status='pending')::text AS pending`, [projectId])
+  const generatedAt = new Date()
+  const windowStart = new Date(generatedAt)
+  if (period === 'daily') windowStart.setHours(windowStart.getHours() - 24)
+  else if (period === 'weekly') windowStart.setDate(windowStart.getDate() - 7)
+  else windowStart.setTime(0)
+  const windowStartIso = windowStart.toISOString()
+  const generatedAtIso = generatedAt.toISOString()
+  const [counts, papers, evidence, experiments, artifacts, proposals] = await Promise.all([
+    one<Record<string, string>>(`SELECT
+      (SELECT COUNT(*) FROM papers WHERE project_id=$1)::text AS papers,
+      (SELECT COUNT(*) FROM evidence WHERE project_id=$1)::text AS evidence,
+      (SELECT COUNT(*) FROM experiments WHERE project_id=$1)::text AS experiments,
+      (SELECT COUNT(*) FROM proposals WHERE project_id=$1 AND status='pending')::text AS pending`, [projectId]),
+    rows<{ id: string }>('SELECT id FROM papers WHERE project_id=$1 ORDER BY id', [projectId]),
+    rows<{ id: string }>('SELECT id FROM evidence WHERE project_id=$1 ORDER BY id', [projectId]),
+    rows<{ id: string }>('SELECT id FROM experiments WHERE project_id=$1 ORDER BY id', [projectId]),
+    rows<{ id: string }>('SELECT id FROM artifacts WHERE project_id=$1 AND valid=TRUE ORDER BY id', [projectId]),
+    rows<{ id: string }>('SELECT id FROM proposals WHERE project_id=$1 ORDER BY id', [projectId]),
+  ])
   if (!counts) throw new ApiError(500, 'report_query_failed', '无法生成项目报告。')
-  const content = [`# ${period === 'weekly' ? 'Weekly' : period === 'daily' ? 'Daily' : 'Manual'} Research Report`, '', `Project: ${project.title}`, `Status: ${project.status}`, `Stage: ${project.current_stage}`, '', `- Literature candidates: ${counts.papers}`, `- Verified evidence records: ${counts.evidence}`, `- Experiments: ${counts.experiments}`, `- Pending approvals: ${counts.pending}`, '', 'Metadata candidates are not full-text evidence. Experiment outputs do not establish scientific conclusions.'].join('\n')
+
+  const [auditEvents, messages, tasks, recentExperiments, recentProposals, sourceAttempts, feedbackRows] = await Promise.all([
+    rows<{ id: string; actor: string; action: string; details: Record<string, unknown>; created_at: string }>(
+      'SELECT id,actor,action,details,created_at FROM audit_events WHERE project_id=$1 AND created_at >= $2 AND created_at <= $3 ORDER BY created_at,id',
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+    rows<{ id: string; role: string; content: string; created_at: string }>(
+      `SELECT m.id,m.role,m.content,m.created_at
+       FROM messages m JOIN conversation_sessions s ON s.id=m.session_id
+       WHERE s.project_id=$1 AND m.created_at >= $2 AND m.created_at <= $3
+       ORDER BY m.created_at,m.id`,
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+    rows<{ id: string; kind: string; status: string; error: string | null; updated_at: string }>(
+      'SELECT id,kind,status,error,updated_at FROM tasks WHERE project_id=$1 AND updated_at >= $2 AND updated_at <= $3 ORDER BY updated_at,id',
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+    rows<{ id: string; experiment_type: string; status: string; run_id: string | null; error: string | null; created_at: string }>(
+      'SELECT id,experiment_type,status,run_id,error,created_at FROM experiments WHERE project_id=$1 AND created_at >= $2 AND created_at <= $3 ORDER BY created_at,id',
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+    rows<{ id: string; kind: string; status: string; summary: string; created_at: string }>(
+      'SELECT id,kind,status,summary,created_at FROM proposals WHERE project_id=$1 AND created_at >= $2 AND created_at <= $3 ORDER BY created_at,id',
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+    rows<{ id: string; provider: string; status: string; failure: Record<string, unknown> | null; created_at: string }>(
+      'SELECT id,provider,status,failure,created_at FROM related_work_source_attempts WHERE project_id=$1 AND created_at >= $2 AND created_at <= $3 ORDER BY created_at,id',
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+    rows<{ id: string; category: string; status: string; instruction: string; created_at: string }>(
+      'SELECT id,category,status,instruction,created_at FROM human_feedback WHERE project_id=$1 AND created_at >= $2 AND created_at <= $3 ORDER BY created_at,id',
+      [projectId, windowStartIso, generatedAtIso],
+    ),
+  ])
+
+  const eventCount = auditEvents.length + messages.length + tasks.length + recentExperiments.length + recentProposals.length + sourceAttempts.length + feedbackRows.length
+  if (!eventCount) {
+    throw new ApiError(409, 'report_no_events', `当前${period === 'weekly' ? '周' : period === 'daily' ? '日' : '时间'}窗口没有真实项目事件，报告保持 empty。`)
+  }
+
+  const shorten = (value: string, limit = 180): string => value.replace(/\s+/g, ' ').trim().slice(0, limit)
+  const eventLines = [
+    ...auditEvents.map(event => `[${event.created_at}] 审计 ${event.action} (${event.actor}) ${JSON.stringify(event.details || {})}`),
+    ...messages.map(message => `[${message.created_at}] 对话 ${message.role}: ${shorten(message.content)}`),
+    ...tasks.map(task => `[${task.updated_at}] 任务 ${task.kind}: ${task.status}${task.error ? `；失败：${shorten(task.error)}` : ''}`),
+    ...recentExperiments.map(experiment => `[${experiment.created_at}] 实验 ${experiment.experiment_type}: ${experiment.status}${experiment.run_id ? `；Run ${experiment.run_id}` : ''}${experiment.error ? `；失败：${shorten(experiment.error)}` : ''}`),
+    ...recentProposals.map(proposal => `[${proposal.created_at}] Proposal ${proposal.kind}: ${proposal.status}；${shorten(proposal.summary)}`),
+    ...sourceAttempts.map(attempt => `[${attempt.created_at}] 来源 ${attempt.provider}: ${attempt.status}${attempt.failure ? `；失败：${shorten(String(attempt.failure.message || 'provider request failed'))}` : ''}`),
+    ...feedbackRows.map(feedback => `[${feedback.created_at}] 导师反馈 ${feedback.category}: ${feedback.status}；${shorten(feedback.instruction)}`),
+  ].sort((left, right) => left.localeCompare(right))
+  const failureLines = [
+    ...tasks.filter(item => item.error || ['failed', 'cancelled'].includes(item.status)).map(item => `- 任务 ${item.kind}：${item.error || item.status}`),
+    ...recentExperiments.filter(item => item.error || ['failed', 'cancelled', 'invalidated'].includes(item.status)).map(item => `- 实验 ${item.experiment_type}：${item.error || item.status}`),
+    ...sourceAttempts.filter(item => item.failure || !['succeeded', 'no_match'].includes(item.status)).map(item => `- ${item.provider}：${String(item.failure?.message || item.status)}`),
+  ]
+  const pendingLines = [
+    ...recentProposals.filter(item => item.status === 'pending').map(item => `- Proposal ${item.kind}：${item.summary}`),
+    ...feedbackRows.filter(item => ['open', 'revision_requested'].includes(item.status)).map(item => `- 导师反馈（${item.category}）：${shorten(item.instruction)}`),
+  ]
+  const sourceSnapshot = {
+    project_id: projectId,
+    idea_version: project.current_idea_version,
+    window_start: windowStartIso,
+    data_cutoff: generatedAtIso,
+    event_count: eventCount,
+    audit_event_ids: auditEvents.map(row => row.id),
+    message_ids: messages.map(row => row.id),
+    task_ids: tasks.map(row => row.id),
+    feedback_ids: feedbackRows.map(row => row.id),
+    related_work_attempt_ids: sourceAttempts.map(row => row.id),
+    paper_ids: papers.map(row => row.id),
+    evidence_ids: evidence.map(row => row.id),
+    experiment_ids: experiments.map(row => row.id),
+    artifact_ids: artifacts.map(row => row.id),
+    proposal_ids: proposals.map(row => row.id),
+  }
+  const content = [
+    `# ${period === 'weekly' ? 'Weekly' : period === 'daily' ? 'Daily' : 'Manual'} Research Report`,
+    '',
+    `Project: ${project.title}`,
+    `Status: ${project.status}`,
+    `Stage: ${project.current_stage}`,
+    `Window: ${windowStartIso} -> ${generatedAtIso}`,
+    `Data cutoff: ${generatedAtIso}`,
+    '',
+    '## Observed activity',
+    ...eventLines.map(line => `- ${line}`),
+    '',
+    '## Current project counts',
+    `- Literature records: ${counts.papers}`,
+    `- Evidence records: ${counts.evidence}`,
+    `- Experiments: ${counts.experiments}`,
+    `- Pending approvals: ${counts.pending}`,
+    '',
+    '## Failures and blockers',
+    ...(failureLines.length ? failureLines : ['- None recorded in this window.']),
+    '',
+    '## Waiting for mentor decision',
+    ...(pendingLines.length ? pendingLines : ['- None recorded in this window.']),
+    '',
+    '## Evidence boundary',
+    '- This report contains observed project events, not scientific conclusions.',
+    '- Metadata candidates are not full-text evidence.',
+    '- Experiment outputs require lineage and human review before they can support a paper claim.',
+  ].join('\n')
   const id = crypto.randomUUID()
-  await database.query('INSERT INTO reports(id,project_id,period,content) VALUES ($1,$2,$3,$4)', [id, projectId, period, content])
+  await database.query('INSERT INTO reports(id,project_id,period,content,status,source_snapshot) VALUES ($1,$2,$3,$4,$5,$6)', [id, projectId, period, content, 'valid', sourceSnapshot])
   if (supermemoryEnabled()) {
     await ingestProjectMemory(projectId, {
       source_type: 'report', source_id: id, artifact_id: null, uploaded_file_id: null,

@@ -1,14 +1,15 @@
 import { createHash } from 'node:crypto'
 import { existsSync, lstatSync, readFileSync } from 'node:fs'
-import { pathInside, artifactsRoot } from './paths.js'
+import { pathInside, projectsRoot } from './paths.js'
+import { projectFilePath } from './project-storage.js'
 import { database, audit, one, rows } from './database.js'
 import { ApiError } from './http.js'
 
-export type LineageNodeType = 'idea_version' | 'paper' | 'evidence' | 'repository' | 'uploaded_file' | 'artifact' | 'experiment' | 'checkpoint' | 'git_commit' | 'data_version' | 'config'
+export type LineageNodeType = 'idea_version' | 'paper' | 'evidence' | 'repository' | 'reproduction' | 'reproduction_run' | 'uploaded_file' | 'artifact' | 'experiment' | 'checkpoint' | 'git_commit' | 'data_version' | 'config'
 export type LineageNode = { type: LineageNodeType; id: string }
 export type LineageDependency = { downstream: LineageNode; upstream: LineageNode; relation: string }
 
-const nodeTypes = new Set<LineageNodeType>(['idea_version', 'paper', 'evidence', 'repository', 'uploaded_file', 'artifact', 'experiment', 'checkpoint', 'git_commit', 'data_version', 'config'])
+const nodeTypes = new Set<LineageNodeType>(['idea_version', 'paper', 'evidence', 'repository', 'reproduction', 'reproduction_run', 'uploaded_file', 'artifact', 'experiment', 'checkpoint', 'git_commit', 'data_version', 'config'])
 
 function stableValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(stableValue)
@@ -32,6 +33,8 @@ export async function fingerprintNode(projectId: string, node: LineageNode): Pro
     paper: { table: 'papers', columns: 'id,project_id,title,doi,source_url,metadata,bibtex,verified' },
     evidence: { table: 'evidence', columns: 'id,project_id,paper_id,claim,quote,locator,source_url,metadata' },
     repository: { table: 'repositories', columns: 'id,project_id,source_url,license_spdx,commit_or_tag,verified_official,metadata' },
+    reproduction: { table: 'reproductions', columns: 'id,project_id,repository_id,status,source_commit,repository_relative_path,dependency_manifest,dependency_sha256,venv_relative_path,entrypoint,plan,dependency_report,error' },
+    reproduction_run: { table: 'reproduction_runs', columns: 'id,project_id,reproduction_id,proposal_id,status,source_commit,entrypoint,random_seeds,config,run_relative_path,output_manifest,metrics,artifact_proposal_id,artifact_ids,error' },
     uploaded_file: { table: 'uploaded_files', columns: 'id,project_id,name,size_bytes,sha256,metadata' },
     artifact: { table: 'artifacts', columns: 'id,project_id,experiment_id,kind,name,relative_path,sha256,metadata,valid' },
     experiment: { table: 'experiments', columns: 'id,project_id,proposal_id,status,experiment_type,config,metrics,run_id,error' },
@@ -65,6 +68,10 @@ async function markMaterializedNodeInvalid(projectId: string, node: LineageNode,
     await database.query("UPDATE experiments SET status='invalidated',error=$3,finished_at=COALESCE(finished_at,NOW()) WHERE id=$1 AND project_id=$2 AND status='succeeded'", [node.id, projectId, `dependency_invalidated:${reason}`])
   } else if (node.type === 'checkpoint') {
     await database.query('UPDATE checkpoints SET valid=FALSE,invalidated_reason=$3,invalidated_at=NOW() WHERE id=$1 AND project_id=$2', [node.id, projectId, reason])
+  } else if (node.type === 'reproduction') {
+    await database.query("UPDATE reproductions SET status='invalidated',error=$3,updated_at=NOW() WHERE id=$1 AND project_id=$2 AND status IN ('source_downloaded','dependency_installing','dependency_failed','ready')", [node.id, projectId, `dependency_invalidated:${reason}`])
+  } else if (node.type === 'reproduction_run') {
+    await database.query("UPDATE reproduction_runs SET status='invalidated',error=$3,finished_at=COALESCE(finished_at,NOW()) WHERE id=$1 AND project_id=$2 AND status IN ('queued','running','awaiting_artifact_approval')", [node.id, projectId, `dependency_invalidated:${reason}`])
   }
 }
 
@@ -124,7 +131,7 @@ export async function assertCheckpointRecoverable(projectId: string, checkpointI
   if (artifacts.length !== artifactIds.length || artifacts.some(artifact => artifact.valid !== true)) throw new ApiError(409, 'checkpoint_artifacts_invalid', '检查点依赖的产物缺失或已失效。')
   for (const artifact of artifacts) {
     if (typeof artifact.relative_path !== 'string' || typeof artifact.sha256 !== 'string') throw new ApiError(409, 'checkpoint_artifact_metadata_invalid', '检查点产物缺少完整哈希谱系。')
-    const artifactPath = pathInside(artifactsRoot, ...artifact.relative_path.split('/'))
+    const artifactPath = projectFilePath(projectId, artifact.relative_path)
     if (!existsSync(artifactPath) || lstatSync(artifactPath).isSymbolicLink()) throw new ApiError(409, 'checkpoint_artifact_missing', '检查点产物文件缺失或是链接文件。')
     const currentSha = createHash('sha256').update(readFileSync(artifactPath)).digest('hex')
     if (currentSha !== artifact.sha256) throw new ApiError(409, 'checkpoint_artifact_hash_mismatch', '检查点产物 SHA-256 已变化，不能恢复。')

@@ -4,6 +4,8 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { isAllowedModelUrl, isResponsesBaseUrl } from '../apps/server/src/model-url.js'
 import { supermemoryChildEnv } from '../apps/server/src/supermemory-env.js'
+import { ensureModelGatewayBridge, stopModelGatewayBridge } from '../apps/server/src/model-gateway-bridge.js'
+import { runtimeRoot } from '../apps/server/src/paths.js'
 
 const sourceDirectory = dirname(fileURLToPath(import.meta.url))
 const repositoryRoot = resolve(sourceDirectory, '..')
@@ -11,7 +13,7 @@ const envPath = resolve(repositoryRoot, '.env')
 if (existsSync(envPath) && typeof process.loadEnvFile === 'function') process.loadEnvFile(envPath)
 
 const action = process.argv[2] ?? 'start'
-const runtimeDir = resolve(repositoryRoot, 'runtime')
+const runtimeDir = runtimeRoot
 const pidPath = resolve(runtimeDir, 'supermemory.pid')
 const baseUrl = process.env.SUPERMEMORY_BASE_URL || 'http://127.0.0.1:6767'
 const healthUrl = baseUrl.replace(/\/$/, '')
@@ -40,11 +42,22 @@ if (action === 'stop') {
   } else {
     console.log('no supermemory pid file; nothing to stop')
   }
+  stopModelGatewayBridge()
   process.exit(0)
 }
 
 if (await healthOk()) {
-  console.log(`supermemory already running at ${baseUrl}`)
+  if (process.env.SUPERMEMORY_MODEL_BRIDGE_ENABLED !== 'false') {
+    try {
+      const bridgeUrl = await ensureModelGatewayBridge()
+      console.log(`supermemory already running at ${baseUrl}; model bridge is ready at ${bridgeUrl}. Restart Supermemory to apply the bridge to the existing child.`)
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : String(error))
+      process.exit(1)
+    }
+  } else {
+    console.log(`supermemory already running at ${baseUrl}`)
+  }
   process.exit(0)
 }
 
@@ -78,6 +91,7 @@ if (!isAllowedModelUrl(modelBaseUrl) || !isResponsesBaseUrl(modelBaseUrl)) {
   console.error('RESEARCH_MODEL_URL_MEDIUM must use HTTPS or loopback/private HTTP and be a Responses API base URL, not /responses, /chat/completions, or /completions')
   process.exit(1)
 }
+const modelRequestBaseUrl = await ensureModelGatewayBridge()
 
 mkdirSync(runtimeDir, { recursive: true })
 const outFd = openSync(resolve(runtimeDir, 'supermemory.out.log'), 'a')
@@ -87,7 +101,7 @@ const child = spawn(bin, [], {
   detached: true,
   stdio: ['ignore', outFd, errFd],
   env: supermemoryChildEnv({
-    OPENAI_BASE_URL: modelBaseUrl,
+    OPENAI_BASE_URL: modelRequestBaseUrl,
     OPENAI_MODEL: process.env.RESEARCH_MODEL_MEDIUM || 'gpt-5.6-luna',
     OPENAI_API_KEY: modelKey,
     SUPERMEMORY_DISABLE_TELEMETRY: '1',

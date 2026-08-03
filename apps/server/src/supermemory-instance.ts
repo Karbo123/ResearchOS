@@ -5,6 +5,7 @@ import { GLOBAL_POOL_KEY, poolForKey, projectEmbeddingSettings, projectsUsingPoo
 import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
 import { runtimeRoot } from './paths.js'
 import { supermemoryChildEnv } from './supermemory-env.js'
+import { ensureModelGatewayBridge } from './model-gateway-bridge.js'
 
 const DEFAULT_GLOBAL_PORT = 6767
 
@@ -18,6 +19,10 @@ function poolDataDir(poolKey: string): string {
 
 function pidPath(poolKey: string): string {
   return resolve(poolDir(poolKey), 'supermemory.pid')
+}
+
+function modelRoutePath(poolKey: string): string {
+  return resolve(poolDir(poolKey), 'model-route')
 }
 
 async function healthOk(port: number): Promise<boolean> {
@@ -47,7 +52,6 @@ export async function resolveProjectBaseUrl(projectId: string): Promise<string> 
 export async function ensurePoolInstance(poolKey: string): Promise<void> {
   const pool = poolForKey(poolKey)
   if (!pool || !pool.port) throw new Error(`embedding pool ${poolKey} is not registered`)
-  if (await healthOk(pool.port)) return
   const bin = process.env.SUPERMEMORY_SERVER_BIN
   if (!bin || !existsSync(bin)) {
     throw new Error('SUPERMEMORY_SERVER_BIN must be configured to start a Supermemory embedding pool instance')
@@ -66,6 +70,11 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
   if (!isAllowedModelUrl(modelBaseUrl) || !isResponsesBaseUrl(modelBaseUrl)) {
     throw new Error('RESEARCH_MODEL_URL_MEDIUM must use HTTPS or loopback/private HTTP and be a Responses API base URL before starting a Supermemory pool')
   }
+  const modelRequestBaseUrl = await ensureModelGatewayBridge()
+  const routePath = modelRoutePath(poolKey)
+  const routeMatches = existsSync(routePath) && readFileSync(routePath, 'utf8').trim() === modelRequestBaseUrl
+  if (await healthOk(pool.port) && routeMatches) return
+  if (await healthOk(pool.port)) await stopPoolInstance(poolKey)
   const outFd = openSync(resolve(poolDir(poolKey), 'supermemory.out.log'), 'a')
   const errFd = openSync(resolve(poolDir(poolKey), 'supermemory.err.log'), 'a')
   const child = spawn(bin, [], {
@@ -83,12 +92,13 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
       SUPERMEMORY_NO_OPEN: '1',
       SUPERMEMORY_NO_UPDATE_CHECK: '1',
       SUPERMEMORY_DISABLE_TELEMETRY: '1',
-      OPENAI_BASE_URL: modelBaseUrl,
+      OPENAI_BASE_URL: modelRequestBaseUrl,
       OPENAI_MODEL: process.env.RESEARCH_MODEL_MEDIUM || 'gpt-5.6-luna',
       OPENAI_API_KEY: process.env.RESEARCH_MODEL_KEY_MEDIUM || '',
     }),
   })
   writeFileSync(pidPath(poolKey), String(child.pid ?? ''))
+  writeFileSync(routePath, modelRequestBaseUrl)
   child.unref()
   const deadline = Date.now() + 240_000
   while (Date.now() < deadline) {
@@ -111,6 +121,7 @@ export async function stopPoolInstance(poolKey: string): Promise<void> {
     }
   }
   rmSync(pidFile, { force: true })
+  rmSync(modelRoutePath(poolKey), { force: true })
 }
 
 export async function projectInstanceStatus(projectId: string): Promise<{ mode: 'global' | 'custom'; port: number | null; running: boolean; shared_projects: number }> {

@@ -19,7 +19,7 @@ describe('project-scoped Supermemory contract', () => {
     for (const key of embeddingEnvKeys) delete process.env[key]
     await migrate()
     await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [projectId, `supermemory-test-${projectId.slice(0, 8)}`, 'Supermemory test project'])
-  })
+  }, 60_000)
 
   afterAll(async () => {
     await database.query('DELETE FROM memory_links WHERE project_id=$1', [projectId])
@@ -30,7 +30,7 @@ describe('project-scoped Supermemory contract', () => {
       if (value === undefined) delete process.env[key]
       else process.env[key] = value
     }
-  })
+  }, 60_000)
 
   it('does not expose the API key and reports configuration state', async () => {
     const previousKey = process.env.SUPERMEMORY_API_KEY

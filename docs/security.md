@@ -20,6 +20,8 @@ The supervisor provides fixed launch arguments, timeout, process-tree terminatio
 
 Experiment outputs are bound to the Idea version, Git commit, configuration fingerprint, source records, Artifact hashes, and Checkpoint. Fingerprint reconciliation and approved revisions recursively invalidate dependent material and record an audit event. Recovery checks project ownership, source-run success, current Idea and Git baselines, Artifact validity, path containment, symlink rejection, file existence, and SHA-256 equality before creating an `experiment_rerun` Proposal. Approval is required before queueing; invalidated or changed dependencies fail closed and cannot be treated as successful output.
 
+Reports have an additional read-time lineage gate. Each new report stores its project ID and source IDs in `source_snapshot`; the API rechecks ownership and source validity before returning it. Missing snapshots are visibly marked `legacy_unverified`, while scope mismatches, cross-project IDs, missing rows, and invalid Artifacts become `blocked` and their Markdown is withheld. A report is not an authority that can preserve deleted experiment results or bypass evidence and approval gates.
+
 ## Uploads and Evidence
 
 Uploads are size- and extension-limited and scanned with Windows Defender. On WSL2/Linux hosts the scanner is reached through the interop mount (`/mnt/c/ProgramData/.../MpCmdRun.exe`) with `wslpath -w` path conversion. Scanner absence, threat detection, timeout, or scan failure rejects the upload (fail closed). Uploaded material remains untrusted context and is not executed.
@@ -28,15 +30,17 @@ PDF evidence is downloaded only from a fixed HTTPS host allowlist, limited to 25
 
 Claim Review endpoints accept only evidence IDs owned by the current project, allow exactly one terminal decision, preserve the `page_quote_requires_claim_review` status, and write creation/decision audit events. Acceptance records human review of the selected quote; it does not establish a scientific conclusion.
 
+Reproduction output is also untrusted integration evidence. It remains bound to the paper, fixed commit, data/configuration/seed, raw metrics, and Artifact hashes; only deterministic TypeScript comparison may calculate differences. Agent-generated novelty or research-gap language remains a candidate until the user reviews the source-bound comparison, and no model output can promote it to a conclusion or write it into a paper without the applicable gate.
+
 ## Files and Secrets
 
 `.env`, `runtime/`, local databases, backup archives, model keys, cookies, and authentication material are ignored and must never be committed. Project patches cannot target `.git`, `.env`, credentials, or paths outside the project. Approved patches bind a Git commit and content hash; conflicts fail before commit and modified files are restored.
 
 ## Repository Acquisition
 
-Repository candidates accept only GitHub or GitLab HTTPS URLs without credentials, query strings, fragments, or custom ports. Verification must record a paper DOI or exact title match in repository citation files, a known SPDX license, and a 40-character commit. Download is blocked until the candidate is verified and a human approves the `dependency_install` Proposal.
+Repository candidates accept only GitHub or GitLab HTTPS URLs without credentials, query strings, fragments, or custom ports. Verification must record a paper DOI or exact title match in repository citation files, a known SPDX license, and a 40-character commit. Download is blocked until the candidate is verified and a human approves the `repository_download` Proposal.
 
-Archives are fetched only from the approved provider hosts, bounded by byte, entry, and uncompressed-size limits, and extracted with traversal, absolute-path, symbolic-link, and hard-link rejection. The original archive is SHA-256 hashed and stored as a controlled Artifact; the extracted path is constrained beneath the project Git workspace. No model output supplies a URL, path, commit, or Git command.
+Archives are fetched only from the approved provider hosts, bounded by byte, entry, and uncompressed-size limits, and extracted with traversal, absolute-path, symbolic-link, and hard-link rejection. The original archive is SHA-256 hashed and stored as a controlled source Artifact; the extracted path is constrained beneath `projects/<id>/experiment/reproductions/<reproduction-id>/source`, outside the method Git workspace. Dependency installation, execution, and result registration require separate `repository_dependency_install`, `repository_reproduction_run`, and `repository_artifact_write` approvals. Dependency files reject indexes, URLs, VCS, and local path installation; run requests reject shell, cwd, arbitrary paths, executables, and network fields. No model output supplies a URL, path, commit, or Git command.
 
 ## Network
 

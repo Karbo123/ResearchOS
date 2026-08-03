@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
-  archiveSha256, archiveUrl, citationMatch, parseRepositoryUrl, repositoryArchiveLimits, repositoryDirectoryName,
-  safeExtractArchive, validateArchiveByteSize, validateArchiveEntryBudget, validateDownloadGate,
+  archiveSha256, archiveUrl, citationMatch, discoverRepositoryCandidates, parseRepositoryUrl, repositoryArchiveLimits, repositoryDirectoryName,
+  repositoryReadinessFromFiles, safeExtractArchive, validateArchiveByteSize, validateArchiveEntryBudget, validateDownloadGate,
 } from '../src/repository-service.js'
 
 function tarEntry(name: string, content = '', type = '0'): Buffer {
@@ -44,9 +44,45 @@ describe('repository verification gates', () => {
     expect(citationMatch('A Study of Signals', null, 'unrelated project').matched).toBe(false)
   })
 
+  it('discovers only explicit GitHub/GitLab links from paper metadata', () => {
+    const discovered = discoverRepositoryCandidates({
+      source_url: 'https://doi.org/10.1000/example',
+      metadata: {
+        code_url: 'https://github.com/example/research-code.git',
+        links: ['https://gitlab.com/lab/reproduction', 'https://example.org/not-a-repository'],
+      },
+    })
+    expect(discovered).toEqual([
+      { canonical_url: 'https://github.com/example/research-code', source_type: 'paper_metadata', locator: 'metadata.code_url' },
+      { canonical_url: 'https://gitlab.com/lab/reproduction', source_type: 'paper_metadata', locator: 'metadata.links[0]' },
+    ])
+  })
+
+  it('keeps repository readiness unknown when the cited files do not declare requirements', () => {
+    const readiness = repositoryReadinessFromFiles(new Map([['README.md', '# Project\n\nA description only.']]))
+    expect(readiness.entrypoint_status).toBe('unknown')
+    expect(readiness.dependency_status).toBe('unknown')
+    expect(readiness.data_requirements_status).toBe('unknown')
+    expect(readiness.system_requirements_status).toBe('unknown')
+  })
+
   it('enforces known SPDX and fixed commit gates', () => {
     const commit = 'a'.repeat(40)
-    const repository = { verified_official: true, license_spdx: 'MIT', commit_or_tag: commit, metadata: { verification: { license_status: 'known_spdx', commit } } }
+    const repository = {
+      verified_official: true,
+      license_spdx: 'MIT',
+      commit_or_tag: commit,
+      metadata: {
+        verification: {
+          license_status: 'known_spdx',
+          commit,
+          readiness: {
+            entrypoint_status: 'declared', dependency_status: 'declared', data_requirements_status: 'declared',
+            system_requirements_status: 'declared', writable_directory_status: 'project_contained',
+          },
+        },
+      },
+    }
     expect(validateDownloadGate(repository, commit)).toBe(commit)
     expect(() => validateDownloadGate({ ...repository, license_spdx: 'Custom-License' }, commit)).toThrow()
     expect(() => validateDownloadGate(repository, 'b'.repeat(40))).toThrow()

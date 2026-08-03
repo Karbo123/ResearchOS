@@ -1,6 +1,7 @@
 import { database, one } from './database.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
 import { extractMaterialChunks, type MaterialFile } from './material-indexer.js'
+import { executeQueuedReproductionRun } from './reproduction-service.js'
 
 type Task = { id: string; project_id: string; kind: string; payload: Record<string, unknown>; attempts: number; max_attempts: number; idempotency_key: string }
 let working = false
@@ -42,6 +43,12 @@ async function runTask(task: Task): Promise<void> {
     await database.query('UPDATE uploaded_files SET metadata=$2 WHERE id=$1 AND project_id=$3', [uploadedFileId, { ...((file.metadata || {}) as Record<string, unknown>), semantic_index_status: 'active', semantic_index_task_id: task.id, semantic_indexed_items: indexed, parse_status: extracted.parse_status }, task.project_id])
     return
   }
+  if (task.kind === 'repository_reproduction_run') {
+    const runId = typeof task.payload.reproduction_run_id === 'string' ? task.payload.reproduction_run_id : ''
+    if (!runId) throw new Error('reproduction_run_id_missing')
+    await executeQueuedReproductionRun(runId)
+    return
+  }
   if (task.kind !== 'research_bootstrap') throw new Error('task_kind_not_allowlisted')
   const response = await fetch(`${(process.env.MASTRA_BASE_URL || 'http://127.0.0.1:4111').replace(/\/$/, '')}/internal/workflows/research-bootstrap`, {
     method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ project_id: task.project_id, task_id: task.id, idempotency_key: task.idempotency_key }), signal: AbortSignal.timeout(120_000),
@@ -75,6 +82,9 @@ async function tick(): Promise<void> {
 export async function recoverInterruptedWork(): Promise<void> {
   await database.query("UPDATE tasks SET status='retrying',leased_until=NULL,lease_token=NULL,next_attempt_at=NOW(),error='native_process_restarted' WHERE status='running'")
   await database.query("UPDATE experiments SET status='failed',error='native_process_restarted',finished_at=NOW() WHERE status IN ('queued','running')")
+  await database.query("UPDATE reproduction_runs SET status='failed',error='native_process_restarted',finished_at=NOW() WHERE status='running'")
+  await database.query("UPDATE related_work_recursive_runs SET status='cancelled',finished_at=NOW(),error='cancelled_after_restart' WHERE status='running' AND cancel_requested=TRUE")
+  await database.query("UPDATE related_work_recursive_runs SET status='queued',started_at=NULL,finished_at=NULL,error='native_process_restarted' WHERE status='running' AND cancel_requested=FALSE")
 }
 
 export function startTaskWorker(): NodeJS.Timeout {

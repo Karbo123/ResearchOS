@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { artifactsRoot } from '../src/paths.js'
+import { projectArtifactPath } from '../src/project-storage.js'
 import { database, migrate } from '../src/database.js'
 import { assertCheckpointRecoverable, fingerprintValue, invalidateFromNodes, registerLineageDependencies, reconcileProjectLineage } from '../src/impact-service.js'
 
@@ -78,8 +78,8 @@ describe('semantic lineage invalidation', () => {
     const experimentId = crypto.randomUUID()
     const artifactId = crypto.randomUUID()
     const checkpointId = crypto.randomUUID()
-    const runDirectory = join(artifactsRoot, 'runs', experimentId)
-    const artifactRelativePath = `runs/${experimentId}/metrics.json`
+    const runDirectory = projectArtifactPath(projectId, `runs/${experimentId}`)
+    const artifactRelativePath = `artifacts/runs/${experimentId}/metrics.json`
     const artifactPath = join(runDirectory, 'metrics.json')
     try {
       mkdirSync(runDirectory, { recursive: true })
