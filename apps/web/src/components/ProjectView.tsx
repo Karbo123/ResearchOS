@@ -4,7 +4,7 @@ import type { ChatMessage, ConfirmRequest, ProjectDetail, ResearchArea, TabId } 
 import { ProjectChat } from './ProjectChat'
 import { OverviewTab } from './tabs/OverviewTab'
 import { LiteratureTab } from './tabs/LiteratureTab'
-import { PaperTab } from './tabs/PaperTab'
+import { PaperWorkspace } from './tabs/PaperWorkspace'
 import { ApprovalsTab } from './tabs/ApprovalsTab'
 import { ReportsTab } from './tabs/ReportsTab'
 import { WorkflowStageTab } from './tabs/WorkflowStageTab'
@@ -206,7 +206,7 @@ export function ProjectView({
           {activeTab === 'visualization' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}
           {activeTab === 'method' || activeTab === 'reproduction' ? <ExperimentWorkspace project={project} mode={activeTab === 'method' ? 'method' : 'reproduction'} onNavigate={onTabChange} onRefresh={onRefresh} showToast={showToast} /> : null}
           {['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'].includes(activeTab)
-            ? <PaperTab project={project} tab={activeTab} onNavigate={onTabChange} onRefresh={onRefresh} showToast={showToast} />
+            ? <PaperWorkspace project={project} tab={activeTab} onNavigate={onTabChange} onRefresh={onRefresh} showToast={showToast} />
             : null}
         </div>
         <button

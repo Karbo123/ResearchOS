@@ -4,11 +4,46 @@ import { database } from './database.js'
 import { ApiError } from './http.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot } from './paths.js'
-import { projectDetail } from './project-service.js'
+import { projectDetail, requireProject } from './project-service.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
+
+const PAPER_SECTION_HEADINGS: Record<string, string> = {
+  introduction: 'Introduction',
+  paper_related_work: 'Related Work',
+  paper_method: 'Method',
+  paper_experiments: 'Experiments',
+  conclusion: 'Conclusion',
+}
 
 function latex(value: unknown): string {
   return String(value ?? '').replace(/([#$%&_{}])/g, '\\$1').replaceAll('~', '\\textasciitilde{}').replaceAll('^', '\\textasciicircum{}')
+}
+
+function sectionIdForHeading(heading: string): string | null {
+  const value = heading.toLowerCase()
+  if (value.includes('introduction') || value.includes('引言')) return 'introduction'
+  if (value.includes('related') || value.includes('相关工作')) return 'paper_related_work'
+  if (value.includes('method') || value.includes('方法')) return 'paper_method'
+  if (value.includes('experiment') || value.includes('实验')) return 'paper_experiments'
+  if (value.includes('conclusion') || value.includes('结论')) return 'conclusion'
+  return null
+}
+
+function replacePaperSection(source: string, sectionId: string, content: string): string {
+  const matches = [...source.matchAll(/\\section\*?\{([^}]+)\}/g)]
+  for (let index = 0; index < matches.length; index += 1) {
+    const match = matches[index]!
+    if (sectionIdForHeading(match[1]!) !== sectionId) continue
+    const start = match.index! + match[0].length
+    const end = matches[index + 1]?.index ?? source.length
+    return `${source.slice(0, start)}\n${content}\n${source.slice(end)}`
+  }
+  const heading = PAPER_SECTION_HEADINGS[sectionId] || sectionId
+  const endMarker = source.lastIndexOf('\\end{document}')
+  if (endMarker >= 0) {
+    return `${source.slice(0, endMarker)}\\section{${heading}}\n${content}\n${source.slice(endMarker)}`
+  }
+  return `${source}\n\\section{${heading}}\n${content}\n`
 }
 
 export async function createPaperDraftProposal(projectId: string) {
@@ -85,5 +120,25 @@ export async function createCompileProposal(projectId: string) {
   const proposalId = crypto.randomUUID()
   const sourceSha = createHash('sha256').update(readFileSync(path)).digest('hex')
   await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', 'Compile the reviewed LaTeX source', 'Compile paper/main.tex', { experiment_type: 'compile_latex', execution_backend: 'linux', config: {}, random_seeds: [0], source_sha256: sourceSha, base_git_commit: gitCommit(projectId) }])
+  return { proposal_id: proposalId, status: 'pending' }
+}
+
+export async function createPaperSectionProposal(projectId: string, sectionId: string, content: string) {
+  await requireProject(projectId)
+  const target = pathInside(projectsRoot, projectId, 'paper', 'main.tex')
+  if (!existsSync(target)) throw new ApiError(422, 'paper_source_missing', '项目尚无 paper/main.tex。')
+  const existing = readFileSync(target)
+  const next = replacePaperSection(existing.toString('utf8'), sectionId, content)
+  const proposalId = crypto.randomUUID()
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [
+    proposalId, projectId, 'code_patch', 'Edit a paper section through the approval gate', `Edit paper section ${sectionId}`,
+    `--- paper/main.tex\n+++ paper/main.tex\n+ Section ${sectionId} revision`,
+    {
+      patch_kind: 'latex',
+      base_git_commit: gitCommit(projectId),
+      operations: [{ action: 'replace', path: 'paper/main.tex', content: next, expected_sha256: createHash('sha256').update(existing).digest('hex') }],
+      paper_section: sectionId,
+    },
+  ])
   return { proposal_id: proposalId, status: 'pending' }
 }

@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react29 = __toESM(require_react(), 1);
+  var import_react30 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -13998,6 +13998,59 @@
     "paper.proposalCompileText": "\u6279\u51C6\u540E\u624D\u4F1A\u4FEE\u6539\u9879\u76EE\u4E2D\u7684 paper/main.tex\uFF0C\u5E76\u7531 Linux latexmk \u7F16\u8BD1\u8FDB\u7A0B\u751F\u6210\u7F16\u8BD1\u4EA7\u7269\u3002",
     "paper.referenceRecords": "\u8BBA\u6587\u53C2\u8003\u8BB0\u5F55",
     "paper.noReferences": "\u5C1A\u65E0\u53EF\u5F15\u7528\u7684\u6587\u732E\u8BB0\u5F55\u3002\u8BF7\u5148\u5B8C\u6210\u76F8\u5173\u5DE5\u4F5C\u8C03\u7814\u3002",
+    "paperWorkspace.title": "\u5B66\u672F\u8BBA\u6587\u64B0\u5199\u5DE5\u4F5C\u533A",
+    "paperWorkspace.hint": "\u6309\u7AE0\u8282\u7F16\u8F91\u82F1\u6587\u7A3F\u4EF6\uFF0C\u4E2D\u6587\u7FFB\u8BD1\u4EC5\u7528\u4E8E\u754C\u9762\u7406\u89E3\uFF0C\u4E0D\u8FDB\u5165 PDF\uFF1B\u4EFB\u4F55\u5199\u5165\u4E0E\u7F16\u8BD1\u90FD\u5FC5\u987B\u5148\u8FDB\u5165\u5BA1\u6279\u3002",
+    "paperWorkspace.sections": "\u7AE0\u8282\u4E0E\u7A3F\u4EF6",
+    "paperWorkspace.sectionCount": "{count} \u4E2A\u7AE0\u8282",
+    "paperWorkspace.citationMeta": "{count} \u6761\u5F15\u7528",
+    "paperWorkspace.noCitationMeta": "\u6682\u65E0\u5F15\u7528",
+    "paperWorkspace.compile": "\u7F16\u8BD1\u4E0E PDF",
+    "paperWorkspace.noCompile": "\u5C1A\u65E0\u7F16\u8BD1\u8FD0\u884C",
+    "paperWorkspace.compileMeta": "{runs} \u6B21\u8FD0\u884C \xB7 {succeeded} \u6B21\u6210\u529F",
+    "paperWorkspace.pdfMeta": "{count} \u4E2A PDF \u4EA7\u7269",
+    "paperWorkspace.emptyWorkspace": "\u8BBA\u6587\u5DE5\u4F5C\u533A\u6682\u4E0D\u53EF\u7528\u3002",
+    "paperWorkspace.editorEyebrow": "\u82F1\u6587\u7A3F\u4EF6\u4E0E\u4E2D\u6587\u53C2\u8003",
+    "paperWorkspace.sentenceCount": "{count} \u4E2A\u53E5\u5B50",
+    "paperWorkspace.statusReady": "\u5DF2\u5C31\u7EEA",
+    "paperWorkspace.statusDraft": "\u8349\u7A3F",
+    "paperWorkspace.statusMissing": "\u7F3A\u5931",
+    "paperWorkspace.manuscript": "\u82F1\u6587\u7A3F\u4EF6",
+    "paperWorkspace.translation": "\u4E2D\u6587\u7FFB\u8BD1",
+    "paperWorkspace.translationNote": "\u4EC5\u754C\u9762\u53C2\u8003\uFF0C\u4E0D\u8FDB\u5165 PDF",
+    "paperWorkspace.translationPending": "\u7FFB\u8BD1\u5F85\u751F\u6210",
+    "paperWorkspace.translationMissing": "\u672C\u8282\u5C1A\u65E0\u9010\u53E5\u4E2D\u8BD1\u3002",
+    "paperWorkspace.missingManuscript": "\u672C\u8282\u8FD8\u6CA1\u6709\u53EF\u7F16\u8F91\u7684\u82F1\u6587\u7A3F\u4EF6\u3002",
+    "paperWorkspace.rawManuscript": "\u539F\u59CB\u7A3F\u4EF6",
+    "paperWorkspace.citations": "\u5F15\u7528\u4E0E\u4E0A\u6E38\u6765\u6E90",
+    "paperWorkspace.citationCount": "{count} \u6761\u5F15\u7528",
+    "paperWorkspace.noCitations": "\u672C\u8282\u8FD8\u6CA1\u6709\u5F15\u7528\u3002",
+    "paperWorkspace.citationUnresolved": "\u5F15\u7528\u5C1A\u672A\u5728\u53C2\u8003\u6587\u732E\u4E2D\u89E3\u6790",
+    "paperWorkspace.confirmedSource": "\u5DF2\u786E\u8BA4\u6765\u6E90",
+    "paperWorkspace.projectSource": "\u9879\u76EE\u6765\u6E90",
+    "paperWorkspace.unresolvedSource": "\u672A\u89E3\u6790\u6765\u6E90",
+    "paperWorkspace.figures": "\u56FE\u8868\u5F15\u7528",
+    "paperWorkspace.figureCount": "{count} \u4E2A\u5F15\u7528",
+    "paperWorkspace.figureRefHint": "LaTeX \u4E2D\u7684\u56FE\u8868\u5F15\u7528\uFF0C\u5B9E\u9645\u63D2\u5165\u4F4D\u7F6E\u7531\u7A3F\u4EF6\u63A7\u5236\u3002",
+    "paperWorkspace.noFigures": "\u672C\u8282\u8FD8\u6CA1\u6709\u56FE\u8868\u5F15\u7528\u3002",
+    "paperWorkspace.sourceFile": "\u8BBA\u6587\u6E90\u6587\u4EF6",
+    "paperWorkspace.sourcePresent": "\u6E90\u6587\u4EF6\u5B58\u5728",
+    "paperWorkspace.sourceMissing": "\u6E90\u6587\u4EF6\u7F3A\u5931",
+    "paperWorkspace.sourceCommit": "\u6E90\u6587\u4EF6 Git \u63D0\u4EA4",
+    "paperWorkspace.sourceDirty": "\u6709\u672A\u63D0\u4EA4\u4FEE\u6539",
+    "paperWorkspace.sourceClean": "\u5DE5\u4F5C\u533A\u5E72\u51C0",
+    "paperWorkspace.dirty": "\u672A\u63D0\u4EA4",
+    "paperWorkspace.clean": "\u5E72\u51C0",
+    "paperWorkspace.compileRuns": "\u7F16\u8BD1\u8FD0\u884C",
+    "paperWorkspace.noPdf": "\u8FD8\u6CA1\u6709\u6210\u529F\u7F16\u8BD1\u7684 PDF\u3002\u8BF7\u5148\u751F\u6210\u8349\u7A3F\u5E76\u901A\u8FC7\u7F16\u8BD1\u5BA1\u6279\u3002",
+    "paperWorkspace.openPdf": "\u6253\u5F00 PDF",
+    "paperWorkspace.createDraft": "\u751F\u6210\u8BBA\u6587\u8349\u7A3F",
+    "paperWorkspace.createCompile": "\u521B\u5EFA\u7F16\u8BD1 Proposal",
+    "paperWorkspace.edit": "\u7F16\u8F91\u672C\u8282",
+    "paperWorkspace.saveRevision": "\u4FDD\u5B58\u4FEE\u8BA2 Proposal",
+    "paperWorkspace.cancel": "\u53D6\u6D88",
+    "paperWorkspace.editHint": "\u7F16\u8F91\u82F1\u6587\u7A3F\u4EF6\uFF08LaTeX \u7247\u6BB5\uFF09",
+    "paperWorkspace.editPlaceholder": "\u5728\u6B64\u8F93\u5165\u672C\u8282\u82F1\u6587\u7A3F\u4EF6\u5185\u5BB9\u2026\u2026\u4FDD\u5B58\u540E\u4F1A\u5148\u521B\u5EFA\u5F85\u5BA1\u6279 Proposal\uFF0C\u6279\u51C6\u540E\u624D\u5199\u5165 paper/main.tex\u3002",
+    "paperWorkspace.saveToast": "\u8BBA\u6587\u7AE0\u8282\u4FEE\u8BA2 Proposal {id} \u5F85\u5BA1\u6279",
     "comparison.reason": "\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "\u9879\u76EE\u8BBA\u6587",
@@ -15235,6 +15288,59 @@
     "paper.proposalCompileText": "\u6838\u51C6\u5F8C\u624D\u6703\u4FEE\u6539\u5C08\u6848\u4E2D\u7684 paper/main.tex\uFF0C\u4E26\u7531 Linux latexmk \u7DE8\u8B6F\u7A0B\u5E8F\u7522\u751F\u7DE8\u8B6F\u7522\u7269\u3002",
     "paper.referenceRecords": "\u8AD6\u6587\u53C3\u8003\u8A18\u9304",
     "paper.noReferences": "\u5C1A\u7121\u53EF\u5F15\u7528\u7684\u6587\u737B\u8A18\u9304\u3002\u8ACB\u5148\u5B8C\u6210\u76F8\u95DC\u5DE5\u4F5C\u8ABF\u7814\u3002",
+    "paperWorkspace.title": "\u5B78\u8853\u8AD6\u6587\u64B0\u5BEB\u5DE5\u4F5C\u5340",
+    "paperWorkspace.hint": "\u6309\u7AE0\u7BC0\u7DE8\u8F2F\u82F1\u6587\u7A3F\u4EF6\uFF0C\u4E2D\u6587\u7FFB\u8B6F\u50C5\u7528\u65BC\u4ECB\u9762\u7406\u89E3\uFF0C\u4E0D\u9032\u5165 PDF\uFF1B\u4EFB\u4F55\u5BEB\u5165\u8207\u7DE8\u8B6F\u90FD\u5FC5\u9808\u5148\u9032\u5165\u5BE9\u6279\u3002",
+    "paperWorkspace.sections": "\u7AE0\u7BC0\u8207\u7A3F\u4EF6",
+    "paperWorkspace.sectionCount": "{count} \u500B\u7AE0\u7BC0",
+    "paperWorkspace.citationMeta": "{count} \u689D\u5F15\u7528",
+    "paperWorkspace.noCitationMeta": "\u66AB\u7121\u5F15\u7528",
+    "paperWorkspace.compile": "\u7DE8\u8B6F\u8207 PDF",
+    "paperWorkspace.noCompile": "\u5C1A\u7121\u7DE8\u8B6F\u57F7\u884C",
+    "paperWorkspace.compileMeta": "{runs} \u6B21\u57F7\u884C \xB7 {succeeded} \u6B21\u6210\u529F",
+    "paperWorkspace.pdfMeta": "{count} \u500B PDF \u7522\u7269",
+    "paperWorkspace.emptyWorkspace": "\u8AD6\u6587\u5DE5\u4F5C\u5340\u66AB\u4E0D\u53EF\u7528\u3002",
+    "paperWorkspace.editorEyebrow": "\u82F1\u6587\u7A3F\u4EF6\u8207\u4E2D\u6587\u53C3\u8003",
+    "paperWorkspace.sentenceCount": "{count} \u500B\u53E5\u5B50",
+    "paperWorkspace.statusReady": "\u5DF2\u5C31\u7DD2",
+    "paperWorkspace.statusDraft": "\u8349\u7A3F",
+    "paperWorkspace.statusMissing": "\u7F3A\u5931",
+    "paperWorkspace.manuscript": "\u82F1\u6587\u7A3F\u4EF6",
+    "paperWorkspace.translation": "\u4E2D\u6587\u7FFB\u8B6F",
+    "paperWorkspace.translationNote": "\u50C5\u4ECB\u9762\u53C3\u8003\uFF0C\u4E0D\u9032\u5165 PDF",
+    "paperWorkspace.translationPending": "\u7FFB\u8B6F\u5F85\u7522\u751F",
+    "paperWorkspace.translationMissing": "\u672C\u7BC0\u5C1A\u7121\u9010\u53E5\u4E2D\u8B6F\u3002",
+    "paperWorkspace.missingManuscript": "\u672C\u7BC0\u9084\u6C92\u6709\u53EF\u7DE8\u8F2F\u7684\u82F1\u6587\u7A3F\u4EF6\u3002",
+    "paperWorkspace.rawManuscript": "\u539F\u59CB\u7A3F\u4EF6",
+    "paperWorkspace.citations": "\u5F15\u7528\u8207\u4E0A\u6E38\u4F86\u6E90",
+    "paperWorkspace.citationCount": "{count} \u689D\u5F15\u7528",
+    "paperWorkspace.noCitations": "\u672C\u7BC0\u9084\u6C92\u6709\u5F15\u7528\u3002",
+    "paperWorkspace.citationUnresolved": "\u5F15\u7528\u5C1A\u672A\u5728\u53C3\u8003\u6587\u737B\u4E2D\u89E3\u6790",
+    "paperWorkspace.confirmedSource": "\u5DF2\u78BA\u8A8D\u4F86\u6E90",
+    "paperWorkspace.projectSource": "\u5C08\u6848\u4F86\u6E90",
+    "paperWorkspace.unresolvedSource": "\u672A\u89E3\u6790\u4F86\u6E90",
+    "paperWorkspace.figures": "\u5716\u8868\u5F15\u7528",
+    "paperWorkspace.figureCount": "{count} \u500B\u5F15\u7528",
+    "paperWorkspace.figureRefHint": "LaTeX \u4E2D\u7684\u5716\u8868\u5F15\u7528\uFF0C\u5BE6\u969B\u63D2\u5165\u4F4D\u7F6E\u7531\u7A3F\u4EF6\u63A7\u5236\u3002",
+    "paperWorkspace.noFigures": "\u672C\u7BC0\u9084\u6C92\u6709\u5716\u8868\u5F15\u7528\u3002",
+    "paperWorkspace.sourceFile": "\u8AD6\u6587\u4F86\u6E90\u6A94\u6848",
+    "paperWorkspace.sourcePresent": "\u4F86\u6E90\u6A94\u6848\u5B58\u5728",
+    "paperWorkspace.sourceMissing": "\u4F86\u6E90\u6A94\u6848\u7F3A\u5931",
+    "paperWorkspace.sourceCommit": "\u4F86\u6E90\u6A94\u6848 Git \u63D0\u4EA4",
+    "paperWorkspace.sourceDirty": "\u6709\u672A\u63D0\u4EA4\u4FEE\u6539",
+    "paperWorkspace.sourceClean": "\u5DE5\u4F5C\u5340\u4E7E\u6DE8",
+    "paperWorkspace.dirty": "\u672A\u63D0\u4EA4",
+    "paperWorkspace.clean": "\u4E7E\u6DE8",
+    "paperWorkspace.compileRuns": "\u7DE8\u8B6F\u57F7\u884C",
+    "paperWorkspace.noPdf": "\u9084\u6C92\u6709\u6210\u529F\u7DE8\u8B6F\u7684 PDF\u3002\u8ACB\u5148\u7522\u751F\u8349\u7A3F\u4E26\u901A\u904E\u7DE8\u8B6F\u5BE9\u6279\u3002",
+    "paperWorkspace.openPdf": "\u958B\u555F PDF",
+    "paperWorkspace.createDraft": "\u7522\u751F\u8AD6\u6587\u8349\u7A3F",
+    "paperWorkspace.createCompile": "\u5EFA\u7ACB\u7DE8\u8B6F Proposal",
+    "paperWorkspace.edit": "\u7DE8\u8F2F\u672C\u7BC0",
+    "paperWorkspace.saveRevision": "\u5132\u5B58\u4FEE\u8A02 Proposal",
+    "paperWorkspace.cancel": "\u53D6\u6D88",
+    "paperWorkspace.editHint": "\u7DE8\u8F2F\u82F1\u6587\u7A3F\u4EF6\uFF08LaTeX \u7247\u6BB5\uFF09",
+    "paperWorkspace.editPlaceholder": "\u5728\u6B64\u8F38\u5165\u672C\u7BC0\u82F1\u6587\u7A3F\u4EF6\u5167\u5BB9\u2026\u2026\u5132\u5B58\u5F8C\u6703\u5148\u5EFA\u7ACB\u5F85\u5BE9\u6279 Proposal\uFF0C\u6838\u51C6\u5F8C\u624D\u5BEB\u5165 paper/main.tex\u3002",
+    "paperWorkspace.saveToast": "\u8AD6\u6587\u7AE0\u7BC0\u4FEE\u8A02 Proposal {id} \u5F85\u5BE9\u6279",
     "comparison.reason": "\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "\u5C08\u6848\u8AD6\u6587",
@@ -16472,6 +16578,59 @@
     "paper.proposalCompileText": "Only after approval is project paper/main.tex modified, and the Linux latexmk compilation process generates compilation artifacts.",
     "paper.referenceRecords": "Paper reference records",
     "paper.noReferences": "No citable literature records yet. Complete related-work research first.",
+    "paperWorkspace.title": "Academic paper writing workspace",
+    "paperWorkspace.hint": "Edit the English manuscript section by section; Chinese translations are for interface understanding only and never enter the PDF. Any write or compilation must enter approval first.",
+    "paperWorkspace.sections": "Sections and manuscript",
+    "paperWorkspace.sectionCount": "{count} sections",
+    "paperWorkspace.citationMeta": "{count} citations",
+    "paperWorkspace.noCitationMeta": "No citations yet",
+    "paperWorkspace.compile": "Compilation and PDF",
+    "paperWorkspace.noCompile": "No compilation runs yet",
+    "paperWorkspace.compileMeta": "{runs} runs \xB7 {succeeded} succeeded",
+    "paperWorkspace.pdfMeta": "{count} PDF artifacts",
+    "paperWorkspace.emptyWorkspace": "Paper workspace is temporarily unavailable.",
+    "paperWorkspace.editorEyebrow": "English manuscript and Chinese reference",
+    "paperWorkspace.sentenceCount": "{count} sentences",
+    "paperWorkspace.statusReady": "Ready",
+    "paperWorkspace.statusDraft": "Draft",
+    "paperWorkspace.statusMissing": "Missing",
+    "paperWorkspace.manuscript": "English manuscript",
+    "paperWorkspace.translation": "Chinese translation",
+    "paperWorkspace.translationNote": "Interface reference only, never enters PDF",
+    "paperWorkspace.translationPending": "Translation pending",
+    "paperWorkspace.translationMissing": "No sentence-level translation for this section yet.",
+    "paperWorkspace.missingManuscript": "No editable English manuscript for this section yet.",
+    "paperWorkspace.rawManuscript": "Raw manuscript",
+    "paperWorkspace.citations": "Citations and upstream sources",
+    "paperWorkspace.citationCount": "{count} citations",
+    "paperWorkspace.noCitations": "No citations in this section yet.",
+    "paperWorkspace.citationUnresolved": "Citation not yet resolved in the bibliography",
+    "paperWorkspace.confirmedSource": "Confirmed source",
+    "paperWorkspace.projectSource": "Project source",
+    "paperWorkspace.unresolvedSource": "Unresolved source",
+    "paperWorkspace.figures": "Figure references",
+    "paperWorkspace.figureCount": "{count} references",
+    "paperWorkspace.figureRefHint": "LaTeX figure references; the actual insertion position is controlled by the manuscript.",
+    "paperWorkspace.noFigures": "No figure references in this section yet.",
+    "paperWorkspace.sourceFile": "Paper source file",
+    "paperWorkspace.sourcePresent": "Source file present",
+    "paperWorkspace.sourceMissing": "Source file missing",
+    "paperWorkspace.sourceCommit": "Source file Git commit",
+    "paperWorkspace.sourceDirty": "Uncommitted changes",
+    "paperWorkspace.sourceClean": "Clean working tree",
+    "paperWorkspace.dirty": "Dirty",
+    "paperWorkspace.clean": "Clean",
+    "paperWorkspace.compileRuns": "Compilation runs",
+    "paperWorkspace.noPdf": "No successfully compiled PDF yet. Create a draft and complete a compilation approval first.",
+    "paperWorkspace.openPdf": "Open PDF",
+    "paperWorkspace.createDraft": "Create paper draft",
+    "paperWorkspace.createCompile": "Create compilation Proposal",
+    "paperWorkspace.edit": "Edit this section",
+    "paperWorkspace.saveRevision": "Save revision Proposal",
+    "paperWorkspace.cancel": "Cancel",
+    "paperWorkspace.editHint": "Edit the English manuscript (LaTeX fragment)",
+    "paperWorkspace.editPlaceholder": "Type this section's English manuscript here. Saving creates a pending Proposal; it is written to paper/main.tex only after approval.",
+    "paperWorkspace.saveToast": "Paper section revision Proposal {id} pending approval",
     "comparison.reason": "Compare paper-reported metrics with real reproduction output at a fixed commit",
     "comparison.definitionsPlaceholder": 'e.g. {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "Project Paper",
@@ -17709,6 +17868,59 @@
     "paper.proposalCompileText": "Solo tras la aprobaci\xF3n se modifica paper/main.tex y el proceso de compilaci\xF3n Linux latexmk genera los artefactos.",
     "paper.referenceRecords": "Registros de referencia del art\xEDculo",
     "paper.noReferences": "A\xFAn no hay registros de literatura citables. Completa primero la investigaci\xF3n de trabajo relacionado.",
+    "paperWorkspace.title": "Espacio de redacci\xF3n de art\xEDculos acad\xE9micos",
+    "paperWorkspace.hint": "Edita el manuscrito en ingl\xE9s por secciones; las traducciones al chino son solo de referencia para la interfaz y nunca entran en el PDF. Cualquier escritura o compilaci\xF3n debe pasar primero por aprobaci\xF3n.",
+    "paperWorkspace.sections": "Secciones y manuscrito",
+    "paperWorkspace.sectionCount": "{count} secciones",
+    "paperWorkspace.citationMeta": "{count} citas",
+    "paperWorkspace.noCitationMeta": "Sin citas todav\xEDa",
+    "paperWorkspace.compile": "Compilaci\xF3n y PDF",
+    "paperWorkspace.noCompile": "Sin ejecuciones de compilaci\xF3n todav\xEDa",
+    "paperWorkspace.compileMeta": "{runs} ejecuciones \xB7 {succeeded} correctas",
+    "paperWorkspace.pdfMeta": "{count} artefactos PDF",
+    "paperWorkspace.emptyWorkspace": "El espacio del art\xEDculo no est\xE1 disponible temporalmente.",
+    "paperWorkspace.editorEyebrow": "Manuscrito en ingl\xE9s y referencia en chino",
+    "paperWorkspace.sentenceCount": "{count} frases",
+    "paperWorkspace.statusReady": "Listo",
+    "paperWorkspace.statusDraft": "Borrador",
+    "paperWorkspace.statusMissing": "Falta",
+    "paperWorkspace.manuscript": "Manuscrito en ingl\xE9s",
+    "paperWorkspace.translation": "Traducci\xF3n al chino",
+    "paperWorkspace.translationNote": "Solo referencia de interfaz, nunca entra en el PDF",
+    "paperWorkspace.translationPending": "Traducci\xF3n pendiente",
+    "paperWorkspace.translationMissing": "A\xFAn no hay traducci\xF3n por frase en esta secci\xF3n.",
+    "paperWorkspace.missingManuscript": "A\xFAn no hay manuscrito editable en esta secci\xF3n.",
+    "paperWorkspace.rawManuscript": "Manuscrito original",
+    "paperWorkspace.citations": "Citas y fuentes upstream",
+    "paperWorkspace.citationCount": "{count} citas",
+    "paperWorkspace.noCitations": "A\xFAn no hay citas en esta secci\xF3n.",
+    "paperWorkspace.citationUnresolved": "La cita a\xFAn no se resuelve en la bibliograf\xEDa",
+    "paperWorkspace.confirmedSource": "Fuente confirmada",
+    "paperWorkspace.projectSource": "Fuente del proyecto",
+    "paperWorkspace.unresolvedSource": "Fuente sin resolver",
+    "paperWorkspace.figures": "Referencias a figuras",
+    "paperWorkspace.figureCount": "{count} referencias",
+    "paperWorkspace.figureRefHint": "Referencias LaTeX a figuras; la posici\xF3n real la controla el manuscrito.",
+    "paperWorkspace.noFigures": "A\xFAn no hay referencias a figuras en esta secci\xF3n.",
+    "paperWorkspace.sourceFile": "Archivo fuente del art\xEDculo",
+    "paperWorkspace.sourcePresent": "Archivo fuente presente",
+    "paperWorkspace.sourceMissing": "Falta el archivo fuente",
+    "paperWorkspace.sourceCommit": "Commit Git del archivo fuente",
+    "paperWorkspace.sourceDirty": "Cambios sin confirmar",
+    "paperWorkspace.sourceClean": "\xC1rbol de trabajo limpio",
+    "paperWorkspace.dirty": "Sucio",
+    "paperWorkspace.clean": "Limpio",
+    "paperWorkspace.compileRuns": "Ejecuciones de compilaci\xF3n",
+    "paperWorkspace.noPdf": "A\xFAn no hay un PDF compilado correctamente. Crea un borrador y completa primero una aprobaci\xF3n de compilaci\xF3n.",
+    "paperWorkspace.openPdf": "Abrir PDF",
+    "paperWorkspace.createDraft": "Crear borrador del art\xEDculo",
+    "paperWorkspace.createCompile": "Crear Propuesta de compilaci\xF3n",
+    "paperWorkspace.edit": "Editar esta secci\xF3n",
+    "paperWorkspace.saveRevision": "Guardar Propuesta de revisi\xF3n",
+    "paperWorkspace.cancel": "Cancelar",
+    "paperWorkspace.editHint": "Editar el manuscrito en ingl\xE9s (fragmento LaTeX)",
+    "paperWorkspace.editPlaceholder": "Escribe aqu\xED el manuscrito en ingl\xE9s de esta secci\xF3n. Guardar crea una Propuesta pendiente; se escribe en paper/main.tex solo tras la aprobaci\xF3n.",
+    "paperWorkspace.saveToast": "Propuesta de revisi\xF3n de secci\xF3n {id} pendiente de aprobaci\xF3n",
     "comparison.reason": "Comparar las m\xE9tricas del art\xEDculo con la salida real de reproducci\xF3n en un commit fijo",
     "comparison.definitionsPlaceholder": 'p. ej. {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "Paper del proyecto",
@@ -18368,38 +18580,30 @@
   ];
   var Library = createLucideIcon("library", __iconNode34);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode35 = [
-    ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
-    ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
-    ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
-  ];
-  var Link2 = createLucideIcon("link-2", __iconNode35);
-
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode36 = [
+  var __iconNode35 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode36);
+  var ListChecks = createLucideIcon("list-checks", __iconNode35);
 
   // ../../node_modules/lucide-react/dist/esm/icons/loader-circle.mjs
-  var __iconNode37 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-  var LoaderCircle = createLucideIcon("loader-circle", __iconNode37);
+  var __iconNode36 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+  var LoaderCircle = createLucideIcon("loader-circle", __iconNode36);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode38 = [
+  var __iconNode37 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode38);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode37);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode39 = [
+  var __iconNode38 = [
     [
       "path",
       {
@@ -18408,10 +18612,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode39);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode40 = [
+  var __iconNode39 = [
     [
       "path",
       {
@@ -18420,28 +18624,28 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode40);
+  var MessageSquare = createLucideIcon("message-square", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/mic.mjs
-  var __iconNode41 = [
+  var __iconNode40 = [
     ["path", { d: "M12 19v3", key: "npa21l" }],
     ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
     ["rect", { x: "9", y: "2", width: "6", height: "13", rx: "3", key: "s6n7sd" }]
   ];
-  var Mic = createLucideIcon("mic", __iconNode41);
+  var Mic = createLucideIcon("mic", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode42 = [
+  var __iconNode41 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode42);
+  var Network = createLucideIcon("network", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode43 = [
+  var __iconNode42 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -18454,10 +18658,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode43);
+  var PackageCheck = createLucideIcon("package-check", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode44 = [
+  var __iconNode43 = [
     [
       "path",
       {
@@ -18470,17 +18674,17 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode44);
+  var Palette = createLucideIcon("palette", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode45 = [
+  var __iconNode44 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode45);
+  var Pause = createLucideIcon("pause", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin-off.mjs
-  var __iconNode46 = [
+  var __iconNode45 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     ["path", { d: "M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89", key: "znwnzq" }],
     ["path", { d: "m2 2 20 20", key: "1ooewy" }],
@@ -18492,10 +18696,10 @@
       }
     ]
   ];
-  var PinOff = createLucideIcon("pin-off", __iconNode46);
+  var PinOff = createLucideIcon("pin-off", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin.mjs
-  var __iconNode47 = [
+  var __iconNode46 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     [
       "path",
@@ -18505,10 +18709,10 @@
       }
     ]
   ];
-  var Pin = createLucideIcon("pin", __iconNode47);
+  var Pin = createLucideIcon("pin", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode48 = [
+  var __iconNode47 = [
     [
       "path",
       {
@@ -18517,17 +18721,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode48);
+  var Play = createLucideIcon("play", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode49 = [
+  var __iconNode48 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode49);
+  var Plus = createLucideIcon("plus", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode50 = [
+  var __iconNode49 = [
     [
       "path",
       {
@@ -18543,26 +18747,26 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode50);
+  var Quote = createLucideIcon("quote", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode51 = [
+  var __iconNode50 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode51);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode52 = [
+  var __iconNode51 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode52);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode53 = [
+  var __iconNode52 = [
     [
       "path",
       {
@@ -18573,10 +18777,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode53);
+  var Save = createLucideIcon("save", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode54 = [
+  var __iconNode53 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -18585,7 +18789,22 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode54);
+  var ScanText = createLucideIcon("scan-text", __iconNode53);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/scroll-text.mjs
+  var __iconNode54 = [
+    ["path", { d: "M15 12h-5", key: "r7krc0" }],
+    ["path", { d: "M15 8h-5", key: "1khuty" }],
+    ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
+    [
+      "path",
+      {
+        d: "M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3",
+        key: "1ph1d7"
+      }
+    ]
+  ];
+  var ScrollText = createLucideIcon("scroll-text", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
   var __iconNode55 = [
@@ -19697,7 +19916,7 @@
   }
 
   // src/components/ProjectView.tsx
-  var import_react18 = __toESM(require_react(), 1);
+  var import_react19 = __toESM(require_react(), 1);
 
   // src/components/ProjectChat.tsx
   var import_react10 = __toESM(require_react(), 1);
@@ -21672,360 +21891,27 @@
     ] });
   }
 
-  // src/components/previews.tsx
+  // src/components/tabs/PaperWorkspace.tsx
   var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
-  function PointCloudPreview({ preview }) {
-    const { t } = useTranslation();
-    const canvasRef = (0, import_react13.useRef)(null);
-    const points = preview.points || [];
-    const [resetKey, setResetKey] = (0, import_react13.useState)(0);
-    (0, import_react13.useEffect)(() => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-      const state = { yaw: 0.55, pitch: 0.25, zoom: 1, dragging: false, x: 0, y: 0 };
-      const draw = () => {
-        const width = canvas.width;
-        const height = canvas.height;
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = "#17201d";
-        context.fillRect(0, 0, width, height);
-        if (!points.length) {
-          context.fillStyle = "#aab6b1";
-          context.font = "14px sans-serif";
-          context.textAlign = "center";
-          context.fillText(t("preview.noPoints"), width / 2, height / 2);
-          return;
-        }
-        const mins = [Infinity, Infinity, Infinity];
-        const maxs = [-Infinity, -Infinity, -Infinity];
-        points.forEach((point) => point.forEach((value, index) => {
-          if (index < 3) {
-            mins[index] = Math.min(mins[index], value);
-            maxs[index] = Math.max(maxs[index], value);
-          }
-        }));
-        const center = mins.map((min, index) => (min + maxs[index]) / 2);
-        const scale = Math.max(...maxs.map((max, index) => max - mins[index]), 1);
-        const projected = points.map((point, index) => {
-          const p = point.map((value, axis) => (value - center[axis]) / scale);
-          const cy = Math.cos(state.yaw);
-          const sy = Math.sin(state.yaw);
-          const cp = Math.cos(state.pitch);
-          const sp = Math.sin(state.pitch);
-          const x = p[0] * cy - p[2] * sy;
-          const depth = p[0] * sy + p[2] * cy;
-          const y = p[1] * cp - depth * sp;
-          const z = p[1] * sp + depth * cp;
-          return { x: width / 2 + x * width * 0.82 * state.zoom, y: height / 2 - y * height * 0.82 * state.zoom, z, index };
-        }).sort((a, b) => a.z - b.z);
-        if (preview.faces?.length && points.length < 2e3) {
-          context.strokeStyle = "#56b89555";
-          context.lineWidth = 1;
-          preview.faces.forEach((face) => {
-            const vertices = face.map((index) => projected.find((point) => point.index === index)).filter(Boolean);
-            if (vertices.length >= 3) {
-              context.beginPath();
-              context.moveTo(vertices[0].x, vertices[0].y);
-              vertices.slice(1).forEach((point) => context.lineTo(point.x, point.y));
-              context.closePath();
-              context.stroke();
-            }
-          });
-        }
-        projected.forEach((point) => {
-          const alpha = Math.max(0.25, Math.min(1, 0.58 + point.z));
-          context.fillStyle = `rgba(86,184,149,${alpha})`;
-          context.fillRect(point.x - 1.5, point.y - 1.5, 3, 3);
-        });
-      };
-      const onPointerDown = (event) => {
-        state.dragging = true;
-        state.x = event.clientX;
-        state.y = event.clientY;
-        canvas.setPointerCapture(event.pointerId);
-      };
-      const onPointerMove = (event) => {
-        if (!state.dragging) return;
-        state.yaw += (event.clientX - state.x) * 0.01;
-        state.pitch = Math.max(-1.4, Math.min(1.4, state.pitch + (event.clientY - state.y) * 0.01));
-        state.x = event.clientX;
-        state.y = event.clientY;
-        draw();
-      };
-      const onPointerUp = () => {
-        state.dragging = false;
-      };
-      const onWheel = (event) => {
-        event.preventDefault();
-        state.zoom = Math.max(0.35, Math.min(4, state.zoom * (event.deltaY > 0 ? 0.9 : 1.1)));
-        draw();
-      };
-      canvas.addEventListener("pointerdown", onPointerDown);
-      canvas.addEventListener("pointermove", onPointerMove);
-      canvas.addEventListener("pointerup", onPointerUp);
-      canvas.addEventListener("wheel", onWheel, { passive: false });
-      draw();
-      return () => {
-        canvas.removeEventListener("pointerdown", onPointerDown);
-        canvas.removeEventListener("pointermove", onPointerMove);
-        canvas.removeEventListener("pointerup", onPointerUp);
-        canvas.removeEventListener("wheel", onWheel);
-      };
-    }, [points, preview.faces, resetKey]);
-    const reset = () => {
-      setResetKey((key) => key + 1);
+  var SECTION_ICONS = {
+    introduction: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ScrollText, { size: 15 }),
+    paper_related_work: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Quote, { size: 15 }),
+    paper_method: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FlaskConical, { size: 15 }),
+    paper_experiments: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ChartColumn, { size: 15 }),
+    conclusion: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileText, { size: 15 })
+  };
+  function sectionTabKey(id) {
+    const keys = {
+      introduction: "tab.introduction",
+      paper_related_work: "tab.paperRelatedWork",
+      paper_method: "tab.paperMethod",
+      paper_experiments: "tab.paperExperiments",
+      conclusion: "tab.conclusion"
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "artifact-preview", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "point-cloud-tools", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "muted", children: [
-          String(preview.format || "ply").toUpperCase(),
-          " \xB7 ",
-          points.length,
-          "/",
-          Number(preview.source_point_count || points.length),
-          " ",
-          t("preview.pointCount", { count: "" }),
-          preview.sampled ? t("preview.sampled") : ""
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "icon-btn point-reset", type: "button", title: t("preview.resetView"), "aria-label": t("preview.resetView"), onClick: reset, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(RotateCcw, { size: 15 }) })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("canvas", { ref: canvasRef, className: "point-cloud-canvas", width: "640", height: "420", "aria-label": t("preview.pointCloud") }),
-      preview.faces?.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-footnote", children: t("preview.loadedFaces", { count: preview.faces.length }) }) : null
-    ] });
+    return keys[id];
   }
-  function TimeseriesPreview({ preview }) {
-    const { t } = useTranslation();
-    const points = (preview.points || []).filter((point) => point && Number.isFinite(Number(point.step)));
-    const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
-      (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
-    );
-    const [metric, setMetric] = (0, import_react13.useState)(metrics[0] || "loss");
-    const [windowSize, setWindowSize] = (0, import_react13.useState)(Math.max(10, points.length));
-    const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react13.useState)(allSeeds);
-    const [hovered, setHovered] = (0, import_react13.useState)(null);
-    const seedKey = allSeeds.join("|");
-    (0, import_react13.useEffect)(() => {
-      setSelectedSeeds((current) => {
-        const next = current.filter((seed) => allSeeds.includes(seed));
-        return next.length ? next : allSeeds;
-      });
-    }, [seedKey]);
-    if (!points.length || !metrics.length) {
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-error", children: t("preview.noFiniteMetrics") });
-    }
-    const visible = points.slice(-windowSize);
-    const numeric = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && Number.isFinite(Number(point[metric])));
-    const missingCount = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && !Number.isFinite(Number(point[metric]))).length;
-    if (!numeric.length) {
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-error", children: t("preview.selectionNoFinite") });
-    }
-    const steps = numeric.map((point) => Number(point.step));
-    const minStep = Math.min(...steps);
-    const stepSpan = Math.max(Math.max(...steps) - minStep, 1);
-    const values = numeric.map((point) => Number(point[metric]));
-    const minValue = Math.min(...values);
-    const maxValue = Math.max(...values);
-    const span = Math.max(maxValue - minValue, 1e-12);
-    const groups = [...new Set(numeric.map((point) => String(point.seed ?? "all")))];
-    const colors = ["#16856b", "#d97706", "#2563eb", "#be123c", "#7c3aed", "#0f766e"];
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "artifact-preview", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-toolbar", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
-          t("preview.metric"),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("select", { value: metric, onChange: (event) => setMetric(event.target.value), children: metrics.map((name) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: name, children: name }, name)) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { children: [
-          t("preview.points"),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-            "input",
-            {
-              type: "range",
-              min: 10,
-              max: Math.max(10, points.length),
-              value: windowSize,
-              onChange: (event) => setWindowSize(Number(event.target.value))
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-seeds", "aria-label": t("preview.selectSeeds"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "muted", children: t("preview.seed") }),
-          allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-            "button",
-            {
-              className: selectedSeeds.includes(seed) ? "seed-toggle active" : "seed-toggle",
-              type: "button",
-              onClick: () => setSelectedSeeds((current) => current.includes(seed) ? current.length === 1 ? current : current.filter((value) => value !== seed) : [...current, seed]),
-              children: seed
-            },
-            seed
-          ))
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "muted timeseries-count", children: [
-          numeric.length,
-          "/",
-          points.length,
-          " ",
-          t("preview.pointsCount", { count: "" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-chart-wrap", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
-          "svg",
-          {
-            className: "timeseries-chart",
-            viewBox: "0 0 720 300",
-            role: "img",
-            "aria-label": t("preview.metricCurve", { metric }),
-            onMouseLeave: () => setHovered(null),
-            onMouseMove: (event) => {
-              const rect = event.currentTarget.getBoundingClientRect();
-              const x = Math.max(48, Math.min(704, (event.clientX - rect.left) / rect.width * 720));
-              const targetStep = minStep + (x - 48) / 656 * stepSpan;
-              const nearest = numeric.reduce((best, point) => Math.abs(Number(point.step) - targetStep) < Math.abs(Number(best.step) - targetStep) ? point : best, numeric[0]);
-              setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? "all") });
-            },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "var(--preview-chart-bg)", rx: "8" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "var(--preview-chart-grid)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "var(--preview-chart-grid)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("text", { x: "52", y: "18", fill: "var(--preview-chart-label)", fontSize: "11", children: [
-                metric,
-                " \xB7 ",
-                minValue.toPrecision(4),
-                "\u2013",
-                maxValue.toPrecision(4)
-              ] }),
-              groups.map((seed, groupIndex) => {
-                const group = numeric.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step));
-                const segments = [];
-                visible.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step)).forEach((point) => {
-                  if (!Number.isFinite(Number(point[metric]))) return;
-                  const segment = segments.at(-1);
-                  if (segment) segment.push(point);
-                  else segments.push([point]);
-                });
-                const color = colors[groupIndex % colors.length];
-                return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("g", { children: [
-                  segments.map((segment, segmentIndex) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-                    "polyline",
-                    {
-                      points: segment.map((point) => `${48 + (Number(point.step) - minStep) / stepSpan * 656},${250 - (Number(point[metric]) - minValue) / span * 220}`).join(" "),
-                      fill: "none",
-                      stroke: color,
-                      strokeWidth: "2",
-                      strokeLinejoin: "round"
-                    },
-                    segmentIndex
-                  )),
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
-                    t("preview.seed"),
-                    " ",
-                    seed
-                  ] }),
-                  group.map((point, index) => {
-                    const x = 48 + (Number(point.step) - minStep) / stepSpan * 656;
-                    const y = 250 - (Number(point[metric]) - minValue) / span * 220;
-                    const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed;
-                    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "var(--preview-chart-focus)" : "none", strokeWidth: "2" }, index);
-                  })
-                ] }, seed);
-              })
-            ]
-          }
-        ),
-        hovered ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "timeseries-tooltip", children: [
-          "step ",
-          hovered.step,
-          " \xB7 seed ",
-          hovered.seed,
-          " \xB7 ",
-          metric,
-          " ",
-          hovered.value.toPrecision(6)
-        ] }) : null
-      ] }),
-      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-footnote", children: t("preview.missingPoints", { count: missingCount, metric }) }) : null
-    ] });
-  }
-  function PreviewBody({ preview }) {
-    const { t } = useTranslation();
-    switch (preview.type) {
-      case "point_cloud":
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PointCloudPreview, { preview });
-      case "timeseries":
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TimeseriesPreview, { preview });
-      case "video":
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("video", { className: "artifact-video", controls: true, preload: "metadata", src: preview.download_url });
-      case "image":
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-footnote", children: t("preview.imageNote") });
-      case "json": {
-        const value = typeof preview.value === "string" ? preview.value : JSON.stringify(preview.value, null, 2);
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("pre", { className: "preview-text", children: value });
-      }
-      case "pdf": {
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("pre", { className: "preview-text", children: preview.text || "" });
-      }
-      case "table":
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("table", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tbody", { children: preview.rows.map((row, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tr", { children: row.map((cell, cellIndex) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: String(cell) }, cellIndex)) }, index)) }) }) });
-      case "html_text":
-      case "text":
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("pre", { className: "preview-text", children: preview.text || "" });
-      default:
-        return null;
-    }
-  }
-  function ArtifactCard({ artifact }) {
-    const { t } = useTranslation();
-    const [preview, setPreview] = (0, import_react13.useState)(null);
-    const [status, setStatus] = (0, import_react13.useState)("idle");
-    const [error, setError] = (0, import_react13.useState)("");
-    (0, import_react13.useEffect)(() => {
-      if (artifact.mime_type?.startsWith("image/")) return;
-      if (!artifact.preview_url) return;
-      setStatus("loading");
-      api(artifact.preview_url).then((data) => {
-        setPreview(data);
-        setStatus("ready");
-      }).catch((err) => {
-        setError(errorMessage(err));
-        setStatus("error");
-      });
-    }, [artifact.preview_url, artifact.mime_type]);
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("article", { className: "artifact-card", children: [
-      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: statusLabel(artifact.experiment_status, t) }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PreviewBody, { preview }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "artifact-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: artifact.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
-          artifact.kind,
-          " \xB7 ",
-          artifact.valid ? t("common.valid") : t("common.invalid"),
-          artifact.experiment_status ? ` \xB7 ${t("preview.runStatus", { status: statusLabel(artifact.experiment_status, t) })}` : ""
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? t("preview.lineage", {
-          run: String(artifact.metadata.lineage.run_id || t("preview.lineageUnbound")),
-          idea: String(artifact.metadata.lineage.idea_version || t("preview.lineageUnknown")),
-          data: String(artifact.metadata.lineage.data_version || t("preview.lineageNotDeclared"))
-        }) : t("preview.lineageMissing") }),
-        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: t("preview.download") }) : null
-      ] })
-    ] });
-  }
-
-  // src/components/tabs/PaperTab.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
-  function paperEvidence(project, paper) {
-    return (project.evidence || []).filter((evidence) => evidence.paper_id === paper.id);
-  }
-  function evidenceStatus(project, paper) {
-    const evidence = paperEvidence(project, paper);
-    const accepted = (project.claim_reviews || []).some((review) => review.status === "accepted" && review.evidence_ids.some((id) => evidence.some((item) => item.id === id)));
-    return accepted ? "claim_reviewed" : evidence.some((item) => item.locator) ? "page_quote" : "metadata_only";
-  }
-  function PaperTab({
+  function PaperWorkspace({
     project,
     tab,
     onNavigate,
@@ -22033,13 +21919,36 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const legacyTab = tab === "introduction" ? "paper_outline" : tab === "paper_related_work" ? "paper_citations" : tab === "paper_method" ? "paper_figures" : tab === "paper_experiments" ? "paper_data" : tab === "conclusion" ? "paper_compile" : null;
-    const acceptedReviews = project.claim_reviews?.filter((review) => review.status === "accepted").length || 0;
-    const evidenceCount = project.evidence?.length || 0;
-    const validArtifacts = (project.artifacts || []).filter((artifact) => artifact.valid !== false);
+    const [workspace, setWorkspace] = (0, import_react13.useState)(null);
+    const [workspaceError, setWorkspaceError] = (0, import_react13.useState)(null);
+    const [busy, setBusy] = (0, import_react13.useState)(null);
+    const [editing, setEditing] = (0, import_react13.useState)(false);
+    const [draftContent, setDraftContent] = (0, import_react13.useState)("");
+    const activeSection = workspace?.sections.find((section) => section.id === tab);
+    const pdfArtifacts = (project.artifacts || []).filter(
+      (artifact) => artifact.valid !== false && /pdf/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`)
+    );
     const compileRuns = (project.experiments || []).filter((item) => item.experiment_type === "compile_latex");
-    const compileProposals = (project.proposals || []).filter((item) => item.payload?.experiment_type === "compile_latex" || item.summary.toLowerCase().includes("compile"));
+    const latestCompile = compileRuns[0] || null;
+    const loadWorkspace = async () => {
+      setWorkspace(null);
+      setWorkspaceError(null);
+      try {
+        const data = await api(`/api/projects/${project.id}/paper-workspace`);
+        setWorkspace(data);
+      } catch (error) {
+        setWorkspaceError(errorMessage(error));
+      }
+    };
+    (0, import_react13.useEffect)(() => {
+      void loadWorkspace();
+    }, [project.id]);
+    (0, import_react13.useEffect)(() => {
+      setEditing(false);
+      setDraftContent(activeSection?.source || "");
+    }, [activeSection?.id, activeSection?.source]);
     const createPaperDraft = async () => {
+      setBusy("draft");
       try {
         const result = await api(`/api/projects/${project.id}/paper-draft`, { method: "POST" });
         await onRefresh();
@@ -22047,9 +21956,12 @@
         showToast(t("paper.draftProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
+      } finally {
+        setBusy(null);
       }
     };
     const createCompilePlan = async () => {
+      setBusy("compile");
       try {
         const result = await api(`/api/projects/${project.id}/compile-plan`, { method: "POST" });
         await onRefresh();
@@ -22057,270 +21969,268 @@
         showToast(t("paper.compileProposal", { id: result.proposal_id.slice(0, 8) }));
       } catch (error) {
         showToast(errorMessage(error));
+      } finally {
+        setBusy(null);
       }
     };
-    if (legacyTab === "paper_outline") {
-      const sections = [
-        ["paper.sectionAbstract", Boolean(project.spec?.idea?.research_question)],
-        ["paper.sectionIntroduction", Boolean(project.spec?.idea?.research_question)],
-        ["paper.sectionRelatedWork", (project.papers || []).some((paper) => paper.confirmed)],
-        ["paper.sectionMethod", Boolean(project.spec?.idea?.hypotheses?.length)],
-        ["paper.sectionSetup", (project.experiments || []).length > 0],
-        ["paper.sectionResults", (project.experiments || []).some((experiment) => experiment.status === "succeeded")],
-        ["paper.sectionLimitations", Boolean(project.spec?.idea?.risks?.length)]
-      ];
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.outlineTitle"), hint: t("paper.outlineHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: sections.map(([key, ready]) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t(key) }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: ready ? t("paper.outlineReady") : t("paper.outlineMissing") })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: ready ? "candidate" : "blocked", children: ready ? t("paper.candidate") : "blocked" })
-        ] }, key)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.versionRules") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("paper.versionRulesText") })
-        ] })
-      ] });
-    }
-    if (legacyTab === "paper_citations") {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.citationsTitle"), hint: t("paper.citationsHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: "project-scoped", children: t("paper.projectScoped") }) }),
-        project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.papers.map((paper) => {
-          const evidence = paperEvidence(project, paper);
-          const status = evidenceStatus(project, paper);
-          return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: paper.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
-                paper.doi || paper.source_url || t("paper.sourcePending"),
-                " \xB7 ",
-                t("paper.evidenceCount", { count: evidence.length }),
-                " \xB7 ",
-                paper.bibtex ? t("paper.bibtexRecorded") : t("paper.bibtexMissing")
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("paper.citationReadiness", { status, confirmed: String(Boolean(paper.confirmed)), verified: String(Boolean(paper.verified)) }) })
+    const saveSectionRevision = async () => {
+      if (!activeSection) return;
+      setBusy(`edit:${activeSection.id}`);
+      try {
+        const result = await api(`/api/projects/${project.id}/paper-section`, {
+          method: "POST",
+          body: JSON.stringify({ section_id: activeSection.id, content: draftContent })
+        });
+        await onRefresh();
+        onNavigate("approvals");
+        showToast(t("paperWorkspace.saveToast", { id: result.proposal_id.slice(0, 8) }));
+      } catch (error) {
+        showToast(errorMessage(error));
+      } finally {
+        setBusy(null);
+      }
+    };
+    const statusLabel2 = (status) => {
+      if (status === "ready") return t("paperWorkspace.statusReady");
+      if (status === "draft") return t("paperWorkspace.statusDraft");
+      return t("paperWorkspace.statusMissing");
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { className: "paper-workspace", "aria-label": t("paperWorkspace.title"), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "workspace-head", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        SectionHeading,
+        {
+          title: t("paperWorkspace.title"),
+          hint: t("paperWorkspace.hint"),
+          extra: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === "draft", onClick: () => {
+              void createPaperDraft();
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FilePenLine, { size: 15 }),
+              t("paperWorkspace.createDraft")
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" }),
-              paper.source_url ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { className: "secondary", href: paper.source_url, target: "_blank", rel: "noreferrer", "aria-label": `${t("paper.open")} ${paper.title}`, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ExternalLink, { size: 14 }) }) : null
-            ] })
-          ] }, paper.id);
-        }) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("paper.noPapers"), action: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("literature"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Link2, { size: 14 }),
-          t("paper.openLiterature")
-        ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-list", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("paper.claimReviewsTitle") }),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: t("paper.acceptedReviewCount", { count: acceptedReviews }) })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: acceptedReviews ? "ready" : "evidence-required" })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === "compile", onClick: () => {
+              void createCompilePlan();
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 15 }),
+              t("paperWorkspace.createCompile")
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("paper.fulltextLocated") }),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: t("paper.locatedCount", { located: (project.evidence || []).filter((item) => item.locator).length, total: evidenceCount }) })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ShieldCheck, { size: 16, className: "muted" })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === "refresh", onClick: async () => {
+              setBusy("refresh");
+              try {
+                await Promise.all([loadWorkspace(), onRefresh()]);
+              } finally {
+                setBusy(null);
+              }
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(RefreshCw, { size: 15 }),
+              t("topbar.refresh")
             ] })
           ] })
-        ] })
-      ] });
-    }
-    if (legacyTab === "paper_figures") {
-      const figures = validArtifacts.filter((artifact) => /image|plot|chart|png|jpe?g|svg|pdf|ply|mesh/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.figuresTitle"), hint: t("paper.figuresHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: "project-scoped", children: t("paper.figureCount", { count: figures.length }) }) }),
-        figures.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "artifact-grid", children: figures.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArtifactCard, { artifact }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("paper.noFigures"), action: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("method"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Image, { size: 14 }),
-          t("paper.viewArtifacts")
-        ] }) })
-      ] });
-    }
-    if (legacyTab === "paper_data") {
-      const dataArtifacts = validArtifacts.filter((artifact) => /json|csv|tsv|table|metric|loss|data|timeseries/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.dataTitle"), hint: t("paper.dataHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: "project-scoped", children: t("paper.dataCount", { count: dataArtifacts.length }) }) }),
-        dataArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: dataArtifacts.map((artifact) => {
-          const lineage = artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? artifact.metadata.lineage : {};
-          return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: artifact.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
-                artifact.kind,
-                " \xB7 ",
-                artifact.mime_type || t("paper.typePending")
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("paper.dataLineage", { run: String(lineage.run_id || t("preview.lineageUnbound")), idea: String(lineage.idea_version || t("preview.lineageUnknown")), data: String(lineage.data_version || t("preview.lineageNotDeclared")) }) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
-          ] }, artifact.id);
-        }) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("paper.noData"), action: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("method"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Image, { size: 14 }),
-          t("paper.viewArtifacts")
-        ] }) })
-      ] });
-    }
-    if (legacyTab === "paper_compile") {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.compileTitle"), hint: t("paper.compileHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
-          void createCompilePlan();
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(FileCheck, { size: 15 }),
-          t("paper.createCompileProposal")
-        ] }) }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("paper.sourceFile") }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("code", { children: [
-                "projects/",
-                project.id,
-                "/paper/main.tex"
-              ] }) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: compileProposals.length ? "candidate" : "blocked", children: compileProposals.length ? t("paper.compileProposalExists") : t("paper.notProposed") })
+        }
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "workspace-split paper-workspace-split", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("aside", { className: "workspace-list-pane", "aria-label": t("paperWorkspace.sections"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "workspace-pane-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: t("paperWorkspace.sections") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { children: t("paperWorkspace.sectionCount", { count: workspace?.sections.length || 0 }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("paper.compileRuns") }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: compileRuns.length ? t("paper.compileRunCount", { count: compileRuns.length }) : t("paper.noCompileRuns") })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "workspace-entry-list", children: (workspace?.sections || []).map((section) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+            "button",
+            {
+              type: "button",
+              className: `workspace-entry${tab === section.id ? " active" : ""}`,
+              "data-active": tab === section.id ? "true" : "false",
+              "aria-current": tab === section.id ? "true" : void 0,
+              onClick: () => onNavigate(section.id),
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "workspace-entry-icon", children: SECTION_ICONS[section.id] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "workspace-entry-copy", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: t(sectionTabKey(section.id)) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("small", { children: section.citations.length ? t("paperWorkspace.citationMeta", { count: section.citations.length }) : t("paperWorkspace.noCitationMeta") })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "workspace-entry-side", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: section.status, children: statusLabel2(section.status) }),
+                  section.sentences.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("em", { children: section.sentences.length }) : null
+                ] })
+              ]
+            },
+            section.id
+          )) }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-compile-card", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-compile-title", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: t("paperWorkspace.compile") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: compileRuns.some((item) => item.status === "succeeded") ? "succeeded" : compileRuns.length ? compileRuns[0].status : "empty" })
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-compile-rows", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: latestCompile?.status || "empty", children: latestCompile ? latestCompile.status : t("paperWorkspace.noCompile") }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "muted", children: t("paperWorkspace.compileMeta", { runs: workspace?.compile_runs || 0, succeeded: workspace?.compile_succeeded || 0 }) })
+            ] }),
+            latestCompile?.error ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "paper-workspace-error", children: localizeFailure(latestCompile.status, latestCompile.error) }) : null,
+            pdfArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "muted", children: t("paperWorkspace.pdfMeta", { count: pdfArtifacts.length }) }) : null
           ] })
         ] }),
-        compileRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.compileRunRecords") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: compileRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: run.run_id || run.id }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: run.error ? localizeFailure(run.status, run.error) : JSON.stringify(run.metrics || {}) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: run.status })
-          ] }, run.id)) })
-        ] }) : null,
-        compileProposals.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.compileApprovals") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: compileProposals.map((proposal) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: proposal.summary }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
-                proposal.reason || t("paper.noReason"),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "workspace-detail-pane paper-editor-pane", "aria-live": "polite", children: workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "inline-warning", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TriangleAlert, { size: 15 }),
+          " ",
+          workspaceError
+        ] }) : !activeSection ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paperWorkspace.emptyWorkspace") }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "workspace-detail-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "workspace-detail-title", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "eyebrow", children: t("paperWorkspace.editorEyebrow") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t(sectionTabKey(activeSection.id)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { className: "muted", children: [
+                activeSection.heading,
                 " \xB7 ",
-                proposal.created_at || t("common.timePending")
+                t("paperWorkspace.sentenceCount", { count: activeSection.sentences.length })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: proposal.status })
-          ] }, proposal.id)) })
-        ] }) : null
-      ] });
-    }
-    if (legacyTab === "paper_review") {
-      const pdfArtifacts = validArtifacts.filter((artifact) => /pdf/i.test(`${artifact.kind || ""} ${artifact.name} ${artifact.mime_type || ""}`));
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.pdfTitle"), hint: t("paper.pdfHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: "project-scoped", children: t("paper.pdfCount", { count: pdfArtifacts.length }) }) }),
-        pdfArtifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: pdfArtifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: artifact.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
-              artifact.mime_type || "application/pdf",
-              " \xB7 SHA-256 ",
-              artifact.sha256 ? artifact.sha256.slice(0, 12) : t("common.unrecorded"),
-              "\u2026"
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: activeSection.status, children: statusLabel2(activeSection.status) }),
+              editing ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `edit:${activeSection.id}`, onClick: () => {
+                  void saveSectionRevision();
+                }, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 15 }),
+                  t("paperWorkspace.saveRevision")
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "secondary", type: "button", onClick: () => {
+                  setEditing(false);
+                  setDraftContent(activeSection.source);
+                }, children: t("paperWorkspace.cancel") })
+              ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+                setEditing(true);
+                setDraftContent(activeSection.source);
+              }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FilePenLine, { size: 15 }),
+                t("paperWorkspace.edit")
+              ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" }),
-            artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("a", { className: "secondary", href: artifact.download_url || artifact.url, target: "_blank", rel: "noreferrer", children: [
-              t("paper.openPdf"),
+          editing ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-source-editor", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-bilingual-heading", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FilePenLine, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: t("paperWorkspace.editHint") })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+              "textarea",
+              {
+                value: draftContent,
+                onChange: (event) => setDraftContent(event.target.value),
+                spellCheck: false,
+                "aria-label": t("paperWorkspace.edit"),
+                placeholder: t("paperWorkspace.editPlaceholder")
+              }
+            )
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-bilingual", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-bilingual-pane paper-manuscript-pane", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-bilingual-heading", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ScrollText, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: t("paperWorkspace.manuscript") })
+              ] }),
+              activeSection.sentences.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "paper-sentence-list", children: activeSection.sentences.map((sentence, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: sentence.en }, `${sentence.en}-${index}`)) }) : activeSection.english ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("pre", { className: "paper-raw-manuscript", children: activeSection.english }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paperWorkspace.missingManuscript") })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-bilingual-pane paper-translation-pane", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-bilingual-heading", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Languages, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: t("paperWorkspace.translation") }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "paper-translation-note", children: t("paperWorkspace.translationNote") })
+              ] }),
+              activeSection.sentences.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "paper-sentence-list", children: activeSection.sentences.map((sentence, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: sentence.zh ? "paper-translation-ready" : "paper-translation-pending", children: sentence.zh || t("paperWorkspace.translationPending") }, `${sentence.en}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paperWorkspace.translationMissing") })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-section-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(BookOpen, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h4", { children: t("paperWorkspace.citations") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { children: t("paperWorkspace.citationCount", { count: activeSection.citations.length }) })
+            ] }),
+            activeSection.citations.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list paper-workspace-detail-list", children: activeSection.citations.map((citation) => {
+              const reference = workspace?.references.find((item) => item.key === citation);
+              const paper = (project.papers || []).find((item) => item.bibtex?.includes(citation) || item.title === reference?.title);
+              return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: reference?.title || citation }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: reference ? `${reference.authors || t("common.unrecorded")} \xB7 ${reference.year || t("literature.yearUnknown")} \xB7 ${reference.venue || t("common.unrecorded")}` : t("paperWorkspace.citationUnresolved") })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: paper?.confirmed ? "confirmed" : paper ? "metadata-only" : "unresolved", children: paper?.confirmed ? t("paperWorkspace.confirmedSource") : paper ? t("paperWorkspace.projectSource") : t("paperWorkspace.unresolvedSource") })
+              ] }, citation);
+            }) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paperWorkspace.noCitations") })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-section-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Image, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h4", { children: t("paperWorkspace.figures") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { children: t("paperWorkspace.figureCount", { count: activeSection.figure_refs.length }) })
+            ] }),
+            activeSection.figure_refs.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "data-list paper-workspace-detail-list", children: activeSection.figure_refs.map((ref) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("code", { children: ref }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "muted", children: t("paperWorkspace.figureRefHint") })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: "candidate" })
+            ] }, ref)) }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paperWorkspace.noFigures") })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-workspace-section-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileCheck, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h4", { children: t("paperWorkspace.compile") }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: latestCompile?.status || "empty", children: latestCompile?.status || t("paperWorkspace.noCompile") })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-list paper-workspace-detail-list", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paperWorkspace.sourceFile") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("code", { children: workspace?.source_path || "" }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: workspace?.has_source ? "ready" : "blocked", children: workspace?.has_source ? t("paperWorkspace.sourcePresent") : t("paperWorkspace.sourceMissing") })
+              ] }),
+              workspace?.source_commit ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paperWorkspace.sourceCommit") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("code", { children: workspace.source_commit.slice(0, 12) }),
+                    " \xB7 ",
+                    workspace.source_dirty ? t("paperWorkspace.sourceDirty") : t("paperWorkspace.sourceClean")
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: workspace.source_dirty ? "candidate" : "verified", children: workspace.source_dirty ? t("paperWorkspace.dirty") : t("paperWorkspace.clean") })
+              ] }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "data-row", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("paperWorkspace.compileRuns") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { children: t("paperWorkspace.compileMeta", { runs: workspace?.compile_runs || 0, succeeded: workspace?.compile_succeeded || 0 }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: workspace?.compile_succeeded ? "succeeded" : workspace?.compile_runs ? "failed" : "empty" })
+              ] })
+            ] }),
+            latestCompile?.error ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "inline-warning", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TriangleAlert, { size: 15 }),
               " ",
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ExternalLink, { size: 14 })
-            ] }) : null
+              localizeFailure(latestCompile.status, latestCompile.error)
+            ] }) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "paper-pdf-grid", children: pdfArtifacts.length ? pdfArtifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PdfCard, { artifact }, artifact.id)) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(EmptyState, { text: t("paperWorkspace.noPdf") }) })
           ] })
-        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("paper.noPdf"), action: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => onNavigate("conclusion"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(FileCheck, { size: 14 }),
-          t("paper.goCompile")
         ] }) })
-      ] });
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.projectTitle"), hint: t("paper.projectHint"), extra: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(ButtonRow, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
-          void createPaperDraft();
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(FilePenLine, { size: 15 }),
-          t("paper.createDraftProposal")
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
-          void createCompilePlan();
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(FileCheck, { size: 15 }),
-          t("paper.proposeCompile")
-        ] })
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "metric-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: t("paper.literatureCount") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: project.papers?.length || 0 })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: t("paper.evidenceCandidates") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: evidenceCount })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: t("paper.acceptedClaims") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: acceptedReviews })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "metric", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: t("paper.validArtifacts") }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: validArtifacts.length })
-        ] })
+      ] })
+    ] });
+  }
+  function PdfCard({ artifact }) {
+    const { t } = useTranslation();
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-pdf-card", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "paper-pdf-card-icon", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileText, { size: 16 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-pdf-card-copy", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: artifact.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("small", { children: artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}\u2026` : t("common.unrecorded") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.evidenceGate") }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("paper.claimPageEvidence") }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: t("paper.claimPageEvidenceText") })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: acceptedReviews > 0 ? "ready" : "evidence-required" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("paper.proposalCompile") }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: t("paper.proposalCompileText") })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ShieldCheck, { size: 16, className: "muted" })
-          ] })
-        ] })
-      ] }),
-      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("paper.referenceRecords") }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.papers.slice(0, 8).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: paper.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
-              paper.year || t("literature.yearUnknown"),
-              " \xB7 ",
-              paper.venue || paper.source_provider || t("paper.sourcePending"),
-              " \xB7 DOI ",
-              paper.doi || t("common.notProvided")
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: paper.confirmed ? "confirmed" : "metadata-only" })
-        ] }, paper.id)) })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("paper.noReferences") })
+      artifact.download_url ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("a", { className: "paper-pdf-open", href: artifact.download_url, target: "_blank", rel: "noreferrer", "aria-label": `${t("paperWorkspace.openPdf")} ${artifact.name}`, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ExternalLink, { size: 14 }),
+        t("paperWorkspace.openPdf")
+      ] }) : null
     ] });
   }
 
   // src/components/tabs/ApprovalsTab.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   function ApprovalsTab({
     project,
     onRefresh,
@@ -22361,73 +22271,73 @@
         showToast(errorMessage(error));
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("approvals.title"), hint: t("approvals.hint") }),
-      project.proposals?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: project.proposals.map((proposal) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("approvals.title"), hint: t("approvals.hint") }),
+      project.proposals?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.proposals.map((proposal) => {
         const execution = proposal.impact?.automatic_execution || {};
         const rerunStatus = proposal.kind === "experiment_rerun" && proposal.status === "approved" ? execution.status === "failed" ? t("approvals.rerunFailed") : execution.run_id ? t("approvals.rerunSubmitted", { id: String(execution.run_id).slice(0, 8) }) : t("approvals.rerunPending") : null;
         const canLaunch = proposal.status === "approved" && proposal.kind === "experiment_plan";
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: proposal.summary }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+        return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: proposal.summary }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               proposal.reason,
               " \xB7 ",
               t("approvals.estimatedCost"),
               " $",
               Number(proposal.estimated_cost_usd || 0).toFixed(2)
             ] }),
-            proposal.diff ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("pre", { className: "code-block", children: proposal.diff }) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+            proposal.diff ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("pre", { className: "code-block", children: proposal.diff }) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               t("approvals.impact"),
               " ",
               JSON.stringify(proposal.impact)
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: proposal.status }),
-            proposal.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "approve", type: "button", onClick: () => decide(proposal.id, "approved"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Check, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: proposal.status }),
+            proposal.status === "pending" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "approve", type: "button", onClick: () => decide(proposal.id, "approved"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Check, { size: 15 }),
                 t("approvals.approve")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "reject", type: "button", onClick: () => decide(proposal.id, "rejected"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(X, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "reject", type: "button", onClick: () => decide(proposal.id, "rejected"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(X, { size: 15 }),
                 t("approvals.reject")
               ] })
             ] }) : null,
-            canLaunch ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "secondary", type: "button", onClick: () => launch(proposal), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Play, { size: 15 }),
+            canLaunch ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "secondary", type: "button", onClick: () => launch(proposal), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Play, { size: 15 }),
               proposal.payload?.plan_type === "topic_specific" ? t("approvals.runTopicPlan") : t("approvals.execute")
             ] }) : null,
-            rerunStatus ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "muted", children: rerunStatus }) : null
+            rerunStatus ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "muted", children: rerunStatus }) : null
           ] })
         ] }, proposal.id);
-      }) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("approvals.empty") }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("approvals.revisionOpinions"), hint: t("approvals.revisionHint") }),
-        project.idea_versions?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: project.idea_versions.map((version) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: t("approvals.versionLabel", { version: version.version }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("approvals.empty") }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("approvals.revisionOpinions"), hint: t("approvals.revisionHint") }),
+        project.idea_versions?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.idea_versions.map((version) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: t("approvals.versionLabel", { version: version.version }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               version.change_reason || t("approvals.noChangeReason"),
               " \xB7 ",
               formatDateTime(version.created_at, locale)
             ] }),
-            version.supersedes_id ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("approvals.supersedes", { id: version.supersedes_id.slice(0, 8) }) }) : null
+            version.supersedes_id ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("approvals.supersedes", { id: version.supersedes_id.slice(0, 8) }) }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: version.version === project.current_idea_version ? "current" : "superseded" })
-        ] }, version.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("approvals.noRevisions") })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: version.version === project.current_idea_version ? "current" : "superseded" })
+        ] }, version.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("approvals.noRevisions") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SectionHeading, { title: t("approvals.policiesTitle"), hint: t("approvals.policiesHint") }),
-        project.policies?.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "data-list", children: project.policies.map((policy) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { children: policy.rule }),
-            policy.rationale ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: policy.rationale }) : null
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("approvals.policiesTitle"), hint: t("approvals.policiesHint") }),
+        project.policies?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.policies.map((policy) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { children: policy.rule }),
+            policy.rationale ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: policy.rationale }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Badge, { status: policy.recognized ? "enforced" : "candidate" })
-        ] }, policy.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(EmptyState, { text: t("approvals.noPolicies") })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: policy.recognized ? "enforced" : "candidate" })
+        ] }, policy.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(EmptyState, { text: t("approvals.noPolicies") })
       ] })
     ] });
   }
@@ -22436,7 +22346,7 @@
   var import_react14 = __toESM(require_react(), 1);
 
   // src/components/MarkdownPreview.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function inlineNodes(value, prefix) {
     const pattern = /(`[^`]+`|\*\*[^*]+\*\*|_[^_]+_|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g;
     const nodes = [];
@@ -22447,16 +22357,16 @@
       if (match.index > cursor) nodes.push(value.slice(cursor, match.index));
       const token = match[0];
       if (token.startsWith("`")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: token.slice(1, -1) }, `${prefix}-code-${index}`));
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: token.slice(1, -1) }, `${prefix}-code-${index}`));
       } else if (token.startsWith("**")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: token.slice(2, -2) }, `${prefix}-strong-${index}`));
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: token.slice(2, -2) }, `${prefix}-strong-${index}`));
       } else if (token.startsWith("_")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)("em", { children: token.slice(1, -1) }, `${prefix}-em-${index}`));
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("em", { children: token.slice(1, -1) }, `${prefix}-em-${index}`));
       } else {
         const link = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
         if (link) {
           nodes.push(
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("a", { href: link[2], target: "_blank", rel: "noreferrer", children: link[1] }, `${prefix}-link-${index}`)
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: link[2], target: "_blank", rel: "noreferrer", children: link[1] }, `${prefix}-link-${index}`)
           );
         } else {
           nodes.push(token);
@@ -22547,27 +22457,27 @@
   function MarkdownPreview({ content }) {
     const { t } = useTranslation();
     const blocks = parseBlocks(content);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("article", { className: "markdown-preview", "aria-label": t("md.previewLabel"), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("article", { className: "markdown-preview", "aria-label": t("md.previewLabel"), children: [
       blocks.map((block, index) => {
         const key = `markdown-${index}`;
         if (block.kind === "heading") {
           const Heading = block.level === 1 ? "h1" : block.level === 2 ? "h2" : "h3";
-          return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Heading, { children: inlineNodes(block.text, key) }, key);
+          return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Heading, { children: inlineNodes(block.text, key) }, key);
         }
         if (block.kind === "unordered" || block.kind === "ordered") {
           const List = block.kind === "unordered" ? "ul" : "ol";
-          return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(List, { children: block.items.map((item, itemIndex) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("li", { children: inlineNodes(item, `${key}-${itemIndex}`) }, `${key}-${itemIndex}`)) }, key);
+          return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(List, { children: block.items.map((item, itemIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("li", { children: inlineNodes(item, `${key}-${itemIndex}`) }, `${key}-${itemIndex}`)) }, key);
         }
-        if (block.kind === "quote") return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("blockquote", { children: inlineNodes(block.text, key) }, key);
-        if (block.kind === "code") return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("pre", { "data-language": block.language || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("code", { children: block.text }) }, key);
-        return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: inlineNodes(block.text, key) }, key);
+        if (block.kind === "quote") return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("blockquote", { children: inlineNodes(block.text, key) }, key);
+        if (block.kind === "code") return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("pre", { "data-language": block.language || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: block.text }) }, key);
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: inlineNodes(block.text, key) }, key);
       }),
-      !blocks.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "muted", children: t("md.noPreview") }) : null
+      !blocks.length ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "muted", children: t("md.noPreview") }) : null
     ] });
   }
 
   // src/components/tabs/ReportsTab.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function displayable(report) {
     return report?.status === "valid";
   }
@@ -22676,33 +22586,33 @@
       }
     };
     const relevantAudit = auditRows.filter((row) => row.action.startsWith("human_feedback") || row.action.startsWith("proposal."));
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("reports.title"), hint: t("reports.hint") }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "settings-segmented reports-period-switch", role: "radiogroup", "aria-label": t("reports.periodLabel"), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "daily", className: period === "daily" ? "active" : "", onClick: () => setPeriod("daily"), children: t("reports.daily") }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "weekly", className: period === "weekly" ? "active" : "", onClick: () => setPeriod("weekly"), children: t("reports.weekly") })
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("reports.title"), hint: t("reports.hint") }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "settings-segmented reports-period-switch", role: "radiogroup", "aria-label": t("reports.periodLabel"), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "daily", className: period === "daily" ? "active" : "", onClick: () => setPeriod("daily"), children: t("reports.daily") }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "weekly", className: period === "weekly" ? "active" : "", onClick: () => setPeriod("weekly"), children: t("reports.weekly") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           SectionHeading,
           {
             title: period === "daily" ? t("reports.daily") : t("reports.weekly"),
             hint: t("reports.periodHint"),
-            extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+            extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
               void generateReport();
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(FileText, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FileText, { size: 15 }),
               t("reports.generate", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") })
             ] }) })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }) }),
-        reports.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("reports.history") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: `${content ? "report" : activeReportStatus && activeReportStatus !== "valid" ? "empty report-blocked" : "empty"}`, children: content ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(MarkdownPreview, { content }) : activeReportStatus && activeReportStatus !== "valid" ? t("reports.blocked", { reason: activeReportReason || t("reports.lineageUnverifiable") }) : t("reports.noneForPeriod", { period: period === "daily" ? t("reports.daily") : t("reports.weekly") }) }),
+        reports.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: t("reports.history") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: reports.slice(1).map((report) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: formatDateTime(report.created_at, locale) }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
                 report.id,
                 " \xB7 ",
                 t("reports.sourceSnapshot"),
@@ -22710,93 +22620,93 @@
                 report.source_snapshot ? t("common.recorded") : t("common.missing")
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: report.status || "legacy_unverified" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { className: "secondary", type: "button", onClick: () => selectReport(report), children: report.status === "valid" ? t("reports.view") : t("reports.viewStatus") })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ButtonRow, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: report.status || "legacy_unverified" }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "secondary", type: "button", onClick: () => selectReport(report), children: report.status === "valid" ? t("reports.view") : t("reports.viewStatus") })
             ] })
           ] }, report.id)) })
         ] }) : null
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("reports.feedbackInbox"), hint: t("reports.feedbackHint") }),
-        loadingFeedback ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("reports.loadingFeedback") }) : feedbackRows.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: feedbackRows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("article", { className: "data-row feedback-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: row.instruction }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("reports.feedbackInbox"), hint: t("reports.feedbackHint") }),
+        loadingFeedback ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("reports.loadingFeedback") }) : feedbackRows.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: feedbackRows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("article", { className: "data-row feedback-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: row.instruction }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
               row.category,
               " \xB7 ",
               formatDateTime(row.created_at, locale),
               row.reference_id ? ` \xB7 ${t("reports.reference")} ${row.reference_id.slice(0, 8)}` : ""
             ] }),
-            row.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "muted", children: [
+            row.decision_comment ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { className: "muted", children: [
               t("reports.decisionComment"),
               row.decision_comment
             ] }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: row.status }),
-            row.status === "open" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "approve", type: "button", onClick: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: row.status }),
+            row.status === "open" ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "approve", type: "button", onClick: () => {
                 void decideFeedback(row.id, "acknowledged");
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Check, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Check, { size: 14 }),
                 t("reports.acknowledge")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
                 void decideFeedback(row.id, "revision_requested");
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(MessageSquare, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(MessageSquare, { size: 14 }),
                 t("reports.requestRevision")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "reject", type: "button", onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "reject", type: "button", onClick: () => {
                 void decideFeedback(row.id, "rejected");
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(X, { size: 14 }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(X, { size: 14 }),
                 t("common.reject")
               ] })
             ] }) : null,
-            row.status !== "rejected" && row.status !== "proposal_created" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+            row.status !== "rejected" && row.status !== "proposal_created" ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
               void createFeedbackProposal(row);
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Gavel, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Gavel, { size: 14 }),
               t("reports.createProposal")
             ] }) : null
           ] })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("reports.noFeedback") }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section report-feedback", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("reports.recordFeedback"), hint: t("reports.recordFeedbackHint") }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "feedback-form", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("reports.noFeedback") }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section report-feedback", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("reports.recordFeedback"), hint: t("reports.recordFeedbackHint") }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "feedback-form", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
               t("reports.feedbackType"),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { value: feedbackCategory, onChange: (event) => setFeedbackCategory(event.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "report", children: t("reports.forReport") }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "general", children: t("reports.nextDirection") })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { value: feedbackCategory, onChange: (event) => setFeedbackCategory(event.target.value), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "report", children: t("reports.forReport") }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "general", children: t("reports.nextDirection") })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
               t("reports.feedbackToAi"),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { maxLength: 8e3, value: feedback, placeholder: t("reports.feedbackPlaceholder"), onChange: (event) => setFeedback(event.target.value) })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("textarea", { maxLength: 8e3, value: feedback, placeholder: t("reports.feedbackPlaceholder"), onChange: (event) => setFeedback(event.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", disabled: !feedback.trim(), onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", disabled: !feedback.trim(), onClick: () => {
               void submitFeedback();
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Send, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Send, { size: 15 }),
               t("reports.recordFeedbackAction")
             ] })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SectionHeading, { title: t("reports.auditTitle"), hint: t("reports.auditHint", { projectId: project.id }), extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
           void onRefresh();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RefreshCw, { size: 15 }),
           t("topbar.refresh")
         ] }) }) }),
-        loadingAudit ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("reports.loadingAudit") }) : relevantAudit.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: relevantAudit.map((row) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: row.action }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
+        loadingAudit ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("reports.loadingAudit") }) : relevantAudit.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "data-list", children: relevantAudit.map((row) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { children: row.action }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { children: [
               row.actor,
               " \xB7 ",
               formatDateTime(row.created_at, locale),
@@ -22804,15 +22714,15 @@
               JSON.stringify(row.details || {})
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: "recorded" })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("reports.noAudit") })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { status: "recorded" })
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(EmptyState, { text: t("reports.noAudit") })
       ] })
     ] });
   }
 
   // src/components/tabs/WorkflowStageTab.tsx
   var import_react15 = __toESM(require_react(), 1);
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   function text(value, t) {
     return typeof value === "string" && value.trim() ? value : t("common.unrecorded");
   }
@@ -22925,20 +22835,20 @@
       const max = Math.max(1, ...entries.map(([, count]) => count));
       return entries.map(([year, count]) => ({ year, count, height: Math.max(24, Math.round(30 + count / max * 112)) }));
     }, [papers]);
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "graph-year-panel section", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "graph-year-panel section", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         SectionHeading,
         {
           title: t("graph.timelineTitle"),
           hint: t("graph.timelineHint"),
-          extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { children: t("graph.timelineCount", { count: bars.reduce((sum, bar) => sum + bar.count, 0) }) })
+          extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { children: t("graph.timelineCount", { count: bars.reduce((sum, bar) => sum + bar.count, 0) }) })
         }
       ),
-      bars.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "graph-year-bars", role: "img", "aria-label": t("graph.timelineAria"), children: bars.map((bar) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "graph-year-bar", title: `${bar.year} \xB7 ${bar.count}`, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "graph-year-bar-fill", style: { height: `${bar.height}px` } }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: bar.year }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("em", { children: bar.count })
-      ] }, bar.year)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("graph.timelineEmpty") })
+      bars.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "graph-year-bars", role: "img", "aria-label": t("graph.timelineAria"), children: bars.map((bar) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "graph-year-bar", title: `${bar.year} \xB7 ${bar.count}`, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "graph-year-bar-fill", style: { height: `${bar.height}px` } }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: bar.year }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("em", { children: bar.count })
+      ] }, bar.year)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("graph.timelineEmpty") })
     ] });
   }
   function WorkflowStageTab({
@@ -22969,56 +22879,56 @@
       }
     }, [legacyTab, project.id, tab]);
     if (legacyTab === "citation_graph") {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("graph.title"), hint: t("graph.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { children: t("graph.edgeCount", { count: researchStatus?.graph.edges.length || 0 }) }) }),
-        researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("graph.requestFailed", { error: researchStatusError }) }) : null,
-        !researchStatus && !researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("graph.loading") }) : null,
-        researchStatus ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-list", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("graph.permissionScope") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: researchStatus.project_id }) })
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("graph.title"), hint: t("graph.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { children: t("graph.edgeCount", { count: researchStatus?.graph.edges.length || 0 }) }) }),
+        researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("graph.requestFailed", { error: researchStatusError }) }) : null,
+        !researchStatus && !researchStatusError ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("graph.loading") }) : null,
+        researchStatus ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-list", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("graph.permissionScope") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: researchStatus.project_id }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: researchStatus.permission_status })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: researchStatus.permission_status })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("graph.state") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: researchStatus.graph_status === "partial" ? t("graph.partial") : researchStatus.graph_status === "empty" ? t("graph.empty") : t("graph.onlySaved") })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("graph.state") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: researchStatus.graph_status === "partial" ? t("graph.partial") : researchStatus.graph_status === "empty" ? t("graph.empty") : t("graph.onlySaved") })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: researchStatus.graph_status })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: researchStatus.graph_status })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("graph.scale") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: t("graph.scaleText", { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length }) })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("graph.scale") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: t("graph.scaleText", { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Network, { size: 16, className: "muted" })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Network, { size: 16, className: "muted" })
             ] })
           ] }),
-          researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(YearTimeline, { papers: project.papers || [] }),
-          graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "research-graph-panel", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [
-              GRAPH_KINDS.map((kind) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: `research-graph-legend-item kind-${kind}`, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("i", { "aria-hidden": "true" }),
+          researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(YearTimeline, { papers: project.papers || [] }),
+          graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "research-graph-panel", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [
+              GRAPH_KINDS.map((kind) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: `research-graph-legend-item kind-${kind}`, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { "aria-hidden": "true" }),
                 t(GRAPH_KIND_LABELS[kind])
               ] }, kind)),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "research-graph-legend-note", children: t("graph.legendNote") })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "research-graph-legend-note", children: t("graph.legendNote") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": t("graph.aria", { projectId: researchStatus.project_id }), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("title", { children: t("graph.titleShort") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("marker", { id: "research-graph-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("path", { d: "M 0 0 L 8 4 L 0 8 z" }) }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: graphLayout.columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("text", { x: column.x, y: "27", children: t(GRAPH_KIND_LABELS[column.kind]) }, column.kind)) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": t("graph.aria", { projectId: researchStatus.project_id }), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("title", { children: t("graph.titleShort") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("marker", { id: "research-graph-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("path", { d: "M 0 0 L 8 4 L 0 8 z" }) }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: graphLayout.columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { x: column.x, y: "27", children: t(GRAPH_KIND_LABELS[column.kind]) }, column.kind)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
                 const path = graphEdgePath(edge, graphNodesById);
-                return path ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${statusLabel(edge.evidence_status, t)} \xB7 ${statusLabel(edge.permission_status, t)}` }, edge.id) : null;
+                return path ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${statusLabel(edge.evidence_status, t)} \xB7 ${statusLabel(edge.permission_status, t)}` }, edge.id) : null;
               }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("g", { className: "research-graph-nodes", "aria-label": t("graph.nodesAria"), children: graphLayout.nodes.map((node) => {
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("g", { className: "research-graph-nodes", "aria-label": t("graph.nodesAria"), children: graphLayout.nodes.map((node) => {
                 const selected = selectedGraphNodeId === node.id;
                 const selectNode = () => setSelectedGraphNodeId(node.id);
-                return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+                return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
                   "g",
                   {
                     className: `research-graph-node-group kind-${node.kind}${selected ? " selected" : ""}`,
@@ -23034,12 +22944,12 @@
                       }
                     },
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("title", { children: `${node.label} \xB7 ${node.id}` }),
-                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("rect", { x: node.x, y: node.y, width: node.width, height: node.height, rx: "14" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + node.height - 12 }),
-                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: t(GRAPH_KIND_LABELS[node.kind]) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label, t) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("text", { className: "research-graph-node-status", x: node.x + 15, y: node.y + 66, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("title", { children: `${node.label} \xB7 ${node.id}` }),
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("rect", { x: node.x, y: node.y, width: node.width, height: node.height, rx: "14" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + node.height - 12 }),
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: t(GRAPH_KIND_LABELS[node.kind]) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label, t) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("text", { className: "research-graph-node-status", x: node.x + 15, y: node.y + 66, children: [
                         t(graphStatusLabel(node.status)),
                         " \xB7 ",
                         t(graphEvidenceLabel(node.evidence_status))
@@ -23050,59 +22960,59 @@
                 );
               }) })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "research-graph-details", "aria-live": "polite", children: selectedGraphNode ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "research-graph-details-heading", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "eyebrow", children: t("graph.selectedNode") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: selectedGraphNode.label })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "research-graph-details", "aria-live": "polite", children: selectedGraphNode ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "research-graph-details-heading", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "eyebrow", children: t("graph.selectedNode") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: selectedGraphNode.label })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: selectedGraphNode.status, children: t(graphStatusLabel(selectedGraphNode.status)) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: selectedGraphNode.status, children: t(graphStatusLabel(selectedGraphNode.status)) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("dl", { className: "research-graph-details-list", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.type") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: t(GRAPH_KIND_LABELS[selectedGraphNode.kind]) })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("dl", { className: "research-graph-details-list", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.type") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: t(GRAPH_KIND_LABELS[selectedGraphNode.kind]) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.stableId") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: text(selectedGraphNode.source.stable_id, t) || selectedGraphNode.id }) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.stableId") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: text(selectedGraphNode.source.stable_id, t) || selectedGraphNode.id }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.source") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("dd", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.source") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("dd", { children: [
                     text(selectedGraphNode.source.source_type, t),
                     " \xB7 ",
-                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: selectedGraphNode.source.source_id })
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: selectedGraphNode.source.source_id })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.evidenceStatus") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: t(graphEvidenceLabel(selectedGraphNode.evidence_status)) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.evidenceStatus") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: t(graphEvidenceLabel(selectedGraphNode.evidence_status)) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.permission") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.permission") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.citations") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: typeof selectedGraphNode.citation_count === "number" ? selectedGraphNode.citation_count : t("graph.citationUnknown") })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.citations") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: typeof selectedGraphNode.citation_count === "number" ? selectedGraphNode.citation_count : t("graph.citationUnknown") })
                 ] }),
-                selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.provider") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: selectedGraphNode.source.provider })
+                selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.provider") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: selectedGraphNode.source.provider })
                 ] }) : null,
-                selectedGraphNode.source.locator ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dt", { children: t("graph.locator") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("dd", { children: selectedGraphNode.source.locator })
+                selectedGraphNode.source.locator ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dt", { children: t("graph.locator") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("dd", { children: selectedGraphNode.source.locator })
                 ] }) : null
               ] }),
-              selectedGraphNode.source.url ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("a", { className: "research-graph-source-link", href: selectedGraphNode.source.url, target: "_blank", rel: "noreferrer", children: [
+              selectedGraphNode.source.url ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("a", { className: "research-graph-source-link", href: selectedGraphNode.source.url, target: "_blank", rel: "noreferrer", children: [
                 t("graph.openSource"),
                 " ",
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ExternalLink, { size: 13 })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ExternalLink, { size: 13 })
               ] }) : null
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "muted", children: t("graph.selectHint") }) })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("graph.empty") })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "muted", children: t("graph.selectHint") }) })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("graph.empty") })
         ] }) : null
       ] });
     }
@@ -23112,134 +23022,479 @@
         ...(project.experiments || []).map((run) => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: t("overview.runDetail", { run: run.run_id || t("progress.runPending") }), status: run.status })),
         ...(project.proposals || []).filter((item) => item.status === "pending").map((item) => ({ id: `proposal-${item.id}`, title: item.summary, detail: item.kind, status: "waiting-approval" }))
       ];
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("progress.title"), hint: t("progress.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { children: t("progress.count", { count: rows.length }) }) }),
-        rows.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "data-list", children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: row.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: row.detail })
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("progress.title"), hint: t("progress.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { children: t("progress.count", { count: rows.length }) }) }),
+        rows.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: row.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: row.detail })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: row.status })
-        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("progress.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: row.status })
+        ] }, row.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("progress.empty") })
       ] });
     }
     if (legacyTab === "method_design") {
       const idea = project.spec?.idea;
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("method.title"), hint: t("method.hint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("method.question") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: text(idea?.research_question, t) || t("common.notConfirmed") })
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("method.title"), hint: t("method.hint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("method.question") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: text(idea?.research_question, t) || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: idea?.research_question ? "recorded" : "unresolved" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: idea?.research_question ? "recorded" : "unresolved" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("method.hypotheses") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: idea?.hypotheses?.join("\uFF1B") || t("common.notConfirmed") })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("method.hypotheses") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: idea?.hypotheses?.join("\uFF1B") || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: idea?.hypotheses?.length ? "recorded" : "unresolved" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: idea?.hypotheses?.length ? "recorded" : "unresolved" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("method.contributions") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: idea?.expected_contributions?.join("\uFF1B") || t("common.notConfirmed") })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("method.contributions") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: idea?.expected_contributions?.join("\uFF1B") || t("common.notConfirmed") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: idea?.expected_contributions?.length ? "candidate" : "unresolved" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: idea?.expected_contributions?.length ? "candidate" : "unresolved" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("method.relatedEvidence") }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: t("method.verifiedCount", { verified: (project.papers || []).filter((paper) => paper.verified).length, total: project.papers?.length || 0 }) })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("method.relatedEvidence") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: t("method.verifiedCount", { verified: (project.papers || []).filter((paper) => paper.verified).length, total: project.papers?.length || 0 }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ShieldCheck, { size: 16, className: "muted" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ShieldCheck, { size: 16, className: "muted" })
           ] })
         ] })
       ] });
     }
     if (legacyTab === "code_workspace") {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("code.title"), hint: t("code.hint") }),
-        workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("code.error", { error: workspaceError }) }) : null,
-        workspace ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-list", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("code.workspace") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: workspace.code_relative_path }) })
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("code.title"), hint: t("code.hint") }),
+        workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("code.error", { error: workspaceError }) }) : null,
+        workspace ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-list", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("code.workspace") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: workspace.code_relative_path }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: workspace.code_directory_exists ? "project-scoped" : "missing" })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: workspace.code_directory_exists ? "project-scoped" : "missing" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("code.gitBaseline") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("code.gitBaseline") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { children: [
                   workspace.branch || t("common.unknown"),
                   " \xB7 ",
                   workspace.head || t("code.noCommit")
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: workspace.dirty ? "dirty" : "clean" })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: workspace.dirty ? "dirty" : "clean" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: t("code.pendingTitle") }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: t("code.pendingCount", { count: (project.proposals || []).filter((item) => ["code_patch", "config_change", "dependency_install", "repository_download", "repository_dependency_install", "repository_reproduction_run", "repository_artifact_write"].includes(item.kind) && item.status === "pending").length }) })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: t("code.pendingTitle") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: t("code.pendingCount", { count: (project.proposals || []).filter((item) => ["code_patch", "config_change", "dependency_install", "repository_download", "repository_dependency_install", "repository_reproduction_run", "repository_artifact_write"].includes(item.kind) && item.status === "pending").length }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: "approval-required" })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: "approval-required" })
             ] })
           ] }),
-          workspace.files?.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("code.fileTree"), hint: t("code.fileTreeHint", { max: workspace.limits?.max_files || 600 }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "data-list", children: workspace.files.map((file) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row compact-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("code", { children: file.kind === "directory" ? `${file.path}/` : file.path }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "muted", children: [
+          workspace.files?.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("code.fileTree"), hint: t("code.fileTreeHint", { max: workspace.limits?.max_files || 600 }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: workspace.files.map((file) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row compact-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("code", { children: file.kind === "directory" ? `${file.path}/` : file.path }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "muted", children: [
                 file.size_bytes,
                 " B"
               ] })
             ] }, file.path)) })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("code.emptyDir") }),
-          workspace.diff ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("code.currentDiff"), hint: workspace.diff_truncated ? t("code.diffTruncated") : t("code.diffReadonly") }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("pre", { className: "code-block workspace-diff", children: workspace.diff })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("code.emptyDir") }),
+          workspace.diff ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("code.currentDiff"), hint: workspace.diff_truncated ? t("code.diffTruncated") : t("code.diffReadonly") }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("pre", { className: "code-block workspace-diff", children: workspace.diff })
           ] }) : null
-        ] }) : !workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("code.loading") }) : null
+        ] }) : !workspaceError ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("code.loading") }) : null
       ] });
     }
     if (legacyTab === "experiment_queue" || legacyTab === "experiment_metrics") {
       const experiments = project.experiments || [];
       const filtered = legacyTab === "experiment_queue" ? experiments.filter((item) => ["queued", "running", "paused", "cancelled", "waiting-approval"].includes(item.status)) : experiments.filter((item) => Object.keys(item.metrics || {}).length > 0);
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: legacyTab === "experiment_queue" ? t("queue.title") : t("metrics.title"), hint: t("queue.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { children: t("queue.count", { count: filtered.length }) }) }),
-        filtered.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "data-list", children: filtered.map((item) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: item.experiment_type }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: legacyTab === "experiment_queue" ? t("overview.runDetail", { run: item.run_id || t("queue.runUnassigned") }) : JSON.stringify(item.metrics) })
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: legacyTab === "experiment_queue" ? t("queue.title") : t("metrics.title"), hint: t("queue.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { children: t("queue.count", { count: filtered.length }) }) }),
+        filtered.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: filtered.map((item) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: item.experiment_type }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: legacyTab === "experiment_queue" ? t("overview.runDetail", { run: item.run_id || t("queue.runUnassigned") }) : JSON.stringify(item.metrics) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: item.status })
-        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: legacyTab === "experiment_queue" ? t("queue.empty") : t("metrics.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: item.status })
+        ] }, item.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: legacyTab === "experiment_queue" ? t("queue.empty") : t("metrics.empty") })
       ] });
     }
     if (legacyTab === "lineage") {
       const artifacts = project.artifacts || [];
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SectionHeading, { title: t("lineage.title"), hint: t("lineage.hint") }),
-        artifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "data-list", children: artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: artifact.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: artifact.metadata?.lineage ? JSON.stringify(artifact.metadata.lineage) : t("lineage.missingMeta") })
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SectionHeading, { title: t("lineage.title"), hint: t("lineage.hint") }),
+        artifacts.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "data-list", children: artifacts.map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "data-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { children: artifact.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: artifact.metadata?.lineage ? JSON.stringify(artifact.metadata.lineage) : t("lineage.missingMeta") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
-        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("lineage.empty") })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: artifact.valid ? "valid" : "invalid" })
+        ] }, artifact.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("lineage.empty") })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EmptyState, { text: t("workflow.empty") });
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("workflow.empty") });
   }
 
   // src/components/tabs/ExperimentWorkspace.tsx
+  var import_react17 = __toESM(require_react(), 1);
+
+  // src/components/previews.tsx
   var import_react16 = __toESM(require_react(), 1);
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  function PointCloudPreview({ preview }) {
+    const { t } = useTranslation();
+    const canvasRef = (0, import_react16.useRef)(null);
+    const points = preview.points || [];
+    const [resetKey, setResetKey] = (0, import_react16.useState)(0);
+    (0, import_react16.useEffect)(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      const state = { yaw: 0.55, pitch: 0.25, zoom: 1, dragging: false, x: 0, y: 0 };
+      const draw = () => {
+        const width = canvas.width;
+        const height = canvas.height;
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "#17201d";
+        context.fillRect(0, 0, width, height);
+        if (!points.length) {
+          context.fillStyle = "#aab6b1";
+          context.font = "14px sans-serif";
+          context.textAlign = "center";
+          context.fillText(t("preview.noPoints"), width / 2, height / 2);
+          return;
+        }
+        const mins = [Infinity, Infinity, Infinity];
+        const maxs = [-Infinity, -Infinity, -Infinity];
+        points.forEach((point) => point.forEach((value, index) => {
+          if (index < 3) {
+            mins[index] = Math.min(mins[index], value);
+            maxs[index] = Math.max(maxs[index], value);
+          }
+        }));
+        const center = mins.map((min, index) => (min + maxs[index]) / 2);
+        const scale = Math.max(...maxs.map((max, index) => max - mins[index]), 1);
+        const projected = points.map((point, index) => {
+          const p = point.map((value, axis) => (value - center[axis]) / scale);
+          const cy = Math.cos(state.yaw);
+          const sy = Math.sin(state.yaw);
+          const cp = Math.cos(state.pitch);
+          const sp = Math.sin(state.pitch);
+          const x = p[0] * cy - p[2] * sy;
+          const depth = p[0] * sy + p[2] * cy;
+          const y = p[1] * cp - depth * sp;
+          const z = p[1] * sp + depth * cp;
+          return { x: width / 2 + x * width * 0.82 * state.zoom, y: height / 2 - y * height * 0.82 * state.zoom, z, index };
+        }).sort((a, b) => a.z - b.z);
+        if (preview.faces?.length && points.length < 2e3) {
+          context.strokeStyle = "#56b89555";
+          context.lineWidth = 1;
+          preview.faces.forEach((face) => {
+            const vertices = face.map((index) => projected.find((point) => point.index === index)).filter(Boolean);
+            if (vertices.length >= 3) {
+              context.beginPath();
+              context.moveTo(vertices[0].x, vertices[0].y);
+              vertices.slice(1).forEach((point) => context.lineTo(point.x, point.y));
+              context.closePath();
+              context.stroke();
+            }
+          });
+        }
+        projected.forEach((point) => {
+          const alpha = Math.max(0.25, Math.min(1, 0.58 + point.z));
+          context.fillStyle = `rgba(86,184,149,${alpha})`;
+          context.fillRect(point.x - 1.5, point.y - 1.5, 3, 3);
+        });
+      };
+      const onPointerDown = (event) => {
+        state.dragging = true;
+        state.x = event.clientX;
+        state.y = event.clientY;
+        canvas.setPointerCapture(event.pointerId);
+      };
+      const onPointerMove = (event) => {
+        if (!state.dragging) return;
+        state.yaw += (event.clientX - state.x) * 0.01;
+        state.pitch = Math.max(-1.4, Math.min(1.4, state.pitch + (event.clientY - state.y) * 0.01));
+        state.x = event.clientX;
+        state.y = event.clientY;
+        draw();
+      };
+      const onPointerUp = () => {
+        state.dragging = false;
+      };
+      const onWheel = (event) => {
+        event.preventDefault();
+        state.zoom = Math.max(0.35, Math.min(4, state.zoom * (event.deltaY > 0 ? 0.9 : 1.1)));
+        draw();
+      };
+      canvas.addEventListener("pointerdown", onPointerDown);
+      canvas.addEventListener("pointermove", onPointerMove);
+      canvas.addEventListener("pointerup", onPointerUp);
+      canvas.addEventListener("wheel", onWheel, { passive: false });
+      draw();
+      return () => {
+        canvas.removeEventListener("pointerdown", onPointerDown);
+        canvas.removeEventListener("pointermove", onPointerMove);
+        canvas.removeEventListener("pointerup", onPointerUp);
+        canvas.removeEventListener("wheel", onWheel);
+      };
+    }, [points, preview.faces, resetKey]);
+    const reset = () => {
+      setResetKey((key) => key + 1);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "artifact-preview", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "point-cloud-tools", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "muted", children: [
+          String(preview.format || "ply").toUpperCase(),
+          " \xB7 ",
+          points.length,
+          "/",
+          Number(preview.source_point_count || points.length),
+          " ",
+          t("preview.pointCount", { count: "" }),
+          preview.sampled ? t("preview.sampled") : ""
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { className: "icon-btn point-reset", type: "button", title: t("preview.resetView"), "aria-label": t("preview.resetView"), onClick: reset, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(RotateCcw, { size: 15 }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("canvas", { ref: canvasRef, className: "point-cloud-canvas", width: "640", height: "420", "aria-label": t("preview.pointCloud") }),
+      preview.faces?.length ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-footnote", children: t("preview.loadedFaces", { count: preview.faces.length }) }) : null
+    ] });
+  }
+  function TimeseriesPreview({ preview }) {
+    const { t } = useTranslation();
+    const points = (preview.points || []).filter((point) => point && Number.isFinite(Number(point.step)));
+    const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
+      (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
+    );
+    const [metric, setMetric] = (0, import_react16.useState)(metrics[0] || "loss");
+    const [windowSize, setWindowSize] = (0, import_react16.useState)(Math.max(10, points.length));
+    const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react16.useState)(allSeeds);
+    const [hovered, setHovered] = (0, import_react16.useState)(null);
+    const seedKey = allSeeds.join("|");
+    (0, import_react16.useEffect)(() => {
+      setSelectedSeeds((current) => {
+        const next = current.filter((seed) => allSeeds.includes(seed));
+        return next.length ? next : allSeeds;
+      });
+    }, [seedKey]);
+    if (!points.length || !metrics.length) {
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-error", children: t("preview.noFiniteMetrics") });
+    }
+    const visible = points.slice(-windowSize);
+    const numeric = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && Number.isFinite(Number(point[metric])));
+    const missingCount = visible.filter((point) => selectedSeeds.includes(String(point.seed ?? "all")) && !Number.isFinite(Number(point[metric]))).length;
+    if (!numeric.length) {
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-error", children: t("preview.selectionNoFinite") });
+    }
+    const steps = numeric.map((point) => Number(point.step));
+    const minStep = Math.min(...steps);
+    const stepSpan = Math.max(Math.max(...steps) - minStep, 1);
+    const values = numeric.map((point) => Number(point[metric]));
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const span = Math.max(maxValue - minValue, 1e-12);
+    const groups = [...new Set(numeric.map((point) => String(point.seed ?? "all")))];
+    const colors = ["#16856b", "#d97706", "#2563eb", "#be123c", "#7c3aed", "#0f766e"];
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "artifact-preview", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "timeseries-toolbar", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
+          t("preview.metric"),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("select", { value: metric, onChange: (event) => setMetric(event.target.value), children: metrics.map((name) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: name, children: name }, name)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { children: [
+          t("preview.points"),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "input",
+            {
+              type: "range",
+              min: 10,
+              max: Math.max(10, points.length),
+              value: windowSize,
+              onChange: (event) => setWindowSize(Number(event.target.value))
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "timeseries-seeds", "aria-label": t("preview.selectSeeds"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "muted", children: t("preview.seed") }),
+          allSeeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "button",
+            {
+              className: selectedSeeds.includes(seed) ? "seed-toggle active" : "seed-toggle",
+              type: "button",
+              onClick: () => setSelectedSeeds((current) => current.includes(seed) ? current.length === 1 ? current : current.filter((value) => value !== seed) : [...current, seed]),
+              children: seed
+            },
+            seed
+          ))
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "muted timeseries-count", children: [
+          numeric.length,
+          "/",
+          points.length,
+          " ",
+          t("preview.pointsCount", { count: "" })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "timeseries-chart-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+          "svg",
+          {
+            className: "timeseries-chart",
+            viewBox: "0 0 720 300",
+            role: "img",
+            "aria-label": t("preview.metricCurve", { metric }),
+            onMouseLeave: () => setHovered(null),
+            onMouseMove: (event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              const x = Math.max(48, Math.min(704, (event.clientX - rect.left) / rect.width * 720));
+              const targetStep = minStep + (x - 48) / 656 * stepSpan;
+              const nearest = numeric.reduce((best, point) => Math.abs(Number(point.step) - targetStep) < Math.abs(Number(best.step) - targetStep) ? point : best, numeric[0]);
+              setHovered({ step: Number(nearest.step), value: Number(nearest[metric]), seed: String(nearest.seed ?? "all") });
+            },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("rect", { x: "0", y: "0", width: "720", height: "300", fill: "var(--preview-chart-bg)", rx: "8" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("line", { x1: "48", y1: "18", x2: "48", y2: "266", stroke: "var(--preview-chart-grid)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("line", { x1: "48", y1: "266", x2: "704", y2: "266", stroke: "var(--preview-chart-grid)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("text", { x: "52", y: "18", fill: "var(--preview-chart-label)", fontSize: "11", children: [
+                metric,
+                " \xB7 ",
+                minValue.toPrecision(4),
+                "\u2013",
+                maxValue.toPrecision(4)
+              ] }),
+              groups.map((seed, groupIndex) => {
+                const group = numeric.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step));
+                const segments = [];
+                visible.filter((point) => String(point.seed ?? "all") === seed).sort((a, b) => Number(a.step) - Number(b.step)).forEach((point) => {
+                  if (!Number.isFinite(Number(point[metric]))) return;
+                  const segment = segments.at(-1);
+                  if (segment) segment.push(point);
+                  else segments.push([point]);
+                });
+                const color = colors[groupIndex % colors.length];
+                return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("g", { children: [
+                  segments.map((segment, segmentIndex) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                    "polyline",
+                    {
+                      points: segment.map((point) => `${48 + (Number(point.step) - minStep) / stepSpan * 656},${250 - (Number(point[metric]) - minValue) / span * 220}`).join(" "),
+                      fill: "none",
+                      stroke: color,
+                      strokeWidth: "2",
+                      strokeLinejoin: "round"
+                    },
+                    segmentIndex
+                  )),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("text", { x: 56 + groupIndex * 86, y: 288, fill: color, fontSize: "11", children: [
+                    t("preview.seed"),
+                    " ",
+                    seed
+                  ] }),
+                  group.map((point, index) => {
+                    const x = 48 + (Number(point.step) - minStep) / stepSpan * 656;
+                    const y = 250 - (Number(point[metric]) - minValue) / span * 220;
+                    const isHovered = hovered?.step === Number(point.step) && hovered.seed === seed;
+                    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("circle", { cx: x, cy: y, r: isHovered ? 6 : 3, fill: color, stroke: isHovered ? "var(--preview-chart-focus)" : "none", strokeWidth: "2" }, index);
+                  })
+                ] }, seed);
+              })
+            ]
+          }
+        ),
+        hovered ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "timeseries-tooltip", children: [
+          "step ",
+          hovered.step,
+          " \xB7 seed ",
+          hovered.seed,
+          " \xB7 ",
+          metric,
+          " ",
+          hovered.value.toPrecision(6)
+        ] }) : null
+      ] }),
+      missingCount ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-footnote", children: t("preview.missingPoints", { count: missingCount, metric }) }) : null
+    ] });
+  }
+  function PreviewBody({ preview }) {
+    const { t } = useTranslation();
+    switch (preview.type) {
+      case "point_cloud":
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PointCloudPreview, { preview });
+      case "timeseries":
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(TimeseriesPreview, { preview });
+      case "video":
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("video", { className: "artifact-video", controls: true, preload: "metadata", src: preview.download_url });
+      case "image":
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-footnote", children: t("preview.imageNote") });
+      case "json": {
+        const value = typeof preview.value === "string" ? preview.value : JSON.stringify(preview.value, null, 2);
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("pre", { className: "preview-text", children: value });
+      }
+      case "pdf": {
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("pre", { className: "preview-text", children: preview.text || "" });
+      }
+      case "table":
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "table-preview", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("table", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("tbody", { children: preview.rows.map((row, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("tr", { children: row.map((cell, cellIndex) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: String(cell) }, cellIndex)) }, index)) }) }) });
+      case "html_text":
+      case "text":
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("pre", { className: "preview-text", children: preview.text || "" });
+      default:
+        return null;
+    }
+  }
+  function ArtifactCard({ artifact }) {
+    const { t } = useTranslation();
+    const [preview, setPreview] = (0, import_react16.useState)(null);
+    const [status, setStatus] = (0, import_react16.useState)("idle");
+    const [error, setError] = (0, import_react16.useState)("");
+    (0, import_react16.useEffect)(() => {
+      if (artifact.mime_type?.startsWith("image/")) return;
+      if (!artifact.preview_url) return;
+      setStatus("loading");
+      api(artifact.preview_url).then((data) => {
+        setPreview(data);
+        setStatus("ready");
+      }).catch((err) => {
+        setError(errorMessage(err));
+        setStatus("error");
+      });
+    }, [artifact.preview_url, artifact.mime_type]);
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("article", { className: "artifact-card", children: [
+      !artifact.valid ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.invalidArtifact") }) : artifact.experiment_status && artifact.experiment_status !== "succeeded" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "artifact-preview preview-error", children: t("preview.experimentNotSucceeded", { status: statusLabel(artifact.experiment_status, t) }) }) : artifact.mime_type?.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("img", { className: "artifact-image", src: artifact.download_url || artifact.url, alt: artifact.name }) : status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-loading", children: t("preview.loading") }) }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "artifact-preview", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "preview-error", children: t("preview.error", { error }) }) }) : status === "ready" && preview ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PreviewBody, { preview }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "artifact-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: artifact.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { className: "muted", children: [
+          artifact.kind,
+          " \xB7 ",
+          artifact.valid ? t("common.valid") : t("common.invalid"),
+          artifact.experiment_status ? ` \xB7 ${t("preview.runStatus", { status: statusLabel(artifact.experiment_status, t) })}` : ""
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "artifact-lineage", children: artifact.metadata?.lineage && typeof artifact.metadata.lineage === "object" ? t("preview.lineage", {
+          run: String(artifact.metadata.lineage.run_id || t("preview.lineageUnbound")),
+          idea: String(artifact.metadata.lineage.idea_version || t("preview.lineageUnknown")),
+          data: String(artifact.metadata.lineage.data_version || t("preview.lineageNotDeclared"))
+        }) : t("preview.lineageMissing") }),
+        artifact.valid && artifact.experiment_status !== "failed" && artifact.experiment_status !== "cancelled" ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("a", { href: artifact.download_url || artifact.url, download: true, children: t("preview.download") }) : null
+      ] })
+    ] });
+  }
+
+  // src/components/tabs/ExperimentWorkspace.tsx
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
   var defaultForm = () => ({ dependency_manifest: "requirements.txt", entrypoint: "", random_seeds: "13,37,73", config: "{}" });
   function lineageRunId(artifact) {
@@ -23361,24 +23616,24 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [selectedId, setSelectedId] = (0, import_react16.useState)(null);
-    const [forms, setForms] = (0, import_react16.useState)({});
-    const [busy, setBusy] = (0, import_react16.useState)(null);
-    const [workspace, setWorkspace] = (0, import_react16.useState)(null);
-    const [workspaceError, setWorkspaceError] = (0, import_react16.useState)(null);
-    const entries = (0, import_react16.useMemo)(() => buildEntries(project, mode), [project, mode]);
+    const [selectedId, setSelectedId] = (0, import_react17.useState)(null);
+    const [forms, setForms] = (0, import_react17.useState)({});
+    const [busy, setBusy] = (0, import_react17.useState)(null);
+    const [workspace, setWorkspace] = (0, import_react17.useState)(null);
+    const [workspaceError, setWorkspaceError] = (0, import_react17.useState)(null);
+    const entries = (0, import_react17.useMemo)(() => buildEntries(project, mode), [project, mode]);
     const selected = entries.find((entry) => entry.id === selectedId) || entries[0] || null;
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       setSelectedId(null);
     }, [mode]);
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!selectedId || !entries.some((entry) => entry.id === selectedId)) {
         setSelectedId(entries[0]?.id || null);
       }
     }, [selectedId, entries]);
     const workspaceScope = selected?.kind === "method_workspace" ? "method" : selected?.kind === "reproduction" && selected.reproduction ? "reproduction" : null;
     const reproductionWorkspaceId = workspaceScope === "reproduction" ? selected?.reproduction?.id : void 0;
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       let active = true;
       setWorkspace(null);
       setWorkspaceError(null);
@@ -23943,7 +24198,7 @@
   }
 
   // src/components/ResizableDivider.tsx
-  var import_react17 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
   var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, Math.round(value)));
@@ -23959,14 +24214,14 @@
     onPreview,
     onCommit
   }) {
-    const [resizing, setResizing] = (0, import_react17.useState)(false);
-    const pendingValue = (0, import_react17.useRef)(value);
-    const frame = (0, import_react17.useRef)(null);
-    const cleanup = (0, import_react17.useRef)(null);
-    (0, import_react17.useEffect)(() => {
+    const [resizing, setResizing] = (0, import_react18.useState)(false);
+    const pendingValue = (0, import_react18.useRef)(value);
+    const frame = (0, import_react18.useRef)(null);
+    const cleanup = (0, import_react18.useRef)(null);
+    (0, import_react18.useEffect)(() => {
       if (!resizing) pendingValue.current = value;
     }, [resizing, value]);
-    (0, import_react17.useEffect)(() => () => cleanup.current?.(), []);
+    (0, import_react18.useEffect)(() => () => cleanup.current?.(), []);
     const isDisabled = () => disabledMediaQuery ? window.matchMedia(disabledMediaQuery).matches : false;
     const commitPreview = (next) => {
       const clamped = clamp(next, min, max);
@@ -24050,9 +24305,9 @@
     measurementKey,
     children
   }) {
-    const navRef = (0, import_react18.useRef)(null);
-    const [indicator, setIndicator] = (0, import_react18.useState)({ left: 0, width: 0, ready: false });
-    (0, import_react18.useLayoutEffect)(() => {
+    const navRef = (0, import_react19.useRef)(null);
+    const [indicator, setIndicator] = (0, import_react19.useState)({ left: 0, width: 0, ready: false });
+    (0, import_react19.useLayoutEffect)(() => {
       const nav = navRef.current;
       if (!nav) return void 0;
       const measure = () => {
@@ -24147,12 +24402,12 @@
     onToggleMobileChat
   }) {
     const { t } = useTranslation();
-    const [projectChatWidth, setProjectChatWidth] = (0, import_react18.useState)(() => {
+    const [projectChatWidth, setProjectChatWidth] = (0, import_react19.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.projectChatWidth"));
       return Number.isFinite(stored) ? Math.min(PROJECT_CHAT_MAX_WIDTH, Math.max(PROJECT_CHAT_MIN_WIDTH, stored)) : PROJECT_CHAT_DEFAULT_WIDTH;
     });
-    const projectLayoutRef = (0, import_react18.useRef)(null);
-    (0, import_react18.useEffect)(() => {
+    const projectLayoutRef = (0, import_react19.useRef)(null);
+    (0, import_react19.useEffect)(() => {
       window.localStorage.setItem("researchos.projectChatWidth", String(projectChatWidth));
     }, [projectChatWidth]);
     const tabProps = {
@@ -24208,7 +24463,7 @@
               activeTab === "literature" || activeTab === "seed_expansion" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LiteratureTab, { ...tabProps, searchCandidates, tab: activeTab === "seed_expansion" ? "seed_expansion" : "literature" }) : null,
               activeTab === "visualization" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
               activeTab === "method" || activeTab === "reproduction" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ExperimentWorkspace, { project, mode: activeTab === "method" ? "method" : "reproduction", onNavigate: onTabChange, onRefresh, showToast }) : null,
-              ["introduction", "paper_related_work", "paper_method", "paper_experiments", "conclusion"].includes(activeTab) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PaperTab, { project, tab: activeTab, onNavigate: onTabChange, onRefresh, showToast }) : null
+              ["introduction", "paper_related_work", "paper_method", "paper_experiments", "conclusion"].includes(activeTab) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PaperWorkspace, { project, tab: activeTab, onNavigate: onTabChange, onRefresh, showToast }) : null
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
               "button",
@@ -24412,13 +24667,13 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react25 = __toESM(require_react(), 1);
+  var import_react26 = __toESM(require_react(), 1);
 
   // src/components/GeneralSettingsForm.tsx
-  var import_react20 = __toESM(require_react(), 1);
+  var import_react21 = __toESM(require_react(), 1);
 
   // src/theme.ts
-  var import_react19 = __toESM(require_react(), 1);
+  var import_react20 = __toESM(require_react(), 1);
   var THEME_OPTIONS = ["light", "dark"];
   var STORAGE_KEY2 = "researchos.theme";
   function initialTheme() {
@@ -24445,7 +24700,7 @@
     listeners2.forEach((listener) => listener());
   }
   function useTheme() {
-    return (0, import_react19.useSyncExternalStore)(subscribe2, getTheme, getTheme);
+    return (0, import_react20.useSyncExternalStore)(subscribe2, getTheme, getTheme);
   }
 
   // src/components/GeneralSettingsForm.tsx
@@ -24454,11 +24709,11 @@
   function GeneralSettingsForm({ onChanged }) {
     const { locale, t, setLocale: setLocale2 } = useTranslation();
     const theme = useTheme();
-    const [proxy, setProxy] = (0, import_react20.useState)(EMPTY_PROXY);
-    const [loading, setLoading] = (0, import_react20.useState)(true);
-    const [saving, setSaving] = (0, import_react20.useState)(false);
-    const [error, setError] = (0, import_react20.useState)("");
-    const [dirty, setDirty] = (0, import_react20.useState)(false);
+    const [proxy, setProxy] = (0, import_react21.useState)(EMPTY_PROXY);
+    const [loading, setLoading] = (0, import_react21.useState)(true);
+    const [saving, setSaving] = (0, import_react21.useState)(false);
+    const [error, setError] = (0, import_react21.useState)("");
+    const [dirty, setDirty] = (0, import_react21.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -24472,7 +24727,7 @@
         setLoading(false);
       }
     };
-    (0, import_react20.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       void load();
     }, []);
     const updateProxy = (field, value) => {
@@ -24606,7 +24861,7 @@
   }
 
   // src/components/CodeModelSettingsForm.tsx
-  var import_react21 = __toESM(require_react(), 1);
+  var import_react22 = __toESM(require_react(), 1);
   var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
   var TIERS = [
     { id: "simple", labelKey: "settings.tierLight", descriptionKey: "settings.tierLightDescription", defaultEffort: "low" },
@@ -24622,12 +24877,12 @@
     onSaved
   }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react21.useState)(null);
-    const [loading, setLoading] = (0, import_react21.useState)(false);
-    const [saving, setSaving] = (0, import_react21.useState)(false);
-    const [error, setError] = (0, import_react21.useState)("");
-    const [dirty, setDirty] = (0, import_react21.useState)(false);
-    (0, import_react21.useEffect)(() => {
+    const [values, setValues] = (0, import_react22.useState)(null);
+    const [loading, setLoading] = (0, import_react22.useState)(false);
+    const [saving, setSaving] = (0, import_react22.useState)(false);
+    const [error, setError] = (0, import_react22.useState)("");
+    const [dirty, setDirty] = (0, import_react22.useState)(false);
+    (0, import_react22.useEffect)(() => {
       setLoading(true);
       setError("");
       api("/api/settings/models").then((result) => {
@@ -24808,18 +25063,18 @@
   }
 
   // src/components/DocumentModelSettingsForm.tsx
-  var import_react22 = __toESM(require_react(), 1);
+  var import_react23 = __toESM(require_react(), 1);
   var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
   function DocumentModelSettingsForm({
     onChanged,
     onDirtyChange
   }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react22.useState)(null);
-    const [loading, setLoading] = (0, import_react22.useState)(false);
-    const [saving, setSaving] = (0, import_react22.useState)(false);
-    const [error, setError] = (0, import_react22.useState)("");
-    const [dirty, setDirty] = (0, import_react22.useState)(false);
+    const [values, setValues] = (0, import_react23.useState)(null);
+    const [loading, setLoading] = (0, import_react23.useState)(false);
+    const [saving, setSaving] = (0, import_react23.useState)(false);
+    const [error, setError] = (0, import_react23.useState)("");
+    const [dirty, setDirty] = (0, import_react23.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -24834,7 +25089,7 @@
         setLoading(false);
       }
     };
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       void load();
     }, []);
     const update = (field, value) => {
@@ -24958,17 +25213,17 @@
   }
 
   // src/components/ProjectEmbeddingSettingsForm.tsx
-  var import_react23 = __toESM(require_react(), 1);
+  var import_react24 = __toESM(require_react(), 1);
   var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react23.useState)(null);
-    const [instance, setInstance] = (0, import_react23.useState)(null);
-    const [loading, setLoading] = (0, import_react23.useState)(false);
-    const [saving, setSaving] = (0, import_react23.useState)(false);
-    const [error, setError] = (0, import_react23.useState)("");
-    const [dirty, setDirty] = (0, import_react23.useState)(false);
-    const [confirmReset, setConfirmReset] = (0, import_react23.useState)(false);
+    const [values, setValues] = (0, import_react24.useState)(null);
+    const [instance, setInstance] = (0, import_react24.useState)(null);
+    const [loading, setLoading] = (0, import_react24.useState)(false);
+    const [saving, setSaving] = (0, import_react24.useState)(false);
+    const [error, setError] = (0, import_react24.useState)("");
+    const [dirty, setDirty] = (0, import_react24.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react24.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -24991,7 +25246,7 @@
         setLoading(false);
       }
     };
-    (0, import_react23.useEffect)(() => {
+    (0, import_react24.useEffect)(() => {
       if (projectId) void load();
     }, [projectId]);
     const update = (field, value) => {
@@ -25185,15 +25440,15 @@
   }
 
   // src/components/VoiceSettingsForm.tsx
-  var import_react24 = __toESM(require_react(), 1);
+  var import_react25 = __toESM(require_react(), 1);
   var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
   function VoiceSettingsForm({ onChanged }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react24.useState)(null);
-    const [loading, setLoading] = (0, import_react24.useState)(false);
-    const [saving, setSaving] = (0, import_react24.useState)(false);
-    const [error, setError] = (0, import_react24.useState)("");
-    const [dirty, setDirty] = (0, import_react24.useState)(false);
+    const [values, setValues] = (0, import_react25.useState)(null);
+    const [loading, setLoading] = (0, import_react25.useState)(false);
+    const [saving, setSaving] = (0, import_react25.useState)(false);
+    const [error, setError] = (0, import_react25.useState)("");
+    const [dirty, setDirty] = (0, import_react25.useState)(false);
     const friendlyError = (err) => err instanceof ApiError && err.code === "not_found" ? t("voice.endpointMissing") : errorMessage(err);
     const load = async () => {
       setLoading(true);
@@ -25214,7 +25469,7 @@
         setLoading(false);
       }
     };
-    (0, import_react24.useEffect)(() => {
+    (0, import_react25.useEffect)(() => {
       void load();
     }, []);
     const update = (field, value) => {
@@ -25379,9 +25634,9 @@
     ariaLabel
   }) {
     const { t } = useTranslation();
-    const navRef = (0, import_react25.useRef)(null);
-    const [indicator, setIndicator] = (0, import_react25.useState)({ left: 0, width: 0, ready: false });
-    (0, import_react25.useLayoutEffect)(() => {
+    const navRef = (0, import_react26.useRef)(null);
+    const [indicator, setIndicator] = (0, import_react26.useState)({ left: 0, width: 0, ready: false });
+    (0, import_react26.useLayoutEffect)(() => {
       const nav = navRef.current;
       if (!nav) return void 0;
       const measure = () => {
@@ -25423,11 +25678,11 @@
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
     const { t } = useTranslation();
-    const [tab, setTab] = (0, import_react25.useState)("general");
-    const [subTab, setSubTab] = (0, import_react25.useState)("code");
-    const [dirty, setDirty] = (0, import_react25.useState)(false);
-    const [pending, setPending] = (0, import_react25.useState)(null);
-    (0, import_react25.useEffect)(() => {
+    const [tab, setTab] = (0, import_react26.useState)("general");
+    const [subTab, setSubTab] = (0, import_react26.useState)("code");
+    const [dirty, setDirty] = (0, import_react26.useState)(false);
+    const [pending, setPending] = (0, import_react26.useState)(null);
+    (0, import_react26.useEffect)(() => {
       if (!open) return;
       setTab("general");
       setSubTab("code");
@@ -25538,7 +25793,7 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react26 = __toESM(require_react(), 1);
+  var import_react27 = __toESM(require_react(), 1);
   var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     const { t } = useTranslation();
@@ -25581,13 +25836,13 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [view, setView] = (0, import_react26.useState)("graph");
-    const [query, setQuery] = (0, import_react26.useState)("");
-    const [status, setStatus] = (0, import_react26.useState)(t("memory.graphPrompt"));
-    const [graph, setGraph] = (0, import_react26.useState)(null);
-    const [search, setSearch] = (0, import_react26.useState)(null);
-    const [loading, setLoading] = (0, import_react26.useState)(false);
-    (0, import_react26.useEffect)(() => {
+    const [view, setView] = (0, import_react27.useState)("graph");
+    const [query, setQuery] = (0, import_react27.useState)("");
+    const [status, setStatus] = (0, import_react27.useState)(t("memory.graphPrompt"));
+    const [graph, setGraph] = (0, import_react27.useState)(null);
+    const [search, setSearch] = (0, import_react27.useState)(null);
+    const [loading, setLoading] = (0, import_react27.useState)(false);
+    (0, import_react27.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -25729,16 +25984,16 @@
   }
 
   // src/components/NotFoundView.tsx
-  var import_react27 = __toESM(require_react(), 1);
+  var import_react28 = __toESM(require_react(), 1);
   var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
   function NotFoundView({ path, onGoHome }) {
     const { t } = useTranslation();
-    const [seconds, setSeconds] = (0, import_react27.useState)(3);
-    const onGoHomeRef = (0, import_react27.useRef)(onGoHome);
-    (0, import_react27.useEffect)(() => {
+    const [seconds, setSeconds] = (0, import_react28.useState)(3);
+    const onGoHomeRef = (0, import_react28.useRef)(onGoHome);
+    (0, import_react28.useEffect)(() => {
       onGoHomeRef.current = onGoHome;
     }, [onGoHome]);
-    (0, import_react27.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       const countdown = window.setInterval(() => {
         setSeconds((value) => Math.max(0, value - 1));
       }, 1e3);
@@ -25767,7 +26022,7 @@
   }
 
   // src/components/DeleteProjectDialog.tsx
-  var import_react28 = __toESM(require_react(), 1);
+  var import_react29 = __toESM(require_react(), 1);
   var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   function DeleteProjectDialog({
     project,
@@ -25776,7 +26031,7 @@
     onConfirm
   }) {
     const { t } = useTranslation();
-    const [confirmation, setConfirmation] = (0, import_react28.useState)("");
+    const [confirmation, setConfirmation] = (0, import_react29.useState)("");
     const canDelete = confirmation === "DELETE" && !busy;
     return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
       Modal,
@@ -25826,36 +26081,36 @@
   }
   function App() {
     const { t } = useTranslation();
-    const [projects, setProjects] = (0, import_react29.useState)([]);
-    const [projectId, setProjectId] = (0, import_react29.useState)(null);
-    const [project, setProject] = (0, import_react29.useState)(null);
-    const [view, setView] = (0, import_react29.useState)("home");
-    const [activeArea, setActiveArea] = (0, import_react29.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react29.useState)("overview");
-    const [health, setHealth] = (0, import_react29.useState)("connecting");
-    const [toast, setToast] = (0, import_react29.useState)(null);
-    const [projectMessages, setProjectMessages] = (0, import_react29.useState)([]);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react29.useState)(false);
-    const [sessionId, setSessionId] = (0, import_react29.useState)(null);
-    const [settingsOpen, setSettingsOpen] = (0, import_react29.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react29.useState)(false);
-    const [confirm, setConfirm] = (0, import_react29.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react29.useState)(false);
-    const [notFoundPath, setNotFoundPath] = (0, import_react29.useState)(null);
-    const [homeLoading, setHomeLoading] = (0, import_react29.useState)(true);
-    const [homeError, setHomeError] = (0, import_react29.useState)(null);
-    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react29.useState)(null);
-    const [deleteBusy, setDeleteBusy] = (0, import_react29.useState)(false);
-    const [projectDrawerOpen, setProjectDrawerOpen] = (0, import_react29.useState)(false);
-    const [projectRefreshing, setProjectRefreshing] = (0, import_react29.useState)(false);
-    const [sidebarWidth, setSidebarWidth] = (0, import_react29.useState)(() => {
+    const [projects, setProjects] = (0, import_react30.useState)([]);
+    const [projectId, setProjectId] = (0, import_react30.useState)(null);
+    const [project, setProject] = (0, import_react30.useState)(null);
+    const [view, setView] = (0, import_react30.useState)("home");
+    const [activeArea, setActiveArea] = (0, import_react30.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react30.useState)("overview");
+    const [health, setHealth] = (0, import_react30.useState)("connecting");
+    const [toast, setToast] = (0, import_react30.useState)(null);
+    const [projectMessages, setProjectMessages] = (0, import_react30.useState)([]);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react30.useState)(false);
+    const [sessionId, setSessionId] = (0, import_react30.useState)(null);
+    const [settingsOpen, setSettingsOpen] = (0, import_react30.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react30.useState)(false);
+    const [confirm, setConfirm] = (0, import_react30.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react30.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react30.useState)(null);
+    const [homeLoading, setHomeLoading] = (0, import_react30.useState)(true);
+    const [homeError, setHomeError] = (0, import_react30.useState)(null);
+    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react30.useState)(null);
+    const [deleteBusy, setDeleteBusy] = (0, import_react30.useState)(false);
+    const [projectDrawerOpen, setProjectDrawerOpen] = (0, import_react30.useState)(false);
+    const [projectRefreshing, setProjectRefreshing] = (0, import_react30.useState)(false);
+    const [sidebarWidth, setSidebarWidth] = (0, import_react30.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.sidebarWidth"));
       return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276;
     });
-    const projectChatBusyRef = (0, import_react29.useRef)(false);
-    const sessionIdRef = (0, import_react29.useRef)(null);
-    const toastTimerRef = (0, import_react29.useRef)(null);
-    (0, import_react29.useEffect)(() => {
+    const projectChatBusyRef = (0, import_react30.useRef)(false);
+    const sessionIdRef = (0, import_react30.useRef)(null);
+    const toastTimerRef = (0, import_react30.useRef)(null);
+    (0, import_react30.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
     const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
@@ -26045,7 +26300,7 @@
       const slug = project?.slug || projectId;
       if (slug) writeWorkspacePath(slug, area, tab);
     };
-    (0, import_react29.useEffect)(() => {
+    (0, import_react30.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
@@ -26313,7 +26568,6 @@ lucide-react/dist/esm/icons/image.mjs:
 lucide-react/dist/esm/icons/languages.mjs:
 lucide-react/dist/esm/icons/layout-dashboard.mjs:
 lucide-react/dist/esm/icons/library.mjs:
-lucide-react/dist/esm/icons/link-2.mjs:
 lucide-react/dist/esm/icons/list-checks.mjs:
 lucide-react/dist/esm/icons/loader-circle.mjs:
 lucide-react/dist/esm/icons/lock-keyhole.mjs:
@@ -26333,6 +26587,7 @@ lucide-react/dist/esm/icons/refresh-cw.mjs:
 lucide-react/dist/esm/icons/rotate-ccw.mjs:
 lucide-react/dist/esm/icons/save.mjs:
 lucide-react/dist/esm/icons/scan-text.mjs:
+lucide-react/dist/esm/icons/scroll-text.mjs:
 lucide-react/dist/esm/icons/search.mjs:
 lucide-react/dist/esm/icons/send.mjs:
 lucide-react/dist/esm/icons/settings.mjs:

@@ -9,7 +9,7 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
+  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, paperSectionEditRequest, projectEmbeddingSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
@@ -25,7 +25,8 @@ import { createProjectWorkspace, enqueue, listProjectSummaries, projectDetail, r
 import { normalizeProjectSlug } from './project-slug.js'
 import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
-import { createCompileProposal, createPaperDraftProposal } from './paper-service.js'
+import { createCompileProposal, createPaperDraftProposal, createPaperSectionProposal } from './paper-service.js'
+import { paperWorkspaceDetail } from './paper-workspace-service.js'
 import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { scanFile } from './malware-scanner.js'
@@ -370,6 +371,8 @@ app.get('/api/projects/:projectId/workspace', async context => {
   return context.json(await projectWorkspaceDetail(uuid.parse(context.req.param('projectId')), options))
 })
 
+app.get('/api/projects/:projectId/paper-workspace', async context => context.json(await paperWorkspaceDetail(await projectIdForReference(context.req.param('projectId')))))
+
 app.post('/api/projects/:projectId/related-work/seeds', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const body = await jsonBody(context, relatedWorkSeedRequest)
@@ -705,6 +708,10 @@ app.post('/api/proposals/:proposalId/decision', async context => {
 })
 
 app.post('/api/projects/:projectId/paper-draft', async context => context.json(await createPaperDraftProposal(uuid.parse(context.req.param('projectId'))), 201))
+app.post('/api/projects/:projectId/paper-section', async context => {
+  const body = await jsonBody(context, paperSectionEditRequest)
+  return context.json(await createPaperSectionProposal(uuid.parse(context.req.param('projectId')), body.section_id, body.content), 201)
+})
 app.post('/api/projects/:projectId/compile-plan', async context => context.json(await createCompileProposal(uuid.parse(context.req.param('projectId'))), 201))
 app.post('/api/projects/:projectId/checkpoints/:checkpointId/rerun', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))

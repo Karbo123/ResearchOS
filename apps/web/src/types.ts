@@ -301,6 +301,47 @@ export interface ProjectWorkspaceDetail {
   limits?: { max_files: number; max_diff_chars: number }
 }
 
+export type PaperSectionId = 'introduction' | 'paper_related_work' | 'paper_method' | 'paper_experiments' | 'conclusion'
+
+export interface PaperSentence {
+  en: string
+  zh: string | null
+}
+
+export interface PaperSectionWorkspace {
+  id: PaperSectionId
+  heading: string
+  source: string
+  english: string
+  citations: string[]
+  figure_refs: string[]
+  sentences: PaperSentence[]
+  status: 'missing' | 'draft' | 'ready'
+}
+
+export interface PaperBibEntry {
+  key: string
+  title: string
+  authors: string
+  year: string
+  venue: string
+}
+
+export interface PaperWorkspaceDetail {
+  project_id: string
+  source_path: string
+  has_source: boolean
+  has_references: boolean
+  source_commit: string | null
+  source_dirty: boolean
+  sections: PaperSectionWorkspace[]
+  references: PaperBibEntry[]
+  compile_runs: number
+  compile_succeeded: number
+  compile_latest_status: string | null
+  compile_latest_error: string | null
+}
+
 export interface RelatedWorkRun {
   id: string
   proposal_id: string
