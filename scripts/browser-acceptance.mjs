@@ -43,7 +43,7 @@ async function evaluate(expression) {
 
 async function waitForApp() {
   for (let attempt = 0; attempt < 60; attempt += 1) {
-    const ready = await evaluate(`document.readyState === 'complete' && !!document.querySelector('.app-shell')`)
+    const ready = await evaluate(`document.readyState === 'complete' && (!!document.querySelector('.app-shell') || !!document.querySelector('.not-found-card'))`)
     if (ready) return
     await new Promise(resolveTimeout => setTimeout(resolveTimeout, 250))
   }
@@ -83,6 +83,10 @@ async function overflowOffenders() {
     const rect = element.getBoundingClientRect()
     return { tag: element.tagName, className: String(element.className || '').slice(0, 90), id: element.id || '', left: Math.round(rect.left * 10) / 10, right: Math.round(rect.right * 10) / 10, width: Math.round(rect.width * 10) / 10 }
   }).filter(item => item.right > window.innerWidth + 0.5 || item.left < -0.5).slice(0, 30)`)
+}
+
+async function wait(ms) {
+  await new Promise(resolveTimeout => setTimeout(resolveTimeout, ms))
 }
 
 const homeUrl = `${appBase}/`
@@ -151,5 +155,167 @@ const reducedMotion = await evaluate(`(() => {
 })()`)
 await capture('108h-project-reduced-open.png')
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, results }, null, 2))
+const notFound = []
+for (const locale of ['zh-CN', 'zh-TW', 'en', 'es']) {
+  await navigate(`${appBase}/definitely-not-a-page`, locale, 'light')
+  const state = await evaluate(`(() => {
+    const card = document.querySelector('.not-found-card')
+    return {
+      visible: !!card,
+      title: document.querySelector('.not-found-card h1')?.textContent || null,
+      code: document.querySelector('.not-found-code')?.textContent || null,
+      countdown: document.querySelector('.not-found-countdown')?.textContent || null,
+      overflowX: document.documentElement.scrollWidth > window.innerWidth,
+      lang: document.documentElement.lang || null,
+    }
+  })()`)
+  await capture(`108h-404-${locale}.png`)
+  notFound.push({ locale, state })
+}
+await navigate(`${appBase}/definitely-not-a-page`, 'en', 'dark')
+const notFoundDark = await evaluate(`!!document.querySelector('.not-found-card') && document.documentElement.dataset.theme === 'dark'`)
+await capture('108h-404-dark.png')
+await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
+await navigate(`${appBase}/definitely-not-a-page`, 'zh-CN', 'light')
+const notFoundMobile = await evaluate(`({
+  visible: !!document.querySelector('.not-found-card'),
+  overflowX: document.documentElement.scrollWidth > window.innerWidth,
+})`)
+await capture('108h-404-mobile.png')
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
+const settings = []
+for (const locale of ['zh-CN', 'zh-TW', 'en', 'es']) {
+  await navigate(homeUrl, locale, 'light')
+  await evaluate(`document.querySelector('.side-settings')?.click()`)
+  await wait(700)
+  const state = await evaluate(`(() => {
+    const dialog = document.querySelector('.modal-panel[role="dialog"]')
+    return {
+      visible: !!dialog,
+      ariaLabel: dialog?.getAttribute('aria-label') || null,
+      tabs: document.querySelectorAll('.settings-tabs button').length,
+      overflowX: document.documentElement.scrollWidth > window.innerWidth,
+    }
+  })()`)
+  await capture(`108h-settings-${locale}.png`)
+  settings.push({ locale, state })
+}
+await navigate(homeUrl, 'en', 'dark')
+await evaluate(`document.querySelector('.side-settings')?.click()`)
+await wait(700)
+const settingsDark = await evaluate(`!!document.querySelector('.modal-panel[role="dialog"]') && document.documentElement.dataset.theme === 'dark'`)
+await capture('108h-settings-dark.png')
+await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
+await navigate(homeUrl, 'zh-CN', 'light')
+await evaluate(`document.querySelector('.side-settings')?.click()`)
+await wait(700)
+const settingsMobile = await evaluate(`({
+  visible: !!document.querySelector('.modal-panel[role="dialog"]'),
+  overflowX: document.documentElement.scrollWidth > window.innerWidth,
+})`)
+await capture('108h-settings-mobile.png')
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
+await navigate(homeUrl, 'en', 'light')
+await evaluate(`document.querySelector('.home-delete-action')?.click()`)
+await wait(600)
+const deleteLight = await evaluate(`(() => {
+  const input = document.getElementById('delete-project-confirmation')
+  const dialog = input?.closest('.modal-panel') || null
+  return {
+    visible: !!dialog,
+    ariaLabel: dialog?.getAttribute('aria-label') || null,
+    hasConfirmationInput: !!document.getElementById('delete-project-confirmation'),
+    warning: document.querySelector('.delete-project-warning')?.textContent || null,
+  }
+})()`)
+await capture('108h-delete-light.png')
+await navigate(homeUrl, 'en', 'dark')
+await evaluate(`document.querySelector('.home-delete-action')?.click()`)
+await wait(600)
+const deleteDark = await evaluate(`(() => {
+  const input = document.getElementById('delete-project-confirmation')
+  return !!input?.closest('.modal-panel') && document.documentElement.dataset.theme === 'dark'
+})()`)
+await capture('108h-delete-dark.png')
+
+await navigate(projectUrl, 'en', 'light')
+await evaluate(`document.querySelector('.project-drawer-toggle')?.click()`)
+await wait(700)
+const brand = await evaluate(`(() => {
+  const button = document.querySelector('.brand')
+  const mark = document.querySelector('.brand-mark')
+  const rect = button?.getBoundingClientRect()
+  const markRect = mark?.getBoundingClientRect()
+  button?.click()
+  return {
+    exists: !!button,
+    ariaLabel: button?.getAttribute('aria-label') || null,
+    heightCoversMark: rect && markRect ? rect.height >= markRect.height : false,
+    borderRadius: button ? getComputedStyle(button).borderRadius : null,
+  }
+})()`)
+await wait(900)
+brand.homePath = await evaluate(`window.location.pathname`)
+await capture('108h-brand-home.png')
+
+await navigate(homeUrl, 'en', 'light')
+const brandHover = await evaluate(`(() => {
+  const button = document.querySelector('.brand')
+  const rect = button?.getBoundingClientRect()
+  return rect ? { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) } : null
+})()`)
+if (brandHover) {
+  await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: brandHover.x, y: brandHover.y })
+  await wait(350)
+  brand.hoverBackground = await evaluate(`(() => {
+    const button = document.querySelector('.brand')
+    return button ? getComputedStyle(button).backgroundColor : null
+  })()`)
+  await capture('108h-brand-hover.png')
+}
+
+await navigate(projectUrl, 'en', 'light')
+await evaluate(`localStorage.setItem('researchos.theme', 'dark'); location.reload()`)
+await wait(2200)
+const themePersist = await evaluate(`({
+  path: window.location.pathname,
+  lang: document.documentElement.lang,
+  theme: document.documentElement.dataset.theme,
+  overflowX: document.documentElement.scrollWidth > window.innerWidth,
+})`)
+await capture('108h-theme-persist.png')
+
+const paperUrl = `${appBase}/project/${projectSlug}/paper/introduction`
+await navigate(paperUrl, 'en', 'light')
+const longContent = await evaluate(`(() => {
+  const content = document.querySelector('.tab-content')
+  const scrollables = Array.from(document.querySelectorAll('*'))
+    .filter(element => element.scrollHeight > element.clientHeight + 4 && ['auto', 'scroll'].includes(getComputedStyle(element).overflowY))
+    .slice(0, 6)
+    .map(element => ({ tag: element.tagName, className: String(element.className || '').slice(0, 70) }))
+  return {
+    exists: !!content,
+    scrollable: scrollables.length > 0,
+    scrollables,
+    overflowY: content ? getComputedStyle(content).overflowY : null,
+    scrollbarWidth: content ? getComputedStyle(content).scrollbarWidth : null,
+  }
+})()`)
+await capture('108h-long-content.png')
+
+await navigate(homeUrl, 'en', 'light')
+const actionMotion = await evaluate(`(() => {
+  const track = document.querySelector('.project-actions-track')
+  const row = document.querySelector('.project-row')
+  return {
+    exists: !!track,
+    transitionProperty: track ? getComputedStyle(track).transitionProperty : null,
+    transitionDuration: track ? getComputedStyle(track).transitionDuration : null,
+    rowHoverTransition: row ? getComputedStyle(row).transitionDuration : null,
+  }
+})()`)
+
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, themePersist, longContent, actionMotion }, null, 2))
 socket.close()
