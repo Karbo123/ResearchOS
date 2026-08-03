@@ -274,7 +274,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
 ## 5. 外部阻塞（等待外部条件，不阻塞其它排期）
 
 - [!] `P0-SUPERMEMORY-LOCAL-053` 当前 Supermemory server build 的远程 embedding/PDF/图片能力存在已验证限制；保持失败关闭。解除条件：受支持的 Linux build/源码补丁和可用模型端点完成真实验收，或用户明确批准新的兼容实现。
-- [!] `P0-RUNTIME-101` 当前正式 `runtime/research-os.pglite` 在首次 SQL 查询时稳定抛出 PGlite `RuntimeError: Aborted()`；锁清理和独立复制均不能恢复，正式库与备份已保留未覆盖。已用 `artifacts/backups/20260730T200648Z/postgres.sql` 生成并校验独立 `runtime/restore-pglite-model-check-20260803` 候选，但不能自动替换正式运行目录。解除条件：人工审阅恢复候选并明确选择恢复，或从经验证的 PGlite 备份恢复正式库后重新完成 API/浏览器验收。
+- [x] `P0-RUNTIME-101` 2026-08-03 用户明确同意直接使用已验证的恢复候选库（测试阶段，无真实科研数据），`.env` 的 `RESEARCH_RUNTIME_DIR` 已切到 `runtime/restore-pglite-model-check-20260803`，8080 API 健康检查、语音设置与 Groq 真实转写均已通过。
 - [!] `P0-RUNNER-007` 目标 WSL2 主机的真实 GPU/CUDA 资源尚未验收；CPU supervisor 测试不能代表 GPU 通过。
 - [!] `P0-DEPS-056` 当前 Mastra/deployer 依赖链的上游 Hono advisory 需等待兼容修复；不能用破坏性降级掩盖。
 
