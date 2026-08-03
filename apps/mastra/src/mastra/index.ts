@@ -22,6 +22,7 @@ import { ensureIdeaDataset, ideaClarificationContractScorer, MastraEvalContractE
 import { inspectIdeaDraft, inspectIdeaDraftTool } from './tools/inspect-idea-draft.js'
 import { approvalGateWorkflow, projectChatWorkflow, researchBootstrapWorkflow, supervisionReportsWorkflow } from './workflows/research-workflows.js'
 import { researchRoot } from './env.js'
+import { structuredJsonValue } from './structured-json-input.js'
 
 const storage = new LibSQLStore({
   id: 'research-os-mastra-storage', url: `file:${resolve(researchRoot, 'runtime', 'mastra.db')}`,
@@ -121,7 +122,7 @@ const apiRoutes = [
           deterministic_schema_gaps: gapResult.gaps,
         }
         const content = [
-          { type: 'text' as const, text: JSON.stringify(payload) },
+          { type: 'text' as const, text: structuredJsonValue(payload) },
           ...body.attachment_images.map(image => ({ type: 'image' as const, image: image.data_url })),
         ]
         const response = await ideaClarificationAgent.generate([{ role: 'user', content }], {
@@ -146,7 +147,7 @@ const apiRoutes = [
       try {
         const body = await parsedBody(c, projectSlugRequestSchema)
         const context = requestContext(body.tier)
-        const response = await projectSlugAgent.generate(JSON.stringify({ confirmed_idea: body.idea }), {
+        const response = await projectSlugAgent.generate(structuredJsonValue({ confirmed_idea: body.idea }), {
           ...generationOptions(context),
           structuredOutput: { schema: projectSlugResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
         })
@@ -165,7 +166,7 @@ const apiRoutes = [
       try {
         const body = await parsedBody(c, supervisionRequestSchema)
         const context = requestContext(body.tier, undefined, body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null, body.memory_thread?.startsWith('session:') ? body.memory_thread.slice('session:'.length) : null)
-        const response = await supervisionIntentAgent.generate(JSON.stringify({
+        const response = await supervisionIntentAgent.generate(structuredJsonValue({
           latest_user_message: body.message,
           project_context: body.project_context,
           recent_conversation: body.transcript,
@@ -191,7 +192,7 @@ const apiRoutes = [
       try {
         const body = await parsedBody(c, experimentPlanRequestSchema)
         const context = requestContext('complex', undefined, body.project_id, `planning-${body.project_id}-${body.idea_version}`)
-        const response = await experimentPlanningAgent.generate(JSON.stringify({
+        const response = await experimentPlanningAgent.generate(structuredJsonValue({
           project_id: body.project_id, idea_version: body.idea_version, planning_context: body.planning_context,
         }), {
           ...generationOptions(context),
@@ -210,7 +211,7 @@ const apiRoutes = [
       try {
         const body = await parsedBody(c, coordinatorRequestSchema)
         const context = requestContext(body.tier, undefined, body.project_id, body.memory_thread || `coordinator-${body.project_id}`)
-        const response = await researchCoordinatorAgent.generate(JSON.stringify({
+        const response = await researchCoordinatorAgent.generate(structuredJsonValue({
           project_id: body.project_id,
           task: body.task,
           planning_context: body.planning_context,

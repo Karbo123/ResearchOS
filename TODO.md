@@ -475,7 +475,9 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `100d` provider HTTP、超时、鉴权、schema、拒绝和空/不完整响应全部失败关闭，返回稳定结构化错误；没有默认助手消息、空成功结果、伪造项目 slug/计划或隐式换 provider。Guardrail detector provider 失败同样直接阻断请求。
   - [x] `100e` 增加可捕获请求 URL/body 的 Responses 契约测试、4xx/5xx/超时/非法结构化响应、guardrail 失败关闭和 Mastra client 非 JSON 测试；已通过 typecheck、127 项全量服务端测试、build、Mastra HITL/evals、Idea/navigation/UI 检查和主链真实验收（2 次真实模型调用）。本轮补充的 `model-failure:check` 在正常首轮请求处收到模型网关 HTTP 502，未伪造通过；失败关闭由 Responses provider/guardrail/mastra-client 契约测试覆盖。Supermemory 真实验收已尝试但远端文档保持 `queued`，按既有 `P0-SUPERMEMORY-LOCAL-053` 外部阻塞记录，未伪造通过。
 
-- [!] `P0-MODEL-API-101` 2026-08-03 用户在上游模型控制面板看到 `Response input messages must contain the word 'json' ... json_object`；当前仓库源码、Responses 构建产物和契约测试均确认 Research OS 自有 Agent/Guardrail 请求不再发送 `json_object`、`response_format` 或 `/chat/completions`。旧的 `runtime/mastra.err.log` 仍保留 2026-08-01 迁移前的旧请求；另有闭源 Supermemory 子进程可能按自身实现调用兼容 Chat API，无法由本仓库改写。解除条件：从控制面板提供该错误的时间、请求路径和 request-id，确认它来自旧进程/其他客户端还是 Supermemory；若来自 Supermemory，需支持 Responses 的新 build 或经批准的兼容适配层，不能把本地源码测试冒充为全链路迁移。
+- [~] `P0-MODEL-API-101` 2026-08-03 用户在上游模型控制面板看到 `Response input messages must contain the word 'json' ... json_object`；当前仓库源码、Responses 构建产物和契约测试均确认 Research OS 自有 Agent/Guardrail 请求不再发送 `json_object`、`response_format` 或 `/chat/completions`。旧的 `runtime/mastra.err.log` 仍保留 2026-08-01 迁移前的旧请求；另有闭源 Supermemory 子进程可能按自身实现调用兼容 Chat API，无法由本仓库改写。
+  - [x] `101a` 为所有 Research OS 自有结构化调用的实际 `input` 文本显式加入 JSON 输出指令，并增加兼容性测试；捕获的最终 Agent 请求确认使用 `/v1/responses`、`text.format.type=json_schema` 且 `input` 含 `json`，即使上游把 schema 兼容降级为 `json_object` 也不会因缺少提示词而拒绝。全量 129 项测试和完整构建通过。
+  - [!] `101b` 外部控制面板报错的最终来源仍需从请求时间、路径和 request-id 确认；若来自 Supermemory，需支持 Responses 的新 build 或经批准的兼容适配层，不能把本地源码测试冒充为全链路迁移。
 
 ## 5. 平台任务和外部阻塞
 
