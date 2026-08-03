@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research OS 项目级大工作流设计草案</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #f8fafc;
+      --panel-soft: #eef2f7;
+      --text: #17202a;
+      --muted: #5b6b7b;
+      --accent: #2563eb;
+      --warm: #b45309;
+      --green: #047857;
+      --border: #dbe3ec;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 56px 36px 96px;
+    }
+    h1, h2, h3, h4 { color: #0f172a; line-height: 1.35; }
+    h1 {
+      font-size: 2.2rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    h2 {
+      font-size: 1.55rem;
+      margin-top: 56px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(37, 99, 235, 0.18);
+    }
+    h3 { font-size: 1.18rem; margin-top: 32px; }
+    p { margin: 12px 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    blockquote {
+      margin: 18px 0;
+      padding: 12px 18px;
+      border-left: 4px solid var(--warm);
+      background: #fff7ed;
+      border-radius: 0 10px 10px 0;
+      color: #7c2d12;
+    }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      background: rgba(37, 99, 235, 0.08);
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #1e40af;
+    }
+    pre {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      overflow: auto;
+      line-height: 1.5;
+      color: #1e293b;
+    }
+    pre code { background: transparent; padding: 0; }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 18px 0 26px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    tr:last-child td { border-bottom: 0; }
+    th { background: #f1f5f9; color: #0f172a; }
+    td { color: #1e293b; }
+    .mermaid {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 8px;
+      margin: 28px 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .mermaid-workflow {
+      background: #10161f;
+      border-color: #33465f;
+    }
+    hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0; }
+    @media (max-width: 760px) {
+      .page { padding: 32px 18px 64px; }
+      h1 { font-size: 1.7rem; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Research OS 项目级大工作流设计草案</h1>
+<blockquote>
+<p>状态：设计草案，等待审核。本文只描述目标架构，不代表这些能力已经实现。
+阅读顺序：先看第 1 节的那一张巨型工作流图，确认四个一级区域、二级子工作流和三级页面的整体组织；再依次读运行模型、现状映射、数据模型和实施步骤。
+浏览器实时渲染版：<a href="giant-workflow.html">giant-workflow.html</a></p>
+</blockquote>
+<h2>0. 结论先行</h2>
+<p>一个科研项目就是一个持续数天、数月、有固定科学流程的长期执行任务。项目应该有一个项目级“大工作流”，并且这个大工作流直接对齐前端已经确定的标签栏：</p>
+<pre><code class="language-text">项目概述 -&gt; 相关工作调研 -&gt; 实验实现 -&gt; 学术论文撰写
+</code></pre>
+<p>层级规则：</p>
+<ul>
+<li><strong>一级</strong>：<code>项目概述</code>、<code>相关工作调研</code>、<code>实验实现</code>、<code>学术论文撰写</code>，对应前端第一栏。</li>
+<li><strong>二级</strong>：每个一级区域内部的工作区，对应前端第二栏。</li>
+<li><strong>三级</strong>：每个二级工作区内部的具体页面，对应前端第三栏，也是最小的叶子工作流。</li>
+</ul>
+<p>不要把整个项目实现成一条永不结束的线性步骤链，而是实现成一个<strong>持久化的项目级执行图</strong>。这个大执行图只负责：</p>
+<ul>
+<li>定义一级、二级、三级之间的依赖和条件分支；</li>
+<li>在可以并行的节点（例如多个实验、多个论文章节）上 fan-out / fan-in；</li>
+<li>等待审批、等待实验结果、等待外部服务时持久化休眠；</li>
+<li>在事件到达时重新计算哪些节点可以执行；</li>
+<li>在项目总览页面显示整张执行图。</li>
+</ul>
+<p>换句话说：<strong>整张图中的所有节点共同构成一个项目级大工作流；浅色阴影框表示其中某一个子工作流；每个叶子节点本身也可以再展开为一个更小的 Mastra 工作流</strong>。</p>
+<h2>1. 第一层：整个项目是一张巨型工作流图</h2>
+<p>下面这张图把四个一级区域、二级子工作流和三级页面全部放在同一张图里。琥珀色大块是《项目概述 / 用户参与与呈现》区，深蓝底框是另外三个一级区域，深绿底框是二级子工作流，深蓝灰方块是三级页面/叶子工作流；节点采用深色底 + 浅色文字，在纯白页面背景下也保持高对比和可读性。</p>
+<blockquote>
+<p>渲染说明：这张图使用 Mermaid 的 <strong>ELK 布局</strong>（<code>defaultRenderer: &quot;elk&quot;</code>），默认的 dagre 布局会把“跨子图连到内层节点”的边停在子图边界；本页面会在浏览器中实时渲染，确保箭头真正指向《引用图》等三级节点。下方 <code>mermaid-source</code> 块仅保存可编辑源码。</p>
+</blockquote>
+<pre class="mermaid mermaid-workflow">%%{init: {"theme":"base","themeVariables":{"darkMode":true,"background":"#10161F","lineColor":"#8FB8E8","textColor":"#EAF2FF","primaryColor":"#172A45","primaryTextColor":"#EAF2FF","primaryBorderColor":"#6FA8DC","secondaryColor":"#1F3B2E","secondaryTextColor":"#EAF2FF","secondaryBorderColor":"#7BC892","tertiaryColor":"#25344D","tertiaryTextColor":"#EAF2FF","tertiaryBorderColor":"#8FB8E8","clusterBkg":"#172A45","clusterBorder":"#6FA8DC","edgeLabelBackground":"#10161F"},"flowchart":{"defaultRenderer":"elk","curve":"linear","nodeSpacing":60,"rankSpacing":140,"padding":10}}}%%
+flowchart TB
+    Start((科研项目)) --&gt; OV_IDEA
+    OV_PRO --&gt; RW_SEARCH
+    RW_STATUS_MATRIX --&gt; IMP_METHOD_DESIGN
+    IMP_METHOD_EXP --&gt; PAP_OUTLINE
+
+    subgraph OV["一级：项目概述 / 用户参与与呈现"]
+        direction TB
+        OV_IDEA[二级/三级：Idea 讨论]
+        OV_SPEC[二级/三级：项目描述与研究问题]
+        OV_INN[二级/三级：创新点与边界]
+        OV_PRO[二级/三级：项目进度与待决策]
+        subgraph OV_REP["二级：定期总结与用户决策"]
+            direction TB
+            OV_REP_PERIODIC[三级：定期总结]
+            OV_REP_AUDIT[三级：决策与审计]
+        end
+        OV_REP_FEEDBACK_ONCE[三级：用户反馈 - 单次意见]
+        OV_REP_FEEDBACK_MULTI[三级：用户反馈 - 多轮对话]
+        OV_IDEA --&gt; OV_SPEC
+        OV_SPEC --&gt; OV_INN
+        OV_INN --&gt; OV_PRO
+        OV_REP -.回写.-&gt; OV_IDEA
+        OV_REP -.回写.-&gt; OV_SPEC
+        OV_REP -.回写.-&gt; OV_INN
+        OV_REP -.回写.-&gt; OV_PRO
+    end
+
+    subgraph RW["一级：相关工作调研"]
+        direction TB
+        RW_SEARCH[二级/三级：种子与文献检索]
+        subgraph RW_STATUS["二级：研究现状与引用图"]
+            direction TB
+            RW_STATUS_MATRIX[三级：研究现状]
+            RW_STATUS_GRAPH[三级：引用图]
+        end
+        RW_SEARCH --&gt; RW_STATUS
+    end
+
+    subgraph IMP["一级：实验实现"]
+        direction TB
+        subgraph IMP_REL["二级：相关工作实现"]
+            direction LR
+            IMP_REL_REPRO[三级：代码复现] --&gt; IMP_REL_COMP[三级：效果比较]
+        end
+        subgraph IMP_METHOD["二级：本方法实现"]
+            direction TB
+            IMP_METHOD_DESIGN[三级：方法设计] --&gt; IMP_METHOD_CODE[三级：代码工作区]
+            IMP_METHOD_CODE --&gt; IMP_METHOD_EXP[三级：实验计划与结果]
+            IMP_METHOD_EXP --&gt; IMP_METHOD_QUEUE[三级：运行队列]
+            IMP_METHOD_EXP --&gt; IMP_METHOD_METRICS[三级：指标统计]
+            IMP_METHOD_EXP --&gt; IMP_METHOD_ARTIFACTS[三级：结果与可视化]
+            IMP_METHOD_EXP --&gt; IMP_METHOD_LINEAGE[三级：实验谱系]
+            IMP_METHOD_POLICIES[三级：变更与审批] -.门禁.-&gt; IMP_METHOD_CODE
+            IMP_METHOD_GIT[三级：Git 与备份] -.版本控制.-&gt; IMP_METHOD_CODE
+        end
+        IMP_REL --&gt; IMP_METHOD
+    end
+
+    subgraph PAP["一级：学术论文撰写"]
+        direction TB
+        PAP_PROJECT[二级/三级：论文项目]
+        PAP_OUTLINE[二级/三级：大纲与章节]
+        PAP_CIT[二级/三级：引用与 BibTeX]
+        PAP_FIG[二级/三级：图表选择与插入]
+        PAP_DATA[二级/三级：实验数据选择与引用]
+        PAP_COMPILE[二级/三级：LaTeX 编译]
+        PAP_REVIEW[二级/三级：PDF 呈现与审阅]
+        PAP_PROJECT --&gt; PAP_OUTLINE
+        PAP_OUTLINE --&gt; PAP_CIT
+        PAP_OUTLINE --&gt; PAP_FIG
+        PAP_OUTLINE --&gt; PAP_DATA
+        PAP_CIT --&gt; PAP_COMPILE
+        PAP_FIG --&gt; PAP_COMPILE
+        PAP_DATA --&gt; PAP_COMPILE
+        PAP_COMPILE --&gt; PAP_REVIEW
+    end
+
+    OV_REP_FEEDBACK_ONCE == 单次意见：启动新实验 ==&gt; IMP_METHOD_EXP
+    OV_REP_FEEDBACK_ONCE == 单次意见：批准/拒绝 ==&gt; IMP_METHOD_POLICIES
+    OV_REP_FEEDBACK_ONCE == 单次意见：补充/筛选文献 ==&gt; RW_STATUS_GRAPH
+    OV_REP_FEEDBACK_MULTI == 多轮对话：Idea 澄清 ==&gt; OV_IDEA
+    OV_REP_FEEDBACK_MULTI == 多轮对话：文献与现状讨论 ==&gt; RW_STATUS_MATRIX
+    OV_REP_FEEDBACK_MULTI == 多轮对话：论文写作指导 ==&gt; PAP_OUTLINE
+    OV_REP_FEEDBACK_MULTI == 多轮对话：实验方案讨论 ==&gt; IMP_METHOD_EXP
+
+    style OV fill:#3A2A1B,stroke:#E8A85A,stroke-width:2px,color:#FFE9C9
+    style RW fill:#172A45,stroke:#6FA8DC,stroke-width:1.5px,color:#EAF2FF
+    style IMP fill:#172A45,stroke:#6FA8DC,stroke-width:1.5px,color:#EAF2FF
+    style PAP fill:#172A45,stroke:#6FA8DC,stroke-width:1.5px,color:#EAF2FF
+
+    style OV_REP fill:#1F3B2E,stroke:#7BC892,stroke-width:1.5px,color:#EAF2FF
+    style RW_STATUS fill:#1F3B2E,stroke:#7BC892,stroke-width:1.5px,color:#EAF2FF
+    style IMP_REL fill:#1F3B2E,stroke:#7BC892,stroke-width:1.5px,color:#EAF2FF
+    style IMP_METHOD fill:#1F3B2E,stroke:#7BC892,stroke-width:1.5px,color:#EAF2FF
+
+    classDef start fill:#2B4A63,stroke:#9CC7FF,stroke-width:2px,color:#FFFFFF
+    classDef leaf fill:#25344D,stroke:#8FB8E8,stroke-width:1px,color:#EAF2FF
+    classDef feedback fill:#4A2C17,stroke:#FFB86C,stroke-width:2px,color:#FFE9C9
+    class Start start
+    class OV_IDEA,OV_SPEC,OV_INN,OV_PRO,OV_REP_PERIODIC,OV_REP_FEEDBACK_ONCE,OV_REP_FEEDBACK_MULTI,OV_REP_AUDIT,RW_SEARCH,RW_STATUS_MATRIX,RW_STATUS_GRAPH,IMP_REL_REPRO,IMP_REL_COMP,IMP_METHOD_DESIGN,IMP_METHOD_CODE,IMP_METHOD_EXP,IMP_METHOD_QUEUE,IMP_METHOD_METRICS,IMP_METHOD_ARTIFACTS,IMP_METHOD_LINEAGE,IMP_METHOD_POLICIES,IMP_METHOD_GIT,PAP_PROJECT,PAP_OUTLINE,PAP_CIT,PAP_FIG,PAP_DATA,PAP_COMPILE,PAP_REVIEW leaf
+    class OV_REP_FEEDBACK_ONCE,OV_REP_FEEDBACK_MULTI feedback
+</pre><p>这张图表达的关键语义：</p>
+<ul>
+<li><strong>整张图是一个大工作流</strong>：<code>科研项目</code> 从项目概述进入相关工作调研，再进入实验实现，最后进入学术论文撰写；</li>
+<li><strong>项目概述内部按前端标签栏组织</strong>：<code>Idea 讨论</code>、<code>项目规格</code>、<code>创新与边界</code>、<code>进度与待决策</code>、<code>定期总结与用户反馈</code> 五个二级工作区，以及它们下面的三级页面；</li>
+<li><strong>琥珀色大块就是《项目概述 / 用户参与与呈现》区</strong>：Idea 对话、项目规格输入、创新点确认、进度呈现、定期总结、用户反馈（单次意见/多轮对话）、决策与审计全部收敛在这里；</li>
+<li><strong>审批和论文审阅的入口都集中在《项目概述》</strong>：所有需要用户输入、确认或查看的节点都从这一个入口管理；</li>
+<li><strong>深蓝底框是一级工作流</strong>：四个一级区域各自是一个大的子工作流；</li>
+<li><strong>深绿底框是二级工作流</strong>：例如 <code>本方法实现</code>、<code>研究现状与引用图</code>；</li>
+<li><strong>深蓝灰方块是三级页面/叶子工作流</strong>：例如 <code>代码复现</code>、<code>实验计划与结果</code>、<code>LaTeX 编译</code>；</li>
+<li><strong>单节点二级/三级已合并展示</strong>：如果一个二级工作区只有一个三级页面，就直接画成一个节点，不再套一层空框；</li>
+<li><strong>实线是主依赖</strong>：上游完成后才能启动下游；</li>
+<li><strong>虚线是旁路或约束</strong>：定期总结按配置的时间间隔自动汇总工作流状态，单次意见可以触发新实验，多轮反馈可以进入 Idea 澄清、论文指导或实验方案讨论；审批和 Git 备份约束代码工作区；</li>
+<li><strong>并行</strong>：<code>实验计划与结果</code>、<code>运行队列</code>、<code>指标统计</code>、<code>结果与可视化</code>、<code>实验谱系</code> 可以同时运行；论文章节和素材准备也可以并行。</li>
+</ul>
+<p>反馈箭头说明：</p>
+<ul>
+<li><code>用户反馈 - 单次意见</code> 和 <code>用户反馈 - 多轮对话</code> 在页面归属上属于 <code>定期总结与用户反馈</code> 二级工作区；图中把它们单独画出来，是为了让箭头直接从反馈节点本身指向具体讨论对象。</li>
+<li><code>用户反馈 - 多轮对话 ==&gt; Idea 讨论</code>：新建或澄清 Idea 时使用多轮对话；</li>
+<li><code>用户反馈 - 多轮对话 ==&gt; 研究现状</code>：讨论文献、研究现状与引用图；</li>
+<li><code>用户反馈 - 多轮对话 ==&gt; 实验计划与结果</code>：咨询实验结果或商讨实验方案；</li>
+<li><code>用户反馈 - 多轮对话 ==&gt; 大纲与章节</code>：论文写作时进行多轮指导；</li>
+<li><code>用户反馈 - 单次意见 ==&gt; 实验计划与结果</code>：实验结果完成后用户单次指示启动一个新实验。</li>
+<li><code>用户反馈 - 单次意见 ==&gt; 变更与审批</code>：直接批准或拒绝一个 Proposal；</li>
+<li><code>用户反馈 - 单次意见 ==&gt; 引用图</code>：用户单次补充/筛选文献后，直接更新引用图；</li>
+</ul>
+<p>图中只保留这 7 条代表性箭头，其余场景（项目规格细化、方法实现讨论、暂停/恢复、补充文献材料、定期总结操作等）完整列在下面的适用场景表中。</p>
+<h3>1.2 单次意见与多轮对话的适用场景</h3>
+<p>判断标准不是“在哪个页面”，而是“这次交互能不能一次说完，还是需要先看到中间结果再继续”。同一个页面往往同时存在单次和多轮入口。</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>新建项目的 Idea 澄清</td>
+<td>多轮</td>
+<td>逐步收敛研究问题、假设、范围、边界和成功标准</td>
+</tr>
+<tr>
+<td>项目规格与研究问题细化</td>
+<td>多轮</td>
+<td>需要反复澄清范围和验收条件</td>
+</tr>
+<tr>
+<td>文献与相关工作讨论</td>
+<td>多轮</td>
+<td>查看文献候选、研究现状矩阵和引用图后讨论是否纳入、缺口和证据关系</td>
+</tr>
+<tr>
+<td>方法设计与代码实现讨论</td>
+<td>多轮</td>
+<td>讨论方法方案、实现策略、执行约束</td>
+</tr>
+<tr>
+<td>实验规划</td>
+<td>多轮</td>
+<td>设计实验矩阵、数据集、指标、随机种子和执行条件</td>
+</tr>
+<tr>
+<td>实验结果解读</td>
+<td>多轮</td>
+<td>查看指标、Artifact 和谱系后询问原因、决定是否继续或补充实验</td>
+</tr>
+<tr>
+<td>论文写作指导</td>
+<td>多轮</td>
+<td>大纲、章节、引用、图表、实验数据选择和审阅意见</td>
+</tr>
+<tr>
+<td>项目日常监督咨询</td>
+<td>多轮</td>
+<td>全局 ProjectChat 可以针对任何工作流状态提问和讨论</td>
+</tr>
+<tr>
+<td>批准/拒绝 Proposal</td>
+<td>单次</td>
+<td>一次明确决策即可，例如批准实验、拒绝方法修改</td>
+</tr>
+<tr>
+<td>单条执行指令</td>
+<td>单次</td>
+<td>例如“再跑一个不同随机种子的实验”“切换到另一个数据集”“暂停/恢复项目”</td>
+</tr>
+<tr>
+<td>补充文献或材料</td>
+<td>单次</td>
+<td>添加 seed paper、上传材料或确认某篇候选</td>
+</tr>
+<tr>
+<td>定期总结后的单项操作</td>
+<td>单次</td>
+<td>从总结中直接选择一个动作，例如批准、重试或启动新实验</td>
+</tr>
+</tbody></table>
+<p>单次意见和多轮对话只是第一层分类，未来可以继续扩展更具体的反馈类型。每种反馈都应记录 <code>project_id</code>、来源对话、关联节点和它触发的新工作流；定期总结则独立保存为一份只读报告，并允许用户从总结里直接发起单次意见。</p>
+<h2>2. 第二层：运行模型</h2>
+<h3>2.1 为什么不能做成一条永不结束的步骤链</h3>
+<pre><code class="language-text">start -&gt; overview -&gt; related_work -&gt; implementation -&gt; paper -&gt; done
+</code></pre>
+<p>这条链只能表达“顺序”，表达不了：</p>
+<ul>
+<li>五个实验同时跑；</li>
+<li>论文多个章节同时撰写；</li>
+<li>等待实验结果、等待审批、等待外部服务；</li>
+<li>定期总结按配置的时间间隔自动触发但不阻塞主线；</li>
+<li>暂停、恢复、取消和部分失败；</li>
+<li>服务重启后恢复长期项目。</li>
+</ul>
+<p>因此运行时采用<strong>事件驱动的持久化调度器</strong>，而不是线性阻塞执行器。</p>
+<h3>2.2 节点状态机</h3>
+<pre class="mermaid mermaid-state">stateDiagram-v2
+    [*] --&gt; pending
+    pending --&gt; ready: 依赖满足且条件成立
+    ready --&gt; running: 调度器领取并启动
+    running --&gt; waiting_human: 进入审批/用户确认
+    running --&gt; waiting_resource: 等待实验/外部服务/artifact
+    waiting_resource --&gt; running: 事件到达并恢复
+    waiting_human --&gt; running: 用户批准/拒绝后恢复
+    running --&gt; succeeded: 执行成功
+    running --&gt; partial: 子节点部分成功
+    running --&gt; failed: 执行失败且不可自动恢复
+    running --&gt; cancelled: 用户取消或项目取消
+    partial --&gt; ready: 满足继续条件
+    failed --&gt; blocked: 需要人工干预
+    blocked --&gt; ready: 用户修订后重新调度
+    succeeded --&gt; [*]
+    cancelled --&gt; [*]</pre><p>项目本身还有一层全局状态：</p>
+<pre><code class="language-text">active / paused / cancelled / finished
+</code></pre>
+<p>暂停不是“杀死一切”，而是：</p>
+<ul>
+<li>不再调度新的 <code>ready</code> 节点；</li>
+<li>已经在运行的实验可以安全跑到检查点，或者由用户选择取消；</li>
+<li>所有未完成节点保持可恢复状态；</li>
+<li>恢复时调度器重新计算哪些节点满足条件。</li>
+</ul>
+<h3>2.3 调度器如何不空转</h3>
+<pre><code class="language-text">事件源：
+  节点完成
+  审批通过/拒绝
+  实验完成/失败/取消
+  相关工作任务完成
+  定时任务（定期总结）
+  用户手动触发（暂停、恢复、重试、跳过）
+        |
+        v
+  调度器 tick
+        |
+        v
+  读取执行图，计算 ready 节点
+        |
+        v
+  在项目级/全局并发配额内派发到 worker 池
+        |
+        v
+  每个子工作流持有 mastra_run_id / correlation_id
+        |
+        v
+  完成事件写回 PGlite，继续下一轮 tick
+</code></pre>
+<p>当没有 <code>ready</code> 节点且没有运行中的节点时，调度器只是“睡着”，不会调用大模型，也不会占住 worker。</p>
+<h2>3. 第三层：与当前前端和现有工作流的映射</h2>
+<h3>3.1 页面到工作流节点</h3>
+<table>
+<thead>
+<tr>
+<th>一级</th>
+<th>二级</th>
+<th>三级 / 叶子工作流</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>项目概述</td>
+<td>Idea 讨论</td>
+<td>Idea 讨论</td>
+</tr>
+<tr>
+<td>项目概述</td>
+<td>项目规格</td>
+<td>项目描述与研究问题</td>
+</tr>
+<tr>
+<td>项目概述</td>
+<td>创新与边界</td>
+<td>创新点与边界</td>
+</tr>
+<tr>
+<td>项目概述</td>
+<td>进度与待决策</td>
+<td>项目进度与待决策</td>
+</tr>
+<tr>
+<td>项目概述</td>
+<td>定期总结与用户反馈</td>
+<td>定期总结、用户反馈 - 单次意见、用户反馈 - 多轮对话、决策与审计</td>
+</tr>
+<tr>
+<td>相关工作调研</td>
+<td>种子与文献检索</td>
+<td>种子与文献检索</td>
+</tr>
+<tr>
+<td>相关工作调研</td>
+<td>研究现状与引用图</td>
+<td>研究现状、引用图</td>
+</tr>
+<tr>
+<td>实验实现</td>
+<td>相关工作实现</td>
+<td>代码复现、效果比较</td>
+</tr>
+<tr>
+<td>实验实现</td>
+<td>本方法实现</td>
+<td>方法设计、代码工作区、变更与审批、Git 与备份、实验计划与结果、运行队列、指标统计、结果与可视化、实验谱系</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>论文项目</td>
+<td>论文项目</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>大纲与章节</td>
+<td>大纲与章节</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>引用与 BibTeX</td>
+<td>引用与 BibTeX</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>图表选择与插入</td>
+<td>图表选择与插入</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>实验数据选择与引用</td>
+<td>实验数据选择与引用</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>LaTeX 编译</td>
+<td>LaTeX 编译</td>
+</tr>
+<tr>
+<td>学术论文撰写</td>
+<td>PDF 呈现与审阅</td>
+<td>PDF 呈现与审阅</td>
+</tr>
+</tbody></table>
+<p><code>项目概述</code> 本身就是<strong>用户参与与呈现区</strong>，不再额外套一层空框；它包含 Idea 对话、项目规格输入、创新点确认、进度与决策呈现、定期总结、用户反馈（单次意见/多轮对话）、决策与审计。</p>
+<h3>3.2 与现有代码的差距</h3>
+<p>当前项目已经有一些 Mastra workflow，但它们目前是零散的薄封装，而不是项目级总编排：</p>
+<table>
+<thead>
+<tr>
+<th>当前实现</th>
+<th>未来的角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>research-bootstrap</code>（文献搜索 + 证据覆盖评估）</td>
+<td><code>相关工作调研</code> 区域中的子工作流</td>
+</tr>
+<tr>
+<td><code>proposal-approval-gate</code>（suspend/resume）</td>
+<td>审批节点，挂在任何高风险子工作流前面</td>
+</tr>
+<tr>
+<td><code>supervision-reports</code>（当前报告机制）</td>
+<td><code>PeriodicReportWorkflow</code>：<code>项目概述</code> 中的旁路子工作流</td>
+</tr>
+<tr>
+<td><code>project-chat</code></td>
+<td>Idea 讨论 / 反馈协调节点</td>
+</tr>
+<tr>
+<td><code>task-worker</code>（当前全局 <code>working</code> 串行）</td>
+<td>改为多 worker 并发池</td>
+</tr>
+<tr>
+<td>原生实验监督器</td>
+<td><code>本方法实现</code> 中每个实验叶子节点的执行后端</td>
+</tr>
+</tbody></table>
+<p>目前代码里的主要差距：</p>
+<ul>
+<li><code>task-worker.ts</code> 用全局 <code>working</code> 标志，一次只处理一个任务，真实执行是串行的；</li>
+<li>Mastra workflow 大多只是调用服务器 API 的薄包装，没有项目级依赖图；</li>
+<li>报告 workflow 在一个 step 中顺序遍历所有项目，一个项目失败可能影响整批报告；</li>
+<li>实验、复现运行和审批各有自己的状态表，但没有统一的项目执行图投影；</li>
+<li>Mastra Studio 的 workflow graph 只展示单个 workflow 的技术步骤，不能直接展示跨区域、跨实验、跨 Proposal 的项目总览。</li>
+</ul>
+<p>所以项目总览页需要一张<strong>业务级执行图</strong>，它把四个一级区域、二级工作区、三级页面、Mastra run、实验、Proposal、报告和 Artifact 状态聚合到同一个图上。</p>
+<h2>4. 第四层：数据模型与关键设计</h2>
+<h3>4.1 核心表</h3>
+<p>建议在 PGlite 中新增：</p>
+<pre><code class="language-text">project_executions
+  id, project_id, definition_version, status,
+  policy, created_at, started_at, paused_at, finished_at
+
+workflow_nodes
+  id, execution_id, parent_node_id, node_key, node_type,
+  area, group_key, tab_key, workflow_key, status,
+  input, output, attempts, error, started_at, finished_at
+
+workflow_edges
+  id, execution_id, from_node_id, to_node_id,
+  condition, priority
+
+workflow_events
+  id, execution_id, node_id, event_type,
+  payload, created_at
+</code></pre>
+<p>节点上的 <code>area / group_key / tab_key</code> 直接对应前端一级、二级、三级导航，让执行图可以按标签栏渲染。</p>
+<p>每个节点还保存关联信息：</p>
+<pre><code class="language-text">project_id
+parent_run_id
+correlation_id
+mastra_run_id（如果有）
+proposal_id（如果是审批节点）
+experiment_id / reproduction_run_id（如果是执行节点）
+</code></pre>
+<p>这样业务状态和 Mastra checkpoint 可以互相追踪，服务重启后也能恢复。</p>
+<h3>4.2 节点类型</h3>
+<table>
+<thead>
+<tr>
+<th>节点类型</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>action</code></td>
+<td>调用一个 Mastra workflow 或服务器 API</td>
+</tr>
+<tr>
+<td><code>composite</code></td>
+<td>一个包含子图的二级/三级子工作流</td>
+</tr>
+<tr>
+<td><code>fork</code></td>
+<td>fan-out，把多个并行子节点同时派出</td>
+</tr>
+<tr>
+<td><code>join</code></td>
+<td>fan-in，按策略（全部/部分/阈值）汇聚结果</td>
+</tr>
+<tr>
+<td><code>condition</code></td>
+<td>根据上游结果选择后续路径</td>
+</tr>
+<tr>
+<td><code>approval</code></td>
+<td>等待用户审批，产生 Proposal</td>
+</tr>
+<tr>
+<td><code>wait</code></td>
+<td>等待外部事件，例如实验完成或定时器</td>
+</tr>
+<tr>
+<td><code>report</code></td>
+<td>生成定期总结等旁路产物</td>
+</tr>
+<tr>
+<td><code>interaction</code></td>
+<td>需要用户输入或确认，例如 Idea 讨论、用户反馈、审批</td>
+</tr>
+<tr>
+<td><code>presentation</code></td>
+<td>把进度、报告、结果或决策请求呈现给用户</td>
+</tr>
+</tbody></table>
+<h3>4.3 并行与失败策略</h3>
+<ul>
+<li>实验矩阵使用 <code>fork</code> 并行启动多个实验；</li>
+<li>每个实验节点内部是：<code>Proposal 审批 -&gt; 执行 -&gt; Artifact 验收</code>；</li>
+<li>论文撰写使用 <code>fork</code> 并行撰写章节，再 <code>join</code> 合并；</li>
+<li><code>join</code> 支持三种策略：<ul>
+<li><code>all</code>：全部成功才继续；</li>
+<li><code>threshold</code>：达到最少成功数即可继续，其余标记为 <code>partial</code>；</li>
+<li><code>any</code>：任一成功即可继续；</li>
+</ul>
+</li>
+<li>默认建议 <code>threshold</code>，因为科研中部分实验失败后可以修订方法，而不是让整个项目失败；</li>
+<li>论文章节并行写入时需要版本锁定、引用 provenance 和最终合并校验。</li>
+</ul>
+<h3>4.4 暂停、恢复、取消</h3>
+<ul>
+<li>暂停：设置项目级 <code>paused</code>，调度器停止派发新节点；</li>
+<li>恢复：设置 <code>active</code>，调度器重新计算 <code>ready</code> 节点；</li>
+<li>取消：只允许取消尚未终态的节点，已完成的实验/Artifact 保留审计记录；</li>
+<li>审批节点被暂停时保持 <code>waiting_human</code>，恢复后仍可继续审批。</li>
+</ul>
+<h2>5. 第五层：实施步骤</h2>
+<h3>Phase 0：执行图数据模型与事件日志</h3>
+<ul>
+<li>新增 <code>project_executions</code>、<code>workflow_nodes</code>、<code>workflow_edges</code>、<code>workflow_events</code>；</li>
+<li>节点保存 <code>area / group_key / tab_key</code>，保证与前端导航一一对应；</li>
+<li>定义节点状态、条件边和并发策略的 Zod 契约；</li>
+<li>为现有 <code>tasks</code>、<code>experiments</code>、<code>reproduction_runs</code>、<code>proposals</code> 补充 <code>execution_node_id</code> / <code>correlation_id</code>。</li>
+</ul>
+<h3>Phase 1：项目总览执行图（先做用户能看到的）</h3>
+<ul>
+<li>实现 <code>/api/projects/:projectId/execution-graph</code>，返回一级、二级、三级节点、边和状态；</li>
+<li>在 <code>项目概述 -&gt; 进度与待决策</code> 或 Overview 主区域渲染这一张巨型执行图；</li>
+<li>支持点击节点查看子工作流、Mastra run、实验、审批详情；</li>
+<li>支持空状态、失败状态、暂停状态和窄屏布局。</li>
+</ul>
+<h3>Phase 2：事件调度器与多 worker</h3>
+<ul>
+<li>把 <code>task-worker.ts</code> 的全局 <code>working</code> 换成并发 worker 池；</li>
+<li>支持按项目和全局配置最大并发数；</li>
+<li>调度器在 tick 中只派发 <code>ready</code> 节点；</li>
+<li>服务重启时恢复未完成的节点，而不是把运行中的实验直接标成失败。</li>
+</ul>
+<h3>Phase 3：把现有 workflow 包装成子工作流</h3>
+<ul>
+<li><code>RelatedWorkWorkflow</code>、<code>EvidenceWorkflow</code>、<code>ApprovalWorkflow</code>、<code>PeriodicReportWorkflow</code>、<code>UserFeedbackWorkflow</code>；</li>
+<li><code>PeriodicReportWorkflow</code> 按项目配置的时间间隔自动汇总当前执行图状态，并保存为只读报告；</li>
+<li><code>UserFeedbackWorkflow</code> 区分单次意见和多轮对话：单次意见直接转为 Proposal 或新节点，多轮对话绑定持续会话；</li>
+<li>每个子工作流保留 <code>project_id</code>、<code>parent_run_id</code>、<code>node_id</code>、<code>correlation_id</code>；</li>
+<li>Mastra 仍是子工作流的执行引擎，项目级总编排由 PGlite + 调度器承担。</li>
+</ul>
+<h3>Phase 4：暂停、恢复、取消与审批</h3>
+<ul>
+<li>项目级暂停/恢复 API 和 Overview 操作按钮；</li>
+<li>暂停时新节点停止派发，运行中实验支持软暂停/取消选择；</li>
+<li>审批节点接入现有 <code>approvalGateWorkflow</code>。</li>
+<li>定期总结支持用户配置时间间隔，到点后自动生成并投递到 <code>项目概述 -&gt; 定期总结</code>。</li>
+</ul>
+<h3>Phase 5：并行实验矩阵与并行论文</h3>
+<ul>
+<li><code>本方法实现</code> 下的实验矩阵支持同时运行多个实验；</li>
+<li><code>学术论文撰写</code> 支持多个章节并行生成；</li>
+<li>支持 <code>partial</code> 状态、章节合并、引用核验和失败回退。</li>
+</ul>
+<h3>验收标准</h3>
+<ul>
+<li>用同一个演示项目真实运行 5 个并行实验，Overview 图能同时显示 5 个 <code>running</code>；</li>
+<li>项目暂停后没有新节点被派发，恢复后自动继续；</li>
+<li>一个实验失败但达到阈值时，项目进入 <code>partial</code> 而不是整体失败；</li>
+<li>论文多个章节并行生成后能合并并进入人工审查；</li>
+<li>服务重启后，等待中、审批中、运行中的节点都能恢复；</li>
+<li>四语言、四主题下 Overview 执行图均可读、无重叠、可交互。</li>
+</ul>
+<h2>6. 需要你确认的设计决策</h2>
+<ol>
+<li>执行图是否放在 <code>项目概述 -&gt; 进度与待决策</code> 页面，还是单独新增一个 Overview 主区域图表？</li>
+<li>是否每个项目只允许一个当前执行实例，还是允许“重新开启上一轮执行”的版本化历史？</li>
+<li>暂停时运行中的实验默认“跑到安全检查点后暂停”，还是“立即取消”？</li>
+<li>并行实验的默认失败策略是否采用“达到阈值即可继续”，而不是“一个失败就整体失败”？</li>
+<li>默认并发上限是全局统一配置，还是每个项目单独配置？</li>
+</ol>
+<p>如果第 1 节那张巨型图符合你的预期，下一步就可以按 Phase 1 先做数据模型和 Overview 执行图。</p>
+
+  </main>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.esm.min.mjs";
+    import elk from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.2/dist/mermaid-layout-elk.esm.min.mjs";
+    mermaid.registerLayoutLoaders(elk);
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      flowchart: { curve: "linear", htmlLabels: true }
+    });
+  </script>
+</body>
+</html>
