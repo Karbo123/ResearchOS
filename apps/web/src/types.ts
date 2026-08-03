@@ -789,13 +789,55 @@ export interface ResearchStatusGraphEdge {
   evidence_status: 'metadata_only' | 'page_quote' | 'claim_reviewed'
 }
 
+export type ResearchStatusCandidateType =
+  | 'gap'
+  | 'cluster'
+  | 'duplicate_risk'
+  | 'innovation'
+  | 'boundary'
+  | 'counterexample'
+  | 'open_question'
+
+export interface ResearchStatusCandidateBasisPaper {
+  id: string
+  title: string
+  doi: string | null
+  source_url: string
+}
+
+export interface ResearchStatusCandidateBasisEvidence {
+  id: string
+  paper_id: string | null
+  claim: string
+  locator: string | null
+  source_url: string
+}
+
+export interface ResearchStatusCandidateBasisReview {
+  id: string
+  claim: string
+  evidence_ids: string[]
+}
+
+export interface ResearchStatusCandidateBasis {
+  idea_version: number
+  papers: ResearchStatusCandidateBasisPaper[]
+  evidence: ResearchStatusCandidateBasisEvidence[]
+  claim_reviews: ResearchStatusCandidateBasisReview[]
+}
+
 export interface ResearchStatusGapCandidate {
   id: string
   project_id: string
   matrix_id: string
-  candidate_type: 'gap' | 'cluster' | 'duplicate_risk'
+  candidate_type: ResearchStatusCandidateType
   statement: string
   row_ids: string[]
+  paper_ids: string[]
+  evidence_ids: string[]
+  claim_review_ids: string[]
+  idea_version: number
+  basis: ResearchStatusCandidateBasis
   evidence_status: string
   status: 'candidate' | 'accepted' | 'rejected' | string
   actor: string

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Download, Filter, Lightbulb, RefreshCw, Table2 } from 'lucide-react'
 import { api, errorMessage } from '../../api'
-import type { ProjectDetail, ResearchStatusGapCandidate, ResearchStatusResponse } from '../../types'
+import type { ProjectDetail, ResearchStatusCandidateType, ResearchStatusGapCandidate, ResearchStatusResponse } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 
@@ -14,6 +14,26 @@ function evidenceLabel(status: string) {
   if (status === 'page_quote') return 'research.pageQuote'
   return 'research.metadataOnly'
 }
+
+const CANDIDATE_TYPE_KEYS: Record<ResearchStatusCandidateType, TranslationKey> = {
+  gap: 'research.gap',
+  cluster: 'research.cluster',
+  duplicate_risk: 'research.duplicateRisk',
+  innovation: 'research.innovation',
+  boundary: 'research.boundary',
+  counterexample: 'research.counterexample',
+  open_question: 'research.openQuestion',
+}
+
+const CANDIDATE_TYPES: ResearchStatusCandidateType[] = [
+  'innovation',
+  'boundary',
+  'counterexample',
+  'open_question',
+  'gap',
+  'cluster',
+  'duplicate_risk',
+]
 
 export function ResearchStatusTab({
   project,
@@ -30,7 +50,7 @@ export function ResearchStatusTab({
   const [theme, setTheme] = useState('')
   const [method, setMethod] = useState('')
   const [year, setYear] = useState('')
-  const [gapType, setGapType] = useState<'gap' | 'cluster' | 'duplicate_risk'>('gap')
+  const [gapType, setGapType] = useState<ResearchStatusCandidateType>('innovation')
   const [gapStatement, setGapStatement] = useState('')
 
   const loadStatus = async (filters = { theme, method, year }) => {
@@ -201,11 +221,11 @@ export function ResearchStatusTab({
           <div className="section research-gap-panel">
             <SectionHeading title={t('research.gapTitle')} hint={t('research.gapHint')} extra={<Lightbulb size={16} className="muted" />} />
             <div className="form-grid gap-candidate-form">
-              <label>{t('research.candidateType')}<select value={gapType} onChange={event => setGapType(event.target.value as typeof gapType)}><option value="gap">{t('research.gap')}</option><option value="cluster">{t('research.cluster')}</option><option value="duplicate_risk">{t('research.duplicateRisk')}</option></select></label>
+              <label>{t('research.candidateType')}<select value={gapType} onChange={event => setGapType(event.target.value as ResearchStatusCandidateType)}>{CANDIDATE_TYPES.map(type => <option key={type} value={type}>{t(CANDIDATE_TYPE_KEYS[type])}</option>)}</select></label>
               <label className="wide-field">{t('research.candidateStatement')}<textarea value={gapStatement} onChange={event => setGapStatement(event.target.value)} placeholder={t('research.candidatePlaceholder')} rows={3} /></label>
             </div>
             <ButtonRow><button className="secondary" type="button" disabled={working || !gapStatement.trim()} onClick={() => { void createGapCandidate() }}>{t('research.recordCandidate')}</button></ButtonRow>
-            {status.gap_candidates.length ? <div className="data-list">{status.gap_candidates.map(candidate => <div className="data-row" key={candidate.id}><div><h3>{candidate.statement}</h3><p>{candidate.candidate_type} · {t('research.rowsCount', { count: candidate.row_ids.length })} · {statusLabel(candidate.evidence_status, t)}</p></div><ButtonRow><Badge status={candidate.status} />{candidate.status === 'candidate' ? <><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'accepted') }}>{t('research.keepCandidate')}</button><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'rejected') }}>{t('common.reject')}</button></> : null}</ButtonRow></div>)}</div> : <EmptyState text={t('research.noCandidates')} />}
+            {status.gap_candidates.length ? <div className="data-list">{status.gap_candidates.map(candidate => <div className="data-row" key={candidate.id}><div><h3>{candidate.statement}</h3><p>{t(CANDIDATE_TYPE_KEYS[candidate.candidate_type] ?? 'research.gap')} · {t('research.rowsCount', { count: candidate.row_ids.length })} · {statusLabel(candidate.evidence_status, t)}</p><p className="muted">{t('research.sourceCount', { papers: candidate.paper_ids.length, evidence: candidate.evidence_ids.length, claims: candidate.claim_review_ids.length, version: candidate.idea_version })}</p><details className="candidate-sources"><summary>{t('research.candidateSources')}</summary><div><strong>{t('research.candidatePapers')}</strong>{candidate.basis.papers?.length ? candidate.basis.papers.map(paper => <p key={paper.id}><span>{paper.title}</span><small>{paper.doi || paper.source_url}</small></p>) : <p className="muted">{t('research.noSourceBinding')}</p>}</div><div><strong>{t('research.candidateEvidence')}</strong>{candidate.basis.evidence?.length ? candidate.basis.evidence.map(item => <p key={item.id}><span>{item.claim}</span><small>{t('research.locatorValue', { locator: item.locator || t('research.unresolved') })} · <a href={item.source_url} target="_blank" rel="noreferrer">{t('research.source')}</a></small></p>) : <p className="muted">{t('research.noSourceBinding')}</p>}</div><div><strong>{t('research.candidateClaims')}</strong>{candidate.basis.claim_reviews?.length ? candidate.basis.claim_reviews.map(review => <p key={review.id}><span>{review.claim}</span><small>{review.evidence_ids.length} {t('research.candidateEvidence')}</small></p>) : <p className="muted">{t('research.noSourceBinding')}</p>}</div></details></div><ButtonRow><Badge status={candidate.status} />{candidate.status === 'candidate' ? <><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'accepted') }}>{t('research.keepCandidate')}</button><button className="secondary" type="button" disabled={working} onClick={() => { void decideGap(candidate, 'rejected') }}>{t('common.reject')}</button></> : null}</ButtonRow></div>)}</div> : <EmptyState text={t('research.noCandidates')} />}
           </div>
         </>
       ) : null}

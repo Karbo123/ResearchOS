@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Boxes, CircleDashed, RefreshCw, Save, Sparkles } from 'lucide-react'
 import { api, errorMessage } from '../api'
-import type { ProjectDetail, ResearchStatusResponse } from '../types'
-import { Badge, ButtonRow, EmptyState, SectionHeading } from './ui'
-import { useTranslation } from '../i18n'
+import type { ProjectDetail, ResearchStatusCandidateType, ResearchStatusGapCandidate, ResearchStatusResponse } from '../types'
+import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from './ui'
+import { useTranslation, type TranslationKey } from '../i18n'
 
 function unique(values: Array<string | null | undefined>): string[] {
   return [...new Set(values.filter((value): value is string => Boolean(value?.trim())))]
@@ -19,6 +19,26 @@ function cellKey(cell: CellKey) {
   return `${cell.dimension}::${cell.axis}::${cell.method}`
 }
 
+const CANDIDATE_TYPE_KEYS: Record<ResearchStatusCandidateType, TranslationKey> = {
+  gap: 'research.gap',
+  cluster: 'research.cluster',
+  duplicate_risk: 'research.duplicateRisk',
+  innovation: 'research.innovation',
+  boundary: 'research.boundary',
+  counterexample: 'research.counterexample',
+  open_question: 'research.openQuestion',
+}
+
+const CANDIDATE_TYPES: ResearchStatusCandidateType[] = [
+  'innovation',
+  'boundary',
+  'counterexample',
+  'open_question',
+  'gap',
+  'cluster',
+  'duplicate_risk',
+]
+
 export function NoveltyExplorer({
   project,
   showToast,
@@ -32,6 +52,7 @@ export function NoveltyExplorer({
   const [error, setError] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
+  const [candidateType, setCandidateType] = useState<ResearchStatusCandidateType>('innovation')
 
   const loadStatus = async () => {
     setLoading(true)
@@ -97,7 +118,7 @@ export function NoveltyExplorer({
         method: 'POST',
         body: JSON.stringify({
           matrix_id: matrix.id,
-          candidate_type: 'gap',
+          candidate_type: candidateType,
           statement,
           row_ids: matrix.rows.map(row => row.id),
         }),
@@ -105,6 +126,22 @@ export function NoveltyExplorer({
       setSelected(new Set())
       await loadStatus()
       showToast(t('research.candidateRecorded'))
+    } catch (requestError) {
+      showToast(errorMessage(requestError))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const decideCandidate = async (candidate: ResearchStatusGapCandidate, decision: 'accepted' | 'rejected') => {
+    setSaving(true)
+    try {
+      await api(`/api/projects/${project.id}/research-status/gap-candidates/${candidate.id}/decision`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, reason: decision === 'accepted' ? t('research.acceptGapReason') : t('research.rejectGapReason') }),
+      })
+      await loadStatus()
+      showToast(decision === 'accepted' ? t('research.acceptedGapToast') : t('research.rejectedGapToast'))
     } catch (requestError) {
       showToast(errorMessage(requestError))
     } finally {
@@ -187,7 +224,11 @@ export function NoveltyExplorer({
           {!datasets.length && !metrics.length ? <EmptyState text={t('novelty.noDimensions')} /> : null}
           <div className="novelty-selection">
             <div>
-              <strong>{t('novelty.selectionTitle')}</strong>
+              <strong>{t('research.candidateType')}</strong>
+              <select value={candidateType} onChange={event => setCandidateType(event.target.value as ResearchStatusCandidateType)}>
+                {CANDIDATE_TYPES.map(type => <option key={type} value={type}>{t(CANDIDATE_TYPE_KEYS[type])}</option>)}
+              </select>
+              <p className="muted">{t('novelty.selectionTitle')}</p>
               <p className="muted">{selectedCells.length ? selectedCells.map(cell => t('novelty.combination', { axis: cell.axis, method: cell.method })).join(' · ') : t('novelty.selectionEmpty')}</p>
             </div>
             <button className="primary" type="button" disabled={saving || !selectedCells.length} onClick={() => { void saveCandidate() }}>
@@ -199,8 +240,38 @@ export function NoveltyExplorer({
             <div className="data-list novelty-candidates">
               {status.gap_candidates.map(candidate => (
                 <div className="data-row" key={candidate.id}>
-                  <div><h3>{candidate.statement}</h3><p>{candidate.candidate_type} · {t('research.rowsCount', { count: candidate.row_ids.length })}</p></div>
-                  <Badge status={candidate.status} />
+                  <div>
+                    <h3>{candidate.statement}</h3>
+                    <p>{t(CANDIDATE_TYPE_KEYS[candidate.candidate_type] ?? 'research.gap')} · {t('research.rowsCount', { count: candidate.row_ids.length })}</p>
+                    <p className="muted">{t('research.sourceCount', {
+                      papers: candidate.paper_ids.length,
+                      evidence: candidate.evidence_ids.length,
+                      claims: candidate.claim_review_ids.length,
+                      version: candidate.idea_version,
+                    })}</p>
+                    <details className="candidate-sources">
+                      <summary>{t('research.candidateSources')}</summary>
+                      <div>
+                        <strong>{t('research.candidatePapers')}</strong>
+                        {candidate.basis.papers?.length ? candidate.basis.papers.map(paper => <p key={paper.id}><span>{paper.title}</span><small>{paper.doi || paper.source_url}</small></p>) : <p className="muted">{t('research.noSourceBinding')}</p>}
+                      </div>
+                      <div>
+                        <strong>{t('research.candidateEvidence')}</strong>
+                        {candidate.basis.evidence?.length ? candidate.basis.evidence.map(item => <p key={item.id}><span>{item.claim}</span><small>{t('research.locatorValue', { locator: item.locator || t('research.unresolved') })} · <a href={item.source_url} target="_blank" rel="noreferrer">{t('research.source')}</a></small></p>) : <p className="muted">{t('research.noSourceBinding')}</p>}
+                      </div>
+                      <div>
+                        <strong>{t('research.candidateClaims')}</strong>
+                        {candidate.basis.claim_reviews?.length ? candidate.basis.claim_reviews.map(review => <p key={review.id}><span>{review.claim}</span><small>{review.evidence_ids.length} {t('research.candidateEvidence')}</small></p>) : <p className="muted">{t('research.noSourceBinding')}</p>}
+                      </div>
+                    </details>
+                  </div>
+                  <ButtonRow>
+                    <Badge status={candidate.status} />
+                    {candidate.status === 'candidate' ? <>
+                      <button className="secondary" type="button" disabled={saving} onClick={() => { void decideCandidate(candidate, 'accepted') }}>{t('research.keepCandidate')}</button>
+                      <button className="secondary" type="button" disabled={saving} onClick={() => { void decideCandidate(candidate, 'rejected') }}>{t('common.reject')}</button>
+                    </> : null}
+                  </ButtonRow>
                 </div>
               ))}
             </div>

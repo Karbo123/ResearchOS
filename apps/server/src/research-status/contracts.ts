@@ -41,9 +41,18 @@ export type ResearchStatusFilterRequest = z.infer<typeof researchStatusFilterReq
 
 export const researchStatusGapCandidateRequest = z.object({
   matrix_id: uuid,
-  candidate_type: z.enum(['gap', 'cluster', 'duplicate_risk']),
+  candidate_type: z.enum([
+    'gap',
+    'cluster',
+    'duplicate_risk',
+    'innovation',
+    'boundary',
+    'counterexample',
+    'open_question',
+  ]),
   statement: z.string().trim().min(5).max(4_000),
   row_ids: z.array(uuid).min(1).max(100),
+  idea_version: z.number().int().positive().nullable().optional(),
   actor: z.string().trim().min(1).max(200).default('local-user'),
 }).strict()
 export type ResearchStatusGapCandidateRequest = z.infer<typeof researchStatusGapCandidateRequest>

@@ -200,6 +200,27 @@ if (!specFieldState.hasConfirmed || !specFieldState.hasIdeaVersion || specFieldS
   throw new Error(`Specification field status markers missing: ${JSON.stringify(specFieldState)}`)
 }
 
+await navigate(`${appBase}/project/${projectSlug}/overview/idea`, 'en', 'light')
+const noveltySourced = await evaluate(`(() => {
+  const select = document.querySelector('.novelty-selection select')
+  const candidates = Array.from(document.querySelectorAll('.novelty-candidates .data-row'))
+  const first = candidates[0]
+  return {
+    explorerExists: !!document.querySelector('.novelty-explorer'),
+    matrixVisible: !!document.querySelector('.novelty-selection select'),
+    typeOptions: select ? Array.from(select.options).map(option => option.value) : [],
+    candidateCount: candidates.length,
+    sourceCount: first?.textContent?.includes('papers') || false,
+    sourceDetails: !!first?.querySelector('.candidate-sources summary'),
+    decisionButtons: first ? first.querySelectorAll('button').length : 0,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-novelty-sourced-candidates.png')
+if (!noveltySourced.explorerExists || (noveltySourced.matrixVisible && (!noveltySourced.typeOptions.includes('innovation') || (noveltySourced.candidateCount && (!noveltySourced.sourceCount || !noveltySourced.sourceDetails)))) || noveltySourced.overflowX) {
+  throw new Error(`Sourced novelty candidates missing: ${JSON.stringify(noveltySourced)}`)
+}
+
 await navigate(`${appBase}/project/${projectSlug}/overview/overview`, 'en', 'light')
 const timelineState = await evaluate(`(() => {
   const items = Array.from(document.querySelectorAll('.timeline-item')).map(node => ({
@@ -765,5 +786,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState, timelineState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
 socket.close()

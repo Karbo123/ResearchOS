@@ -74,15 +74,41 @@ type GapCandidateRecord = {
   id: string
   project_id: string
   matrix_id: string
-  candidate_type: 'gap' | 'cluster' | 'duplicate_risk'
+  candidate_type: string
   statement: string
   row_ids: string[]
+  paper_ids: string[]
+  evidence_ids: string[]
+  claim_review_ids: string[]
+  idea_version: number
+  basis: Record<string, unknown>
   evidence_status: string
   status: string
   actor: string
   decision_comment: string | null
   created_at: string
   decided_at: string | null
+}
+
+type CandidatePaperRecord = {
+  id: string
+  title: string
+  doi: string | null
+  source_url: string
+}
+
+type CandidateEvidenceRecord = {
+  id: string
+  paper_id: string | null
+  claim: string
+  locator: string | null
+  source_url: string
+}
+
+type CandidateReviewRecord = {
+  id: string
+  claim: string
+  evidence_ids: string[]
 }
 
 type GraphNode = {
@@ -317,7 +343,24 @@ async function graphForProject(projectId: string) {
 
 async function gapsForProject(projectId: string, matrixId?: string) {
   const gaps = await rows<GapCandidateRecord>(`SELECT * FROM research_status_gap_candidates WHERE project_id=$1${matrixId ? ' AND matrix_id=$2' : ''} ORDER BY created_at DESC,id`, matrixId ? [projectId, matrixId] : [projectId])
-  return gaps.map(item => ({ ...item, row_ids: jsonArray(item.row_ids), evidence_status: item.evidence_status || 'candidate_requires_review' }))
+  return gaps.map(item => {
+    const basis = metadataObject(item.basis)
+    const normalizedBasis = {
+      idea_version: item.idea_version,
+      papers: Array.isArray(basis.papers) ? basis.papers : [],
+      evidence: Array.isArray(basis.evidence) ? basis.evidence : [],
+      claim_reviews: Array.isArray(basis.claim_reviews) ? basis.claim_reviews : [],
+    }
+    return {
+      ...item,
+      row_ids: jsonArray(item.row_ids),
+      paper_ids: jsonArray(item.paper_ids),
+      evidence_ids: jsonArray(item.evidence_ids),
+      claim_review_ids: jsonArray(item.claim_review_ids),
+      basis: normalizedBasis,
+      evidence_status: item.evidence_status || 'candidate_requires_review',
+    }
+  })
 }
 
 export async function getResearchStatus(projectId: string, filter: ResearchStatusFilterRequest = {}) {
@@ -343,17 +386,58 @@ export async function getResearchStatus(projectId: string, filter: ResearchStatu
 
 export async function createResearchStatusGapCandidate(projectId: string, input: ResearchStatusGapCandidateRequest) {
   await requireProject(projectId, true)
-  await matrixForProject(projectId, input.matrix_id)
+  const matrix = await matrixForProject(projectId, input.matrix_id)
   const rowIds = unique(input.row_ids)
-  const scopedRows = await rows<{ id: string; evidence_status: string }>('SELECT id,evidence_status FROM research_status_matrix_rows WHERE project_id=$1 AND matrix_id=$2 AND id=ANY($3::uuid[])', [projectId, input.matrix_id, rowIds])
+  const scopedRows = await rows<{ id: string; paper_id: string; evidence_ids: string[]; claim_review_ids: string[]; evidence_status: string }>(
+    'SELECT id,paper_id,evidence_ids,claim_review_ids,evidence_status FROM research_status_matrix_rows WHERE project_id=$1 AND matrix_id=$2 AND id=ANY($3::uuid[])',
+    [projectId, input.matrix_id, rowIds],
+  )
   if (scopedRows.length !== rowIds.length) throw new ApiError(403, 'research_status_gap_row_scope', '研究空白候选只能引用当前项目矩阵中的行。')
   if (scopedRows.some(row => row.evidence_status !== 'claim_reviewed')) throw new ApiError(409, 'research_status_gap_evidence_required', '研究空白候选只能引用已完成 ClaimReview 的矩阵行。')
+  const paperIds = unique(scopedRows.map(row => row.paper_id))
+  const evidenceIds = unique(scopedRows.flatMap(row => jsonArray(row.evidence_ids)))
+  const claimReviewIds = unique(scopedRows.flatMap(row => jsonArray(row.claim_review_ids)))
+  const ideaVersion = input.idea_version ?? matrix.idea_version
+  if (ideaVersion !== matrix.idea_version) throw new ApiError(409, 'research_status_gap_idea_version_stale', '候选使用的 Idea 版本不是矩阵版本，请重新确认研究规格。')
+  const papers = await rows<CandidatePaperRecord>('SELECT id,title,doi,source_url FROM papers WHERE project_id=$1 AND id=ANY($2::uuid[])', [projectId, paperIds])
+  const evidence = await rows<CandidateEvidenceRecord>('SELECT id,paper_id,claim,locator,source_url FROM evidence WHERE project_id=$1 AND id=ANY($2::uuid[])', [projectId, evidenceIds])
+  const reviews = await rows<CandidateReviewRecord>('SELECT id,claim,evidence_ids FROM claim_reviews WHERE project_id=$1 AND id=ANY($2::uuid[])', [projectId, claimReviewIds])
+  if (!paperIds.length || !evidenceIds.length || !claimReviewIds.length) throw new ApiError(409, 'research_status_gap_source_required', '待核验候选必须绑定 Paper、Evidence 与 ClaimReview 来源。')
+  if (papers.length !== paperIds.length || evidence.length !== evidenceIds.length || reviews.length !== claimReviewIds.length) {
+    throw new ApiError(403, 'research_status_gap_source_scope', '待核验候选的来源必须全部属于当前项目。')
+  }
+  const basis = {
+    idea_version: ideaVersion,
+    papers: papers.map(paper => ({ id: paper.id, title: paper.title, doi: paper.doi, source_url: paper.source_url })),
+    evidence: evidence.map(item => ({ id: item.id, paper_id: item.paper_id, claim: item.claim, locator: item.locator, source_url: item.source_url })),
+    claim_reviews: reviews.map(review => ({ id: review.id, claim: review.claim, evidence_ids: jsonArray(review.evidence_ids) })),
+  }
   const id = crypto.randomUUID()
   await database.query(`INSERT INTO research_status_gap_candidates
-    (id,project_id,matrix_id,candidate_type,statement,row_ids,evidence_status,status,actor)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [id, projectId, input.matrix_id, input.candidate_type, input.statement, rowIds, 'candidate_requires_review', 'candidate', input.actor])
-  await audit('research_status.gap_candidate_created', projectId, { candidate_id: id, matrix_id: input.matrix_id, candidate_type: input.candidate_type, row_ids: rowIds }, input.actor)
-  return { candidate_id: id, status: 'candidate', evidence_status: 'candidate_requires_review' }
+    (id,project_id,matrix_id,candidate_type,statement,row_ids,paper_ids,evidence_ids,claim_review_ids,idea_version,basis,evidence_status,status,actor)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`, [
+    id, projectId, input.matrix_id, input.candidate_type, input.statement, rowIds,
+    paperIds, evidenceIds, claimReviewIds, ideaVersion, basis, 'candidate_requires_review', 'candidate', input.actor,
+  ])
+  await audit('research_status.gap_candidate_created', projectId, {
+    candidate_id: id,
+    matrix_id: input.matrix_id,
+    candidate_type: input.candidate_type,
+    row_ids: rowIds,
+    paper_ids: paperIds,
+    evidence_ids: evidenceIds,
+    claim_review_ids: claimReviewIds,
+    idea_version: ideaVersion,
+  }, input.actor)
+  return {
+    candidate_id: id,
+    status: 'candidate',
+    evidence_status: 'candidate_requires_review',
+    idea_version: ideaVersion,
+    paper_ids: paperIds,
+    evidence_ids: evidenceIds,
+    claim_review_ids: claimReviewIds,
+  }
 }
 
 export async function decideResearchStatusGapCandidate(projectId: string, candidateId: string, input: ResearchStatusGapDecisionRequest) {

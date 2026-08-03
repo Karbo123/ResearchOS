@@ -306,6 +306,11 @@ CREATE TABLE IF NOT EXISTS research_status_gap_candidates (
   candidate_type VARCHAR(30) NOT NULL,
   statement TEXT NOT NULL,
   row_ids JSONB NOT NULL DEFAULT '[]',
+  paper_ids JSONB NOT NULL DEFAULT '[]',
+  evidence_ids JSONB NOT NULL DEFAULT '[]',
+  claim_review_ids JSONB NOT NULL DEFAULT '[]',
+  idea_version INTEGER NOT NULL DEFAULT 1,
+  basis JSONB NOT NULL DEFAULT '{}',
   evidence_status VARCHAR(60) NOT NULL DEFAULT 'candidate_requires_review',
   status VARCHAR(30) NOT NULL DEFAULT 'candidate',
   actor VARCHAR(200) NOT NULL,
@@ -313,6 +318,11 @@ CREATE TABLE IF NOT EXISTS research_status_gap_candidates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   decided_at TIMESTAMPTZ
 );
+ALTER TABLE research_status_gap_candidates ADD COLUMN IF NOT EXISTS paper_ids JSONB NOT NULL DEFAULT '[]';
+ALTER TABLE research_status_gap_candidates ADD COLUMN IF NOT EXISTS evidence_ids JSONB NOT NULL DEFAULT '[]';
+ALTER TABLE research_status_gap_candidates ADD COLUMN IF NOT EXISTS claim_review_ids JSONB NOT NULL DEFAULT '[]';
+ALTER TABLE research_status_gap_candidates ADD COLUMN IF NOT EXISTS idea_version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE research_status_gap_candidates ADD COLUMN IF NOT EXISTS basis JSONB NOT NULL DEFAULT '{}';
 CREATE INDEX IF NOT EXISTS ix_research_status_gaps_project ON research_status_gap_candidates(project_id,matrix_id,created_at);
 CREATE TABLE IF NOT EXISTS research_comparisons (
   id UUID PRIMARY KEY,
@@ -377,6 +387,7 @@ export async function migrate(): Promise<void> {
     await database.query("INSERT INTO schema_migrations(version) VALUES ('0013-project-sidebar-order') ON CONFLICT DO NOTHING")
   }
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0014-project-slug-aliases') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0015-research-status-source-binding') ON CONFLICT DO NOTHING")
 }
 
 export async function rows<T extends object>(sql: string, params: unknown[] = []): Promise<T[]> {

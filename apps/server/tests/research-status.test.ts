@@ -214,4 +214,53 @@ describe('project-scoped research status matrix and citation graph', () => {
     const auditRows = await rows<{ action: string }>('SELECT action FROM audit_events WHERE project_id=$1 AND action LIKE \'research_status.gap_candidate_%\' ORDER BY created_at', [projectId])
     expect(auditRows.map(row => row.action)).toEqual(['research_status.gap_candidate_created', 'research_status.gap_candidate_accepted'])
   })
+
+  it('binds innovation, boundary, counterexample, and open-question candidates to Paper/Evidence/Claim/IdeaVersion', async () => {
+    const matrix = await json(`/api/projects/${projectId}/research-status`)
+    const matrixId = String(matrix.body.matrix.id)
+    const row = matrix.body.matrix.rows.find((item: Record<string, unknown>) => item.paper_id === paperId)
+    const rowId = String(row.id)
+    const candidateTypes = ['innovation', 'boundary', 'counterexample', 'open_question']
+    for (const candidateType of candidateTypes) {
+      const created = await json(`/api/projects/${projectId}/research-status/gap-candidates`, {
+        method: 'POST',
+        body: JSON.stringify({
+          matrix_id: matrixId,
+          candidate_type: candidateType,
+          statement: `A sourced ${candidateType} candidate requiring review.`,
+          row_ids: [rowId],
+          idea_version: 1,
+        }),
+      })
+      expect(created.response.status).toBe(201)
+      expect(created.body).toMatchObject({
+        status: 'candidate',
+        idea_version: 1,
+        paper_ids: [paperId],
+        evidence_ids: [evidenceId],
+        claim_review_ids: [reviewId],
+      })
+    }
+    const refreshed = await json(`/api/projects/${projectId}/research-status`)
+    const candidates = refreshed.body.gap_candidates.filter((candidate: Record<string, unknown>) => candidateTypes.includes(String(candidate.candidate_type)))
+    expect(candidates).toHaveLength(4)
+    for (const candidate of candidates) {
+      expect(candidate.basis.papers).toContainEqual(expect.objectContaining({ id: paperId, title: 'Confirmed Paper' }))
+      expect(candidate.basis.evidence).toContainEqual(expect.objectContaining({ id: evidenceId, locator: 'page 4' }))
+      expect(candidate.basis.claim_reviews).toContainEqual(expect.objectContaining({ id: reviewId, claim: 'bounded claim' }))
+    }
+
+    const stale = await json(`/api/projects/${projectId}/research-status/gap-candidates`, {
+      method: 'POST',
+      body: JSON.stringify({ matrix_id: matrixId, candidate_type: 'innovation', statement: 'A stale Idea version must be rejected.', row_ids: [rowId], idea_version: 99 }),
+    })
+    expect(stale.response.status).toBe(409)
+    expect(stale.body.code).toBe('research_status_gap_idea_version_stale')
+
+    const noRows = await json(`/api/projects/${projectId}/research-status/gap-candidates`, {
+      method: 'POST',
+      body: JSON.stringify({ matrix_id: matrixId, candidate_type: 'innovation', statement: 'A candidate without rows must be rejected.', row_ids: [] }),
+    })
+    expect(noRows.response.status).toBe(422)
+  })
 })

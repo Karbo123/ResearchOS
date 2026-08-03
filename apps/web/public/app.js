@@ -13768,10 +13768,22 @@
     "research.gap": "\u7814\u7A76\u7A7A\u767D",
     "research.cluster": "\u4E3B\u9898\u805A\u7C7B",
     "research.duplicateRisk": "\u91CD\u590D\u98CE\u9669",
+    "research.innovation": "\u521B\u65B0\u5019\u9009",
+    "research.boundary": "\u8FB9\u754C",
+    "research.counterexample": "\u53CD\u4F8B",
+    "research.openQuestion": "\u5F85\u6838\u9A8C\u95EE\u9898",
     "research.candidateStatement": "\u5019\u9009\u9648\u8FF0",
     "research.candidatePlaceholder": "\u5199\u4E0B\u9700\u8981\u6838\u9A8C\u7684\u5019\u9009\uFF0C\u4E0D\u8981\u5199\u6210\u5DF2\u7ECF\u8BC1\u660E\u7684\u7ED3\u8BBA\u3002",
     "research.recordCandidate": "\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009",
     "research.rowsCount": "{count} \u4E2A\u77E9\u9635\u884C",
+    "research.sourceCount": "{papers} \u7BC7 Paper \xB7 {evidence} \u6761 Evidence \xB7 {claims} \u6761 ClaimReview \xB7 Idea v{version}",
+    "research.candidateSources": "\u6765\u6E90\u7ED1\u5B9A",
+    "research.candidatePapers": "\u5173\u8054 Paper",
+    "research.candidateEvidence": "\u5173\u8054 Evidence",
+    "research.candidateClaims": "\u5173\u8054 ClaimReview",
+    "research.locator": "\u5B9A\u4F4D",
+    "research.locatorValue": "\u5B9A\u4F4D\uFF1A{locator}",
+    "research.noSourceBinding": "\u65E0\u6765\u6E90\u7ED1\u5B9A\uFF08\u4E0D\u5E94\u51FA\u73B0\uFF09\u3002",
     "research.keepCandidate": "\u4FDD\u7559\u5019\u9009",
     "research.noCandidates": "\u5C1A\u672A\u8BB0\u5F55\u5F85\u6838\u9A8C\u5019\u9009\u3002",
     "novelty.title": "\u521B\u65B0\u77E9\u9635\u63A2\u7D22",
@@ -15184,10 +15196,22 @@
     "research.gap": "\u7814\u7A76\u7A7A\u767D",
     "research.cluster": "\u4E3B\u984C\u53E2\u96C6",
     "research.duplicateRisk": "\u91CD\u8907\u98A8\u96AA",
+    "research.innovation": "\u5275\u65B0\u5019\u9078",
+    "research.boundary": "\u908A\u754C",
+    "research.counterexample": "\u53CD\u4F8B",
+    "research.openQuestion": "\u5F85\u6838\u9A57\u554F\u984C",
     "research.candidateStatement": "\u5019\u9078\u9673\u8FF0",
     "research.candidatePlaceholder": "\u5BEB\u4E0B\u9700\u8981\u6838\u9A57\u7684\u5019\u9078\uFF0C\u4E0D\u8981\u5BEB\u6210\u5DF2\u7D93\u8B49\u660E\u7684\u7D50\u8AD6\u3002",
     "research.recordCandidate": "\u8A18\u9304\u5F85\u6838\u9A57\u5019\u9078",
     "research.rowsCount": "{count} \u500B\u77E9\u9663\u5217",
+    "research.sourceCount": "{papers} \u7BC7 Paper \xB7 {evidence} \u689D Evidence \xB7 {claims} \u689D ClaimReview \xB7 Idea v{version}",
+    "research.candidateSources": "\u4F86\u6E90\u7D81\u5B9A",
+    "research.candidatePapers": "\u95DC\u806F Paper",
+    "research.candidateEvidence": "\u95DC\u806F Evidence",
+    "research.candidateClaims": "\u95DC\u806F ClaimReview",
+    "research.locator": "\u5B9A\u4F4D",
+    "research.locatorValue": "\u5B9A\u4F4D\uFF1A{locator}",
+    "research.noSourceBinding": "\u7121\u4F86\u6E90\u7D81\u5B9A\uFF08\u4E0D\u61C9\u51FA\u73FE\uFF09\u3002",
     "research.keepCandidate": "\u4FDD\u7559\u5019\u9078",
     "research.noCandidates": "\u5C1A\u672A\u8A18\u9304\u5F85\u6838\u9A57\u5019\u9078\u3002",
     "novelty.title": "\u5275\u65B0\u77E9\u9663\u63A2\u7D22",
@@ -16600,10 +16624,22 @@
     "research.gap": "Research gap",
     "research.cluster": "Theme cluster",
     "research.duplicateRisk": "Duplicate risk",
+    "research.innovation": "Innovation candidate",
+    "research.boundary": "Boundary",
+    "research.counterexample": "Counterexample",
+    "research.openQuestion": "Open question",
     "research.candidateStatement": "Candidate statement",
     "research.candidatePlaceholder": "Write the candidate that needs verification; do not phrase it as a proven conclusion.",
     "research.recordCandidate": "Record candidate to verify",
     "research.rowsCount": "{count} matrix rows",
+    "research.sourceCount": "{papers} papers \xB7 {evidence} evidence \xB7 {claims} ClaimReviews \xB7 Idea v{version}",
+    "research.candidateSources": "Bound sources",
+    "research.candidatePapers": "Linked papers",
+    "research.candidateEvidence": "Linked evidence",
+    "research.candidateClaims": "Linked ClaimReviews",
+    "research.locator": "Locator",
+    "research.locatorValue": "Locator: {locator}",
+    "research.noSourceBinding": "No bound sources (should not happen).",
     "research.keepCandidate": "Keep candidate",
     "research.noCandidates": "No candidates to verify recorded yet.",
     "novelty.title": "Novelty Matrix Explorer",
@@ -18016,10 +18052,22 @@
     "research.gap": "Brecha de investigaci\xF3n",
     "research.cluster": "Agrupaci\xF3n tem\xE1tica",
     "research.duplicateRisk": "Riesgo de duplicaci\xF3n",
+    "research.innovation": "Candidata de innovaci\xF3n",
+    "research.boundary": "L\xEDmite",
+    "research.counterexample": "Contraejemplo",
+    "research.openQuestion": "Pregunta abierta",
     "research.candidateStatement": "Declaraci\xF3n del candidato",
     "research.candidatePlaceholder": "Escribe el candidato que necesita verificaci\xF3n; no lo redactes como conclusi\xF3n probada.",
     "research.recordCandidate": "Registrar candidato a verificar",
     "research.rowsCount": "{count} filas de matriz",
+    "research.sourceCount": "{papers} art\xEDculos \xB7 {evidence} evidencias \xB7 {claims} ClaimReviews \xB7 Idea v{version}",
+    "research.candidateSources": "Fuentes vinculadas",
+    "research.candidatePapers": "Art\xEDculos vinculados",
+    "research.candidateEvidence": "Evidencias vinculadas",
+    "research.candidateClaims": "ClaimReviews vinculadas",
+    "research.locator": "Localizador",
+    "research.locatorValue": "Localizador: {locator}",
+    "research.noSourceBinding": "Sin fuentes vinculadas (no deber\xEDa ocurrir).",
     "research.keepCandidate": "Conservar candidato",
     "research.noCandidates": "A\xFAn no hay candidatos a verificar registrados.",
     "novelty.title": "Explorador de novedades",
@@ -21181,6 +21229,24 @@
   function cellKey(cell) {
     return `${cell.dimension}::${cell.axis}::${cell.method}`;
   }
+  var CANDIDATE_TYPE_KEYS = {
+    gap: "research.gap",
+    cluster: "research.cluster",
+    duplicate_risk: "research.duplicateRisk",
+    innovation: "research.innovation",
+    boundary: "research.boundary",
+    counterexample: "research.counterexample",
+    open_question: "research.openQuestion"
+  };
+  var CANDIDATE_TYPES = [
+    "innovation",
+    "boundary",
+    "counterexample",
+    "open_question",
+    "gap",
+    "cluster",
+    "duplicate_risk"
+  ];
   function NoveltyExplorer({
     project,
     showToast
@@ -21191,6 +21257,7 @@
     const [error, setError] = (0, import_react11.useState)("");
     const [selected, setSelected] = (0, import_react11.useState)(/* @__PURE__ */ new Set());
     const [saving, setSaving] = (0, import_react11.useState)(false);
+    const [candidateType, setCandidateType] = (0, import_react11.useState)("innovation");
     const loadStatus = async () => {
       setLoading(true);
       setError("");
@@ -21247,7 +21314,7 @@
           method: "POST",
           body: JSON.stringify({
             matrix_id: matrix.id,
-            candidate_type: "gap",
+            candidate_type: candidateType,
             statement,
             row_ids: matrix.rows.map((row) => row.id)
           })
@@ -21255,6 +21322,21 @@
         setSelected(/* @__PURE__ */ new Set());
         await loadStatus();
         showToast(t("research.candidateRecorded"));
+      } catch (requestError) {
+        showToast(errorMessage(requestError));
+      } finally {
+        setSaving(false);
+      }
+    };
+    const decideCandidate = async (candidate, decision) => {
+      setSaving(true);
+      try {
+        await api(`/api/projects/${project.id}/research-status/gap-candidates/${candidate.id}/decision`, {
+          method: "POST",
+          body: JSON.stringify({ decision, reason: decision === "accepted" ? t("research.acceptGapReason") : t("research.rejectGapReason") })
+        });
+        await loadStatus();
+        showToast(decision === "accepted" ? t("research.acceptedGapToast") : t("research.rejectedGapToast"));
       } catch (requestError) {
         showToast(errorMessage(requestError));
       } finally {
@@ -21338,7 +21420,9 @@
         !datasets.length && !metrics.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(EmptyState, { text: t("novelty.noDimensions") }) : null,
         /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "novelty-selection", children: [
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("novelty.selectionTitle") }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("research.candidateType") }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("select", { value: candidateType, onChange: (event) => setCandidateType(event.target.value), children: CANDIDATE_TYPES.map((type) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("option", { value: type, children: t(CANDIDATE_TYPE_KEYS[type]) }, type)) }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("novelty.selectionTitle") }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: selectedCells.length ? selectedCells.map((cell) => t("novelty.combination", { axis: cell.axis, method: cell.method })).join(" \xB7 ") : t("novelty.selectionEmpty") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("button", { className: "primary", type: "button", disabled: saving || !selectedCells.length, onClick: () => {
@@ -21352,12 +21436,60 @@
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { children: candidate.statement }),
             /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
-              candidate.candidate_type,
+              t(CANDIDATE_TYPE_KEYS[candidate.candidate_type] ?? "research.gap"),
               " \xB7 ",
               t("research.rowsCount", { count: candidate.row_ids.length })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("research.sourceCount", {
+              papers: candidate.paper_ids.length,
+              evidence: candidate.evidence_ids.length,
+              claims: candidate.claim_review_ids.length,
+              version: candidate.idea_version
+            }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("details", { className: "candidate-sources", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("summary", { children: t("research.candidateSources") }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("research.candidatePapers") }),
+                candidate.basis.papers?.length ? candidate.basis.papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: paper.title }),
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("small", { children: paper.doi || paper.source_url })
+                ] }, paper.id)) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("research.noSourceBinding") })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("research.candidateEvidence") }),
+                candidate.basis.evidence?.length ? candidate.basis.evidence.map((item) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: item.claim }),
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("small", { children: [
+                    t("research.locatorValue", { locator: item.locator || t("research.unresolved") }),
+                    " \xB7 ",
+                    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("a", { href: item.source_url, target: "_blank", rel: "noreferrer", children: t("research.source") })
+                  ] })
+                ] }, item.id)) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("research.noSourceBinding") })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { children: t("research.candidateClaims") }),
+                candidate.basis.claim_reviews?.length ? candidate.basis.claim_reviews.map((review) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: review.claim }),
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("small", { children: [
+                    review.evidence_ids.length,
+                    " ",
+                    t("research.candidateEvidence")
+                  ] })
+                ] }, review.id)) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("research.noSourceBinding") })
+              ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: candidate.status })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(ButtonRow, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Badge, { status: candidate.status }),
+            candidate.status === "candidate" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "secondary", type: "button", disabled: saving, onClick: () => {
+                void decideCandidate(candidate, "accepted");
+              }, children: t("research.keepCandidate") }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "secondary", type: "button", disabled: saving, onClick: () => {
+                void decideCandidate(candidate, "rejected");
+              }, children: t("common.reject") })
+            ] }) : null
+          ] })
         ] }, candidate.id)) }) : null
       ] }) : null
     ] });
@@ -22895,7 +23027,7 @@
         setBusy(null);
       }
     };
-    const statusLabel2 = (status) => {
+    const statusLabel3 = (status) => {
       if (status === "ready") return t("paperWorkspace.statusReady");
       if (status === "draft") return t("paperWorkspace.statusDraft");
       return t("paperWorkspace.statusMissing");
@@ -22954,7 +23086,7 @@
                   /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("small", { children: section.citations.length ? t("paperWorkspace.citationMeta", { count: section.citations.length }) : t("paperWorkspace.noCitationMeta") })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "workspace-entry-side", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: section.status, children: statusLabel2(section.status) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: section.status, children: statusLabel3(section.status) }),
                   section.sentences.length ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("em", { children: section.sentences.length }) : null
                 ] })
               ]
@@ -22990,7 +23122,7 @@
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: activeSection.status, children: statusLabel2(activeSection.status) }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: activeSection.status, children: statusLabel3(activeSection.status) }),
               /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `translate:${activeSection.id}`, onClick: () => {
                 void generateTranslation();
               }, children: [

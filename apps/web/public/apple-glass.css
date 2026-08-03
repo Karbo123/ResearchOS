@@ -2505,7 +2505,14 @@ a.secondary { text-decoration: none; color: var(--ink); }
 }
 .novelty-selection strong { display: block; font-size: 13px; }
 .novelty-selection .muted { margin-top: 3px; }
+.novelty-selection select { margin-top: 7px; min-width: 190px; }
 .novelty-candidates { margin-top: 14px; }
+.candidate-sources { margin-top: 9px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 12px; background: rgba(242, 242, 247, .55); }
+.candidate-sources summary { color: var(--blue); font-size: 11px; font-weight: 650; cursor: pointer; }
+.candidate-sources div { margin-top: 8px; }
+.candidate-sources p { display: grid; gap: 2px; margin-top: 5px; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.candidate-sources small { color: var(--muted); }
+:root[data-theme='dark'] .candidate-sources { background: rgba(58, 58, 60, .42); }
 .reports-period-switch {
   display: inline-grid;
   grid-auto-flow: column;
