@@ -3,6 +3,7 @@ import { CircleUserRound, Send, Sparkles, X } from 'lucide-react'
 import type { ChatMessage } from '../types'
 import { useTranslation } from '../i18n'
 import { VoiceInputButton } from './VoiceInputButton'
+import { useComposerTextarea, useVoiceInsertion } from '../hooks/useComposerInput'
 
 function ProjectProgress() {
   const { t } = useTranslation()
@@ -48,6 +49,8 @@ export function ProjectChat({
 }) {
   const { t } = useTranslation()
   const [input, setInput] = useState('')
+  const textareaRef = useComposerTextarea(input)
+  const voiceInsertion = useVoiceInsertion(textareaRef, setInput)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -98,11 +101,16 @@ export function ProjectChat({
       {busy ? <ProjectProgress /> : null}
       <form className="composer compact" onSubmit={submit} aria-busy={busy}>
         <textarea
+          ref={textareaRef}
           value={input}
-          rows={2}
+          rows={1}
           placeholder={t('chat.placeholder')}
           aria-keyshortcuts="Control+Enter Meta+Enter"
-          onChange={event => setInput(event.target.value)}
+          onChange={event => voiceInsertion.setValue(event.target.value)}
+          onFocus={voiceInsertion.trackSelection}
+          onSelect={voiceInsertion.trackSelection}
+          onClick={voiceInsertion.trackSelection}
+          onKeyUp={voiceInsertion.trackSelection}
           onKeyDown={event => {
             if (event.key === 'Enter' && !event.nativeEvent.isComposing && (event.ctrlKey || event.metaKey)) {
               event.preventDefault()
@@ -110,7 +118,12 @@ export function ProjectChat({
             }
           }}
         />
-        <VoiceInputButton disabled={busy} onText={setInput} />
+        <VoiceInputButton
+          disabled={busy}
+          onText={voiceInsertion.handleText}
+          onSessionStart={voiceInsertion.reset}
+          onSessionEnd={voiceInsertion.reset}
+        />
         <button className="send-btn" type="submit" title={t('common.send')} aria-label={t('common.send')} disabled={busy || !input.trim()}>
           <Send size={17} />
         </button>

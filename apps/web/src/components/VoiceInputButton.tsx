@@ -57,10 +57,14 @@ export function VoiceInputButton({
   disabled = false,
   onText,
   onError,
+  onSessionStart,
+  onSessionEnd,
 }: {
   disabled?: boolean
   onText: (text: string) => void
   onError?: (key: TranslationKey) => void
+  onSessionStart?: () => void
+  onSessionEnd?: () => void
 }) {
   const { t } = useTranslation()
   const locale = useLocale()
@@ -70,6 +74,8 @@ export function VoiceInputButton({
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
   const onTextRef = useRef(onText)
   const onErrorRef = useRef(onError)
+  const onSessionStartRef = useRef(onSessionStart)
+  const onSessionEndRef = useRef(onSessionEnd)
   const localeRef = useRef(locale)
   const disabledRef = useRef(disabled)
   const activeRef = useRef(false)
@@ -77,6 +83,8 @@ export function VoiceInputButton({
   useEffect(() => {
     onTextRef.current = onText
     onErrorRef.current = onError
+    onSessionStartRef.current = onSessionStart
+    onSessionEndRef.current = onSessionEnd
     localeRef.current = locale
     disabledRef.current = disabled
   })
@@ -96,10 +104,12 @@ export function VoiceInputButton({
     recognition.onend = () => {
       activeRef.current = false
       setListening(false)
+      onSessionEndRef.current?.()
     }
     recognition.onerror = event => {
       activeRef.current = false
       setListening(false)
+      onSessionEndRef.current?.()
       const key = errorTranslation(event)
       setErrorKey(key)
       onErrorRef.current?.(key)
@@ -144,6 +154,7 @@ export function VoiceInputButton({
       const recognition = recognitionRef.current
       activeRef.current = true
       setErrorKey(null)
+      onSessionStartRef.current?.()
       recognition.lang = recognitionLanguage(localeRef.current)
       try {
         recognition.start()
@@ -151,6 +162,7 @@ export function VoiceInputButton({
         activeRef.current = false
         setErrorKey('voice.error')
         onErrorRef.current?.('voice.error')
+        onSessionEndRef.current?.()
       }
     }
 
@@ -192,6 +204,7 @@ export function VoiceInputButton({
     }
     setErrorKey(null)
     activeRef.current = true
+    onSessionStartRef.current?.()
     recognition.lang = recognitionLanguage(locale)
     try {
       recognition.start()
@@ -199,6 +212,7 @@ export function VoiceInputButton({
       activeRef.current = false
       setErrorKey('voice.error')
       onErrorRef.current?.('voice.error')
+      onSessionEndRef.current?.()
     }
   }
 

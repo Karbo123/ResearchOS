@@ -6,6 +6,7 @@ import { ThinkingSessions } from './ThinkingSessions'
 import { ResizableDivider } from './ResizableDivider'
 import { useTranslation } from '../i18n'
 import { VoiceInputButton } from './VoiceInputButton'
+import { useComposerTextarea, useVoiceInsertion } from '../hooks/useComposerInput'
 
 const IDEA_PROGRESS_STAGE_KEYS = [
   'idea.stage.understand',
@@ -106,6 +107,8 @@ export function IdeaView({
 }) {
   const { t } = useTranslation()
   const [input, setInput] = useState('')
+  const textareaRef = useComposerTextarea(input)
+  const voiceInsertion = useVoiceInsertion(textareaRef, setInput)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const newViewRef = useRef<HTMLElement>(null)
@@ -185,14 +188,24 @@ export function IdeaView({
             />
           </label>
           <textarea
+            ref={textareaRef}
             value={input}
-            rows={2}
+            rows={1}
             placeholder={t('idea.placeholder')}
             aria-keyshortcuts="Control+Enter Meta+Enter"
-            onChange={event => setInput(event.target.value)}
+            onChange={event => voiceInsertion.setValue(event.target.value)}
+            onFocus={voiceInsertion.trackSelection}
+            onSelect={voiceInsertion.trackSelection}
+            onClick={voiceInsertion.trackSelection}
+            onKeyUp={voiceInsertion.trackSelection}
             onKeyDown={handleKeyDown}
           />
-          <VoiceInputButton disabled={chatBusy} onText={setInput} />
+          <VoiceInputButton
+            disabled={chatBusy}
+            onText={voiceInsertion.handleText}
+            onSessionStart={voiceInsertion.reset}
+            onSessionEnd={voiceInsertion.reset}
+          />
           <button className="send-btn" type="submit" title={t('common.send')} aria-label={t('common.send')} disabled={chatBusy || !input.trim()}>
             <Send size={17} />
           </button>

@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react28 = __toESM(require_react(), 1);
+  var import_react29 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -18679,7 +18679,7 @@
   }
 
   // src/components/IdeaView.tsx
-  var import_react11 = __toESM(require_react(), 1);
+  var import_react12 = __toESM(require_react(), 1);
 
   // src/components/SpecPane.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
@@ -18909,7 +18909,9 @@
   function VoiceInputButton({
     disabled = false,
     onText,
-    onError
+    onError,
+    onSessionStart,
+    onSessionEnd
   }) {
     const { t } = useTranslation();
     const locale = useLocale();
@@ -18919,12 +18921,16 @@
     const recognitionRef = (0, import_react10.useRef)(null);
     const onTextRef = (0, import_react10.useRef)(onText);
     const onErrorRef = (0, import_react10.useRef)(onError);
+    const onSessionStartRef = (0, import_react10.useRef)(onSessionStart);
+    const onSessionEndRef = (0, import_react10.useRef)(onSessionEnd);
     const localeRef = (0, import_react10.useRef)(locale);
     const disabledRef = (0, import_react10.useRef)(disabled);
     const activeRef = (0, import_react10.useRef)(false);
     (0, import_react10.useEffect)(() => {
       onTextRef.current = onText;
       onErrorRef.current = onError;
+      onSessionStartRef.current = onSessionStart;
+      onSessionEndRef.current = onSessionEnd;
       localeRef.current = locale;
       disabledRef.current = disabled;
     });
@@ -18943,10 +18949,12 @@
       recognition.onend = () => {
         activeRef.current = false;
         setListening(false);
+        onSessionEndRef.current?.();
       };
       recognition.onerror = (event) => {
         activeRef.current = false;
         setListening(false);
+        onSessionEndRef.current?.();
         const key = errorTranslation(event);
         setErrorKey(key);
         onErrorRef.current?.(key);
@@ -18988,6 +18996,7 @@
         const recognition = recognitionRef.current;
         activeRef.current = true;
         setErrorKey(null);
+        onSessionStartRef.current?.();
         recognition.lang = recognitionLanguage(localeRef.current);
         try {
           recognition.start();
@@ -18995,6 +19004,7 @@
           activeRef.current = false;
           setErrorKey("voice.error");
           onErrorRef.current?.("voice.error");
+          onSessionEndRef.current?.();
         }
       };
       const handleKeyUp = (event) => {
@@ -19032,6 +19042,7 @@
       }
       setErrorKey(null);
       activeRef.current = true;
+      onSessionStartRef.current?.();
       recognition.lang = recognitionLanguage(locale);
       try {
         recognition.start();
@@ -19039,6 +19050,7 @@
         activeRef.current = false;
         setErrorKey("voice.error");
         onErrorRef.current?.("voice.error");
+        onSessionEndRef.current?.();
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
@@ -19060,6 +19072,69 @@
         ]
       }
     );
+  }
+
+  // src/hooks/useComposerInput.ts
+  var import_react11 = __toESM(require_react(), 1);
+  var COMPOSER_TEXTAREA_MAX_HEIGHT = 130;
+  function useComposerTextarea(input) {
+    const textareaRef = (0, import_react11.useRef)(null);
+    (0, import_react11.useEffect)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+      const resize = () => {
+        textarea.style.height = "auto";
+        textarea.style.height = `${Math.min(textarea.scrollHeight, COMPOSER_TEXTAREA_MAX_HEIGHT)}px`;
+      };
+      resize();
+      if (typeof ResizeObserver === "undefined") return;
+      const observer = new ResizeObserver(resize);
+      observer.observe(textarea);
+      return () => observer.disconnect();
+    }, [input]);
+    return textareaRef;
+  }
+  function useVoiceInsertion(textareaRef, setInput) {
+    const anchorRef = (0, import_react11.useRef)(null);
+    const tailRef = (0, import_react11.useRef)(null);
+    const lastSelectionRef = (0, import_react11.useRef)(null);
+    const valueRef = (0, import_react11.useRef)("");
+    const trackSelection = () => {
+      const textarea = textareaRef.current;
+      if (textarea) lastSelectionRef.current = { start: textarea.selectionStart, end: textarea.selectionEnd };
+    };
+    const handleText = (text2) => {
+      const textarea = textareaRef.current;
+      const value = valueRef.current || textarea?.value || "";
+      const activeSelection = document.activeElement === textarea ? { start: textarea?.selectionStart ?? value.length, end: textarea?.selectionEnd ?? value.length } : lastSelectionRef.current ?? { start: value.length, end: value.length };
+      const start = anchorRef.current ?? Math.min(activeSelection.start, value.length);
+      const end = anchorRef.current === null ? Math.max(start, Math.min(activeSelection.end, value.length)) : tailRef.current ?? start;
+      anchorRef.current = start;
+      tailRef.current = end;
+      const next = `${value.slice(0, start)}${text2}${value.slice(end)}`;
+      valueRef.current = next;
+      setInput(next);
+      const cursor = start + text2.length;
+      tailRef.current = cursor;
+      window.requestAnimationFrame(() => {
+        const element = textareaRef.current;
+        if (element) {
+          element.setSelectionRange(cursor, cursor);
+          lastSelectionRef.current = { start: cursor, end: cursor };
+        }
+      });
+    };
+    const reset = () => {
+      anchorRef.current = null;
+      tailRef.current = null;
+      const textarea = textareaRef.current;
+      if (textarea) valueRef.current = textarea.value;
+    };
+    const setValue = (value) => {
+      valueRef.current = value;
+      setInput(value);
+    };
+    return { handleText, reset, setValue, trackSelection };
   }
 
   // src/components/IdeaView.tsx
@@ -19092,11 +19167,11 @@
   }
   function AiProgress({ project = false }) {
     const { t } = useTranslation();
-    const [elapsed, setElapsed] = (0, import_react11.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react12.useState)(0);
     const stageKeys = project ? ["idea.stage.identifyIntent", "idea.stage.checkBoundaries", "idea.stage.organizeReply", "idea.stage.stillWorking"] : IDEA_PROGRESS_STAGE_KEYS;
     const stages = stageKeys.map((key) => t(key));
-    const [stageIndex, setStageIndex] = (0, import_react11.useState)(0);
-    (0, import_react11.useEffect)(() => {
+    const [stageIndex, setStageIndex] = (0, import_react12.useState)(0);
+    (0, import_react12.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -19136,18 +19211,20 @@
     onToggleThinking
   }) {
     const { t } = useTranslation();
-    const [input, setInput] = (0, import_react11.useState)("");
-    const messagesEndRef = (0, import_react11.useRef)(null);
-    const fileInputRef = (0, import_react11.useRef)(null);
-    const newViewRef = (0, import_react11.useRef)(null);
-    const [specWidth, setSpecWidth] = (0, import_react11.useState)(() => {
+    const [input, setInput] = (0, import_react12.useState)("");
+    const textareaRef = useComposerTextarea(input);
+    const voiceInsertion = useVoiceInsertion(textareaRef, setInput);
+    const messagesEndRef = (0, import_react12.useRef)(null);
+    const fileInputRef = (0, import_react12.useRef)(null);
+    const newViewRef = (0, import_react12.useRef)(null);
+    const [specWidth, setSpecWidth] = (0, import_react12.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.specWidth"));
       return Number.isFinite(stored) ? Math.min(IDEA_SPEC_MAX_WIDTH, Math.max(IDEA_SPEC_MIN_WIDTH, stored)) : IDEA_SPEC_DEFAULT_WIDTH;
     });
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       window.localStorage.setItem("researchos.specWidth", String(specWidth));
     }, [specWidth]);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, chatBusy]);
     const handleSubmit = (event) => {
@@ -19217,15 +19294,28 @@
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
                 "textarea",
                 {
+                  ref: textareaRef,
                   value: input,
-                  rows: 2,
+                  rows: 1,
                   placeholder: t("idea.placeholder"),
                   "aria-keyshortcuts": "Control+Enter Meta+Enter",
-                  onChange: (event) => setInput(event.target.value),
+                  onChange: (event) => voiceInsertion.setValue(event.target.value),
+                  onFocus: voiceInsertion.trackSelection,
+                  onSelect: voiceInsertion.trackSelection,
+                  onClick: voiceInsertion.trackSelection,
+                  onKeyUp: voiceInsertion.trackSelection,
                   onKeyDown: handleKeyDown
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(VoiceInputButton, { disabled: chatBusy, onText: setInput }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+                VoiceInputButton,
+                {
+                  disabled: chatBusy,
+                  onText: voiceInsertion.handleText,
+                  onSessionStart: voiceInsertion.reset,
+                  onSessionEnd: voiceInsertion.reset
+                }
+              ),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: chatBusy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Send, { size: 17 }) })
             ] }),
             input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "composer-hint", "aria-live": "polite", children: [
@@ -19268,17 +19358,17 @@
   }
 
   // src/components/ProjectView.tsx
-  var import_react22 = __toESM(require_react(), 1);
+  var import_react23 = __toESM(require_react(), 1);
 
   // src/components/ProjectChat.tsx
-  var import_react12 = __toESM(require_react(), 1);
+  var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   function ProjectProgress() {
     const { t } = useTranslation();
-    const [elapsed, setElapsed] = (0, import_react12.useState)(0);
-    const [stageIndex, setStageIndex] = (0, import_react12.useState)(0);
+    const [elapsed, setElapsed] = (0, import_react13.useState)(0);
+    const [stageIndex, setStageIndex] = (0, import_react13.useState)(0);
     const stages = [t("idea.stage.identifyIntent"), t("idea.stage.checkBoundaries"), t("idea.stage.organizeReply"), t("idea.stage.stillWorking")];
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       const started = Date.now();
       const timer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - started) / 1e3);
@@ -19309,9 +19399,11 @@
     mobileOpen
   }) {
     const { t } = useTranslation();
-    const [input, setInput] = (0, import_react12.useState)("");
-    const messagesEndRef = (0, import_react12.useRef)(null);
-    (0, import_react12.useEffect)(() => {
+    const [input, setInput] = (0, import_react13.useState)("");
+    const textareaRef = useComposerTextarea(input);
+    const voiceInsertion = useVoiceInsertion(textareaRef, setInput);
+    const messagesEndRef = (0, import_react13.useRef)(null);
+    (0, import_react13.useEffect)(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages, busy]);
     const submit = (event) => {
@@ -19352,11 +19444,16 @@
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
           "textarea",
           {
+            ref: textareaRef,
             value: input,
-            rows: 2,
+            rows: 1,
             placeholder: t("chat.placeholder"),
             "aria-keyshortcuts": "Control+Enter Meta+Enter",
-            onChange: (event) => setInput(event.target.value),
+            onChange: (event) => voiceInsertion.setValue(event.target.value),
+            onFocus: voiceInsertion.trackSelection,
+            onSelect: voiceInsertion.trackSelection,
+            onClick: voiceInsertion.trackSelection,
+            onKeyUp: voiceInsertion.trackSelection,
             onKeyDown: (event) => {
               if (event.key === "Enter" && !event.nativeEvent.isComposing && (event.ctrlKey || event.metaKey)) {
                 event.preventDefault();
@@ -19365,7 +19462,15 @@
             }
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(VoiceInputButton, { disabled: busy, onText: setInput }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          VoiceInputButton,
+          {
+            disabled: busy,
+            onText: voiceInsertion.handleText,
+            onSessionStart: voiceInsertion.reset,
+            onSessionEnd: voiceInsertion.reset
+          }
+        ),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: busy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Send, { size: 17 }) })
       ] }),
       input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "composer-hint", "aria-live": "polite", children: [
@@ -19631,7 +19736,7 @@
   }
 
   // src/components/tabs/LiteratureTab.tsx
-  var import_react13 = __toESM(require_react(), 1);
+  var import_react14 = __toESM(require_react(), 1);
   var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   function LiteratureTab({
     project,
@@ -19642,31 +19747,31 @@
     searchCandidates
   }) {
     const { t } = useTranslation();
-    const [materialQuery, setMaterialQuery] = (0, import_react13.useState)("");
-    const [materialLoading, setMaterialLoading] = (0, import_react13.useState)(false);
-    const [materialRows, setMaterialRows] = (0, import_react13.useState)([]);
-    const [materialTotal, setMaterialTotal] = (0, import_react13.useState)(0);
-    const [nextOffset, setNextOffset] = (0, import_react13.useState)(null);
-    const [repoInputFor, setRepoInputFor] = (0, import_react13.useState)(null);
-    const [repoUrl, setRepoUrl] = (0, import_react13.useState)("");
-    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react13.useState)({});
-    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react13.useState)(null);
-    const [claimText, setClaimText] = (0, import_react13.useState)("");
-    const [selectedEvidence, setSelectedEvidence] = (0, import_react13.useState)([]);
-    const [seedType, setSeedType] = (0, import_react13.useState)("doi");
-    const [seedValue, setSeedValue] = (0, import_react13.useState)("");
-    const [seedTitle, setSeedTitle] = (0, import_react13.useState)("");
-    const [seedArtifactId, setSeedArtifactId] = (0, import_react13.useState)("");
-    const [seedPaperId, setSeedPaperId] = (0, import_react13.useState)("");
-    const [seedLoading, setSeedLoading] = (0, import_react13.useState)(false);
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react13.useState)([]);
-    const [recursiveDepth, setRecursiveDepth] = (0, import_react13.useState)(2);
-    const [recursiveWidth, setRecursiveWidth] = (0, import_react13.useState)(5);
-    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react13.useState)(30);
-    const [recursiveProviders, setRecursiveProviders] = (0, import_react13.useState)(["crossref", "openalex", "semantic_scholar"]);
-    const [recursiveReason, setRecursiveReason] = (0, import_react13.useState)(t("literature.recursiveDefaultReason"));
-    const [recursiveLoading, setRecursiveLoading] = (0, import_react13.useState)(false);
-    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react13.useState)(null);
+    const [materialQuery, setMaterialQuery] = (0, import_react14.useState)("");
+    const [materialLoading, setMaterialLoading] = (0, import_react14.useState)(false);
+    const [materialRows, setMaterialRows] = (0, import_react14.useState)([]);
+    const [materialTotal, setMaterialTotal] = (0, import_react14.useState)(0);
+    const [nextOffset, setNextOffset] = (0, import_react14.useState)(null);
+    const [repoInputFor, setRepoInputFor] = (0, import_react14.useState)(null);
+    const [repoUrl, setRepoUrl] = (0, import_react14.useState)("");
+    const [repositoryDiscoveries, setRepositoryDiscoveries] = (0, import_react14.useState)({});
+    const [repositoryDiscoveryLoading, setRepositoryDiscoveryLoading] = (0, import_react14.useState)(null);
+    const [claimText, setClaimText] = (0, import_react14.useState)("");
+    const [selectedEvidence, setSelectedEvidence] = (0, import_react14.useState)([]);
+    const [seedType, setSeedType] = (0, import_react14.useState)("doi");
+    const [seedValue, setSeedValue] = (0, import_react14.useState)("");
+    const [seedTitle, setSeedTitle] = (0, import_react14.useState)("");
+    const [seedArtifactId, setSeedArtifactId] = (0, import_react14.useState)("");
+    const [seedPaperId, setSeedPaperId] = (0, import_react14.useState)("");
+    const [seedLoading, setSeedLoading] = (0, import_react14.useState)(false);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react14.useState)([]);
+    const [recursiveDepth, setRecursiveDepth] = (0, import_react14.useState)(2);
+    const [recursiveWidth, setRecursiveWidth] = (0, import_react14.useState)(5);
+    const [recursiveMaxTotal, setRecursiveMaxTotal] = (0, import_react14.useState)(30);
+    const [recursiveProviders, setRecursiveProviders] = (0, import_react14.useState)(["crossref", "openalex", "semantic_scholar"]);
+    const [recursiveReason, setRecursiveReason] = (0, import_react14.useState)(t("literature.recursiveDefaultReason"));
+    const [recursiveLoading, setRecursiveLoading] = (0, import_react14.useState)(false);
+    const [provenanceCandidateId, setProvenanceCandidateId] = (0, import_react14.useState)(null);
     const activeRecursiveRun = project.related_work_runs?.find((run) => ["queued", "running"].includes(run.status));
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
@@ -19728,7 +19833,7 @@
         showToast(errorMessage(error));
       }
     };
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       if (!activeRecursiveRun) return;
       const timer = window.setInterval(() => {
         void onRefresh();
@@ -20407,14 +20512,14 @@
   }
 
   // src/components/previews.tsx
-  var import_react14 = __toESM(require_react(), 1);
+  var import_react15 = __toESM(require_react(), 1);
   var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function PointCloudPreview({ preview }) {
     const { t } = useTranslation();
-    const canvasRef = (0, import_react14.useRef)(null);
+    const canvasRef = (0, import_react15.useRef)(null);
     const points = preview.points || [];
-    const [resetKey, setResetKey] = (0, import_react14.useState)(0);
-    (0, import_react14.useEffect)(() => {
+    const [resetKey, setResetKey] = (0, import_react15.useState)(0);
+    (0, import_react15.useEffect)(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const context = canvas.getContext("2d");
@@ -20536,13 +20641,13 @@
     const metrics = ["loss", "accuracy", "validation_loss", "validation_accuracy", "learning_rate"].filter(
       (metric2) => points.some((point) => Number.isFinite(Number(point[metric2])))
     );
-    const [metric, setMetric] = (0, import_react14.useState)(metrics[0] || "loss");
-    const [windowSize, setWindowSize] = (0, import_react14.useState)(Math.max(10, points.length));
+    const [metric, setMetric] = (0, import_react15.useState)(metrics[0] || "loss");
+    const [windowSize, setWindowSize] = (0, import_react15.useState)(Math.max(10, points.length));
     const allSeeds = [...new Set(points.map((point) => String(point.seed ?? "all")))];
-    const [selectedSeeds, setSelectedSeeds] = (0, import_react14.useState)(allSeeds);
-    const [hovered, setHovered] = (0, import_react14.useState)(null);
+    const [selectedSeeds, setSelectedSeeds] = (0, import_react15.useState)(allSeeds);
+    const [hovered, setHovered] = (0, import_react15.useState)(null);
     const seedKey = allSeeds.join("|");
-    (0, import_react14.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       setSelectedSeeds((current) => {
         const next = current.filter((seed) => allSeeds.includes(seed));
         return next.length ? next : allSeeds;
@@ -20714,10 +20819,10 @@
   }
   function ArtifactCard({ artifact }) {
     const { t } = useTranslation();
-    const [preview, setPreview] = (0, import_react14.useState)(null);
-    const [status, setStatus] = (0, import_react14.useState)("idle");
-    const [error, setError] = (0, import_react14.useState)("");
-    (0, import_react14.useEffect)(() => {
+    const [preview, setPreview] = (0, import_react15.useState)(null);
+    const [status, setStatus] = (0, import_react15.useState)("idle");
+    const [error, setError] = (0, import_react15.useState)("");
+    (0, import_react15.useEffect)(() => {
       if (artifact.mime_type?.startsWith("image/")) return;
       if (!artifact.preview_url) return;
       setStatus("loading");
@@ -21053,7 +21158,7 @@
   }
 
   // src/components/tabs/ReproductionTab.tsx
-  var import_react15 = __toESM(require_react(), 1);
+  var import_react16 = __toESM(require_react(), 1);
   var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   var defaultForm = () => ({ dependency_manifest: "requirements.txt", entrypoint: "", random_seeds: "13,37,73", config: "{}" });
   function statusText(status) {
@@ -21083,10 +21188,10 @@
     const repositories = project.repositories || [];
     const reproductions = project.reproductions || [];
     const runs = project.reproduction_runs || [];
-    const [forms, setForms] = (0, import_react15.useState)({});
-    const [busy, setBusy] = (0, import_react15.useState)(null);
-    const reproductionByRepository = (0, import_react15.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
-    const runByReproduction = (0, import_react15.useMemo)(() => {
+    const [forms, setForms] = (0, import_react16.useState)({});
+    const [busy, setBusy] = (0, import_react16.useState)(null);
+    const reproductionByRepository = (0, import_react16.useMemo)(() => new Map(reproductions.map((item) => [item.repository_id, item])), [reproductions]);
+    const runByReproduction = (0, import_react16.useMemo)(() => {
       const map = /* @__PURE__ */ new Map();
       for (const run of runs) map.set(run.reproduction_id, [...map.get(run.reproduction_id) || [], run]);
       return map;
@@ -21291,7 +21396,7 @@
   }
 
   // src/components/tabs/ComparisonTab.tsx
-  var import_react16 = __toESM(require_react(), 1);
+  var import_react17 = __toESM(require_react(), 1);
   var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
   var defaultContext = () => ({
     data_version: "",
@@ -21331,23 +21436,23 @@
   }
   function ComparisonTab({ project, onRefresh, showToast }) {
     const { t } = useTranslation();
-    const papers = (0, import_react16.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
-    const runs = (0, import_react16.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
-    const [paperId, setPaperId] = (0, import_react16.useState)("");
-    const [runId, setRunId] = (0, import_react16.useState)("");
-    const [evidenceIds, setEvidenceIds] = (0, import_react16.useState)([]);
-    const [paperMetrics, setPaperMetrics] = (0, import_react16.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
-    const [context, setContext] = (0, import_react16.useState)(defaultContext);
-    const [busy, setBusy] = (0, import_react16.useState)(false);
-    const [error, setError] = (0, import_react16.useState)(null);
+    const papers = (0, import_react17.useMemo)(() => (project.papers || []).filter((paper) => paper.confirmed === true), [project.papers]);
+    const runs = (0, import_react17.useMemo)(() => completedRuns(project), [project.reproduction_runs]);
+    const [paperId, setPaperId] = (0, import_react17.useState)("");
+    const [runId, setRunId] = (0, import_react17.useState)("");
+    const [evidenceIds, setEvidenceIds] = (0, import_react17.useState)([]);
+    const [paperMetrics, setPaperMetrics] = (0, import_react17.useState)('{\n  "accuracy": {\n    "value": 0,\n    "evidence_ids": [],\n    "direction": "higher_is_better",\n    "definition": null\n  }\n}');
+    const [context, setContext] = (0, import_react17.useState)(defaultContext);
+    const [busy, setBusy] = (0, import_react17.useState)(false);
+    const [error, setError] = (0, import_react17.useState)(null);
     const selectedPaper = papers.find((paper) => paper.id === paperId) || null;
-    const paperEvidence2 = (0, import_react16.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
+    const paperEvidence2 = (0, import_react17.useMemo)(() => (project.evidence || []).filter((item) => item.paper_id === paperId && Boolean(item.locator?.trim())), [project.evidence, paperId]);
     const comparisons = project.research_comparisons || [];
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!paperId && papers[0]) setPaperId(papers[0].id);
       if (!runId && runs[0]) setRunId(runs[0].id);
     }, [papers, runs, paperId, runId]);
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       setEvidenceIds((current) => current.filter((id) => paperEvidence2.some((evidence) => evidence.id === id)));
     }, [paperEvidence2]);
     const createComparison = async () => {
@@ -21599,7 +21704,7 @@
   }
 
   // src/components/tabs/ResearchStatusTab.tsx
-  var import_react17 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
   function listLabel(values, emptyLabel) {
     return values.length ? values.join(", ") : emptyLabel;
@@ -21614,15 +21719,15 @@
     showToast
   }) {
     const { t, locale } = useTranslation();
-    const [status, setStatus] = (0, import_react17.useState)(null);
-    const [loading, setLoading] = (0, import_react17.useState)(true);
-    const [working, setWorking] = (0, import_react17.useState)(false);
-    const [error, setError] = (0, import_react17.useState)(null);
-    const [theme, setTheme2] = (0, import_react17.useState)("");
-    const [method, setMethod] = (0, import_react17.useState)("");
-    const [year, setYear] = (0, import_react17.useState)("");
-    const [gapType, setGapType] = (0, import_react17.useState)("gap");
-    const [gapStatement, setGapStatement] = (0, import_react17.useState)("");
+    const [status, setStatus] = (0, import_react18.useState)(null);
+    const [loading, setLoading] = (0, import_react18.useState)(true);
+    const [working, setWorking] = (0, import_react18.useState)(false);
+    const [error, setError] = (0, import_react18.useState)(null);
+    const [theme, setTheme2] = (0, import_react18.useState)("");
+    const [method, setMethod] = (0, import_react18.useState)("");
+    const [year, setYear] = (0, import_react18.useState)("");
+    const [gapType, setGapType] = (0, import_react18.useState)("gap");
+    const [gapStatement, setGapStatement] = (0, import_react18.useState)("");
     const loadStatus = async (filters = { theme, method, year }) => {
       setLoading(true);
       setError(null);
@@ -21638,11 +21743,11 @@
         setLoading(false);
       }
     };
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       setStatus(null);
       void loadStatus({ theme: "", method: "", year: "" });
     }, [project.id]);
-    const eligibleRows = (0, import_react17.useMemo)(() => {
+    const eligibleRows = (0, import_react18.useMemo)(() => {
       const reviews = project.claim_reviews || [];
       return (project.papers || []).flatMap((paper) => {
         if (paper.confirmed !== true) return [];
@@ -21881,7 +21986,7 @@
   }
 
   // src/components/tabs/ExperimentsTab.tsx
-  var import_react18 = __toESM(require_react(), 1);
+  var import_react19 = __toESM(require_react(), 1);
   var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function ExperimentsTab({
     project,
@@ -21890,8 +21995,8 @@
     onNavigate
   }) {
     const { t } = useTranslation();
-    const [diagnostics, setDiagnostics] = (0, import_react18.useState)(null);
-    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react18.useState)(false);
+    const [diagnostics, setDiagnostics] = (0, import_react19.useState)(null);
+    const [diagnosticsLoading, setDiagnosticsLoading] = (0, import_react19.useState)(false);
     const createExperimentPlan = async () => {
       try {
         const result = await api(`/api/projects/${project.id}/experiment-plan`, { method: "POST" });
@@ -22160,7 +22265,7 @@
   }
 
   // src/components/tabs/PoliciesTab.tsx
-  var import_react19 = __toESM(require_react(), 1);
+  var import_react20 = __toESM(require_react(), 1);
   var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   function PoliciesTab({
     project,
@@ -22169,7 +22274,7 @@
     onNavigate
   }) {
     const { t } = useTranslation();
-    const [rule, setRule] = (0, import_react19.useState)("");
+    const [rule, setRule] = (0, import_react20.useState)("");
     const addPolicy = async (event) => {
       event.preventDefault();
       if (!rule.trim()) return;
@@ -22268,7 +22373,7 @@
   }
 
   // src/components/tabs/ReportsTab.tsx
-  var import_react20 = __toESM(require_react(), 1);
+  var import_react21 = __toESM(require_react(), 1);
 
   // src/components/MarkdownPreview.tsx
   var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
@@ -22419,27 +22524,27 @@
     const isFeedback = tab === "feedback_inbox";
     const isAudit = tab === "feedback_audit";
     const period = periodForTab(tab);
-    const [content, setContent] = (0, import_react20.useState)("");
-    const [activeReportId, setActiveReportId] = (0, import_react20.useState)("");
-    const [activeReportStatus, setActiveReportStatus] = (0, import_react20.useState)("");
-    const [activeReportReason, setActiveReportReason] = (0, import_react20.useState)("");
-    const [feedback, setFeedback] = (0, import_react20.useState)("");
-    const [feedbackCategory, setFeedbackCategory] = (0, import_react20.useState)("report");
-    const [feedbackRows, setFeedbackRows] = (0, import_react20.useState)(project.feedback || []);
-    const [auditRows, setAuditRows] = (0, import_react20.useState)([]);
-    const [loading, setLoading] = (0, import_react20.useState)(false);
-    const reports = (0, import_react20.useMemo)(
+    const [content, setContent] = (0, import_react21.useState)("");
+    const [activeReportId, setActiveReportId] = (0, import_react21.useState)("");
+    const [activeReportStatus, setActiveReportStatus] = (0, import_react21.useState)("");
+    const [activeReportReason, setActiveReportReason] = (0, import_react21.useState)("");
+    const [feedback, setFeedback] = (0, import_react21.useState)("");
+    const [feedbackCategory, setFeedbackCategory] = (0, import_react21.useState)("report");
+    const [feedbackRows, setFeedbackRows] = (0, import_react21.useState)(project.feedback || []);
+    const [auditRows, setAuditRows] = (0, import_react21.useState)([]);
+    const [loading, setLoading] = (0, import_react21.useState)(false);
+    const reports = (0, import_react21.useMemo)(
       () => (project.reports || []).filter((report) => report.period === period),
       [period, project.reports]
     );
-    (0, import_react20.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       const latest = reports[0];
       setContent(displayable(latest) ? latest?.content || "" : "");
       setActiveReportId(latest?.id || "");
       setActiveReportStatus(latest?.status || "");
       setActiveReportReason(latest?.blocking_reason || "");
     }, [project.id, period, reports]);
-    (0, import_react20.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       if (!isFeedback && !isAudit) return;
       setLoading(true);
       const request = isFeedback ? api(`/api/projects/${project.id}/feedback`).then((result) => setFeedbackRows(result.feedback || [])) : api(`/api/projects/${project.id}/audit`).then((result) => setAuditRows(result || []));
@@ -22632,7 +22737,7 @@
   }
 
   // src/components/tabs/WorkflowStageTab.tsx
-  var import_react21 = __toESM(require_react(), 1);
+  var import_react22 = __toESM(require_react(), 1);
   var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function text(value, t) {
     return typeof value === "string" && value.trim() ? value : t("common.unrecorded");
@@ -22719,15 +22824,15 @@
     tab
   }) {
     const { t } = useTranslation();
-    const [workspace, setWorkspace] = (0, import_react21.useState)(null);
-    const [workspaceError, setWorkspaceError] = (0, import_react21.useState)(null);
-    const [researchStatus, setResearchStatus] = (0, import_react21.useState)(null);
-    const [researchStatusError, setResearchStatusError] = (0, import_react21.useState)(null);
-    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react21.useState)(null);
-    const graphLayout = (0, import_react21.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
-    const graphNodesById = (0, import_react21.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
+    const [workspace, setWorkspace] = (0, import_react22.useState)(null);
+    const [workspaceError, setWorkspaceError] = (0, import_react22.useState)(null);
+    const [researchStatus, setResearchStatus] = (0, import_react22.useState)(null);
+    const [researchStatusError, setResearchStatusError] = (0, import_react22.useState)(null);
+    const [selectedGraphNodeId, setSelectedGraphNodeId] = (0, import_react22.useState)(null);
+    const graphLayout = (0, import_react22.useMemo)(() => layoutGraph(researchStatus?.graph.nodes || []), [researchStatus]);
+    const graphNodesById = (0, import_react22.useMemo)(() => new Map(graphLayout.nodes.map((node) => [node.id, node])), [graphLayout.nodes]);
     const selectedGraphNode = selectedGraphNodeId ? graphNodesById.get(selectedGraphNodeId) || null : null;
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (tab === "code_workspace") {
         setWorkspace(null);
         setWorkspaceError(null);
@@ -23014,9 +23119,9 @@
     measurementKey,
     children
   }) {
-    const navRef = (0, import_react22.useRef)(null);
-    const [indicator, setIndicator] = (0, import_react22.useState)({ left: 0, width: 0, ready: false });
-    (0, import_react22.useLayoutEffect)(() => {
+    const navRef = (0, import_react23.useRef)(null);
+    const [indicator, setIndicator] = (0, import_react23.useState)({ left: 0, width: 0, ready: false });
+    (0, import_react23.useLayoutEffect)(() => {
       const nav = navRef.current;
       if (!nav) return void 0;
       const measure = () => {
@@ -23136,12 +23241,12 @@
     onToggleMobileChat
   }) {
     const { t } = useTranslation();
-    const [projectChatWidth, setProjectChatWidth] = (0, import_react22.useState)(() => {
+    const [projectChatWidth, setProjectChatWidth] = (0, import_react23.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.projectChatWidth"));
       return Number.isFinite(stored) ? Math.min(PROJECT_CHAT_MAX_WIDTH, Math.max(PROJECT_CHAT_MIN_WIDTH, stored)) : PROJECT_CHAT_DEFAULT_WIDTH;
     });
-    const projectLayoutRef = (0, import_react22.useRef)(null);
-    (0, import_react22.useEffect)(() => {
+    const projectLayoutRef = (0, import_react23.useRef)(null);
+    (0, import_react23.useEffect)(() => {
       window.localStorage.setItem("researchos.projectChatWidth", String(projectChatWidth));
     }, [projectChatWidth]);
     const tabProps = {
@@ -23358,20 +23463,20 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react24 = __toESM(require_react(), 1);
+  var import_react25 = __toESM(require_react(), 1);
 
   // src/components/ProjectEmbeddingSettingsForm.tsx
-  var import_react23 = __toESM(require_react(), 1);
+  var import_react24 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
   function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react23.useState)(null);
-    const [instance, setInstance] = (0, import_react23.useState)(null);
-    const [loading, setLoading] = (0, import_react23.useState)(false);
-    const [saving, setSaving] = (0, import_react23.useState)(false);
-    const [error, setError] = (0, import_react23.useState)("");
-    const [dirty, setDirty] = (0, import_react23.useState)(false);
-    const [confirmReset, setConfirmReset] = (0, import_react23.useState)(false);
+    const [values, setValues] = (0, import_react24.useState)(null);
+    const [instance, setInstance] = (0, import_react24.useState)(null);
+    const [loading, setLoading] = (0, import_react24.useState)(false);
+    const [saving, setSaving] = (0, import_react24.useState)(false);
+    const [error, setError] = (0, import_react24.useState)("");
+    const [dirty, setDirty] = (0, import_react24.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react24.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -23394,7 +23499,7 @@
         setLoading(false);
       }
     };
-    (0, import_react23.useEffect)(() => {
+    (0, import_react24.useEffect)(() => {
       if (projectId) void load();
     }, [projectId]);
     const update = (field, value) => {
@@ -23599,14 +23704,14 @@
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
     const { t } = useTranslation();
-    const [tab, setTab] = (0, import_react24.useState)("models");
-    const [values, setValues] = (0, import_react24.useState)(null);
-    const [loading, setLoading] = (0, import_react24.useState)(false);
-    const [saving, setSaving] = (0, import_react24.useState)(false);
-    const [error, setError] = (0, import_react24.useState)("");
-    const [dirty, setDirty] = (0, import_react24.useState)(false);
-    const [confirmClose, setConfirmClose] = (0, import_react24.useState)(false);
-    (0, import_react24.useEffect)(() => {
+    const [tab, setTab] = (0, import_react25.useState)("models");
+    const [values, setValues] = (0, import_react25.useState)(null);
+    const [loading, setLoading] = (0, import_react25.useState)(false);
+    const [saving, setSaving] = (0, import_react25.useState)(false);
+    const [error, setError] = (0, import_react25.useState)("");
+    const [dirty, setDirty] = (0, import_react25.useState)(false);
+    const [confirmClose, setConfirmClose] = (0, import_react25.useState)(false);
+    (0, import_react25.useEffect)(() => {
       if (!open) return;
       setTab("models");
       setLoading(true);
@@ -23837,7 +23942,7 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react25 = __toESM(require_react(), 1);
+  var import_react26 = __toESM(require_react(), 1);
   var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     const { t } = useTranslation();
@@ -23880,13 +23985,13 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [view, setView] = (0, import_react25.useState)("graph");
-    const [query, setQuery] = (0, import_react25.useState)("");
-    const [status, setStatus] = (0, import_react25.useState)(t("memory.graphPrompt"));
-    const [graph, setGraph] = (0, import_react25.useState)(null);
-    const [search, setSearch] = (0, import_react25.useState)(null);
-    const [loading, setLoading] = (0, import_react25.useState)(false);
-    (0, import_react25.useEffect)(() => {
+    const [view, setView] = (0, import_react26.useState)("graph");
+    const [query, setQuery] = (0, import_react26.useState)("");
+    const [status, setStatus] = (0, import_react26.useState)(t("memory.graphPrompt"));
+    const [graph, setGraph] = (0, import_react26.useState)(null);
+    const [search, setSearch] = (0, import_react26.useState)(null);
+    const [loading, setLoading] = (0, import_react26.useState)(false);
+    (0, import_react26.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -24028,16 +24133,16 @@
   }
 
   // src/components/NotFoundView.tsx
-  var import_react26 = __toESM(require_react(), 1);
+  var import_react27 = __toESM(require_react(), 1);
   var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   function NotFoundView({ path, onGoHome }) {
     const { t } = useTranslation();
-    const [seconds, setSeconds] = (0, import_react26.useState)(3);
-    const onGoHomeRef = (0, import_react26.useRef)(onGoHome);
-    (0, import_react26.useEffect)(() => {
+    const [seconds, setSeconds] = (0, import_react27.useState)(3);
+    const onGoHomeRef = (0, import_react27.useRef)(onGoHome);
+    (0, import_react27.useEffect)(() => {
       onGoHomeRef.current = onGoHome;
     }, [onGoHome]);
-    (0, import_react26.useEffect)(() => {
+    (0, import_react27.useEffect)(() => {
       const countdown = window.setInterval(() => {
         setSeconds((value) => Math.max(0, value - 1));
       }, 1e3);
@@ -24066,7 +24171,7 @@
   }
 
   // src/components/DeleteProjectDialog.tsx
-  var import_react27 = __toESM(require_react(), 1);
+  var import_react28 = __toESM(require_react(), 1);
   var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
   function DeleteProjectDialog({
     project,
@@ -24075,7 +24180,7 @@
     onConfirm
   }) {
     const { t } = useTranslation();
-    const [confirmation, setConfirmation] = (0, import_react27.useState)("");
+    const [confirmation, setConfirmation] = (0, import_react28.useState)("");
     const canDelete = confirmation === "DELETE" && !busy;
     return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
       Modal,
@@ -24136,45 +24241,45 @@
       role: "assistant",
       text: t("app.initialMessage")
     };
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       setMessages((current) => current.map((message) => message.id === "initial-assistant" ? { ...message, text: t("app.initialMessage") } : message));
     }, [locale]);
-    const [projects, setProjects] = (0, import_react28.useState)([]);
-    const [projectId, setProjectId] = (0, import_react28.useState)(null);
-    const [project, setProject] = (0, import_react28.useState)(null);
-    const [view, setView] = (0, import_react28.useState)("idea");
-    const [activeArea, setActiveArea] = (0, import_react28.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react28.useState)("overview");
-    const [health, setHealth] = (0, import_react28.useState)("connecting");
-    const [toast, setToast] = (0, import_react28.useState)(null);
-    const [messages, setMessages] = (0, import_react28.useState)([initialMessage]);
-    const [projectMessages, setProjectMessages] = (0, import_react28.useState)([]);
-    const [spec, setSpec] = (0, import_react28.useState)(null);
-    const [projectSlug, setProjectSlug] = (0, import_react28.useState)("");
-    const [specStatus, setSpecStatus] = (0, import_react28.useState)("pending_clarification");
-    const [chatBusy, setChatBusy] = (0, import_react28.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react28.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react28.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react28.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react28.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react28.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react28.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react28.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react28.useState)(false);
-    const [confirm, setConfirm] = (0, import_react28.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react28.useState)(false);
-    const [notFoundPath, setNotFoundPath] = (0, import_react28.useState)(null);
-    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react28.useState)(null);
-    const [deleteBusy, setDeleteBusy] = (0, import_react28.useState)(false);
-    const [sidebarWidth, setSidebarWidth] = (0, import_react28.useState)(() => {
+    const [projects, setProjects] = (0, import_react29.useState)([]);
+    const [projectId, setProjectId] = (0, import_react29.useState)(null);
+    const [project, setProject] = (0, import_react29.useState)(null);
+    const [view, setView] = (0, import_react29.useState)("idea");
+    const [activeArea, setActiveArea] = (0, import_react29.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react29.useState)("overview");
+    const [health, setHealth] = (0, import_react29.useState)("connecting");
+    const [toast, setToast] = (0, import_react29.useState)(null);
+    const [messages, setMessages] = (0, import_react29.useState)([initialMessage]);
+    const [projectMessages, setProjectMessages] = (0, import_react29.useState)([]);
+    const [spec, setSpec] = (0, import_react29.useState)(null);
+    const [projectSlug, setProjectSlug] = (0, import_react29.useState)("");
+    const [specStatus, setSpecStatus] = (0, import_react29.useState)("pending_clarification");
+    const [chatBusy, setChatBusy] = (0, import_react29.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react29.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react29.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react29.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react29.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react29.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react29.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react29.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react29.useState)(false);
+    const [confirm, setConfirm] = (0, import_react29.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react29.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react29.useState)(null);
+    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react29.useState)(null);
+    const [deleteBusy, setDeleteBusy] = (0, import_react29.useState)(false);
+    const [sidebarWidth, setSidebarWidth] = (0, import_react29.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.sidebarWidth"));
       return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276;
     });
-    const chatBusyRef = (0, import_react28.useRef)(false);
-    const projectChatBusyRef = (0, import_react28.useRef)(false);
-    const sessionIdRef = (0, import_react28.useRef)(null);
-    const toastTimerRef = (0, import_react28.useRef)(null);
-    (0, import_react28.useEffect)(() => {
+    const chatBusyRef = (0, import_react29.useRef)(false);
+    const projectChatBusyRef = (0, import_react29.useRef)(false);
+    const sessionIdRef = (0, import_react29.useRef)(null);
+    const toastTimerRef = (0, import_react29.useRef)(null);
+    (0, import_react29.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
     const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
@@ -24254,7 +24359,7 @@
       else window.history.pushState(null, "", "/new");
       void loadProjects();
     };
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
