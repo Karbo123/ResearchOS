@@ -332,7 +332,6 @@ export function Sidebar({
                   }}
                 >
                   <span className="project-title-text">{project.title}</span>
-                  {project.pinned ? <Pin className="project-pinned-indicator" size={13} strokeWidth={2.2} aria-hidden="true" /> : null}
                 </button>
                 <div className="project-actions" onPointerDown={event => event.stopPropagation()}>
                   <div className="project-actions-track">

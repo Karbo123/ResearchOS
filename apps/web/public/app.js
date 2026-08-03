@@ -19732,7 +19732,7 @@
             "data-dragging": draggingProjectId === project.id ? "true" : "false",
             "data-drop-target": dragOverProjectId === project.id && draggingProjectId !== project.id ? "true" : "false",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                 "button",
                 {
                   type: "button",
@@ -19749,10 +19749,7 @@
                     }
                     onOpenProject(project.id);
                   },
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "project-title-text", children: project.title }),
-                    project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { className: "project-pinned-indicator", size: 13, strokeWidth: 2.2, "aria-hidden": "true" }) : null
-                  ]
+                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "project-title-text", children: project.title })
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "project-actions", onPointerDown: (event) => event.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions-track", children: [
