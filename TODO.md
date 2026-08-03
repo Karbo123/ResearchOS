@@ -473,12 +473,13 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `100b` 所有结构化调用使用 Responses Structured Outputs 的 `text.format.type=json_schema` 和严格业务 schema；请求不发送 `json_object` 或互斥的旧 `response_format` 字段，Agent/Skill 提示明确要求 JSON。
   - [x] `100c` 模型配置 URL 统一作为 Responses API base URL 处理，拒绝包含 `/chat/completions`、`/completions` 或 `/responses` 的操作地址，并限制为 HTTPS 或回环/私有 HTTP；Luna/Terra/Sol 保持独立的 model、URL、key 和 reasoning effort，key 不进入返回值、日志或审计。
   - [x] `100d` provider HTTP、超时、鉴权、schema、拒绝和空/不完整响应全部失败关闭，返回稳定结构化错误；没有默认助手消息、空成功结果、伪造项目 slug/计划或隐式换 provider。Guardrail detector provider 失败同样直接阻断请求。
-  - [x] `100e` 增加可捕获请求 URL/body 的 Responses 契约测试、4xx/5xx/超时/非法结构化响应、guardrail 失败关闭和 Mastra client 非 JSON 测试；已通过 typecheck、126 项全量服务端测试、build、model-failure、Mastra HITL/evals、Idea/navigation/UI 检查和主链真实验收（2 次真实模型调用）。Supermemory 真实验收已尝试但远端文档保持 `queued`，按既有 `P0-SUPERMEMORY-LOCAL-053` 外部阻塞记录，未伪造通过。
+  - [x] `100e` 增加可捕获请求 URL/body 的 Responses 契约测试、4xx/5xx/超时/非法结构化响应、guardrail 失败关闭和 Mastra client 非 JSON 测试；已通过 typecheck、127 项全量服务端测试、build、Mastra HITL/evals、Idea/navigation/UI 检查和主链真实验收（2 次真实模型调用）。本轮补充的 `model-failure:check` 在正常首轮请求处收到模型网关 HTTP 502，未伪造通过；失败关闭由 Responses provider/guardrail/mastra-client 契约测试覆盖。Supermemory 真实验收已尝试但远端文档保持 `queued`，按既有 `P0-SUPERMEMORY-LOCAL-053` 外部阻塞记录，未伪造通过。
 
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。
 - [!] `P0-SUPERMEMORY-LOCAL-053` 当前 Supermemory server build 的远程 embedding/PDF/图片能力存在已验证限制；保持失败关闭。解除条件：受支持的 Linux build/源码补丁和可用模型端点完成真实验收，或用户明确批准新的兼容实现。
+- [!] `P0-RUNTIME-101` 当前正式 `runtime/research-os.pglite` 在首次 SQL 查询时稳定抛出 PGlite `RuntimeError: Aborted()`；锁清理和独立复制均不能恢复，正式库与备份已保留未覆盖。已用 `artifacts/backups/20260730T200648Z/postgres.sql` 生成并校验独立 `runtime/restore-pglite-model-check-20260803` 候选供本轮 API/失败边界验证，但不能自动替换正式运行目录。解除条件：人工审阅恢复候选并明确选择恢复，或从经验证的 PGlite 备份恢复正式库后重新完成 API/浏览器验收。
 - [!] `P0-RUNNER-007` 目标 WSL2 主机的真实 GPU/CUDA 资源尚未验收；CPU supervisor 测试不能代表 GPU 通过。
 - [x] `P0-WSL2-008` Windows 原生宿主不再是支持目标；WSL2 是默认开发 shell（nvm Node 26.5.1、共享 `/mnt/d/ResearchOS`、Linux API/Mastra/实验运行路径已验证）。Windows Chrome 仅作为调试浏览器，通过端口转发访问 WSL2 服务。
 - [!] `P0-DEPS-056` 当前 Mastra/deployer 依赖链的上游 Hono advisory 需等待兼容修复；不能用破坏性降级掩盖。
