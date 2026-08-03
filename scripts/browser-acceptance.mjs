@@ -534,5 +534,41 @@ sidebarResize.afterWidth = await evaluate(`document.querySelector('.app-shell')?
 sidebarResize.changed = sidebarResize.width !== sidebarResize.afterWidth && sidebarResize.afterWidth !== null
 await evaluate(`localStorage.setItem('researchos.sidebarWidth', ${JSON.stringify(String(sidebarResize.originalWidth))})`)
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, homeUi, themePersist, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
+await navigate(homeUrl, 'en', 'light')
+const faviconLight = await evaluate(`(async () => {
+  const link = document.querySelector('link[rel="icon"]')
+  const brand = document.querySelector('.brand')
+  const mark = document.querySelector('.brand-mark')
+  const svgText = link ? await fetch(link.href).then(response => response.ok ? response.text() : '') : ''
+  return {
+    linkHref: link?.getAttribute('href') || null,
+    svgLoads: svgText.includes('<svg') && svgText.includes('Research OS'),
+    titlePresent: svgText.includes('<title') && svgText.includes('</title>'),
+    descPresent: svgText.includes('<desc') && svgText.includes('</desc>'),
+    markLoaded: mark ? mark.complete && mark.naturalWidth > 0 : false,
+    markSize: mark ? { width: mark.getBoundingClientRect().width, height: mark.getBoundingClientRect().height } : null,
+    brandAria: brand?.getAttribute('aria-label') || null,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-favicon-light.png')
+
+await navigate(homeUrl, 'en', 'dark')
+const faviconDark = await evaluate(`(() => {
+  const mark = document.querySelector('.brand-mark')
+  return {
+    theme: document.documentElement.dataset.theme || null,
+    markVisible: mark ? getComputedStyle(mark).display !== 'none' : false,
+    markLoaded: mark ? mark.complete && mark.naturalWidth > 0 : false,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-favicon-dark.png')
+
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 2, mobile: false })
+await navigate(homeUrl, 'en', 'light')
+await capture('108h-brand-high-dpi.png')
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, themePersist, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
 socket.close()
