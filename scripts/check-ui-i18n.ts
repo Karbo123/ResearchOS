@@ -75,7 +75,8 @@ function visitDirectory(directory: string): void {
     if (!entry.isFile() || (!entry.name.endsWith('.ts') && !entry.name.endsWith('.tsx'))) continue
 
     const path = join(directory, entry.name)
-    if (relative(scanRoot, path) === 'i18n.ts') continue
+    // i18n dictionaries and voice punctuation rule data are content, not UI strings.
+    if (relative(scanRoot, path) === 'i18n.ts' || relative(scanRoot, path) === 'voicePunctuation.ts') continue
     scannedFiles += 1
 
     const sourceText = readFileSync(path, 'utf8')

@@ -18887,6 +18887,63 @@
 
   // src/components/VoiceInputButton.tsx
   var import_react10 = __toESM(require_react(), 1);
+
+  // src/voicePunctuation.ts
+  var ZH_QUESTION_END = /* @__PURE__ */ new Set(["\u5417", "\u5462", "\u4E48", "\u561B"]);
+  var ZH_CONNECTORS = ["\u7136\u540E", "\u4F46\u662F", "\u6240\u4EE5", "\u56E0\u4E3A", "\u5982\u679C", "\u867D\u7136", "\u4E0D\u8FC7", "\u800C\u4E14", "\u63A5\u7740", "\u53E6\u5916", "\u603B\u4E4B", "\u6BD4\u5982"];
+  var EN_QUESTION_WORDS = /* @__PURE__ */ new Set([
+    "am",
+    "are",
+    "can",
+    "could",
+    "did",
+    "do",
+    "does",
+    "how",
+    "is",
+    "may",
+    "might",
+    "should",
+    "was",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "who",
+    "whom",
+    "whose",
+    "will",
+    "would"
+  ]);
+  var ES_QUESTION_WORDS = /* @__PURE__ */ new Set(["c\xF3mo", "cu\xE1l", "cu\xE1les", "cu\xE1ndo", "d\xF3nde", "por qu\xE9", "qu\xE9", "qui\xE9n", "qui\xE9nes"]);
+  var END_PUNCTUATION = /* @__PURE__ */ new Set(["\u3002", "\uFF01", "\uFF1F", ".", "!", "?", "\u2026"]);
+  function addConnectorPunctuation(value) {
+    let next = value;
+    for (const connector of ZH_CONNECTORS) {
+      next = next.replace(new RegExp(`(?<=^|[\uFF0C\u3002\uFF01\uFF1F\uFF1B\u3001,.!?;:])${connector}(?=\\S)`, "g"), `${connector}\uFF0C`);
+    }
+    return next;
+  }
+  function addEndPunctuation(value, locale) {
+    const last = value[value.length - 1];
+    if (END_PUNCTUATION.has(last)) return value;
+    if (locale === "zh-CN" || locale === "zh-TW") {
+      return ZH_QUESTION_END.has(last) ? `${value}\uFF1F` : `${value}\u3002`;
+    }
+    const words = value.trim().split(/\s+/);
+    const lastWord = words[words.length - 1]?.toLowerCase().replace(/[^a-záéíóúüñ]/gi, "") ?? "";
+    if (locale === "es" && ES_QUESTION_WORDS.has(words.slice(-2).join(" ").toLowerCase())) return `${value}?`;
+    if (EN_QUESTION_WORDS.has(lastWord)) return `${value}?`;
+    return `${value}.`;
+  }
+  function punctuateTranscript(text2, locale) {
+    const value = text2.trim().replace(/\s+/g, " ");
+    if (!value) return "";
+    return addEndPunctuation(addConnectorPunctuation(value), locale);
+  }
+
+  // src/components/VoiceInputButton.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
   function recognitionLanguage(locale) {
     if (locale === "zh-TW") return "zh-TW";
@@ -18962,14 +19019,19 @@
       recognition.onresult = (event) => {
         let final = "";
         let interim = "";
+        let hasFinal = false;
         for (let index = 0; index < event.results.length; index += 1) {
           const item = event.results[index];
           const transcript = item[0]?.transcript ?? "";
-          if (item.isFinal) final += transcript;
-          else interim += transcript;
+          if (item.isFinal) {
+            final += transcript;
+            hasFinal = true;
+          } else {
+            interim += transcript;
+          }
         }
         const text2 = `${final}${interim}`.trim();
-        if (text2) onTextRef.current(text2);
+        if (text2) onTextRef.current(hasFinal ? punctuateTranscript(text2, localeRef.current) : text2);
       };
       recognitionRef.current = recognition;
       return () => {

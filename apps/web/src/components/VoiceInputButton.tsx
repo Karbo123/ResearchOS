@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Mic, Square } from 'lucide-react'
 import { useLocale, useTranslation, type TranslationKey } from '../i18n'
+import { punctuateTranscript } from '../voicePunctuation'
 
 interface SpeechRecognitionResultLike {
   isFinal: boolean
@@ -117,14 +118,19 @@ export function VoiceInputButton({
     recognition.onresult = event => {
       let final = ''
       let interim = ''
+      let hasFinal = false
       for (let index = 0; index < event.results.length; index += 1) {
         const item = event.results[index]
         const transcript = item[0]?.transcript ?? ''
-        if (item.isFinal) final += transcript
-        else interim += transcript
+        if (item.isFinal) {
+          final += transcript
+          hasFinal = true
+        } else {
+          interim += transcript
+        }
       }
       const text = `${final}${interim}`.trim()
-      if (text) onTextRef.current(text)
+      if (text) onTextRef.current(hasFinal ? punctuateTranscript(text, localeRef.current) : text)
     }
     recognitionRef.current = recognition
     return () => {
