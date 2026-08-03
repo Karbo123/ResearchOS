@@ -145,7 +145,7 @@ export async function createOperationalReport(projectId: string, period: string)
     ...recentExperiments.map(experiment => `[${experiment.created_at}] 实验 ${experiment.experiment_type}: ${experiment.status}${experiment.run_id ? `；Run ${experiment.run_id}` : ''}${experiment.error ? `；失败：${shorten(experiment.error)}` : ''}`),
     ...recentProposals.map(proposal => `[${proposal.created_at}] Proposal ${proposal.kind}: ${proposal.status}；${shorten(proposal.summary)}`),
     ...sourceAttempts.map(attempt => `[${attempt.created_at}] 来源 ${attempt.provider}: ${attempt.status}${attempt.failure ? `；失败：${shorten(String(attempt.failure.message || 'provider request failed'))}` : ''}`),
-    ...feedbackRows.map(feedback => `[${feedback.created_at}] 导师反馈 ${feedback.category}: ${feedback.status}；${shorten(feedback.instruction)}`),
+    ...feedbackRows.map(feedback => `[${feedback.created_at}] 反馈 ${feedback.category}: ${feedback.status}；${shorten(feedback.instruction)}`),
   ].sort((left, right) => left.localeCompare(right))
   const failureLines = [
     ...tasks.filter(item => item.error || ['failed', 'cancelled'].includes(item.status)).map(item => `- 任务 ${item.kind}：${item.error || item.status}`),
@@ -154,7 +154,7 @@ export async function createOperationalReport(projectId: string, period: string)
   ]
   const pendingLines = [
     ...recentProposals.filter(item => item.status === 'pending').map(item => `- Proposal ${item.kind}：${item.summary}`),
-    ...feedbackRows.filter(item => ['open', 'revision_requested'].includes(item.status)).map(item => `- 导师反馈（${item.category}）：${shorten(item.instruction)}`),
+    ...feedbackRows.filter(item => ['open', 'revision_requested'].includes(item.status)).map(item => `- 反馈（${item.category}）：${shorten(item.instruction)}`),
   ]
   const sourceSnapshot = {
     project_id: projectId,
@@ -172,6 +172,20 @@ export async function createOperationalReport(projectId: string, period: string)
     experiment_ids: experiments.map(row => row.id),
     artifact_ids: artifacts.map(row => row.id),
     proposal_ids: proposals.map(row => row.id),
+  }
+  const paragraphSources = [
+    { heading: 'Observed activity', source_keys: ['audit_event_ids', 'message_ids', 'task_ids', 'feedback_ids', 'related_work_attempt_ids'] as const },
+    { heading: 'Current project counts', source_keys: ['paper_ids', 'evidence_ids', 'experiment_ids', 'artifact_ids', 'proposal_ids'] as const },
+    { heading: 'Failures and blockers', source_keys: ['task_ids', 'experiment_ids', 'related_work_attempt_ids'] as const },
+    { heading: 'Waiting for decision', source_keys: ['proposal_ids', 'feedback_ids'] as const },
+    { heading: 'Evidence boundary', source_keys: [] as const },
+  ].map(item => ({
+    heading: item.heading,
+    source_ids: item.source_keys.flatMap(key => Array.isArray(sourceSnapshot[key]) ? sourceSnapshot[key] : []),
+  }))
+  const sourceSnapshotWithParagraphs = {
+    ...sourceSnapshot,
+    paragraph_sources: paragraphSources,
   }
   const content = [
     `# ${period === 'weekly' ? 'Weekly' : period === 'daily' ? 'Daily' : 'Manual'} Research Report`,
@@ -194,7 +208,7 @@ export async function createOperationalReport(projectId: string, period: string)
     '## Failures and blockers',
     ...(failureLines.length ? failureLines : ['- None recorded in this window.']),
     '',
-    '## Waiting for mentor decision',
+    '## Waiting for decision',
     ...(pendingLines.length ? pendingLines : ['- None recorded in this window.']),
     '',
     '## Evidence boundary',
@@ -203,7 +217,7 @@ export async function createOperationalReport(projectId: string, period: string)
     '- Experiment outputs require lineage and human review before they can support a paper claim.',
   ].join('\n')
   const id = crypto.randomUUID()
-  await database.query('INSERT INTO reports(id,project_id,period,content,status,source_snapshot) VALUES ($1,$2,$3,$4,$5,$6)', [id, projectId, period, content, 'valid', sourceSnapshot])
+  await database.query('INSERT INTO reports(id,project_id,period,content,status,source_snapshot) VALUES ($1,$2,$3,$4,$5,$6)', [id, projectId, period, content, 'valid', sourceSnapshotWithParagraphs])
   if (supermemoryEnabled()) {
     await ingestProjectMemory(projectId, {
       source_type: 'report', source_id: id, artifact_id: null, uploaded_file_id: null,

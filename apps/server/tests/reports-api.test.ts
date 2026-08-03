@@ -51,8 +51,15 @@ describe('operational report API', () => {
     expect(result.response.status).toBe(200)
     expect(String(result.body.content)).toContain('明确比较两个方法在当前 topic 上的实验差异。')
     expect(String(result.body.content)).toContain('test.report_event')
+    expect(String(result.body.content)).not.toContain('导师')
+    expect(String(result.body.content)).not.toContain('mentor')
+    expect(String(result.body.content)).toContain('Waiting for decision')
 
     const stored = await rows<{ source_snapshot: Record<string, unknown> }>('SELECT source_snapshot FROM reports WHERE id=$1', [result.body.id])
     expect(stored[0]?.source_snapshot).toMatchObject({ project_id: projectId, event_count: 2, audit_event_ids: [auditId], message_ids: [messageId] })
+    expect(stored[0]?.source_snapshot.paragraph_sources).toEqual(expect.arrayContaining([
+      expect.objectContaining({ heading: 'Observed activity', source_ids: [auditId, messageId] }),
+      expect.objectContaining({ heading: 'Waiting for decision', source_ids: [] }),
+    ]))
   })
 })

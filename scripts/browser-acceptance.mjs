@@ -443,6 +443,7 @@ const reportStates = await evaluate(`(() => {
   const sourceLine = document.querySelector('.report-source-line')
   const feedbackBadge = document.querySelector('.feedback-row .report-state-badge')
   const auditBadge = document.querySelector('.data-row:not(.feedback-row):not(.report-history-row) .report-state-badge')
+  const paragraphSummary = document.querySelector('.report-paragraph-sources summary')
   return {
     legendExists: !!legend,
     legendChips: document.querySelectorAll('.report-state-chip').length,
@@ -452,6 +453,12 @@ const reportStates = await evaluate(`(() => {
     sourceLine: sourceLine?.textContent?.trim() || null,
     feedbackBadge: feedbackBadge?.textContent?.trim() || null,
     auditBadge: auditBadge?.textContent?.trim() || null,
+    filterBarExists: !!document.querySelector('.report-filter-bar'),
+    filterSelectCount: document.querySelectorAll('.report-filter-bar select').length,
+    versionOptions: document.querySelectorAll('.report-version-select option').length,
+    paragraphSummary: paragraphSummary?.textContent?.trim() || null,
+    paragraphUnavailable: document.querySelector('.report-paragraph-sources')?.textContent?.includes('report-level source snapshot') || false,
+    paragraphRows: document.querySelectorAll('.report-paragraph-source-row').length,
     overflowX: document.documentElement.scrollWidth > window.innerWidth,
   }
 })()`)

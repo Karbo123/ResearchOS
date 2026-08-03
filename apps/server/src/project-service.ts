@@ -82,6 +82,7 @@ type ReportSourceSnapshot = {
   experiment_ids?: unknown
   artifact_ids?: unknown
   proposal_ids?: unknown
+  paragraph_sources?: unknown
 }
 
 type ReportRow = {

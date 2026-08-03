@@ -12778,7 +12778,7 @@
     "group.overviewSpec": "\u9879\u76EE\u89C4\u683C",
     "group.overviewInnovation": "\u521B\u65B0\u4E0E\u8FB9\u754C",
     "group.overviewProgress": "\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
-    "group.overviewReports": "\u65E5\u62A5/\u5468\u62A5\u4E0E\u53CD\u9988",
+    "group.overviewReports": "\u6C47\u62A5\u4E0E\u53CD\u9988",
     "group.relatedSearch": "\u79CD\u5B50\u4E0E\u6587\u732E\u68C0\u7D22",
     "group.relatedStatus": "\u7814\u7A76\u73B0\u72B6\u4E0E\u5F15\u7528\u56FE",
     "group.implRelated": "\u76F8\u5173\u5DE5\u4F5C\u5B9E\u73B0",
@@ -12790,8 +12790,8 @@
     "tab.overviewSpec": "\u9879\u76EE\u63CF\u8FF0\u4E0E\u7814\u7A76\u95EE\u9898",
     "tab.overviewInnovation": "\u521B\u65B0\u70B9\u4E0E\u8FB9\u754C",
     "tab.overviewProgress": "\u9879\u76EE\u8FDB\u5EA6\u4E0E\u5F85\u51B3\u7B56",
-    "tab.dailyReports": "\u65E5\u62A5",
-    "tab.weeklyReports": "\u5468\u62A5",
+    "tab.dailyReports": "\u6309\u65E5\u6C47\u62A5",
+    "tab.weeklyReports": "\u6309\u5468\u6C47\u62A5",
     "tab.feedbackInbox": "\u53CD\u9988",
     "tab.feedbackAudit": "\u51B3\u7B56\u4E0E\u5BA1\u8BA1",
     "tab.literature": "\u6587\u732E\u5217\u8868",
@@ -13234,7 +13234,7 @@
     "overview.ideaConversation": "Idea \u8BA8\u8BBA",
     "overview.ideaConversationHint": "\u6F84\u6E05\u8FC7\u7A0B\u5DF2\u5E76\u5165\u53F3\u4FA7\u5E38\u9A7B\u9879\u76EE\u5BF9\u8BDD\uFF0C\u8DE8\u9875\u9762\u6301\u7EED\u5B58\u5728\u3002",
     "overview.ideaConversationLive": "\u5728\u9879\u76EE\u5BF9\u8BDD\u4E2D\u7EE7\u7EED\u8BA8\u8BBA\u76EE\u6807\u3001\u8FB9\u754C\u548C\u521B\u65B0\u5019\u9009\uFF0C\u8BA8\u8BBA\u8BB0\u5F55\u4E0D\u4F1A\u56E0\u5207\u6362\u9875\u9762\u800C\u6E05\u7A7A\u3002",
-    "reports.daily": "\u65E5\u62A5",
+    "reports.daily": "\u6309\u65E5\u6C47\u62A5",
     "reports.title": "\u5B9A\u671F\u6C47\u62A5\u4E0E\u53CD\u9988",
     "reports.hint": "\u62A5\u544A\u3001\u53CD\u9988\u548C\u5BA1\u8BA1\u90FD\u53EA\u6765\u81EA\u5F53\u524D\u9879\u76EE\u771F\u5B9E\u8BB0\u5F55\u7684\u4E8B\u4EF6\u3002",
     "reports.stateLegend": "\u72B6\u6001\u56FE\u4F8B",
@@ -13260,7 +13260,24 @@
     "reports.missingSources": "\u6765\u6E90\u7F3A\u53E3\uFF1A{ids}",
     "reports.noSourceSnapshot": "\u672A\u8BB0\u5F55\u6765\u6E90\u5FEB\u7167",
     "reports.periodLabel": "\u6C47\u62A5\u5468\u671F",
-    "reports.weekly": "\u5468\u62A5",
+    "reports.filtersLabel": "\u62A5\u544A\u7B5B\u9009",
+    "reports.statusFilter": "\u72B6\u6001",
+    "reports.sourceFilter": "\u6765\u6E90\u5FEB\u7167",
+    "reports.rangeFilter": "\u65F6\u95F4\u8303\u56F4",
+    "reports.filterAll": "\u5168\u90E8",
+    "reports.sourceRecorded": "\u5DF2\u8BB0\u5F55",
+    "reports.sourceMissing": "\u672A\u8BB0\u5F55",
+    "reports.rangeAll": "\u5168\u90E8\u65F6\u95F4",
+    "reports.range7d": "\u6700\u8FD1 7 \u5929",
+    "reports.range30d": "\u6700\u8FD1 30 \u5929",
+    "reports.version": "\u7248\u672C",
+    "reports.chooseVersion": "\u9009\u62E9\u62A5\u544A\u7248\u672C",
+    "reports.currentReport": "\u5F53\u524D\u62A5\u544A",
+    "reports.paragraphSources": "\u6BB5\u843D\u6765\u6E90",
+    "reports.paragraphSourcesUnavailable": "\u8BE5\u62A5\u544A\u6CA1\u6709\u6BB5\u843D\u7EA7\u6765\u6E90\u6620\u5C04\uFF1B\u76EE\u524D\u53EA\u63D0\u4F9B\u62A5\u544A\u7EA7\u6765\u6E90\u5FEB\u7167\u3002",
+    "reports.paragraphSourceCount": "{count} \u6761\u6765\u6E90",
+    "reports.noDirectSources": "\u6B64\u6BB5\u843D\u6CA1\u6709\u76F4\u63A5\u6765\u6E90\uFF08\u5C5E\u4E8E\u8BF4\u660E\u6027\u8FB9\u754C\uFF09\u3002",
+    "reports.weekly": "\u6309\u5468\u6C47\u62A5",
     "reports.generated": "{period}\u5DF2\u751F\u6210\uFF1B\u6765\u6E90\u5FEB\u7167\u5DF2\u8BB0\u5F55",
     "reports.feedbackRecorded": "\u53CD\u9988\u5DF2\u8BB0\u5F55\uFF1B\u540E\u7EED\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u4F1A\u6267\u884C",
     "reports.feedbackProposalSummary": "\u6839\u636E\u53CD\u9988\u751F\u6210\u5F85\u5BA1\u9605\u4E0B\u4E00\u6B65\u63D0\u6848",
@@ -14104,7 +14121,7 @@
     "group.overviewSpec": "\u5C08\u6848\u898F\u683C",
     "group.overviewInnovation": "\u5275\u65B0\u8207\u908A\u754C",
     "group.overviewProgress": "\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
-    "group.overviewReports": "\u65E5\u5831/\u9031\u5831\u8207\u56DE\u994B",
+    "group.overviewReports": "\u5F59\u5831\u8207\u56DE\u994B",
     "group.relatedSearch": "\u7A2E\u5B50\u8207\u6587\u737B\u6AA2\u7D22",
     "group.relatedStatus": "\u7814\u7A76\u73FE\u6CC1\u8207\u5F15\u7528\u5716",
     "group.implRelated": "\u76F8\u95DC\u5DE5\u4F5C\u5BE6\u4F5C",
@@ -14116,8 +14133,8 @@
     "tab.overviewSpec": "\u5C08\u6848\u63CF\u8FF0\u8207\u7814\u7A76\u554F\u984C",
     "tab.overviewInnovation": "\u5275\u65B0\u9EDE\u8207\u908A\u754C",
     "tab.overviewProgress": "\u5C08\u6848\u9032\u5EA6\u8207\u5F85\u6C7A\u7B56",
-    "tab.dailyReports": "\u65E5\u5831",
-    "tab.weeklyReports": "\u9031\u5831",
+    "tab.dailyReports": "\u6309\u65E5\u5F59\u5831",
+    "tab.weeklyReports": "\u6309\u9031\u5F59\u5831",
     "tab.feedbackInbox": "\u56DE\u994B",
     "tab.feedbackAudit": "\u6C7A\u7B56\u8207\u7A3D\u6838",
     "tab.literature": "\u6587\u737B\u5217\u8868",
@@ -14683,7 +14700,7 @@
     "overview.ideaConversation": "Idea \u8A0E\u8AD6",
     "overview.ideaConversationHint": "\u6F84\u6E05\u904E\u7A0B\u5DF2\u4F75\u5165\u53F3\u5074\u5E38\u99D0\u5C08\u6848\u5C0D\u8A71\uFF0C\u8DE8\u9801\u9762\u6301\u7E8C\u5B58\u5728\u3002",
     "overview.ideaConversationLive": "\u5728\u5C08\u6848\u5C0D\u8A71\u4E2D\u7E7C\u7E8C\u8A0E\u8AD6\u76EE\u6A19\u3001\u908A\u754C\u8207\u5275\u65B0\u5019\u9078\uFF0C\u8A0E\u8AD6\u8A18\u9304\u4E0D\u6703\u56E0\u5207\u63DB\u9801\u9762\u800C\u6E05\u7A7A\u3002",
-    "reports.daily": "\u65E5\u5831",
+    "reports.daily": "\u6309\u65E5\u5F59\u5831",
     "reports.title": "\u5B9A\u671F\u5F59\u5831\u8207\u56DE\u994B",
     "reports.hint": "\u5831\u544A\u3001\u56DE\u994B\u8207\u7A3D\u6838\u90FD\u53EA\u4F86\u81EA\u76EE\u524D\u5C08\u6848\u771F\u5BE6\u8A18\u9304\u7684\u4E8B\u4EF6\u3002",
     "reports.stateLegend": "\u72C0\u614B\u5716\u4F8B",
@@ -14709,7 +14726,24 @@
     "reports.missingSources": "\u4F86\u6E90\u7F3A\u53E3\uFF1A{ids}",
     "reports.noSourceSnapshot": "\u672A\u8A18\u9304\u4F86\u6E90\u5FEB\u7167",
     "reports.periodLabel": "\u5F59\u5831\u9031\u671F",
-    "reports.weekly": "\u9031\u5831",
+    "reports.filtersLabel": "\u5831\u544A\u7BE9\u9078",
+    "reports.statusFilter": "\u72C0\u614B",
+    "reports.sourceFilter": "\u4F86\u6E90\u5FEB\u7167",
+    "reports.rangeFilter": "\u6642\u9593\u7BC4\u570D",
+    "reports.filterAll": "\u5168\u90E8",
+    "reports.sourceRecorded": "\u5DF2\u8A18\u9304",
+    "reports.sourceMissing": "\u672A\u8A18\u9304",
+    "reports.rangeAll": "\u5168\u90E8\u6642\u9593",
+    "reports.range7d": "\u6700\u8FD1 7 \u5929",
+    "reports.range30d": "\u6700\u8FD1 30 \u5929",
+    "reports.version": "\u7248\u672C",
+    "reports.chooseVersion": "\u9078\u64C7\u5831\u544A\u7248\u672C",
+    "reports.currentReport": "\u76EE\u524D\u5831\u544A",
+    "reports.paragraphSources": "\u6BB5\u843D\u4F86\u6E90",
+    "reports.paragraphSourcesUnavailable": "\u8A72\u5831\u544A\u6C92\u6709\u6BB5\u843D\u7D1A\u4F86\u6E90\u5C0D\u61C9\uFF1B\u76EE\u524D\u53EA\u63D0\u4F9B\u5831\u544A\u7D1A\u4F86\u6E90\u5FEB\u7167\u3002",
+    "reports.paragraphSourceCount": "{count} \u689D\u4F86\u6E90",
+    "reports.noDirectSources": "\u6B64\u6BB5\u843D\u6C92\u6709\u76F4\u63A5\u4F86\u6E90\uFF08\u5C6C\u65BC\u8AAA\u660E\u6027\u908A\u754C\uFF09\u3002",
+    "reports.weekly": "\u6309\u9031\u5F59\u5831",
     "reports.generated": "{period}\u5DF2\u7522\u751F\uFF1B\u4F86\u6E90\u5FEB\u7167\u5DF2\u8A18\u9304",
     "reports.feedbackRecorded": "\u56DE\u994B\u5DF2\u8A18\u9304\uFF1B\u5F8C\u7E8C\u65B9\u5411\u4ECD\u9700 Proposal \u624D\u6703\u57F7\u884C",
     "reports.feedbackProposalSummary": "\u6839\u64DA\u56DE\u994B\u7522\u751F\u5F85\u5BE9\u95B1\u4E0B\u4E00\u6B65\u63D0\u6848",
@@ -15442,8 +15476,8 @@
     "tab.overviewSpec": "Description and Research Question",
     "tab.overviewInnovation": "Innovation and Boundaries",
     "tab.overviewProgress": "Progress and Decisions",
-    "tab.dailyReports": "Daily Report",
-    "tab.weeklyReports": "Weekly Report",
+    "tab.dailyReports": "Daily summary",
+    "tab.weeklyReports": "Weekly summary",
     "tab.feedbackInbox": "Feedback",
     "tab.feedbackAudit": "Decisions and Audit",
     "tab.literature": "Literature List",
@@ -16009,7 +16043,7 @@
     "overview.ideaConversation": "Idea discussion",
     "overview.ideaConversationHint": "Clarification lives in the persistent project chat on the right and stays across pages.",
     "overview.ideaConversationLive": "Continue discussing goals, boundaries, and innovation candidates in the project chat without losing history when switching pages.",
-    "reports.daily": "Daily report",
+    "reports.daily": "Daily summary",
     "reports.title": "Periodic reports and feedback",
     "reports.hint": "Reports, feedback, and audit only come from events actually recorded in the current project.",
     "reports.stateLegend": "State legend",
@@ -16035,7 +16069,24 @@
     "reports.missingSources": "Source gap: {ids}",
     "reports.noSourceSnapshot": "No source snapshot recorded",
     "reports.periodLabel": "Report period",
-    "reports.weekly": "Weekly report",
+    "reports.filtersLabel": "Report filters",
+    "reports.statusFilter": "Status",
+    "reports.sourceFilter": "Source snapshot",
+    "reports.rangeFilter": "Time range",
+    "reports.filterAll": "All",
+    "reports.sourceRecorded": "Recorded",
+    "reports.sourceMissing": "Not recorded",
+    "reports.rangeAll": "All time",
+    "reports.range7d": "Last 7 days",
+    "reports.range30d": "Last 30 days",
+    "reports.version": "Version",
+    "reports.chooseVersion": "Choose a report version",
+    "reports.currentReport": "Current report",
+    "reports.paragraphSources": "Paragraph sources",
+    "reports.paragraphSourcesUnavailable": "This report has no paragraph-level source mapping; only the report-level source snapshot is available.",
+    "reports.paragraphSourceCount": "{count} sources",
+    "reports.noDirectSources": "No direct sources for this paragraph (explanatory boundary).",
+    "reports.weekly": "Weekly summary",
     "reports.generated": "{period} generated; source snapshot recorded",
     "reports.feedbackRecorded": "Feedback recorded; next steps still require a Proposal before execution",
     "reports.feedbackProposalSummary": "Generate a reviewable next-step proposal from feedback",
@@ -16768,8 +16819,8 @@
     "tab.overviewSpec": "Descripci\xF3n y pregunta de investigaci\xF3n",
     "tab.overviewInnovation": "Innovaci\xF3n y l\xEDmites",
     "tab.overviewProgress": "Progreso y decisiones",
-    "tab.dailyReports": "Informe diario",
-    "tab.weeklyReports": "Informe semanal",
+    "tab.dailyReports": "Resumen diario",
+    "tab.weeklyReports": "Resumen semanal",
     "tab.feedbackInbox": "Comentarios",
     "tab.feedbackAudit": "Decisiones y auditor\xEDa",
     "tab.literature": "Lista de literatura",
@@ -17335,7 +17386,7 @@
     "overview.ideaConversation": "Discusi\xF3n de Idea",
     "overview.ideaConversationHint": "La aclaraci\xF3n vive en el chat persistente del proyecto a la derecha y permanece entre p\xE1ginas.",
     "overview.ideaConversationLive": "Sigue discutiendo objetivos, l\xEDmites y candidatos de innovaci\xF3n en el chat del proyecto sin perder el historial al cambiar de p\xE1gina.",
-    "reports.daily": "Informe diario",
+    "reports.daily": "Resumen diario",
     "reports.title": "Informes peri\xF3dicos y comentarios",
     "reports.hint": "Los informes, comentarios y auditor\xEDas solo provienen de eventos realmente registrados en el proyecto actual.",
     "reports.stateLegend": "Leyenda de estados",
@@ -17361,7 +17412,24 @@
     "reports.missingSources": "Falta de fuentes: {ids}",
     "reports.noSourceSnapshot": "No se registr\xF3 una instant\xE1nea de fuentes",
     "reports.periodLabel": "Periodo del informe",
-    "reports.weekly": "Informe semanal",
+    "reports.filtersLabel": "Filtros de informes",
+    "reports.statusFilter": "Estado",
+    "reports.sourceFilter": "Instant\xE1nea de fuentes",
+    "reports.rangeFilter": "Rango de tiempo",
+    "reports.filterAll": "Todo",
+    "reports.sourceRecorded": "Registrado",
+    "reports.sourceMissing": "No registrado",
+    "reports.rangeAll": "Todo el tiempo",
+    "reports.range7d": "\xDAltimos 7 d\xEDas",
+    "reports.range30d": "\xDAltimos 30 d\xEDas",
+    "reports.version": "Versi\xF3n",
+    "reports.chooseVersion": "Elige una versi\xF3n del informe",
+    "reports.currentReport": "Informe actual",
+    "reports.paragraphSources": "Fuentes de p\xE1rrafos",
+    "reports.paragraphSourcesUnavailable": "Este informe no tiene asignaci\xF3n de fuentes por p\xE1rrafo; solo est\xE1 disponible la instant\xE1nea de fuentes a nivel de informe.",
+    "reports.paragraphSourceCount": "{count} fuentes",
+    "reports.noDirectSources": "Sin fuentes directas para este p\xE1rrafo (l\xEDmite explicativo).",
+    "reports.weekly": "Resumen semanal",
     "reports.generated": "{period} generado; instant\xE1nea de fuentes registrada",
     "reports.feedbackRecorded": "Comentarios registrados; los siguientes pasos requieren una Propuesta antes de ejecutarse",
     "reports.feedbackProposalSummary": "Generar una propuesta revisable de siguiente paso a partir de los comentarios",
@@ -22870,6 +22938,19 @@
     const proposals = Array.isArray(snapshot.proposal_ids) ? snapshot.proposal_ids.length : 0;
     return t("reports.sourceCounts", { papers, evidence, experiments, artifacts, proposals });
   }
+  function hasSourceSnapshot(report) {
+    return Boolean(report.source_snapshot && Object.keys(report.source_snapshot).length > 0);
+  }
+  function paragraphSourceEntries(report) {
+    const raw = report?.source_snapshot?.paragraph_sources;
+    if (!Array.isArray(raw)) return [];
+    return raw.flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
+      const heading = "heading" in item && typeof item.heading === "string" ? item.heading : "";
+      const sourceIds = "source_ids" in item && Array.isArray(item.source_ids) ? item.source_ids.filter((id) => typeof id === "string") : [];
+      return heading ? [{ heading, source_ids: Array.from(new Set(sourceIds)) }] : [];
+    });
+  }
   function StateBadge({ category }) {
     const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: `report-state-badge state-${category}`, title: reportStateNext(category, t), children: reportStateLabel(category, t) });
@@ -22885,6 +22966,9 @@
   }) {
     const { t, locale } = useTranslation();
     const [period, setPeriod] = (0, import_react14.useState)("daily");
+    const [statusFilter, setStatusFilter] = (0, import_react14.useState)("all");
+    const [sourceFilter, setSourceFilter] = (0, import_react14.useState)("all");
+    const [rangeFilter, setRangeFilter] = (0, import_react14.useState)("all");
     const [content, setContent] = (0, import_react14.useState)("");
     const [activeReportId, setActiveReportId] = (0, import_react14.useState)("");
     const [activeReportStatus, setActiveReportStatus] = (0, import_react14.useState)("");
@@ -22895,10 +22979,11 @@
     const [auditRows, setAuditRows] = (0, import_react14.useState)([]);
     const [loadingFeedback, setLoadingFeedback] = (0, import_react14.useState)(false);
     const [loadingAudit, setLoadingAudit] = (0, import_react14.useState)(false);
-    const reports = (0, import_react14.useMemo)(
-      () => (project.reports || []).filter((report) => report.period === period),
-      [period, project.reports]
-    );
+    const reports = (0, import_react14.useMemo)(() => {
+      const rangeMs = rangeFilter === "7d" ? 7 * 24 * 60 * 60 * 1e3 : rangeFilter === "30d" ? 30 * 24 * 60 * 60 * 1e3 : 0;
+      const cutoff = rangeMs ? Date.now() - rangeMs : 0;
+      return (project.reports || []).filter((report) => report.period === period).filter((report) => statusFilter === "all" || report.status === statusFilter).filter((report) => sourceFilter === "all" ? true : sourceFilter === "recorded" ? hasSourceSnapshot(report) : !hasSourceSnapshot(report)).filter((report) => !cutoff || new Date(report.created_at || 0).getTime() >= cutoff).sort((left, right) => new Date(right.created_at || 0).getTime() - new Date(left.created_at || 0).getTime());
+    }, [period, project.reports, statusFilter, sourceFilter, rangeFilter]);
     (0, import_react14.useEffect)(() => {
       const latest = reports[0];
       setContent(displayable(latest) ? latest?.content || "" : "");
@@ -23003,11 +23088,60 @@
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "daily", className: period === "daily" ? "active" : "", onClick: () => setPeriod("daily"), children: t("reports.daily") }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", role: "radio", "aria-checked": period === "weekly", className: period === "weekly" ? "active" : "", onClick: () => setPeriod("weekly"), children: t("reports.weekly") })
       ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "report-filter-bar", "aria-label": t("reports.filtersLabel"), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+          t("reports.statusFilter"),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { value: statusFilter, onChange: (event) => setStatusFilter(event.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "all", children: t("reports.filterAll") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "valid", children: t("status.valid") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "blocked", children: t("status.blocked") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "legacy_unverified", children: t("status.legacyUnverified") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "failed", children: t("status.failed") })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+          t("reports.sourceFilter"),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { value: sourceFilter, onChange: (event) => setSourceFilter(event.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "all", children: t("reports.filterAll") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "recorded", children: t("reports.sourceRecorded") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "missing", children: t("reports.sourceMissing") })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+          t("reports.rangeFilter"),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { value: rangeFilter, onChange: (event) => setRangeFilter(event.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "all", children: t("reports.rangeAll") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "7d", children: t("reports.range7d") }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "30d", children: t("reports.range30d") })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "report-version-select", children: [
+          t("reports.version"),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+            "select",
+            {
+              value: reports.some((report) => report.id === activeReportId) ? activeReportId : "",
+              onChange: (event) => {
+                const report = reports.find((candidate) => candidate.id === event.target.value);
+                if (report) selectReport(report);
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "", disabled: true, children: t("reports.chooseVersion") }),
+                reports.map((report) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("option", { value: report.id, children: [
+                  formatDateTime(report.created_at, locale),
+                  " \xB7 ",
+                  statusLabel(report.status, t)
+                ] }, report.id))
+              ]
+            }
+          )
+        ] })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "section", children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           SectionHeading,
           {
-            title: period === "daily" ? t("reports.daily") : t("reports.weekly"),
+            title: t("reports.currentReport"),
             hint: t("reports.periodHint"),
             extra: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ButtonRow, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
               void generateReport();
@@ -23024,7 +23158,14 @@
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NextStep, { category: activeCategory }),
             activeSourceReport ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line", children: sourceSnapshotSummary(activeSourceReport, t) }),
-              activeSourceReport.missing_source_ids?.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line report-source-missing", children: t("reports.missingSources", { ids: activeSourceReport.missing_source_ids.join(", ") }) }) : null
+              activeSourceReport.missing_source_ids?.length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "report-source-line report-source-missing", children: t("reports.missingSources", { ids: activeSourceReport.missing_source_ids.join(", ") }) }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("details", { className: "report-paragraph-sources", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("summary", { children: t("reports.paragraphSources") }),
+                paragraphSourceEntries(activeSourceReport).length ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "report-paragraph-source-list", children: paragraphSourceEntries(activeSourceReport).map((entry) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "report-paragraph-source-row", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: entry.heading }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: entry.source_ids.length ? `${t("reports.paragraphSourceCount", { count: entry.source_ids.length })} \xB7 ${entry.source_ids.slice(0, 6).join(", ")}${entry.source_ids.length > 6 ? "\u2026" : ""}` : t("reports.noDirectSources") })
+                ] }, entry.heading)) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "muted", children: t("reports.paragraphSourcesUnavailable") })
+              ] })
             ] }) : null
           ] })
         ] }),
