@@ -30,7 +30,11 @@ for (let index = 0; index < 4 && chat.phase !== 'ready_for_confirmation'; index 
   routes.push({ tier: chat.model_tier, model: chat.model, reasoning_effort: chat.reasoning_effort })
 }
 if (chat.phase !== 'ready_for_confirmation') throw new Error('Idea clarification did not reach confirmation')
-const project = await request<{ project_id: string }>('POST', '/api/projects', { session_id: chat.session_id, confirmed: true })
+const suffix = crypto.randomUUID().replaceAll('-', '').slice(0, 4)
+const project = await request<{ project_id: string }>('POST', '/api/projects', {
+  slug: `native-acceptance-${suffix}`,
+  title: testCase.description,
+})
 const paused = await request<{ status: string }>('POST', `/api/projects/${project.project_id}/state`, { action: 'pause', reason: 'Native acceptance state gate' })
 const resumed = await request<{ status: string }>('POST', `/api/projects/${project.project_id}/state`, { action: 'resume', reason: 'Native acceptance state gate complete' })
 if (paused.status !== 'paused' || resumed.status !== 'active') throw new Error('project state gate failed')

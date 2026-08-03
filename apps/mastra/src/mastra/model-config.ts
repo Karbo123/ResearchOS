@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import type { ModelConfig, ModelTier } from './contracts.js'
 import { modelConfigSchema } from './contracts.js'
-import { researchRoot } from './env.js'
+import { modelSettingsPath } from './env.js'
 
 const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'medium' | 'high' }> = {
   simple: { model: 'gpt-5.6-luna', reasoningEffort: 'low' },
@@ -64,7 +63,7 @@ function environmentProxy(): ProxyConfig {
 
 export function loadProxyConfig(): ProxyConfig {
   const result = environmentProxy()
-  const path = process.env.MODEL_SETTINGS_PATH || resolve(researchRoot, 'runtime', 'model-settings.json')
+  const path = modelSettingsPath
   try {
     const parsed = JSON.parse(readFileSync(path, 'utf8')) as { proxy?: Partial<ProxyConfig> }
     const savedProxy = parsed.proxy
@@ -83,7 +82,7 @@ export function loadProxyConfig(): ProxyConfig {
 
 export function loadModelConfig(tier: ModelTier): ModelConfig {
   const merged = environmentSettings(tier)
-  const path = process.env.MODEL_SETTINGS_PATH || resolve(researchRoot, 'runtime', 'model-settings.json')
+  const path = modelSettingsPath
   try {
     const parsed = JSON.parse(readFileSync(path, 'utf8')) as Record<string, Record<string, unknown>>
     const item = parsed[tier]

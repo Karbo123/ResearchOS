@@ -193,6 +193,23 @@ function formatMemoryPrompt(data: MemoryPromptData): string {
   ].filter(Boolean).join('\n')
 }
 
+function semanticQuery(messages: ProcessInputArgs['messages']): string {
+  const userMessages = messages
+    .filter(message => message.role === 'user')
+    .map(messageText)
+    .filter(Boolean)
+  for (const text of [...userMessages].reverse()) {
+    try {
+      const parsed = JSON.parse(text) as Record<string, unknown>
+      const field = parsed.latest_user_message ?? parsed.user_message
+      if (typeof field === 'string' && field.trim()) return field.trim().slice(0, 2000)
+    } catch {
+      // Plain user text is analyzed below.
+    }
+  }
+  return userMessages.join('\n').slice(-2000)
+}
+
 class StrictSupermemoryInputProcessor implements Processor {
   readonly id = 'research-os-supermemory-input'
   readonly name = 'Research OS Supermemory Input'
@@ -205,7 +222,7 @@ class StrictSupermemoryInputProcessor implements Processor {
   }
 
   async processInput(args: ProcessInputArgs) {
-    const query = args.messages.map(messageText).filter(Boolean).join('\n').slice(-12000)
+    const query = semanticQuery(args.messages)
     if (!query) return args.messageList
     const response = await this.api.search({
       q: query,
