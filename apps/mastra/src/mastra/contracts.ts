@@ -87,6 +87,30 @@ export const documentReplyResultSchema = z.object({
   reply: z.string().trim().min(1).max(6000),
 }).strict()
 
+export const paperSectionIdSchema = z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'])
+export const paperSectionTranslateRequestSchema = z.object({
+  section_id: paperSectionIdSchema,
+  heading: z.string().max(120),
+  source: z.string().max(20_000),
+}).strict()
+export const paperTranslationSentenceSchema = z.object({
+  en: z.string().min(1).max(4000),
+  zh: z.string().min(1).max(4000),
+}).strict()
+export const paperSectionTranslateResultSchema = z.object({
+  sentences: z.array(paperTranslationSentenceSchema).max(200),
+}).strict()
+export const paperSectionReviseRequestSchema = z.object({
+  section_id: paperSectionIdSchema,
+  heading: z.string().max(120),
+  source: z.string().max(20_000),
+  project_context: z.string().max(12_000).default(''),
+}).strict()
+export const paperSectionReviseResultSchema = z.object({
+  revised_source: z.string().min(1).max(20_000),
+  summary: z.string().min(1).max(1200),
+}).strict()
+
 const uuidList = (max: number) => z.array(z.string().uuid()).max(max)
 const evidenceIds = z.object({ basis_evidence_ids: uuidList(30) })
 

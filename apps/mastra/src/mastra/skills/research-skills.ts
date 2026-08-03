@@ -53,6 +53,32 @@ Return only the requested strict JSON object.
 `,
 })
 
+export const paperTranslationSkill = createSkill({
+  name: 'paper-section-chinese-translation',
+  description: 'Translate each English sentence of a paper section into Chinese for interface understanding only.',
+  instructions: `
+Translate each English sentence of the supplied paper section into fluent Simplified Chinese.
+Keep the sentence order identical to the source. Do not add, remove, or invent technical facts,
+citations, numbers, or claims. Preserve LaTeX commands, citation keys, and inline math verbatim
+inside the English sentence when present. The Chinese text is an interface aid only and never
+enters the compiled PDF. Return exactly one zh entry per en sentence.
+Return only the requested strict JSON object.
+`,
+})
+
+export const paperRevisionSkill = createSkill({
+  name: 'paper-section-revision',
+  description: 'Revise one paper section into clearer academic prose without inventing evidence or results.',
+  instructions: `
+Revise the supplied paper section into clear, evidence-respecting academic prose.
+Improve grammar, flow, and precision while preserving the original meaning and all facts.
+Do not add invented citations, datasets, experiments, metrics, URLs, or scientific conclusions.
+Use only the supplied project context when present and never claim work that is not recorded there.
+Return the complete revised LaTeX body and a concise summary of changes.
+Return only the requested strict JSON object.
+`,
+})
+
 export const experimentPlanningSkill = createSkill({
   name: 'evidence-grounded-experiment-planning',
   description: 'Use to draft a topic-specific experiment proposal from a ProjectSpec, verified evidence, and active policies.',

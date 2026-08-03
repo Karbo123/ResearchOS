@@ -14051,6 +14051,10 @@
     "paperWorkspace.editHint": "\u7F16\u8F91\u82F1\u6587\u7A3F\u4EF6\uFF08LaTeX \u7247\u6BB5\uFF09",
     "paperWorkspace.editPlaceholder": "\u5728\u6B64\u8F93\u5165\u672C\u8282\u82F1\u6587\u7A3F\u4EF6\u5185\u5BB9\u2026\u2026\u4FDD\u5B58\u540E\u4F1A\u5148\u521B\u5EFA\u5F85\u5BA1\u6279 Proposal\uFF0C\u6279\u51C6\u540E\u624D\u5199\u5165 paper/main.tex\u3002",
     "paperWorkspace.saveToast": "\u8BBA\u6587\u7AE0\u8282\u4FEE\u8BA2 Proposal {id} \u5F85\u5BA1\u6279",
+    "paperWorkspace.aiTranslate": "AI \u4E2D\u8BD1",
+    "paperWorkspace.aiRevise": "AI \u4FEE\u8BA2",
+    "paperWorkspace.translationDone": "\u4E2D\u6587\u7FFB\u8BD1\u5DF2\u751F\u6210\uFF08\u4EC5\u754C\u9762\u53C2\u8003\uFF0C\u4E0D\u8FDB\u5165 PDF\uFF09\u3002",
+    "paperWorkspace.revisionToast": "AI \u4FEE\u8BA2 Proposal {id} \u5F85\u5BA1\u6279",
     "comparison.reason": "\u6BD4\u8F83\u8BBA\u6587\u62A5\u544A\u6307\u6807\u4E0E\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5B9E\u590D\u73B0\u8F93\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "\u9879\u76EE\u8BBA\u6587",
@@ -15341,6 +15345,10 @@
     "paperWorkspace.editHint": "\u7DE8\u8F2F\u82F1\u6587\u7A3F\u4EF6\uFF08LaTeX \u7247\u6BB5\uFF09",
     "paperWorkspace.editPlaceholder": "\u5728\u6B64\u8F38\u5165\u672C\u7BC0\u82F1\u6587\u7A3F\u4EF6\u5167\u5BB9\u2026\u2026\u5132\u5B58\u5F8C\u6703\u5148\u5EFA\u7ACB\u5F85\u5BE9\u6279 Proposal\uFF0C\u6838\u51C6\u5F8C\u624D\u5BEB\u5165 paper/main.tex\u3002",
     "paperWorkspace.saveToast": "\u8AD6\u6587\u7AE0\u7BC0\u4FEE\u8A02 Proposal {id} \u5F85\u5BE9\u6279",
+    "paperWorkspace.aiTranslate": "AI \u4E2D\u8B6F",
+    "paperWorkspace.aiRevise": "AI \u4FEE\u8A02",
+    "paperWorkspace.translationDone": "\u4E2D\u6587\u7FFB\u8B6F\u5DF2\u7522\u751F\uFF08\u50C5\u4ECB\u9762\u53C3\u8003\uFF0C\u4E0D\u9032\u5165 PDF\uFF09\u3002",
+    "paperWorkspace.revisionToast": "AI \u4FEE\u8A02 Proposal {id} \u5F85\u5BE9\u6279",
     "comparison.reason": "\u6BD4\u8F03\u8AD6\u6587\u5831\u544A\u6307\u6A19\u8207\u56FA\u5B9A\u63D0\u4EA4\u7684\u771F\u5BE6\u91CD\u73FE\u8F38\u51FA",
     "comparison.definitionsPlaceholder": '\u4F8B\u5982 {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "\u5C08\u6848\u8AD6\u6587",
@@ -16631,6 +16639,10 @@
     "paperWorkspace.editHint": "Edit the English manuscript (LaTeX fragment)",
     "paperWorkspace.editPlaceholder": "Type this section's English manuscript here. Saving creates a pending Proposal; it is written to paper/main.tex only after approval.",
     "paperWorkspace.saveToast": "Paper section revision Proposal {id} pending approval",
+    "paperWorkspace.aiTranslate": "AI translate",
+    "paperWorkspace.aiRevise": "AI revise",
+    "paperWorkspace.translationDone": "Chinese translation generated (interface reference only, never enters the PDF).",
+    "paperWorkspace.revisionToast": "AI revision Proposal {id} pending approval",
     "comparison.reason": "Compare paper-reported metrics with real reproduction output at a fixed commit",
     "comparison.definitionsPlaceholder": 'e.g. {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "Project Paper",
@@ -17921,6 +17933,10 @@
     "paperWorkspace.editHint": "Editar el manuscrito en ingl\xE9s (fragmento LaTeX)",
     "paperWorkspace.editPlaceholder": "Escribe aqu\xED el manuscrito en ingl\xE9s de esta secci\xF3n. Guardar crea una Propuesta pendiente; se escribe en paper/main.tex solo tras la aprobaci\xF3n.",
     "paperWorkspace.saveToast": "Propuesta de revisi\xF3n de secci\xF3n {id} pendiente de aprobaci\xF3n",
+    "paperWorkspace.aiTranslate": "Traducir con IA",
+    "paperWorkspace.aiRevise": "Revisar con IA",
+    "paperWorkspace.translationDone": "Traducci\xF3n al chino generada (solo referencia de interfaz, nunca entra en el PDF).",
+    "paperWorkspace.revisionToast": "Propuesta de revisi\xF3n con IA {id} pendiente de aprobaci\xF3n",
     "comparison.reason": "Comparar las m\xE9tricas del art\xEDculo con la salida real de reproducci\xF3n en un commit fijo",
     "comparison.definitionsPlaceholder": 'p. ej. {"accuracy":"top-1 accuracy"}',
     "literature.projectPaper": "Paper del proyecto",
@@ -21973,6 +21989,53 @@
         setBusy(null);
       }
     };
+    const generateTranslation = async () => {
+      if (!activeSection) return;
+      setBusy(`translate:${activeSection.id}`);
+      try {
+        const result = await api(`/api/projects/${project.id}/paper-translate`, {
+          method: "POST",
+          body: JSON.stringify({ section_id: activeSection.id })
+        });
+        setWorkspace((current) => {
+          if (!current) return current;
+          const translations = new Map(result.sentences.map((item) => [item.en.trim(), item.zh]));
+          return {
+            ...current,
+            sections: current.sections.map((section) => {
+              if (section.id !== result.section_id) return section;
+              return {
+                ...section,
+                status: section.sentences.some((item) => translations.has(item.en.trim())) ? "ready" : section.status,
+                sentences: section.sentences.map((item) => ({ en: item.en, zh: translations.get(item.en.trim()) ?? item.zh }))
+              };
+            })
+          };
+        });
+        showToast(t("paperWorkspace.translationDone"));
+      } catch (error) {
+        showToast(errorMessage(error));
+      } finally {
+        setBusy(null);
+      }
+    };
+    const aiReviseSection = async () => {
+      if (!activeSection) return;
+      setBusy(`revise:${activeSection.id}`);
+      try {
+        const result = await api(`/api/projects/${project.id}/paper-revise`, {
+          method: "POST",
+          body: JSON.stringify({ section_id: activeSection.id })
+        });
+        await onRefresh();
+        onNavigate("approvals");
+        showToast(t("paperWorkspace.revisionToast", { id: result.proposal_id.slice(0, 8) }));
+      } catch (error) {
+        showToast(errorMessage(error));
+      } finally {
+        setBusy(null);
+      }
+    };
     const saveSectionRevision = async () => {
       if (!activeSection) return;
       setBusy(`edit:${activeSection.id}`);
@@ -22086,6 +22149,18 @@
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(ButtonRow, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Badge, { status: activeSection.status, children: statusLabel2(activeSection.status) }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `translate:${activeSection.id}`, onClick: () => {
+                void generateTranslation();
+              }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Languages, { size: 15 }),
+                t("paperWorkspace.aiTranslate")
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `revise:${activeSection.id}`, onClick: () => {
+                void aiReviseSection();
+              }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FilePenLine, { size: 15 }),
+                t("paperWorkspace.aiRevise")
+              ] }),
               editing ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { className: "secondary", type: "button", disabled: busy === `edit:${activeSection.id}`, onClick: () => {
                   void saveSectionRevision();

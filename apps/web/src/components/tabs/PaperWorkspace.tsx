@@ -114,6 +114,55 @@ export function PaperWorkspace({
     }
   }
 
+  const generateTranslation = async () => {
+    if (!activeSection) return
+    setBusy(`translate:${activeSection.id}`)
+    try {
+      const result = await api<{ section_id: string; sentences: Array<{ en: string; zh: string }> }>(`/api/projects/${project.id}/paper-translate`, {
+        method: 'POST',
+        body: JSON.stringify({ section_id: activeSection.id }),
+      })
+      setWorkspace(current => {
+        if (!current) return current
+        const translations = new Map(result.sentences.map(item => [item.en.trim(), item.zh]))
+        return {
+          ...current,
+          sections: current.sections.map(section => {
+            if (section.id !== result.section_id) return section
+            return {
+              ...section,
+              status: section.sentences.some(item => translations.has(item.en.trim())) ? 'ready' : section.status,
+              sentences: section.sentences.map(item => ({ en: item.en, zh: translations.get(item.en.trim()) ?? item.zh })),
+            }
+          }),
+        }
+      })
+      showToast(t('paperWorkspace.translationDone'))
+    } catch (error) {
+      showToast(errorMessage(error))
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const aiReviseSection = async () => {
+    if (!activeSection) return
+    setBusy(`revise:${activeSection.id}`)
+    try {
+      const result = await api<{ proposal_id: string; summary: string }>(`/api/projects/${project.id}/paper-revise`, {
+        method: 'POST',
+        body: JSON.stringify({ section_id: activeSection.id }),
+      })
+      await onRefresh()
+      onNavigate('approvals')
+      showToast(t('paperWorkspace.revisionToast', { id: result.proposal_id.slice(0, 8) }))
+    } catch (error) {
+      showToast(errorMessage(error))
+    } finally {
+      setBusy(null)
+    }
+  }
+
   const saveSectionRevision = async () => {
     if (!activeSection) return
     setBusy(`edit:${activeSection.id}`)
@@ -218,6 +267,14 @@ export function PaperWorkspace({
                 </div>
                 <ButtonRow>
                   <Badge status={activeSection.status}>{statusLabel(activeSection.status)}</Badge>
+                  <button className="secondary" type="button" disabled={busy === `translate:${activeSection.id}`} onClick={() => { void generateTranslation() }}>
+                    <Languages size={15} />
+                    {t('paperWorkspace.aiTranslate')}
+                  </button>
+                  <button className="secondary" type="button" disabled={busy === `revise:${activeSection.id}`} onClick={() => { void aiReviseSection() }}>
+                    <FilePenLine size={15} />
+                    {t('paperWorkspace.aiRevise')}
+                  </button>
                   {editing ? (
                     <>
                       <button className="secondary" type="button" disabled={busy === `edit:${activeSection.id}`} onClick={() => { void saveSectionRevision() }}>

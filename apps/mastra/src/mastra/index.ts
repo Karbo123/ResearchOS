@@ -8,10 +8,10 @@ import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mas
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent,
+  configuredModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent,
 } from './agents/research-agents.js'
 import {
-  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
+  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, paperSectionReviseRequestSchema, paperSectionReviseResultSchema, paperSectionTranslateRequestSchema, paperSectionTranslateResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
   approvalGateRequestSchema, approvalGateResumeRequestSchema, coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
   supervisionIntentSchema, supervisionRequestSchema, type ModelTier,
 } from './contracts.js'
@@ -208,6 +208,53 @@ const apiRoutes = [
         return c.json({ result, route: { tier: 'document', model: config.model, reasoning_effort: config.reasoningEffort } })
       } catch (error) {
         const failure = routeError(error, '文档文本回复模型调用')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/agents/paper-translate', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, paperSectionTranslateRequestSchema)
+        const context = requestContext('document')
+        const response = await paperTranslationAgent.generate(structuredJsonValue({
+          section_id: body.section_id,
+          heading: body.heading,
+          source: body.source,
+        }), {
+          ...generationOptions(context),
+          structuredOutput: { schema: paperSectionTranslateResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
+        })
+        const result = paperSectionTranslateResultSchema.parse(response.object)
+        const config = context.get('modelConfig')
+        return c.json({ result, route: { tier: 'document', model: config.model, reasoning_effort: config.reasoningEffort } })
+      } catch (error) {
+        const failure = routeError(error, '论文章节中译模型调用')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/agents/paper-revise', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, paperSectionReviseRequestSchema)
+        const context = requestContext('document')
+        const response = await paperRevisionAgent.generate(structuredJsonValue({
+          section_id: body.section_id,
+          heading: body.heading,
+          source: body.source,
+          project_context: body.project_context,
+        }), {
+          ...generationOptions(context),
+          structuredOutput: { schema: paperSectionReviseResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
+        })
+        const result = paperSectionReviseResultSchema.parse(response.object)
+        const config = context.get('modelConfig')
+        return c.json({ result, route: { tier: 'document', model: config.model, reasoning_effort: config.reasoningEffort } })
+      } catch (error) {
+        const failure = routeError(error, '论文章节修订模型调用')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },

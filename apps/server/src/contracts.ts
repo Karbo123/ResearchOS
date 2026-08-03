@@ -52,6 +52,9 @@ export const paperSectionEditRequest = z.object({
   section_id: z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion']),
   content: z.string().max(100_000),
 }).strict()
+export const paperSectionModelRequest = z.object({
+  section_id: z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion']),
+}).strict()
 export const projectOrderRequest = z.object({
   project_ids: z.array(uuid).min(1).max(500),
 }).strict().superRefine((value, context) => {

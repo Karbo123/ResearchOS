@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { database } from './database.js'
 import { ApiError } from './http.js'
+import { mastraJson } from './mastra-client.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot } from './paths.js'
 import { projectDetail, requireProject } from './project-service.js'
@@ -44,6 +45,30 @@ function replacePaperSection(source: string, sectionId: string, content: string)
     return `${source.slice(0, endMarker)}\\section{${heading}}\n${content}\n${source.slice(endMarker)}`
   }
   return `${source}\n\\section{${heading}}\n${content}\n`
+}
+
+function extractPaperSection(source: string, sectionId: string): { heading: string; body: string } | null {
+  const matches = [...source.matchAll(/\\section\*?\{([^}]+)\}/g)]
+  for (let index = 0; index < matches.length; index += 1) {
+    const match = matches[index]!
+    if (sectionIdForHeading(match[1]!) !== sectionId) continue
+    const start = match.index! + match[0].length
+    const end = matches[index + 1]?.index ?? source.length
+    return { heading: match[1]!.trim(), body: source.slice(start, end).trim() }
+  }
+  return null
+}
+
+function paperProjectContext(project: Record<string, unknown>): string {
+  const ideaVersions = project.idea_versions as Array<Record<string, unknown>> | undefined
+  const idea = (ideaVersions?.[0] as Record<string, unknown> | undefined)?.spec as Record<string, unknown> | undefined
+  const experiments = (project.experiments as Array<Record<string, unknown>> | undefined) || []
+  const papers = (project.papers as Array<Record<string, unknown>> | undefined) || []
+  return JSON.stringify({
+    idea,
+    experiment_statuses: experiments.map(item => ({ type: item.experiment_type, status: item.status })),
+    confirmed_papers: papers.filter(item => item.confirmed).map(item => ({ title: item.title, year: item.year })),
+  }).slice(0, 12_000)
 }
 
 export async function createPaperDraftProposal(projectId: string) {
@@ -141,4 +166,48 @@ export async function createPaperSectionProposal(projectId: string, sectionId: s
     },
   ])
   return { proposal_id: proposalId, status: 'pending' }
+}
+
+export async function translatePaperSection(projectId: string, sectionId: string) {
+  await requireProject(projectId)
+  const target = pathInside(projectsRoot, projectId, 'paper', 'main.tex')
+  if (!existsSync(target)) throw new ApiError(422, 'paper_source_missing', '项目尚无 paper/main.tex。')
+  const source = readFileSync(target, 'utf8')
+  const section = extractPaperSection(source, sectionId)
+  if (!section) throw new ApiError(422, 'paper_section_missing', '论文中尚未包含该章节。')
+  const result = await mastraJson<{ result: { sentences: Array<{ en: string; zh: string }> } }>('/internal/agents/paper-translate', {
+    section_id: sectionId,
+    heading: section.heading,
+    source: section.body,
+  })
+  return { section_id: sectionId, sentences: result.result.sentences }
+}
+
+export async function revisePaperSection(projectId: string, sectionId: string) {
+  const project = await projectDetail(projectId)
+  const target = pathInside(projectsRoot, projectId, 'paper', 'main.tex')
+  if (!existsSync(target)) throw new ApiError(422, 'paper_source_missing', '项目尚无 paper/main.tex。')
+  const source = readFileSync(target)
+  const section = extractPaperSection(source.toString('utf8'), sectionId)
+  if (!section) throw new ApiError(422, 'paper_section_missing', '论文中尚未包含该章节。')
+  const result = await mastraJson<{ result: { revised_source: string; summary: string } }>('/internal/agents/paper-revise', {
+    section_id: sectionId,
+    heading: section.heading,
+    source: section.body,
+    project_context: paperProjectContext(project),
+  })
+  const revised = replacePaperSection(source.toString('utf8'), sectionId, result.result.revised_source)
+  const proposalId = crypto.randomUUID()
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [
+    proposalId, projectId, 'code_patch', 'AI-assisted paper section revision requires approval', `Revise paper section ${sectionId}`,
+    `--- paper/main.tex\n+++ paper/main.tex\n+ AI-assisted section revision`,
+    {
+      patch_kind: 'latex',
+      base_git_commit: gitCommit(projectId),
+      operations: [{ action: 'replace', path: 'paper/main.tex', content: revised, expected_sha256: createHash('sha256').update(source).digest('hex') }],
+      paper_section: sectionId,
+      revision_summary: result.result.summary,
+    },
+  ])
+  return { proposal_id: proposalId, status: 'pending', revised_source: result.result.revised_source, summary: result.result.summary }
 }

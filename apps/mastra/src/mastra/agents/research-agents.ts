@@ -4,7 +4,7 @@ import { Memory } from '@mastra/memory'
 import { agentRequestContextSchema, type ModelTier } from '../contracts.js'
 import { loadModelConfig, ModelConfigurationError } from '../model-config.js'
 import { proxyFetch } from '../proxy-fetch.js'
-import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, projectSlugSkill, supervisionIntentSkill } from '../skills/research-skills.js'
+import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, paperRevisionSkill, paperTranslationSkill, projectSlugSkill, supervisionIntentSkill } from '../skills/research-skills.js'
 import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
 const ideaMemory = new Memory({ options: { lastMessages: 12 } })
@@ -64,6 +64,26 @@ export const documentReplyAgent = new Agent({
   instructions: documentReplySkill.instructions,
   model: () => configuredModel('document'),
   skills: [documentReplySkill],
+})
+
+export const paperTranslationAgent = new Agent({
+  id: 'paper-section-translation-agent',
+  name: 'Paper Section Chinese Translation Agent',
+  requestContextSchema: agentRequestContextSchema,
+  maxRetries: 0,
+  instructions: paperTranslationSkill.instructions,
+  model: () => configuredModel('document'),
+  skills: [paperTranslationSkill],
+})
+
+export const paperRevisionAgent = new Agent({
+  id: 'paper-section-revision-agent',
+  name: 'Paper Section Revision Agent',
+  requestContextSchema: agentRequestContextSchema,
+  maxRetries: 0,
+  instructions: paperRevisionSkill.instructions,
+  model: () => configuredModel('document'),
+  skills: [paperRevisionSkill],
 })
 
 export const experimentPlanningAgent = new Agent({
