@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
@@ -106,5 +106,13 @@ The method is competitive.
     const payload = rows.rows[0]?.payload as { paper_section: string; operations: Array<{ content: string }> }
     expect(payload.paper_section).toBe('introduction')
     expect(payload.operations[0]?.content).toContain('New introduction sentence for review.')
+  })
+
+  it('persists generated sentence translations for later reloads', async () => {
+    const { savePaperTranslations } = await import('../src/paper-service.js')
+    await savePaperTranslations(projectId, 'introduction', [{ en: 'A new sentence.', zh: '一个新句子。' }])
+    const content = readFileSync(pathInside(projectsRoot, projectId, 'paper', 'translations.json'), 'utf8')
+    expect(content).toContain('A new sentence.')
+    expect(content).toContain('一个新句子。')
   })
 })

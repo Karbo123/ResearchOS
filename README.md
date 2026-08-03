@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-02 -->
 
 # Research OS
 
@@ -32,6 +32,10 @@ Project Overview contains `Project Overview`, `Idea Discussion`, `Approvals and 
 The grouping does not bypass workflow boundaries: a paper cannot consume unreviewed evidence or unverified experiment output, and an experiment cannot consume an unapproved method change. Every view is project-scoped, restores its project/stage/page deep link, exposes structured failures and approval states, and never turns an external or model failure into a fallback result. Legacy hashes and old deep links are accepted only as compatibility redirects to a single new page in this contract; they do not restore the removed long navigation structure. `method/*` redirects to the matching implementation tab, old paper-experiment hashes redirect to Experiment Implementation, and old paper-report/feedback hashes redirect to Project Overview.
 
 Project workspaces use readable clean URLs such as `/project/cnn-minimal-2q95/overview/overview`. The internal UUID remains the immutable project identity for API ownership and data isolation, but it is not exposed in the normal browser path. When a project is created, its slug uses two semantic lowercase English words plus a four-character lowercase alphanumeric suffix, and the server checks the complete identifier for uniqueness. Older three-word, UUID, and hash links remain resolvable for compatibility and are not rewritten in the database.
+
+### Academic Paper Workspace
+
+Paper sections live in `projects/<project-id>/paper/` and are versioned in the project-local Git repository. The default generated draft uses a self-contained CVPR-style template (`paper/cvpr.sty` plus a two-column article preamble) and compiles with Linux `latexmk`. Approving a paper `code_patch` Proposal (any `patch_kind=latex` change) automatically queues a `compile_latex` run; the paper workspace polls queued and running compiles, then shows the real PDF Artifact or the structured compile error. Chinese sentence translations are UI-reference only, persist to `paper/translations.json` with an audit event, and never enter the PDF. Projects that predate project-local Git are migrated automatically with a project `.gitignore` on first paper access.
 
 ## Project Storage Boundary
 

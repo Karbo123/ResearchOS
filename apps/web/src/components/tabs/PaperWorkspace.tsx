@@ -86,6 +86,17 @@ export function PaperWorkspace({
     setDraftContent(activeSection?.source || '')
   }, [activeSection?.id, activeSection?.source])
 
+  useEffect(() => {
+    const status = workspace?.compile_latest_status
+    if (!status || !['queued', 'running'].includes(status)) return
+    const timer = window.setInterval(() => {
+      void loadWorkspace()
+      void onRefresh()
+    }, 4000)
+    return () => window.clearInterval(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace?.compile_latest_status])
+
   const createPaperDraft = async () => {
     setBusy('draft')
     try {

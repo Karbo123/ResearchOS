@@ -664,6 +664,24 @@ app.post('/api/proposals/:proposalId/decision', async context => {
     }
   }
   let automaticExecution: Record<string, unknown> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'code_patch' && proposal.payload.patch_kind === 'latex') {
+    const compileRunId = crypto.randomUUID()
+    const compileRequest = experimentRequest.parse({
+      project_id: proposal.project_id,
+      proposal_id: proposalId,
+      experiment_type: 'compile_latex',
+      execution_backend: 'linux',
+      config: {},
+      random_seeds: [0],
+      topic_plan: null,
+      topic_resume: null,
+    })
+    await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [
+      compileRunId, proposal.project_id, proposalId, 'compile_latex', { execution_backend: 'linux', random_seeds: [0] }, compileRunId,
+    ])
+    submitRun(compileRunId, compileRequest)
+    automaticExecution = { status: 'queued', run_id: compileRunId, compile_latex: true, source_proposal: proposalId }
+  }
   if (body.decision === 'approved' && proposal.kind === 'experiment_rerun') {
     const checkpointId = uuid.parse(String(proposal.payload.checkpoint_id || ''))
     const recovered = await assertCheckpointRecoverable(proposal.project_id, checkpointId)

@@ -1,11 +1,22 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
-import { basename } from 'node:path'
+import { basename, resolve } from 'node:path'
 import { gitBinary, pathInside, projectsRoot } from './paths.js'
 import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { reconcileProjectLineage } from './impact-service.js'
 import { moveIntoProject, projectStagingPath } from './project-storage.js'
+
+const PROJECT_GITIGNORE = `.venv/
+artifacts/
+experiments/runs/
+logs/
+source-bundles/
+*.db
+*.sqlite
+*.bak
+*.log
+`
 
 export async function moveSessionUploadsIntoProject(projectId: string, sessionId: string): Promise<void> {
   const files = await rows<{ id: string; relative_path: string }>('SELECT id,relative_path FROM uploaded_files WHERE session_id=$1 AND project_id=$2', [sessionId, projectId])
@@ -136,11 +147,39 @@ export async function createProjectWorkspace(projectId: string, slug: string, sp
   for (const directory of ['code', 'experiment', 'paper', 'literature', 'data', 'artifacts']) mkdirSync(pathInside(root, directory), { recursive: true })
   writeFileSync(pathInside(root, 'idea.json'), `${JSON.stringify(spec, null, 2)}\n`, 'utf8')
   writeFileSync(pathInside(root, 'README.md'), `# ${slug}\n\nResearch OS project workspace.\n`, 'utf8')
+  writeFileSync(pathInside(root, '.gitignore'), PROJECT_GITIGNORE, 'utf8')
   execFileSync(gitBinary(), ['init', '--initial-branch=main'], { cwd: root, stdio: 'ignore' })
-  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md'], { cwd: root, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md', '.gitignore'], { cwd: root, stdio: 'ignore' })
   execFileSync(gitBinary(), ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: initialize research project'], { cwd: root, stdio: 'ignore' })
   await audit('project.workspace_created', projectId, { slug })
   return root
+}
+
+export function ensureProjectGit(projectId: string): string {
+  const root = pathInside(projectsRoot, projectId)
+  if (!existsSync(root)) throw new ApiError(404, 'project_workspace_not_found', '项目代码工作区不存在。')
+  const expectedGitDir = resolve(root, '.git')
+  const gitignorePath = pathInside(root, '.gitignore')
+  if (!existsSync(gitignorePath)) writeFileSync(gitignorePath, PROJECT_GITIGNORE, 'utf8')
+  if (existsSync(expectedGitDir)) {
+    try {
+      const actual = execFileSync(gitBinary(), ['rev-parse', '--absolute-git-dir'], { cwd: root, encoding: 'utf8' }).trim()
+      if (resolve(actual) === expectedGitDir) {
+        try {
+          return execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()
+        } catch { /* fall through and create the initial commit */ }
+      }
+    } catch { /* fall through and reinitialize */ }
+  }
+  execFileSync(gitBinary(), ['init', '--initial-branch=main'], { cwd: root, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['add', '--all'], { cwd: root, stdio: 'ignore' })
+  try {
+    execFileSync(gitBinary(), ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: adopt existing project workspace into project git'], { cwd: root, stdio: 'ignore' })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    if (!message.includes('nothing to commit')) throw error
+  }
+  return execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()
 }
 
 export async function projectDetail(projectId: string) {

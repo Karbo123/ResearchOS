@@ -40,12 +40,16 @@ Code reproduction is a separate experiment boundary rather than a method-code im
 
 The Web graph view consumes that projection without inventing relationships. It renders deterministic candidate/Paper/Evidence/ClaimReview columns as an accessible SVG, keeps node status separate from evidence status, and exposes source ID, stable ID, provider, locator, and project permission in the selected-node detail. Mouse and keyboard selection are supported, and the container scrolls horizontally on narrow screens. Empty, partial, and failed API states are separate UI states; a graph screenshot or fixture does not close the related-work workflow until the applicable provider and browser acceptance has also passed.
 
+## Paper Workspace
+
+The paper workspace reads and edits `projects/<id>/paper/main.tex` and `references.bib` inside the project-local Git repository. The default draft is a self-contained CVPR-style template: `paper/cvpr.sty` is a portable layout file stored with the paper and approved together with the generated `main.tex`. Section edits and AI revisions are `code_patch` Proposals with `patch_kind=latex`; approval writes the file, commits it in the project-local Git, and automatically queues a fixed `compile_latex` experiment. Linux `latexmk` produces the PDF into the controlled artifact run directory, so a failed compile leaves a structured error and never reuses an old PDF. Chinese sentence translations are generated separately, written atomically to `paper/translations.json` with an audit event, and are UI-reference data that never enters the PDF. Projects created before project-local Git was introduced are migrated on first paper access: `ensureProjectGit` initializes the nested repository, adds a project `.gitignore` excluding runtime/artifact directories, and records the baseline commit.
+
 ## Persistence
 
 - `runtime/research-os.pglite`: embedded PostgreSQL-compatible business database.
 - `runtime/mastra.db`: Mastra workflow and memory state.
 - `runtime/model-settings.json`: ignored runtime overrides; keys are never returned by the API.
-- `projects/<id>`: project Git repository, Idea, paper, experiment source, per-project `.venv`, and project-owned files under `projects/<id>/artifacts/`.
+- `projects/<id>`: project Git repository, Idea, paper (`paper/main.tex`, `references.bib`, `translations.json`, `cvpr.sty`), experiment source, per-project `.venv`, and project-owned files under `projects/<id>/artifacts/`.
 - `artifacts`: shared immutable or append-only acceptance files, test/operations material, backups, and legacy migration sources; it is not the live home of new project files.
 
 Project URLs use two lowercase English words and a four-character lowercase alphanumeric suffix. `project_slug_aliases` keeps pre-migration slugs resolvable while the canonical `projects.slug` value is normalized, so URL cleanup does not break historical links.

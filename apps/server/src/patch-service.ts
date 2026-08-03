@@ -5,9 +5,10 @@ import { dirname, extname } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { gitBinary, pathInside, projectsRoot } from './paths.js'
 import { ApiError } from './http.js'
+import { ensureProjectGit } from './project-service.js'
 
 type Operation = { action: 'create' | 'replace' | 'delete'; path: string; content?: string; expected_sha256?: string }
-const allowedExtensions = new Set(['.ts', '.tsx', '.json', '.toml', '.tex', '.bib', '.md', '.yaml', '.yml', '.css'])
+const allowedExtensions = new Set(['.ts', '.tsx', '.json', '.toml', '.tex', '.bib', '.md', '.yaml', '.yml', '.css', '.sty'])
 
 function sha256(content: Buffer): string { return createHash('sha256').update(content).digest('hex') }
 function validateOperation(operation: Operation): void {
@@ -17,8 +18,7 @@ function validateOperation(operation: Operation): void {
 }
 
 export function gitCommit(projectId: string): string {
-  const root = pathInside(projectsRoot, projectId)
-  return execFileSync(gitBinary(), ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()
+  return ensureProjectGit(projectId)
 }
 
 export function applyApprovedPatch(projectId: string, payload: Record<string, unknown>, actor: string): string {

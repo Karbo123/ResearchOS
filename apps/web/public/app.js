@@ -21955,6 +21955,15 @@
       setEditing(false);
       setDraftContent(activeSection?.source || "");
     }, [activeSection?.id, activeSection?.source]);
+    (0, import_react13.useEffect)(() => {
+      const status = workspace?.compile_latest_status;
+      if (!status || !["queued", "running"].includes(status)) return;
+      const timer = window.setInterval(() => {
+        void loadWorkspace();
+        void onRefresh();
+      }, 4e3);
+      return () => window.clearInterval(timer);
+    }, [workspace?.compile_latest_status]);
     const createPaperDraft = async () => {
       setBusy("draft");
       try {

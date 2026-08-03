@@ -1,12 +1,18 @@
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync } from 'node:fs'
-import { database } from './database.js'
+import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { audit, database } from './database.js'
 import { ApiError } from './http.js'
 import { mastraJson } from './mastra-client.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot } from './paths.js'
 import { projectDetail, requireProject } from './project-service.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
+
+const TEMPLATE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../assets/paper-template')
+const CVPR_STYLE = readFileSync(resolve(TEMPLATE_ROOT, 'cvpr.sty'), 'utf8')
+const EMPTY_REFERENCES = '% Research OS references will be managed through evidence-grounded proposals.\n'
 
 const PAPER_SECTION_HEADINGS: Record<string, string> = {
   introduction: 'Introduction',
@@ -18,6 +24,12 @@ const PAPER_SECTION_HEADINGS: Record<string, string> = {
 
 function latex(value: unknown): string {
   return String(value ?? '').replace(/([#$%&_{}])/g, '\\$1').replaceAll('~', '\\textasciitilde{}').replaceAll('^', '\\textasciicircum{}')
+}
+
+function paperText(value: unknown, fallback: string): string {
+  const raw = String(value ?? '').trim()
+  if (!raw || /[^\x00-\x7F]/.test(raw)) return fallback
+  return latex(raw)
 }
 
 function sectionIdForHeading(heading: string): string | null {
@@ -89,38 +101,49 @@ export async function createPaperDraftProposal(projectId: string) {
   const resultText = experiments.length
     ? experiments.map(item => `\\item Run ${latex(item.id)}: \\texttt{${latex(JSON.stringify(item.metrics || {}))}}`).join('\n')
     : '\\item No approved experiment has completed; no scientific result is claimed.'
-  const content = `\\documentclass{article}
-\\usepackage[margin=1in]{geometry}
+  const content = `\\documentclass[10pt,twocolumn,letterpaper]{article}
+\\usepackage{cvpr}
 \\title{${latex(ideaBody.title || project.title)}}
+\\author{Research OS Project}
 \\begin{document}
 \\maketitle
-\\section{Research Question}
-${latex(ideaBody.research_question || 'Not yet confirmed.')}
-\\section{Human-Reviewed Claim Mappings}
+\\begin{abstract}
+${paperText(ideaBody.abstract || ideaBody.research_question, 'An English abstract will be generated after evidence-grounded revision.')}
+\\end{abstract}
+\\section{Introduction}
+${paperText(ideaBody.research_question, 'The research question is pending English revision.')}
+\\section{Related Work}
 The following mappings record human review of selected page-level quotes. They do not establish a scientific conclusion.
 \\begin{description}
 ${reviewedText}
 \\end{description}
-\\section{Evidence Candidates}
+\\section{Method}
 The following page-level passages remain candidates and require claim-level human review before use as factual support.
 \\begin{description}
 ${evidenceText}
 \\end{description}
-\\section{Method and Experiment Status}
+\\section{Experiments}
 \\begin{itemize}
 ${resultText}
 \\end{itemize}
-\\section{Limitations}
+\\section{Conclusion}
 Metadata candidates are not full-text evidence. System integration results do not establish the research hypothesis.
+\\bibliographystyle{plain}
+\\bibliography{references}
 \\end{document}
 `
   const target = pathInside(projectsRoot, projectId, 'paper', 'main.tex')
   const existing = existsSync(target) ? readFileSync(target) : null
   const proposalId = crypto.randomUUID()
-  const operation = existing
+  const operations: Array<Record<string, unknown>> = []
+  const stylePath = pathInside(projectsRoot, projectId, 'paper', 'cvpr.sty')
+  if (!existsSync(stylePath)) operations.push({ action: 'create', path: 'paper/cvpr.sty', content: CVPR_STYLE })
+  const referencesPath = pathInside(projectsRoot, projectId, 'paper', 'references.bib')
+  if (!existsSync(referencesPath)) operations.push({ action: 'create', path: 'paper/references.bib', content: EMPTY_REFERENCES })
+  operations.push(existing
     ? { action: 'replace', path: 'paper/main.tex', content, expected_sha256: createHash('sha256').update(existing).digest('hex') }
-    : { action: 'create', path: 'paper/main.tex', content }
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded LaTeX draft', 'Create evidence-grounded paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic draft`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations: [operation], evidence_ids: evidence.map(item => item.id), claim_review_ids: acceptedReviews.map(item => item.id), reviewed_evidence_ids: [...reviewedEvidenceIds] }])
+    : { action: 'create', path: 'paper/main.tex', content })
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded CVPR LaTeX draft', 'Create evidence-grounded CVPR paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic CVPR draft`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations, evidence_ids: evidence.map(item => item.id), claim_review_ids: acceptedReviews.map(item => item.id), reviewed_evidence_ids: [...reviewedEvidenceIds] }])
   if (supermemoryEnabled()) {
     await ingestProjectMemory(projectId, {
       source_type: 'related_work',
@@ -180,6 +203,7 @@ export async function translatePaperSection(projectId: string, sectionId: string
     heading: section.heading,
     source: section.body,
   })
+  await savePaperTranslations(projectId, sectionId, result.result.sentences)
   return { section_id: sectionId, sentences: result.result.sentences }
 }
 
@@ -210,4 +234,34 @@ export async function revisePaperSection(projectId: string, sectionId: string) {
     },
   ])
   return { proposal_id: proposalId, status: 'pending', revised_source: result.result.revised_source, summary: result.result.summary }
+}
+
+function readTranslationSections(paperRoot: string): Record<string, Array<{ en: string; zh: string | null }>> {
+  const translationsPath = pathInside(paperRoot, 'translations.json')
+  if (!existsSync(translationsPath)) return {}
+  try {
+    const parsed = JSON.parse(readFileSync(translationsPath, 'utf8')) as { sections?: Record<string, Array<{ en?: unknown; zh?: unknown }>> }
+    const sections: Record<string, Array<{ en: string; zh: string | null }>> = {}
+    for (const [key, values] of Object.entries(parsed.sections || {})) {
+      if (!Array.isArray(values)) continue
+      sections[key] = values
+        .map(item => ({ en: String(item.en ?? ''), zh: typeof item.zh === 'string' ? item.zh : null }))
+        .filter(item => item.en)
+    }
+    return sections
+  } catch {
+    return {}
+  }
+}
+
+export async function savePaperTranslations(projectId: string, sectionId: string, sentences: Array<{ en: string; zh: string }>): Promise<void> {
+  const paperRoot = pathInside(projectsRoot, projectId, 'paper')
+  const sections = readTranslationSections(paperRoot)
+  sections[sectionId] = sentences
+  const content = `${JSON.stringify({ schema_version: 1, sections }, null, 2)}\n`
+  const target = pathInside(paperRoot, 'translations.json')
+  const temporary = `${target}.tmp`
+  writeFileSync(temporary, content, 'utf8')
+  renameSync(temporary, target)
+  await audit('paper.translations_updated', projectId, { section_id: sectionId, sentence_count: sentences.length })
 }

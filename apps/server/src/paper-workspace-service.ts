@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { database } from './database.js'
 import { ApiError } from './http.js'
 import { gitBinary, pathInside, projectsRoot } from './paths.js'
-import { requireProject } from './project-service.js'
+import { ensureProjectGit, requireProject } from './project-service.js'
 
 const PAPER_SECTION_IDS = ['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'] as const
 type PaperSectionId = typeof PAPER_SECTION_IDS[number]
@@ -169,6 +169,7 @@ export async function paperWorkspaceDetail(projectId: string): Promise<PaperWork
   await requireProject(projectId)
   const root = pathInside(projectsRoot, projectId)
   if (!existsSync(root)) throw new ApiError(404, 'project_workspace_not_found', '项目代码工作区不存在。')
+  ensureProjectGit(projectId)
   const paperRoot = pathInside(root, 'paper')
   const mainPath = pathInside(paperRoot, 'main.tex')
   const source = existsSync(mainPath) ? readFileSync(mainPath, 'utf8') : null
