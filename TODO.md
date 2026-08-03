@@ -482,6 +482,8 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `101e` 修复固定网关不支持 Responses `item_reference` 导致的 Agent 502：所有 Mastra Responses 请求显式使用 `store:false`，将 Skills/Tools 的历史展开为完整 `function_call`/`function_call_output` 输入；保留严格 `text.format.type=json_schema`、JSON 指令和失败关闭。真实 `/api/chat`、带 Skill 的内部 Agent 探针、`model-failure:check` 和主链验收（2 次真实模型调用）均已通过固定网关；guardrail 契约测试覆盖 `store:false`。完整 typecheck、134 项服务端测试、Web/Server/Mastra 构建、docs/language-boundary/navigation/ui/idea-cases 检查均通过。
   - [~] `101d` 重启全局 Supermemory 和已发现的 embedding pool 后，两个运行实例的 `OPENAI_BASE_URL` 已核对为 `http://127.0.0.1:3010/v1`；隔离 Supermemory 文本 `add` 仍保持 `queued`、没有触发 memory-agent，因此未把“Supermemory 内部请求已真实捕获”冒充为完成。下一步仅需在有可处理的真实文档/LLM-agent 队列时确认 bridge 收到的原始请求形状。
 
+- [x] `P0-MODEL-API-102` 将“仅结构化输出请求才在 input 消息注入 `json` 字样，普通自由文本请求禁止注入”的规则固化到 AGENTS.md；已逐处复核 Mastra 的 6 个 `generate` 调用点、Mastra workflows/evals/skills/tools 和 Supermemory Responses bridge，确认所有生产请求只在 `structuredOutput`/`response_format` 存在时注入。定向 18 项请求体契约测试通过，未发现全量注入、Chat Completions 残留或 `json_object` 请求。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

@@ -46,6 +46,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - Luna、Terra、Sol 三档的 model、URL、key 和 reasoning effort 完全独立。读取接口只返回 `key_configured`。
 - 运行时只读取项目 `.env`、`runtime/model-settings.json`、`runtime/project-embedding-settings.json` 和 `runtime/embedding-pools.json`，不得读取 Codex 配置目录或 `auth.json`。
 - 模型失败必须直接返回结构化错误；不得本地回复、隐式切换提供方、规则回答、伪造助手消息或替换为无关实验。
+- OpenAI Responses/兼容网关对开启 JSON mode 或 Structured Outputs 的请求，要求 effective input 中至少有一条 input message 含大小写不敏感的 `json`；顶层 `instructions` 或仅放在 system/developer 提示中的 `json` 不算。Research OS 只允许在真正请求 JSON 结构化输出的调用中，把 `Return a JSON object that conforms to the requested JSON Schema.` 注入到实际 `input` 消息（Mastra 使用 `structuredJsonInput`/`structuredJsonValue`，Supermemory bridge 使用 `JSON_INSTRUCTION`）；`strictJsonSchema: true` 本身不开启 JSON mode，不能单独作为注入依据。普通自由文本请求禁止为了规避该校验而人为添加 `json` 字样，也不得把所有模型请求一律注入 JSON 指令；新增结构化调用必须同步使用注入 helper 并保留相应请求体契约测试。
 - HTTP 模型 URL 只允许回环和 RFC1918 私有地址；其他远程端点必须使用 HTTPS。
 - Idea 澄清不使用固定问题队列。只询问当前真正阻碍规格确认的高信息问题。
 - 自动化 Idea 输入只能来自 `tests/idea-cases/*.json`，并通过 TypeScript loader 按公开 ID 读取。
