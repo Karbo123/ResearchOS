@@ -2,57 +2,70 @@ import type { ResearchArea, TabId } from './types.js'
 
 export const TAB_AREA: Record<TabId, ResearchArea> = {
   overview: 'overview',
-  overview_spec: 'overview',
-  overview_innovation: 'overview',
-  overview_progress: 'overview',
-  daily_reports: 'overview',
-  weekly_reports: 'overview',
-  feedback_inbox: 'overview',
-  feedback_audit: 'overview',
+  idea: 'overview',
+  approvals: 'overview',
   reports: 'overview',
   literature: 'related_work',
-  research_status: 'related_work',
-  citation_graph: 'related_work',
+  visualization: 'related_work',
+  seed_expansion: 'related_work',
+  method: 'implementation',
   reproduction: 'implementation',
-  comparison: 'implementation',
-  method_design: 'implementation',
-  code_workspace: 'implementation',
-  policies: 'implementation',
-  approvals: 'implementation',
-  experiments: 'implementation',
-  experiment_queue: 'implementation',
-  experiment_metrics: 'implementation',
-  artifacts: 'implementation',
-  lineage: 'implementation',
-  paper: 'paper',
-  paper_outline: 'paper',
-  paper_citations: 'paper',
-  paper_figures: 'paper',
-  paper_data: 'paper',
-  paper_compile: 'paper',
-  paper_review: 'paper',
+  introduction: 'paper',
+  paper_related_work: 'paper',
+  paper_method: 'paper',
+  paper_experiments: 'paper',
+  conclusion: 'paper',
 }
 
 export const AREA_DEFAULT_TAB: Record<ResearchArea, TabId> = {
   overview: 'overview',
   related_work: 'literature',
-  implementation: 'reproduction',
-  paper: 'paper_outline',
+  implementation: 'method',
+  paper: 'introduction',
 }
 
 export const AREA_TABS: Record<ResearchArea, TabId[]> = {
-  overview: ['overview', 'overview_spec', 'overview_innovation', 'overview_progress', 'daily_reports', 'weekly_reports', 'feedback_inbox', 'feedback_audit', 'reports'],
-  related_work: ['literature', 'research_status', 'citation_graph'],
-  implementation: ['method_design', 'code_workspace', 'policies', 'approvals', 'experiments', 'experiment_queue', 'experiment_metrics', 'artifacts', 'lineage', 'reproduction', 'comparison'],
-  paper: ['paper', 'paper_outline', 'paper_citations', 'paper_figures', 'paper_data', 'paper_compile', 'paper_review'],
+  overview: ['overview', 'idea', 'approvals', 'reports'],
+  related_work: ['literature', 'visualization', 'seed_expansion'],
+  implementation: ['method', 'reproduction'],
+  paper: ['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'],
 }
 
 const LEGACY_AREA_REDIRECT: Record<string, ResearchArea> = {
   method: 'implementation',
 }
 
-const LEGACY_TAB_REDIRECT: Partial<Record<TabId, TabId>> = {
-  reports: 'daily_reports',
+const LEGACY_TAB_REDIRECT: Record<string, TabId> = {
+  overview: 'overview',
+  overview_spec: 'idea',
+  overview_innovation: 'idea',
+  overview_progress: 'overview',
+  daily_reports: 'reports',
+  weekly_reports: 'reports',
+  feedback_inbox: 'reports',
+  feedback_audit: 'reports',
+  reports: 'reports',
+  literature: 'literature',
+  research_status: 'visualization',
+  citation_graph: 'visualization',
+  reproduction: 'reproduction',
+  comparison: 'reproduction',
+  method_design: 'method',
+  code_workspace: 'method',
+  policies: 'method',
+  approvals: 'approvals',
+  experiments: 'method',
+  experiment_queue: 'method',
+  experiment_metrics: 'method',
+  artifacts: 'method',
+  lineage: 'method',
+  paper: 'introduction',
+  paper_outline: 'introduction',
+  paper_citations: 'paper_related_work',
+  paper_figures: 'paper_method',
+  paper_data: 'paper_experiments',
+  paper_compile: 'conclusion',
+  paper_review: 'conclusion',
 }
 
 const RESEARCH_AREAS: ResearchArea[] = ['overview', 'related_work', 'implementation', 'paper']
@@ -70,16 +83,24 @@ export interface ResolvedWorkspaceLocation {
   legacyHash: boolean
 }
 
-export function normalizeTab(tab: TabId): TabId {
-  return LEGACY_TAB_REDIRECT[tab] || tab
+export function normalizeTab(tab: string): TabId {
+  return LEGACY_TAB_REDIRECT[tab] || tab as TabId
 }
 
 const URL_TAB_ALIASES: Record<string, TabId> = {
-  idea: 'overview',
+  idea: 'idea',
+  'seed-expansion': 'seed_expansion',
+  'related-work': 'paper_related_work',
+  'paper-method': 'paper_method',
+  'paper-experiments': 'paper_experiments',
 }
 
 function tabPathSegment(tab: TabId): string {
-  return tab === 'overview' ? 'idea' : tab
+  if (tab === 'seed_expansion') return 'seed-expansion'
+  if (tab === 'paper_related_work') return 'related-work'
+  if (tab === 'paper_method') return 'paper-method'
+  if (tab === 'paper_experiments') return 'paper-experiments'
+  return tab
 }
 
 export function workspacePath(projectSlug: string, area: ResearchArea, tab: TabId): string {
@@ -95,7 +116,8 @@ export function resolveWorkspaceParts(hash: string): ResolvedWorkspaceHash | nul
   if (!match) return null
   const projectId = decodeURIComponent(match[1] || '')
   const rawArea = match[2] || ''
-  const tab = normalizeTab(match[3] as TabId)
+  const rawTab = match[3] || ''
+  const tab = URL_TAB_ALIASES[rawTab] || normalizeTab(rawTab)
   if (!projectId || !TAB_AREA[tab]) return null
   if (rawArea !== 'method' && !RESEARCH_AREAS.includes(rawArea as ResearchArea)) return null
   const area = LEGACY_AREA_REDIRECT[rawArea] || TAB_AREA[tab]
@@ -113,8 +135,9 @@ export function resolveWorkspacePath(pathname: string): ResolvedWorkspaceLocatio
   try { projectRef = decodeURIComponent(match[1] || '') } catch { return null }
   const rawArea = match[2] || ''
   const rawTab = match[3] || ''
-  const tab = normalizeTab(URL_TAB_ALIASES[rawTab] || rawTab as TabId)
-  if (!projectRef || !TAB_AREA[tab] || !RESEARCH_AREAS.includes(rawArea as ResearchArea)) return null
+  const tab = URL_TAB_ALIASES[rawTab] || normalizeTab(rawTab)
+  if (!projectRef || !TAB_AREA[tab]) return null
+  if (rawArea !== 'method' && !RESEARCH_AREAS.includes(rawArea as ResearchArea)) return null
   return { projectRef, area: LEGACY_AREA_REDIRECT[rawArea] || TAB_AREA[tab], tab, legacyHash: false }
 }
 

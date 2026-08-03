@@ -11,7 +11,7 @@ function displayable(report: Report | undefined): boolean {
 }
 
 function periodForTab(tab: TabId): 'daily' | 'weekly' {
-  return tab === 'weekly_reports' ? 'weekly' : 'daily'
+  return tab === 'reports' ? 'daily' : 'daily'
 }
 
 export function ReportsTab({
@@ -26,8 +26,8 @@ export function ReportsTab({
   showToast: (message: string) => void
 }) {
   const { t, locale } = useTranslation()
-  const isFeedback = tab === 'feedback_inbox'
-  const isAudit = tab === 'feedback_audit'
+  const isFeedback = false
+  const isAudit = false
   const period = periodForTab(tab)
   const [content, setContent] = useState('')
   const [activeReportId, setActiveReportId] = useState('')

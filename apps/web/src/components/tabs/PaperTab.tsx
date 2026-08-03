@@ -30,6 +30,17 @@ export function PaperTab({
   showToast: (message: string) => void
 }) {
   const { t } = useTranslation()
+  const legacyTab = tab === 'introduction'
+    ? 'paper_outline'
+    : tab === 'paper_related_work'
+      ? 'paper_citations'
+      : tab === 'paper_method'
+        ? 'paper_figures'
+        : tab === 'paper_experiments'
+          ? 'paper_data'
+          : tab === 'conclusion'
+            ? 'paper_compile'
+            : null
   const acceptedReviews = project.claim_reviews?.filter(review => review.status === 'accepted').length || 0
   const evidenceCount = project.evidence?.length || 0
   const validArtifacts = (project.artifacts || []).filter(artifact => artifact.valid !== false)
@@ -54,7 +65,7 @@ export function PaperTab({
     } catch (error) { showToast(errorMessage(error)) }
   }
 
-  if (tab === 'paper_outline') {
+  if (legacyTab === 'paper_outline') {
     const sections = [
       ['paper.sectionAbstract', Boolean(project.spec?.idea?.research_question)],
       ['paper.sectionIntroduction', Boolean(project.spec?.idea?.research_question)],
@@ -71,7 +82,7 @@ export function PaperTab({
     </>
   }
 
-  if (tab === 'paper_citations') {
+  if (legacyTab === 'paper_citations') {
     return <>
       <SectionHeading title={t('paper.citationsTitle')} hint={t('paper.citationsHint')} extra={<Badge status="project-scoped">{t('paper.projectScoped')}</Badge>} />
       {project.papers?.length ? <div className="data-list">{project.papers.map(paper => {
@@ -83,26 +94,26 @@ export function PaperTab({
     </>
   }
 
-  if (tab === 'paper_figures') {
+  if (legacyTab === 'paper_figures') {
     const figures = validArtifacts.filter(artifact => /image|plot|chart|png|jpe?g|svg|pdf|ply|mesh/i.test(`${artifact.kind || ''} ${artifact.name} ${artifact.mime_type || ''}`))
     return <>
       <SectionHeading title={t('paper.figuresTitle')} hint={t('paper.figuresHint')} extra={<Badge status="project-scoped">{t('paper.figureCount', { count: figures.length })}</Badge>} />
-      {figures.length ? <div className="artifact-grid">{figures.map(artifact => <ArtifactCard key={artifact.id} artifact={artifact} />)}</div> : <EmptyState text={t('paper.noFigures')} action={<button className="secondary" type="button" onClick={() => onNavigate('artifacts')}><Image size={14} />{t('paper.viewArtifacts')}</button>} />}
+      {figures.length ? <div className="artifact-grid">{figures.map(artifact => <ArtifactCard key={artifact.id} artifact={artifact} />)}</div> : <EmptyState text={t('paper.noFigures')} action={<button className="secondary" type="button" onClick={() => onNavigate('method')}><Image size={14} />{t('paper.viewArtifacts')}</button>} />}
     </>
   }
 
-  if (tab === 'paper_data') {
+  if (legacyTab === 'paper_data') {
     const dataArtifacts = validArtifacts.filter(artifact => /json|csv|tsv|table|metric|loss|data|timeseries/i.test(`${artifact.kind || ''} ${artifact.name} ${artifact.mime_type || ''}`))
     return <>
       <SectionHeading title={t('paper.dataTitle')} hint={t('paper.dataHint')} extra={<Badge status="project-scoped">{t('paper.dataCount', { count: dataArtifacts.length })}</Badge>} />
       {dataArtifacts.length ? <div className="data-list">{dataArtifacts.map(artifact => {
         const lineage = artifact.metadata?.lineage && typeof artifact.metadata.lineage === 'object' ? artifact.metadata.lineage as Record<string, unknown> : {}
         return <div className="data-row" key={artifact.id}><div><h3>{artifact.name}</h3><p>{artifact.kind} · {artifact.mime_type || t('paper.typePending')}</p><p className="muted">{t('paper.dataLineage', { run: String(lineage.run_id || t('preview.lineageUnbound')), idea: String(lineage.idea_version || t('preview.lineageUnknown')), data: String(lineage.data_version || t('preview.lineageNotDeclared')) })}</p></div><Badge status={artifact.valid ? 'valid' : 'invalid'} /></div>
-      })}</div> : <EmptyState text={t('paper.noData')} action={<button className="secondary" type="button" onClick={() => onNavigate('artifacts')}><Image size={14} />{t('paper.viewArtifacts')}</button>} />}
+      })}</div> : <EmptyState text={t('paper.noData')} action={<button className="secondary" type="button" onClick={() => onNavigate('method')}><Image size={14} />{t('paper.viewArtifacts')}</button>} />}
     </>
   }
 
-  if (tab === 'paper_compile') {
+  if (legacyTab === 'paper_compile') {
     return <>
       <SectionHeading title={t('paper.compileTitle')} hint={t('paper.compileHint')} extra={<ButtonRow><button className="secondary" type="button" onClick={() => { void createCompilePlan() }}><FileCheck size={15} />{t('paper.createCompileProposal')}</button></ButtonRow>} />
       <div className="data-list"><div className="data-row"><div><h3>{t('paper.sourceFile')}</h3><p><code>projects/{project.id}/paper/main.tex</code></p></div><Badge status={compileProposals.length ? 'candidate' : 'blocked'}>{compileProposals.length ? t('paper.compileProposalExists') : t('paper.notProposed')}</Badge></div><div className="data-row"><div><h3>{t('paper.compileRuns')}</h3><p>{compileRuns.length ? t('paper.compileRunCount', { count: compileRuns.length }) : t('paper.noCompileRuns')}</p></div><Badge status={compileRuns.some(item => item.status === 'succeeded') ? 'succeeded' : compileRuns.length ? compileRuns[0].status : 'empty'} /></div></div>
@@ -111,7 +122,7 @@ export function PaperTab({
     </>
   }
 
-  if (tab === 'paper_review') {
+  if (legacyTab === 'paper_review') {
     const pdfArtifacts = validArtifacts.filter(artifact => /pdf/i.test(`${artifact.kind || ''} ${artifact.name} ${artifact.mime_type || ''}`))
     return (
       <>
@@ -131,7 +142,7 @@ export function PaperTab({
               </div>
             ))}
           </div>
-        ) : <EmptyState text={t('paper.noPdf')} action={<button className="secondary" type="button" onClick={() => onNavigate('paper_compile')}><FileCheck size={14} />{t('paper.goCompile')}</button>} />}
+        ) : <EmptyState text={t('paper.noPdf')} action={<button className="secondary" type="button" onClick={() => onNavigate('conclusion')}><FileCheck size={14} />{t('paper.goCompile')}</button>} />}
       </>
     )
   }

@@ -44,7 +44,7 @@ export function ApprovalsTab({
         }),
       })
       await onRefresh()
-      onNavigate('experiments')
+      onNavigate('method')
       showToast(t('approvals.launchToast', { id: result.run_id.slice(0, 8) }))
     } catch (error) {
       showToast(errorMessage(error))

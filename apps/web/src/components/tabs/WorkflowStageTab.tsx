@@ -108,6 +108,7 @@ export function WorkflowStageTab({
   tab: TabId
 }) {
   const { t } = useTranslation()
+  const legacyTab: string | null = tab === 'visualization' ? 'citation_graph' : tab === 'method' ? 'method_design' : null
   const [workspace, setWorkspace] = useState<ProjectWorkspaceDetail | null>(null)
   const [workspaceError, setWorkspaceError] = useState<string | null>(null)
   const [researchStatus, setResearchStatus] = useState<ResearchStatusResponse | null>(null)
@@ -119,14 +120,14 @@ export function WorkflowStageTab({
   const selectedGraphNode = selectedGraphNodeId ? graphNodesById.get(selectedGraphNodeId) || null : null
 
   useEffect(() => {
-    if (tab === 'code_workspace') {
+    if (legacyTab === 'code_workspace') {
       setWorkspace(null)
       setWorkspaceError(null)
       api<ProjectWorkspaceDetail>(`/api/projects/${project.id}/workspace`)
         .then(setWorkspace)
         .catch(error => setWorkspaceError(errorMessage(error)))
     }
-    if (tab === 'citation_graph') {
+    if (legacyTab === 'citation_graph') {
       setResearchStatus(null)
       setResearchStatusError(null)
       setSelectedGraphNodeId(null)
@@ -134,9 +135,9 @@ export function WorkflowStageTab({
         .then(setResearchStatus)
         .catch(error => setResearchStatusError(errorMessage(error)))
     }
-  }, [project.id, tab])
+  }, [legacyTab, project.id, tab])
 
-  if (tab === 'citation_graph') {
+  if (legacyTab === 'citation_graph') {
     return (
       <>
         <SectionHeading title={t('graph.title')} hint={t('graph.hint')} extra={<Badge>{t('graph.edgeCount', { count: researchStatus?.graph.edges.length || 0 })}</Badge>} />
@@ -230,7 +231,7 @@ export function WorkflowStageTab({
     )
   }
 
-  if (tab === 'overview_progress') {
+  if (legacyTab === 'overview_progress') {
     const rows = [
       ...(project.related_work_runs || []).map(run => ({ id: `search-${run.id}`, title: t('progress.relatedRun', { id: run.id.slice(0, 8) }), detail: t('progress.candidateCount', { count: run.discovered_count || 0, edges: run.edge_count || 0 }), status: run.status })),
       ...(project.experiments || []).map(run => ({ id: `experiment-${run.id}`, title: run.experiment_type, detail: t('overview.runDetail', { run: run.run_id || t('progress.runPending') }), status: run.status })),
@@ -244,7 +245,7 @@ export function WorkflowStageTab({
     )
   }
 
-  if (tab === 'method_design') {
+  if (legacyTab === 'method_design') {
     const idea = project.spec?.idea
     return (
       <>
@@ -259,7 +260,7 @@ export function WorkflowStageTab({
     )
   }
 
-  if (tab === 'code_workspace') {
+  if (legacyTab === 'code_workspace') {
     return (
       <>
         <SectionHeading title={t('code.title')} hint={t('code.hint')} />
@@ -279,20 +280,20 @@ export function WorkflowStageTab({
     )
   }
 
-  if (tab === 'experiment_queue' || tab === 'experiment_metrics') {
+  if (legacyTab === 'experiment_queue' || legacyTab === 'experiment_metrics') {
     const experiments = project.experiments || []
-    const filtered = tab === 'experiment_queue'
+    const filtered = legacyTab === 'experiment_queue'
       ? experiments.filter(item => ['queued', 'running', 'paused', 'cancelled', 'waiting-approval'].includes(item.status))
       : experiments.filter(item => Object.keys(item.metrics || {}).length > 0)
     return (
       <>
-        <SectionHeading title={tab === 'experiment_queue' ? t('queue.title') : t('metrics.title')} hint={t('queue.hint')} extra={<Badge>{t('queue.count', { count: filtered.length })}</Badge>} />
-        {filtered.length ? <div className="data-list">{filtered.map(item => <div className="data-row" key={item.id}><div><h3>{item.experiment_type}</h3><p>{tab === 'experiment_queue' ? t('overview.runDetail', { run: item.run_id || t('queue.runUnassigned') }) : JSON.stringify(item.metrics)}</p></div><Badge status={item.status} /></div>)}</div> : <EmptyState text={tab === 'experiment_queue' ? t('queue.empty') : t('metrics.empty')} />}
+        <SectionHeading title={legacyTab === 'experiment_queue' ? t('queue.title') : t('metrics.title')} hint={t('queue.hint')} extra={<Badge>{t('queue.count', { count: filtered.length })}</Badge>} />
+        {filtered.length ? <div className="data-list">{filtered.map(item => <div className="data-row" key={item.id}><div><h3>{item.experiment_type}</h3><p>{legacyTab === 'experiment_queue' ? t('overview.runDetail', { run: item.run_id || t('queue.runUnassigned') }) : JSON.stringify(item.metrics)}</p></div><Badge status={item.status} /></div>)}</div> : <EmptyState text={legacyTab === 'experiment_queue' ? t('queue.empty') : t('metrics.empty')} />}
       </>
     )
   }
 
-  if (tab === 'lineage') {
+  if (legacyTab === 'lineage') {
     const artifacts = project.artifacts || []
     return (
       <>

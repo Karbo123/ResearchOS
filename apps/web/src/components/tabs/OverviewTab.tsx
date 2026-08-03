@@ -62,10 +62,10 @@ export function OverviewTab({
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
   onRequestConfirm: (request: ConfirmRequest) => void
-  tab?: 'overview' | 'overview_spec'
+  tab?: 'overview' | 'idea'
 }) {
   const { t, locale } = useTranslation()
-  if (tab === 'overview_spec') return <ProjectSpecificationTab project={project} />
+  if (tab === 'idea') return <ProjectSpecificationTab project={project} />
   const counts = project.counts || {
     papers: project.papers?.length || 0,
     experiments: project.experiments?.length || 0,
