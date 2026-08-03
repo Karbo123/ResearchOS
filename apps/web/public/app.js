@@ -12830,7 +12830,6 @@
     "topbar.refreshingProject": "\u6B63\u5728\u91CD\u65B0\u83B7\u53D6\u5F53\u524D\u9879\u76EE\u6570\u636E\u2026",
     "topbar.language": "\u754C\u9762\u8BED\u8A00",
     "topbar.theme": "\u754C\u9762\u4E3B\u9898",
-    "sidebar.newProject": "\u65B0\u7814\u7A76\u9879\u76EE",
     "sidebar.goHome": "\u8FD4\u56DE\u9996\u9875",
     "sidebar.projects": "\u9879\u76EE",
     "sidebar.noProjects": "\u6682\u65E0\u9879\u76EE",
@@ -14124,7 +14123,6 @@
     "topbar.refreshingProject": "\u6B63\u5728\u91CD\u65B0\u53D6\u5F97\u76EE\u524D\u5C08\u6848\u8CC7\u6599\u2026",
     "topbar.language": "\u4ECB\u9762\u8A9E\u8A00",
     "topbar.theme": "\u4ECB\u9762\u4E3B\u984C",
-    "sidebar.newProject": "\u65B0\u7814\u7A76\u5C08\u6848",
     "sidebar.goHome": "\u8FD4\u56DE\u9996\u9801",
     "sidebar.projects": "\u5C08\u6848",
     "sidebar.noProjects": "\u5C1A\u7121\u5C08\u6848",
@@ -15418,7 +15416,6 @@
     "topbar.refreshingProject": "Reloading current project data\u2026",
     "topbar.language": "Interface language",
     "topbar.theme": "Interface theme",
-    "sidebar.newProject": "New Research Project",
     "sidebar.goHome": "Go to home",
     "sidebar.projects": "Projects",
     "sidebar.noProjects": "No projects yet",
@@ -16712,7 +16709,6 @@
     "topbar.refreshingProject": "Recargando los datos del proyecto\u2026",
     "topbar.language": "Idioma de la interfaz",
     "topbar.theme": "Tema de la interfaz",
-    "sidebar.newProject": "Nuevo proyecto de investigaci\xF3n",
     "sidebar.goHome": "Ir al inicio",
     "sidebar.projects": "Proyectos",
     "sidebar.noProjects": "A\xFAn no hay proyectos",
@@ -19192,10 +19188,6 @@
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { className: "brand-mark", src: "/favicon.svg", alt: "", "aria-hidden": "true" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Research OS" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "primary full", type: "button", onClick: onNewProject, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { size: 17 }),
-        t("sidebar.newProject")
-      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "side-label", children: t("sidebar.projects") }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "project-list", "aria-label": t("sidebar.projects"), children: visibleProjects.length ? visibleProjects.map((project) => {
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
@@ -19818,10 +19810,7 @@
                     title: project.title,
                     onClick: () => onOpenProject(project.id),
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "home-project-title-line", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: project.title }),
-                        project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Pin, { className: "home-pinned-icon", size: 13, "aria-hidden": "true" }) : null
-                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "home-project-title-line", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: project.title }) }),
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { className: "home-project-slug", children: project.slug }),
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: `home-status-badge status-${project.status || "active"}`, children: project.status === "paused" ? t("home.statusPaused") : project.status === "cancelled" ? t("home.statusCancelled") : t("home.statusActive") })
                     ]
@@ -19862,10 +19851,11 @@
                   /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
                     "button",
                     {
-                      className: "home-action home-pin-action",
+                      className: `home-action home-pin-action${project.pinned ? " is-pinned" : ""}`,
                       type: "button",
                       "aria-label": t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
                       title: t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
+                      "aria-pressed": project.pinned === true,
                       onClick: () => void onPinProject(project),
                       children: project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(PinOff, { size: 15, "aria-hidden": "true" }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Pin, { size: 15, "aria-hidden": "true" })
                     }
@@ -26199,6 +26189,7 @@
     const projectChatBusyRef = (0, import_react30.useRef)(false);
     const sessionIdRef = (0, import_react30.useRef)(null);
     const toastTimerRef = (0, import_react30.useRef)(null);
+    const pinningProjectIdsRef = (0, import_react30.useRef)(/* @__PURE__ */ new Set());
     (0, import_react30.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
@@ -26315,15 +26306,27 @@
       }
     };
     const pinProject = async (target) => {
+      if (pinningProjectIdsRef.current.has(target.id)) return;
+      pinningProjectIdsRef.current.add(target.id);
       try {
-        await api(`/api/projects/${target.id}/pin`, {
+        const updated = await api(`/api/projects/${target.id}/pin`, {
           method: "PATCH",
           body: JSON.stringify({ pinned: !target.pinned })
         });
-        await loadProjects();
+        setProjects((previous) => {
+          const current = previous.find((project2) => project2.id === target.id);
+          if (!current) return previous;
+          const changed = { ...current, pinned: updated.pinned, sidebar_order: updated.sidebar_order };
+          const pinned = previous.filter((project2) => project2.pinned && project2.id !== target.id);
+          const unpinned = previous.filter((project2) => !project2.pinned && project2.id !== target.id);
+          return updated.pinned ? [...pinned, changed, ...unpinned] : [...pinned, ...unpinned, changed];
+        });
         showToast(t(target.pinned ? "app.projectUnpinned" : "app.projectPinned"));
       } catch (error) {
+        await loadProjects();
         showToast(errorMessage(error));
+      } finally {
+        pinningProjectIdsRef.current.delete(target.id);
       }
     };
     const requestDeleteProject = (target) => {
@@ -26335,7 +26338,16 @@
           method: "PATCH",
           body: JSON.stringify({ project_ids: projectIds })
         });
-        await loadProjects();
+        setProjects((previous) => {
+          const movedIds = new Set(projectIds);
+          const moved = projectIds.map((id) => previous.find((project2) => project2.id === id)).filter((project2) => Boolean(project2));
+          if (moved.length !== projectIds.length) return previous;
+          const pinned = moved[0]?.pinned ?? false;
+          if (pinned) return [...moved, ...previous.filter((project2) => !movedIds.has(project2.id))];
+          const pinnedProjects = previous.filter((project2) => project2.pinned);
+          const unpinnedRest = previous.filter((project2) => !project2.pinned && !movedIds.has(project2.id));
+          return [...pinnedProjects, ...moved, ...unpinnedRest];
+        });
         showToast(t("app.projectOrderUpdated"));
       } catch (error) {
         await loadProjects();
@@ -26417,6 +26429,17 @@
         window.removeEventListener("hashchange", restoreWorkspace);
       };
     }, []);
+    (0, import_react30.useEffect)(() => {
+      if (!projectDrawerOpen || view !== "project") return;
+      const closeDrawer = (event) => {
+        const target = event.target;
+        if (target instanceof Element && !target.closest(".project-drawer-region")) {
+          setProjectDrawerOpen(false);
+        }
+      };
+      document.addEventListener("pointerdown", closeDrawer);
+      return () => document.removeEventListener("pointerdown", closeDrawer);
+    }, [projectDrawerOpen, view]);
     if (notFoundPath) {
       return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => goHome(true) }, notFoundPath);
     }

@@ -90,7 +90,7 @@ button { -webkit-font-smoothing: inherit; }
 .primary { min-height: 42px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 13px; background: var(--blue); box-shadow: 0 8px 20px rgba(0, 122, 255, .22), inset 0 1px 0 rgba(255, 255, 255, .28); font-size: 13px; font-weight: 650; transition: transform .24s var(--spring), background .24s var(--ease), box-shadow .24s var(--ease); }
 .primary:hover { background: #248bff; box-shadow: 0 11px 26px rgba(0, 122, 255, .28), inset 0 1px 0 rgba(255, 255, 255, .30); transform: translateY(-1px); }
 .primary:active, .send-btn:active, .voice-btn:active, .secondary:active, .icon-btn:active { transform: scale(.97); }
-.side-label { margin: 27px 9px 8px; color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .10em; text-transform: uppercase; }
+.side-label { margin: 18px 9px 8px; color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .10em; text-transform: uppercase; }
 .project-list { gap: 4px; padding: 0 2px 0 0; overflow-x: clip; scrollbar-color: rgba(60, 60, 67, .24) transparent; }
 .project-list::-webkit-scrollbar { width: 7px; }
 .project-list::-webkit-scrollbar-thumb { background: rgba(60, 60, 67, .22); border: 2px solid transparent; background-clip: content-box; }
@@ -655,7 +655,6 @@ button { -webkit-font-smoothing: inherit; }
   white-space: nowrap;
   transition: color .2s var(--ease);
 }
-.home-pinned-icon { flex: none; color: var(--blue); }
 .home-project-slug {
   grid-area: slug;
   max-width: 100%;
@@ -717,6 +716,12 @@ button { -webkit-font-smoothing: inherit; }
 .home-action:hover { background: var(--surface-elevated); transform: translateY(-1px); box-shadow: 0 5px 12px rgba(25, 25, 35, .08); }
 .home-action:active { transform: scale(.94); }
 .home-pin-action:hover { color: var(--blue); border-color: rgba(0, 122, 255, .30); }
+.home-pin-action.is-pinned {
+  color: var(--blue);
+  background: var(--blue-soft);
+  border-color: rgba(0, 122, 255, .26);
+  box-shadow: 0 5px 13px rgba(0, 122, 255, .13);
+}
 .home-delete-action:hover { color: var(--red); border-color: var(--red-soft); background: var(--red-soft); }
 .home-open-action { color: var(--blue); }
 .home-open-action:hover { background: var(--blue-soft); border-color: rgba(0, 122, 255, .28); box-shadow: 0 5px 13px rgba(0, 122, 255, .13); }
@@ -2045,7 +2050,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--muted);
+  color: var(--blue);
   box-shadow: none;
   pointer-events: auto;
   cursor: pointer;
@@ -2053,12 +2058,30 @@ a.secondary { text-decoration: none; color: var(--ink); }
   transform: translateY(-50%);
   transition: left .52s var(--spring), color .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
 }
+.project-drawer-toggle::before {
+  content: '';
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: rgba(0, 122, 255, .18);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, .05);
+  transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring);
+}
 .project-drawer-toggle:hover {
-  color: var(--blue);
+  color: var(--blue-dark);
+}
+.project-drawer-toggle:hover::before,
+.project-drawer-toggle:focus-visible::before {
+  background: var(--blue);
+  box-shadow: 0 0 0 4px var(--blue-soft);
+  transform: scaleY(1.08);
 }
 .project-drawer-toggle:focus-visible {
   outline: none;
-  color: var(--blue);
+  color: var(--blue-dark);
 }
 .project-drawer-toggle:focus-visible .project-drawer-arrow {
   filter: drop-shadow(0 0 6px rgba(0, 122, 255, .55));

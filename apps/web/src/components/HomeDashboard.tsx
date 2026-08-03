@@ -302,7 +302,6 @@ export function HomeDashboard({
                   >
                     <span className="home-project-title-line">
                       <strong>{project.title}</strong>
-                      {project.pinned ? <Pin className="home-pinned-icon" size={13} aria-hidden="true" /> : null}
                     </span>
                     <code className="home-project-slug">{project.slug}</code>
                     <span className={`home-status-badge status-${project.status || 'active'}`}>
@@ -336,10 +335,11 @@ export function HomeDashboard({
                   </time>
                   <div className="home-project-actions">
                     <button
-                      className="home-action home-pin-action"
+                      className={`home-action home-pin-action${project.pinned ? ' is-pinned' : ''}`}
                       type="button"
                       aria-label={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
                       title={t(project.pinned ? 'sidebar.unpinProjectAction' : 'sidebar.pinProjectAction', { title: project.title })}
+                      aria-pressed={project.pinned === true}
                       onClick={() => void onPinProject(project)}
                     >
                       {project.pinned ? <PinOff size={15} aria-hidden="true" /> : <Pin size={15} aria-hidden="true" />}

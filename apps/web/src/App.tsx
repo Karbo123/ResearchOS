@@ -57,6 +57,7 @@ export function App() {
   const projectChatBusyRef = useRef(false)
   const sessionIdRef = useRef<string | null>(null)
   const toastTimerRef = useRef<number | null>(null)
+  const pinningProjectIdsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     window.localStorage.setItem('researchos.sidebarWidth', String(sidebarWidth))
@@ -185,15 +186,27 @@ export function App() {
   }
 
   const pinProject = async (target: ProjectSummary) => {
+    if (pinningProjectIdsRef.current.has(target.id)) return
+    pinningProjectIdsRef.current.add(target.id)
     try {
-      await api<ProjectSummary>(`/api/projects/${target.id}/pin`, {
+      const updated = await api<Pick<ProjectSummary, 'pinned' | 'sidebar_order'>>(`/api/projects/${target.id}/pin`, {
         method: 'PATCH',
         body: JSON.stringify({ pinned: !target.pinned }),
       })
-      await loadProjects()
+      setProjects(previous => {
+        const current = previous.find(project => project.id === target.id)
+        if (!current) return previous
+        const changed = { ...current, pinned: updated.pinned, sidebar_order: updated.sidebar_order }
+        const pinned = previous.filter(project => project.pinned && project.id !== target.id)
+        const unpinned = previous.filter(project => !project.pinned && project.id !== target.id)
+        return updated.pinned ? [...pinned, changed, ...unpinned] : [...pinned, ...unpinned, changed]
+      })
       showToast(t(target.pinned ? 'app.projectUnpinned' : 'app.projectPinned'))
     } catch (error) {
+      await loadProjects()
       showToast(errorMessage(error))
+    } finally {
+      pinningProjectIdsRef.current.delete(target.id)
     }
   }
 
@@ -207,7 +220,18 @@ export function App() {
         method: 'PATCH',
         body: JSON.stringify({ project_ids: projectIds }),
       })
-      await loadProjects()
+      setProjects(previous => {
+        const movedIds = new Set(projectIds)
+        const moved = projectIds
+          .map(id => previous.find(project => project.id === id))
+          .filter((project): project is ProjectSummary => Boolean(project))
+        if (moved.length !== projectIds.length) return previous
+        const pinned = moved[0]?.pinned ?? false
+        if (pinned) return [...moved, ...previous.filter(project => !movedIds.has(project.id))]
+        const pinnedProjects = previous.filter(project => project.pinned)
+        const unpinnedRest = previous.filter(project => !project.pinned && !movedIds.has(project.id))
+        return [...pinnedProjects, ...moved, ...unpinnedRest]
+      })
       showToast(t('app.projectOrderUpdated'))
     } catch (error) {
       await loadProjects()
@@ -299,6 +323,18 @@ export function App() {
       window.removeEventListener('hashchange', restoreWorkspace)
     }
   }, [])
+
+  useEffect(() => {
+    if (!projectDrawerOpen || view !== 'project') return
+    const closeDrawer = (event: PointerEvent) => {
+      const target = event.target
+      if (target instanceof Element && !target.closest('.project-drawer-region')) {
+        setProjectDrawerOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', closeDrawer)
+    return () => document.removeEventListener('pointerdown', closeDrawer)
+  }, [projectDrawerOpen, view])
 
   if (notFoundPath) {
     return <NotFoundView key={notFoundPath} path={notFoundPath} onGoHome={() => goHome(true)} />

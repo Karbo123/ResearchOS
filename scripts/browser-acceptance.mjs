@@ -165,6 +165,15 @@ await capture('108h-home-mobile-zh-CN.png')
 await navigate(projectUrl, 'zh-CN', 'light')
 const mobileProject = await checkOverflow()
 await capture('108h-project-mobile-zh-CN.png')
+
+await send('Emulation.setDeviceMetricsOverride', { width: 1024, height: 768, deviceScaleFactor: 1, mobile: false })
+await navigate(homeUrl, 'en', 'light')
+const narrowHome = await checkOverflow()
+await capture('108h-narrow-home.png')
+await navigate(projectUrl, 'en', 'light')
+const narrowProject = await checkOverflow()
+await capture('108h-narrow-project.png')
+
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
 await navigate(projectUrl, 'en', 'light')
@@ -173,6 +182,7 @@ const drawer = await evaluate(`(() => {
   toggle?.focus()
   const shell = document.querySelector('.project-drawer-shell')
   const button = document.querySelector('.project-drawer-toggle')
+  const toggleStyle = toggle ? getComputedStyle(toggle, '::before') : null
   return {
     hasToggle: !!toggle,
     activeLabel: document.activeElement?.getAttribute('aria-label') || null,
@@ -180,6 +190,8 @@ const drawer = await evaluate(`(() => {
     ariaControls: button?.getAttribute('aria-controls') || null,
     panelExists: !!document.getElementById('project-drawer-panel'),
     shellTransition: shell ? getComputedStyle(shell).transitionDuration : null,
+    toggleLineBackground: toggleStyle?.backgroundColor || null,
+    toggleLineWidth: toggleStyle?.width || null,
   }
 })()`)
 await capture('108h-project-focus-light.png')
@@ -375,6 +387,17 @@ const longContent = await evaluate(`(() => {
 await capture('108h-long-content.png')
 
 await navigate(homeUrl, 'en', 'light')
+const homeUi = await evaluate(`(() => {
+  const sidebar = document.querySelector('.sidebar')
+  return {
+    legacyNewButton: !!sidebar?.querySelector('.primary.full'),
+    pinnedTitleIcons: document.querySelectorAll('.home-pinned-icon').length,
+    pinActions: Array.from(document.querySelectorAll('.home-pin-action')).slice(0, 4).map(button => ({
+      pinned: button.classList.contains('is-pinned'),
+      pressed: button.getAttribute('aria-pressed'),
+    })),
+  }
+})()`)
 const actionRow = await elementCenter('.project-row')
 const actionMotion = {
   rowFound: !!actionRow,
@@ -441,6 +464,13 @@ actionMotion.programmaticFocus = programmaticFocus
 actionMotion.keyboardFocus = keyboardFocus
 
 await navigate(projectUrl, 'en', 'light')
+await evaluate(`document.querySelector('.project-drawer-toggle')?.click()`)
+await wait(700)
+await evaluate(`document.querySelector('.tab-content')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, pointerType: 'mouse' }))`)
+await wait(700)
+const drawerOutsideClose = await evaluate(`!document.querySelector('.project-drawer-region')?.classList.contains('open')`)
+
+await navigate(projectUrl, 'en', 'light')
 const tabMotion = await evaluate(`(() => {
   const nav = document.querySelector('.project-areas')
   const indicator = nav?.querySelector('.sliding-tab-indicator')
@@ -484,5 +514,5 @@ sidebarResize.afterWidth = await evaluate(`document.querySelector('.app-shell')?
 sidebarResize.changed = sidebarResize.width !== sidebarResize.afterWidth && sidebarResize.afterWidth !== null
 await evaluate(`localStorage.setItem('researchos.sidebarWidth', ${JSON.stringify(String(sidebarResize.originalWidth))})`)
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, themePersist, longContent, actionMotion, tabMotion, sidebarResize }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, homeUi, themePersist, longContent, actionMotion, drawerOutsideClose, tabMotion, sidebarResize }, null, 2))
 socket.close()

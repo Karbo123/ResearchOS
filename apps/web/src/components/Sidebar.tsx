@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Pin, PinOff, Plus, Settings, Share2, Trash2, Workflow } from 'lucide-react'
+import { Pin, PinOff, Settings, Share2, Trash2, Workflow } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 
@@ -259,10 +259,6 @@ export function Sidebar({
       <button className="brand" type="button" onClick={onNewProject} aria-label={t('sidebar.goHome')} title={t('sidebar.goHome')}>
         <img className="brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
         <span>Research OS</span>
-      </button>
-      <button className="primary full" type="button" onClick={onNewProject}>
-        <Plus size={17} />
-        {t('sidebar.newProject')}
       </button>
       <div className="side-label">{t('sidebar.projects')}</div>
       <nav className="project-list" aria-label={t('sidebar.projects')}>
