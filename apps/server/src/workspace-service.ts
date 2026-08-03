@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readdirSync, statSync } from 'node:fs'
 import { basename, relative } from 'node:path'
+import { one } from './database.js'
 import { gitBinary, pathInside, projectsRoot } from './paths.js'
 import { ApiError } from './http.js'
 import { requireProject } from './project-service.js'
@@ -40,21 +41,42 @@ function collectFiles(root: string): Array<{ path: string; kind: 'file' | 'direc
   return files
 }
 
-export async function projectWorkspaceDetail(projectId: string) {
+export async function projectWorkspaceDetail(
+  projectId: string,
+  options: { scope?: 'method' | 'reproduction'; reproductionId?: string } = {},
+) {
   await requireProject(projectId)
   const root = pathInside(projectsRoot, projectId)
   if (!existsSync(root)) throw new ApiError(404, 'project_workspace_not_found', '项目代码工作区不存在。')
-  const codeRoot = pathInside(root, 'code')
+  let codeRoot: string
+  let codeRelativePath: string
+  let sourceCommit: string | null = null
+  if (options.scope === 'reproduction') {
+    if (!options.reproductionId) throw new ApiError(422, 'reproduction_id_required', '查看复现代码工作区需要指定复现记录。')
+    const reproduction = await one<{ id: string; repository_relative_path: string; source_commit: string }>(
+      'SELECT id,repository_relative_path,source_commit FROM reproductions WHERE id=$1 AND project_id=$2',
+      [options.reproductionId, projectId],
+    )
+    if (!reproduction) throw new ApiError(404, 'reproduction_not_found', '复现记录不存在或不属于当前项目。')
+    codeRoot = pathInside(root, ...reproduction.repository_relative_path.split('/'))
+    codeRelativePath = reproduction.repository_relative_path
+    sourceCommit = reproduction.source_commit
+  } else {
+    codeRoot = pathInside(root, 'code')
+    codeRelativePath = `projects/${projectId}/code`
+  }
   const branch = runGit(root, ['branch', '--show-current'])
   const head = runGit(root, ['rev-parse', 'HEAD'])
   const status = runGit(root, ['status', '--short', '--branch'])
-  const diff = runGit(root, ['diff', '--no-ext-diff', '--', 'code'])
+  const diffPath = options.scope === 'reproduction' ? codeRelativePath : 'code'
+  const diff = runGit(root, ['diff', '--no-ext-diff', '--', diffPath])
   const trackedDiff = diff ? diff.slice(0, MAX_DIFF_CHARS) : ''
   return {
     project_id: projectId,
     root_relative_path: `projects/${projectId}`,
-    code_relative_path: `projects/${projectId}/code`,
+    code_relative_path: codeRelativePath,
     code_directory_exists: existsSync(codeRoot),
+    source_commit: sourceCommit,
     branch: branch || null,
     head: head || null,
     dirty: Boolean(status?.split('\n').some(line => line && !line.startsWith('##'))),

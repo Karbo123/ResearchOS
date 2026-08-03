@@ -359,7 +359,16 @@ app.delete('/api/projects/:projectId', async context => {
   const body = await jsonBody(context, projectDeleteRequest)
   return context.json(await deleteProject(projectId, body.project_title, body.confirmation))
 })
-app.get('/api/projects/:projectId/workspace', async context => context.json(await projectWorkspaceDetail(uuid.parse(context.req.param('projectId')))))
+app.get('/api/projects/:projectId/workspace', async context => {
+  const scope = context.req.query('scope')
+  const reproductionId = context.req.query('reproductionId')
+  if (scope && !['method', 'reproduction'].includes(scope)) throw new ApiError(422, 'workspace_scope_invalid', '工作区范围无效。')
+  if (scope === 'reproduction' && !reproductionId) throw new ApiError(422, 'reproduction_id_required', '查看复现工作区需要指定复现记录。')
+  const options: { scope?: 'method' | 'reproduction'; reproductionId?: string } = {}
+  if (scope) options.scope = scope as 'method' | 'reproduction'
+  if (scope === 'reproduction' && reproductionId) options.reproductionId = uuid.parse(reproductionId)
+  return context.json(await projectWorkspaceDetail(uuid.parse(context.req.param('projectId')), options))
+})
 
 app.post('/api/projects/:projectId/related-work/seeds', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))

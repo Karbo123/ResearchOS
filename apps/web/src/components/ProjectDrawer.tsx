@@ -55,7 +55,6 @@ export function ProjectDrawer({
         onClick={() => onOpenChange(!open)}
       >
         {open ? <ChevronLeft size={17} aria-hidden="true" /> : <ChevronRight size={17} aria-hidden="true" />}
-        <span>{open ? t('projectDrawer.close') : t('projectDrawer.open')}</span>
       </button>
     </div>
   )

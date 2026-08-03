@@ -28,6 +28,7 @@ describe('project-scoped reproduction approval chain', () => {
       projectId, `reproduction-${projectId.slice(0, 8)}`, 'Reproduction test',
       otherProjectId, `reproduction-other-${otherProjectId.slice(0, 8)}`, 'Other reproduction test',
     ])
+    mkdirSync(pathInside(projectsRoot, otherProjectId), { recursive: true })
     await database.query('INSERT INTO papers(id,project_id,title,source_url,doi) VALUES ($1,$2,$3,$4,$5)', [paperId, projectId, 'Reproduction test paper', 'https://doi.org/10.1000/reproduction', '10.1000/reproduction'])
     await database.query('INSERT INTO repositories(id,project_id,paper_id,source_url,license_spdx,commit_or_tag,verified_official,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [
       repositoryId, projectId, paperId, 'https://github.com/example/reproduction', 'MIT', commit, true,
@@ -60,6 +61,7 @@ describe('project-scoped reproduction approval chain', () => {
     await database.query('DELETE FROM audit_events WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM projects WHERE id IN ($1,$2)', [projectId, otherProjectId])
     rmSync(pathInside(projectsRoot, projectId), { recursive: true, force: true })
+    rmSync(pathInside(projectsRoot, otherProjectId), { recursive: true, force: true })
   })
 
   it('keeps download, dependency, and run approvals separate', async () => {
@@ -101,5 +103,34 @@ describe('project-scoped reproduction approval chain', () => {
     expect(approved.body.reproduction_run).toMatchObject({ status: 'queued' })
     const runId = String((approved.body.reproduction_run as Record<string, unknown>).run_id)
     expect((await rows<{ kind: string; max_attempts: number }>('SELECT kind,max_attempts FROM tasks WHERE payload->>\'reproduction_run_id\'=$1', [runId]))[0]).toEqual({ kind: 'repository_reproduction_run', max_attempts: 1 })
+  })
+
+  it('exposes only the pinned reproduction source as a scoped workspace', async () => {
+    const invalidScope = await requestJson(`/api/projects/${projectId}/workspace?scope=unknown`)
+    expect(invalidScope.response.status).toBe(422)
+    expect(invalidScope.body.code).toBe('workspace_scope_invalid')
+
+    const missingReproduction = await requestJson(`/api/projects/${projectId}/workspace?scope=reproduction`)
+    expect(missingReproduction.response.status).toBe(422)
+    expect(missingReproduction.body.code).toBe('reproduction_id_required')
+
+    const methodWorkspace = await requestJson(`/api/projects/${projectId}/workspace?scope=method`)
+    expect(methodWorkspace.response.status).toBe(200)
+    expect(methodWorkspace.body.code_relative_path).toBe(`projects/${projectId}/code`)
+
+    const reproductionWorkspace = await requestJson(`/api/projects/${projectId}/workspace?scope=reproduction&reproductionId=${reproductionId}`)
+    expect(reproductionWorkspace.response.status).toBe(200)
+    expect(reproductionWorkspace.body).toMatchObject({
+      code_relative_path: `experiment/reproductions/${reproductionId}/source`,
+      source_commit: commit,
+      code_directory_exists: true,
+    })
+    const paths = (reproductionWorkspace.body.files as Array<{ path: string }>).map(file => file.path)
+    expect(paths).toContain('requirements.txt')
+    expect(paths).toContain('scripts/evaluate.py')
+
+    const crossProject = await requestJson(`/api/projects/${otherProjectId}/workspace?scope=reproduction&reproductionId=${reproductionId}`)
+    expect(crossProject.response.status).toBe(404)
+    expect(crossProject.body.code).toBe('reproduction_not_found')
   })
 })

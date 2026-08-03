@@ -289,6 +289,7 @@ export interface ProjectWorkspaceDetail {
   root_relative_path: string
   code_relative_path: string
   code_directory_exists: boolean
+  source_commit?: string | null
   branch?: string | null
   head?: string | null
   dirty?: boolean
