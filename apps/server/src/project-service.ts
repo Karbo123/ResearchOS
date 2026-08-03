@@ -6,6 +6,7 @@ import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { reconcileProjectLineage } from './impact-service.js'
 import { moveIntoProject, projectStagingPath } from './project-storage.js'
+import { specFieldStatus } from './spec-field-status.js'
 
 const PROJECT_GITIGNORE = `.venv/
 artifacts/
@@ -222,6 +223,7 @@ export async function projectDetail(projectId: string) {
     rows('SELECT * FROM research_comparison_candidates WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
   ])
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 ORDER BY updated_at DESC LIMIT 1', [projectId])
+  const currentSpec = (ideas[0] as Record<string, unknown> | undefined)?.spec as Record<string, unknown> | null | undefined
   const repositoryRows = repositories as Array<Record<string, unknown>>
   const evidenceRows = evidence as Array<Record<string, unknown>>
   const paperRows = (papers as Array<Record<string, unknown>>).map(paper => ({
@@ -258,7 +260,8 @@ export async function projectDetail(projectId: string) {
   return {
     ...project,
     session_id: session?.id ?? null,
-    spec: (ideas[0] as Record<string, unknown> | undefined)?.spec ?? null,
+    spec: currentSpec ?? null,
+    spec_field_status: specFieldStatus(currentSpec, ideas as Array<Record<string, unknown>>),
     idea_versions: ideas,
     papers: paperRows,
     evidence: evidenceRows,

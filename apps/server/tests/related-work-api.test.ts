@@ -22,6 +22,21 @@ describe('project-scoped related work API', () => {
       projectId, `related-work-${projectId.slice(0, 8)}`, 'Related Work Test',
       otherProjectId, `related-work-other-${otherProjectId.slice(0, 8)}`, 'Other Related Work Test',
     ])
+    const spec = {
+      schema_version: '1.0',
+      idea: {
+        title: 'Related Work Test',
+        research_question: 'How can citation networks be expanded reliably across sources?',
+        domain: 'Research infrastructure',
+        available_data: 'Public bibliographic metadata',
+        ethics_and_compliance: 'No personal data involved',
+      },
+      feasibility: 'medium',
+    }
+    await database.query('INSERT INTO idea_versions(id,project_id,version,spec) VALUES ($1,$2,1,$3),($4,$5,1,$6)', [
+      crypto.randomUUID(), projectId, spec,
+      crypto.randomUUID(), otherProjectId, spec,
+    ])
     fetchMock.mockImplementation(async input => {
       const url = String(input)
       if (url.includes('/works/') && url.includes('root')) {
@@ -47,6 +62,7 @@ describe('project-scoped related work API', () => {
     await database.query('DELETE FROM papers WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM audit_events WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM proposals WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
+    await database.query('DELETE FROM idea_versions WHERE project_id IN ($1,$2)', [projectId, otherProjectId])
     await database.query('DELETE FROM projects WHERE id IN ($1,$2)', [projectId, otherProjectId])
   })
 

@@ -3,7 +3,12 @@ import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
 
 export class ApiError extends Error {
-  constructor(public readonly status: 400 | 401 | 403 | 404 | 409 | 413 | 415 | 422 | 500 | 501 | 502 | 503 | 504, public readonly code: string, message: string) {
+  constructor(
+    public readonly status: 400 | 401 | 403 | 404 | 409 | 413 | 415 | 422 | 500 | 501 | 502 | 503 | 504,
+    public readonly code: string,
+    message: string,
+    public readonly details: Record<string, unknown> | null = null,
+  ) {
     super(message)
   }
 }
@@ -17,7 +22,7 @@ export async function jsonBody<T>(context: Context, schema: z.ZodType<T>): Promi
 }
 
 export function errorResponse(error: unknown, context: Context): Response {
-  if (error instanceof ApiError) return context.json({ code: error.code, message: error.message }, error.status)
+  if (error instanceof ApiError) return context.json({ code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) }, error.status)
   if (error instanceof HTTPException) return context.json({ code: 'http_error', message: error.message }, error.status)
   console.error(error instanceof Error ? `${error.name}: ${error.message}` : 'unknown_server_error')
   return context.json({ code: 'internal_error', message: '服务器处理请求失败。' }, 500)

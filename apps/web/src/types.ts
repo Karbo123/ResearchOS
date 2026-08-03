@@ -60,6 +60,9 @@ export interface IdeaSpec {
   expected_contributions?: string[]
   success_criteria?: string[]
   target_venues?: string[]
+  available_data?: string
+  ethics_and_compliance?: string
+  constraints?: Record<string, unknown>
   risks?: string[]
   open_questions?: string[]
 }
@@ -167,6 +170,7 @@ export interface ProjectDetail {
   sidebar_order?: number
   session_id?: string | null
   spec?: ResearchSpec | null
+  spec_field_status?: SpecFieldStatus
   idea_versions?: IdeaVersion[]
   papers?: Paper[]
   evidence?: Evidence[]
@@ -211,6 +215,17 @@ export interface IdeaVersion {
   supersedes_id?: string | null
   created_at?: string
 }
+
+export interface SpecFieldStatusEntry {
+  status: 'user_confirmed' | 'model_candidate' | 'unresolved'
+  source: 'user_revision' | 'project_spec' | 'model_draft'
+  version: number
+  confirmed_at?: string | null
+  changed_from_version?: number | null
+  change_reason?: string | null
+}
+
+export type SpecFieldStatus = Record<string, SpecFieldStatusEntry>
 
 export interface ProjectTask {
   id: string

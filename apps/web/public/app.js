@@ -13025,6 +13025,19 @@
     "spec.feasibilityNotes": "\u53EF\u884C\u6027\u8BF4\u660E",
     "spec.candidateModifications": "\u5F85\u6838\u9A8C\u4FEE\u6539\u5EFA\u8BAE",
     "spec.approvals": "\u6240\u9700\u5BA1\u6279",
+    "spec.keywords": "\u5173\u952E\u8BCD",
+    "spec.availableData": "\u53EF\u7528\u6570\u636E",
+    "spec.ethicsAndCompliance": "\u4F26\u7406\u4E0E\u5408\u89C4",
+    "spec.fieldConfirmed": "\u7528\u6237\u5DF2\u786E\u8BA4",
+    "spec.fieldModelCandidate": "\u6A21\u578B\u5019\u9009",
+    "spec.fieldUnresolved": "\u672A\u89E3\u51B3",
+    "spec.sourceUserRevision": "\u7528\u6237\u6279\u51C6\u4FEE\u8BA2",
+    "spec.sourceProjectSpec": "\u9879\u76EE\u521B\u5EFA\u65F6\u786E\u8BA4",
+    "spec.sourceModelDraft": "\u6A21\u578B\u5019\u9009\u8349\u7A3F",
+    "spec.ideaVersionShort": "Idea v{version}",
+    "spec.changedFromVersion": "\u4ECE v{from} \u4FEE\u8BA2\u5230 v{to}",
+    "spec.gateTitle": "\u90E8\u5206\u6838\u5FC3\u89C4\u683C\u5C1A\u672A\u786E\u8BA4",
+    "spec.gateDescription": "\u4EE5\u4E0B\u5B57\u6BB5\u4ECD\u9700\u786E\u8BA4\uFF1A{fields}\u3002\u5728\u786E\u8BA4\u4E4B\u524D\uFF0C\u68C0\u7D22\u3001\u76F8\u5173\u5DE5\u4F5C\u3001\u65B9\u6CD5\u548C\u5B9E\u9A8C\u4F1A\u88AB\u963B\u6B62\u3002",
     "spec.projectSlug": "\u9879\u76EE\u5730\u5740\u6807\u8BC6",
     "spec.projectSlugPlaceholder": "\u4F8B\u5982 cnn-minimal-2q95",
     "spec.projectSlugHint": "\u7559\u7A7A\u7531 AI \u6839\u636E Idea \u751F\u6210\u4E24\u4E2A\u8BED\u4E49\u5355\u8BCD\u548C\u56DB\u4F4D\u968F\u673A\u540E\u7F00\uFF1B\u624B\u52A8\u586B\u5199\u65F6\u8BF7\u4F7F\u7528\u4E24\u4E2A\u82F1\u6587\u5C0F\u5199\u5355\u8BCD\uFF0C\u52A0\u4E0A\u56DB\u4F4D\u5C0F\u5199\u5B57\u6BCD\u6216\u6570\u5B57\uFF0C\u5E76\u7528\u8FDE\u5B57\u7B26\u8FDE\u63A5\u3002",
@@ -14491,6 +14504,19 @@
     "spec.feasibilityNotes": "\u53EF\u884C\u6027\u8AAA\u660E",
     "spec.candidateModifications": "\u5F85\u8907\u6838\u4FEE\u6539\u5EFA\u8B70",
     "spec.approvals": "\u6240\u9700\u5BE9\u6279",
+    "spec.keywords": "\u95DC\u9375\u8A5E",
+    "spec.availableData": "\u53EF\u7528\u8CC7\u6599",
+    "spec.ethicsAndCompliance": "\u502B\u7406\u8207\u5408\u898F",
+    "spec.fieldConfirmed": "\u4F7F\u7528\u8005\u5DF2\u78BA\u8A8D",
+    "spec.fieldModelCandidate": "\u6A21\u578B\u5019\u9078",
+    "spec.fieldUnresolved": "\u672A\u89E3\u6C7A",
+    "spec.sourceUserRevision": "\u4F7F\u7528\u8005\u6279\u51C6\u4FEE\u8A02",
+    "spec.sourceProjectSpec": "\u5EFA\u7ACB\u5C08\u6848\u6642\u78BA\u8A8D",
+    "spec.sourceModelDraft": "\u6A21\u578B\u5019\u9078\u8349\u7A3F",
+    "spec.ideaVersionShort": "Idea v{version}",
+    "spec.changedFromVersion": "\u5F9E v{from} \u4FEE\u8A02\u5230 v{to}",
+    "spec.gateTitle": "\u90E8\u5206\u6838\u5FC3\u898F\u683C\u5C1A\u672A\u78BA\u8A8D",
+    "spec.gateDescription": "\u4EE5\u4E0B\u6B04\u4F4D\u4ECD\u9700\u78BA\u8A8D\uFF1A{fields}\u3002\u5728\u78BA\u8A8D\u4E4B\u524D\uFF0C\u6AA2\u7D22\u3001\u76F8\u95DC\u5DE5\u4F5C\u3001\u65B9\u6CD5\u548C\u5BE6\u9A57\u6703\u88AB\u963B\u6B62\u3002",
     "spec.projectSlug": "\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC",
     "spec.projectSlugPlaceholder": "\u4F8B\u5982 cnn-minimal-2q95",
     "spec.projectSlugHint": "\u7559\u7A7A\u7531 AI \u6839\u64DA Idea \u7522\u751F\u5169\u500B\u8A9E\u610F\u55AE\u8A5E\u548C\u56DB\u4F4D\u96A8\u6A5F\u5F8C\u7DB4\uFF1B\u624B\u52D5\u586B\u5BEB\u6642\u8ACB\u4F7F\u7528\u5169\u500B\u82F1\u6587\u5C0F\u5BEB\u55AE\u8A5E\uFF0C\u52A0\u4E0A\u56DB\u4F4D\u5C0F\u5BEB\u5B57\u6BCD\u6216\u6578\u5B57\uFF0C\u4E26\u4EE5\u9023\u5B57\u865F\u9023\u63A5\u3002",
@@ -15834,6 +15860,19 @@
     "spec.feasibilityNotes": "Feasibility notes",
     "spec.candidateModifications": "Candidate modifications",
     "spec.approvals": "Required approvals",
+    "spec.keywords": "Keywords",
+    "spec.availableData": "Available data",
+    "spec.ethicsAndCompliance": "Ethics and compliance",
+    "spec.fieldConfirmed": "User confirmed",
+    "spec.fieldModelCandidate": "Model candidate",
+    "spec.fieldUnresolved": "Unresolved",
+    "spec.sourceUserRevision": "User-approved revision",
+    "spec.sourceProjectSpec": "Confirmed at project creation",
+    "spec.sourceModelDraft": "Model candidate draft",
+    "spec.ideaVersionShort": "Idea v{version}",
+    "spec.changedFromVersion": "Revised from v{from} to v{to}",
+    "spec.gateTitle": "Some core specification fields are not confirmed yet",
+    "spec.gateDescription": "These fields still need confirmation: {fields}. Search, related work, methods, and experiments stay blocked until they are confirmed.",
     "spec.projectSlug": "Project URL identifier",
     "spec.projectSlugPlaceholder": "For example, cnn-minimal-2q95",
     "spec.projectSlugHint": "Leave blank to let AI generate two semantic words and a four-character suffix from the Idea; manual values must use two lowercase English words plus four lowercase letters or digits joined with hyphens.",
@@ -17177,6 +17216,19 @@
     "spec.feasibilityNotes": "Notas de viabilidad",
     "spec.candidateModifications": "Modificaciones candidatas",
     "spec.approvals": "Aprobaciones necesarias",
+    "spec.keywords": "Palabras clave",
+    "spec.availableData": "Datos disponibles",
+    "spec.ethicsAndCompliance": "\xC9tica y cumplimiento",
+    "spec.fieldConfirmed": "Confirmado por el usuario",
+    "spec.fieldModelCandidate": "Candidato del modelo",
+    "spec.fieldUnresolved": "Sin resolver",
+    "spec.sourceUserRevision": "Revisi\xF3n aprobada por el usuario",
+    "spec.sourceProjectSpec": "Confirmado al crear el proyecto",
+    "spec.sourceModelDraft": "Borrador candidato del modelo",
+    "spec.ideaVersionShort": "Idea v{version}",
+    "spec.changedFromVersion": "Revisado de v{from} a v{to}",
+    "spec.gateTitle": "Algunos campos centrales de la especificaci\xF3n a\xFAn no est\xE1n confirmados",
+    "spec.gateDescription": "Estos campos todav\xEDa necesitan confirmaci\xF3n: {fields}. La b\xFAsqueda, el trabajo relacionado, los m\xE9todos y los experimentos permanecen bloqueados hasta que se confirmen.",
     "spec.projectSlug": "Identificador de URL del proyecto",
     "spec.projectSlugPlaceholder": "Por ejemplo, cnn-minimal-2q95",
     "spec.projectSlugHint": "D\xE9jalo vac\xEDo para que la IA genere dos palabras sem\xE1nticas y un sufijo de cuatro caracteres a partir de la Idea; los valores manuales deben usar dos palabras inglesas min\xFAsculas y cuatro letras min\xFAsculas o d\xEDgitos unidos con guiones.",
@@ -21076,17 +21128,46 @@
 
   // src/components/tabs/OverviewTab.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
-  function SpecificationField({ label, value, emptyLabel }) {
+  var CORE_FIELDS = ["research_question", "domain", "available_data", "ethics_and_compliance"];
+  var FIELD_LABEL_KEYS = {
+    research_question: "spec.researchQuestion",
+    domain: "spec.domain",
+    available_data: "spec.availableData",
+    ethics_and_compliance: "spec.ethicsAndCompliance"
+  };
+  function FieldStatusPill({ status }) {
+    const { t } = useTranslation();
+    const kind = status?.status || "unresolved";
+    const labelKey = kind === "user_confirmed" ? "spec.fieldConfirmed" : kind === "model_candidate" ? "spec.fieldModelCandidate" : "spec.fieldUnresolved";
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: `spec-field-pill spec-field-${kind}`, children: t(labelKey) });
+  }
+  function SpecificationField({ label, field, value, status, emptyLabel }) {
+    const { t, locale } = useTranslation();
     const values = Array.isArray(value) ? value.filter((item) => item.trim()) : value?.trim() ? [value.trim()] : [];
+    const sourceKey = status?.source === "user_revision" ? t("spec.sourceUserRevision") : status?.source === "project_spec" ? t("spec.sourceProjectSpec") : t("spec.sourceModelDraft");
+    const metaParts = [sourceKey, `${t("spec.ideaVersionShort", { version: status?.version ?? 1 })}`];
+    if (status?.confirmed_at) metaParts.push(formatDateTime(status.confirmed_at, locale));
+    const diffParts = [];
+    if (status?.changed_from_version && status.changed_from_version !== status.version) {
+      diffParts.push(t("spec.changedFromVersion", { from: status.changed_from_version, to: status.version }));
+    }
+    if (status?.change_reason) diffParts.push(status.change_reason);
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "spec-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { children: label }),
-      values.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("ul", { children: values.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("li", { children: item }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: values[0] || emptyLabel })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "spec-group-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FieldStatusPill, { status })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "spec-field-meta", children: metaParts.join(" \xB7 ") }),
+      values.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("ul", { children: values.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("li", { children: item }, `${item}-${index}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: values[0] || emptyLabel }),
+      diffParts.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("small", { className: "spec-field-diff", children: diffParts.join(" \xB7 ") }) : null
     ] });
   }
   function ProjectSpecificationTab({ project }) {
     const { t } = useTranslation();
     const spec = project.spec;
     const idea = spec?.idea;
+    const fieldStatus = project.spec_field_status || {};
+    const blockedFields = CORE_FIELDS.filter((field) => fieldStatus[field]?.status !== "user_confirmed");
     const emptyLabel = t("common.notConfirmed");
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "pane-heading", children: [
@@ -21096,20 +21177,30 @@
         ] }),
         spec?.feasibility ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Badge, { status: spec.feasibility }) : null
       ] }),
+      blockedFields.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "spec-gate-notice", role: "status", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ShieldAlert, { size: 16, "aria-hidden": "true" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t("spec.gateTitle") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: t("spec.gateDescription", { fields: blockedFields.map((field) => t(FIELD_LABEL_KEYS[field] || "common.notConfirmed")).join("\u3001") }) })
+        ] })
+      ] }) : null,
       spec && idea ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "project-spec-details", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.titleField"), value: idea.title, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.researchQuestion"), value: idea.research_question, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.domain"), value: idea.domain, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.hypotheses"), value: idea.hypotheses, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.contributions"), value: idea.expected_contributions, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.successCriteria"), value: idea.success_criteria, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.targetVenues"), value: idea.target_venues, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.risks"), value: idea.risks, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.openQuestions"), value: idea.open_questions, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.feasibility"), value: spec.feasibility, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.feasibilityNotes"), value: spec.feasibility_notes, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.candidateModifications"), value: spec.candidate_modifications, emptyLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.approvals"), value: spec.required_approvals, emptyLabel })
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.titleField"), field: "title", value: idea.title, status: fieldStatus.title, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.researchQuestion"), field: "research_question", value: idea.research_question, status: fieldStatus.research_question, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.domain"), field: "domain", value: idea.domain, status: fieldStatus.domain, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.keywords"), field: "keywords", value: idea.keywords, status: fieldStatus.keywords, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.hypotheses"), field: "hypotheses", value: idea.hypotheses, status: fieldStatus.hypotheses, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.contributions"), field: "expected_contributions", value: idea.expected_contributions, status: fieldStatus.expected_contributions, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.successCriteria"), field: "success_criteria", value: idea.success_criteria, status: fieldStatus.success_criteria, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.targetVenues"), field: "target_venues", value: idea.target_venues, status: fieldStatus.target_venues, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.availableData"), field: "available_data", value: idea.available_data, status: fieldStatus.available_data, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.ethicsAndCompliance"), field: "ethics_and_compliance", value: idea.ethics_and_compliance, status: fieldStatus.ethics_and_compliance, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.risks"), field: "risks", value: idea.risks, status: fieldStatus.risks, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.openQuestions"), field: "open_questions", value: idea.open_questions, status: fieldStatus.open_questions, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.feasibility"), field: "feasibility", value: spec.feasibility, status: fieldStatus.feasibility, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.feasibilityNotes"), field: "feasibility_notes", value: spec.feasibility_notes, status: fieldStatus.feasibility_notes, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.candidateModifications"), field: "candidate_modifications", value: spec.candidate_modifications, status: fieldStatus.candidate_modifications, emptyLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SpecificationField, { label: t("spec.approvals"), field: "required_approvals", value: spec.required_approvals, status: fieldStatus.required_approvals, emptyLabel })
       ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "empty", children: t("spec.empty") })
     ] });
   }
@@ -21155,6 +21246,8 @@
     };
     const pendingCount = project.proposals?.filter((proposal) => proposal.status === "pending").length || 0;
     const spec = project.spec?.idea;
+    const fieldStatus = project.spec_field_status || {};
+    const blockedFields = CORE_FIELDS.filter((field) => fieldStatus[field]?.status !== "user_confirmed");
     const checkpoints = project.checkpoints || [];
     const proposals = project.proposals || [];
     const experiments = project.experiments || [];
@@ -21205,6 +21298,7 @@
     };
     const isActive = project.status === "active";
     const executionDisabled = !isActive;
+    const specBlocked = blockedFields.length > 0;
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "metric-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "metric", children: [
@@ -21230,21 +21324,28 @@
           {
             title: t("overview.spec"),
             extra: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(ButtonRow, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: runSearch, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled || specBlocked, onClick: runSearch, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Search, { size: 15 }),
                 t("overview.searchLiterature")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createPaperDraft, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled || specBlocked, onClick: createPaperDraft, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FilePenLine, { size: 15 }),
                 t("overview.paperDraft")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled, onClick: createCompilePlan, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("button", { className: "secondary", type: "button", disabled: executionDisabled || specBlocked, onClick: createCompilePlan, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FileCheck, { size: 15 }),
                 t("overview.compilePaper")
               ] })
             ] })
           }
         ),
+        specBlocked ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "spec-gate-notice compact", role: "status", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(ShieldAlert, { size: 15, "aria-hidden": "true" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("strong", { children: t("spec.gateTitle") }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: t("spec.gateDescription", { fields: blockedFields.map((field) => t(FIELD_LABEL_KEYS[field] || "common.notConfirmed")).join("\u3001") }) })
+          ] })
+        ] }) : null,
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "data-list", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: spec?.research_question || t("overview.noSpec") }),

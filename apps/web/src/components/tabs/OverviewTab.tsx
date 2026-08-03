@@ -1,16 +1,53 @@
 import { FileCheck, FilePenLine, Pause, Play, Search, ShieldAlert, Square } from 'lucide-react'
 import { api, errorMessage } from '../../api'
-import type { ConfirmRequest, ProjectDetail, TabId } from '../../types'
+import type { ConfirmRequest, ProjectDetail, SpecFieldStatusEntry, TabId } from '../../types'
 import { Badge, ButtonRow, SectionHeading } from '../ui'
-import { formatDateTime, useTranslation } from '../../i18n'
+import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 import { NoveltyExplorer } from '../NoveltyExplorer'
 
-function SpecificationField({ label, value, emptyLabel }: { label: string; value?: string | string[]; emptyLabel: string }) {
+const CORE_FIELDS = ['research_question', 'domain', 'available_data', 'ethics_and_compliance']
+const FIELD_LABEL_KEYS: Record<string, TranslationKey> = {
+  research_question: 'spec.researchQuestion',
+  domain: 'spec.domain',
+  available_data: 'spec.availableData',
+  ethics_and_compliance: 'spec.ethicsAndCompliance',
+}
+
+function FieldStatusPill({ status }: { status?: SpecFieldStatusEntry }) {
+  const { t } = useTranslation()
+  const kind = status?.status || 'unresolved'
+  const labelKey = kind === 'user_confirmed'
+    ? 'spec.fieldConfirmed'
+    : kind === 'model_candidate'
+      ? 'spec.fieldModelCandidate'
+      : 'spec.fieldUnresolved'
+  return <span className={`spec-field-pill spec-field-${kind}`}>{t(labelKey)}</span>
+}
+
+function SpecificationField({ label, field, value, status, emptyLabel }: { label: string; field: string; value?: string | string[]; status?: SpecFieldStatusEntry; emptyLabel: string }) {
+  const { t, locale } = useTranslation()
   const values = Array.isArray(value) ? value.filter(item => item.trim()) : value?.trim() ? [value.trim()] : []
+  const sourceKey = status?.source === 'user_revision'
+    ? t('spec.sourceUserRevision')
+    : status?.source === 'project_spec'
+      ? t('spec.sourceProjectSpec')
+      : t('spec.sourceModelDraft')
+  const metaParts = [sourceKey, `${t('spec.ideaVersionShort', { version: status?.version ?? 1 })}`]
+  if (status?.confirmed_at) metaParts.push(formatDateTime(status.confirmed_at, locale))
+  const diffParts: string[] = []
+  if (status?.changed_from_version && status.changed_from_version !== status.version) {
+    diffParts.push(t('spec.changedFromVersion', { from: status.changed_from_version, to: status.version }))
+  }
+  if (status?.change_reason) diffParts.push(status.change_reason)
   return (
     <div className="spec-group">
-      <label>{label}</label>
+      <div className="spec-group-head">
+        <label>{label}</label>
+        <FieldStatusPill status={status} />
+      </div>
+      <div className="spec-field-meta">{metaParts.join(' · ')}</div>
       {values.length > 1 ? <ul>{values.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul> : <div>{values[0] || emptyLabel}</div>}
+      {diffParts.length ? <small className="spec-field-diff">{diffParts.join(' · ')}</small> : null}
     </div>
   )
 }
@@ -19,6 +56,8 @@ function ProjectSpecificationTab({ project }: { project: ProjectDetail }) {
   const { t } = useTranslation()
   const spec = project.spec
   const idea = spec?.idea
+  const fieldStatus = project.spec_field_status || {}
+  const blockedFields = CORE_FIELDS.filter(field => fieldStatus[field]?.status !== 'user_confirmed')
   const emptyLabel = t('common.notConfirmed')
   return (
     <>
@@ -29,21 +68,33 @@ function ProjectSpecificationTab({ project }: { project: ProjectDetail }) {
         </div>
         {spec?.feasibility ? <Badge status={spec.feasibility} /> : null}
       </div>
+      {blockedFields.length ? (
+        <div className="spec-gate-notice" role="status">
+          <ShieldAlert size={16} aria-hidden="true" />
+          <div>
+            <strong>{t('spec.gateTitle')}</strong>
+            <p>{t('spec.gateDescription', { fields: blockedFields.map(field => t(FIELD_LABEL_KEYS[field] || 'common.notConfirmed')).join('、') })}</p>
+          </div>
+        </div>
+      ) : null}
       {spec && idea ? (
         <div className="project-spec-details">
-          <SpecificationField label={t('spec.titleField')} value={idea.title} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.researchQuestion')} value={idea.research_question} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.domain')} value={idea.domain} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.hypotheses')} value={idea.hypotheses} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.contributions')} value={idea.expected_contributions} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.successCriteria')} value={idea.success_criteria} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.targetVenues')} value={idea.target_venues} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.risks')} value={idea.risks} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.openQuestions')} value={idea.open_questions} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.feasibility')} value={spec.feasibility} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.feasibilityNotes')} value={spec.feasibility_notes} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.candidateModifications')} value={spec.candidate_modifications} emptyLabel={emptyLabel} />
-          <SpecificationField label={t('spec.approvals')} value={spec.required_approvals} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.titleField')} field="title" value={idea.title} status={fieldStatus.title} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.researchQuestion')} field="research_question" value={idea.research_question} status={fieldStatus.research_question} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.domain')} field="domain" value={idea.domain} status={fieldStatus.domain} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.keywords')} field="keywords" value={idea.keywords} status={fieldStatus.keywords} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.hypotheses')} field="hypotheses" value={idea.hypotheses} status={fieldStatus.hypotheses} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.contributions')} field="expected_contributions" value={idea.expected_contributions} status={fieldStatus.expected_contributions} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.successCriteria')} field="success_criteria" value={idea.success_criteria} status={fieldStatus.success_criteria} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.targetVenues')} field="target_venues" value={idea.target_venues} status={fieldStatus.target_venues} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.availableData')} field="available_data" value={idea.available_data} status={fieldStatus.available_data} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.ethicsAndCompliance')} field="ethics_and_compliance" value={idea.ethics_and_compliance} status={fieldStatus.ethics_and_compliance} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.risks')} field="risks" value={idea.risks} status={fieldStatus.risks} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.openQuestions')} field="open_questions" value={idea.open_questions} status={fieldStatus.open_questions} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.feasibility')} field="feasibility" value={spec.feasibility} status={fieldStatus.feasibility} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.feasibilityNotes')} field="feasibility_notes" value={spec.feasibility_notes} status={fieldStatus.feasibility_notes} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.candidateModifications')} field="candidate_modifications" value={spec.candidate_modifications} status={fieldStatus.candidate_modifications} emptyLabel={emptyLabel} />
+          <SpecificationField label={t('spec.approvals')} field="required_approvals" value={spec.required_approvals} status={fieldStatus.required_approvals} emptyLabel={emptyLabel} />
         </div>
       ) : <div className="empty">{t('spec.empty')}</div>}
     </>
@@ -95,6 +146,8 @@ export function OverviewTab({
   }
   const pendingCount = project.proposals?.filter(proposal => proposal.status === 'pending').length || 0
   const spec = project.spec?.idea
+  const fieldStatus = project.spec_field_status || {}
+  const blockedFields = CORE_FIELDS.filter(field => fieldStatus[field]?.status !== 'user_confirmed')
   const checkpoints = project.checkpoints || []
   const proposals = project.proposals || []
   const experiments = project.experiments || []
@@ -154,6 +207,7 @@ export function OverviewTab({
 
   const isActive = project.status === 'active'
   const executionDisabled = !isActive
+  const specBlocked = blockedFields.length > 0
 
   return (
     <>
@@ -169,21 +223,30 @@ export function OverviewTab({
           title={t('overview.spec')}
           extra={
             <ButtonRow>
-              <button className="secondary" type="button" disabled={executionDisabled} onClick={runSearch}>
+              <button className="secondary" type="button" disabled={executionDisabled || specBlocked} onClick={runSearch}>
                 <Search size={15} />
                 {t('overview.searchLiterature')}
               </button>
-              <button className="secondary" type="button" disabled={executionDisabled} onClick={createPaperDraft}>
+              <button className="secondary" type="button" disabled={executionDisabled || specBlocked} onClick={createPaperDraft}>
                 <FilePenLine size={15} />
                 {t('overview.paperDraft')}
               </button>
-              <button className="secondary" type="button" disabled={executionDisabled} onClick={createCompilePlan}>
+              <button className="secondary" type="button" disabled={executionDisabled || specBlocked} onClick={createCompilePlan}>
                 <FileCheck size={15} />
                 {t('overview.compilePaper')}
               </button>
             </ButtonRow>
           }
         />
+        {specBlocked ? (
+          <div className="spec-gate-notice compact" role="status">
+            <ShieldAlert size={15} aria-hidden="true" />
+            <div>
+              <strong>{t('spec.gateTitle')}</strong>
+              <p>{t('spec.gateDescription', { fields: blockedFields.map(field => t(FIELD_LABEL_KEYS[field] || 'common.notConfirmed')).join('、') })}</p>
+            </div>
+          </div>
+        ) : null}
         <div className="data-list">
           <div className="data-row">
             <div>

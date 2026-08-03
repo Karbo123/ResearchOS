@@ -5,7 +5,33 @@ import { ApiError } from './http.js'
 import { invalidateFromNodes } from './impact-service.js'
 import { gitBinary, pathInside, projectsRoot } from './paths.js'
 
-const revisionFields = new Set(['title', 'research_question', 'domain', 'available_data', 'ethics_and_compliance'])
+const revisionFields = new Set([
+  'title',
+  'research_question',
+  'domain',
+  'keywords',
+  'hypotheses',
+  'expected_contributions',
+  'success_criteria',
+  'target_venues',
+  'available_data',
+  'risks',
+  'open_questions',
+  'ethics_and_compliance',
+])
+
+function parseRevisionValue(raw: string): string | string[] {
+  const trimmed = raw.trim()
+  if (trimmed.startsWith('[')) {
+    try {
+      const parsed: unknown = JSON.parse(trimmed)
+      if (Array.isArray(parsed) && parsed.every(item => typeof item === 'string' && item.trim().length > 0)) return parsed
+    } catch {
+      // Fall back to treating the raw text as a scalar value.
+    }
+  }
+  return trimmed
+}
 
 export async function applyApprovedIdeaRevision(projectId: string, payload: Record<string, unknown>, actor: string) {
   const field = typeof payload.field === 'string' ? payload.field : ''
@@ -15,7 +41,7 @@ export async function applyApprovedIdeaRevision(projectId: string, payload: Reco
   if (!current) throw new ApiError(409, 'idea_version_missing', '项目没有可修改的 Idea 版本。')
   const nextSpec = structuredClone(current.spec)
   const idea = (nextSpec.idea || {}) as Record<string, unknown>
-  idea[field] = value
+  idea[field] = parseRevisionValue(value)
   nextSpec.idea = idea
   const nextVersion = current.version + 1
   const workspace = pathInside(projectsRoot, projectId)

@@ -40,6 +40,7 @@ import { buildArtifactPreview, verifyArtifactFile } from './artifact-preview-ser
 import { relatedWorkCandidateDecisionRequest, relatedWorkEnrichmentRequest, relatedWorkFieldName, relatedWorkFieldSelectionRequest, relatedWorkRecursivePlanRequest, relatedWorkRunCancelRequest, relatedWorkRunExecuteRequest, relatedWorkSeedRequest } from './related-work/contracts.js'
 import { cancelRelatedWorkRun, createRelatedWorkEnrichmentProposal, createRelatedWorkRecursiveProposal, createRelatedWorkSeed, decideRelatedWorkCandidate, executeRelatedWorkEnrichment, relatedWorkRunDetail, resumeQueuedRelatedWorkRuns, selectRelatedWorkField, startRelatedWorkRun } from './related-work/service.js'
 import { projectWorkspaceDetail } from './workspace-service.js'
+import { requireConfirmedSpecFields } from './spec-field-status.js'
 import { researchStatusExportFormat, researchStatusFilterRequest, researchStatusGapCandidateRequest, researchStatusGapDecisionRequest, researchStatusMatrixCreateRequest } from './research-status/contracts.js'
 import { createResearchStatusGapCandidate, createResearchStatusMatrix, decideResearchStatusGapCandidate, exportResearchStatus, getResearchStatus } from './research-status/service.js'
 import { createDependencyInstallProposal, createRunProposal, downloadRepositoryForReproduction, finalizeReproductionArtifacts, installReproductionDependencies, queueReproductionRun, rejectReproductionArtifacts } from './reproduction-service.js'
@@ -399,6 +400,9 @@ app.post('/api/projects/:projectId/related-work/candidate-enrichment', async con
 app.post('/api/projects/:projectId/related-work/recursive-plan', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const body = await jsonBody(context, relatedWorkRecursivePlanRequest)
+  await requireProject(projectId, true)
+  const recursiveDetail = await projectDetail(projectId)
+  requireConfirmedSpecFields(projectId, recursiveDetail.spec, recursiveDetail.idea_versions || [])
   return context.json(await createRelatedWorkRecursiveProposal(projectId, body), 201)
 })
 app.get('/api/projects/:projectId/related-work/runs/:runId', async context => {
@@ -424,6 +428,8 @@ app.post('/api/projects/:projectId/related-work/runs/:runId/cancel', async conte
 app.post('/api/search', async context => {
   const body = await jsonBody(context, z.object({ project_id: uuid, query: z.string().max(500).nullable().optional(), limit: z.number().int().min(1).max(30).default(8) }).strict())
   const project = await requireProject(body.project_id, true)
+  const searchDetail = await projectDetail(body.project_id)
+  requireConfirmedSpecFields(body.project_id, searchDetail.spec, searchDetail.idea_versions || [])
   return context.json(await searchLiterature(body.project_id, body.query || project.title, body.limit))
 })
 app.get('/api/projects/:projectId/research-status', async context => {
@@ -603,6 +609,7 @@ app.post('/api/projects/:projectId/experiment-plan', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const project = await projectDetail(projectId)
   if (project.status !== 'active') throw new ApiError(409, 'project_not_active', '项目当前不可执行实验规划。')
+  requireConfirmedSpecFields(projectId, project.spec, project.idea_versions || [])
   const idea = project.idea_versions[0] as Record<string, unknown> | undefined
   const result = await mastraJson<{ result: Record<string, unknown> }>('/internal/agents/experiment-plan', { project_id: projectId, idea_version: project.current_idea_version, planning_context: { idea: idea?.spec, evidence: project.evidence, policies: project.policies } })
   const proposalId = crypto.randomUUID()
@@ -725,7 +732,12 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, idea_revision: ideaRevision, repository_download: repositoryDownload, reproduction_dependencies: reproductionDependencies, reproduction_run: reproductionRun, reproduction_artifacts: reproductionArtifacts, lineage_invalidation: lineageInvalidation, automatic_execution: automaticExecution, memory_revocation: memoryRevocation, related_work_run: relatedWorkRun, related_work_enrichment: relatedWorkEnrichment })
 })
 
-app.post('/api/projects/:projectId/paper-draft', async context => context.json(await createPaperDraftProposal(uuid.parse(context.req.param('projectId'))), 201))
+app.post('/api/projects/:projectId/paper-draft', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const paperDetail = await projectDetail(projectId)
+  requireConfirmedSpecFields(projectId, paperDetail.spec, paperDetail.idea_versions || [])
+  return context.json(await createPaperDraftProposal(projectId), 201)
+})
 app.post('/api/projects/:projectId/paper-section', async context => {
   const body = await jsonBody(context, paperSectionEditRequest)
   return context.json(await createPaperSectionProposal(uuid.parse(context.req.param('projectId')), body.section_id, body.content), 201)
@@ -738,7 +750,12 @@ app.post('/api/projects/:projectId/paper-revise', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
   return context.json(await revisePaperSection(uuid.parse(context.req.param('projectId')), body.section_id), 201)
 })
-app.post('/api/projects/:projectId/compile-plan', async context => context.json(await createCompileProposal(uuid.parse(context.req.param('projectId'))), 201))
+app.post('/api/projects/:projectId/compile-plan', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const compileDetail = await projectDetail(projectId)
+  requireConfirmedSpecFields(projectId, compileDetail.spec, compileDetail.idea_versions || [])
+  return context.json(await createCompileProposal(projectId), 201)
+})
 app.post('/api/projects/:projectId/checkpoints/:checkpointId/rerun', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const checkpointId = uuid.parse(context.req.param('checkpointId'))

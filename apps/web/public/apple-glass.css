@@ -323,6 +323,21 @@ button { -webkit-font-smoothing: inherit; }
 .spec-group input:focus { outline: 0; border-color: rgba(0, 122, 255, .46); background: var(--surface-solid); box-shadow: 0 0 0 4px var(--blue-soft); }
 .spec-group small { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; line-height: 1.45; }
 .spec-group:last-child { border-bottom: 0; }
+.spec-group-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.spec-group-head label { margin: 0; }
+.spec-field-pill { display: inline-flex; align-items: center; flex: 0 0 auto; min-height: 20px; padding: 3px 8px; border: 1px solid transparent; border-radius: 999px; font-size: 10px; font-weight: 650; letter-spacing: .01em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.spec-field-confirmed { color: var(--success-ink); background: var(--green-soft); border-color: rgba(52, 199, 89, .20); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18); }
+.spec-field-model_candidate { color: var(--blue-dark); background: var(--blue-soft); border-color: rgba(0, 122, 255, .20); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18); }
+.spec-field-unresolved { color: var(--warning-ink); background: var(--amber-soft); border-color: rgba(255, 149, 0, .20); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18); }
+.spec-field-meta { margin: 5px 0 7px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+.spec-field-diff { display: block; margin-top: 6px; color: var(--blue-dark); }
+.spec-gate-notice { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid rgba(255, 149, 0, .28); border-radius: 14px; background: var(--amber-soft); color: var(--warning-ink); box-shadow: 0 8px 24px rgba(255, 149, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .18); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); }
+.spec-gate-notice.compact { margin: 12px 0 0; padding: 10px 12px; }
+.spec-gate-notice svg { flex: 0 0 auto; margin-top: 1px; }
+.spec-gate-notice strong { display: block; color: var(--warning-ink); font-size: 12px; }
+.spec-gate-notice p { margin: 2px 0 0; color: var(--warning-ink); font-size: 11px; line-height: 1.5; }
+.project-spec-details { display: grid; gap: 0 18px; }
+.project-spec-details .spec-group { min-width: 0; }
 .thinking-session, .data-list, .metric, .artifact-card, .report { border: 1px solid var(--line); border-radius: 15px; background: var(--surface); box-shadow: 0 5px 18px rgba(25, 25, 35, .05); }
 .thinking-session { overflow: hidden; }
 .thinking-session-header { padding: 11px 13px; background: rgba(242, 242, 247, .56); }
