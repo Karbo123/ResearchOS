@@ -494,11 +494,26 @@ if (tabMotion.exists) {
 
 const seedExpansionUrl = `${appBase}/project/${projectSlug}/related_work/seed-expansion`
 await navigate(seedExpansionUrl, 'en', 'light')
-const seedExpansion = await evaluate(`(() => {
+const seedExpansion = await evaluate(`(async () => {
   const note = document.querySelector('.provider-capability-note')
   const attempts = Array.from(document.querySelectorAll('.source-attempt-row'))
   const panel = document.querySelector('.related-work-attempt-panel')
   const empty = document.querySelector('.related-work-attempt-panel .empty')
+  const form = document.querySelector('.related-work-seed-form')
+  const select = form?.querySelector('select')
+  const options = select ? Array.from(select.options).map(option => option.value) : []
+  const setSelect = value => {
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
+    if (!setter || !select) return
+    setter.call(select, value)
+    select.dispatchEvent(new Event('change', { bubbles: true }))
+  }
+  if (select) setSelect('artifact_pdf')
+  await new Promise(resolve => setTimeout(resolve, 120))
+  const artifactVisible = Boolean(form?.textContent?.includes('PDF Artifact') && form?.textContent?.includes('Select controlled PDF'))
+  if (select) setSelect('existing_paper')
+  await new Promise(resolve => setTimeout(resolve, 120))
+  const paperVisible = Boolean(form?.textContent?.includes('Existing project Paper') && form?.textContent?.includes('Select project Paper'))
   return {
     note: note?.textContent?.trim() || null,
     notesDblp: /dblp/i.test(note?.textContent || ''),
@@ -507,6 +522,7 @@ const seedExpansion = await evaluate(`(() => {
     attemptsEmptyVisible: !!empty,
     attemptRows: attempts.length,
     attemptProviders: attempts.map(row => row.querySelector('.source-attempt-provider')?.textContent?.trim() || null).slice(0, 8),
+    seedForm: { exists: !!form, options, artifactVisible, paperVisible },
     overflowX: document.documentElement.scrollWidth > window.innerWidth,
   }
 })()`)

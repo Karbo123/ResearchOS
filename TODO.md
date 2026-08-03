@@ -293,7 +293,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 - [x] `070-C1` 在网页上如实标明 DBLP/arXiv 只支持搜索、不支持引用递归；每次来源尝试的成功、无匹配、无效、限流、超时、取消都要可查。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：`种子文献扩展` 页面新增“DBLP 与 arXiv 只支持关键词搜索，不支持引用递归；引用递归只使用 Crossref、OpenAlex 与 Semantic Scholar”能力说明，且在没有种子时也始终可见。新增“来源请求记录”面板：按项目展示每条真实来源尝试的 provider、状态、查询、请求地址、HTTP 状态、结果数、开始/结束时间和结构化失败，成功但零结果的请求显示“无匹配”，无记录时显示空状态。`related_work_source_attempts` 通过项目详情接口返回 `request_url`，服务端相关测试断言 seed 搜索后尝试记录含 `provider=crossref / status=succeeded / result_count=1 / request_url`；真实浏览器在 `related_work/seed-expansion` 验收能力说明、空状态与无横向溢出，Web 类型检查、构建、UI/i18n、navigation 与相关服务端测试均通过。
-- [~] `070-C2` 补齐用户输入种子、Artifact 和候选来源的完整前端展示与校验，让用户清楚每条候选来自哪里。 [Apple 设计验收]
+- [x] `070-C2` 补齐用户输入种子、Artifact 和候选来源的完整前端展示与校验，让用户清楚每条候选来自哪里。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：`种子文献扩展` 的种子表单提供 DOI、标题、URL、BibTeX、受控 PDF 与已有论文六种输入，切换 PDF/已有论文时对应受控选项即时出现；种子列表展示输入摘要、来源类型、状态与时间，候选行展示 provider、发现深度、年份、DOI 和来源证据数，字段来源抽屉展示 provider、来源类型、请求尝试、Artifact、定位、哈希与原始值并支持逐字段选择。服务端严格 Zod 校验种子与项目范围，PDF 必须属于当前项目且为有效 Artifact，已有论文必须属于当前项目；用户 BibTeX 与字段选择来源测试覆盖 `user_input` provenance，跨项目种子/递归被拒绝。真实浏览器在 `related_work/seed-expansion` 验证六种选项与 PDF/已有论文联动且无横向溢出，Web 类型检查、构建、UI/i18n、navigation 与相关服务端测试均通过。
 - [ ] `070-C9e` 浏览器验收相关工作调研全流程：候选审阅、来源抽屉、去重理由、递归进度、研究现状矩阵、引用图、复现 Proposal，以及空/加载/部分/失败/阻塞状态和切换项目。 [Apple 设计验收]
 - [~] `070-C10d` 效果比较列表、详情、审批、指标/门禁/Artifact/候选状态的浏览器与窄屏截图验收。 [Apple 设计验收]
 
