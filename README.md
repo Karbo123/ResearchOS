@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-03-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-01 -->
 
 # Research OS
 
@@ -41,7 +41,7 @@ The root `artifacts/` directory is not a second live project store. `artifacts/b
 
 ## Interface Language and Theme
 
-The top-right corner provides language and theme controls. Interface languages are Simplified Chinese (default), Traditional Chinese, English, and Spanish; the choice is persisted locally and restored after refresh. All UI copy uses i18n keys and a unified glossary, while model/data-generated content such as chat replies, report or paper bodies, and experiment logs stays in its original language and is not auto-translated. Themes are Light (default) and Dark, built with Apple System Colors and semantic CSS variables, including glass surfaces, layered shadows, and spring-like motion. The four languages and both themes are covered by the remaining real-browser acceptance work tracked under `P0-UI-THEME-080` and `P0-UI-I18N-079`.
+The left-bottom settings panel provides language and theme controls; the top-right corner no longer duplicates them. Interface languages are Simplified Chinese (default), Traditional Chinese, English, and Spanish; the choice is persisted locally and restored after refresh. All UI copy uses i18n keys and a unified glossary, while model/data-generated content such as chat replies, report or paper bodies, and experiment logs stays in its original language and is not auto-translated. Themes are Light (default) and Dark, built with Apple System Colors and semantic CSS variables, including glass surfaces, layered shadows, and spring-like motion. The four languages and both themes are covered by the remaining real-browser acceptance work tracked under `P0-UI-THEME-080` and `P0-UI-I18N-079`.
 
 Reports are lineage-bound records, not permanent snapshots of whatever happened to exist when an old page is opened. A newly generated daily or weekly report reads only real events in its time window (conversation messages, audit events, tasks, experiments, proposals, provider attempts, and user feedback); it stores the window, data cutoff, event/source IDs, project ID, and the Paper, Evidence, Experiment, valid Artifact, and Proposal IDs used to build it. A window with no events returns structured `report_no_events` and remains `empty`; it never creates a template saying that work was completed. Reading a project revalidates the declared source IDs and project ownership; a missing snapshot is `legacy_unverified`, while a scope mismatch, cross-project source, deleted source, or invalid Artifact is `blocked` and its Markdown is not rendered. This prevents a historical report from presenting deleted or invalid experiment data as current evidence. `apps/server/tests/report-lineage.test.ts` and `apps/server/tests/reports-api.test.ts` cover lineage, empty windows, real event sources, invalid artifacts, and cross-project cases.
 

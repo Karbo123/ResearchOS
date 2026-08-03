@@ -12,6 +12,7 @@ import { Sidebar } from './components/Sidebar'
 import { Topbar } from './components/Topbar'
 import { HomeDashboard } from './components/HomeDashboard'
 import { ProjectView } from './components/ProjectView'
+import { ProjectDrawer } from './components/ProjectDrawer'
 import { AREA_DEFAULT_TAB, normalizeTab, resolveWorkspaceLocation, TAB_AREA, workspacePath } from './navigation'
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
@@ -46,6 +47,8 @@ export function App() {
   const [homeError, setHomeError] = useState<string | null>(null)
   const [deleteProjectTarget, setDeleteProjectTarget] = useState<ProjectSummary | null>(null)
   const [deleteBusy, setDeleteBusy] = useState(false)
+  const [projectDrawerOpen, setProjectDrawerOpen] = useState(false)
+  const [projectRefreshing, setProjectRefreshing] = useState(false)
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const stored = Number(window.localStorage.getItem('researchos.sidebarWidth'))
     return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276
@@ -103,6 +106,7 @@ export function App() {
     setActiveTab('overview')
     setProjectMessages([])
     setMobileChatOpen(false)
+    setProjectDrawerOpen(false)
     setNotFoundPath(null)
     if (replace) window.history.replaceState(null, '', '/')
     else window.history.pushState(null, '', '/')
@@ -120,6 +124,7 @@ export function App() {
       setProject(detail)
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
+      setProjectDrawerOpen(false)
       if (!options?.preserveTab) {
         setActiveArea('overview')
         setActiveTab('overview')
@@ -138,8 +143,14 @@ export function App() {
   }
 
   const refreshProject = async () => {
-    if (projectId) await openProject(projectId, { preserveTab: true })
-    else await loadProjects()
+    if (projectRefreshing) return
+    setProjectRefreshing(true)
+    try {
+      if (projectId) await openProject(projectId, { preserveTab: true })
+      else await loadProjects()
+    } finally {
+      setProjectRefreshing(false)
+    }
   }
 
   const createProject = async (slug: string, title: string) => {
@@ -294,23 +305,48 @@ export function App() {
   }
 
   return (
-    <div className="app-shell" style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}>
-      <Sidebar
-        projects={projects}
-        activeProjectId={projectId}
-        onNewProject={() => goHome()}
-        onOpenProject={id => void openProject(id)}
-        onOpenMemory={() => {
-          if (!projectId) showToast(t('app.openProjectFirst'))
-          else setMemoryOpen(true)
-        }}
-        onOpenSettings={() => setSettingsOpen(true)}
-        onDeleteProject={requestDeleteProject}
-        onPinProject={project => void pinProject(project)}
-        onReorderProjects={reorderProjects}
-        sidebarWidth={sidebarWidth}
-        onSidebarWidthChange={updateSidebarWidth}
-      />
+    <div className={`app-shell${view === 'project' ? ' project-mode' : ''}`} style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}>
+      {view === 'project' ? (
+        <ProjectDrawer
+          open={projectDrawerOpen}
+          drawerWidth={sidebarWidth}
+          onOpenChange={setProjectDrawerOpen}
+          projects={projects}
+          activeProjectId={projectId}
+          onNewProject={() => goHome()}
+          onOpenProject={id => {
+            setProjectDrawerOpen(false)
+            void openProject(id)
+          }}
+          onOpenMemory={() => {
+            if (!projectId) showToast(t('app.openProjectFirst'))
+            else setMemoryOpen(true)
+          }}
+          onOpenSettings={() => setSettingsOpen(true)}
+          onDeleteProject={requestDeleteProject}
+          onPinProject={project => void pinProject(project)}
+          onReorderProjects={reorderProjects}
+          sidebarWidth={sidebarWidth}
+          onSidebarWidthChange={updateSidebarWidth}
+        />
+      ) : (
+        <Sidebar
+          projects={projects}
+          activeProjectId={projectId}
+          onNewProject={() => goHome()}
+          onOpenProject={id => void openProject(id)}
+          onOpenMemory={() => {
+            if (!projectId) showToast(t('app.openProjectFirst'))
+            else setMemoryOpen(true)
+          }}
+          onOpenSettings={() => setSettingsOpen(true)}
+          onDeleteProject={requestDeleteProject}
+          onPinProject={project => void pinProject(project)}
+          onReorderProjects={reorderProjects}
+          sidebarWidth={sidebarWidth}
+          onSidebarWidthChange={updateSidebarWidth}
+        />
+      )}
       <main className="workspace">
         <Topbar
           title={view === 'project' ? project?.title || t('app.researchProject') : t('home.title')}
@@ -324,6 +360,7 @@ export function App() {
               })
             : t('home.meta', { count: projects.length })}
           health={health}
+          refreshing={projectRefreshing}
           onRefresh={() => void refreshProject()}
           project={view === 'project' ? project : null}
         />
