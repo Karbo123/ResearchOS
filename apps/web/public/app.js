@@ -12880,6 +12880,7 @@
     "voice.securityNote": "Groq \u6A21\u5F0F\u4F1A\u628A\u672C\u6B21\u5F55\u97F3\u97F3\u9891\u53D1\u9001\u7ED9\u6240\u9009 API\uFF1B\u6D4F\u89C8\u5668\u6A21\u5F0F\u4E0D\u4F1A\u4E0A\u4F20\u97F3\u9891\u3002",
     "voice.processing": "\u6B63\u5728\u8BC6\u522B\u2026",
     "voice.groqUnsupported": "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u5F55\u97F3\u4E0A\u4F20\uFF0C\u8BF7\u6539\u7528\u6D4F\u89C8\u5668\u8BED\u97F3\u8BC6\u522B",
+    "voice.endpointMissing": "\u670D\u52A1\u7AEF\u6CA1\u6709\u8BED\u97F3\u8BC6\u522B\u63A5\u53E3\uFF0C\u8BF7\u91CD\u542F API \u670D\u52A1\u540E\u518D\u8BD5\u3002",
     "common.loadingProject": "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u5173\u95ED",
@@ -13931,6 +13932,7 @@
     "voice.securityNote": "Groq \u6A21\u5F0F\u6703\u628A\u672C\u6B21\u9304\u97F3\u97F3\u8A0A\u50B3\u9001\u7D66\u6240\u9078 API\uFF1B\u700F\u89BD\u5668\u6A21\u5F0F\u4E0D\u6703\u4E0A\u50B3\u97F3\u8A0A\u3002",
     "voice.processing": "\u6B63\u5728\u8FA8\u8B58\u2026",
     "voice.groqUnsupported": "\u76EE\u524D\u700F\u89BD\u5668\u4E0D\u652F\u63F4\u9304\u97F3\u4E0A\u50B3\uFF0C\u8ACB\u6539\u7528\u700F\u89BD\u5668\u8A9E\u97F3\u8FA8\u8B58",
+    "voice.endpointMissing": "\u4F3A\u670D\u7AEF\u6C92\u6709\u8A9E\u97F3\u8FA8\u8B58\u4ECB\u9762\uFF0C\u8ACB\u91CD\u65B0\u555F\u52D5 API \u670D\u52D9\u5F8C\u518D\u8A66\u3002",
     "common.loadingProject": "\u6B63\u5728\u8F09\u5165\u5C08\u6848\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u95DC\u9589",
@@ -14982,6 +14984,7 @@
     "voice.securityNote": "Groq mode sends the recorded audio to the selected API; browser mode never uploads audio.",
     "voice.processing": "Recognizing\u2026",
     "voice.groqUnsupported": "This browser cannot record audio for upload. Switch back to browser speech recognition",
+    "voice.endpointMissing": "The server does not have the voice recognition endpoint. Restart the API service and try again.",
     "common.loadingProject": "Loading project\u2026",
     "common.seconds": "sec",
     "common.close": "Close",
@@ -16033,6 +16036,7 @@
     "voice.securityNote": "El modo Groq env\xEDa el audio grabado a la API seleccionada; el modo navegador nunca sube audio.",
     "voice.processing": "Reconociendo\u2026",
     "voice.groqUnsupported": "Este navegador no puede grabar audio para subirlo. Vuelve al reconocimiento de voz del navegador",
+    "voice.endpointMissing": "El servidor no tiene el endpoint de reconocimiento de voz. Reinicia el servicio API e int\xE9ntalo de nuevo.",
     "common.loadingProject": "Cargando proyecto\u2026",
     "common.seconds": "seg",
     "common.close": "Cerrar",
@@ -19132,6 +19136,9 @@
     const groqReadyRef = (0, import_react10.useRef)(groqReady);
     const activeRef = (0, import_react10.useRef)(false);
     const processingRef = (0, import_react10.useRef)(false);
+    const browserFinalRef = (0, import_react10.useRef)("");
+    const browserInterimRef = (0, import_react10.useRef)("");
+    const browserCommitRef = (0, import_react10.useRef)(false);
     (0, import_react10.useEffect)(() => {
       onTextRef.current = onText;
       onErrorRef.current = onError;
@@ -19161,21 +19168,34 @@
     (0, import_react10.useEffect)(() => {
       const recognition = createRecognition();
       if (!recognition) return;
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
       recognition.lang = recognitionLanguage(locale);
       recognition.onstart = () => {
+        browserFinalRef.current = "";
+        browserInterimRef.current = "";
+        browserCommitRef.current = false;
         activeRef.current = true;
         setListening(true);
         setErrorKey(null);
       };
       recognition.onend = () => {
+        const text2 = `${browserFinalRef.current}${browserInterimRef.current}`.trim();
+        if (text2 && browserCommitRef.current) {
+          onTextRef.current(punctuateTranscript(text2, localeRef.current));
+        }
+        browserFinalRef.current = "";
+        browserInterimRef.current = "";
+        browserCommitRef.current = false;
         activeRef.current = false;
         setListening(false);
         onSessionEndRef.current?.();
       };
       recognition.onerror = (event) => {
+        browserCommitRef.current = false;
+        browserFinalRef.current = "";
+        browserInterimRef.current = "";
         activeRef.current = false;
         setListening(false);
         onSessionEndRef.current?.();
@@ -19186,19 +19206,17 @@
       recognition.onresult = (event) => {
         let final = "";
         let interim = "";
-        let hasFinal = false;
         for (let index = 0; index < event.results.length; index += 1) {
           const item = event.results[index];
           const transcript = item[0]?.transcript ?? "";
           if (item.isFinal) {
             final += transcript;
-            hasFinal = true;
           } else {
             interim += transcript;
           }
         }
-        const text2 = `${final}${interim}`.trim();
-        if (text2) onTextRef.current(hasFinal ? punctuateTranscript(text2, localeRef.current) : text2);
+        browserFinalRef.current = final;
+        browserInterimRef.current = interim;
       };
       recognitionRef.current = recognition;
       return () => {
@@ -19338,6 +19356,7 @@
       }
       const recognition = recognitionRef.current;
       if (!recognition) return;
+      browserCommitRef.current = true;
       activeRef.current = false;
       try {
         recognition.stop();
@@ -24029,6 +24048,7 @@
     const [saving, setSaving] = (0, import_react25.useState)(false);
     const [error, setError] = (0, import_react25.useState)("");
     const [dirty, setDirty] = (0, import_react25.useState)(false);
+    const friendlyError = (err) => err instanceof ApiError && err.code === "not_found" ? t("voice.endpointMissing") : errorMessage(err);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -24042,7 +24062,7 @@
         });
         setDirty(false);
       } catch (err) {
-        setError(errorMessage(err));
+        setError(friendlyError(err));
       } finally {
         setLoading(false);
       }
@@ -24073,7 +24093,7 @@
         onChanged();
         window.dispatchEvent(new Event("researchos:voice-settings-changed"));
       } catch (err) {
-        setError(t("settings.saveFailed", { error: errorMessage(err) }));
+        setError(t("settings.saveFailed", { error: friendlyError(err) }));
       } finally {
         setSaving(false);
       }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Mic, Save, ShieldCheck } from 'lucide-react'
-import { api, errorMessage } from '../api'
+import { ApiError, api, errorMessage } from '../api'
 import type { VoiceProvider, VoiceSettingsResponse } from '../types'
 import { StatusDot } from './ui'
 import { useTranslation } from '../i18n'
@@ -20,6 +20,10 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
   const [error, setError] = useState('')
   const [dirty, setDirty] = useState(false)
 
+  const friendlyError = (err: unknown) => err instanceof ApiError && err.code === 'not_found'
+    ? t('voice.endpointMissing')
+    : errorMessage(err)
+
   const load = async () => {
     setLoading(true)
     setError('')
@@ -33,7 +37,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
       })
       setDirty(false)
     } catch (err) {
-      setError(errorMessage(err))
+      setError(friendlyError(err))
     } finally {
       setLoading(false)
     }
@@ -68,7 +72,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
       onChanged()
       window.dispatchEvent(new Event('researchos:voice-settings-changed'))
     } catch (err) {
-      setError(t('settings.saveFailed', { error: errorMessage(err) }))
+      setError(t('settings.saveFailed', { error: friendlyError(err) }))
     } finally {
       setSaving(false)
     }

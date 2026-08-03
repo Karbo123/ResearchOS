@@ -119,6 +119,9 @@ export function VoiceInputButton({
   const groqReadyRef = useRef(groqReady)
   const activeRef = useRef(false)
   const processingRef = useRef(false)
+  const browserFinalRef = useRef('')
+  const browserInterimRef = useRef('')
+  const browserCommitRef = useRef(false)
 
   useEffect(() => {
     onTextRef.current = onText
@@ -153,21 +156,34 @@ export function VoiceInputButton({
   useEffect(() => {
     const recognition = createRecognition()
     if (!recognition) return
-    recognition.continuous = false
+    recognition.continuous = true
     recognition.interimResults = true
     recognition.maxAlternatives = 1
     recognition.lang = recognitionLanguage(locale)
     recognition.onstart = () => {
+      browserFinalRef.current = ''
+      browserInterimRef.current = ''
+      browserCommitRef.current = false
       activeRef.current = true
       setListening(true)
       setErrorKey(null)
     }
     recognition.onend = () => {
+      const text = `${browserFinalRef.current}${browserInterimRef.current}`.trim()
+      if (text && browserCommitRef.current) {
+        onTextRef.current(punctuateTranscript(text, localeRef.current))
+      }
+      browserFinalRef.current = ''
+      browserInterimRef.current = ''
+      browserCommitRef.current = false
       activeRef.current = false
       setListening(false)
       onSessionEndRef.current?.()
     }
     recognition.onerror = event => {
+      browserCommitRef.current = false
+      browserFinalRef.current = ''
+      browserInterimRef.current = ''
       activeRef.current = false
       setListening(false)
       onSessionEndRef.current?.()
@@ -178,19 +194,17 @@ export function VoiceInputButton({
     recognition.onresult = event => {
       let final = ''
       let interim = ''
-      let hasFinal = false
       for (let index = 0; index < event.results.length; index += 1) {
         const item = event.results[index]
         const transcript = item[0]?.transcript ?? ''
         if (item.isFinal) {
           final += transcript
-          hasFinal = true
         } else {
           interim += transcript
         }
       }
-      const text = `${final}${interim}`.trim()
-      if (text) onTextRef.current(hasFinal ? punctuateTranscript(text, localeRef.current) : text)
+      browserFinalRef.current = final
+      browserInterimRef.current = interim
     }
     recognitionRef.current = recognition
     return () => {
@@ -331,6 +345,7 @@ export function VoiceInputButton({
     }
     const recognition = recognitionRef.current
     if (!recognition) return
+    browserCommitRef.current = true
     activeRef.current = false
     try {
       recognition.stop()
