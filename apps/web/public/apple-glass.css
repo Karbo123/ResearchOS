@@ -128,6 +128,9 @@ button { -webkit-font-smoothing: inherit; }
 .sidebar-resizer:focus-visible::after,
 .sidebar-resizer.is-resizing::after { background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
 .sidebar-resizer:focus-visible { outline: none; }
+@media (max-width: 760px) {
+  .sidebar-resizer { display: none; }
+}
 .project-row {
   position: relative;
   width: 100%;

@@ -72,7 +72,7 @@ describe('claim review API', () => {
     const appliedCommit = applyApprovedPatch(projectId, proposal[0]!.payload, 'test-user')
     expect(appliedCommit).toMatch(/^[0-9a-f]{40}$/)
     const paper = readFileSync(pathInside(projectsRoot, projectId, 'paper', 'main.tex'), 'utf8')
-    expect(paper).toContain('Human-Reviewed Claim Mappings')
+    expect(paper).toContain('\\section{Related Work}')
     expect(paper).toContain('The paper supports this bounded claim.')
 
     const repeated = await requestJson(`/api/projects/${projectId}/claim-reviews/${reviewId}/decision`, {
