@@ -48,4 +48,4 @@ The supervisor enforces timeout, process-tree cancellation, bounded logs, requir
 
 ## Failure Semantics
 
-Model calls use zero retries at the Agent boundary. Configuration errors, upstream failures, timeouts, and invalid structured output return explicit API errors. No assistant message is stored unless Mastra produced a valid result. Workflow queue retries apply only to fixed deterministic workflow dispatch, not to model substitution.
+Model calls use zero retries at the Agent boundary and the OpenAI Responses provider. Operation-free base URLs are validated before use. Structured requests use strict `text.format.type=json_schema` output and do not send legacy `response_format` or `json_object` fields. Configuration errors, upstream failures, timeouts, and invalid structured output return explicit API errors. No assistant message is stored unless Mastra produced a valid result. Workflow queue retries apply only to fixed deterministic workflow dispatch, not to model substitution. Supermemory's closed child binary is an external boundary: Research OS validates the base URL passed to it, but cannot assert or rewrite that binary's internal LLM endpoint.

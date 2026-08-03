@@ -11,6 +11,18 @@ const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'med
 }
 export class ModelConfigurationError extends Error {}
 
+export function isResponsesBaseUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    const pathname = url.pathname.replace(/\/+$/, '').toLowerCase()
+    return !/(?:^|\/)chat\/completions$/.test(pathname)
+      && !/(?:^|\/)completions$/.test(pathname)
+      && !/(?:^|\/)responses$/.test(pathname)
+  } catch {
+    return false
+  }
+}
+
 function isAllowedModelUrl(value: string): boolean {
   let url: URL
   try {
@@ -60,12 +72,8 @@ export function loadModelConfig(tier: ModelTier): ModelConfig {
     }
   }
   const result = modelConfigSchema.safeParse(merged)
-  if (!result.success || !result.data.key || !isAllowedModelUrl(result.data.url)) {
+  if (!result.success || !result.data.key || !isAllowedModelUrl(result.data.url) || !isResponsesBaseUrl(result.data.url)) {
     throw new ModelConfigurationError(`${tier} model configuration is incomplete`)
   }
   return result.data
-}
-
-export function modelId(model: string): `${string}/${string}` {
-  return (model.includes('/') ? model : `openai/${model}`) as `${string}/${string}`
 }

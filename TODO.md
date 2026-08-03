@@ -1,6 +1,6 @@
 # Research OS TODO
 
-最后更新：2026-08-02（Asia/Shanghai）
+最后更新：2026-08-03（Asia/Shanghai）
 
 状态只使用：`[ ]` 待处理、`[~]` 进行中、`[x]` 已完成且已验证、`[!]` 外部阻塞。
 
@@ -467,6 +467,13 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `099c` 更新四语言文案、服务端错误、测试、README/架构说明和 URL 示例，明确四字符后缀不是语义词。
   - [x] `099d` 复查项目专属文件只写入 `projects/<project-id>/`；根目录 `artifacts/` 仅保留全局备份、验收/测试/运维材料和历史兼容迁移来源，并补充清晰的目录说明；数据库中的项目 Artifact/上传记录已全部落在项目路径，历史孤立文件不自动删除。
   - [x] `099e` 已完成类型检查、110 项服务端测试、slug/API 定向测试、UI/i18n 检查、Web/Server/Mastra 构建、文档/语言边界/导航检查、真实 API 迁移验证和差异检查；本任务相关文件可独立提交。
+
+- [x] `P0-MODEL-API-100` 全量审计并迁移 Research OS 的大模型请求到 OpenAI Responses API，修复结构化 JSON 请求契约并移除模型失败后的所有成功型 fallback。
+  - [x] `100a` 逐处核对 Mastra Agent、子 Agent 委派、Tools/Workflows/Evals 和服务端 Mastra client；Research OS 的所有生产模型请求都通过 `@ai-sdk/openai` 的 `responses()` 使用 `/responses`，没有 provider 自动切换回 `/chat/completions` 或旧 completions。Supermemory 闭源子进程不属于本仓库可改写的模型 provider，Research OS 只向它传递经过校验的 base URL，内部行为仍按 `P0-SUPERMEMORY-LOCAL-053` 记录。
+  - [x] `100b` 所有结构化调用使用 Responses Structured Outputs 的 `text.format.type=json_schema` 和严格业务 schema；请求不发送 `json_object` 或互斥的旧 `response_format` 字段，Agent/Skill 提示明确要求 JSON。
+  - [x] `100c` 模型配置 URL 统一作为 Responses API base URL 处理，拒绝包含 `/chat/completions`、`/completions` 或 `/responses` 的操作地址，并限制为 HTTPS 或回环/私有 HTTP；Luna/Terra/Sol 保持独立的 model、URL、key 和 reasoning effort，key 不进入返回值、日志或审计。
+  - [x] `100d` provider HTTP、超时、鉴权、schema、拒绝和空/不完整响应全部失败关闭，返回稳定结构化错误；没有默认助手消息、空成功结果、伪造项目 slug/计划或隐式换 provider。Guardrail detector provider 失败同样直接阻断请求。
+  - [x] `100e` 增加可捕获请求 URL/body 的 Responses 契约测试、4xx/5xx/超时/非法结构化响应、guardrail 失败关闭和 Mastra client 非 JSON 测试；已通过 typecheck、126 项全量服务端测试、build、model-failure、Mastra HITL/evals、Idea/navigation/UI 检查和主链真实验收（2 次真实模型调用）。Supermemory 真实验收已尝试但远端文档保持 `queued`，按既有 `P0-SUPERMEMORY-LOCAL-053` 外部阻塞记录，未伪造通过。
 
 ## 5. 平台任务和外部阻塞
 

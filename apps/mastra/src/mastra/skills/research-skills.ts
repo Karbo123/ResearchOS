@@ -11,7 +11,7 @@ Never use a fixed questionnaire or repeat answered questions. Match the user's l
 Do not execute code, browse, approve work, change project state, or claim that any research action ran.
 Set ready_for_confirmation only when the research question, domain, hypothesis, expected contribution, available data,
 success criteria, ethics/compliance, compute and data-access constraints are coherent enough for review.
-Return only the requested strict structured object.
+Return only the requested strict JSON object.
 `,
 })
 
@@ -23,7 +23,7 @@ Read the complete confirmed research Idea. Return exactly two distinct, concise,
 The keywords must describe the actual research topic, method, or dataset rather than generic words such as research,
 project, study, example, test, or work. Prefer recognizable technical terms (for example mnist, cnn, classification).
 Do not return a third word, punctuation, spaces, explanations, translations, claims of novelty, or invented details.
-Return only the requested strict structured object.
+Return only the requested strict JSON object.
 `,
 })
 
@@ -36,7 +36,7 @@ A change request needs a concrete allowlisted Idea field and value. A policy cha
 Use ambiguous with a clarification question when the target or value is unclear. Explanation and advice are never execution.
 Write assistant_reply as a concise, useful response in the user's language. Clearly state when an action needs a Proposal,
 approval, or a separate state-control request; never claim that the action has already happened.
-Return only the requested strict structured object.
+Return only the requested strict JSON object.
 `,
 })
 
@@ -49,6 +49,6 @@ Never invent datasets, repository code, licenses, citations, compute availabilit
 Never substitute a generic demo, synthetic benchmark, or unrelated baseline for the requested topic.
 Include topic-specific data, baselines, metrics, ablations, statistics, seeds, resources, risks, and decision criteria.
 The output is a proposal only. Do not include shell commands, paths, dependency instructions, or Runner arguments.
-Return only the requested strict structured object.
+Return only the requested strict JSON object.
 `,
 })

@@ -2,6 +2,7 @@ import { spawn, spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { GLOBAL_POOL_KEY, poolForKey, projectEmbeddingSettings, projectsUsingPool } from './project-embedding-settings.js'
+import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
 import { runtimeRoot } from './paths.js'
 import { supermemoryChildEnv } from './supermemory-env.js'
 
@@ -61,6 +62,10 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
     }
   }
   mkdirSync(poolDir(poolKey), { recursive: true })
+  const modelBaseUrl = (process.env.RESEARCH_MODEL_URL_MEDIUM || 'http://127.0.0.1:3000/v1').trim()
+  if (!isAllowedModelUrl(modelBaseUrl) || !isResponsesBaseUrl(modelBaseUrl)) {
+    throw new Error('RESEARCH_MODEL_URL_MEDIUM must use HTTPS or loopback/private HTTP and be a Responses API base URL before starting a Supermemory pool')
+  }
   const outFd = openSync(resolve(poolDir(poolKey), 'supermemory.out.log'), 'a')
   const errFd = openSync(resolve(poolDir(poolKey), 'supermemory.err.log'), 'a')
   const child = spawn(bin, [], {
@@ -78,7 +83,7 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
       SUPERMEMORY_NO_OPEN: '1',
       SUPERMEMORY_NO_UPDATE_CHECK: '1',
       SUPERMEMORY_DISABLE_TELEMETRY: '1',
-      OPENAI_BASE_URL: process.env.RESEARCH_MODEL_URL_MEDIUM || 'http://127.0.0.1:3000/v1',
+      OPENAI_BASE_URL: modelBaseUrl,
       OPENAI_MODEL: process.env.RESEARCH_MODEL_MEDIUM || 'gpt-5.6-luna',
       OPENAI_API_KEY: process.env.RESEARCH_MODEL_KEY_MEDIUM || '',
     }),

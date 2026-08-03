@@ -62,8 +62,8 @@ function generationOptions(context: RequestContext<z.infer<typeof agentRequestCo
   return {
     requestContext: context,
     model: configuredModel(context.get('tier')),
-    maxRetries: 0,
-    providerOptions: { openai: { reasoningEffort: config.reasoningEffort } },
+    modelSettings: { maxRetries: 0 },
+    providerOptions: { openai: { reasoningEffort: config.reasoningEffort, strictJsonSchema: true } },
     inputProcessors: [...guardrails.inputProcessors, ...(memory.inputProcessors || [])],
     outputProcessors: [...guardrails.outputProcessors, ...(memory.outputProcessors || [])],
   }
@@ -129,7 +129,7 @@ const apiRoutes = [
           ...(body.memory_resource && body.memory_thread ? {
             memory: { resource: body.memory_resource, thread: body.memory_thread },
           } : {}),
-          structuredOutput: { schema: adaptiveClarificationResultSchema, errorStrategy: 'strict' },
+          structuredOutput: { schema: adaptiveClarificationResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
         })
         const result = adaptiveClarificationResultSchema.parse(response.object)
         const config = context.get('modelConfig')
@@ -148,7 +148,7 @@ const apiRoutes = [
         const context = requestContext(body.tier)
         const response = await projectSlugAgent.generate(JSON.stringify({ confirmed_idea: body.idea }), {
           ...generationOptions(context),
-          structuredOutput: { schema: projectSlugResultSchema, errorStrategy: 'strict' },
+          structuredOutput: { schema: projectSlugResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
         })
         const result = projectSlugResultSchema.parse(response.object)
         const config = context.get('modelConfig')
@@ -174,7 +174,7 @@ const apiRoutes = [
           ...(body.memory_resource && body.memory_thread ? {
             memory: { resource: body.memory_resource, thread: body.memory_thread },
           } : {}),
-          structuredOutput: { schema: supervisionIntentSchema, errorStrategy: 'strict' },
+          structuredOutput: { schema: supervisionIntentSchema, errorStrategy: 'strict', jsonPromptInjection: false },
         })
         const result = supervisionIntentSchema.parse(response.object)
         const config = context.get('modelConfig')
@@ -195,7 +195,7 @@ const apiRoutes = [
           project_id: body.project_id, idea_version: body.idea_version, planning_context: body.planning_context,
         }), {
           ...generationOptions(context),
-          structuredOutput: { schema: experimentPlanSchema, errorStrategy: 'strict' },
+          structuredOutput: { schema: experimentPlanSchema, errorStrategy: 'strict', jsonPromptInjection: false },
         })
         return c.json({ result: experimentPlanSchema.parse(response.object) })
       } catch (error) {
@@ -228,7 +228,7 @@ const apiRoutes = [
               return { modifiedInstructions: '只返回审查结果或提案，不执行任何外部操作，不生成未经证实的事实。' }
             },
           },
-          structuredOutput: { schema: coordinatorResultSchema, errorStrategy: 'strict' },
+          structuredOutput: { schema: coordinatorResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
         })
         return c.json({ result: coordinatorResultSchema.parse(response.object), route: { tier: body.tier, model: context.get('modelConfig').model, reasoning_effort: context.get('modelConfig').reasoningEffort, max_steps: 4 } })
       } catch (error) {

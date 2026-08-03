@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-03-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-03-02 -->
 
 # Research OS
 
@@ -89,7 +89,7 @@ Run these in the WSL2 shell. Debug and verify the UI in Windows Chrome at `http:
 
 Luna, Terra, and Sol are fully independent. Each tier has its own model, URL, key, and reasoning effort. The settings API returns only `key_configured`; it never returns a key. Runtime code reads project `.env` and `runtime/model-settings.json`, never Codex configuration or authentication files.
 
-The project `.env` currently defaults all three tiers to the local OpenAI-compatible endpoint `http://127.0.0.1:3000/v1` (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Runtime settings may override each tier independently.
+The project `.env` currently defaults all three tiers to the local OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1` (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Research OS appends `/responses`; do not configure an operation URL such as `/chat/completions`, `/completions`, or `/responses`. Runtime settings may override each tier independently.
 
 - Luna (`gpt-5.6-luna`): `RESEARCH_MODEL_SIMPLE`, `RESEARCH_MODEL_URL_SIMPLE`, `RESEARCH_MODEL_KEY_SIMPLE`, `RESEARCH_REASONING_SIMPLE`
 - Terra (`gpt-5.6-terra`): `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM`
@@ -97,6 +97,8 @@ The project `.env` currently defaults all three tiers to the local OpenAI-compat
 - Shared request limit: `MODEL_REQUEST_TIMEOUT_SECONDS`
 
 HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC1918 private addresses, including local OpenAI-compatible services.
+
+Every production Mastra Agent, delegated sub-Agent, guardrail detector, and experiment-planning request uses the OpenAI Responses provider. Structured outputs use a strict `text.format.type=json_schema` schema and never send the legacy `response_format` field or `json_object`. Provider HTTP errors, timeouts, authentication failures, invalid responses, and schema failures are returned as structured errors; no default assistant reply, empty success, provider switch, or unrelated experiment fallback is generated. The external Supermemory binary receives the same operation-free base URL for its own LLM extraction; its internal API implementation is outside this repository and is not silently represented as a Research OS Responses call.
 
 ## Claim Review and Evidence
 

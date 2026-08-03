@@ -60,9 +60,9 @@ For the retained PostgreSQL SQL dump, generate a separate PGlite candidate with 
 
 Use the lower-left settings button or edit project `.env`. Luna, Terra, and Sol are independent. A blank key in the Web form preserves the existing key. The settings API never returns key material.
 
-The checked configuration template uses `http://127.0.0.1:3000/v1` for all three default model URLs (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Keep the `/v1` suffix; each tier can be overridden independently.
+The checked configuration template uses `http://127.0.0.1:3000/v1` as the Responses API base for all three model tiers (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Keep the `/v1` suffix and omit operation paths; Research OS appends `/responses` and rejects `/responses`, `/chat/completions`, and `/completions` values. Each tier can be overridden independently.
 
-Private HTTP endpoints are accepted; public remote endpoints require HTTPS. A failed request is not retried through another model or provider.
+Private HTTP endpoints are accepted; public remote endpoints require HTTPS. All Mastra model and guardrail calls use Responses with strict JSON Schema output where structured output is requested. A failed request is returned as a structured error and is not retried through another model or provider.
 
 ## Supermemory Operations
 

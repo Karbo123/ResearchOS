@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
 
 export const uuid = z.string().uuid()
 export const clarificationMode = z.enum(['automatic', 'detailed'])
@@ -57,7 +58,9 @@ export const projectOrderRequest = z.object({
 })
 export const modelTierSettings = z.object({
   model: z.string().trim().min(1).max(200),
-  url: z.string().url().max(500),
+  url: z.string().url().max(500)
+    .refine(isAllowedModelUrl, 'model URL must use HTTPS or loopback/private HTTP')
+    .refine(isResponsesBaseUrl, 'model URL must be a Responses API base URL, not an operation endpoint'),
   key: z.string().max(1000),
   reasoning_effort: z.enum(['low', 'medium', 'high']),
 }).strict()

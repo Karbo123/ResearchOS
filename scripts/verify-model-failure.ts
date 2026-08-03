@@ -9,8 +9,12 @@ const previous = existsSync(settingsPath) ? readFileSync(settingsPath) : null
 
 async function jsonRequest(path: string, init?: RequestInit) {
   const response = await fetch(`${apiBase}${path}`, { ...init, signal: AbortSignal.timeout(300_000) })
-  const payload = await response.json().catch(() => ({})) as Record<string, unknown>
-  return { response, payload }
+  const raw = await response.text()
+  let payload: unknown
+  try { payload = JSON.parse(raw) }
+  catch { throw new Error(`non-JSON API response (${response.status})`) }
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw new Error(`invalid API response shape (${response.status})`)
+  return { response, payload: payload as Record<string, unknown> }
 }
 
 function roleCount(messages: unknown[], role: string): number {

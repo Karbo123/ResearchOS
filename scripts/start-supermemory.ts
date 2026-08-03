@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } 
 import { spawn, spawnSync } from 'node:child_process'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { isAllowedModelUrl, isResponsesBaseUrl } from '../apps/server/src/model-url.js'
 import { supermemoryChildEnv } from '../apps/server/src/supermemory-env.js'
 
 const sourceDirectory = dirname(fileURLToPath(import.meta.url))
@@ -72,6 +73,11 @@ if (!modelKey) {
   console.error('RESEARCH_MODEL_KEY_MEDIUM is not set in .env; Supermemory LLM extraction needs a model key')
   process.exit(1)
 }
+const modelBaseUrl = (process.env.RESEARCH_MODEL_URL_MEDIUM || 'http://127.0.0.1:3000/v1').trim()
+if (!isAllowedModelUrl(modelBaseUrl) || !isResponsesBaseUrl(modelBaseUrl)) {
+  console.error('RESEARCH_MODEL_URL_MEDIUM must use HTTPS or loopback/private HTTP and be a Responses API base URL, not /responses, /chat/completions, or /completions')
+  process.exit(1)
+}
 
 mkdirSync(runtimeDir, { recursive: true })
 const outFd = openSync(resolve(runtimeDir, 'supermemory.out.log'), 'a')
@@ -81,7 +87,7 @@ const child = spawn(bin, [], {
   detached: true,
   stdio: ['ignore', outFd, errFd],
   env: supermemoryChildEnv({
-    OPENAI_BASE_URL: process.env.RESEARCH_MODEL_URL_MEDIUM || 'http://127.0.0.1:3000/v1',
+    OPENAI_BASE_URL: modelBaseUrl,
     OPENAI_MODEL: process.env.RESEARCH_MODEL_MEDIUM || 'gpt-5.6-luna',
     OPENAI_API_KEY: modelKey,
     SUPERMEMORY_DISABLE_TELEMETRY: '1',

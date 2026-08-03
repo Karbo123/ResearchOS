@@ -6,7 +6,7 @@ Research OS is a single-user local MVP. It listens only on loopback inside WSL2 
 
 ## Model Boundary
 
-Agents receive validated, bounded business objects. They do not receive process, SQL, arbitrary path, credential, or unrestricted network tools. Model output is never interpreted as a command. Model failure returns a structured error and no assistant message is persisted.
+Agents receive validated, bounded business objects. They do not receive process, SQL, arbitrary path, credential, or unrestricted network tools. Research OS uses the OpenAI Responses provider with operation-free base URL validation; structured calls use strict JSON Schema and do not fall back to legacy JSON mode. Model output is never interpreted as a command. Model failure returns a structured error and no assistant message is persisted.
 
 Luna, Terra, and Sol credentials are independent. Public settings expose only `key_configured`. Runtime code does not read Codex configuration or authentication files. Logs, audits, workflow inputs, and reports must not contain model keys.
 

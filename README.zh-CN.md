@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-03-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-03-02 -->
 
 # Research OS
 
@@ -89,7 +89,7 @@ npm test
 
 Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和 reasoning effort。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
-项目 `.env` 当前将三档默认 URL 都设为本地 OpenAI-compatible 端点 `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。运行时设置仍可完全独立地覆盖每一档。
+项目 `.env` 当前将三档默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
 
 - Luna（`gpt-5.6-luna`）：`RESEARCH_MODEL_SIMPLE`、`RESEARCH_MODEL_URL_SIMPLE`、`RESEARCH_MODEL_KEY_SIMPLE`、`RESEARCH_REASONING_SIMPLE`
 - Terra（`gpt-5.6-terra`）：`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM`
@@ -97,6 +97,8 @@ Luna、Terra、Sol 三档完全独立，每档分别拥有 model、URL、key 和
 - 共享请求时限：`MODEL_REQUEST_TIMEOUT_SECONDS`
 
 系统接受 HTTPS 端点；HTTP 只允许回环地址和 RFC1918 私有地址，包括本地 OpenAI-compatible 服务。
+
+所有生产 Mastra Agent、子 Agent 委派、提示注入检测器和实验计划请求都使用 OpenAI Responses provider。结构化输出统一使用严格的 `text.format.type=json_schema` 业务 schema，不发送旧的 `response_format` 字段，也不发送会触发当前错误的 `json_object`。provider HTTP 错误、超时、鉴权失败、非法响应和 schema 错误都会返回结构化错误；系统不会生成默认助手回复、空成功结果、隐式切换 provider 或无关实验 fallback。外部 Supermemory 二进制只接收同一个不带操作后缀的 base URL 来执行它自己的 LLM 抽取；其内部 API 实现不在本仓库内，不能被误称为 Research OS 已控制的 Responses 请求。
 
 ## Claim 与证据复核
 
