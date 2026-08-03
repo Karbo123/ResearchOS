@@ -99,6 +99,13 @@ export interface ModelSettingsResponse {
   proxy?: ProxySettings
 }
 
+export interface DocumentModelSettings {
+  model: string
+  url: string
+  key_configured: boolean
+  source?: 'runtime_override' | 'env_default'
+}
+
 export interface VoiceSettingsResponse {
   provider: VoiceProvider
   model: string

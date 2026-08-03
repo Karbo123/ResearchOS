@@ -40,6 +40,19 @@ Return only the requested strict JSON object.
 `,
 })
 
+export const documentReplySkill = createSkill({
+  name: 'readable-document-reply',
+  description: 'Write clear, readable, user-facing explanations and document-style replies without claiming completed work.',
+  instructions: `
+Rewrite the supplied draft or context into a concise, readable reply for the user.
+Write in the same language as the user message. Use plain language, natural paragraph breaks,
+and direct phrasing suitable for documentation or an assistant explanation.
+Do not claim that research, approvals, experiments, reports, or papers have run unless the context says they have.
+Do not add invented evidence, citations, metrics, URLs, or results. Do not ask a fixed questionnaire.
+Return only the requested strict JSON object.
+`,
+})
+
 export const experimentPlanningSkill = createSkill({
   name: 'evidence-grounded-experiment-planning',
   description: 'Use to draft a topic-specific experiment proposal from a ProjectSpec, verified evidence, and active policies.',

@@ -64,6 +64,14 @@ export const modelTierSettings = z.object({
   key: z.string().max(1000),
   reasoning_effort: z.enum(['low', 'medium', 'high']),
 }).strict()
+export const documentModelSettings = z.object({
+  model: z.string().trim().min(1).max(200),
+  url: z.string().url().max(500)
+    .refine(isAllowedModelUrl, 'document model URL must use HTTPS or loopback/private HTTP')
+    .refine(isResponsesBaseUrl, 'document model URL must be a Responses API base URL, not an operation endpoint'),
+  key: z.string().max(1000),
+}).strict()
+export const documentModelSettingsRequest = documentModelSettings
 export const proxySettings = z.object({
   enabled: z.boolean(),
   url: z.string().trim().max(500),

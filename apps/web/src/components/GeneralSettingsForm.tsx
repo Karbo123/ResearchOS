@@ -130,7 +130,7 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
           </div>
           <span className="tier-default">{t('settings.default')} {proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}</span>
         </div>
-        <div className="settings-proxy-controls">
+        <div className="settings-proxy-row">
           <label className="settings-switch">
             <input
               type="checkbox"
@@ -141,17 +141,21 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
             <span className="settings-switch-track" aria-hidden="true"><span /></span>
             <span>{t('settings.proxyEnabled')}</span>
           </label>
-          <label>
-            {t('settings.proxyUrl')}
-            <input
-              type="url"
-              value={proxy.url}
-              disabled={!proxy.enabled || loading}
-              maxLength={500}
-              placeholder="http://127.0.0.1:7890"
-              onChange={event => updateProxy('url', event.target.value)}
-            />
-          </label>
+          {proxy.enabled ? (
+            <label className="settings-proxy-url">
+              <span>{t('settings.proxyUrl')}</span>
+              <input
+                type="url"
+                value={proxy.url}
+                disabled={loading}
+                maxLength={500}
+                placeholder="http://127.0.0.1:7890"
+                onChange={event => updateProxy('url', event.target.value)}
+              />
+            </label>
+          ) : (
+            <span className="settings-proxy-state">{t('settings.proxyDisabled')}</span>
+          )}
         </div>
         <p className="settings-note">
           <ShieldCheck size={16} />

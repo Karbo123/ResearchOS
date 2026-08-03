@@ -73,4 +73,29 @@ describe('public model settings', () => {
     expect(after.simple.model).toBe(before.simple.model)
     expect(after.simple.key).toBe(before.simple.key)
   })
+
+  it('persists the document model settings without returning the key', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-document-settings-${process.pid}`)
+    vi.resetModules()
+    const { privateModelSettings, publicDocumentSettings, saveDocumentSettings } = await import('../src/model-settings.js')
+    const saved = saveDocumentSettings({
+      model: 'deepseek-v4-flash',
+      url: 'http://127.0.0.1:3000/v1',
+      key: 'document-key',
+    })
+    expect(saved).toMatchObject({
+      model: 'deepseek-v4-flash',
+      url: 'http://127.0.0.1:3000/v1',
+      key_configured: true,
+    })
+    expect(publicDocumentSettings()).not.toHaveProperty('key')
+    expect(privateModelSettings().document.key).toBe('document-key')
+
+    saveDocumentSettings({
+      model: 'deepseek-v4-flash',
+      url: 'http://127.0.0.1:3000/v1',
+      key: '',
+    })
+    expect(privateModelSettings().document.key).toBe('document-key')
+  })
 })

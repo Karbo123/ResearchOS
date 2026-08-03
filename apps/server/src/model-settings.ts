@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { modelSettingsRequest, proxySettingsRequest, type ModelTier } from './contracts.js'
+import { documentModelSettingsRequest, modelSettingsRequest, proxySettingsRequest, type ModelTier } from './contracts.js'
 import { runtimeRoot } from './paths.js'
 
 interface TierSettings {
@@ -15,13 +15,20 @@ interface ProxySettings {
   url: string
 }
 
-type ModelSettings = Record<ModelTier, TierSettings> & { proxy: ProxySettings }
+interface DocumentSettings {
+  model: string
+  url: string
+  key: string
+}
+
+type ModelSettings = Record<ModelTier, TierSettings> & { document: DocumentSettings; proxy: ProxySettings }
 
 const settingsPath = resolve(runtimeRoot, 'model-settings.json')
 const defaults: ModelSettings = {
   simple: envTier('SIMPLE', 'gpt-5.6-luna', 'low'),
   medium: envTier('MEDIUM', 'gpt-5.6-terra', 'medium'),
   complex: envTier('COMPLEX', 'gpt-5.6-sol', 'high'),
+  document: envDocument(),
   proxy: envProxy(),
 }
 
@@ -39,6 +46,14 @@ function envProxy(): ProxySettings {
   return { enabled: Boolean(url), url }
 }
 
+function envDocument(): DocumentSettings {
+  return {
+    model: process.env.RESEARCH_DOCUMENT_MODEL?.trim() || 'deepseek-v4-flash',
+    url: process.env.RESEARCH_DOCUMENT_MODEL_URL?.trim() || 'http://127.0.0.1:3000/v1',
+    key: process.env.RESEARCH_DOCUMENT_MODEL_KEY?.trim() || process.env.RESEARCH_MODEL_KEY_MEDIUM?.trim() || '',
+  }
+}
+
 export function privateModelSettings() {
   const merged = structuredClone(defaults)
   if (!existsSync(settingsPath)) return merged
@@ -51,6 +66,12 @@ export function privateModelSettings() {
   const savedProxy = saved.proxy
   if (savedProxy && typeof savedProxy.enabled === 'boolean' && typeof savedProxy.url === 'string') {
     merged.proxy = { enabled: savedProxy.enabled, url: savedProxy.url }
+  }
+  const savedDocument = saved.document
+  if (savedDocument && typeof savedDocument === 'object') {
+    for (const field of ['model', 'url', 'key'] as const) {
+      if (typeof savedDocument[field] === 'string' && savedDocument[field]) merged.document[field] = savedDocument[field] as never
+    }
   }
   return merged
 }
@@ -70,6 +91,16 @@ export function publicProxySettings() {
   return privateModelSettings().proxy
 }
 
+export function publicDocumentSettings() {
+  const settings = privateModelSettings()
+  return {
+    model: settings.document.model,
+    url: settings.document.url,
+    key_configured: Boolean(settings.document.key),
+    source: existsSync(settingsPath) ? 'runtime_override' : 'env_default',
+  }
+}
+
 export function saveModelSettings(input: unknown) {
   const parsed = modelSettingsRequest.parse(input)
   const current = privateModelSettings()
@@ -83,6 +114,20 @@ export function saveModelSettings(input: unknown) {
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
   renameSync(temporary, settingsPath)
   return publicModelSettings()
+}
+
+export function saveDocumentSettings(input: unknown) {
+  const parsed = documentModelSettingsRequest.parse(input)
+  const current = privateModelSettings()
+  current.document = {
+    model: parsed.model.trim(),
+    url: parsed.url.trim(),
+    key: parsed.key.trim() || current.document.key,
+  }
+  const temporary = `${settingsPath}.tmp`
+  writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
+  renameSync(temporary, settingsPath)
+  return publicDocumentSettings()
 }
 
 export function saveProxySettings(input: unknown) {

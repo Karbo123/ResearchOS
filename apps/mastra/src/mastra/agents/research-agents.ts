@@ -4,7 +4,7 @@ import { Memory } from '@mastra/memory'
 import { agentRequestContextSchema, type ModelTier } from '../contracts.js'
 import { loadModelConfig, ModelConfigurationError } from '../model-config.js'
 import { proxyFetch } from '../proxy-fetch.js'
-import { experimentPlanningSkill, ideaClarificationSkill, projectSlugSkill, supervisionIntentSkill } from '../skills/research-skills.js'
+import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, projectSlugSkill, supervisionIntentSkill } from '../skills/research-skills.js'
 import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
 const ideaMemory = new Memory({ options: { lastMessages: 12 } })
@@ -54,6 +54,16 @@ export const supervisionIntentAgent = new Agent({
   model: () => configuredModel('complex'),
   memory: ideaMemory,
   skills: [supervisionIntentSkill],
+})
+
+export const documentReplyAgent = new Agent({
+  id: 'document-reply-agent',
+  name: 'Readable Document Reply Agent',
+  requestContextSchema: agentRequestContextSchema,
+  maxRetries: 0,
+  instructions: documentReplySkill.instructions,
+  model: () => configuredModel('document'),
+  skills: [documentReplySkill],
 })
 
 export const experimentPlanningAgent = new Agent({

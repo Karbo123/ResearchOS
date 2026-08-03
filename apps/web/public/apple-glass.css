@@ -1463,6 +1463,14 @@ a.secondary { text-decoration: none; color: var(--ink); }
   border-color: transparent;
   box-shadow: none;
 }
+.settings-model-sections {
+  margin-top: 4px;
+}
+.settings-model-sections > button {
+  font-size: 12px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
 
 .settings-general-card,
 .settings-proxy-card {
@@ -1528,17 +1536,25 @@ a.secondary { text-decoration: none; color: var(--ink); }
   grid-column: 1 / -1;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.settings-proxy-controls {
+.settings-proxy-row {
   display: grid;
-  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
   margin-top: 2px;
 }
-.settings-proxy-controls > label:last-child {
+.settings-proxy-url {
   display: grid;
-  gap: 5px;
+  gap: 4px;
+  min-width: 0;
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
+}
+.settings-proxy-state {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
 }
 .settings-switch {
   display: inline-flex;
@@ -1595,6 +1611,9 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .settings-field-row {
     grid-template-columns: 1fr;
     gap: 7px;
+  }
+  .settings-proxy-row {
+    grid-template-columns: 1fr;
   }
   .settings-general-card,
   .settings-proxy-card {

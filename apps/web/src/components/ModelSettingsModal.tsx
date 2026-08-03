@@ -1,37 +1,41 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Save, ShieldCheck } from 'lucide-react'
-import { api, errorMessage } from '../api'
-import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
-import { ConfirmDialog, Modal, StatusDot } from './ui'
+import { Modal, ConfirmDialog } from './ui'
 import { GeneralSettingsForm } from './GeneralSettingsForm'
+import { CodeModelSettingsForm } from './CodeModelSettingsForm'
+import { DocumentModelSettingsForm } from './DocumentModelSettingsForm'
 import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
 import { VoiceSettingsForm } from './VoiceSettingsForm'
 import { useTranslation, type TranslationKey } from '../i18n'
 
-const TIERS: Array<{ id: TierId; label: string; defaultEffort: ReasoningEffort }> = [
-  { id: 'simple', label: 'Luna', defaultEffort: 'low' },
-  { id: 'medium', label: 'Terra', defaultEffort: 'medium' },
-  { id: 'complex', label: 'Sol', defaultEffort: 'high' },
-]
-
-type SettingsTab = 'general' | 'models' | 'voice' | 'embedding'
+type SettingsTab = 'general' | 'models'
+type ModelSubTab = 'code' | 'document' | 'embedding' | 'voice'
+type PendingSwitch = { kind: 'tab' | 'subtab'; value: string } | null
 
 const TABS: Array<{ id: SettingsTab; labelKey: TranslationKey }> = [
   { id: 'general', labelKey: 'settings.generalTab' },
   { id: 'models', labelKey: 'settings.modelsTab' },
-  { id: 'voice', labelKey: 'settings.voiceTab' },
-  { id: 'embedding', labelKey: 'settings.embeddingTab' },
 ]
 
-interface TierFormValues extends ModelTierSettings {
-  key: string
-}
+const MODEL_TABS: Array<{ id: ModelSubTab; labelKey: TranslationKey }> = [
+  { id: 'code', labelKey: 'settings.codeModelsTab' },
+  { id: 'document', labelKey: 'settings.documentTab' },
+  { id: 'embedding', labelKey: 'settings.embeddingTab' },
+  { id: 'voice', labelKey: 'settings.voiceTab' },
+]
 
-function sourceLabelKey(value?: string) {
-  return value === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv'
-}
-
-function SettingsSlidingNav({ active, onChange }: { active: SettingsTab; onChange: (next: SettingsTab) => void }) {
+function SettingsSlidingNav({
+  active,
+  onChange,
+  items,
+  className = '',
+  ariaLabel,
+}: {
+  active: string
+  onChange: (next: string) => void
+  items: Array<{ id: string; labelKey: TranslationKey }>
+  className?: string
+  ariaLabel: string
+}) {
   const { t } = useTranslation()
   const navRef = useRef<HTMLDivElement>(null)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
@@ -52,25 +56,25 @@ function SettingsSlidingNav({ active, onChange }: { active: SettingsTab; onChang
       observer?.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [active])
+  }, [active, items])
 
   return (
-    <div ref={navRef} className="sliding-nav settings-tabs" role="tablist" aria-label={t('settings.title')}>
+    <div ref={navRef} className={`sliding-nav settings-tabs ${className}`.trim()} role="tablist" aria-label={ariaLabel}>
       <span
         className={`sliding-tab-indicator${indicator.ready ? ' ready' : ''}`}
         aria-hidden="true"
         style={{ left: indicator.left, width: indicator.width }}
       />
-      {TABS.map(tab => (
+      {items.map(item => (
         <button
-          key={tab.id}
+          key={item.id}
           type="button"
           role="tab"
-          aria-selected={tab.id === active}
-          data-active={tab.id === active ? 'true' : 'false'}
-          onClick={() => onChange(tab.id)}
+          aria-selected={item.id === active}
+          data-active={item.id === active ? 'true' : 'false'}
+          onClick={() => onChange(item.id)}
         >
-          {t(tab.labelKey)}
+          {t(item.labelKey)}
         </button>
       ))}
     </div>
@@ -80,123 +84,68 @@ function SettingsSlidingNav({ active, onChange }: { active: SettingsTab; onChang
 export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean; onClose: () => void; projectId: string | null }) {
   const { t } = useTranslation()
   const [tab, setTab] = useState<SettingsTab>('general')
-  const [values, setValues] = useState<Record<TierId, TierFormValues> | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [subTab, setSubTab] = useState<ModelSubTab>('code')
   const [dirty, setDirty] = useState(false)
-  const [confirmSwitchTo, setConfirmSwitchTo] = useState<SettingsTab | null>(null)
-  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [pending, setPending] = useState<PendingSwitch>(null)
 
   useEffect(() => {
     if (!open) return
     setTab('general')
-    setValues(null)
+    setSubTab('code')
     setDirty(false)
-    setError('')
-    setConfirmSwitchTo(null)
-    setConfirmOpen(false)
+    setPending(null)
   }, [open])
-
-  useEffect(() => {
-    if (!open || tab !== 'models') return
-    setLoading(true)
-    setError('')
-    api<ModelSettingsResponse>('/api/settings/models')
-      .then(result => {
-        const next = {} as Record<TierId, TierFormValues>
-        for (const tier of TIERS) {
-          const item = result.tiers[tier.id] || {}
-          next[tier.id] = {
-            model: item.model || '',
-            url: item.url || '',
-            key: '',
-            reasoning_effort: item.reasoning_effort || tier.defaultEffort,
-            key_configured: item.key_configured,
-            sources: item.sources,
-          }
-        }
-        setValues(next)
-      })
-      .catch(err => setError(errorMessage(err)))
-      .finally(() => setLoading(false))
-  }, [open, tab])
 
   if (!open) return null
 
-  const update = (tier: TierId, field: keyof TierFormValues, value: string | ReasoningEffort) => {
-    setValues(previous => previous ? {
-      ...previous,
-      [tier]: { ...previous[tier], [field]: value },
-    } : previous)
-    setDirty(true)
-  }
-
   const requestClose = () => {
     if (dirty) {
-      setConfirmSwitchTo(null)
-      setConfirmOpen(true)
+      setPending({ kind: 'tab', value: 'close' })
       return
     }
     onClose()
   }
 
-  const switchTab = (next: SettingsTab) => {
-    if (tab === 'models' && dirty && next !== 'models') {
-      setConfirmSwitchTo(next)
-      setConfirmOpen(true)
+  const switchTopTab = (next: SettingsTab) => {
+    if (dirty && next !== tab) {
+      setPending({ kind: 'tab', value: next })
       return
     }
-    if (next === 'models') setValues(null)
-    setError('')
+    setDirty(false)
     setTab(next)
   }
 
-  const save = async (event: React.FormEvent) => {
-    event.preventDefault()
-    if (!values || loading) return
-    setError('')
-    try {
-      const payload = {} as Record<TierId, { model: string; url: string; key: string; reasoning_effort: ReasoningEffort }>
-      for (const tier of TIERS) {
-        const item = values[tier.id]
-        payload[tier.id] = {
-          model: item.model.trim(),
-          url: item.url.trim(),
-          key: item.key,
-          reasoning_effort: item.reasoning_effort || tier.defaultEffort,
-        }
-      }
-      const result = await api<ModelSettingsResponse>('/api/settings/models', {
-        method: 'PUT',
-        body: JSON.stringify(payload),
-      })
-      const next = {} as Record<TierId, TierFormValues>
-      for (const tier of TIERS) {
-        const item = result.tiers[tier.id] || {}
-        next[tier.id] = {
-          model: item.model || values[tier.id].model,
-          url: item.url || '',
-          key: '',
-          reasoning_effort: item.reasoning_effort || tier.defaultEffort,
-          key_configured: item.key_configured,
-          sources: item.sources,
-        }
-      }
-      setValues(next)
-      setDirty(false)
-      onClose()
-    } catch (err) {
-      setError(`${t('settings.saveFailed', { error: errorMessage(err) })}${t('settings.keyHint')}`)
+  const switchSubTab = (next: ModelSubTab) => {
+    if (dirty && next !== subTab) {
+      setPending({ kind: 'subtab', value: next })
+      return
     }
+    setDirty(false)
+    setSubTab(next)
+  }
+
+  const confirmPending = () => {
+    if (!pending) return
+    if (pending.kind === 'tab' && pending.value === 'close') {
+      onClose()
+    } else if (pending.kind === 'tab') {
+      setTab(pending.value as SettingsTab)
+    } else {
+      setSubTab(pending.value as ModelSubTab)
+    }
+    setDirty(false)
+    setPending(null)
   }
 
   const description = tab === 'general'
     ? t('settings.generalDescription')
-    : tab === 'models'
-      ? t('settings.modelsDescription')
-      : tab === 'voice'
-        ? t('settings.voiceDescription')
-        : t('settings.embeddingDescription')
+    : subTab === 'code'
+      ? t('settings.codeModelsDescription')
+      : subTab === 'document'
+        ? t('settings.documentDescription')
+        : subTab === 'embedding'
+          ? t('settings.embeddingDescription')
+          : t('settings.voiceDescription')
 
   return (
     <>
@@ -206,128 +155,56 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
         description={description}
         onClose={requestClose}
       >
-        <SettingsSlidingNav active={tab} onChange={switchTab} />
+        <SettingsSlidingNav
+          active={tab}
+          onChange={next => switchTopTab(next as SettingsTab)}
+          items={TABS}
+          ariaLabel={t('settings.title')}
+        />
         {tab === 'general' ? (
           <GeneralSettingsForm onChanged={() => setDirty(false)} />
-        ) : tab === 'embedding' ? (
-          projectId ? (
-            <ProjectEmbeddingSettingsForm
-              projectId={projectId}
-              onChanged={() => setDirty(false)}
-            />
-          ) : (
-            <div className="empty">{t('settings.openProjectFirst')}</div>
-          )
-        ) : tab === 'voice' ? (
-          <VoiceSettingsForm onChanged={() => setDirty(false)} />
-        ) : loading ? (
-          <div className="empty">{t('settings.loadingModels')}</div>
-        ) : values ? (
-          <form className="model-settings-form" onSubmit={save}>
-            {TIERS.map(tier => {
-              const item = values[tier.id]
-              return (
-                <section className="model-tier" key={tier.id}>
-                  <div className="model-tier-heading">
-                    <div>
-                      <h3>{tier.label}<span className="badge neutral">{tier.id}</span></h3>
-                      <div className="tier-status">
-                        <StatusDot ready={Boolean(item.key_configured && item.url)} />
-                        {item.key_configured ? t('settings.keyConfigured') : t('settings.keyPending')} · {item.url ? t('settings.urlReady') : t('settings.urlPending')}
-                      </div>
-                      <div className="tier-sources">
-                        <span>{t('settings.urlLabel')} · {t(sourceLabelKey(item.sources?.url) as any)}</span>
-                        <span>{t('settings.keyLabel')} · {t(sourceLabelKey(item.sources?.key) as any)}</span>
-                      </div>
-                    </div>
-                    <span className="tier-default">{t('settings.default')} {tier.defaultEffort}</span>
-                  </div>
-                  <div className="model-tier-grid">
-                    <label>
-                      {t('settings.modelName')}
-                      <input
-                        value={item.model}
-                        required
-                        maxLength={200}
-                        onChange={event => update(tier.id, 'model', event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      {t('settings.reasoningEffort')}
-                      <select
-                        value={item.reasoning_effort}
-                        onChange={event => update(tier.id, 'reasoning_effort', event.target.value as ReasoningEffort)}
-                      >
-                        <option value="low">{t('settings.low')}</option>
-                        <option value="medium">{t('settings.medium')}</option>
-                        <option value="high">{t('settings.high')}</option>
-                      </select>
-                    </label>
-                    <label>
-                      {t('settings.modelUrl')}
-                      <input
-                        type="url"
-                        value={item.url}
-                        required
-                        maxLength={500}
-                        placeholder="https://.../v1"
-                        onChange={event => update(tier.id, 'url', event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      {t('settings.apiKey')}
-                      <input
-                        type="password"
-                        value={item.key}
-                        placeholder={item.key_configured ? t('settings.keyKeep') : t('settings.keyPlaceholder')}
-                        autoComplete="new-password"
-                        maxLength={1000}
-                        onChange={event => update(tier.id, 'key', event.target.value)}
-                      />
-                    </label>
-                  </div>
-                </section>
-              )
-            })}
-            <p className="settings-note">
-              <ShieldCheck size={16} />
-              <span>{t('settings.securityNote')}</span>
-            </p>
-            {error ? <div className="form-error" role="alert">{error}</div> : null}
-            <div className="modal-actions">
-              <button className="secondary" type="button" onClick={requestClose}>{t('common.cancel')}</button>
-              <button className="primary" type="submit" disabled={loading}>
-                <Save size={16} />
-                {t('settings.save')}
-              </button>
-            </div>
-          </form>
         ) : (
-          <div className="form-error" role="alert">{error || t('settings.loadFailed')}</div>
+          <>
+            <SettingsSlidingNav
+              active={subTab}
+              onChange={next => switchSubTab(next as ModelSubTab)}
+              items={MODEL_TABS}
+              className="settings-model-sections"
+              ariaLabel={t('settings.modelsTab')}
+            />
+            {subTab === 'code' ? (
+              <CodeModelSettingsForm
+                onClose={requestClose}
+                onDirtyChange={setDirty}
+                onSaved={() => setDirty(false)}
+              />
+            ) : subTab === 'document' ? (
+              <DocumentModelSettingsForm
+                onChanged={() => setDirty(false)}
+                onDirtyChange={setDirty}
+              />
+            ) : subTab === 'embedding' ? (
+              projectId ? (
+                <ProjectEmbeddingSettingsForm
+                  projectId={projectId}
+                  onChanged={() => setDirty(false)}
+                />
+              ) : (
+                <div className="empty">{t('settings.openProjectFirst')}</div>
+              )
+            ) : (
+              <VoiceSettingsForm onChanged={() => setDirty(false)} />
+            )}
+          </>
         )}
       </Modal>
-      {confirmOpen ? (
+      {pending ? (
         <ConfirmDialog
           title={t('settings.discardTitle')}
           description={t('settings.discardDescription')}
           confirmLabel={t('settings.discardConfirm')}
-          onConfirm={() => {
-            const target = confirmSwitchTo
-            setConfirmSwitchTo(null)
-            setConfirmOpen(false)
-            setDirty(false)
-            if (target) {
-              if (target === 'models') setValues(null)
-              setError('')
-              setTab(target)
-            } else {
-              onClose()
-            }
-          }}
-          onCancel={() => {
-            setConfirmSwitchTo(null)
-            setConfirmOpen(false)
-          }}
+          onConfirm={confirmPending}
+          onCancel={() => setPending(null)}
         />
       ) : null}
     </>

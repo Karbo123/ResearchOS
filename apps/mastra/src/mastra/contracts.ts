@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const modelTierSchema = z.enum(['simple', 'medium', 'complex'])
+export const modelTierSchema = z.enum(['simple', 'medium', 'complex', 'document'])
 export type ModelTier = z.infer<typeof modelTierSchema>
 export const reasoningEffortSchema = z.enum(['low', 'medium', 'high'])
 
@@ -75,6 +75,16 @@ export const supervisionIntentSchema = z.object({
   policy_rule: z.string().max(2000).nullable(),
   clarification_question: z.string().max(2000).nullable(),
   assistant_reply: z.string().min(1).max(6000),
+}).strict()
+
+export const documentReplyRequestSchema = z.object({
+  user_message: z.string().trim().min(1).max(20_000),
+  context: z.string().max(12_000).default(''),
+  draft_reply: z.string().max(6000).default(''),
+  purpose: z.enum(['clarify', 'supervise']).default('supervise'),
+}).strict()
+export const documentReplyResultSchema = z.object({
+  reply: z.string().trim().min(1).max(6000),
 }).strict()
 
 const uuidList = (max: number) => z.array(z.string().uuid()).max(max)

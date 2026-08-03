@@ -9,14 +9,14 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
+  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
-import { privateModelSettings, publicModelSettings, publicProxySettings, saveModelSettings, saveProxySettings } from './model-settings.js'
+import { privateModelSettings, publicDocumentSettings, publicModelSettings, publicProxySettings, saveDocumentSettings, saveModelSettings, saveProxySettings } from './model-settings.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeVoice } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
@@ -88,9 +88,19 @@ async function sessionFor(input: z.infer<typeof chatRequest>): Promise<SessionRo
   return session
 }
 
+async function readableDocumentReply(input: {
+  purpose: 'clarify' | 'supervise'
+  user_message: string
+  context: string
+  draft_reply: string
+}) {
+  return mastraJson<{ result: { reply: string }; route: { model: string; reasoning_effort: string } }>('/internal/agents/document-reply', input)
+}
+
 async function chatTurn(input: z.infer<typeof chatRequest>) {
   const session = await sessionFor(input)
   const transcript = await rows<MessageRow>('SELECT role,content FROM messages WHERE session_id=$1 ORDER BY created_at DESC LIMIT 12', [session.id])
+  const recentTranscript = [...transcript].reverse()
   const tier = tierFor(input.message, input.clarification_mode, input.attachments.length)
   const userMessageId = crypto.randomUUID()
   await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [userMessageId, session.id, 'user', input.message, { clarification_mode: input.clarification_mode }])
@@ -110,12 +120,18 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
     const modelResult = await mastraJson<{ result: { intent: string; target_field: string | null; proposed_value: string | null; policy_rule: string | null; clarification_question: string | null; assistant_reply: string }; route: { tier: string; model: string; reasoning_effort: string } }>('/internal/agents/supervision-intent', {
       message: input.message,
       project_context: project,
-      transcript: transcript.reverse(),
+      transcript: recentTranscript,
       tier,
       memory_resource: `project:${projectId}`,
       memory_thread: `session:${session.id}`,
     })
-    reply = modelResult.result.assistant_reply
+    const documentResult = await readableDocumentReply({
+      purpose: 'supervise',
+      user_message: input.message,
+      context: JSON.stringify({ project_context: project, recent_conversation: recentTranscript }).slice(0, 12_000),
+      draft_reply: modelResult.result.assistant_reply,
+    })
+    reply = documentResult.result.reply
     const assistantMessageId = crypto.randomUUID()
     if (supermemoryEnabled()) await ingestProjectMemory(projectId, {
       source_type: 'project_chat_message', source_id: assistantMessageId, artifact_id: null, uploaded_file_id: null,
@@ -133,12 +149,12 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
       actionRequired = proposalId
     }
     await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [assistantMessageId, session.id, 'assistant', reply, { model_tier: tier, intent: modelResult.result.intent }])
-    return { session_id: session.id, project_id: projectId, phase: 'supervising', reply, spec: null, missing_fields: [], action_required: actionRequired, model_tier: tier, model: modelResult.route.model, reasoning_effort: modelResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
+    return { session_id: session.id, project_id: projectId, phase: 'supervising', reply, spec: null, missing_fields: [], action_required: actionRequired, model_tier: 'document', model: documentResult.route.model, reasoning_effort: documentResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
   }
   const modelResult = await mastraJson<{ result: { draft: Record<string, unknown>; assistant_reply: string; ready_for_confirmation: boolean; unresolved_items: string[] }; route: { tier: string; model: string; reasoning_effort: string } }>('/internal/agents/clarify', {
     message: input.message,
     current_draft: session.draft,
-    transcript: transcript.reverse(),
+    transcript: recentTranscript,
     attachment_count: input.attachments.length,
     clarification_mode: input.clarification_mode,
     attachment_context: [],
@@ -147,12 +163,18 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
     memory_resource: `idea:${session.id}`,
     memory_thread: `session:${session.id}`,
   })
-  reply = modelResult.result.assistant_reply
+  const documentResult = await readableDocumentReply({
+    purpose: 'clarify',
+    user_message: input.message,
+    context: JSON.stringify({ current_draft: session.draft, recent_conversation: recentTranscript }).slice(0, 12_000),
+    draft_reply: modelResult.result.assistant_reply,
+  })
+  reply = documentResult.result.reply
   draft = modelResult.result.draft
   phase = modelResult.result.ready_for_confirmation ? 'ready_for_confirmation' : 'clarifying'
   await database.query('UPDATE conversation_sessions SET draft=$2,phase=$3,updated_at=NOW() WHERE id=$1', [session.id, draft, phase])
   await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), session.id, 'assistant', reply, { model_tier: tier, clarification_mode: input.clarification_mode }])
-  return { session_id: session.id, project_id: null, phase, reply, spec: phase === 'ready_for_confirmation' ? { schema_version: '1.0', idea: draft, feasibility: 'medium', feasibility_notes: [], required_approvals: [], candidate_modifications: [], policies: [] } : null, missing_fields: modelResult.result.unresolved_items, action_required: null, model_tier: tier, model: modelResult.route.model, reasoning_effort: modelResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
+  return { session_id: session.id, project_id: null, phase, reply, spec: phase === 'ready_for_confirmation' ? { schema_version: '1.0', idea: draft, feasibility: 'medium', feasibility_notes: [], required_approvals: [], candidate_modifications: [], policies: [] } : null, missing_fields: modelResult.result.unresolved_items, action_required: null, model_tier: 'document', model: documentResult.route.model, reasoning_effort: documentResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
 }
 
 app.get('/api/health', async context => context.json({ status: 'ok', runtime: 'native-typescript', database: 'pglite', container_runtime_required: false, secrets_exposed: false }))
@@ -160,6 +182,11 @@ app.get('/api/settings/models', context => context.json({ tiers: publicModelSett
 app.put('/api/settings/models', async context => {
   const body = await jsonBody(context, modelSettingsRequest)
   return context.json({ tiers: saveModelSettings(body), proxy: publicProxySettings() })
+})
+app.get('/api/settings/document', context => context.json(publicDocumentSettings()))
+app.put('/api/settings/document', async context => {
+  const body = await jsonBody(context, documentModelSettingsRequest)
+  return context.json(saveDocumentSettings(body))
 })
 app.get('/api/settings/proxy', context => context.json(publicProxySettings()))
 app.put('/api/settings/proxy', async context => {

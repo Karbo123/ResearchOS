@@ -8,6 +8,7 @@ const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'med
   simple: { model: 'gpt-5.6-luna', reasoningEffort: 'low' },
   medium: { model: 'gpt-5.6-terra', reasoningEffort: 'medium' },
   complex: { model: 'gpt-5.6-sol', reasoningEffort: 'high' },
+  document: { model: 'deepseek-v4-flash', reasoningEffort: 'medium' },
 }
 export class ModelConfigurationError extends Error {}
 
@@ -48,8 +49,8 @@ function environmentSettings(tier: ModelTier): ModelConfig {
   const suffix = tier.toUpperCase()
   return {
     model: (process.env[`RESEARCH_MODEL_${suffix}`] || DEFAULTS[tier].model).trim(),
-    url: (process.env[`RESEARCH_MODEL_URL_${suffix}`] || '').trim(),
-    key: (process.env[`RESEARCH_MODEL_KEY_${suffix}`] || '').trim(),
+    url: (process.env[`RESEARCH_MODEL_URL_${suffix}`] || (tier === 'document' ? 'http://127.0.0.1:3000/v1' : '')).trim(),
+    key: (process.env[`RESEARCH_MODEL_KEY_${suffix}`] || (tier === 'document' ? process.env.RESEARCH_MODEL_KEY_MEDIUM : '') || '').trim(),
     reasoningEffort: (
       process.env[`RESEARCH_REASONING_${suffix}`] || DEFAULTS[tier].reasoningEffort
     ).trim() as ModelConfig['reasoningEffort'],

@@ -8,10 +8,10 @@ import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mas
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, experimentPlanningAgent, ideaClarificationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent,
+  configuredModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent,
 } from './agents/research-agents.js'
 import {
-  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, projectSlugRequestSchema, projectSlugResultSchema,
+  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
   approvalGateRequestSchema, approvalGateResumeRequestSchema, coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
   supervisionIntentSchema, supervisionRequestSchema, type ModelTier,
 } from './contracts.js'
@@ -184,6 +184,30 @@ const apiRoutes = [
         return c.json({ result, route: { tier: body.tier, model: config.model, reasoning_effort: config.reasoningEffort } })
       } catch (error) {
         const failure = routeError(error, '项目消息意图分类')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/agents/document-reply', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, documentReplyRequestSchema)
+        const context = requestContext('document')
+        const response = await documentReplyAgent.generate(structuredJsonValue({
+          user_message: body.user_message,
+          context: body.context,
+          draft_reply: body.draft_reply,
+          purpose: body.purpose,
+        }), {
+          ...generationOptions(context),
+          structuredOutput: { schema: documentReplyResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
+        })
+        const result = documentReplyResultSchema.parse(response.object)
+        const config = context.get('modelConfig')
+        return c.json({ result, route: { tier: 'document', model: config.model, reasoning_effort: config.reasoningEffort } })
+      } catch (error) {
+        const failure = routeError(error, '文档文本回复模型调用')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },
