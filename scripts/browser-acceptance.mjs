@@ -492,6 +492,26 @@ if (tabMotion.exists) {
   tabMotion.after = await computedStyles('.project-areas .sliding-tab-indicator')
 }
 
+const seedExpansionUrl = `${appBase}/project/${projectSlug}/related_work/seed-expansion`
+await navigate(seedExpansionUrl, 'en', 'light')
+const seedExpansion = await evaluate(`(() => {
+  const note = document.querySelector('.provider-capability-note')
+  const attempts = Array.from(document.querySelectorAll('.source-attempt-row'))
+  const panel = document.querySelector('.related-work-attempt-panel')
+  const empty = document.querySelector('.related-work-attempt-panel .empty')
+  return {
+    note: note?.textContent?.trim() || null,
+    notesDblp: /dblp/i.test(note?.textContent || ''),
+    notesArxiv: /arxiv/i.test(note?.textContent || ''),
+    attemptsPanel: !!panel,
+    attemptsEmptyVisible: !!empty,
+    attemptRows: attempts.length,
+    attemptProviders: attempts.map(row => row.querySelector('.source-attempt-provider')?.textContent?.trim() || null).slice(0, 8),
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-seed-expansion-attempts.png')
+
 await navigate(homeUrl, 'en', 'light')
 const sidebarResize = await evaluate(`(() => {
   const resizer = document.querySelector('.sidebar-resizer')
@@ -514,5 +534,5 @@ sidebarResize.afterWidth = await evaluate(`document.querySelector('.app-shell')?
 sidebarResize.changed = sidebarResize.width !== sidebarResize.afterWidth && sidebarResize.afterWidth !== null
 await evaluate(`localStorage.setItem('researchos.sidebarWidth', ${JSON.stringify(String(sidebarResize.originalWidth))})`)
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, homeUi, themePersist, longContent, actionMotion, drawerOutsideClose, tabMotion, sidebarResize }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, narrowHome, narrowProject, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, homeUi, themePersist, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize }, null, 2))
 socket.close()

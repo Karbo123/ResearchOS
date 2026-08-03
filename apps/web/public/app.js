@@ -13842,12 +13842,23 @@
     "literature.maxTotal": "\u5019\u9009\u4E0A\u9650",
     "literature.proposalReason": "Proposal \u539F\u56E0",
     "literature.recursiveProviders": "\u9012\u5F52\u6765\u6E90",
+    "literature.providerCapabilityNote": "DBLP \u4E0E arXiv \u53EA\u652F\u6301\u5173\u952E\u8BCD\u641C\u7D22\uFF0C\u4E0D\u652F\u6301\u5F15\u7528\u9012\u5F52\uFF1B\u5F15\u7528\u9012\u5F52\u53EA\u4F7F\u7528 Crossref\u3001OpenAlex \u4E0E Semantic Scholar\u3002",
     "literature.creating": "\u6B63\u5728\u521B\u5EFA\u2026",
     "literature.createRecursiveProposal": "\u4E3A {count} \u4E2A\u79CD\u5B50\u521B\u5EFA\u9012\u5F52 Proposal",
     "literature.noSeeds": "\u8FD8\u6CA1\u6709\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u3002\u5148\u6DFB\u52A0 DOI\u3001\u6807\u9898\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709\u8BBA\u6587\u3002",
     "literature.runsTitle": "\u5F15\u7528\u7F51\u7EDC\u8FD0\u884C",
     "literature.runsHint": "\u8FD0\u884C\u72B6\u6001\u548C provider attempt \u6765\u81EA\u771F\u5B9E\u8BF7\u6C42\uFF1B\u5931\u8D25\u3001\u53D6\u6D88\u548C\u4E0A\u9650\u622A\u65AD\u4E0D\u4F1A\u88AB\u6807\u8BB0\u4E3A\u6210\u529F\u3002",
     "literature.runCandidates": "{count} \u4E2A\u5019\u9009 \xB7 {edges} \u6761\u5F15\u7528\u8FB9",
+    "literature.attemptsTitle": "\u6765\u6E90\u8BF7\u6C42\u8BB0\u5F55",
+    "literature.attemptsHint": "\u6BCF\u6B21\u6765\u6E90\u5C1D\u8BD5\u90FD\u4F1A\u4FDD\u7559\u771F\u5B9E\u72B6\u6001\uFF1A\u6210\u529F\u3001\u65E0\u5339\u914D\u3001\u90E8\u5206\u6210\u529F\u3001\u9650\u6D41\u3001\u8D85\u65F6\u3001\u65E0\u6548\u54CD\u5E94\u3001\u4E0D\u652F\u6301\u6216\u53D6\u6D88\u3002",
+    "literature.attemptsEmpty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u6765\u6E90\u8BF7\u6C42\u8BB0\u5F55\u3002",
+    "literature.noMatch": "\u65E0\u5339\u914D",
+    "literature.attemptQuery": "\u67E5\u8BE2",
+    "literature.attemptRequestUrl": "\u8BF7\u6C42\u5730\u5740",
+    "literature.attemptResultCount": "\u7ED3\u679C",
+    "literature.attemptHttpStatus": "HTTP",
+    "literature.attemptStartedAt": "\u5F00\u59CB",
+    "literature.attemptFinishedAt": "\u7ED3\u675F",
     "literature.providerFailures": "Provider \u5931\u8D25\u4E0E\u90E8\u5206\u5931\u8D25",
     "literature.noFailureDetail": "\u672A\u63D0\u4F9B\u5931\u8D25\u8BE6\u60C5",
     "literature.edgeTitle": "\u5F15\u7528\u56FE\u8FB9\uFF08\u5F53\u524D\u9879\u76EE\u8303\u56F4\uFF09",
@@ -15135,12 +15146,23 @@
     "literature.maxTotal": "\u5019\u9078\u4E0A\u9650",
     "literature.proposalReason": "Proposal \u539F\u56E0",
     "literature.recursiveProviders": "\u905E\u8FF4\u4F86\u6E90",
+    "literature.providerCapabilityNote": "DBLP \u8207 arXiv \u53EA\u652F\u63F4\u95DC\u9375\u5B57\u641C\u5C0B\uFF0C\u4E0D\u652F\u63F4\u5F15\u7528\u905E\u8FF4\uFF1B\u5F15\u7528\u905E\u8FF4\u53EA\u4F7F\u7528 Crossref\u3001OpenAlex \u8207 Semantic Scholar\u3002",
     "literature.creating": "\u6B63\u5728\u5EFA\u7ACB\u2026",
     "literature.createRecursiveProposal": "\u70BA {count} \u500B\u7A2E\u5B50\u5EFA\u7ACB\u905E\u8FF4 Proposal",
     "literature.noSeeds": "\u9084\u6C92\u6709\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u3002\u5148\u65B0\u589E DOI\u3001\u6A19\u984C\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709\u8AD6\u6587\u3002",
     "literature.runsTitle": "\u5F15\u7528\u7DB2\u8DEF\u57F7\u884C",
     "literature.runsHint": "\u57F7\u884C\u72C0\u614B\u8207 provider attempt \u4F86\u81EA\u771F\u5BE6\u8ACB\u6C42\uFF1B\u5931\u6557\u3001\u53D6\u6D88\u8207\u4E0A\u9650\u622A\u65B7\u4E0D\u6703\u88AB\u6A19\u8A18\u70BA\u6210\u529F\u3002",
     "literature.runCandidates": "{count} \u500B\u5019\u9078 \xB7 {edges} \u689D\u5F15\u7528\u908A",
+    "literature.attemptsTitle": "\u4F86\u6E90\u8ACB\u6C42\u8A18\u9304",
+    "literature.attemptsHint": "\u6BCF\u6B21\u4F86\u6E90\u5617\u8A66\u90FD\u6703\u4FDD\u7559\u771F\u5BE6\u72C0\u614B\uFF1A\u6210\u529F\u3001\u7121\u5339\u914D\u3001\u90E8\u5206\u6210\u529F\u3001\u9650\u6D41\u3001\u903E\u6642\u3001\u7121\u6548\u56DE\u61C9\u3001\u4E0D\u652F\u63F4\u6216\u53D6\u6D88\u3002",
+    "literature.attemptsEmpty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u4F86\u6E90\u8ACB\u6C42\u8A18\u9304\u3002",
+    "literature.noMatch": "\u7121\u5339\u914D",
+    "literature.attemptQuery": "\u67E5\u8A62",
+    "literature.attemptRequestUrl": "\u8ACB\u6C42\u4F4D\u5740",
+    "literature.attemptResultCount": "\u7D50\u679C",
+    "literature.attemptHttpStatus": "HTTP",
+    "literature.attemptStartedAt": "\u958B\u59CB",
+    "literature.attemptFinishedAt": "\u7D50\u675F",
     "literature.providerFailures": "Provider \u5931\u6557\u8207\u90E8\u5206\u5931\u6557",
     "literature.noFailureDetail": "\u672A\u63D0\u4F9B\u5931\u6557\u8A73\u60C5",
     "literature.edgeTitle": "\u5F15\u7528\u5716\u908A\uFF08\u76EE\u524D\u5C08\u6848\u7BC4\u570D\uFF09",
@@ -16428,12 +16450,23 @@
     "literature.maxTotal": "Candidate limit",
     "literature.proposalReason": "Proposal reason",
     "literature.recursiveProviders": "Recursive providers",
+    "literature.providerCapabilityNote": "DBLP and arXiv support keyword search only and do not support citation recursion; citation recursion uses Crossref, OpenAlex, and Semantic Scholar.",
     "literature.creating": "Creating\u2026",
     "literature.createRecursiveProposal": "Create recursive Proposal for {count} seeds",
     "literature.noSeeds": "No project-scoped seeds yet. Add a DOI, title, URL, BibTeX, controlled PDF, or existing Paper first.",
     "literature.runsTitle": "Citation network runs",
     "literature.runsHint": "Run states and provider attempts come from real requests; failures, cancellations, and limit truncation are never marked successful.",
     "literature.runCandidates": "{count} candidates \xB7 {edges} citation edges",
+    "literature.attemptsTitle": "Source request log",
+    "literature.attemptsHint": "Every source attempt keeps its real status: succeeded, no match, partial, rate limited, timed out, invalid response, unsupported, or cancelled.",
+    "literature.attemptsEmpty": "No source requests have been recorded for this project yet.",
+    "literature.noMatch": "No match",
+    "literature.attemptQuery": "Query",
+    "literature.attemptRequestUrl": "Request URL",
+    "literature.attemptResultCount": "Results",
+    "literature.attemptHttpStatus": "HTTP",
+    "literature.attemptStartedAt": "Started",
+    "literature.attemptFinishedAt": "Finished",
     "literature.providerFailures": "Provider failures and partial failures",
     "literature.noFailureDetail": "no failure detail provided",
     "literature.edgeTitle": "Citation graph edges (current project scope)",
@@ -17721,12 +17754,23 @@
     "literature.maxTotal": "L\xEDmite de candidatos",
     "literature.proposalReason": "Motivo de la Propuesta",
     "literature.recursiveProviders": "Proveedores recursivos",
+    "literature.providerCapabilityNote": "DBLP y arXiv solo admiten b\xFAsqueda por palabras clave y no admiten recursi\xF3n de citas; la recursi\xF3n de citas usa Crossref, OpenAlex y Semantic Scholar.",
     "literature.creating": "Creando\u2026",
     "literature.createRecursiveProposal": "Crear Propuesta recursiva para {count} semillas",
     "literature.noSeeds": "A\xFAn no hay semillas del \xE1mbito del proyecto. A\xF1ade primero un DOI, t\xEDtulo, URL, BibTeX, PDF controlado o Paper existente.",
     "literature.runsTitle": "Ejecuciones de red de citas",
     "literature.runsHint": "Los estados de ejecuci\xF3n y los intentos de proveedor provienen de solicitudes reales; fallos, cancelaciones y truncamientos por l\xEDmite nunca se marcan como \xE9xito.",
     "literature.runCandidates": "{count} candidatos \xB7 {edges} aristas de citas",
+    "literature.attemptsTitle": "Registro de solicitudes de fuentes",
+    "literature.attemptsHint": "Cada intento de fuente conserva su estado real: \xE9xito, sin coincidencias, parcial, limitado, agotado, respuesta no v\xE1lida, no compatible o cancelado.",
+    "literature.attemptsEmpty": "A\xFAn no se registran solicitudes de fuentes para este proyecto.",
+    "literature.noMatch": "Sin coincidencias",
+    "literature.attemptQuery": "Consulta",
+    "literature.attemptRequestUrl": "URL de solicitud",
+    "literature.attemptResultCount": "Resultados",
+    "literature.attemptHttpStatus": "HTTP",
+    "literature.attemptStartedAt": "Inicio",
+    "literature.attemptFinishedAt": "Fin",
     "literature.providerFailures": "Fallos y fallos parciales de proveedor",
     "literature.noFailureDetail": "sin detalle de fallo",
     "literature.edgeTitle": "Aristas del grafo de citas (\xE1mbito actual)",
@@ -21121,6 +21165,7 @@
     const activeRecursiveRun = project.related_work_runs?.find((run) => ["queued", "running"].includes(run.status));
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
+    const isNoMatchAttempt = (attempt) => attempt.status === "succeeded" && !(attempt.result_count ?? 0);
     const valueLabel = (value) => {
       if (value === null || value === void 0) return t("common.notProvided");
       if (typeof value === "string") return value.length > 180 ? `${value.slice(0, 180)}\u2026` : value;
@@ -21425,6 +21470,7 @@
           seedLoading ? t("literature.parsing") : t("literature.addSeed")
         ] })
       ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "provider-capability-note", children: t("literature.providerCapabilityNote") }),
       project.related_work_seeds?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-seeds", children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "related-work-seed-list", children: project.related_work_seeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "related-work-seed-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
@@ -21506,16 +21552,6 @@
           ] }) : null
         ] })
       ] }, run.id)) }),
-      project.related_work_attempts?.some((attempt) => attempt.status !== "succeeded") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-failures", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("literature.providerFailures") }),
-        project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: attempt.provider }),
-          " \xB7 ",
-          statusLabel(attempt.status, t),
-          " \xB7 ",
-          attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t("literature.noFailureDetail")
-        ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`))
-      ] }) : null,
       project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "citation-edge-list", children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("literature.edgeTitle") }),
         project.related_work_edges.slice(0, 20).map((edge) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
@@ -21529,6 +21565,37 @@
         ] }, edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`))
       ] }) : null
     ] }) : null;
+    const attemptsPanel = /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-attempt-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.attemptsTitle"), hint: t("literature.attemptsHint") }),
+      project.related_work_attempts?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "source-attempt-list", children: project.related_work_attempts.map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className: "source-attempt-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "source-attempt-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { className: "source-attempt-provider", children: attempt.provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: attempt.status }),
+          isNoMatchAttempt(attempt) ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "source-attempt-no-match", children: t("literature.noMatch") }) : null
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "source-attempt-body", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "source-attempt-query", children: [
+            t("literature.attemptQuery"),
+            ": ",
+            attempt.query
+          ] }),
+          attempt.request_url ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "source-attempt-url", children: [
+            t("literature.attemptRequestUrl"),
+            ": ",
+            attempt.request_url
+          ] }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "source-attempt-meta", children: [
+            t("literature.attemptResultCount"),
+            ": ",
+            attempt.result_count ?? 0,
+            attempt.http_status != null ? ` \xB7 ${t("literature.attemptHttpStatus")}: ${attempt.http_status}` : "",
+            attempt.started_at ? ` \xB7 ${t("literature.attemptStartedAt")}: ${new Date(attempt.started_at).toLocaleString()}` : "",
+            attempt.finished_at ? ` \xB7 ${t("literature.attemptFinishedAt")}: ${new Date(attempt.finished_at).toLocaleString()}` : ""
+          ] }),
+          attempt.failure ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "source-attempt-failure", children: localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) }) : null
+        ] })
+      ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(EmptyState, { text: t("literature.attemptsEmpty") })
+    ] });
     const candidatePanel = project.related_work_candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-candidate-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.candidatesTitle"), hint: t("literature.candidatesHint") }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
@@ -21625,6 +21692,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("seed.title"), hint: t("seed.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: "project-scoped", children: t("seed.scope") }) }),
         seedPanel,
         runPanel,
+        attemptsPanel,
         candidatePanel,
         provenanceModal
       ] });

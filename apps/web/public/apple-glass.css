@@ -1163,10 +1163,42 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .provider-choice { display: flex; flex-wrap: wrap; gap: 8px; }
 .provider-choice label { display: inline-flex; grid-template-columns: auto auto; align-items: center; gap: 5px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--spring); }
 .provider-choice label:hover { border-color: rgba(0, 122, 255, .24); background: var(--surface-elevated); }
+.provider-capability-note {
+  margin: 0;
+  padding: 9px 11px;
+  border: 1px solid rgba(0, 122, 255, .18);
+  border-radius: 11px;
+  background: var(--blue-soft);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
 .related-work-failures, .citation-edge-list { margin-top: 14px; padding: 13px 15px; border: 1px solid rgba(255, 59, 48, .16); border-radius: 12px; background: rgba(255, 59, 48, .05); }
 .citation-edge-list { border-color: rgba(10, 132, 255, .14); background: rgba(10, 132, 255, .04); }
 .related-work-failures h3, .citation-edge-list h3 { margin: 0 0 8px; font-size: 12px; }
 .related-work-failures p, .citation-edge-list p { margin: 4px 0; color: var(--muted); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.related-work-attempt-panel .section-head { margin-bottom: 12px; }
+.source-attempt-list { display: grid; gap: 6px; }
+.source-attempt-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  box-shadow: 0 2px 8px rgba(25, 25, 35, .04);
+  transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--spring);
+}
+.source-attempt-row:hover { background: var(--surface-elevated); border-color: rgba(0, 122, 255, .22); transform: translateY(-1px); }
+.source-attempt-heading { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.source-attempt-provider { color: var(--ink); font-size: 12px; text-transform: capitalize; }
+.source-attempt-no-match { color: var(--blue-dark); font-size: 10px; font-weight: 700; }
+.source-attempt-body { display: grid; gap: 3px; min-width: 0; }
+.source-attempt-query { margin: 0; color: var(--ink); font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
+.source-attempt-url { margin: 0; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.source-attempt-meta { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.source-attempt-failure { margin: 2px 0 0; color: var(--danger-ink); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
 .error-text { color: var(--danger-ink) !important; }
 
 @media (max-width: 760px) {

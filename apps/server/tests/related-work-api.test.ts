@@ -58,6 +58,12 @@ describe('project-scoped related work API', () => {
     expect(first.response.status).toBe(201)
     expect(first.body.status).toBe('resolved')
     const seedId = String(first.body.seed_id)
+    const detail = await requestJson(`/api/projects/${projectId}`)
+    expect(detail.response.status).toBe(200)
+    const detailAttempts = (detail.body.related_work_attempts as Array<Record<string, unknown>>) || []
+    expect(detailAttempts.length).toBeGreaterThan(0)
+    expect(detailAttempts[0]).toMatchObject({ provider: 'crossref', status: 'succeeded', result_count: 1 })
+    expect(detailAttempts[0]?.request_url).toContain('api.crossref.org')
 
     const other = await requestJson(`/api/projects/${otherProjectId}/related-work/seeds`, {
       method: 'POST',

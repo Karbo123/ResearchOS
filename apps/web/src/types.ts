@@ -368,6 +368,7 @@ export interface RelatedWorkAttempt {
   parent_candidate_id?: string | null
   provider: string
   query: string
+  request_url?: string
   status: string
   http_status?: number | null
   result_count?: number

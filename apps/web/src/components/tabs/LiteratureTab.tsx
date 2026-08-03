@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronsDown, Download, GitBranch, GitFork, ScanText, Search, ShieldCheck, Square } from 'lucide-react'
 import { api, errorMessage, localizeFailure } from '../../api'
-import type { ClaimReview, MaterialSearchResponse, Paper, ProjectDetail, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
+import type { ClaimReview, MaterialSearchResponse, Paper, ProjectDetail, RelatedWorkAttempt, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, Modal, SectionHeading, statusLabel } from '../ui'
 import { useTranslation } from '../../i18n'
 
@@ -67,6 +67,7 @@ export function LiteratureTab({
 
   const candidateProvenance = (candidateId: string) => (project.related_work_field_provenance || []).filter(item => item.candidate_id === candidateId)
   const provenanceCandidate = project.related_work_candidates?.find(candidate => candidate.id === provenanceCandidateId) || null
+  const isNoMatchAttempt = (attempt: RelatedWorkAttempt) => attempt.status === 'succeeded' && !(attempt.result_count ?? 0)
 
   const valueLabel = (value: unknown) => {
     if (value === null || value === undefined) return t('common.notProvided')
@@ -401,6 +402,7 @@ export function LiteratureTab({
           {seedLoading ? t('literature.parsing') : t('literature.addSeed')}
         </button>
       </div>
+      <p className="provider-capability-note">{t('literature.providerCapabilityNote')}</p>
       {project.related_work_seeds?.length ? (
         <div className="related-work-seeds">
           <div className="related-work-seed-list">
@@ -459,14 +461,6 @@ export function LiteratureTab({
           </div>
         ))}
       </div>
-      {project.related_work_attempts?.some(attempt => attempt.status !== 'succeeded') ? (
-        <div className="related-work-failures">
-          <h3>{t('literature.providerFailures')}</h3>
-          {project.related_work_attempts.filter(attempt => attempt.status !== 'succeeded').slice(0, 12).map(attempt => (
-            <p key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}><strong>{attempt.provider}</strong> · {statusLabel(attempt.status, t)} · {attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t('literature.noFailureDetail')}</p>
-          ))}
-        </div>
-      ) : null}
       {project.related_work_edges?.length ? (
         <div className="citation-edge-list">
           <h3>{t('literature.edgeTitle')}</h3>
@@ -475,6 +469,36 @@ export function LiteratureTab({
       ) : null}
     </div>
   ) : null
+
+  const attemptsPanel = (
+    <div className="section related-work-attempt-panel">
+      <SectionHeading title={t('literature.attemptsTitle')} hint={t('literature.attemptsHint')} />
+      {project.related_work_attempts?.length ? (
+        <div className="source-attempt-list">
+          {project.related_work_attempts.map(attempt => (
+            <article className="source-attempt-row" key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}>
+              <div className="source-attempt-heading">
+                <strong className="source-attempt-provider">{attempt.provider}</strong>
+                <Badge status={attempt.status} />
+                {isNoMatchAttempt(attempt) ? <span className="source-attempt-no-match">{t('literature.noMatch')}</span> : null}
+              </div>
+              <div className="source-attempt-body">
+                <p className="source-attempt-query">{t('literature.attemptQuery')}: {attempt.query}</p>
+                {attempt.request_url ? <p className="source-attempt-url">{t('literature.attemptRequestUrl')}: {attempt.request_url}</p> : null}
+                <p className="source-attempt-meta">
+                  {t('literature.attemptResultCount')}: {attempt.result_count ?? 0}
+                  {attempt.http_status != null ? ` · ${t('literature.attemptHttpStatus')}: ${attempt.http_status}` : ''}
+                  {attempt.started_at ? ` · ${t('literature.attemptStartedAt')}: ${new Date(attempt.started_at).toLocaleString()}` : ''}
+                  {attempt.finished_at ? ` · ${t('literature.attemptFinishedAt')}: ${new Date(attempt.finished_at).toLocaleString()}` : ''}
+                </p>
+                {attempt.failure ? <p className="source-attempt-failure">{localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message)}</p> : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : <EmptyState text={t('literature.attemptsEmpty')} />}
+    </div>
+  )
 
   const candidatePanel = project.related_work_candidates?.length ? (
     <div className="section related-work-candidate-panel">
@@ -551,6 +575,7 @@ export function LiteratureTab({
         <SectionHeading title={t('seed.title')} hint={t('seed.hint')} extra={<Badge status="project-scoped">{t('seed.scope')}</Badge>} />
         {seedPanel}
         {runPanel}
+        {attemptsPanel}
         {candidatePanel}
         {provenanceModal}
       </>
