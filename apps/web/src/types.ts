@@ -2,6 +2,8 @@ export type TierId = 'simple' | 'medium' | 'complex'
 
 export type ReasoningEffort = 'low' | 'medium' | 'high'
 
+export type VoiceProvider = 'browser' | 'groq'
+
 export type ResearchArea = 'overview' | 'related_work' | 'implementation' | 'paper'
 
 export type TabId =
@@ -89,6 +91,14 @@ export interface ModelTierSettings {
 
 export interface ModelSettingsResponse {
   tiers: Record<TierId, ModelTierSettings>
+}
+
+export interface VoiceSettingsResponse {
+  provider: VoiceProvider
+  model: string
+  url: string
+  key_configured: boolean
+  source?: 'runtime_override' | 'env_default'
 }
 
 export interface SupermemoryEmbeddingStatus {

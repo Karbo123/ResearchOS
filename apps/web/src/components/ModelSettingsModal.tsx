@@ -4,6 +4,7 @@ import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
 import { ConfirmDialog, Modal, StatusDot } from './ui'
 import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
+import { VoiceSettingsForm } from './VoiceSettingsForm'
 import { useTranslation } from '../i18n'
 
 const TIERS: Array<{ id: TierId; label: string; defaultEffort: ReasoningEffort }> = [
@@ -22,7 +23,7 @@ function sourceLabelKey(value?: string) {
 
 export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean; onClose: () => void; projectId: string | null }) {
   const { t } = useTranslation()
-  const [tab, setTab] = useState<'models' | 'embedding'>('models')
+  const [tab, setTab] = useState<'models' | 'embedding' | 'voice'>('models')
   const [values, setValues] = useState<Record<TierId, TierFormValues> | null>(null)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -74,7 +75,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
     onClose()
   }
 
-  const switchTab = (next: 'models' | 'embedding') => {
+  const switchTab = (next: 'models' | 'embedding' | 'voice') => {
     if (dirty) {
       setConfirmClose(true)
       return
@@ -132,12 +133,15 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
         title={t('settings.title')}
         description={tab === 'models'
           ? t('settings.modelsDescription')
-          : t('settings.embeddingDescription')}
+          : tab === 'embedding'
+            ? t('settings.embeddingDescription')
+            : t('settings.voiceDescription')}
         onClose={requestClose}
       >
         <div className="settings-tabs" role="tablist">
           <button className={tab === 'models' ? 'active' : ''} type="button" onClick={() => switchTab('models')}>{t('settings.modelsTab')}</button>
           <button className={tab === 'embedding' ? 'active' : ''} type="button" onClick={() => switchTab('embedding')}>{t('settings.embeddingTab')}</button>
+          <button className={tab === 'voice' ? 'active' : ''} type="button" onClick={() => switchTab('voice')}>{t('settings.voiceTab')}</button>
         </div>
         {tab === 'embedding' ? (
           projectId ? (
@@ -148,6 +152,8 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           ) : (
             <div className="empty">{t('settings.openProjectFirst')}</div>
           )
+        ) : tab === 'voice' ? (
+          <VoiceSettingsForm onChanged={() => setDirty(false)} />
         ) : loading ? (
           <div className="empty">{t('settings.loadingModels')}</div>
         ) : values ? (

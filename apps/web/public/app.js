@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react29 = __toESM(require_react(), 1);
+  var import_react30 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -12866,6 +12866,20 @@
     "voice.audioError": "\u9EA6\u514B\u98CE\u4E0D\u53EF\u7528\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u5907",
     "voice.error": "\u8BED\u97F3\u8BC6\u522B\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5",
     "voice.shortcutHint": "Ctrl+Space \u6309\u4F4F\u8BF4\u8BDD",
+    "voice.loading": "\u6B63\u5728\u8BFB\u53D6\u8BED\u97F3\u8BC6\u522B\u914D\u7F6E\u2026",
+    "voice.provider": "\u8BC6\u522B\u5F15\u64CE",
+    "voice.providerBrowser": "\u6D4F\u89C8\u5668 Web Speech",
+    "voice.providerGroq": "Groq Whisper",
+    "voice.model": "\u6A21\u578B",
+    "voice.modelPlaceholder": "whisper-large-v3-turbo",
+    "voice.url": "API \u5730\u5740",
+    "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.keyConfigured": "Groq key \u5DF2\u914D\u7F6E",
+    "voice.keyPending": "\u672A\u68C0\u6D4B\u5230 Groq key\uFF08\u8BF7\u5728 .env \u8BBE\u7F6E GROQ_API_KEY\uFF09",
+    "voice.keyNote": "Groq key \u53EA\u4ECE\u9879\u76EE .env \u7684 GROQ_API_KEY \u8BFB\u53D6\uFF0C\u4E0D\u4F1A\u5199\u5165\u8FD0\u884C\u65F6\u6587\u4EF6\u6216\u8FD4\u56DE\u7ED9\u524D\u7AEF\uFF1B\u4FEE\u6539\u540E\u9700\u8981\u91CD\u542F API \u670D\u52A1\u3002",
+    "voice.securityNote": "Groq \u6A21\u5F0F\u4F1A\u628A\u672C\u6B21\u5F55\u97F3\u97F3\u9891\u53D1\u9001\u7ED9\u6240\u9009 API\uFF1B\u6D4F\u89C8\u5668\u6A21\u5F0F\u4E0D\u4F1A\u4E0A\u4F20\u97F3\u9891\u3002",
+    "voice.processing": "\u6B63\u5728\u8BC6\u522B\u2026",
+    "voice.groqUnsupported": "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u5F55\u97F3\u4E0A\u4F20\uFF0C\u8BF7\u6539\u7528\u6D4F\u89C8\u5668\u8BED\u97F3\u8BC6\u522B",
     "common.loadingProject": "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u5173\u95ED",
@@ -13009,6 +13023,8 @@
     "settings.embeddingDescription": "\u6BCF\u4E2A\u79D1\u7814\u9879\u76EE\u53EF\u4EE5\u72EC\u7ACB\u914D\u7F6E\u8BED\u4E49\u8BB0\u5FC6 Embedding\uFF1B\u4E0D\u8986\u76D6\u65F6\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08\u5B9E\u6D4B\u672C\u5730 bge-m3 \u6BD4\u8FDC\u7A0B\u5FEB\u7EA6 10 \u500D\uFF09\u3002",
     "settings.modelsTab": "\u6A21\u578B \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 \u8BED\u4E49\u8BB0\u5FC6",
+    "settings.voiceTab": "\u8BED\u97F3\u8BC6\u522B \xB7 Web Speech / Groq",
+    "settings.voiceDescription": "\u9009\u62E9\u8BED\u97F3\u8BC6\u522B\u5F15\u64CE\u3002Groq Whisper \u4F1A\u81EA\u52A8\u8865\u5168\u53E5\u4E2D\u6807\u70B9\uFF1Bkey \u53EA\u4ECE .env \u7684 GROQ_API_KEY \u8BFB\u53D6\u3002",
     "settings.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF0C\u518D\u914D\u7F6E\u9879\u76EE\u7EA7 Embedding\u3002",
     "settings.loadingModels": "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026",
     "settings.keyConfigured": "\u5DF2\u914D\u7F6E key",
@@ -13265,6 +13281,18 @@
     "errors.requestFailed": "\u8BF7\u6C42\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
     "errors.apiFailure": "\u8BF7\u6C42\u5931\u8D25\uFF08{code}\uFF09\u3002",
     "apiError.api_unknown": "\u672C\u5730\u670D\u52A1\u8FD4\u56DE\u4E86\u65E0\u6CD5\u8BC6\u522B\u7684\u9519\u8BEF\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
+    "apiError.voice_auth_failed": "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u62D2\u7EDD\u8BBF\u95EE\uFF0C\u8BF7\u68C0\u67E5 GROQ_API_KEY\u3002",
+    "apiError.voice_rate_limited": "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u6682\u65F6\u9650\u6D41\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
+    "apiError.voice_provider_error": "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u8FD4\u56DE\u9519\u8BEF\u3002",
+    "apiError.voice_provider_invalid": "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u8FD4\u56DE\u4E86\u65E0\u6548\u7ED3\u679C\u3002",
+    "apiError.voice_provider_timeout": "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u54CD\u5E94\u8D85\u65F6\u3002",
+    "apiError.voice_provider_unreachable": "\u65E0\u6CD5\u8FDE\u63A5\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u3002",
+    "apiError.voice_key_missing": "\u672A\u914D\u7F6E GROQ_API_KEY\uFF0C\u8BF7\u5728 .env \u4E2D\u8BBE\u7F6E\u540E\u91CD\u542F\u670D\u52A1\u3002",
+    "apiError.voice_file_required": "\u8BF7\u6C42\u5FC5\u987B\u5305\u542B\u5F55\u97F3\u6587\u4EF6\u3002",
+    "apiError.voice_file_empty": "\u5F55\u97F3\u6587\u4EF6\u4E3A\u7A7A\uFF0C\u8BF7\u91CD\u8BD5\u3002",
+    "apiError.voice_upload_too_large": "\u5F55\u97F3\u6587\u4EF6\u8FC7\u5927\u3002",
+    "apiError.voice_provider_empty": "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u6CA1\u6709\u8BC6\u522B\u5230\u5185\u5BB9\u3002",
+    "apiError.voice_provider_not_configured": "\u5F53\u524D\u672A\u542F\u7528 Groq \u8BED\u97F3\u8BC6\u522B\u3002",
     "apiError.artifact_invalidated": "\u8BE5\u4EA7\u7269\u5DF2\u56E0\u4E0A\u6E38\u53D8\u5316\u5931\u6548\uFF0C\u4E0D\u80FD\u7EE7\u7EED\u4F7F\u7528\u3002",
     "apiError.artifact_not_found": "\u5F53\u524D\u9879\u76EE\u4E2D\u4E0D\u5B58\u5728\u8BE5\u4EA7\u7269\u3002",
     "apiError.claim_review_not_found": "\u5F53\u524D\u9879\u76EE\u4E2D\u4E0D\u5B58\u5728\u8BE5\u8BBA\u65AD\u5BA1\u9605\u3002",
@@ -13889,6 +13917,20 @@
     "voice.audioError": "\u9EA5\u514B\u98A8\u4E0D\u53EF\u7528\uFF0C\u8ACB\u6AA2\u67E5\u88DD\u7F6E",
     "voice.error": "\u8A9E\u97F3\u8FA8\u8B58\u5931\u6557\uFF0C\u8ACB\u91CD\u8A66",
     "voice.shortcutHint": "Ctrl+Space \u6309\u4F4F\u8AAA\u8A71",
+    "voice.loading": "\u6B63\u5728\u8B80\u53D6\u8A9E\u97F3\u8FA8\u8B58\u8A2D\u5B9A\u2026",
+    "voice.provider": "\u8FA8\u8B58\u5F15\u64CE",
+    "voice.providerBrowser": "\u700F\u89BD\u5668 Web Speech",
+    "voice.providerGroq": "Groq Whisper",
+    "voice.model": "\u6A21\u578B",
+    "voice.modelPlaceholder": "whisper-large-v3-turbo",
+    "voice.url": "API \u5730\u5740",
+    "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.keyConfigured": "Groq key \u5DF2\u8A2D\u5B9A",
+    "voice.keyPending": "\u672A\u5075\u6E2C\u5230 Groq key\uFF08\u8ACB\u5728 .env \u8A2D\u5B9A GROQ_API_KEY\uFF09",
+    "voice.keyNote": "Groq key \u53EA\u5F9E\u5C08\u6848 .env \u7684 GROQ_API_KEY \u8B80\u53D6\uFF0C\u4E0D\u6703\u5BEB\u5165\u57F7\u884C\u968E\u6BB5\u6A94\u6848\u6216\u56DE\u50B3\u7D66\u524D\u7AEF\uFF1B\u4FEE\u6539\u5F8C\u9700\u8981\u91CD\u65B0\u555F\u52D5 API \u670D\u52D9\u3002",
+    "voice.securityNote": "Groq \u6A21\u5F0F\u6703\u628A\u672C\u6B21\u9304\u97F3\u97F3\u8A0A\u50B3\u9001\u7D66\u6240\u9078 API\uFF1B\u700F\u89BD\u5668\u6A21\u5F0F\u4E0D\u6703\u4E0A\u50B3\u97F3\u8A0A\u3002",
+    "voice.processing": "\u6B63\u5728\u8FA8\u8B58\u2026",
+    "voice.groqUnsupported": "\u76EE\u524D\u700F\u89BD\u5668\u4E0D\u652F\u63F4\u9304\u97F3\u4E0A\u50B3\uFF0C\u8ACB\u6539\u7528\u700F\u89BD\u5668\u8A9E\u97F3\u8FA8\u8B58",
     "common.loadingProject": "\u6B63\u5728\u8F09\u5165\u5C08\u6848\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u95DC\u9589",
@@ -13920,6 +13962,18 @@
     "errors.requestFailed": "\u8ACB\u6C42\u5931\u6557\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
     "errors.apiFailure": "\u8ACB\u6C42\u5931\u6557\uFF08{code}\uFF09\u3002",
     "apiError.api_unknown": "\u672C\u6A5F\u670D\u52D9\u50B3\u56DE\u4E86\u7121\u6CD5\u8FA8\u8B58\u7684\u932F\u8AA4\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
+    "apiError.voice_auth_failed": "\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u62D2\u7D55\u5B58\u53D6\uFF0C\u8ACB\u6AA2\u67E5 GROQ_API_KEY\u3002",
+    "apiError.voice_rate_limited": "\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u66AB\u6642\u9650\u6D41\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
+    "apiError.voice_provider_error": "\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u50B3\u56DE\u932F\u8AA4\u3002",
+    "apiError.voice_provider_invalid": "\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u50B3\u56DE\u4E86\u7121\u6548\u7D50\u679C\u3002",
+    "apiError.voice_provider_timeout": "\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u56DE\u61C9\u903E\u6642\u3002",
+    "apiError.voice_provider_unreachable": "\u7121\u6CD5\u9023\u7DDA\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u3002",
+    "apiError.voice_key_missing": "\u672A\u8A2D\u5B9A GROQ_API_KEY\uFF0C\u8ACB\u5728 .env \u4E2D\u8A2D\u5B9A\u5F8C\u91CD\u65B0\u555F\u52D5\u670D\u52D9\u3002",
+    "apiError.voice_file_required": "\u8ACB\u6C42\u5FC5\u9808\u5305\u542B\u9304\u97F3\u6A94\u6848\u3002",
+    "apiError.voice_file_empty": "\u9304\u97F3\u6A94\u6848\u70BA\u7A7A\uFF0C\u8ACB\u91CD\u8A66\u3002",
+    "apiError.voice_upload_too_large": "\u9304\u97F3\u6A94\u6848\u904E\u5927\u3002",
+    "apiError.voice_provider_empty": "\u8A9E\u97F3\u8FA8\u8B58\u670D\u52D9\u6C92\u6709\u8FA8\u8B58\u5230\u5167\u5BB9\u3002",
+    "apiError.voice_provider_not_configured": "\u76EE\u524D\u672A\u555F\u7528 Groq \u8A9E\u97F3\u8FA8\u8B58\u3002",
     "apiError.artifact_invalidated": "\u8A72\u7522\u7269\u5DF2\u56E0\u4E0A\u6E38\u8B8A\u5316\u5931\u6548\uFF0C\u4E0D\u80FD\u7E7C\u7E8C\u4F7F\u7528\u3002",
     "apiError.artifact_not_found": "\u76EE\u524D\u5C08\u6848\u4E2D\u4E0D\u5B58\u5728\u8A72\u7522\u7269\u3002",
     "apiError.claim_review_not_found": "\u76EE\u524D\u5C08\u6848\u4E2D\u4E0D\u5B58\u5728\u8A72\u8AD6\u65B7\u5BE9\u95B1\u3002",
@@ -14143,6 +14197,8 @@
     "settings.embeddingDescription": "\u6BCF\u500B\u79D1\u7814\u5C08\u6848\u53EF\u4EE5\u7368\u7ACB\u8A2D\u5B9A\u8A9E\u610F\u8A18\u61B6 Embedding\uFF1B\u4E0D\u8986\u84CB\u6642\u4F7F\u7528\u5168\u57DF\u9810\u8A2D\uFF08\u5BE6\u6E2C\u672C\u6A5F bge-m3 \u6BD4\u9060\u7AEF\u5FEB\u7D04 10 \u500D\uFF09\u3002",
     "settings.modelsTab": "\u6A21\u578B \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 \u8A9E\u610F\u8A18\u61B6",
+    "settings.voiceTab": "\u8A9E\u97F3\u8FA8\u8B58 \xB7 Web Speech / Groq",
+    "settings.voiceDescription": "\u9078\u64C7\u8A9E\u97F3\u8FA8\u8B58\u5F15\u64CE\u3002Groq Whisper \u6703\u81EA\u52D5\u88DC\u5168\u53E5\u4E2D\u6A19\u9EDE\uFF1Bkey \u53EA\u5F9E .env \u7684 GROQ_API_KEY \u8B80\u53D6\u3002",
     "settings.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\uFF0C\u518D\u8A2D\u5B9A\u5C08\u6848\u7D1A Embedding\u3002",
     "settings.loadingModels": "\u6B63\u5728\u8B80\u53D6\u6A21\u578B\u8A2D\u5B9A\u2026",
     "settings.keyConfigured": "\u5DF2\u8A2D\u5B9A key",
@@ -14912,6 +14968,20 @@
     "voice.audioError": "Microphone unavailable. Check your device.",
     "voice.error": "Voice recognition failed. Please try again.",
     "voice.shortcutHint": "Hold Ctrl+Space to speak",
+    "voice.loading": "Loading voice recognition settings\u2026",
+    "voice.provider": "Recognition engine",
+    "voice.providerBrowser": "Browser Web Speech",
+    "voice.providerGroq": "Groq Whisper",
+    "voice.model": "Model",
+    "voice.modelPlaceholder": "whisper-large-v3-turbo",
+    "voice.url": "API URL",
+    "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.keyConfigured": "Groq key configured",
+    "voice.keyPending": "Groq key not found (set GROQ_API_KEY in .env)",
+    "voice.keyNote": "The Groq key is read only from GROQ_API_KEY in the project .env. It is never written to runtime files or returned to the frontend; restart the API after changing it.",
+    "voice.securityNote": "Groq mode sends the recorded audio to the selected API; browser mode never uploads audio.",
+    "voice.processing": "Recognizing\u2026",
+    "voice.groqUnsupported": "This browser cannot record audio for upload. Switch back to browser speech recognition",
     "common.loadingProject": "Loading project\u2026",
     "common.seconds": "sec",
     "common.close": "Close",
@@ -14943,6 +15013,18 @@
     "errors.requestFailed": "Request failed. Please try again later.",
     "errors.apiFailure": "Request failed ({code}).",
     "apiError.api_unknown": "The local service returned an unrecognized error. Please try again later.",
+    "apiError.voice_auth_failed": "The speech recognition service rejected access. Check GROQ_API_KEY.",
+    "apiError.voice_rate_limited": "The speech recognition service is rate limited. Please try again later.",
+    "apiError.voice_provider_error": "The speech recognition service returned an error.",
+    "apiError.voice_provider_invalid": "The speech recognition service returned an invalid result.",
+    "apiError.voice_provider_timeout": "The speech recognition service timed out.",
+    "apiError.voice_provider_unreachable": "Cannot connect to the speech recognition service.",
+    "apiError.voice_key_missing": "GROQ_API_KEY is not configured. Set it in .env and restart the service.",
+    "apiError.voice_file_required": "The request must include a recording file.",
+    "apiError.voice_file_empty": "The recording file is empty. Please try again.",
+    "apiError.voice_upload_too_large": "The recording file is too large.",
+    "apiError.voice_provider_empty": "The speech recognition service returned no content.",
+    "apiError.voice_provider_not_configured": "Groq speech recognition is not enabled.",
     "apiError.artifact_invalidated": "This artifact is no longer valid because an upstream dependency changed.",
     "apiError.artifact_not_found": "No such artifact exists in the current project.",
     "apiError.claim_review_not_found": "No such claim review exists in the current project.",
@@ -15166,6 +15248,8 @@
     "settings.embeddingDescription": "Each research project can configure semantic memory Embedding independently; without an override the global default is used (local bge-m3 is about 10x faster than remote in testing).",
     "settings.modelsTab": "Models \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 Semantic memory",
+    "settings.voiceTab": "Voice \xB7 Web Speech / Groq",
+    "settings.voiceDescription": "Choose the speech recognition engine. Groq Whisper adds natural punctuation inside sentences; the key is read only from GROQ_API_KEY in .env.",
     "settings.openProjectFirst": "Open a research project first to configure project-level Embedding.",
     "settings.loadingModels": "Loading model settings\u2026",
     "settings.keyConfigured": "Key configured",
@@ -15935,6 +16019,20 @@
     "voice.audioError": "Micr\xF3fono no disponible. Revisa tu dispositivo.",
     "voice.error": "El reconocimiento de voz fall\xF3. Int\xE9ntalo de nuevo.",
     "voice.shortcutHint": "Mant\xE9n Ctrl+Space para hablar",
+    "voice.loading": "Cargando configuraci\xF3n de reconocimiento de voz\u2026",
+    "voice.provider": "Motor de reconocimiento",
+    "voice.providerBrowser": "Web Speech del navegador",
+    "voice.providerGroq": "Groq Whisper",
+    "voice.model": "Modelo",
+    "voice.modelPlaceholder": "whisper-large-v3-turbo",
+    "voice.url": "URL de la API",
+    "voice.urlPlaceholder": "https://api.groq.com/openai/v1",
+    "voice.keyConfigured": "Clave de Groq configurada",
+    "voice.keyPending": "No se encontr\xF3 la clave de Groq (define GROQ_API_KEY en .env)",
+    "voice.keyNote": "La clave de Groq solo se lee de GROQ_API_KEY en el .env del proyecto. Nunca se escribe en archivos de runtime ni se devuelve al frontend; reinicia la API despu\xE9s de cambiarla.",
+    "voice.securityNote": "El modo Groq env\xEDa el audio grabado a la API seleccionada; el modo navegador nunca sube audio.",
+    "voice.processing": "Reconociendo\u2026",
+    "voice.groqUnsupported": "Este navegador no puede grabar audio para subirlo. Vuelve al reconocimiento de voz del navegador",
     "common.loadingProject": "Cargando proyecto\u2026",
     "common.seconds": "seg",
     "common.close": "Cerrar",
@@ -15966,6 +16064,18 @@
     "errors.requestFailed": "La solicitud fall\xF3. Int\xE9ntalo de nuevo m\xE1s tarde.",
     "errors.apiFailure": "La solicitud fall\xF3 ({code}).",
     "apiError.api_unknown": "El servicio local devolvi\xF3 un error no reconocido. Int\xE9ntalo de nuevo m\xE1s tarde.",
+    "apiError.voice_auth_failed": "El servicio de reconocimiento de voz rechaz\xF3 el acceso. Revisa GROQ_API_KEY.",
+    "apiError.voice_rate_limited": "El servicio de reconocimiento de voz est\xE1 limitado temporalmente. Int\xE9ntalo de nuevo m\xE1s tarde.",
+    "apiError.voice_provider_error": "El servicio de reconocimiento de voz devolvi\xF3 un error.",
+    "apiError.voice_provider_invalid": "El servicio de reconocimiento de voz devolvi\xF3 un resultado no v\xE1lido.",
+    "apiError.voice_provider_timeout": "El servicio de reconocimiento de voz agot\xF3 el tiempo de espera.",
+    "apiError.voice_provider_unreachable": "No se puede conectar con el servicio de reconocimiento de voz.",
+    "apiError.voice_key_missing": "GROQ_API_KEY no est\xE1 configurada. Def\xEDnela en .env y reinicia el servicio.",
+    "apiError.voice_file_required": "La solicitud debe incluir un archivo de grabaci\xF3n.",
+    "apiError.voice_file_empty": "El archivo de grabaci\xF3n est\xE1 vac\xEDo. Int\xE9ntalo de nuevo.",
+    "apiError.voice_upload_too_large": "El archivo de grabaci\xF3n es demasiado grande.",
+    "apiError.voice_provider_empty": "El servicio de reconocimiento de voz no devolvi\xF3 contenido.",
+    "apiError.voice_provider_not_configured": "El reconocimiento de voz de Groq no est\xE1 habilitado.",
     "apiError.artifact_invalidated": "Este artefacto ya no es v\xE1lido porque cambi\xF3 una dependencia de origen.",
     "apiError.artifact_not_found": "No existe este artefacto en el proyecto actual.",
     "apiError.claim_review_not_found": "No existe esta revisi\xF3n de afirmaci\xF3n en el proyecto actual.",
@@ -16189,6 +16299,8 @@
     "settings.embeddingDescription": "Cada proyecto de investigaci\xF3n puede configurar su propio Embedding de memoria sem\xE1ntica; sin anulaci\xF3n se usa el predeterminado global (bge-m3 local es unas 10 veces m\xE1s r\xE1pido que remoto en pruebas).",
     "settings.modelsTab": "Modelos \xB7 Luna/Terra/Sol",
     "settings.embeddingTab": "Embedding \xB7 Memoria sem\xE1ntica",
+    "settings.voiceTab": "Voz \xB7 Web Speech / Groq",
+    "settings.voiceDescription": "Elige el motor de reconocimiento de voz. Groq Whisper a\xF1ade puntuaci\xF3n natural dentro de las frases; la clave solo se lee de GROQ_API_KEY en .env.",
     "settings.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n para configurar el Embedding del proyecto.",
     "settings.loadingModels": "Cargando configuraci\xF3n de modelos\u2026",
     "settings.keyConfigured": "Clave configurada",
@@ -17512,16 +17624,20 @@
   ];
   var ListTree = createLucideIcon("list-tree", __iconNode35);
 
+  // ../../node_modules/lucide-react/dist/esm/icons/loader-circle.mjs
+  var __iconNode36 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+  var LoaderCircle = createLucideIcon("loader-circle", __iconNode36);
+
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode36 = [
+  var __iconNode37 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode36);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode37);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode37 = [
+  var __iconNode38 = [
     [
       "path",
       {
@@ -17530,10 +17646,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode37);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode38 = [
+  var __iconNode39 = [
     [
       "path",
       {
@@ -17542,28 +17658,28 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode38);
+  var MessageSquare = createLucideIcon("message-square", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/mic.mjs
-  var __iconNode39 = [
+  var __iconNode40 = [
     ["path", { d: "M12 19v3", key: "npa21l" }],
     ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
     ["rect", { x: "9", y: "2", width: "6", height: "13", rx: "3", key: "s6n7sd" }]
   ];
-  var Mic = createLucideIcon("mic", __iconNode39);
+  var Mic = createLucideIcon("mic", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode40 = [
+  var __iconNode41 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode40);
+  var Network = createLucideIcon("network", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode41 = [
+  var __iconNode42 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -17576,10 +17692,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode41);
+  var PackageCheck = createLucideIcon("package-check", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode42 = [
+  var __iconNode43 = [
     [
       "path",
       {
@@ -17592,10 +17708,10 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode42);
+  var Palette = createLucideIcon("palette", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/paperclip.mjs
-  var __iconNode43 = [
+  var __iconNode44 = [
     [
       "path",
       {
@@ -17604,17 +17720,17 @@
       }
     ]
   ];
-  var Paperclip = createLucideIcon("paperclip", __iconNode43);
+  var Paperclip = createLucideIcon("paperclip", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode44 = [
+  var __iconNode45 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode44);
+  var Pause = createLucideIcon("pause", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin-off.mjs
-  var __iconNode45 = [
+  var __iconNode46 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     ["path", { d: "M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89", key: "znwnzq" }],
     ["path", { d: "m2 2 20 20", key: "1ooewy" }],
@@ -17626,10 +17742,10 @@
       }
     ]
   ];
-  var PinOff = createLucideIcon("pin-off", __iconNode45);
+  var PinOff = createLucideIcon("pin-off", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin.mjs
-  var __iconNode46 = [
+  var __iconNode47 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     [
       "path",
@@ -17639,10 +17755,10 @@
       }
     ]
   ];
-  var Pin = createLucideIcon("pin", __iconNode46);
+  var Pin = createLucideIcon("pin", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode47 = [
+  var __iconNode48 = [
     [
       "path",
       {
@@ -17651,17 +17767,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode47);
+  var Play = createLucideIcon("play", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode48 = [
+  var __iconNode49 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode48);
+  var Plus = createLucideIcon("plus", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode49 = [
+  var __iconNode50 = [
     [
       "path",
       {
@@ -17677,34 +17793,34 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode49);
+  var Quote = createLucideIcon("quote", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode50 = [
+  var __iconNode51 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode50);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode51 = [
+  var __iconNode52 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode51);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode52 = [
+  var __iconNode53 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode52);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode53 = [
+  var __iconNode54 = [
     [
       "path",
       {
@@ -17715,10 +17831,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode53);
+  var Save = createLucideIcon("save", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode54 = [
+  var __iconNode55 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -17727,17 +17843,17 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode54);
+  var ScanText = createLucideIcon("scan-text", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode55 = [
+  var __iconNode56 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode55);
+  var Search = createLucideIcon("search", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode56 = [
+  var __iconNode57 = [
     [
       "path",
       {
@@ -17747,10 +17863,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode56);
+  var Send = createLucideIcon("send", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode57 = [
+  var __iconNode58 = [
     [
       "path",
       {
@@ -17760,20 +17876,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode57);
+  var Settings = createLucideIcon("settings", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode58 = [
+  var __iconNode59 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode58);
+  var Share2 = createLucideIcon("share-2", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode59 = [
+  var __iconNode60 = [
     [
       "path",
       {
@@ -17784,10 +17900,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode59);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode60 = [
+  var __iconNode61 = [
     [
       "path",
       {
@@ -17797,10 +17913,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode60);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode61 = [
+  var __iconNode62 = [
     [
       "path",
       {
@@ -17812,26 +17928,26 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode61);
+  var Sparkles = createLucideIcon("sparkles", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode62 = [
+  var __iconNode63 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode62);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode63 = [
+  var __iconNode64 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode63);
+  var Square = createLucideIcon("square", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/stamp.mjs
-  var __iconNode64 = [
+  var __iconNode65 = [
     ["path", { d: "M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13", key: "i9gjdv" }],
     [
       "path",
@@ -17842,10 +17958,10 @@
     ],
     ["path", { d: "M5 22h14", key: "ehvnwv" }]
   ];
-  var Stamp = createLucideIcon("stamp", __iconNode64);
+  var Stamp = createLucideIcon("stamp", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/table-2.mjs
-  var __iconNode65 = [
+  var __iconNode66 = [
     [
       "path",
       {
@@ -17854,27 +17970,27 @@
       }
     ]
   ];
-  var Table2 = createLucideIcon("table-2", __iconNode65);
+  var Table2 = createLucideIcon("table-2", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconNode66 = [
+  var __iconNode67 = [
     ["path", { d: "M12 19h8", key: "baeox8" }],
     ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
   ];
-  var Terminal = createLucideIcon("terminal", __iconNode66);
+  var Terminal = createLucideIcon("terminal", __iconNode67);
 
   // ../../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode67 = [
+  var __iconNode68 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode67);
+  var Trash2 = createLucideIcon("trash-2", __iconNode68);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode68 = [
+  var __iconNode69 = [
     [
       "path",
       {
@@ -17885,10 +18001,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode68);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode69);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode69 = [
+  var __iconNode70 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -17897,22 +18013,22 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode69);
+  var Waypoints = createLucideIcon("waypoints", __iconNode70);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode70 = [
+  var __iconNode71 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode70);
+  var Workflow = createLucideIcon("workflow", __iconNode71);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode71 = [
+  var __iconNode72 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode71);
+  var X = createLucideIcon("x", __iconNode72);
 
   // src/components/Sidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -18951,6 +19067,11 @@
     if (locale === "es") return "es-ES";
     return "zh-CN";
   }
+  function groqLanguage(locale) {
+    if (locale === "en") return "en";
+    if (locale === "es") return "es";
+    return "zh";
+  }
   function createRecognition() {
     if (typeof window === "undefined") return null;
     const browserWindow = window;
@@ -18963,6 +19084,25 @@
     if (event.error === "audio-capture") return "voice.audioError";
     return "voice.error";
   }
+  function recorderMimeType() {
+    if (typeof MediaRecorder === "undefined") return "";
+    const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/mp4"];
+    return candidates.find((candidate) => MediaRecorder.isTypeSupported(candidate)) || "";
+  }
+  function microphoneErrorKey(error) {
+    if (error instanceof DOMException) {
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") return "voice.permissionDenied";
+      if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") return "voice.audioError";
+    }
+    return "voice.error";
+  }
+  function voiceApiErrorKey(error) {
+    if (error instanceof ApiError) {
+      if (error.code === "voice_key_missing") return "voice.keyPending";
+      if (error.code === "voice_provider_empty") return "voice.noSpeech";
+    }
+    return "voice.error";
+  }
   function VoiceInputButton({
     disabled = false,
     onText,
@@ -18972,17 +19112,26 @@
   }) {
     const { t } = useTranslation();
     const locale = useLocale();
+    const [provider, setProvider] = (0, import_react10.useState)("browser");
+    const [groqReady, setGroqReady] = (0, import_react10.useState)(false);
     const [listening, setListening] = (0, import_react10.useState)(false);
+    const [processing, setProcessing] = (0, import_react10.useState)(false);
     const [errorKey, setErrorKey] = (0, import_react10.useState)(null);
     const buttonRef = (0, import_react10.useRef)(null);
     const recognitionRef = (0, import_react10.useRef)(null);
+    const mediaStreamRef = (0, import_react10.useRef)(null);
+    const recorderRef = (0, import_react10.useRef)(null);
+    const chunksRef = (0, import_react10.useRef)([]);
     const onTextRef = (0, import_react10.useRef)(onText);
     const onErrorRef = (0, import_react10.useRef)(onError);
     const onSessionStartRef = (0, import_react10.useRef)(onSessionStart);
     const onSessionEndRef = (0, import_react10.useRef)(onSessionEnd);
     const localeRef = (0, import_react10.useRef)(locale);
     const disabledRef = (0, import_react10.useRef)(disabled);
+    const providerRef = (0, import_react10.useRef)(provider);
+    const groqReadyRef = (0, import_react10.useRef)(groqReady);
     const activeRef = (0, import_react10.useRef)(false);
+    const processingRef = (0, import_react10.useRef)(false);
     (0, import_react10.useEffect)(() => {
       onTextRef.current = onText;
       onErrorRef.current = onError;
@@ -18990,7 +19139,25 @@
       onSessionEndRef.current = onSessionEnd;
       localeRef.current = locale;
       disabledRef.current = disabled;
+      providerRef.current = provider;
+      groqReadyRef.current = groqReady;
     });
+    (0, import_react10.useEffect)(() => {
+      const loadSettings = () => {
+        void fetchWithTimeout(window.fetch.bind(window), "/api/settings/voice", {}, 3e4).then(async (response) => {
+          if (!response.ok) throw new Error(`voice_settings_${response.status}`);
+          const result = await response.json();
+          setProvider(result.provider);
+          setGroqReady(result.provider === "groq" && result.key_configured);
+        }).catch(() => {
+          setProvider("browser");
+          setGroqReady(false);
+        });
+      };
+      loadSettings();
+      window.addEventListener("researchos:voice-settings-changed", loadSettings);
+      return () => window.removeEventListener("researchos:voice-settings-changed", loadSettings);
+    }, []);
     (0, import_react10.useEffect)(() => {
       const recognition = createRecognition();
       if (!recognition) return;
@@ -19046,66 +19213,108 @@
     (0, import_react10.useEffect)(() => {
       if (recognitionRef.current) recognitionRef.current.lang = recognitionLanguage(locale);
     }, [locale]);
-    (0, import_react10.useEffect)(() => {
-      const shortcutActive = () => {
-        if (!buttonRef.current || disabledRef.current || !recognitionRef.current) return false;
-        return buttonRef.current.getClientRects().length > 0;
-      };
-      const handleKeyDown = (event) => {
-        if (!event.ctrlKey || event.key !== " " || !shortcutActive()) return;
-        event.preventDefault();
-        if (event.repeat || activeRef.current) return;
-        const recognition = recognitionRef.current;
-        activeRef.current = true;
-        setErrorKey(null);
-        onSessionStartRef.current?.();
-        recognition.lang = recognitionLanguage(localeRef.current);
+    (0, import_react10.useEffect)(() => () => {
+      if (recorderRef.current && recorderRef.current.state !== "inactive") {
         try {
-          recognition.start();
+          recorderRef.current.stop();
         } catch {
-          activeRef.current = false;
-          setErrorKey("voice.error");
-          onErrorRef.current?.("voice.error");
-          onSessionEndRef.current?.();
         }
-      };
-      const handleKeyUp = (event) => {
-        if (event.key !== " " || !activeRef.current) return;
-        const recognition = recognitionRef.current;
-        if (!recognition) return;
-        try {
-          recognition.stop();
-        } catch {
-          activeRef.current = false;
-          setListening(false);
-        }
-      };
-      window.addEventListener("keydown", handleKeyDown, true);
-      window.addEventListener("keyup", handleKeyUp, true);
-      return () => {
-        window.removeEventListener("keydown", handleKeyDown, true);
-        window.removeEventListener("keyup", handleKeyUp, true);
-      };
+      }
+      if (mediaStreamRef.current) {
+        for (const track of mediaStreamRef.current.getTracks()) track.stop();
+        mediaStreamRef.current = null;
+      }
     }, []);
-    const supported = recognitionRef.current !== null;
-    const label = !supported ? t("voice.unsupported") : listening ? t("voice.stop") : t("voice.start");
-    const title = errorKey ? t(errorKey) : label;
-    const toggle = () => {
-      const recognition = recognitionRef.current;
-      if (!recognition || disabled) return;
-      if (listening) {
+    const finishGroqRecording = async () => {
+      if (processingRef.current) return;
+      const recorder = recorderRef.current;
+      const chunks = chunksRef.current;
+      const stream = mediaStreamRef.current;
+      recorderRef.current = null;
+      mediaStreamRef.current = null;
+      chunksRef.current = [];
+      if (stream) for (const track of stream.getTracks()) track.stop();
+      const blob = new Blob(chunks, { type: recorder?.mimeType || "audio/webm" });
+      if (blob.size < 1024) {
         activeRef.current = false;
+        setListening(false);
+        setErrorKey("voice.noSpeech");
+        onErrorRef.current?.("voice.noSpeech");
+        onSessionEndRef.current?.();
+        return;
+      }
+      processingRef.current = true;
+      setProcessing(true);
+      try {
+        const form = new FormData();
+        form.append("file", blob, "voice.webm");
+        form.append("language", groqLanguage(localeRef.current));
+        const response = await fetchWithTimeout(window.fetch.bind(window), "/api/voice/transcribe", {
+          method: "POST",
+          body: form
+        }, 12e4);
+        if (!response.ok) {
+          const body2 = await response.json().catch(() => null);
+          throw new ApiError(body2?.code || "voice_provider_error", body2?.message || "Voice recognition failed.", void 0, response.status);
+        }
+        const body = await response.json();
+        if (typeof body.text !== "string" || !body.text.trim()) throw new ApiError("voice_provider_empty", "Voice recognition returned no content.");
+        onTextRef.current(body.text.trim());
+        setErrorKey(null);
+      } catch (error) {
+        const key = voiceApiErrorKey(error);
+        setErrorKey(key);
+        onErrorRef.current?.(key);
+      } finally {
+        processingRef.current = false;
+        setProcessing(false);
+        activeRef.current = false;
+        setListening(false);
+        onSessionEndRef.current?.();
+      }
+    };
+    const startGroqRecording = async () => {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error("media_devices_unavailable");
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      const mimeType = recorderMimeType();
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) chunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => void finishGroqRecording();
+      recorderRef.current = recorder;
+      recorder.start(250);
+    };
+    const startVoice = async () => {
+      if (disabledRef.current || activeRef.current || processingRef.current) return;
+      activeRef.current = true;
+      setErrorKey(null);
+      onSessionStartRef.current?.();
+      if (providerRef.current === "groq") {
+        setListening(true);
         try {
-          recognition.stop();
-        } catch {
+          await startGroqRecording();
+        } catch (error) {
+          activeRef.current = false;
           setListening(false);
+          const key = microphoneErrorKey(error);
+          setErrorKey(key);
+          onErrorRef.current?.(key);
+          onSessionEndRef.current?.();
         }
         return;
       }
-      setErrorKey(null);
-      activeRef.current = true;
-      onSessionStartRef.current?.();
-      recognition.lang = recognitionLanguage(locale);
+      const recognition = recognitionRef.current;
+      if (!recognition) {
+        activeRef.current = false;
+        setErrorKey("voice.unsupported");
+        onErrorRef.current?.("voice.unsupported");
+        onSessionEndRef.current?.();
+        return;
+      }
+      recognition.lang = recognitionLanguage(localeRef.current);
       try {
         recognition.start();
       } catch {
@@ -19115,13 +19324,69 @@
         onSessionEndRef.current?.();
       }
     };
+    const stopVoice = () => {
+      if (providerRef.current === "groq") {
+        const recorder = recorderRef.current;
+        if (recorder && recorder.state !== "inactive") {
+          try {
+            recorder.stop();
+          } catch {
+            void finishGroqRecording();
+          }
+        }
+        return;
+      }
+      const recognition = recognitionRef.current;
+      if (!recognition) return;
+      activeRef.current = false;
+      try {
+        recognition.stop();
+      } catch {
+        setListening(false);
+        onSessionEndRef.current?.();
+      }
+    };
+    (0, import_react10.useEffect)(() => {
+      const shortcutActive = () => {
+        if (!buttonRef.current || disabledRef.current || processingRef.current) return false;
+        return buttonRef.current.getClientRects().length > 0;
+      };
+      const handleKeyDown = (event) => {
+        if (!event.ctrlKey || event.key !== " " || !shortcutActive()) return;
+        event.preventDefault();
+        if (event.repeat || activeRef.current) return;
+        void startVoice();
+      };
+      const handleKeyUp = (event) => {
+        if (event.key !== " " || !activeRef.current) return;
+        stopVoice();
+      };
+      window.addEventListener("keydown", handleKeyDown, true);
+      window.addEventListener("keyup", handleKeyUp, true);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown, true);
+        window.removeEventListener("keyup", handleKeyUp, true);
+      };
+    }, []);
+    const mediaSupported = typeof MediaRecorder !== "undefined" && Boolean(navigator.mediaDevices?.getUserMedia);
+    const supported = provider === "browser" ? recognitionRef.current !== null : Boolean(mediaSupported && groqReady);
+    const label = !supported ? provider === "groq" && !groqReady ? t("voice.keyPending") : t("voice.unsupported") : processing ? t("voice.processing") : listening ? t("voice.stop") : t("voice.start");
+    const title = errorKey ? t(errorKey) : label;
+    const toggle = () => {
+      if (!supported || disabled || processing) return;
+      if (listening || activeRef.current) {
+        stopVoice();
+        return;
+      }
+      void startVoice();
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
       "button",
       {
         type: "button",
         className: "voice-btn",
-        "data-state": listening ? "listening" : "idle",
-        disabled: disabled || !supported,
+        "data-state": processing ? "processing" : listening ? "listening" : "idle",
+        disabled: disabled || !supported || processing,
         title,
         "aria-label": label,
         "aria-pressed": listening,
@@ -19129,8 +19394,8 @@
         ref: buttonRef,
         onClick: toggle,
         children: [
-          listening ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Square, { size: 17, fill: "currentColor" }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Mic, { size: 17 }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "sr-only", role: "status", "aria-live": "polite", children: listening ? t("voice.listening") : errorKey ? t(errorKey) : "" })
+          processing ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(LoaderCircle, { size: 17, className: "spin" }) : listening ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Square, { size: 17, fill: "currentColor" }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Mic, { size: 17 }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "sr-only", role: "status", "aria-live": "polite", children: processing ? t("voice.processing") : listening ? t("voice.listening") : errorKey ? t(errorKey) : "" })
         ]
       }
     );
@@ -23525,7 +23790,7 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react25 = __toESM(require_react(), 1);
+  var import_react26 = __toESM(require_react(), 1);
 
   // src/components/ProjectEmbeddingSettingsForm.tsx
   var import_react24 = __toESM(require_react(), 1);
@@ -23754,8 +24019,150 @@
     ] });
   }
 
-  // src/components/ModelSettingsModal.tsx
+  // src/components/VoiceSettingsForm.tsx
+  var import_react25 = __toESM(require_react(), 1);
   var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  function VoiceSettingsForm({ onChanged }) {
+    const { t } = useTranslation();
+    const [values, setValues] = (0, import_react25.useState)(null);
+    const [loading, setLoading] = (0, import_react25.useState)(false);
+    const [saving, setSaving] = (0, import_react25.useState)(false);
+    const [error, setError] = (0, import_react25.useState)("");
+    const [dirty, setDirty] = (0, import_react25.useState)(false);
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const result = await api("/api/settings/voice");
+        setValues({
+          provider: result.provider,
+          model: result.model,
+          url: result.url,
+          key_configured: result.key_configured
+        });
+        setDirty(false);
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    (0, import_react25.useEffect)(() => {
+      void load();
+    }, []);
+    const update = (field, value) => {
+      setValues((previous) => previous ? { ...previous, [field]: value } : previous);
+      setDirty(true);
+    };
+    const save = async (event) => {
+      event.preventDefault();
+      if (!values || saving) return;
+      setSaving(true);
+      setError("");
+      try {
+        const result = await api("/api/settings/voice", {
+          method: "PUT",
+          body: JSON.stringify({
+            provider: values.provider,
+            model: values.model.trim(),
+            url: values.url.trim()
+          })
+        });
+        setValues((previous) => previous ? { ...previous, ...result, key_configured: result.key_configured } : previous);
+        setDirty(false);
+        onChanged();
+        window.dispatchEvent(new Event("researchos:voice-settings-changed"));
+      } catch (err) {
+        setError(t("settings.saveFailed", { error: errorMessage(err) }));
+      } finally {
+        setSaving(false);
+      }
+    };
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("voice.loading") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
+    const groq = values.provider === "groq";
+    const ready = !groq || values.key_configured;
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "model-tier", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h3", { children: t("voice.provider") }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-status", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot, { ready }),
+              groq ? values.key_configured ? t("voice.keyConfigured") : t("voice.keyPending") : t("voice.providerBrowser")
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
+            t("settings.default"),
+            " ",
+            t("voice.providerGroq")
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("voice.provider"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+              "select",
+              {
+                value: values.provider,
+                onChange: (event) => update("provider", event.target.value),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "browser", children: t("voice.providerBrowser") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "groq", children: t("voice.providerGroq") })
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("voice.model"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              "input",
+              {
+                value: values.model,
+                disabled: !groq,
+                maxLength: 200,
+                placeholder: t("voice.modelPlaceholder"),
+                onChange: (event) => update("model", event.target.value)
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("voice.url"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              "input",
+              {
+                type: "url",
+                value: values.url,
+                disabled: !groq,
+                maxLength: 500,
+                placeholder: t("voice.urlPlaceholder"),
+                onChange: (event) => update("url", event.target.value)
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Mic, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("voice.securityNote") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("voice.keyNote") })
+        ] })
+      ] }),
+      error ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "modal-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Save, { size: 16 }),
+          t("settings.save")
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/components/ModelSettingsModal.tsx
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
   var TIERS = [
     { id: "simple", label: "Luna", defaultEffort: "low" },
     { id: "medium", label: "Terra", defaultEffort: "medium" },
@@ -23766,14 +24173,14 @@
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
     const { t } = useTranslation();
-    const [tab, setTab] = (0, import_react25.useState)("models");
-    const [values, setValues] = (0, import_react25.useState)(null);
-    const [loading, setLoading] = (0, import_react25.useState)(false);
-    const [saving, setSaving] = (0, import_react25.useState)(false);
-    const [error, setError] = (0, import_react25.useState)("");
-    const [dirty, setDirty] = (0, import_react25.useState)(false);
-    const [confirmClose, setConfirmClose] = (0, import_react25.useState)(false);
-    (0, import_react25.useEffect)(() => {
+    const [tab, setTab] = (0, import_react26.useState)("models");
+    const [values, setValues] = (0, import_react26.useState)(null);
+    const [loading, setLoading] = (0, import_react26.useState)(false);
+    const [saving, setSaving] = (0, import_react26.useState)(false);
+    const [error, setError] = (0, import_react26.useState)("");
+    const [dirty, setDirty] = (0, import_react26.useState)(false);
+    const [confirmClose, setConfirmClose] = (0, import_react26.useState)(false);
+    (0, import_react26.useEffect)(() => {
       if (!open) return;
       setTab("models");
       setLoading(true);
@@ -23859,62 +24266,63 @@
         setSaving(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
         Modal,
         {
           eyebrow: t("settings.eyebrow"),
           title: t("settings.title"),
-          description: tab === "models" ? t("settings.modelsDescription") : t("settings.embeddingDescription"),
+          description: tab === "models" ? t("settings.modelsDescription") : tab === "embedding" ? t("settings.embeddingDescription") : t("settings.voiceDescription"),
           onClose: requestClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "settings-tabs", role: "tablist", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: t("settings.modelsTab") }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: t("settings.embeddingTab") })
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "settings-tabs", role: "tablist", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: tab === "models" ? "active" : "", type: "button", onClick: () => switchTab("models"), children: t("settings.modelsTab") }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: tab === "embedding" ? "active" : "", type: "button", onClick: () => switchTab("embedding"), children: t("settings.embeddingTab") }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: tab === "voice" ? "active" : "", type: "button", onClick: () => switchTab("voice"), children: t("settings.voiceTab") })
             ] }),
-            tab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+            tab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
               ProjectEmbeddingSettingsForm,
               {
                 projectId,
                 onChanged: () => setDirty(false)
               }
-            ) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("settings.loadingModels") }) : values ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+            ) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : tab === "voice" ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(VoiceSettingsForm, { onChanged: () => setDirty(false) }) : loading ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("settings.loadingModels") }) : values ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
               TIERS.map((tier) => {
                 const item = values[tier.id];
-                return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "model-tier", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-heading", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("h3", { children: [
+                return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "model-tier", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-heading", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("h3", { children: [
                         tier.label,
-                        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "badge neutral", children: tier.id })
+                        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: "badge neutral", children: tier.id })
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-status", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "tier-status", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
                         item.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
                         " \xB7 ",
                         item.url ? t("settings.urlReady") : t("settings.urlPending")
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-sources", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "tier-sources", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { children: [
                           "URL\uFF1A",
                           t(sourceLabelKey(item.sources?.url))
                         ] }),
-                        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { children: [
                           "key\uFF1A",
                           t(sourceLabelKey(item.sources?.key))
                         ] })
                       ] })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "tier-default", children: [
                       t("settings.default"),
                       " ",
                       tier.defaultEffort
                     ] })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-grid", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
                       t("settings.modelName"),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                         "input",
                         {
                           value: item.model,
@@ -23924,24 +24332,24 @@
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
                       t("settings.reasoningEffort"),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
                         "select",
                         {
                           value: item.reasoning_effort,
                           onChange: (event) => update(tier.id, "reasoning_effort", event.target.value),
                           children: [
-                            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "low", children: t("settings.low") }),
-                            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "medium", children: t("settings.medium") }),
-                            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "high", children: t("settings.high") })
+                            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "low", children: t("settings.low") }),
+                            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "medium", children: t("settings.medium") }),
+                            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "high", children: t("settings.high") })
                           ]
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
                       t("settings.modelUrl"),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                         "input",
                         {
                           type: "url",
@@ -23953,9 +24361,9 @@
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
                       t("settings.apiKey"),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                         "input",
                         {
                           type: "password",
@@ -23970,23 +24378,23 @@
                   ] })
                 ] }, tier.id);
               }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("settings.securityNote") })
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ShieldCheck, { size: 16 }),
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("settings.securityNote") })
               ] }),
-              error ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "modal-actions", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: t("common.cancel") }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Save, { size: 16 }),
+              error ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "modal-actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: "secondary", type: "button", onClick: requestClose, children: t("common.cancel") }),
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "primary", type: "submit", disabled: saving, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Save, { size: 16 }),
                   t("settings.save")
                 ] })
               ] })
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") })
           ]
         }
       ),
-      confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      confirmClose ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         ConfirmDialog,
         {
           title: t("settings.discardTitle"),
@@ -24004,8 +24412,8 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react26 = __toESM(require_react(), 1);
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  var import_react27 = __toESM(require_react(), 1);
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     const { t } = useTranslation();
     if (!graph) return null;
@@ -24015,27 +24423,27 @@
       x: 80 + index % 5 * 150,
       y: 70 + Math.floor(index / 5) * 120
     }]));
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
       edges.map((edge) => {
         const source = positions.get(edge.source);
         const target = positions.get(edge.target);
-        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
+        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
       }),
       nodes.map((node) => {
         const position = positions.get(node.id);
         if (!position) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("g", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("g", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
             "circle",
             {
               className: `memory-graph-node ${node.kind !== "memory" ? "related" : ""}`,
               cx: position.x,
               cy: position.y,
               r: "18",
-              children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("title", { children: node.label })
+              children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("title", { children: node.label })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
         ] }, node.id);
       })
     ] });
@@ -24047,13 +24455,13 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [view, setView] = (0, import_react26.useState)("graph");
-    const [query, setQuery] = (0, import_react26.useState)("");
-    const [status, setStatus] = (0, import_react26.useState)(t("memory.graphPrompt"));
-    const [graph, setGraph] = (0, import_react26.useState)(null);
-    const [search, setSearch] = (0, import_react26.useState)(null);
-    const [loading, setLoading] = (0, import_react26.useState)(false);
-    (0, import_react26.useEffect)(() => {
+    const [view, setView] = (0, import_react27.useState)("graph");
+    const [query, setQuery] = (0, import_react27.useState)("");
+    const [status, setStatus] = (0, import_react27.useState)(t("memory.graphPrompt"));
+    const [graph, setGraph] = (0, import_react27.useState)(null);
+    const [search, setSearch] = (0, import_react27.useState)(null);
+    const [loading, setLoading] = (0, import_react27.useState)(false);
+    (0, import_react27.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -24101,7 +24509,7 @@
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
       Modal,
       {
         eyebrow: t("memory.eyebrow"),
@@ -24110,8 +24518,8 @@
         onClose,
         wide: true,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
               "button",
               {
                 className: view === "graph" ? "active" : "",
@@ -24123,12 +24531,12 @@
                   setStatus(t("memory.graphPrompt"));
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Share2, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Share2, { size: 16 }),
                   t("memory.graphView")
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
               "button",
               {
                 className: view === "search" ? "active" : "",
@@ -24140,16 +24548,16 @@
                   setStatus(t("memory.searchPrompt"));
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Search, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Search, { size: 16 }),
                   t("memory.searchView")
                 ]
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "memory-graph-query", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "memory-graph-query", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
                 "input",
                 {
                   id: "memoryGraphQuery",
@@ -24160,29 +24568,29 @@
                   onChange: (event) => setQuery(event.target.value)
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Search, { size: 16 }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Search, { size: 16 }),
                 t("memory.search")
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
-          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(GraphCanvas, { graph }),
-            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("article", { className: "memory-graph-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("strong", { children: node.label }),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
+          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(GraphCanvas, { graph }),
+            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("article", { className: "memory-graph-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("strong", { children: node.label }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
             ] }, node.id)) }) : null
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
             const source = item.source_type ? `${item.source_type}${item.source_id ? ` \xB7 ${item.source_id}` : ""}` : "Supermemory semantic result";
-            return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("article", { className: "memory-search-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("article", { className: "memory-search-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { children: [
                 t("memory.similarity", { value: String(item.similarity ?? t("common.notProvided")) }),
                 " \xB7 ",
                 t("memory.source", { source })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { children: [
                 t("memory.artifact", { value: String(item.artifact_id || item.metadata?.artifact_id || t("common.none")) }),
                 " \xB7 ",
                 t("memory.evidenceStatus", { value: String(item.evidence_status || "semantic_candidate") })
@@ -24195,16 +24603,16 @@
   }
 
   // src/components/NotFoundView.tsx
-  var import_react27 = __toESM(require_react(), 1);
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var import_react28 = __toESM(require_react(), 1);
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
   function NotFoundView({ path, onGoHome }) {
     const { t } = useTranslation();
-    const [seconds, setSeconds] = (0, import_react27.useState)(3);
-    const onGoHomeRef = (0, import_react27.useRef)(onGoHome);
-    (0, import_react27.useEffect)(() => {
+    const [seconds, setSeconds] = (0, import_react28.useState)(3);
+    const onGoHomeRef = (0, import_react28.useRef)(onGoHome);
+    (0, import_react28.useEffect)(() => {
       onGoHomeRef.current = onGoHome;
     }, [onGoHome]);
-    (0, import_react27.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       const countdown = window.setInterval(() => {
         setSeconds((value) => Math.max(0, value - 1));
       }, 1e3);
@@ -24214,27 +24622,27 @@
         window.clearTimeout(redirect);
       };
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "not-found-path-wrap", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("code", { className: "not-found-path", children: path })
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "not-found-path-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("code", { className: "not-found-path", children: path })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "not-found-countdown", "aria-live": "polite", children: t("notFound.redirect", { seconds }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(House, { size: 16, "aria-hidden": "true" }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "not-found-countdown", "aria-live": "polite", children: t("notFound.redirect", { seconds }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(House, { size: 16, "aria-hidden": "true" }),
         t("notFound.home")
       ] })
     ] }) });
   }
 
   // src/components/DeleteProjectDialog.tsx
-  var import_react28 = __toESM(require_react(), 1);
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  var import_react29 = __toESM(require_react(), 1);
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
   function DeleteProjectDialog({
     project,
     busy,
@@ -24242,22 +24650,22 @@
     onConfirm
   }) {
     const { t } = useTranslation();
-    const [confirmation, setConfirmation] = (0, import_react28.useState)("");
+    const [confirmation, setConfirmation] = (0, import_react29.useState)("");
     const canDelete = confirmation === "DELETE" && !busy;
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
       Modal,
       {
         eyebrow: t("deleteProject.eyebrow"),
         title: t("deleteProject.title"),
         description: t("deleteProject.description"),
         onClose: busy ? () => void 0 : onClose,
-        children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "delete-project-content", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "delete-project-target", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: t("deleteProject.projectLabel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("strong", { title: project.title, children: project.title })
+        children: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "delete-project-content", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "delete-project-target", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { children: t("deleteProject.projectLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("strong", { title: project.title, children: project.title })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
             "input",
             {
               id: "delete-project-confirmation",
@@ -24275,10 +24683,10 @@
               autoFocus: true
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "modal-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "modal-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
           ] })
         ] })
       }
@@ -24286,7 +24694,7 @@
   }
 
   // src/App.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
   var EMPTY_STAGES = [
     { key: "analyzing_input", labelKey: "app.thinking.readingConversation" },
     { key: "selecting_route", labelKey: "app.thinking.selectingModel" },
@@ -24303,45 +24711,45 @@
       role: "assistant",
       text: t("app.initialMessage")
     };
-    (0, import_react29.useEffect)(() => {
+    (0, import_react30.useEffect)(() => {
       setMessages((current) => current.map((message) => message.id === "initial-assistant" ? { ...message, text: t("app.initialMessage") } : message));
     }, [locale]);
-    const [projects, setProjects] = (0, import_react29.useState)([]);
-    const [projectId, setProjectId] = (0, import_react29.useState)(null);
-    const [project, setProject] = (0, import_react29.useState)(null);
-    const [view, setView] = (0, import_react29.useState)("idea");
-    const [activeArea, setActiveArea] = (0, import_react29.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react29.useState)("overview");
-    const [health, setHealth] = (0, import_react29.useState)("connecting");
-    const [toast, setToast] = (0, import_react29.useState)(null);
-    const [messages, setMessages] = (0, import_react29.useState)([initialMessage]);
-    const [projectMessages, setProjectMessages] = (0, import_react29.useState)([]);
-    const [spec, setSpec] = (0, import_react29.useState)(null);
-    const [projectSlug, setProjectSlug] = (0, import_react29.useState)("");
-    const [specStatus, setSpecStatus] = (0, import_react29.useState)("pending_clarification");
-    const [chatBusy, setChatBusy] = (0, import_react29.useState)(false);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react29.useState)(false);
-    const [queuedFiles, setQueuedFiles] = (0, import_react29.useState)([]);
-    const [clarificationMode, setClarificationMode] = (0, import_react29.useState)("automatic");
-    const [thinkingSessions, setThinkingSessions] = (0, import_react29.useState)([]);
-    const [sessionId, setSessionId] = (0, import_react29.useState)(null);
-    const [searchCandidates, setSearchCandidates] = (0, import_react29.useState)([]);
-    const [settingsOpen, setSettingsOpen] = (0, import_react29.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react29.useState)(false);
-    const [confirm, setConfirm] = (0, import_react29.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react29.useState)(false);
-    const [notFoundPath, setNotFoundPath] = (0, import_react29.useState)(null);
-    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react29.useState)(null);
-    const [deleteBusy, setDeleteBusy] = (0, import_react29.useState)(false);
-    const [sidebarWidth, setSidebarWidth] = (0, import_react29.useState)(() => {
+    const [projects, setProjects] = (0, import_react30.useState)([]);
+    const [projectId, setProjectId] = (0, import_react30.useState)(null);
+    const [project, setProject] = (0, import_react30.useState)(null);
+    const [view, setView] = (0, import_react30.useState)("idea");
+    const [activeArea, setActiveArea] = (0, import_react30.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react30.useState)("overview");
+    const [health, setHealth] = (0, import_react30.useState)("connecting");
+    const [toast, setToast] = (0, import_react30.useState)(null);
+    const [messages, setMessages] = (0, import_react30.useState)([initialMessage]);
+    const [projectMessages, setProjectMessages] = (0, import_react30.useState)([]);
+    const [spec, setSpec] = (0, import_react30.useState)(null);
+    const [projectSlug, setProjectSlug] = (0, import_react30.useState)("");
+    const [specStatus, setSpecStatus] = (0, import_react30.useState)("pending_clarification");
+    const [chatBusy, setChatBusy] = (0, import_react30.useState)(false);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react30.useState)(false);
+    const [queuedFiles, setQueuedFiles] = (0, import_react30.useState)([]);
+    const [clarificationMode, setClarificationMode] = (0, import_react30.useState)("automatic");
+    const [thinkingSessions, setThinkingSessions] = (0, import_react30.useState)([]);
+    const [sessionId, setSessionId] = (0, import_react30.useState)(null);
+    const [searchCandidates, setSearchCandidates] = (0, import_react30.useState)([]);
+    const [settingsOpen, setSettingsOpen] = (0, import_react30.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react30.useState)(false);
+    const [confirm, setConfirm] = (0, import_react30.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react30.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react30.useState)(null);
+    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react30.useState)(null);
+    const [deleteBusy, setDeleteBusy] = (0, import_react30.useState)(false);
+    const [sidebarWidth, setSidebarWidth] = (0, import_react30.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.sidebarWidth"));
       return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276;
     });
-    const chatBusyRef = (0, import_react29.useRef)(false);
-    const projectChatBusyRef = (0, import_react29.useRef)(false);
-    const sessionIdRef = (0, import_react29.useRef)(null);
-    const toastTimerRef = (0, import_react29.useRef)(null);
-    (0, import_react29.useEffect)(() => {
+    const chatBusyRef = (0, import_react30.useRef)(false);
+    const projectChatBusyRef = (0, import_react30.useRef)(false);
+    const sessionIdRef = (0, import_react30.useRef)(null);
+    const toastTimerRef = (0, import_react30.useRef)(null);
+    (0, import_react30.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
     const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
@@ -24421,7 +24829,7 @@
       else window.history.pushState(null, "", "/new");
       void loadProjects();
     };
-    (0, import_react29.useEffect)(() => {
+    (0, import_react30.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
@@ -24721,10 +25129,10 @@
       if (slug) writeWorkspacePath(slug, area, tab);
     };
     if (notFoundPath) {
-      return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
+      return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => newProject({ replace: true }) }, notFoundPath);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "app-shell", style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "app-shell", style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
         Sidebar,
         {
           projects,
@@ -24743,8 +25151,8 @@
           onSidebarWidthChange: updateSidebarWidth
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("main", { className: "workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
           Topbar,
           {
             title: view === "idea" ? t("app.newProject") : project?.title || t("app.researchProject"),
@@ -24758,7 +25166,7 @@
             project: view === "project" ? project : null
           }
         ),
-        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+        view === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
           IdeaView,
           {
             messages,
@@ -24776,7 +25184,7 @@
             thinkingSessions,
             onToggleThinking: toggleThinkingSession
           }
-        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+        ) : project ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
           ProjectView,
           {
             project,
@@ -24794,10 +25202,10 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
+        ) : /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "empty", children: t("common.loadingProject") }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
         MemoryGraphModal,
         {
           open: memoryOpen,
@@ -24806,7 +25214,7 @@
           showToast
         }
       ),
-      confirm ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      confirm ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
         ConfirmDialog,
         {
           title: confirm.title,
@@ -24820,7 +25228,7 @@
           onCancel: () => setConfirm(null)
         }
       ) : null,
-      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
         DeleteProjectDialog,
         {
           project: deleteProjectTarget,
@@ -24830,15 +25238,15 @@
         },
         deleteProjectTarget.id
       ) : null,
-      toast ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Toast, { message: toast }) : null
+      toast ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Toast, { message: toast }) : null
     ] });
   }
 
   // src/main.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime(), 1);
   var rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Missing #root mount element");
-  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime32.jsx)(App, {}));
+  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime33.jsx)(App, {}));
 })();
 /*! Bundled license information:
 
@@ -24941,6 +25349,7 @@ lucide-react/dist/esm/icons/lightbulb.mjs:
 lucide-react/dist/esm/icons/link-2.mjs:
 lucide-react/dist/esm/icons/list-checks.mjs:
 lucide-react/dist/esm/icons/list-tree.mjs:
+lucide-react/dist/esm/icons/loader-circle.mjs:
 lucide-react/dist/esm/icons/lock-keyhole.mjs:
 lucide-react/dist/esm/icons/message-circle.mjs:
 lucide-react/dist/esm/icons/message-square.mjs:

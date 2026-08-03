@@ -10,13 +10,15 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
-  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid,
+  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
 import { privateModelSettings, publicModelSettings, saveModelSettings } from './model-settings.js'
+import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
+import { transcribeWithGroq } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, enqueue, moveSessionUploadsIntoProject, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
@@ -72,6 +74,7 @@ app.onError((error, context) => {
   return errorResponse(error, context)
 })
 app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
+app.use('/api/voice', bodyLimit({ maxSize: 25 * 1024 * 1024, onError: context => context.json({ code: 'voice_upload_too_large', message: '录音文件超过 25 MB 限制。' }, 413) }))
 
 async function sessionFor(input: z.infer<typeof chatRequest>): Promise<SessionRow> {
   if (input.session_id) {
@@ -157,6 +160,20 @@ app.get('/api/settings/models', context => context.json({ tiers: publicModelSett
 app.put('/api/settings/models', async context => {
   const body = await jsonBody(context, modelSettingsRequest)
   return context.json({ tiers: saveModelSettings(body) })
+})
+app.get('/api/settings/voice', context => context.json(publicVoiceSettings()))
+app.put('/api/settings/voice', async context => {
+  const body = await jsonBody(context, voiceSettingsRequest)
+  return context.json(saveVoiceSettings(body))
+})
+app.post('/api/voice/transcribe', async context => {
+  const form = await context.req.formData()
+  const file = form.get('file')
+  if (!(file instanceof File)) throw new ApiError(400, 'voice_file_required', '请求必须包含录音文件。')
+  if (file.size === 0) throw new ApiError(400, 'voice_file_empty', '录音文件为空。')
+  const language = form.get('language')
+  const text = await transcribeWithGroq(file, typeof language === 'string' && language ? language : undefined)
+  return context.json({ text })
 })
 app.get('/api/mastra/open', context => context.redirect(process.env.MASTRA_STUDIO_URL || 'http://127.0.0.1:4111'))
 

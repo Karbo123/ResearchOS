@@ -70,6 +70,17 @@ export const modelSettingsRequest = z.object({
   complex: modelTierSettings,
 }).strict()
 
+export const voiceProvider = z.enum(['browser', 'groq'])
+export type VoiceProvider = z.infer<typeof voiceProvider>
+
+export const voiceSettingsRequest = z.object({
+  provider: voiceProvider.default('browser'),
+  model: z.string().trim().max(200).default(''),
+  url: z.string().trim().max(500).default('')
+    .refine(value => !value || isAllowedModelUrl(value), 'voice URL must be HTTPS or loopback/private HTTP'),
+}).strict()
+export type VoiceSettingsRequest = z.infer<typeof voiceSettingsRequest>
+
 export const embeddingProvider = z.enum(['local', 'openai', 'gemini'])
 export type EmbeddingProvider = z.infer<typeof embeddingProvider>
 

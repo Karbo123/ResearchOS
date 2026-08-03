@@ -491,6 +491,13 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
   - [x] `103d` 让 composer 文本域随内容自适应增高（初始与按钮等高、最大 130px），语音转写改为在当前光标处追加而不是覆盖；Web 类型检查、构建、UI/i18n、语言边界检查和真实 Chrome 行为回归通过。
   - [x] `103e` 为语音转写增加轻量本地标点补全（中文连接词后补逗号、句末按语气补句号/问号），不依赖后端或模型；Web 类型检查、构建、UI/i18n、语言边界检查和真实 Chrome 行为回归通过。
 
+- [x] `P0-UI-VOICE-104` 为语音输入增加可切换的 Groq Whisper 识别引擎，由模型返回自然的中间与句末标点，替代仅浏览器 Web Speech 的轻量标点规则。
+  - [x] `104a` 增加 `runtime/voice-settings.json` 与 `GET/PUT /api/settings/voice`，支持 `browser`/`groq` provider、模型、API base URL；Groq key 只从 `.env` 的 `GROQ_API_KEY` 读取，不进入返回值或运行时文件。
+  - [x] `104b` 新增 `POST /api/voice/transcribe`，服务端以 multipart 调用 Groq Whisper 转写并返回文本；缺少 key、上游 4xx/5xx、无效响应和超时均结构化失败，不静默降级。
+  - [x] `104c` 设置面板新增“语音识别”tab，可切换浏览器/ Groq、配置模型与 URL、显示 key 配置状态，并覆盖四语言文案。
+  - [x] `104d` `VoiceInputButton` 在 Groq 模式下用 MediaRecorder 按住录音、松开后上传转写并在光标处追加；浏览器模式保持原实时 Web Speech 行为，两种模式都保留 Ctrl+Space。
+  - [x] `104e` 完成 server/web 类型检查、服务端测试、Web 构建、UI/i18n、语言边界检查、API 路由实测与 Groq 真实转写验证（Whisper 返回自然的句中标点）；服务端 `dev/start` 启用 Node `--use-env-proxy`，在配置了 `HTTPS_PROXY` 的网络下 Groq 转写可正常连通。
+
 ## 5. 平台任务和外部阻塞
 
 - [~] `P0-MASTRA-050` Agent/Memory/Skills/Tools/Workflows/Approval 使用 Mastra；材料索引和真实 provider 验收仍需外部条件。接入新 Mastra API 前先核对 `https://mastra.ai/llms.txt`、官方文档和当前类型定义。

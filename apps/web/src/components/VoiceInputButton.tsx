@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Mic, Square } from 'lucide-react'
+import { LoaderCircle, Mic, Square } from 'lucide-react'
+import { ApiError, fetchWithTimeout } from '../api'
 import { useLocale, useTranslation, type TranslationKey } from '../i18n'
 import { punctuateTranscript } from '../voicePunctuation'
+import type { VoiceProvider, VoiceSettingsResponse } from '../types'
 
 interface SpeechRecognitionResultLike {
   isFinal: boolean
@@ -37,6 +39,12 @@ function recognitionLanguage(locale: string): string {
   return 'zh-CN'
 }
 
+function groqLanguage(locale: string): string {
+  if (locale === 'en') return 'en'
+  if (locale === 'es') return 'es'
+  return 'zh'
+}
+
 function createRecognition(): SpeechRecognitionLike | null {
   if (typeof window === 'undefined') return null
   const browserWindow = window as unknown as {
@@ -51,6 +59,28 @@ function errorTranslation(event: SpeechRecognitionErrorLike): TranslationKey {
   if (event.error === 'not-allowed' || event.error === 'service-not-allowed') return 'voice.permissionDenied'
   if (event.error === 'no-speech') return 'voice.noSpeech'
   if (event.error === 'audio-capture') return 'voice.audioError'
+  return 'voice.error'
+}
+
+function recorderMimeType(): string {
+  if (typeof MediaRecorder === 'undefined') return ''
+  const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
+  return candidates.find(candidate => MediaRecorder.isTypeSupported(candidate)) || ''
+}
+
+function microphoneErrorKey(error: unknown): TranslationKey {
+  if (error instanceof DOMException) {
+    if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') return 'voice.permissionDenied'
+    if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') return 'voice.audioError'
+  }
+  return 'voice.error'
+}
+
+function voiceApiErrorKey(error: unknown): TranslationKey {
+  if (error instanceof ApiError) {
+    if (error.code === 'voice_key_missing') return 'voice.keyPending'
+    if (error.code === 'voice_provider_empty') return 'voice.noSpeech'
+  }
   return 'voice.error'
 }
 
@@ -69,17 +99,26 @@ export function VoiceInputButton({
 }) {
   const { t } = useTranslation()
   const locale = useLocale()
+  const [provider, setProvider] = useState<VoiceProvider>('browser')
+  const [groqReady, setGroqReady] = useState(false)
   const [listening, setListening] = useState(false)
+  const [processing, setProcessing] = useState(false)
   const [errorKey, setErrorKey] = useState<TranslationKey | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
+  const mediaStreamRef = useRef<MediaStream | null>(null)
+  const recorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
   const onTextRef = useRef(onText)
   const onErrorRef = useRef(onError)
   const onSessionStartRef = useRef(onSessionStart)
   const onSessionEndRef = useRef(onSessionEnd)
   const localeRef = useRef(locale)
   const disabledRef = useRef(disabled)
+  const providerRef = useRef<VoiceProvider>(provider)
+  const groqReadyRef = useRef(groqReady)
   const activeRef = useRef(false)
+  const processingRef = useRef(false)
 
   useEffect(() => {
     onTextRef.current = onText
@@ -88,7 +127,28 @@ export function VoiceInputButton({
     onSessionEndRef.current = onSessionEnd
     localeRef.current = locale
     disabledRef.current = disabled
+    providerRef.current = provider
+    groqReadyRef.current = groqReady
   })
+
+  useEffect(() => {
+    const loadSettings = () => {
+      void fetchWithTimeout(window.fetch.bind(window), '/api/settings/voice', {}, 30_000)
+        .then(async response => {
+          if (!response.ok) throw new Error(`voice_settings_${response.status}`)
+          const result = (await response.json()) as VoiceSettingsResponse
+          setProvider(result.provider)
+          setGroqReady(result.provider === 'groq' && result.key_configured)
+        })
+        .catch(() => {
+          setProvider('browser')
+          setGroqReady(false)
+        })
+    }
+    loadSettings()
+    window.addEventListener('researchos:voice-settings-changed', loadSettings)
+    return () => window.removeEventListener('researchos:voice-settings-changed', loadSettings)
+  }, [])
 
   useEffect(() => {
     const recognition = createRecognition()
@@ -147,71 +207,110 @@ export function VoiceInputButton({
     if (recognitionRef.current) recognitionRef.current.lang = recognitionLanguage(locale)
   }, [locale])
 
-  useEffect(() => {
-    const shortcutActive = () => {
-      if (!buttonRef.current || disabledRef.current || !recognitionRef.current) return false
-      return buttonRef.current.getClientRects().length > 0
+  useEffect(() => () => {
+    if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+      try { recorderRef.current.stop() } catch { /* already stopped */ }
     }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!event.ctrlKey || event.key !== ' ' || !shortcutActive()) return
-      event.preventDefault()
-      if (event.repeat || activeRef.current) return
-      const recognition = recognitionRef.current
-      activeRef.current = true
-      setErrorKey(null)
-      onSessionStartRef.current?.()
-      recognition.lang = recognitionLanguage(localeRef.current)
-      try {
-        recognition.start()
-      } catch {
-        activeRef.current = false
-        setErrorKey('voice.error')
-        onErrorRef.current?.('voice.error')
-        onSessionEndRef.current?.()
-      }
-    }
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.key !== ' ' || !activeRef.current) return
-      const recognition = recognitionRef.current
-      if (!recognition) return
-      try {
-        recognition.stop()
-      } catch {
-        activeRef.current = false
-        setListening(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown, true)
-    window.addEventListener('keyup', handleKeyUp, true)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown, true)
-      window.removeEventListener('keyup', handleKeyUp, true)
+    if (mediaStreamRef.current) {
+      for (const track of mediaStreamRef.current.getTracks()) track.stop()
+      mediaStreamRef.current = null
     }
   }, [])
 
-  const supported = recognitionRef.current !== null
-  const label = !supported ? t('voice.unsupported') : listening ? t('voice.stop') : t('voice.start')
-  const title = errorKey ? t(errorKey) : label
+  const finishGroqRecording = async () => {
+    if (processingRef.current) return
+    const recorder = recorderRef.current
+    const chunks = chunksRef.current
+    const stream = mediaStreamRef.current
+    recorderRef.current = null
+    mediaStreamRef.current = null
+    chunksRef.current = []
+    if (stream) for (const track of stream.getTracks()) track.stop()
 
-  const toggle = () => {
-    const recognition = recognitionRef.current
-    if (!recognition || disabled) return
-    if (listening) {
+    const blob = new Blob(chunks, { type: recorder?.mimeType || 'audio/webm' })
+    if (blob.size < 1024) {
       activeRef.current = false
+      setListening(false)
+      setErrorKey('voice.noSpeech')
+      onErrorRef.current?.('voice.noSpeech')
+      onSessionEndRef.current?.()
+      return
+    }
+
+    processingRef.current = true
+    setProcessing(true)
+    try {
+      const form = new FormData()
+      form.append('file', blob, 'voice.webm')
+      form.append('language', groqLanguage(localeRef.current))
+      const response = await fetchWithTimeout(window.fetch.bind(window), '/api/voice/transcribe', {
+        method: 'POST',
+        body: form,
+      }, 120_000)
+      if (!response.ok) {
+        const body = await response.json().catch(() => null) as { code?: string; message?: string } | null
+        throw new ApiError(body?.code || 'voice_provider_error', body?.message || 'Voice recognition failed.', undefined, response.status)
+      }
+      const body = await response.json() as { text?: unknown }
+      if (typeof body.text !== 'string' || !body.text.trim()) throw new ApiError('voice_provider_empty', 'Voice recognition returned no content.')
+      onTextRef.current(body.text.trim())
+      setErrorKey(null)
+    } catch (error) {
+      const key = voiceApiErrorKey(error)
+      setErrorKey(key)
+      onErrorRef.current?.(key)
+    } finally {
+      processingRef.current = false
+      setProcessing(false)
+      activeRef.current = false
+      setListening(false)
+      onSessionEndRef.current?.()
+    }
+  }
+
+  const startGroqRecording = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error('media_devices_unavailable')
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    mediaStreamRef.current = stream
+    const mimeType = recorderMimeType()
+    const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream)
+    chunksRef.current = []
+    recorder.ondataavailable = event => {
+      if (event.data.size > 0) chunksRef.current.push(event.data)
+    }
+    recorder.onstop = () => void finishGroqRecording()
+    recorderRef.current = recorder
+    recorder.start(250)
+  }
+
+  const startVoice = async () => {
+    if (disabledRef.current || activeRef.current || processingRef.current) return
+    activeRef.current = true
+    setErrorKey(null)
+    onSessionStartRef.current?.()
+    if (providerRef.current === 'groq') {
+      setListening(true)
       try {
-        recognition.stop()
-      } catch {
+        await startGroqRecording()
+      } catch (error) {
+        activeRef.current = false
         setListening(false)
+        const key = microphoneErrorKey(error)
+        setErrorKey(key)
+        onErrorRef.current?.(key)
+        onSessionEndRef.current?.()
       }
       return
     }
-    setErrorKey(null)
-    activeRef.current = true
-    onSessionStartRef.current?.()
-    recognition.lang = recognitionLanguage(locale)
+    const recognition = recognitionRef.current
+    if (!recognition) {
+      activeRef.current = false
+      setErrorKey('voice.unsupported')
+      onErrorRef.current?.('voice.unsupported')
+      onSessionEndRef.current?.()
+      return
+    }
+    recognition.lang = recognitionLanguage(localeRef.current)
     try {
       recognition.start()
     } catch {
@@ -222,12 +321,79 @@ export function VoiceInputButton({
     }
   }
 
+  const stopVoice = () => {
+    if (providerRef.current === 'groq') {
+      const recorder = recorderRef.current
+      if (recorder && recorder.state !== 'inactive') {
+        try { recorder.stop() } catch { void finishGroqRecording() }
+      }
+      return
+    }
+    const recognition = recognitionRef.current
+    if (!recognition) return
+    activeRef.current = false
+    try {
+      recognition.stop()
+    } catch {
+      setListening(false)
+      onSessionEndRef.current?.()
+    }
+  }
+
+  useEffect(() => {
+    const shortcutActive = () => {
+      if (!buttonRef.current || disabledRef.current || processingRef.current) return false
+      return buttonRef.current.getClientRects().length > 0
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!event.ctrlKey || event.key !== ' ' || !shortcutActive()) return
+      event.preventDefault()
+      if (event.repeat || activeRef.current) return
+      void startVoice()
+    }
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key !== ' ' || !activeRef.current) return
+      stopVoice()
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true)
+    window.addEventListener('keyup', handleKeyUp, true)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true)
+      window.removeEventListener('keyup', handleKeyUp, true)
+    }
+  }, [])
+
+  const mediaSupported = typeof MediaRecorder !== 'undefined' && Boolean(navigator.mediaDevices?.getUserMedia)
+  const supported = provider === 'browser'
+    ? recognitionRef.current !== null
+    : Boolean(mediaSupported && groqReady)
+  const label = !supported
+    ? (provider === 'groq' && !groqReady ? t('voice.keyPending') : t('voice.unsupported'))
+    : processing
+      ? t('voice.processing')
+      : listening
+        ? t('voice.stop')
+        : t('voice.start')
+  const title = errorKey ? t(errorKey) : label
+
+  const toggle = () => {
+    if (!supported || disabled || processing) return
+    if (listening || activeRef.current) {
+      stopVoice()
+      return
+    }
+    void startVoice()
+  }
+
   return (
     <button
       type="button"
       className="voice-btn"
-      data-state={listening ? 'listening' : 'idle'}
-      disabled={disabled || !supported}
+      data-state={processing ? 'processing' : listening ? 'listening' : 'idle'}
+      disabled={disabled || !supported || processing}
       title={title}
       aria-label={label}
       aria-pressed={listening}
@@ -235,9 +401,9 @@ export function VoiceInputButton({
       ref={buttonRef}
       onClick={toggle}
     >
-      {listening ? <Square size={17} fill="currentColor" /> : <Mic size={17} />}
+      {processing ? <LoaderCircle size={17} className="spin" /> : listening ? <Square size={17} fill="currentColor" /> : <Mic size={17} />}
       <span className="sr-only" role="status" aria-live="polite">
-        {listening ? t('voice.listening') : errorKey ? t(errorKey) : ''}
+        {processing ? t('voice.processing') : listening ? t('voice.listening') : errorKey ? t(errorKey) : ''}
       </span>
     </button>
   )

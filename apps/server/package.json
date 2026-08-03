@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "node --env-file=../../.env ../../node_modules/tsx/dist/cli.mjs watch src/index.ts",
-    "start": "node --env-file=../../.env dist/index.js",
+    "dev": "node --use-env-proxy --env-file=../../.env ../../node_modules/tsx/dist/cli.mjs watch src/index.ts",
+    "start": "node --use-env-proxy --env-file=../../.env dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --no-file-parallelism",
     "db:migrate": "tsx src/migrate.ts"
