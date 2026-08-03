@@ -2046,6 +2046,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   box-shadow: none;
   pointer-events: auto;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transform: translateY(-50%);
   transition: left .52s var(--spring), color .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
 }
@@ -2053,9 +2054,11 @@ a.secondary { text-decoration: none; color: var(--ink); }
   color: var(--blue);
 }
 .project-drawer-toggle:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: -2px;
+  outline: none;
   color: var(--blue);
+}
+.project-drawer-toggle:focus-visible .project-drawer-arrow {
+  filter: drop-shadow(0 0 6px rgba(0, 122, 255, .55));
 }
 .project-drawer-toggle:active {
   transform: translateY(-50%) scale(.92);

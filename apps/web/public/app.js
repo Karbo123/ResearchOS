@@ -24586,13 +24586,13 @@
   // src/components/ProjectDrawer.tsx
   var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   function DrawerArrow() {
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "project-drawer-arrow", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("svg", { width: "14", height: "18", viewBox: "0 0 14 18", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "project-drawer-arrow", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("svg", { width: "12", height: "16", viewBox: "0 0 12 16", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
       "path",
       {
-        d: "M4.3 4.4 L10 9 L4.3 13.6 Z",
+        d: "M3.6 3.8 L8.8 8 L3.6 12.2 Z",
         fill: "none",
         stroke: "currentColor",
-        strokeWidth: "2",
+        strokeWidth: "1.8",
         strokeLinecap: "round",
         strokeLinejoin: "round"
       }

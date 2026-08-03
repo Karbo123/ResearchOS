@@ -205,7 +205,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 > 阻塞记录（2026-08-04）：本地网关的文档模型 `deepseek-v4-flash` 返回 403 `RegionError`（最新版模型仅在中国区托管且需显式 opt-in），因此 `paper-translate` / `paper-revise` 无法完成端到端模型验收；请在本地网关侧为该模型开启区域 opt-in 后复测。其余代码、自动化测试与真实 latexmk 编译验证均已完成。
 - [ ] `P0-WORKSPACE-108H` 完成全链路和视觉验收。同步严格 Zod API、JSON Schema、数据库迁移、i18n 四语言、浅/暗主题、README、AGENTS、架构/运维/安全文档和 `DOCS_SYNC_VERSION`；在 Windows Chrome 验收桌面/窄桌面/移动端的首页、抽屉、常驻对话、全部新标签、长内容滚动、拖动宽度、动画、键盘/读屏、空/加载/partial/失败/审批状态。运行完整类型检查、测试、构建、导航/UI/i18n、主链、Mastra HITL、实验与 LaTeX 适用验收；外部服务失败保持结构化阻塞；视觉验收必须逐项确认 Apple 设计契约：磨砂玻璃、半透明、`backdrop-filter`、柔和阴影、动效曲线、明暗主题、窄屏与移动端，并检查 `prefers-reduced-motion`。 [Apple 设计验收]
 
-> 进度记录（2026-08-04）：文档同步已完成（README、README.zh-CN、AGENTS、架构、运维 + `DOCS_SYNC_VERSION=2026-08-04-02`）。Windows Chrome 自动化验收通过：桌面 1440 与移动 390 的首页/论文工作区均无横向溢出，论文 5 个章节、编译/PDF 卡片正常，详情区可滚动；抽屉弹簧动画在 `prefers-reduced-motion: no-preference` 下从 -220px 平滑过渡到 0，在 `reduce` 下按契约瞬时完成；server/web typecheck、paper-workspace 3 项测试、ui/navigation/language-boundary/docs 检查通过。剩余：完整键盘/读屏验收、四语言真实浏览器截图、主链/Mastra HITL/实验适用验收，以及最终验收记录。
+> 进度记录（2026-08-04）：文档同步已完成（README、README.zh-CN、AGENTS、架构、运维 + `DOCS_SYNC_VERSION=2026-08-04-02`）。Windows Chrome 自动化验收通过：桌面 1440 与移动 390 的首页/论文工作区均无横向溢出，论文 5 个章节、编译/PDF 卡片正常，详情区可滚动；抽屉弹簧动画在 `prefers-reduced-motion: no-preference` 下从 -220px 平滑过渡到 0，在 `reduce` 下按契约瞬时完成；抽屉触发控件进一步收紧为更细的纯三角符号，键盘焦点不再在透明命中区上绘制高矩形描边，改为围绕三角本身的蓝色柔和光晕；server/web typecheck、paper-workspace 3 项测试、ui/navigation/language-boundary/docs 检查通过。剩余：完整键盘/读屏验收、四语言真实浏览器截图、主链/Mastra HITL/实验适用验收，以及最终验收记录。
 
 ### 4.1 旧任务池（当前非优先）
 
