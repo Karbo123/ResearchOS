@@ -2263,3 +2263,76 @@ a.secondary { text-decoration: none; color: var(--ink); }
 :root[data-theme='dark'] .novelty-selection {
   background: rgba(58, 58, 60, .72);
 }
+
+/* 108E: richer literature rows and publication-year visualization. */
+.paper-authors,
+.paper-institutions {
+  margin: 4px 0 2px;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.paper-institutions { color: var(--muted); }
+.paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 6px 0 0;
+}
+.paper-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--blue-dark);
+  font-size: 11px;
+  font-weight: 650;
+  text-decoration: none;
+}
+.paper-links a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.graph-year-panel {
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+}
+.graph-year-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  min-height: 182px;
+  padding: 12px 6px 4px;
+  overflow-x: auto;
+}
+.graph-year-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 46px;
+  gap: 5px;
+}
+.graph-year-bar-fill {
+  width: 22px;
+  min-height: 18px;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, var(--blue), rgba(0, 122, 255, .42));
+  box-shadow: 0 5px 12px rgba(0, 122, 255, .18);
+  transition: height .45s var(--spring), background .2s var(--ease);
+}
+.graph-year-bar:hover .graph-year-bar-fill {
+  background: linear-gradient(180deg, var(--blue-dark), rgba(0, 122, 255, .55));
+}
+.graph-year-bar strong {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 720;
+}
+.graph-year-bar em {
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+}

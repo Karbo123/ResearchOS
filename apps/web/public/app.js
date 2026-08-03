@@ -13679,6 +13679,13 @@
     "graph.locator": "\u5B9A\u4F4D",
     "graph.openSource": "\u6253\u5F00\u6765\u6E90",
     "graph.selectHint": "\u9009\u62E9\u4E00\u4E2A\u8282\u70B9\u67E5\u770B\u6765\u6E90\u3001\u7A33\u5B9A ID\u3001\u5B9A\u4F4D\u3001\u8BC1\u636E\u548C\u6743\u9650\u72B6\u6001\u3002",
+    "graph.timelineTitle": "\u6587\u732E\u5E74\u4EFD\u5206\u5E03",
+    "graph.timelineHint": "\u67F1\u9AD8\u6309\u5F53\u524D\u9879\u76EE\u5DF2\u4FDD\u5B58\u8BBA\u6587\u7684\u771F\u5B9E\u5E74\u4EFD\u6570\u91CF\u8BA1\u7B97\uFF1B\u6CA1\u6709\u5E74\u4EFD\u7684\u8BB0\u5F55\u4E0D\u53C2\u4E0E\u7EDF\u8BA1\u3002",
+    "graph.timelineCount": "{count} \u7BC7\u6709\u5E74\u4EFD\u7684\u8BBA\u6587",
+    "graph.timelineAria": "\u5F53\u524D\u9879\u76EE\u8BBA\u6587\u6309\u53D1\u8868\u5E74\u4EFD\u5206\u5E03\u7684\u67F1\u72B6\u56FE",
+    "graph.timelineEmpty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u5E26\u5E74\u4EFD\u7684\u8BBA\u6587\u8BB0\u5F55\u3002",
+    "graph.citations": "\u5F15\u7528\u91CF",
+    "graph.citationUnknown": "\u672A\u8BB0\u5F55",
     "progress.relatedRun": "\u76F8\u5173\u5DE5\u4F5C\u9012\u5F52 {id}",
     "progress.candidateCount": "{count} \u4E2A\u5019\u9009 \xB7 {edges} \u6761\u8FB9",
     "progress.runPending": "\u672A\u5165\u961F",
@@ -13755,6 +13762,16 @@
     "literature.proposeDownload": "\u63D0\u51FA\u4E0B\u8F7D",
     "literature.crossVerify": "\u4EA4\u53C9\u9A8C\u8BC1",
     "literature.title": "\u53EF\u9A8C\u8BC1\u6587\u732E\u8BB0\u5F55",
+    "seed.title": "\u79CD\u5B50\u6587\u732E\u6269\u5C55",
+    "seed.hint": "\u4ECE DOI\u3001\u6807\u9898\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u5DF2\u6709\u8BBA\u6587\u51FA\u53D1\uFF0C\u53CC\u5411\u6269\u5C55\u53C2\u8003\u6587\u732E\u4E0E\u540E\u7EED\u5F15\u7528\uFF1B\u6269\u5C55\u5FC5\u987B\u5148\u751F\u6210 Proposal \u5E76\u83B7\u5F97\u6279\u51C6\u3002",
+    "seed.scope": "\u5F53\u524D\u9879\u76EE\u8303\u56F4",
+    "literature.authors": "\u4F5C\u8005 {count} \u4F4D",
+    "literature.moreAuthors": "\u7B49 {count} \u4F4D",
+    "literature.citations": "\u88AB\u5F15 {count}",
+    "literature.institutions": "\u673A\u6784 {count} \u4E2A",
+    "literature.sourceLink": "\u6765\u6E90",
+    "literature.projectHomepage": "\u9879\u76EE\u4E3B\u9875",
+    "literature.codeRepository": "\u4EE3\u7801\u4ED3\u5E93",
     "literature.updateSearch": "\u66F4\u65B0\u68C0\u7D22",
     "literature.extractEvidence": "\u63D0\u53D6\u5168\u6587\u8BC1\u636E",
     "literature.seedTitle": "\u9879\u76EE\u8303\u56F4\u79CD\u5B50\u4E0E\u5F15\u7528\u7F51\u7EDC",
@@ -14854,6 +14871,13 @@
     "graph.locator": "\u5B9A\u4F4D",
     "graph.openSource": "\u958B\u555F\u4F86\u6E90",
     "graph.selectHint": "\u9078\u64C7\u4E00\u500B\u7BC0\u9EDE\u67E5\u770B\u4F86\u6E90\u3001\u7A69\u5B9A ID\u3001\u5B9A\u4F4D\u3001\u8B49\u64DA\u8207\u6B0A\u9650\u72C0\u614B\u3002",
+    "graph.timelineTitle": "\u6587\u737B\u5E74\u4EFD\u5206\u4F48",
+    "graph.timelineHint": "\u67F1\u9AD8\u4F9D\u76EE\u524D\u5C08\u6848\u5DF2\u4FDD\u5B58\u8AD6\u6587\u7684\u771F\u5BE6\u5E74\u4EFD\u6578\u91CF\u8A08\u7B97\uFF1B\u6C92\u6709\u5E74\u4EFD\u7684\u8A18\u9304\u4E0D\u53C3\u8207\u7D71\u8A08\u3002",
+    "graph.timelineCount": "{count} \u7BC7\u6709\u5E74\u4EFD\u7684\u8AD6\u6587",
+    "graph.timelineAria": "\u76EE\u524D\u5C08\u6848\u8AD6\u6587\u6309\u767C\u8868\u5E74\u4EFD\u5206\u4F48\u7684\u67F1\u72C0\u5716",
+    "graph.timelineEmpty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u5E36\u5E74\u4EFD\u7684\u8AD6\u6587\u8A18\u9304\u3002",
+    "graph.citations": "\u5F15\u7528\u91CF",
+    "graph.citationUnknown": "\u672A\u8A18\u9304",
     "progress.relatedRun": "\u76F8\u95DC\u5DE5\u4F5C\u905E\u8FF4 {id}",
     "progress.candidateCount": "{count} \u500B\u5019\u9078 \xB7 {edges} \u689D\u908A",
     "progress.runPending": "\u672A\u5165\u968A",
@@ -14930,6 +14954,16 @@
     "literature.proposeDownload": "\u63D0\u51FA\u4E0B\u8F09",
     "literature.crossVerify": "\u4EA4\u53C9\u9A57\u8B49",
     "literature.title": "\u53EF\u9A57\u8B49\u6587\u737B\u8A18\u9304",
+    "seed.title": "\u7A2E\u5B50\u6587\u737B\u64F4\u5C55",
+    "seed.hint": "\u5F9E DOI\u3001\u6A19\u984C\u3001URL\u3001BibTeX\u3001\u53D7\u63A7 PDF \u6216\u65E2\u6709\u8AD6\u6587\u51FA\u767C\uFF0C\u96D9\u5411\u64F4\u5C55\u53C3\u8003\u6587\u737B\u8207\u5F8C\u7E8C\u5F15\u7528\uFF1B\u64F4\u5C55\u5FC5\u9808\u5148\u7522\u751F Proposal \u4E26\u7372\u5F97\u6279\u51C6\u3002",
+    "seed.scope": "\u76EE\u524D\u5C08\u6848\u7BC4\u570D",
+    "literature.authors": "\u4F5C\u8005 {count} \u4F4D",
+    "literature.moreAuthors": "\u7B49 {count} \u4F4D",
+    "literature.citations": "\u88AB\u5F15 {count}",
+    "literature.institutions": "\u6A5F\u69CB {count} \u500B",
+    "literature.sourceLink": "\u4F86\u6E90",
+    "literature.projectHomepage": "\u5C08\u6848\u9996\u9801",
+    "literature.codeRepository": "\u7A0B\u5F0F\u78BC\u5009\u5EAB",
     "literature.updateSearch": "\u66F4\u65B0\u6AA2\u7D22",
     "literature.extractEvidence": "\u64F7\u53D6\u5168\u6587\u8B49\u64DA",
     "literature.seedTitle": "\u5C08\u6848\u7BC4\u570D\u7A2E\u5B50\u8207\u5F15\u7528\u7DB2\u8DEF",
@@ -16029,6 +16063,13 @@
     "graph.locator": "Locator",
     "graph.openSource": "Open source",
     "graph.selectHint": "Select a node to view source, stable ID, locator, evidence, and permission status.",
+    "graph.timelineTitle": "Publication year distribution",
+    "graph.timelineHint": "Bar heights come from real year counts among saved papers in the current project; records without a year are excluded.",
+    "graph.timelineCount": "{count} papers with a year",
+    "graph.timelineAria": "Bar chart of current project papers by publication year",
+    "graph.timelineEmpty": "No papers with a year are recorded in the current project yet.",
+    "graph.citations": "Citations",
+    "graph.citationUnknown": "Not recorded",
     "progress.relatedRun": "Related-work recursion {id}",
     "progress.candidateCount": "{count} candidates \xB7 {edges} edges",
     "progress.runPending": "not queued",
@@ -16105,6 +16146,16 @@
     "literature.proposeDownload": "Propose download",
     "literature.crossVerify": "Cross-verify",
     "literature.title": "Verifiable literature records",
+    "seed.title": "Seed literature expansion",
+    "seed.hint": "Expand both references and citing works from DOI, title, URL, BibTeX, a controlled PDF, or an existing paper; expansion requires an approved Proposal first.",
+    "seed.scope": "Current project scope",
+    "literature.authors": "{count} authors",
+    "literature.moreAuthors": "and {count} more",
+    "literature.citations": "{count} citations",
+    "literature.institutions": "{count} institutions",
+    "literature.sourceLink": "Source",
+    "literature.projectHomepage": "Project homepage",
+    "literature.codeRepository": "Code repository",
     "literature.updateSearch": "Update search",
     "literature.extractEvidence": "Extract full-text evidence",
     "literature.seedTitle": "Project-scoped seeds and citation network",
@@ -17204,6 +17255,13 @@
     "graph.locator": "Localizaci\xF3n",
     "graph.openSource": "Abrir fuente",
     "graph.selectHint": "Selecciona un nodo para ver fuente, ID estable, localizaci\xF3n, evidencia y permisos.",
+    "graph.timelineTitle": "Distribuci\xF3n por a\xF1o de publicaci\xF3n",
+    "graph.timelineHint": "Las alturas de las barras provienen de los recuentos reales de a\xF1os entre los papers guardados del proyecto actual; los registros sin a\xF1o se excluyen.",
+    "graph.timelineCount": "{count} papers con a\xF1o",
+    "graph.timelineAria": "Gr\xE1fico de barras de papers del proyecto actual por a\xF1o de publicaci\xF3n",
+    "graph.timelineEmpty": "A\xFAn no hay papers con a\xF1o registrados en el proyecto actual.",
+    "graph.citations": "Citas",
+    "graph.citationUnknown": "No registrado",
     "progress.relatedRun": "Recursi\xF3n de trabajo relacionado {id}",
     "progress.candidateCount": "{count} candidatos \xB7 {edges} aristas",
     "progress.runPending": "sin encolar",
@@ -17280,6 +17338,16 @@
     "literature.proposeDownload": "Proponer descarga",
     "literature.crossVerify": "Verificaci\xF3n cruzada",
     "literature.title": "Registros de literatura verificables",
+    "seed.title": "Expansi\xF3n de literatura semilla",
+    "seed.hint": "Expande tanto referencias como obras que citan a partir de DOI, t\xEDtulo, URL, BibTeX, un PDF controlado o un paper existente; la expansi\xF3n requiere una Propuesta aprobada primero.",
+    "seed.scope": "\xC1mbito del proyecto actual",
+    "literature.authors": "{count} autores",
+    "literature.moreAuthors": "y {count} m\xE1s",
+    "literature.citations": "{count} citas",
+    "literature.institutions": "{count} instituciones",
+    "literature.sourceLink": "Fuente",
+    "literature.projectHomepage": "P\xE1gina del proyecto",
+    "literature.codeRepository": "Repositorio de c\xF3digo",
     "literature.updateSearch": "Actualizar b\xFAsqueda",
     "literature.extractEvidence": "Extraer evidencia de texto completo",
     "literature.seedTitle": "Semillas del \xE1mbito del proyecto y red de citas",
@@ -20575,9 +20643,22 @@
     showToast,
     onNavigate,
     onRequestConfirm,
-    searchCandidates
+    searchCandidates,
+    tab = "literature"
   }) {
     const { t } = useTranslation();
+    const paperAuthors = (paper) => {
+      if (!Array.isArray(paper.authors)) return [];
+      return paper.authors.flatMap((item) => {
+        const name = typeof item === "string" ? item : item?.name;
+        return typeof name === "string" && name.trim() ? [name.trim()] : [];
+      });
+    };
+    const paperInstitutions = (paper) => {
+      const direct = Array.isArray(paper.institutions) ? paper.institutions : [];
+      const nested = Array.isArray(paper.authors) ? paper.authors.flatMap((item) => typeof item === "string" ? [] : item?.affiliations || []) : [];
+      return [...new Set([...direct, ...nested].map((item) => String(item).trim()).filter(Boolean))];
+    };
     const [materialQuery, setMaterialQuery] = (0, import_react12.useState)("");
     const [materialLoading, setMaterialLoading] = (0, import_react12.useState)(false);
     const [materialRows, setMaterialRows] = (0, import_react12.useState)([]);
@@ -20866,6 +20947,254 @@
         t("literature.crossVerify")
       ] });
     };
+    const seedPanel = /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-seed-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.seedTitle"), hint: t("literature.seedHint") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-seed-form", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+          t("literature.seedType"),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: seedType, onChange: (event) => {
+            setSeedType(event.target.value);
+            resetSeedForm();
+          }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "doi", children: "DOI" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "title", children: t("literature.titleOption") }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "url", children: t("literature.urlOption") }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "bibtex", children: "BibTeX" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "artifact_pdf", children: t("literature.pdfOption") }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "existing_paper", children: t("literature.existingPaperOption") })
+          ] })
+        ] }),
+        seedType === "artifact_pdf" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+          t("literature.pdfArtifact"),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: seedArtifactId, onChange: (event) => setSeedArtifactId(event.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "", children: t("literature.selectPdf") }),
+            (project.artifacts || []).filter((artifact) => artifact.mime_type === "application/pdf" && artifact.valid !== false).map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: artifact.id, children: artifact.name }, artifact.id))
+          ] })
+        ] }) : null,
+        seedType === "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+          t("literature.projectPaper"),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: seedPaperId, onChange: (event) => setSeedPaperId(event.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "", children: t("literature.selectPaper") }),
+            (project.papers || []).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
+          ] })
+        ] }) : null,
+        seedType !== "artifact_pdf" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "related-work-seed-value", children: [
+          seedType === "doi" ? "DOI" : seedType === "title" ? t("literature.paperTitle") : seedType === "url" ? t("literature.httpsUrl") : t("literature.bibtexEntry"),
+          seedType === "bibtex" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("textarea", { rows: 5, maxLength: 1e5, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: "@article{...}" }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { maxLength: 2e3, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: seedType === "doi" ? "10.1000/example" : seedType === "url" ? "https://doi.org/..." : t("literature.enterTitle") })
+        ] }) : null,
+        seedType !== "title" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+          t("literature.optionalTitle"),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { maxLength: 2e3, value: seedTitle, onChange: (event) => setSeedTitle(event.target.value), placeholder: t("literature.optionalTitlePlaceholder") })
+        ] }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: seedLoading || (seedType === "artifact_pdf" ? !seedArtifactId : seedType === "existing_paper" ? !seedPaperId : !seedValue.trim()), onClick: () => void addSeed(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GitFork, { size: 15 }),
+          seedLoading ? t("literature.parsing") : t("literature.addSeed")
+        ] })
+      ] }),
+      project.related_work_seeds?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-seeds", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "related-work-seed-list", children: project.related_work_seeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "related-work-seed-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "input",
+            {
+              type: "checkbox",
+              checked: selectedSeeds.includes(seed.id),
+              onChange: (event) => setSelectedSeeds((current) => event.target.checked ? [...current, seed.id] : current.filter((id) => id !== seed.id))
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: seed.input_summary }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+              seed.source_type,
+              " \xB7 ",
+              statusLabel(seed.status, t),
+              " \xB7 ",
+              seed.created_at ? new Date(seed.created_at).toLocaleString() : t("literature.timeUnknown")
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: seed.status })
+        ] }, seed.id)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-recursive-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "control-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+              t("literature.depth"),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", min: 1, max: 5, value: recursiveDepth, onChange: (event) => setRecursiveDepth(Number(event.target.value)) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+              t("literature.width"),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", min: 1, max: 50, value: recursiveWidth, onChange: (event) => setRecursiveWidth(Number(event.target.value)) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+              t("literature.maxTotal"),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", min: 1, max: 500, value: recursiveMaxTotal, onChange: (event) => setRecursiveMaxTotal(Number(event.target.value)) })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+            t("literature.proposalReason"),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { maxLength: 2e3, value: recursiveReason, onChange: (event) => setRecursiveReason(event.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "provider-choice", "aria-label": t("literature.recursiveProviders"), children: ["crossref", "openalex", "semantic_scholar"].map((provider) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: recursiveProviders.includes(provider), onChange: () => toggleRecursiveProvider(provider) }),
+            provider
+          ] }, provider)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: recursiveLoading || !selectedSeeds.length || !recursiveProviders.length, onClick: () => void createRecursivePlan(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GitFork, { size: 15 }),
+            recursiveLoading ? t("literature.creating") : t("literature.createRecursiveProposal", { count: selectedSeeds.length })
+          ] })
+        ] })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(EmptyState, { text: t("literature.noSeeds") })
+    ] });
+    const runPanel = project.related_work_runs?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-run-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.runsTitle"), hint: t("literature.runsHint") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("h3", { children: [
+            statusLabel(run.status, t),
+            " \xB7 ",
+            t("literature.runCandidates", { count: run.discovered_count || 0, edges: run.edge_count || 0 })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+            "depth ",
+            run.depth,
+            " \xB7 width ",
+            run.width,
+            " \xB7 max_total ",
+            run.max_total,
+            " \xB7 providers ",
+            run.providers.join(", ")
+          ] }),
+          run.error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: run.status }),
+          ["queued", "running"].includes(run.status) ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", onClick: () => void cancelRecursiveRun(run), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Square, { size: 14 }),
+            t("common.cancel")
+          ] }) : null
+        ] })
+      ] }, run.id)) }),
+      project.related_work_attempts?.some((attempt) => attempt.status !== "succeeded") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-failures", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("literature.providerFailures") }),
+        project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: attempt.provider }),
+          " \xB7 ",
+          statusLabel(attempt.status, t),
+          " \xB7 ",
+          attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t("literature.noFailureDetail")
+        ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`))
+      ] }) : null,
+      project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "citation-edge-list", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("literature.edgeTitle") }),
+        project.related_work_edges.slice(0, 20).map((edge) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: edge.source_title || edge.source_candidate_id }),
+          " \u2192 ",
+          edge.target_title || edge.target_candidate_id,
+          " \xB7 ",
+          edge.provider,
+          " \xB7 ",
+          (edge.ranking_reasons || []).join(", ") || t("literature.noRankingSignal")
+        ] }, edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`))
+      ] }) : null
+    ] }) : null;
+    const candidatePanel = project.related_work_candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-candidate-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.candidatesTitle"), hint: t("literature.candidatesHint") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: candidate.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+            candidate.provider,
+            " \xB7 depth ",
+            candidate.discovery_depth ?? 0,
+            " \xB7 ",
+            candidate.year || t("literature.yearUnknown"),
+            " \xB7 DOI ",
+            candidate.normalized_doi || t("common.notProvided"),
+            " \xB7 ",
+            t("literature.providerEvidenceCount", { count: candidate.source_count || 0 })
+          ] }),
+          (() => {
+            const provenance = candidateProvenance(candidate.id);
+            const conflictFields = [...new Set(provenance.filter((item) => item.status === "conflict").map((item) => item.field_name))];
+            return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted", children: [
+              t("literature.fieldProvenanceCount", { count: provenance.length }),
+              " \xB7 ",
+              conflictFields.length ? t("literature.conflicts", { fields: conflictFields.join(", ") }) : t("literature.noConflicts")
+            ] });
+          })()
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: candidate.paper_id ? "confirmed-paper" : candidate.status || "metadata-candidate" }),
+          candidateProvenance(candidate.id).length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => setProvenanceCandidateId(candidate.id), children: t("literature.viewFieldProvenance") }) : null,
+          !candidate.paper_id && candidate.status !== "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => void proposeCandidateEnrichment(candidate), children: t("literature.enrichFields") }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "primary", type: "button", onClick: () => requestCandidateDecision(candidate, "approved"), children: t("literature.confirmPaper") }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "reject", type: "button", onClick: () => requestCandidateDecision(candidate, "rejected"), children: t("common.reject") })
+          ] }) : null,
+          !candidate.paper_id && candidate.status === "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => requestCandidateDecision(candidate, "reopened"), children: t("literature.reopen") }) : null
+        ] })
+      ] }, candidate.id)) })
+    ] }) : null;
+    const provenanceModal = provenanceCandidate ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      Modal,
+      {
+        eyebrow: t("literature.fieldProvenance"),
+        title: provenanceCandidate.title,
+        description: t("literature.provenanceDescription"),
+        onClose: () => setProvenanceCandidateId(null),
+        wide: true,
+        children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "provenance-drawer-list", children: [...new Set(candidateProvenance(provenanceCandidate.id).map((item) => item.field_name))].sort().map((fieldName) => {
+          const fields = candidateProvenance(provenanceCandidate.id).filter((item) => item.field_name === fieldName);
+          return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { className: "provenance-drawer-field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "provenance-drawer-field-heading", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "eyebrow", children: t("literature.field") }),
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: fieldName })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: fields.some((item) => item.status === "conflict") ? "conflict" : fields.some((item) => item.status === "selected") ? "selected" : "observed" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: fields.map((field) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row compact-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("strong", { children: [
+                  field.provider || field.source_type || t("literature.sourceUnrecorded"),
+                  field.status === "selected" ? t("literature.selected") : ""
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { children: valueLabel(field.normalized_value) }),
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted", children: [
+                  t("literature.sourceType"),
+                  "=",
+                  field.source_type || t("common.unknown"),
+                  " \xB7 ",
+                  t("literature.attempt"),
+                  "=",
+                  field.source_attempt_id || t("common.none"),
+                  " \xB7 ",
+                  t("literature.artifactId"),
+                  "=",
+                  field.artifact_id || t("common.none"),
+                  " \xB7 ",
+                  t("literature.locator"),
+                  "=",
+                  field.locator || t("common.none"),
+                  " \xB7 ",
+                  t("literature.hash"),
+                  "=",
+                  field.raw_value_hash || t("common.none")
+                ] })
+              ] }),
+              field.status !== "selected" && !provenanceCandidate.paper_id ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary compact", type: "button", onClick: () => void selectCandidateField(provenanceCandidate, field), children: t("literature.selectSource") }) : null
+            ] }, field.id)) })
+          ] }, fieldName);
+        }) })
+      }
+    ) : null;
+    if (tab === "seed_expansion") {
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("seed.title"), hint: t("seed.hint"), extra: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: "project-scoped", children: t("seed.scope") }) }),
+        seedPanel,
+        runPanel,
+        candidatePanel,
+        provenanceModal
+      ] });
+    }
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         SectionHeading,
@@ -20883,309 +21212,93 @@
           ] })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-seed-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.seedTitle"), hint: t("literature.seedHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-seed-form", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-            t("literature.seedType"),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: seedType, onChange: (event) => {
-              setSeedType(event.target.value);
-              resetSeedForm();
-            }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "doi", children: "DOI" }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "title", children: t("literature.titleOption") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "url", children: t("literature.urlOption") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "bibtex", children: "BibTeX" }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "artifact_pdf", children: t("literature.pdfOption") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "existing_paper", children: t("literature.existingPaperOption") })
-            ] })
-          ] }),
-          seedType === "artifact_pdf" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-            t("literature.pdfArtifact"),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: seedArtifactId, onChange: (event) => setSeedArtifactId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "", children: t("literature.selectPdf") }),
-              (project.artifacts || []).filter((artifact) => artifact.mime_type === "application/pdf" && artifact.valid !== false).map((artifact) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: artifact.id, children: artifact.name }, artifact.id))
-            ] })
-          ] }) : null,
-          seedType === "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-            t("literature.projectPaper"),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: seedPaperId, onChange: (event) => setSeedPaperId(event.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "", children: t("literature.selectPaper") }),
-              (project.papers || []).map((paper) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: paper.id, children: paper.title }, paper.id))
-            ] })
-          ] }) : null,
-          seedType !== "artifact_pdf" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "related-work-seed-value", children: [
-            seedType === "doi" ? "DOI" : seedType === "title" ? t("literature.paperTitle") : seedType === "url" ? t("literature.httpsUrl") : t("literature.bibtexEntry"),
-            seedType === "bibtex" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("textarea", { rows: 5, maxLength: 1e5, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: "@article{...}" }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { maxLength: 2e3, value: seedValue, onChange: (event) => setSeedValue(event.target.value), placeholder: seedType === "doi" ? "10.1000/example" : seedType === "url" ? "https://doi.org/..." : t("literature.enterTitle") })
-          ] }) : null,
-          seedType !== "title" && seedType !== "existing_paper" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-            t("literature.optionalTitle"),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { maxLength: 2e3, value: seedTitle, onChange: (event) => setSeedTitle(event.target.value), placeholder: t("literature.optionalTitlePlaceholder") })
-          ] }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: seedLoading || (seedType === "artifact_pdf" ? !seedArtifactId : seedType === "existing_paper" ? !seedPaperId : !seedValue.trim()), onClick: () => void addSeed(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GitFork, { size: 15 }),
-            seedLoading ? t("literature.parsing") : t("literature.addSeed")
-          ] })
-        ] }),
-        project.related_work_seeds?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-seeds", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "related-work-seed-list", children: project.related_work_seeds.map((seed) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "related-work-seed-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              "input",
-              {
-                type: "checkbox",
-                checked: selectedSeeds.includes(seed.id),
-                onChange: (event) => setSelectedSeeds((current) => event.target.checked ? [...current, seed.id] : current.filter((id) => id !== seed.id))
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: seed.input_summary }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
-                seed.source_type,
-                " \xB7 ",
-                statusLabel(seed.status, t),
-                " \xB7 ",
-                seed.created_at ? new Date(seed.created_at).toLocaleString() : t("literature.timeUnknown")
-              ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: seed.status })
-          ] }, seed.id)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-recursive-controls", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "control-grid", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-                t("literature.depth"),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", min: 1, max: 5, value: recursiveDepth, onChange: (event) => setRecursiveDepth(Number(event.target.value)) })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-                t("literature.width"),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", min: 1, max: 50, value: recursiveWidth, onChange: (event) => setRecursiveWidth(Number(event.target.value)) })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-                t("literature.maxTotal"),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", min: 1, max: 500, value: recursiveMaxTotal, onChange: (event) => setRecursiveMaxTotal(Number(event.target.value)) })
-              ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-              t("literature.proposalReason"),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { maxLength: 2e3, value: recursiveReason, onChange: (event) => setRecursiveReason(event.target.value) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "provider-choice", "aria-label": t("literature.recursiveProviders"), children: ["crossref", "openalex", "semantic_scholar"].map((provider) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: recursiveProviders.includes(provider), onChange: () => toggleRecursiveProvider(provider) }),
-              provider
-            ] }, provider)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: recursiveLoading || !selectedSeeds.length || !recursiveProviders.length, onClick: () => void createRecursivePlan(), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GitFork, { size: 15 }),
-              recursiveLoading ? t("literature.creating") : t("literature.createRecursiveProposal", { count: selectedSeeds.length })
-            ] })
-          ] })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(EmptyState, { text: t("literature.noSeeds") })
-      ] }),
-      project.related_work_runs?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-run-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.runsTitle"), hint: t("literature.runsHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
+      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.papers.map((paper) => {
+        const authors = paperAuthors(paper);
+        const institutions = paperInstitutions(paper);
+        const homepage = paper.project_homepage || paper.html_url;
+        return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("h3", { children: [
-              statusLabel(run.status, t),
-              " \xB7 ",
-              t("literature.runCandidates", { count: run.discovered_count || 0, edges: run.edge_count || 0 })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
-              "depth ",
-              run.depth,
-              " \xB7 width ",
-              run.width,
-              " \xB7 max_total ",
-              run.max_total,
-              " \xB7 providers ",
-              run.providers.join(", ")
-            ] }),
-            run.error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: run.status }),
-            ["queued", "running"].includes(run.status) ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", onClick: () => void cancelRecursiveRun(run), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Square, { size: 14 }),
-              t("common.cancel")
-            ] }) : null
-          ] })
-        ] }, run.id)) }),
-        project.related_work_attempts?.some((attempt) => attempt.status !== "succeeded") ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "related-work-failures", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("literature.providerFailures") }),
-          project.related_work_attempts.filter((attempt) => attempt.status !== "succeeded").slice(0, 12).map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: attempt.provider }),
-            " \xB7 ",
-            statusLabel(attempt.status, t),
-            " \xB7 ",
-            attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t("literature.noFailureDetail")
-          ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`))
-        ] }) : null,
-        project.related_work_edges?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "citation-edge-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("literature.edgeTitle") }),
-          project.related_work_edges.slice(0, 20).map((edge) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { children: edge.source_title || edge.source_candidate_id }),
-            " \u2192 ",
-            edge.target_title || edge.target_candidate_id,
-            " \xB7 ",
-            edge.provider,
-            " \xB7 ",
-            (edge.ranking_reasons || []).join(", ") || t("literature.noRankingSignal")
-          ] }, edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`))
-        ] }) : null
-      ] }) : null,
-      project.related_work_candidates?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-candidate-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.candidatesTitle"), hint: t("literature.candidatesHint") }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_candidates.map((candidate) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: candidate.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
-              candidate.provider,
-              " \xB7 depth ",
-              candidate.discovery_depth ?? 0,
-              " \xB7 ",
-              candidate.year || t("literature.yearUnknown"),
-              " \xB7 DOI ",
-              candidate.normalized_doi || t("common.notProvided"),
-              " \xB7 ",
-              t("literature.providerEvidenceCount", { count: candidate.source_count || 0 })
-            ] }),
-            (() => {
-              const provenance = candidateProvenance(candidate.id);
-              const conflictFields = [...new Set(provenance.filter((item) => item.status === "conflict").map((item) => item.field_name))];
-              return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted", children: [
-                t("literature.fieldProvenanceCount", { count: provenance.length }),
-                " \xB7 ",
-                conflictFields.length ? t("literature.conflicts", { fields: conflictFields.join(", ") }) : t("literature.noConflicts")
-              ] });
-            })()
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: candidate.paper_id ? "confirmed-paper" : candidate.status || "metadata-candidate" }),
-            candidateProvenance(candidate.id).length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => setProvenanceCandidateId(candidate.id), children: t("literature.viewFieldProvenance") }) : null,
-            !candidate.paper_id && candidate.status !== "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => void proposeCandidateEnrichment(candidate), children: t("literature.enrichFields") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "primary", type: "button", onClick: () => requestCandidateDecision(candidate, "approved"), children: t("literature.confirmPaper") }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "reject", type: "button", onClick: () => requestCandidateDecision(candidate, "rejected"), children: t("common.reject") })
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: paper.source_url, target: "_blank", rel: "noreferrer", children: paper.title }) }),
+            authors.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "paper-authors", children: [
+              t("literature.authors", { count: authors.length }),
+              "\uFF1A",
+              authors.slice(0, 8).join("\uFF1B"),
+              authors.length > 8 ? ` ${t("literature.moreAuthors", { count: authors.length - 8 })}` : ""
             ] }) : null,
-            !candidate.paper_id && candidate.status === "rejected" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => requestCandidateDecision(candidate, "reopened"), children: t("literature.reopen") }) : null
-          ] })
-        ] }, candidate.id)) })
-      ] }) : null,
-      provenanceCandidate ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        Modal,
-        {
-          eyebrow: t("literature.fieldProvenance"),
-          title: provenanceCandidate.title,
-          description: t("literature.provenanceDescription"),
-          onClose: () => setProvenanceCandidateId(null),
-          wide: true,
-          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "provenance-drawer-list", children: [...new Set(candidateProvenance(provenanceCandidate.id).map((item) => item.field_name))].sort().map((fieldName) => {
-            const fields = candidateProvenance(provenanceCandidate.id).filter((item) => item.field_name === fieldName);
-            return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { className: "provenance-drawer-field", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "provenance-drawer-field-heading", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "eyebrow", children: t("literature.field") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: fieldName })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: fields.some((item) => item.status === "conflict") ? "conflict" : fields.some((item) => item.status === "selected") ? "selected" : "observed" })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: fields.map((field) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row compact-row", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("strong", { children: [
-                    field.provider || field.source_type || t("literature.sourceUnrecorded"),
-                    field.status === "selected" ? t("literature.selected") : ""
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { children: valueLabel(field.normalized_value) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted", children: [
-                    t("literature.sourceType"),
-                    "=",
-                    field.source_type || t("common.unknown"),
-                    " \xB7 ",
-                    t("literature.attempt"),
-                    "=",
-                    field.source_attempt_id || t("common.none"),
-                    " \xB7 ",
-                    t("literature.artifactId"),
-                    "=",
-                    field.artifact_id || t("common.none"),
-                    " \xB7 ",
-                    t("literature.locator"),
-                    "=",
-                    field.locator || t("common.none"),
-                    " \xB7 ",
-                    t("literature.hash"),
-                    "=",
-                    field.raw_value_hash || t("common.none")
-                  ] })
-                ] }),
-                field.status !== "selected" && !provenanceCandidate.paper_id ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary compact", type: "button", onClick: () => void selectCandidateField(provenanceCandidate, field), children: t("literature.selectSource") }) : null
-              ] }, field.id)) })
-            ] }, fieldName);
-          }) })
-        }
-      ) : null,
-      project.papers?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.papers.map((paper) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: paper.source_url, target: "_blank", rel: "noreferrer", children: paper.title }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
-            paper.year || "",
-            " ",
-            paper.venue || "",
-            " \xB7 ",
-            paper.source_provider || t("common.unknown"),
-            " \xB7 DOI ",
-            paper.doi || t("common.notProvided"),
-            " \xB7",
-            paper.verified ? t("literature.metadataVerified") : t("literature.pendingVerification"),
-            " \xB7 ",
-            t("literature.fulltextCount", { count: paper.fulltext_evidence_count || 0 }),
-            " \xB7",
-            t("literature.codeCandidateCount", { count: (paper.code_repositories || []).length })
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+              paper.year || t("literature.yearUnknown"),
+              " \xB7 ",
+              paper.venue || t("common.unknown"),
+              " \xB7 ",
+              paper.source_provider || t("common.unknown"),
+              " \xB7 DOI ",
+              paper.doi || t("common.notProvided"),
+              " \xB7",
+              paper.citation_count != null ? ` \xB7 ${t("literature.citations", { count: paper.citation_count })}` : "",
+              " \xB7",
+              paper.verified ? t("literature.metadataVerified") : t("literature.pendingVerification"),
+              " \xB7 ",
+              t("literature.fulltextCount", { count: paper.fulltext_evidence_count || 0 }),
+              " \xB7",
+              t("literature.codeCandidateCount", { count: (paper.code_repositories || []).length })
+            ] }),
+            institutions.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted paper-institutions", children: [
+              t("literature.institutions", { count: institutions.length }),
+              "\uFF1A",
+              institutions.slice(0, 6).join("\uFF1B")
+            ] }) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "paper-links", children: [
+              paper.source_url ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: paper.source_url, target: "_blank", rel: "noreferrer", children: t("literature.sourceLink") }) : null,
+              paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: t("literature.openPdf") }) : null,
+              homepage ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: homepage, target: "_blank", rel: "noreferrer", children: t("literature.projectHomepage") }) : null,
+              (paper.code_repositories || []).map((repository) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: repository.source_url, target: "_blank", rel: "noreferrer", children: t("literature.codeRepository") }, repository.id))
+            ] }),
+            paper.bibtex ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("details", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("summary", { children: t("literature.bibtex") }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("pre", { className: "code-block", children: paper.bibtex })
+            ] }) : null
           ] }),
-          paper.pdf_url ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: paper.pdf_url, target: "_blank", rel: "noreferrer", children: t("literature.openPdf") }) }) : null,
-          paper.bibtex ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("details", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("summary", { children: t("literature.bibtex") }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("pre", { className: "code-block", children: paper.bibtex })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: Number(paper.fulltext_evidence_count || 0) > 0 ? "fulltext-evidence" : "metadata-only" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: repositoryDiscoveryLoading === paper.id, onClick: () => {
+              void discoverRepositories(paper.id);
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Search, { size: 15 }),
+              repositoryDiscoveryLoading === paper.id ? t("literature.loadingRepos") : t("literature.findRepoLinks")
+            ] }),
+            repoInputFor === paper.id ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "inline-repo-form", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                "input",
+                {
+                  value: repoUrl,
+                  placeholder: t("literature.repoPlaceholder"),
+                  onChange: (event) => setRepoUrl(event.target.value)
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => addRepositoryCandidate(paper.id), children: t("literature.add") })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
+              setRepoInputFor(paper.id);
+              setRepoUrl("");
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GitBranch, { size: 15 }),
+              t("literature.addRepository")
+            ] })
+          ] }),
+          repositoryDiscoveries[paper.id]?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "repository-discovery-list", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "muted", children: t("literature.discoveryHint") }),
+            repositoryDiscoveries[paper.id].map((discovery) => {
+              const exists = (paper.code_repositories || []).some((repository) => repository.source_url === discovery.canonical_url);
+              return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "repository-discovery-row", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: discovery.canonical_url, target: "_blank", rel: "noreferrer", children: discovery.canonical_url }),
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "muted", children: discovery.locator }),
+                exists ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: "candidate-exists" }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary compact", type: "button", onClick: () => {
+                  void addRepositoryCandidate(paper.id, discovery.canonical_url);
+                }, children: t("literature.addCandidate") })
+              ] }, discovery.canonical_url);
+            })
           ] }) : null
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: Number(paper.fulltext_evidence_count || 0) > 0 ? "fulltext-evidence" : "metadata-only" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", disabled: repositoryDiscoveryLoading === paper.id, onClick: () => {
-            void discoverRepositories(paper.id);
-          }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Search, { size: 15 }),
-            repositoryDiscoveryLoading === paper.id ? t("literature.loadingRepos") : t("literature.findRepoLinks")
-          ] }),
-          repoInputFor === paper.id ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "inline-repo-form", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              "input",
-              {
-                value: repoUrl,
-                placeholder: t("literature.repoPlaceholder"),
-                onChange: (event) => setRepoUrl(event.target.value)
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary", type: "button", onClick: () => addRepositoryCandidate(paper.id), children: t("literature.add") })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("button", { className: "secondary", type: "button", onClick: () => {
-            setRepoInputFor(paper.id);
-            setRepoUrl("");
-          }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GitBranch, { size: 15 }),
-            t("literature.addRepository")
-          ] })
-        ] }),
-        repositoryDiscoveries[paper.id]?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "repository-discovery-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "muted", children: t("literature.discoveryHint") }),
-          repositoryDiscoveries[paper.id].map((discovery) => {
-            const exists = (paper.code_repositories || []).some((repository) => repository.source_url === discovery.canonical_url);
-            return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "repository-discovery-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("a", { href: discovery.canonical_url, target: "_blank", rel: "noreferrer", children: discovery.canonical_url }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "muted", children: discovery.locator }),
-              exists ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: "candidate-exists" }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "secondary compact", type: "button", onClick: () => {
-                void addRepositoryCandidate(paper.id, discovery.canonical_url);
-              }, children: t("literature.addCandidate") })
-            ] }, discovery.canonical_url);
-          })
-        ] }) : null
-      ] }, paper.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(EmptyState, { text: t("literature.noPapers") }),
+        ] }, paper.id);
+      }) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(EmptyState, { text: t("literature.noPapers") }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section material-search-panel", children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.materialsTitle"), hint: t("literature.materialsHint") }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
@@ -22752,6 +22865,16 @@
     page_quote: "graph.evidence.pageQuote",
     claim_reviewed: "graph.evidence.claimReviewed"
   };
+  function nodeWidth(node) {
+    if (node.kind !== "paper") return GRAPH_NODE_WIDTH;
+    const count = typeof node.citation_count === "number" && node.citation_count > 0 ? node.citation_count : 0;
+    return GRAPH_NODE_WIDTH + Math.min(56, Math.round(Math.log10(count + 1) * 18));
+  }
+  function nodeHeight(node) {
+    if (node.kind !== "paper") return GRAPH_NODE_HEIGHT;
+    const count = typeof node.citation_count === "number" && node.citation_count > 0 ? node.citation_count : 0;
+    return GRAPH_NODE_HEIGHT + Math.min(30, Math.round(Math.log10(count + 1) * 10));
+  }
   function graphLabel(value, t, maxLength = 31) {
     const normalized = text(value, t);
     return normalized.length > maxLength ? `${normalized.slice(0, maxLength - 1)}\u2026` : normalized;
@@ -22767,25 +22890,34 @@
     for (const kind of GRAPH_KINDS) grouped.set(kind, []);
     for (const node of nodes) grouped.get(node.kind)?.push(node);
     const positioned = [];
-    const columnWidth = GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP;
+    const columnWidths = /* @__PURE__ */ new Map();
     for (const [columnIndex, kind] of GRAPH_KINDS.entries()) {
       const columnNodes = (grouped.get(kind) || []).slice().sort((left, right) => {
         const labelOrder = left.label.localeCompare(right.label, "zh-CN");
         return labelOrder || left.id.localeCompare(right.id);
       });
+      const maxWidth = Math.max(GRAPH_NODE_WIDTH, ...columnNodes.map(nodeWidth));
+      columnWidths.set(kind, maxWidth);
       for (const [rowIndex, node] of columnNodes.entries()) {
         positioned.push({
           ...node,
-          x: GRAPH_COLUMN_PADDING + columnIndex * columnWidth,
-          y: GRAPH_TOP + rowIndex * (GRAPH_NODE_HEIGHT + GRAPH_ROW_GAP)
+          x: GRAPH_COLUMN_PADDING + [...GRAPH_KINDS.slice(0, columnIndex)].reduce((sum, previous) => sum + (columnWidths.get(previous) || GRAPH_NODE_WIDTH) + GRAPH_COLUMN_GAP, 0),
+          y: GRAPH_TOP + rowIndex * (GRAPH_NODE_HEIGHT + GRAPH_ROW_GAP),
+          width: nodeWidth(node),
+          height: nodeHeight(node)
         });
       }
     }
     const maxRows = Math.max(1, ...GRAPH_KINDS.map((kind) => grouped.get(kind)?.length || 0));
+    const totalWidth = GRAPH_COLUMN_PADDING * 2 + [...GRAPH_KINDS].reduce((sum, kind) => sum + (columnWidths.get(kind) || GRAPH_NODE_WIDTH), 0) + GRAPH_COLUMN_GAP * (GRAPH_KINDS.length - 1);
     return {
       nodes: positioned,
-      width: GRAPH_COLUMN_PADDING * 2 + GRAPH_NODE_WIDTH * GRAPH_KINDS.length + GRAPH_COLUMN_GAP * (GRAPH_KINDS.length - 1),
-      height: GRAPH_TOP + maxRows * (GRAPH_NODE_HEIGHT + GRAPH_ROW_GAP) + 26
+      width: totalWidth,
+      height: GRAPH_TOP + maxRows * (GRAPH_NODE_HEIGHT + GRAPH_ROW_GAP) + 26,
+      columns: GRAPH_KINDS.map((kind, index) => ({
+        kind,
+        x: GRAPH_COLUMN_PADDING + [...GRAPH_KINDS.slice(0, index)].reduce((sum, previous) => sum + (columnWidths.get(previous) || GRAPH_NODE_WIDTH) + GRAPH_COLUMN_GAP, 0)
+      }))
     };
   }
   function graphEdgePath(edge, nodes) {
@@ -22793,13 +22925,42 @@
     const target = nodes.get(edge.target);
     if (!source || !target) return null;
     const forward = target.x >= source.x;
-    const sourceX = forward ? source.x + GRAPH_NODE_WIDTH : source.x;
-    const targetX = forward ? target.x : target.x + GRAPH_NODE_WIDTH;
-    const sourceY = source.y + GRAPH_NODE_HEIGHT / 2;
-    const targetY = target.y + GRAPH_NODE_HEIGHT / 2;
+    const sourceX = forward ? source.x + source.width : source.x;
+    const targetX = forward ? target.x : target.x + target.width;
+    const sourceY = source.y + source.height / 2;
+    const targetY = target.y + target.height / 2;
     const curve = Math.max(42, Math.abs(targetX - sourceX) * 0.42);
     const controlDirection = forward ? 1 : -1;
     return `M ${sourceX} ${sourceY} C ${sourceX + curve * controlDirection} ${sourceY}, ${targetX - curve * controlDirection} ${targetY}, ${targetX} ${targetY}`;
+  }
+  function YearTimeline({ papers }) {
+    const { t } = useTranslation();
+    const bars = (0, import_react16.useMemo)(() => {
+      const counts = /* @__PURE__ */ new Map();
+      for (const paper of papers) {
+        if (typeof paper.year === "number" && Number.isInteger(paper.year) && paper.year > 0) {
+          counts.set(paper.year, (counts.get(paper.year) || 0) + 1);
+        }
+      }
+      const entries = [...counts.entries()].sort((left, right) => left[0] - right[0]);
+      const max = Math.max(1, ...entries.map(([, count]) => count));
+      return entries.map(([year, count]) => ({ year, count, height: Math.max(24, Math.round(30 + count / max * 112)) }));
+    }, [papers]);
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "graph-year-panel section", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        SectionHeading,
+        {
+          title: t("graph.timelineTitle"),
+          hint: t("graph.timelineHint"),
+          extra: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { children: t("graph.timelineCount", { count: bars.reduce((sum, bar) => sum + bar.count, 0) }) })
+        }
+      ),
+      bars.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "graph-year-bars", role: "img", "aria-label": t("graph.timelineAria"), children: bars.map((bar) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "graph-year-bar", title: `${bar.year} \xB7 ${bar.count}`, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "graph-year-bar-fill", style: { height: `${bar.height}px` } }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("strong", { children: bar.year }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("em", { children: bar.count })
+      ] }, bar.year)) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(EmptyState, { text: t("graph.timelineEmpty") })
+    ] });
   }
   function WorkflowStageTab({
     project,
@@ -22858,6 +23019,7 @@
             ] })
           ] }),
           researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(YearTimeline, { papers: project.papers || [] }),
           graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "research-graph-panel", children: [
             /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [
               GRAPH_KINDS.map((kind) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: `research-graph-legend-item kind-${kind}`, children: [
@@ -22869,7 +23031,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "research-graph-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("svg", { className: "research-graph-svg", width: graphLayout.width, height: graphLayout.height, viewBox: `0 0 ${graphLayout.width} ${graphLayout.height}`, role: "group", "aria-label": t("graph.aria", { projectId: researchStatus.project_id }), children: [
               /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("title", { children: t("graph.titleShort") }),
               /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("marker", { id: "research-graph-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("path", { d: "M 0 0 L 8 4 L 0 8 z" }) }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: GRAPH_KINDS.map((kind, index) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("text", { x: GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP), y: "27", children: t(GRAPH_KIND_LABELS[kind]) }, kind)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("g", { className: "research-graph-columns", "aria-hidden": "true", children: graphLayout.columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("text", { x: column.x, y: "27", children: t(GRAPH_KIND_LABELS[column.kind]) }, column.kind)) }),
               /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("g", { className: "research-graph-edges", "aria-label": t("graph.edgesAria"), children: researchStatus.graph.edges.map((edge) => {
                 const path = graphEdgePath(edge, graphNodesById);
                 return path ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("path", { d: path, className: `research-graph-edge evidence-${edge.evidence_status}`, markerEnd: "url(#research-graph-arrow)", "aria-label": `${edge.relation} \xB7 ${statusLabel(edge.evidence_status, t)} \xB7 ${statusLabel(edge.permission_status, t)}` }, edge.id) : null;
@@ -22894,8 +23056,8 @@
                     },
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("title", { children: `${node.label} \xB7 ${node.id}` }),
-                      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("rect", { x: node.x, y: node.y, width: GRAPH_NODE_WIDTH, height: GRAPH_NODE_HEIGHT, rx: "14" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + GRAPH_NODE_HEIGHT - 12 }),
+                      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("rect", { x: node.x, y: node.y, width: node.width, height: node.height, rx: "14" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("line", { className: "research-graph-node-accent", x1: node.x + 4, y1: node.y + 12, x2: node.x + 4, y2: node.y + node.height - 12 }),
                       /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("text", { className: "research-graph-node-kind", x: node.x + 15, y: node.y + 20, children: t(GRAPH_KIND_LABELS[node.kind]) }),
                       /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("text", { className: "research-graph-node-label", x: node.x + 15, y: node.y + 43, children: graphLabel(node.label, t) }),
                       /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("text", { className: "research-graph-node-status", x: node.x + 15, y: node.y + 66, children: [
@@ -22941,6 +23103,10 @@
                 /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
                   /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: t("graph.permission") }),
                   /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: statusLabel(selectedGraphNode.permission_status, t) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: t("graph.citations") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: typeof selectedGraphNode.citation_count === "number" ? selectedGraphNode.citation_count : t("graph.citationUnknown") })
                 ] }),
                 selectedGraphNode.source.provider ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
                   /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: t("graph.provider") }),
@@ -23356,7 +23522,7 @@
               activeTab === "overview" || activeTab === "idea" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(OverviewTab, { ...tabProps, tab: activeTab }) : null,
               activeTab === "approvals" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ApprovalsTab, { ...tabProps }) : null,
               activeTab === "reports" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ReportsTab, { ...tabProps }) : null,
-              activeTab === "literature" || activeTab === "seed_expansion" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LiteratureTab, { ...tabProps, searchCandidates }) : null,
+              activeTab === "literature" || activeTab === "seed_expansion" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LiteratureTab, { ...tabProps, searchCandidates, tab: activeTab === "seed_expansion" ? "seed_expansion" : "literature" }) : null,
               activeTab === "visualization" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
               activeTab === "method" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(WorkflowStageTab, { project, tab: activeTab }) : null,
               activeTab === "reproduction" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ReproductionTab, { project, onNavigate: onTabChange, onRefresh, showToast }) : null,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronsDown, Download, GitBranch, GitFork, ScanText, Search, ShieldCheck, Square } from 'lucide-react'
 import { api, errorMessage, localizeFailure } from '../../api'
-import type { ClaimReview, MaterialSearchResponse, ProjectDetail, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
+import type { ClaimReview, MaterialSearchResponse, Paper, ProjectDetail, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, Modal, SectionHeading, statusLabel } from '../ui'
 import { useTranslation } from '../../i18n'
 
@@ -12,6 +12,7 @@ export function LiteratureTab({
   onNavigate,
   onRequestConfirm,
   searchCandidates,
+  tab = 'literature',
 }: {
   project: ProjectDetail
   onRefresh: () => Promise<void>
@@ -19,8 +20,23 @@ export function LiteratureTab({
   onNavigate: (tab: TabId) => void
   onRequestConfirm: (request: { title: string; description: string; confirmLabel: string; onConfirm: () => void }) => void
   searchCandidates: SearchCandidate[]
+  tab?: 'literature' | 'seed_expansion'
 }) {
   const { t } = useTranslation()
+  const paperAuthors = (paper: Paper) => {
+    if (!Array.isArray(paper.authors)) return []
+    return paper.authors.flatMap(item => {
+      const name = typeof item === 'string' ? item : item?.name
+      return typeof name === 'string' && name.trim() ? [name.trim()] : []
+    })
+  }
+  const paperInstitutions = (paper: Paper) => {
+    const direct = Array.isArray(paper.institutions) ? paper.institutions : []
+    const nested = Array.isArray(paper.authors)
+      ? paper.authors.flatMap(item => typeof item === 'string' ? [] : item?.affiliations || [])
+      : []
+    return [...new Set([...direct, ...nested].map(item => String(item).trim()).filter(Boolean))]
+  }
   const [materialQuery, setMaterialQuery] = useState('')
   const [materialLoading, setMaterialLoading] = useState(false)
   const [materialRows, setMaterialRows] = useState<Array<Record<string, any>>>([])
@@ -329,6 +345,218 @@ export function LiteratureTab({
     )
   }
 
+  const seedPanel = (
+    <div className="section related-work-seed-panel">
+      <SectionHeading title={t('literature.seedTitle')} hint={t('literature.seedHint')} />
+      <div className="related-work-seed-form">
+        <label>
+          {t('literature.seedType')}
+          <select value={seedType} onChange={event => { setSeedType(event.target.value as typeof seedType); resetSeedForm() }}>
+            <option value="doi">DOI</option>
+            <option value="title">{t('literature.titleOption')}</option>
+            <option value="url">{t('literature.urlOption')}</option>
+            <option value="bibtex">BibTeX</option>
+            <option value="artifact_pdf">{t('literature.pdfOption')}</option>
+            <option value="existing_paper">{t('literature.existingPaperOption')}</option>
+          </select>
+        </label>
+        {seedType === 'artifact_pdf' ? (
+          <label>
+            {t('literature.pdfArtifact')}
+            <select value={seedArtifactId} onChange={event => setSeedArtifactId(event.target.value)}>
+              <option value="">{t('literature.selectPdf')}</option>
+              {(project.artifacts || []).filter(artifact => artifact.mime_type === 'application/pdf' && artifact.valid !== false).map(artifact => (
+                <option value={artifact.id} key={artifact.id}>{artifact.name}</option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        {seedType === 'existing_paper' ? (
+          <label>
+            {t('literature.projectPaper')}
+            <select value={seedPaperId} onChange={event => setSeedPaperId(event.target.value)}>
+              <option value="">{t('literature.selectPaper')}</option>
+              {(project.papers || []).map(paper => <option value={paper.id} key={paper.id}>{paper.title}</option>)}
+            </select>
+          </label>
+        ) : null}
+        {seedType !== 'artifact_pdf' && seedType !== 'existing_paper' ? (
+          <label className="related-work-seed-value">
+            {seedType === 'doi' ? 'DOI' : seedType === 'title' ? t('literature.paperTitle') : seedType === 'url' ? t('literature.httpsUrl') : t('literature.bibtexEntry')}
+            {seedType === 'bibtex' ? (
+              <textarea rows={5} maxLength={100_000} value={seedValue} onChange={event => setSeedValue(event.target.value)} placeholder="@article{...}" />
+            ) : (
+              <input maxLength={2_000} value={seedValue} onChange={event => setSeedValue(event.target.value)} placeholder={seedType === 'doi' ? '10.1000/example' : seedType === 'url' ? 'https://doi.org/...' : t('literature.enterTitle')} />
+            )}
+          </label>
+        ) : null}
+        {seedType !== 'title' && seedType !== 'existing_paper' ? (
+          <label>
+            {t('literature.optionalTitle')}
+            <input maxLength={2_000} value={seedTitle} onChange={event => setSeedTitle(event.target.value)} placeholder={t('literature.optionalTitlePlaceholder')} />
+          </label>
+        ) : null}
+        <button className="secondary" type="button" disabled={seedLoading || (seedType === 'artifact_pdf' ? !seedArtifactId : seedType === 'existing_paper' ? !seedPaperId : !seedValue.trim())} onClick={() => void addSeed()}>
+          <GitFork size={15} />
+          {seedLoading ? t('literature.parsing') : t('literature.addSeed')}
+        </button>
+      </div>
+      {project.related_work_seeds?.length ? (
+        <div className="related-work-seeds">
+          <div className="related-work-seed-list">
+            {project.related_work_seeds.map(seed => (
+              <label className="related-work-seed-row" key={seed.id}>
+                <input
+                  type="checkbox"
+                  checked={selectedSeeds.includes(seed.id)}
+                  onChange={event => setSelectedSeeds(current => event.target.checked ? [...current, seed.id] : current.filter(id => id !== seed.id))}
+                />
+                <span>
+                  <strong>{seed.input_summary}</strong>
+                  <span>{seed.source_type} · {statusLabel(seed.status, t)} · {seed.created_at ? new Date(seed.created_at).toLocaleString() : t('literature.timeUnknown')}</span>
+                </span>
+                <Badge status={seed.status} />
+              </label>
+            ))}
+          </div>
+          <div className="related-work-recursive-controls">
+            <div className="control-grid">
+              <label>{t('literature.depth')}<input type="number" min={1} max={5} value={recursiveDepth} onChange={event => setRecursiveDepth(Number(event.target.value))} /></label>
+              <label>{t('literature.width')}<input type="number" min={1} max={50} value={recursiveWidth} onChange={event => setRecursiveWidth(Number(event.target.value))} /></label>
+              <label>{t('literature.maxTotal')}<input type="number" min={1} max={500} value={recursiveMaxTotal} onChange={event => setRecursiveMaxTotal(Number(event.target.value))} /></label>
+            </div>
+            <label>{t('literature.proposalReason')}<input maxLength={2_000} value={recursiveReason} onChange={event => setRecursiveReason(event.target.value)} /></label>
+            <div className="provider-choice" aria-label={t('literature.recursiveProviders')}>
+              {['crossref', 'openalex', 'semantic_scholar'].map(provider => (
+                <label key={provider}><input type="checkbox" checked={recursiveProviders.includes(provider)} onChange={() => toggleRecursiveProvider(provider)} />{provider}</label>
+              ))}
+            </div>
+            <button className="secondary" type="button" disabled={recursiveLoading || !selectedSeeds.length || !recursiveProviders.length} onClick={() => void createRecursivePlan()}>
+              <GitFork size={15} />
+              {recursiveLoading ? t('literature.creating') : t('literature.createRecursiveProposal', { count: selectedSeeds.length })}
+            </button>
+          </div>
+        </div>
+      ) : <EmptyState text={t('literature.noSeeds')} />}
+    </div>
+  )
+
+  const runPanel = project.related_work_runs?.length ? (
+    <div className="section related-work-run-panel">
+      <SectionHeading title={t('literature.runsTitle')} hint={t('literature.runsHint')} />
+      <div className="data-list">
+        {project.related_work_runs.map(run => (
+          <div className="data-row" key={run.id}>
+            <div>
+              <h3>{statusLabel(run.status, t)} · {t('literature.runCandidates', { count: run.discovered_count || 0, edges: run.edge_count || 0 })}</h3>
+              <p>depth {run.depth} · width {run.width} · max_total {run.max_total} · providers {run.providers.join(', ')}</p>
+              {run.error ? <p className="error-text">{localizeFailure(run.status, run.error)}</p> : null}
+            </div>
+            <div className="button-row">
+              <Badge status={run.status} />
+              {['queued', 'running'].includes(run.status) ? <button className="secondary" type="button" onClick={() => void cancelRecursiveRun(run)}><Square size={14} />{t('common.cancel')}</button> : null}
+            </div>
+          </div>
+        ))}
+      </div>
+      {project.related_work_attempts?.some(attempt => attempt.status !== 'succeeded') ? (
+        <div className="related-work-failures">
+          <h3>{t('literature.providerFailures')}</h3>
+          {project.related_work_attempts.filter(attempt => attempt.status !== 'succeeded').slice(0, 12).map(attempt => (
+            <p key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}><strong>{attempt.provider}</strong> · {statusLabel(attempt.status, t)} · {attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t('literature.noFailureDetail')}</p>
+          ))}
+        </div>
+      ) : null}
+      {project.related_work_edges?.length ? (
+        <div className="citation-edge-list">
+          <h3>{t('literature.edgeTitle')}</h3>
+          {project.related_work_edges.slice(0, 20).map(edge => <p key={edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`}><strong>{edge.source_title || edge.source_candidate_id}</strong> → {edge.target_title || edge.target_candidate_id} · {edge.provider} · {(edge.ranking_reasons || []).join(', ') || t('literature.noRankingSignal')}</p>)}
+        </div>
+      ) : null}
+    </div>
+  ) : null
+
+  const candidatePanel = project.related_work_candidates?.length ? (
+    <div className="section related-work-candidate-panel">
+      <SectionHeading title={t('literature.candidatesTitle')} hint={t('literature.candidatesHint')} />
+      <div className="data-list">
+        {project.related_work_candidates.map(candidate => (
+          <div className="data-row" key={candidate.id}>
+            <div>
+              <h3>{candidate.title}</h3>
+              <p>{candidate.provider} · depth {candidate.discovery_depth ?? 0} · {candidate.year || t('literature.yearUnknown')} · DOI {candidate.normalized_doi || t('common.notProvided')} · {t('literature.providerEvidenceCount', { count: candidate.source_count || 0 })}</p>
+              {(() => {
+                const provenance = candidateProvenance(candidate.id)
+                const conflictFields = [...new Set(provenance.filter(item => item.status === 'conflict').map(item => item.field_name))]
+                return <p className="muted">{t('literature.fieldProvenanceCount', { count: provenance.length })} · {conflictFields.length ? t('literature.conflicts', { fields: conflictFields.join(', ') }) : t('literature.noConflicts')}</p>
+              })()}
+            </div>
+            <div className="button-row">
+              <Badge status={candidate.paper_id ? 'confirmed-paper' : candidate.status || 'metadata-candidate'} />
+              {candidateProvenance(candidate.id).length ? <button className="secondary" type="button" onClick={() => setProvenanceCandidateId(candidate.id)}>{t('literature.viewFieldProvenance')}</button> : null}
+              {!candidate.paper_id && candidate.status !== 'rejected' ? (
+                <>
+                  <button className="secondary" type="button" onClick={() => void proposeCandidateEnrichment(candidate)}>{t('literature.enrichFields')}</button>
+                  <button className="primary" type="button" onClick={() => requestCandidateDecision(candidate, 'approved')}>{t('literature.confirmPaper')}</button>
+                  <button className="reject" type="button" onClick={() => requestCandidateDecision(candidate, 'rejected')}>{t('common.reject')}</button>
+                </>
+              ) : null}
+              {!candidate.paper_id && candidate.status === 'rejected' ? <button className="secondary" type="button" onClick={() => requestCandidateDecision(candidate, 'reopened')}>{t('literature.reopen')}</button> : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : null
+
+  const provenanceModal = provenanceCandidate ? (
+    <Modal
+      eyebrow={t('literature.fieldProvenance')}
+      title={provenanceCandidate.title}
+      description={t('literature.provenanceDescription')}
+      onClose={() => setProvenanceCandidateId(null)}
+      wide
+    >
+      <div className="provenance-drawer-list">
+        {[...new Set(candidateProvenance(provenanceCandidate.id).map(item => item.field_name))].sort().map(fieldName => {
+          const fields = candidateProvenance(provenanceCandidate.id).filter(item => item.field_name === fieldName)
+          return (
+            <section className="provenance-drawer-field" key={fieldName}>
+              <div className="provenance-drawer-field-heading">
+                <div><span className="eyebrow">{t('literature.field')}</span><h3>{fieldName}</h3></div>
+                <Badge status={fields.some(item => item.status === 'conflict') ? 'conflict' : fields.some(item => item.status === 'selected') ? 'selected' : 'observed'} />
+              </div>
+              <div className="data-list">
+                {fields.map(field => (
+                  <div className="data-row compact-row" key={field.id}>
+                    <div>
+                      <strong>{field.provider || field.source_type || t('literature.sourceUnrecorded')}{field.status === 'selected' ? t('literature.selected') : ''}</strong>
+                      <p>{valueLabel(field.normalized_value)}</p>
+                      <p className="muted">{t('literature.sourceType')}={field.source_type || t('common.unknown')} · {t('literature.attempt')}={field.source_attempt_id || t('common.none')} · {t('literature.artifactId')}={field.artifact_id || t('common.none')} · {t('literature.locator')}={field.locator || t('common.none')} · {t('literature.hash')}={field.raw_value_hash || t('common.none')}</p>
+                    </div>
+                    {field.status !== 'selected' && !provenanceCandidate.paper_id ? <button className="secondary compact" type="button" onClick={() => void selectCandidateField(provenanceCandidate, field)}>{t('literature.selectSource')}</button> : null}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )
+        })}
+      </div>
+    </Modal>
+  ) : null
+
+  if (tab === 'seed_expansion') {
+    return (
+      <>
+        <SectionHeading title={t('seed.title')} hint={t('seed.hint')} extra={<Badge status="project-scoped">{t('seed.scope')}</Badge>} />
+        {seedPanel}
+        {runPanel}
+        {candidatePanel}
+        {provenanceModal}
+      </>
+    )
+  }
+
   return (
     <>
       <SectionHeading
@@ -346,259 +574,77 @@ export function LiteratureTab({
           </ButtonRow>
         }
       />
-      <div className="section related-work-seed-panel">
-        <SectionHeading title={t('literature.seedTitle')} hint={t('literature.seedHint')} />
-        <div className="related-work-seed-form">
-          <label>
-            {t('literature.seedType')}
-            <select value={seedType} onChange={event => { setSeedType(event.target.value as typeof seedType); resetSeedForm() }}>
-              <option value="doi">DOI</option>
-              <option value="title">{t('literature.titleOption')}</option>
-              <option value="url">{t('literature.urlOption')}</option>
-              <option value="bibtex">BibTeX</option>
-              <option value="artifact_pdf">{t('literature.pdfOption')}</option>
-              <option value="existing_paper">{t('literature.existingPaperOption')}</option>
-            </select>
-          </label>
-          {seedType === 'artifact_pdf' ? (
-            <label>
-              {t('literature.pdfArtifact')}
-              <select value={seedArtifactId} onChange={event => setSeedArtifactId(event.target.value)}>
-                <option value="">{t('literature.selectPdf')}</option>
-                {(project.artifacts || []).filter(artifact => artifact.mime_type === 'application/pdf' && artifact.valid !== false).map(artifact => (
-                  <option value={artifact.id} key={artifact.id}>{artifact.name}</option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-          {seedType === 'existing_paper' ? (
-            <label>
-              {t('literature.projectPaper')}
-              <select value={seedPaperId} onChange={event => setSeedPaperId(event.target.value)}>
-                <option value="">{t('literature.selectPaper')}</option>
-                {(project.papers || []).map(paper => <option value={paper.id} key={paper.id}>{paper.title}</option>)}
-              </select>
-            </label>
-          ) : null}
-          {seedType !== 'artifact_pdf' && seedType !== 'existing_paper' ? (
-            <label className="related-work-seed-value">
-              {seedType === 'doi' ? 'DOI' : seedType === 'title' ? t('literature.paperTitle') : seedType === 'url' ? t('literature.httpsUrl') : t('literature.bibtexEntry')}
-              {seedType === 'bibtex' ? (
-                <textarea rows={5} maxLength={100_000} value={seedValue} onChange={event => setSeedValue(event.target.value)} placeholder="@article{...}" />
-              ) : (
-                <input maxLength={2_000} value={seedValue} onChange={event => setSeedValue(event.target.value)} placeholder={seedType === 'doi' ? '10.1000/example' : seedType === 'url' ? 'https://doi.org/...' : t('literature.enterTitle')} />
-              )}
-            </label>
-          ) : null}
-          {seedType !== 'title' && seedType !== 'existing_paper' ? (
-            <label>
-              {t('literature.optionalTitle')}
-              <input maxLength={2_000} value={seedTitle} onChange={event => setSeedTitle(event.target.value)} placeholder={t('literature.optionalTitlePlaceholder')} />
-            </label>
-          ) : null}
-          <button className="secondary" type="button" disabled={seedLoading || (seedType === 'artifact_pdf' ? !seedArtifactId : seedType === 'existing_paper' ? !seedPaperId : !seedValue.trim())} onClick={() => void addSeed()}>
-            <GitFork size={15} />
-            {seedLoading ? t('literature.parsing') : t('literature.addSeed')}
-          </button>
-        </div>
-        {project.related_work_seeds?.length ? (
-          <div className="related-work-seeds">
-            <div className="related-work-seed-list">
-              {project.related_work_seeds.map(seed => (
-                <label className="related-work-seed-row" key={seed.id}>
-                  <input
-                    type="checkbox"
-                    checked={selectedSeeds.includes(seed.id)}
-                    onChange={event => setSelectedSeeds(current => event.target.checked ? [...current, seed.id] : current.filter(id => id !== seed.id))}
-                  />
-                  <span>
-                    <strong>{seed.input_summary}</strong>
-                    <span>{seed.source_type} · {statusLabel(seed.status, t)} · {seed.created_at ? new Date(seed.created_at).toLocaleString() : t('literature.timeUnknown')}</span>
-                  </span>
-                  <Badge status={seed.status} />
-                </label>
-              ))}
-            </div>
-            <div className="related-work-recursive-controls">
-              <div className="control-grid">
-                <label>{t('literature.depth')}<input type="number" min={1} max={5} value={recursiveDepth} onChange={event => setRecursiveDepth(Number(event.target.value))} /></label>
-                <label>{t('literature.width')}<input type="number" min={1} max={50} value={recursiveWidth} onChange={event => setRecursiveWidth(Number(event.target.value))} /></label>
-                <label>{t('literature.maxTotal')}<input type="number" min={1} max={500} value={recursiveMaxTotal} onChange={event => setRecursiveMaxTotal(Number(event.target.value))} /></label>
-              </div>
-              <label>{t('literature.proposalReason')}<input maxLength={2_000} value={recursiveReason} onChange={event => setRecursiveReason(event.target.value)} /></label>
-              <div className="provider-choice" aria-label={t('literature.recursiveProviders')}>
-                {['crossref', 'openalex', 'semantic_scholar'].map(provider => (
-                  <label key={provider}><input type="checkbox" checked={recursiveProviders.includes(provider)} onChange={() => toggleRecursiveProvider(provider)} />{provider}</label>
-                ))}
-              </div>
-              <button className="secondary" type="button" disabled={recursiveLoading || !selectedSeeds.length || !recursiveProviders.length} onClick={() => void createRecursivePlan()}>
-                <GitFork size={15} />
-                {recursiveLoading ? t('literature.creating') : t('literature.createRecursiveProposal', { count: selectedSeeds.length })}
-              </button>
-            </div>
-          </div>
-        ) : <EmptyState text={t('literature.noSeeds')} />}
-      </div>
-
-      {project.related_work_runs?.length ? (
-        <div className="section related-work-run-panel">
-          <SectionHeading title={t('literature.runsTitle')} hint={t('literature.runsHint')} />
-          <div className="data-list">
-            {project.related_work_runs.map(run => (
-              <div className="data-row" key={run.id}>
-                <div>
-                  <h3>{statusLabel(run.status, t)} · {t('literature.runCandidates', { count: run.discovered_count || 0, edges: run.edge_count || 0 })}</h3>
-                  <p>depth {run.depth} · width {run.width} · max_total {run.max_total} · providers {run.providers.join(', ')}</p>
-                  {run.error ? <p className="error-text">{localizeFailure(run.status, run.error)}</p> : null}
-                </div>
-                <div className="button-row">
-                  <Badge status={run.status} />
-                  {['queued', 'running'].includes(run.status) ? <button className="secondary" type="button" onClick={() => void cancelRecursiveRun(run)}><Square size={14} />{t('common.cancel')}</button> : null}
-                </div>
-              </div>
-            ))}
-          </div>
-          {project.related_work_attempts?.some(attempt => attempt.status !== 'succeeded') ? (
-            <div className="related-work-failures">
-              <h3>{t('literature.providerFailures')}</h3>
-              {project.related_work_attempts.filter(attempt => attempt.status !== 'succeeded').slice(0, 12).map(attempt => (
-                <p key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}><strong>{attempt.provider}</strong> · {statusLabel(attempt.status, t)} · {attempt.failure ? localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) : t('literature.noFailureDetail')}</p>
-              ))}
-            </div>
-          ) : null}
-          {project.related_work_edges?.length ? (
-            <div className="citation-edge-list">
-              <h3>{t('literature.edgeTitle')}</h3>
-              {project.related_work_edges.slice(0, 20).map(edge => <p key={edge.id || `${edge.source_candidate_id}-${edge.target_candidate_id}-${edge.provider}`}><strong>{edge.source_title || edge.source_candidate_id}</strong> → {edge.target_title || edge.target_candidate_id} · {edge.provider} · {(edge.ranking_reasons || []).join(', ') || t('literature.noRankingSignal')}</p>)}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-      {project.related_work_candidates?.length ? (
-        <div className="section related-work-candidate-panel">
-          <SectionHeading title={t('literature.candidatesTitle')} hint={t('literature.candidatesHint')} />
-          <div className="data-list">
-            {project.related_work_candidates.map(candidate => (
-              <div className="data-row" key={candidate.id}>
-                <div>
-                  <h3>{candidate.title}</h3>
-                  <p>{candidate.provider} · depth {candidate.discovery_depth ?? 0} · {candidate.year || t('literature.yearUnknown')} · DOI {candidate.normalized_doi || t('common.notProvided')} · {t('literature.providerEvidenceCount', { count: candidate.source_count || 0 })}</p>
-                  {(() => {
-                    const provenance = candidateProvenance(candidate.id)
-                    const conflictFields = [...new Set(provenance.filter(item => item.status === 'conflict').map(item => item.field_name))]
-                    return <p className="muted">{t('literature.fieldProvenanceCount', { count: provenance.length })} · {conflictFields.length ? t('literature.conflicts', { fields: conflictFields.join(', ') }) : t('literature.noConflicts')}</p>
-                  })()}
-                </div>
-                <div className="button-row">
-                  <Badge status={candidate.paper_id ? 'confirmed-paper' : candidate.status || 'metadata-candidate'} />
-                  {candidateProvenance(candidate.id).length ? <button className="secondary" type="button" onClick={() => setProvenanceCandidateId(candidate.id)}>{t('literature.viewFieldProvenance')}</button> : null}
-                  {!candidate.paper_id && candidate.status !== 'rejected' ? (
-                    <>
-                      <button className="secondary" type="button" onClick={() => void proposeCandidateEnrichment(candidate)}>{t('literature.enrichFields')}</button>
-                      <button className="primary" type="button" onClick={() => requestCandidateDecision(candidate, 'approved')}>{t('literature.confirmPaper')}</button>
-                      <button className="reject" type="button" onClick={() => requestCandidateDecision(candidate, 'rejected')}>{t('common.reject')}</button>
-                    </>
-                  ) : null}
-                  {!candidate.paper_id && candidate.status === 'rejected' ? <button className="secondary" type="button" onClick={() => requestCandidateDecision(candidate, 'reopened')}>{t('literature.reopen')}</button> : null}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
-      {provenanceCandidate ? (
-        <Modal
-          eyebrow={t('literature.fieldProvenance')}
-          title={provenanceCandidate.title}
-          description={t('literature.provenanceDescription')}
-          onClose={() => setProvenanceCandidateId(null)}
-          wide
-        >
-          <div className="provenance-drawer-list">
-            {[...new Set(candidateProvenance(provenanceCandidate.id).map(item => item.field_name))].sort().map(fieldName => {
-              const fields = candidateProvenance(provenanceCandidate.id).filter(item => item.field_name === fieldName)
-              return (
-                <section className="provenance-drawer-field" key={fieldName}>
-                  <div className="provenance-drawer-field-heading">
-                    <div><span className="eyebrow">{t('literature.field')}</span><h3>{fieldName}</h3></div>
-                    <Badge status={fields.some(item => item.status === 'conflict') ? 'conflict' : fields.some(item => item.status === 'selected') ? 'selected' : 'observed'} />
-                  </div>
-                  <div className="data-list">
-                    {fields.map(field => (
-                      <div className="data-row compact-row" key={field.id}>
-                        <div>
-                          <strong>{field.provider || field.source_type || t('literature.sourceUnrecorded')}{field.status === 'selected' ? t('literature.selected') : ''}</strong>
-                          <p>{valueLabel(field.normalized_value)}</p>
-                          <p className="muted">{t('literature.sourceType')}={field.source_type || t('common.unknown')} · {t('literature.attempt')}={field.source_attempt_id || t('common.none')} · {t('literature.artifactId')}={field.artifact_id || t('common.none')} · {t('literature.locator')}={field.locator || t('common.none')} · {t('literature.hash')}={field.raw_value_hash || t('common.none')}</p>
-                        </div>
-                        {field.status !== 'selected' && !provenanceCandidate.paper_id ? <button className="secondary compact" type="button" onClick={() => void selectCandidateField(provenanceCandidate, field)}>{t('literature.selectSource')}</button> : null}
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )
-            })}
-          </div>
-        </Modal>
-      ) : null}
       {project.papers?.length ? (
         <div className="data-list">
-          {project.papers.map(paper => (
-            <div className="data-row" key={paper.id}>
-              <div>
-                <h3><a href={paper.source_url} target="_blank" rel="noreferrer">{paper.title}</a></h3>
-                <p>
-                  {paper.year || ''} {paper.venue || ''} · {paper.source_provider || t('common.unknown')} · DOI {paper.doi || t('common.notProvided')} ·
-                  {paper.verified ? t('literature.metadataVerified') : t('literature.pendingVerification')} · {t('literature.fulltextCount', { count: paper.fulltext_evidence_count || 0 })} ·
-                  {t('literature.codeCandidateCount', { count: (paper.code_repositories || []).length })}
-                </p>
-                {paper.pdf_url ? <p><a href={paper.pdf_url} target="_blank" rel="noreferrer">{t('literature.openPdf')}</a></p> : null}
-                {paper.bibtex ? (
-                  <details>
-                    <summary>{t('literature.bibtex')}</summary>
-                    <pre className="code-block">{paper.bibtex}</pre>
-                  </details>
+          {project.papers.map(paper => {
+            const authors = paperAuthors(paper)
+            const institutions = paperInstitutions(paper)
+            const homepage = paper.project_homepage || paper.html_url
+            return (
+              <div className="data-row" key={paper.id}>
+                <div>
+                  <h3><a href={paper.source_url} target="_blank" rel="noreferrer">{paper.title}</a></h3>
+                  {authors.length ? <p className="paper-authors">{t('literature.authors', { count: authors.length })}：{authors.slice(0, 8).join('；')}{authors.length > 8 ? ` ${t('literature.moreAuthors', { count: authors.length - 8 })}` : ''}</p> : null}
+                  <p>
+                    {paper.year || t('literature.yearUnknown')} · {paper.venue || t('common.unknown')} · {paper.source_provider || t('common.unknown')} · DOI {paper.doi || t('common.notProvided')} ·
+                    {paper.citation_count != null ? ` · ${t('literature.citations', { count: paper.citation_count })}` : ''} ·
+                    {paper.verified ? t('literature.metadataVerified') : t('literature.pendingVerification')} · {t('literature.fulltextCount', { count: paper.fulltext_evidence_count || 0 })} ·
+                    {t('literature.codeCandidateCount', { count: (paper.code_repositories || []).length })}
+                  </p>
+                  {institutions.length ? <p className="muted paper-institutions">{t('literature.institutions', { count: institutions.length })}：{institutions.slice(0, 6).join('；')}</p> : null}
+                  <p className="paper-links">
+                    {paper.source_url ? <a href={paper.source_url} target="_blank" rel="noreferrer">{t('literature.sourceLink')}</a> : null}
+                    {paper.pdf_url ? <a href={paper.pdf_url} target="_blank" rel="noreferrer">{t('literature.openPdf')}</a> : null}
+                    {homepage ? <a href={homepage} target="_blank" rel="noreferrer">{t('literature.projectHomepage')}</a> : null}
+                    {(paper.code_repositories || []).map(repository => <a href={repository.source_url} target="_blank" rel="noreferrer" key={repository.id}>{t('literature.codeRepository')}</a>)}
+                  </p>
+                  {paper.bibtex ? (
+                    <details>
+                      <summary>{t('literature.bibtex')}</summary>
+                      <pre className="code-block">{paper.bibtex}</pre>
+                    </details>
+                  ) : null}
+                </div>
+                <div className="button-row">
+                  <Badge status={Number(paper.fulltext_evidence_count || 0) > 0 ? 'fulltext-evidence' : 'metadata-only'} />
+                  <button className="secondary" type="button" disabled={repositoryDiscoveryLoading === paper.id} onClick={() => { void discoverRepositories(paper.id) }}>
+                    <Search size={15} />
+                    {repositoryDiscoveryLoading === paper.id ? t('literature.loadingRepos') : t('literature.findRepoLinks')}
+                  </button>
+                  {repoInputFor === paper.id ? (
+                    <span className="inline-repo-form">
+                      <input
+                        value={repoUrl}
+                        placeholder={t('literature.repoPlaceholder')}
+                        onChange={event => setRepoUrl(event.target.value)}
+                      />
+                      <button className="secondary" type="button" onClick={() => addRepositoryCandidate(paper.id)}>{t('literature.add')}</button>
+                    </span>
+                  ) : (
+                    <button className="secondary" type="button" onClick={() => { setRepoInputFor(paper.id); setRepoUrl('') }}>
+                      <GitBranch size={15} />
+                      {t('literature.addRepository')}
+                    </button>
+                  )}
+                </div>
+                {repositoryDiscoveries[paper.id]?.length ? (
+                  <div className="repository-discovery-list">
+                    <p className="muted">{t('literature.discoveryHint')}</p>
+                    {repositoryDiscoveries[paper.id].map(discovery => {
+                      const exists = (paper.code_repositories || []).some(repository => repository.source_url === discovery.canonical_url)
+                      return (
+                        <div className="repository-discovery-row" key={discovery.canonical_url}>
+                          <a href={discovery.canonical_url} target="_blank" rel="noreferrer">{discovery.canonical_url}</a>
+                          <span className="muted">{discovery.locator}</span>
+                          {exists ? <Badge status="candidate-exists" /> : <button className="secondary compact" type="button" onClick={() => { void addRepositoryCandidate(paper.id, discovery.canonical_url) }}>{t('literature.addCandidate')}</button>}
+                        </div>
+                      )
+                    })}
+                  </div>
                 ) : null}
               </div>
-              <div className="button-row">
-                <Badge status={Number(paper.fulltext_evidence_count || 0) > 0 ? 'fulltext-evidence' : 'metadata-only'} />
-                <button className="secondary" type="button" disabled={repositoryDiscoveryLoading === paper.id} onClick={() => { void discoverRepositories(paper.id) }}>
-                  <Search size={15} />
-                  {repositoryDiscoveryLoading === paper.id ? t('literature.loadingRepos') : t('literature.findRepoLinks')}
-                </button>
-                {repoInputFor === paper.id ? (
-                  <span className="inline-repo-form">
-                    <input
-                      value={repoUrl}
-                      placeholder={t('literature.repoPlaceholder')}
-                      onChange={event => setRepoUrl(event.target.value)}
-                    />
-                    <button className="secondary" type="button" onClick={() => addRepositoryCandidate(paper.id)}>{t('literature.add')}</button>
-                  </span>
-                ) : (
-                  <button className="secondary" type="button" onClick={() => { setRepoInputFor(paper.id); setRepoUrl('') }}>
-                    <GitBranch size={15} />
-                    {t('literature.addRepository')}
-                  </button>
-                )}
-              </div>
-              {repositoryDiscoveries[paper.id]?.length ? (
-                <div className="repository-discovery-list">
-                  <p className="muted">{t('literature.discoveryHint')}</p>
-                  {repositoryDiscoveries[paper.id].map(discovery => {
-                    const exists = (paper.code_repositories || []).some(repository => repository.source_url === discovery.canonical_url)
-                    return (
-                      <div className="repository-discovery-row" key={discovery.canonical_url}>
-                        <a href={discovery.canonical_url} target="_blank" rel="noreferrer">{discovery.canonical_url}</a>
-                        <span className="muted">{discovery.locator}</span>
-                        {exists ? <Badge status="candidate-exists" /> : <button className="secondary compact" type="button" onClick={() => { void addRepositoryCandidate(paper.id, discovery.canonical_url) }}>{t('literature.addCandidate')}</button>}
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : null}
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : (
         <EmptyState text={t('literature.noPapers')} />

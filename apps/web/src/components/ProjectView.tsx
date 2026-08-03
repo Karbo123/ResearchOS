@@ -202,7 +202,7 @@ export function ProjectView({
           {activeTab === 'overview' || activeTab === 'idea' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
           {activeTab === 'approvals' ? <ApprovalsTab {...tabProps} /> : null}
           {activeTab === 'reports' ? <ReportsTab {...tabProps} /> : null}
-          {activeTab === 'literature' || activeTab === 'seed_expansion' ? <LiteratureTab {...tabProps} searchCandidates={searchCandidates} /> : null}
+          {activeTab === 'literature' || activeTab === 'seed_expansion' ? <LiteratureTab {...tabProps} searchCandidates={searchCandidates} tab={activeTab === 'seed_expansion' ? 'seed_expansion' : 'literature'} /> : null}
           {activeTab === 'visualization' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}
           {activeTab === 'method' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}
           {activeTab === 'reproduction' ? <ReproductionTab project={project} onNavigate={onTabChange} onRefresh={onRefresh} showToast={showToast} /> : null}

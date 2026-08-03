@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Network, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../../api'
-import type { ProjectDetail, ProjectWorkspaceDetail, ResearchStatusGraphEdge, ResearchStatusGraphNode, ResearchStatusResponse, TabId } from '../../types'
+import type { Paper, ProjectDetail, ProjectWorkspaceDetail, ResearchStatusGraphEdge, ResearchStatusGraphNode, ResearchStatusResponse, TabId } from '../../types'
 import { Badge, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { useTranslation, type TranslationKey } from '../../i18n'
 
@@ -41,7 +41,19 @@ const GRAPH_EVIDENCE_LABELS: Record<string, TranslationKey> = {
   claim_reviewed: 'graph.evidence.claimReviewed',
 }
 
-type PositionedGraphNode = ResearchStatusGraphNode & { x: number; y: number }
+type PositionedGraphNode = ResearchStatusGraphNode & { x: number; y: number; width: number; height: number }
+
+function nodeWidth(node: ResearchStatusGraphNode): number {
+  if (node.kind !== 'paper') return GRAPH_NODE_WIDTH
+  const count = typeof node.citation_count === 'number' && node.citation_count > 0 ? node.citation_count : 0
+  return GRAPH_NODE_WIDTH + Math.min(56, Math.round(Math.log10(count + 1) * 18))
+}
+
+function nodeHeight(node: ResearchStatusGraphNode): number {
+  if (node.kind !== 'paper') return GRAPH_NODE_HEIGHT
+  const count = typeof node.citation_count === 'number' && node.citation_count > 0 ? node.citation_count : 0
+  return GRAPH_NODE_HEIGHT + Math.min(30, Math.round(Math.log10(count + 1) * 10))
+}
 
 function graphLabel(value: string, t: (key: TranslationKey) => string, maxLength = 31) {
   const normalized = text(value, t)
@@ -62,26 +74,35 @@ function layoutGraph(nodes: ResearchStatusGraphNode[]) {
   for (const node of nodes) grouped.get(node.kind)?.push(node)
 
   const positioned: PositionedGraphNode[] = []
-  const columnWidth = GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP
+  const columnWidths = new Map<ResearchStatusGraphNode['kind'], number>()
   for (const [columnIndex, kind] of GRAPH_KINDS.entries()) {
     const columnNodes = (grouped.get(kind) || []).slice().sort((left, right) => {
       const labelOrder = left.label.localeCompare(right.label, 'zh-CN')
       return labelOrder || left.id.localeCompare(right.id)
     })
+    const maxWidth = Math.max(GRAPH_NODE_WIDTH, ...columnNodes.map(nodeWidth))
+    columnWidths.set(kind, maxWidth)
     for (const [rowIndex, node] of columnNodes.entries()) {
       positioned.push({
         ...node,
-        x: GRAPH_COLUMN_PADDING + columnIndex * columnWidth,
+        x: GRAPH_COLUMN_PADDING + [...GRAPH_KINDS.slice(0, columnIndex)].reduce((sum, previous) => sum + (columnWidths.get(previous) || GRAPH_NODE_WIDTH) + GRAPH_COLUMN_GAP, 0),
         y: GRAPH_TOP + rowIndex * (GRAPH_NODE_HEIGHT + GRAPH_ROW_GAP),
+        width: nodeWidth(node),
+        height: nodeHeight(node),
       })
     }
   }
 
   const maxRows = Math.max(1, ...GRAPH_KINDS.map(kind => grouped.get(kind)?.length || 0))
+  const totalWidth = GRAPH_COLUMN_PADDING * 2 + [...GRAPH_KINDS].reduce((sum, kind) => sum + (columnWidths.get(kind) || GRAPH_NODE_WIDTH), 0) + GRAPH_COLUMN_GAP * (GRAPH_KINDS.length - 1)
   return {
     nodes: positioned,
-    width: GRAPH_COLUMN_PADDING * 2 + GRAPH_NODE_WIDTH * GRAPH_KINDS.length + GRAPH_COLUMN_GAP * (GRAPH_KINDS.length - 1),
+    width: totalWidth,
     height: GRAPH_TOP + maxRows * (GRAPH_NODE_HEIGHT + GRAPH_ROW_GAP) + 26,
+    columns: GRAPH_KINDS.map((kind, index) => ({
+      kind,
+      x: GRAPH_COLUMN_PADDING + [...GRAPH_KINDS.slice(0, index)].reduce((sum, previous) => sum + (columnWidths.get(previous) || GRAPH_NODE_WIDTH) + GRAPH_COLUMN_GAP, 0),
+    })),
   }
 }
 
@@ -91,13 +112,48 @@ function graphEdgePath(edge: ResearchStatusGraphEdge, nodes: Map<string, Positio
   if (!source || !target) return null
 
   const forward = target.x >= source.x
-  const sourceX = forward ? source.x + GRAPH_NODE_WIDTH : source.x
-  const targetX = forward ? target.x : target.x + GRAPH_NODE_WIDTH
-  const sourceY = source.y + GRAPH_NODE_HEIGHT / 2
-  const targetY = target.y + GRAPH_NODE_HEIGHT / 2
+  const sourceX = forward ? source.x + source.width : source.x
+  const targetX = forward ? target.x : target.x + target.width
+  const sourceY = source.y + source.height / 2
+  const targetY = target.y + target.height / 2
   const curve = Math.max(42, Math.abs(targetX - sourceX) * 0.42)
   const controlDirection = forward ? 1 : -1
   return `M ${sourceX} ${sourceY} C ${sourceX + curve * controlDirection} ${sourceY}, ${targetX - curve * controlDirection} ${targetY}, ${targetX} ${targetY}`
+}
+
+function YearTimeline({ papers }: { papers: Paper[] }) {
+  const { t } = useTranslation()
+  const bars = useMemo(() => {
+    const counts = new Map<number, number>()
+    for (const paper of papers) {
+      if (typeof paper.year === 'number' && Number.isInteger(paper.year) && paper.year > 0) {
+        counts.set(paper.year, (counts.get(paper.year) || 0) + 1)
+      }
+    }
+    const entries = [...counts.entries()].sort((left, right) => left[0] - right[0])
+    const max = Math.max(1, ...entries.map(([, count]) => count))
+    return entries.map(([year, count]) => ({ year, count, height: Math.max(24, Math.round(30 + (count / max) * 112)) }))
+  }, [papers])
+  return (
+    <section className="graph-year-panel section">
+      <SectionHeading
+        title={t('graph.timelineTitle')}
+        hint={t('graph.timelineHint')}
+        extra={<Badge>{t('graph.timelineCount', { count: bars.reduce((sum, bar) => sum + bar.count, 0) })}</Badge>}
+      />
+      {bars.length ? (
+        <div className="graph-year-bars" role="img" aria-label={t('graph.timelineAria')}>
+          {bars.map(bar => (
+            <div className="graph-year-bar" key={bar.year} title={`${bar.year} · ${bar.count}`}>
+              <span className="graph-year-bar-fill" style={{ height: `${bar.height}px` }} />
+              <strong>{bar.year}</strong>
+              <em>{bar.count}</em>
+            </div>
+          ))}
+        </div>
+      ) : <EmptyState text={t('graph.timelineEmpty')} />}
+    </section>
+  )
 }
 
 export function WorkflowStageTab({
@@ -151,6 +207,7 @@ export function WorkflowStageTab({
               <div className="data-row"><div><h3>{t('graph.scale')}</h3><p>{t('graph.scaleText', { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length })}</p></div><Network size={16} className="muted" /></div>
             </div>
             {researchStatus.graph_status === 'partial' ? <div className="research-graph-alert" role="status">{t('graph.alert')}</div> : null}
+            <YearTimeline papers={project.papers || []} />
             {graphLayout.nodes.length ? (
               <div className="research-graph-panel">
                 <div className="research-graph-legend" aria-label={t('graph.legendAria')}>
@@ -166,7 +223,7 @@ export function WorkflowStageTab({
                       </marker>
                     </defs>
                     <g className="research-graph-columns" aria-hidden="true">
-                      {GRAPH_KINDS.map((kind, index) => <text key={kind} x={GRAPH_COLUMN_PADDING + index * (GRAPH_NODE_WIDTH + GRAPH_COLUMN_GAP)} y="27">{t(GRAPH_KIND_LABELS[kind])}</text>)}
+                      {graphLayout.columns.map(column => <text key={column.kind} x={column.x} y="27">{t(GRAPH_KIND_LABELS[column.kind])}</text>)}
                     </g>
                     <g className="research-graph-edges" aria-label={t('graph.edgesAria')}>
                       {researchStatus.graph.edges.map(edge => {
@@ -195,8 +252,8 @@ export function WorkflowStageTab({
                             }}
                           >
                             <title>{`${node.label} · ${node.id}`}</title>
-                            <rect x={node.x} y={node.y} width={GRAPH_NODE_WIDTH} height={GRAPH_NODE_HEIGHT} rx="14" />
-                            <line className="research-graph-node-accent" x1={node.x + 4} y1={node.y + 12} x2={node.x + 4} y2={node.y + GRAPH_NODE_HEIGHT - 12} />
+                            <rect x={node.x} y={node.y} width={node.width} height={node.height} rx="14" />
+                            <line className="research-graph-node-accent" x1={node.x + 4} y1={node.y + 12} x2={node.x + 4} y2={node.y + node.height - 12} />
                             <text className="research-graph-node-kind" x={node.x + 15} y={node.y + 20}>{t(GRAPH_KIND_LABELS[node.kind])}</text>
                             <text className="research-graph-node-label" x={node.x + 15} y={node.y + 43}>{graphLabel(node.label, t)}</text>
                             <text className="research-graph-node-status" x={node.x + 15} y={node.y + 66}>{t(graphStatusLabel(node.status) as TranslationKey)} · {t(graphEvidenceLabel(node.evidence_status) as TranslationKey)}</text>
@@ -216,6 +273,7 @@ export function WorkflowStageTab({
                         <div><dt>{t('graph.source')}</dt><dd>{text(selectedGraphNode.source.source_type, t)} · <code>{selectedGraphNode.source.source_id}</code></dd></div>
                         <div><dt>{t('graph.evidenceStatus')}</dt><dd>{t(graphEvidenceLabel(selectedGraphNode.evidence_status) as TranslationKey)}</dd></div>
                         <div><dt>{t('graph.permission')}</dt><dd>{statusLabel(selectedGraphNode.permission_status, t)}</dd></div>
+                        <div><dt>{t('graph.citations')}</dt><dd>{typeof selectedGraphNode.citation_count === 'number' ? selectedGraphNode.citation_count : t('graph.citationUnknown')}</dd></div>
                         {selectedGraphNode.source.provider ? <div><dt>{t('graph.provider')}</dt><dd>{selectedGraphNode.source.provider}</dd></div> : null}
                         {selectedGraphNode.source.locator ? <div><dt>{t('graph.locator')}</dt><dd>{selectedGraphNode.source.locator}</dd></div> : null}
                       </dl>

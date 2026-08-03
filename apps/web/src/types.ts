@@ -375,6 +375,11 @@ export interface Paper {
   title: string
   year?: number | null
   venue?: string
+  authors?: Array<{ name: string; orcid?: string | null; affiliations?: string[] } | string>
+  institutions?: string[]
+  citation_count?: number | null
+  html_url?: string | null
+  project_homepage?: string | null
   source_provider?: string
   source_url?: string
   doi?: string | null
@@ -698,6 +703,7 @@ export interface ResearchStatusGraphNode {
   kind: 'candidate' | 'paper' | 'evidence' | 'claim_review'
   label: string
   status: string
+  citation_count?: number | null
   source: {
     source_type: string
     source_id: string

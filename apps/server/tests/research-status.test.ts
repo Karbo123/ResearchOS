@@ -39,7 +39,7 @@ describe('project-scoped research status matrix and citation graph', () => {
       ($1,$3,'Confirmed Paper','10.1000/confirmed','https://doi.org/10.1000/confirmed',$5,TRUE,TRUE),
       ($2,$3,'Earlier Confirmed Paper','10.1000/earlier','https://doi.org/10.1000/earlier',$6,TRUE,TRUE),
       ($7,$4,'Other Paper','10.1000/other','https://doi.org/10.1000/other',$8,TRUE,TRUE)`, [
-      paperId, secondPaperId, projectId, otherProjectId, { year: 2024 }, { year: 2023 }, otherPaperId, { year: 2022 },
+      paperId, secondPaperId, projectId, otherProjectId, { year: 2024, citation_count: 120 }, { year: 2023, citation_count: 40 }, otherPaperId, { year: 2022, citation_count: 8 },
     ])
     await database.query(`INSERT INTO evidence(id,project_id,paper_id,claim,quote,locator,source_url) VALUES
       ($1,$3,$5,'bounded claim','A page-level quote.','page 4','https://example.org/confirmed.pdf'),
@@ -196,6 +196,8 @@ describe('project-scoped research status matrix and citation graph', () => {
     expect(graph.body.graph.nodes.every((node: Record<string, unknown>) => node.permission_status === 'project_scoped')).toBe(true)
     expect(graph.body.graph.edges.some((edge: Record<string, unknown>) => edge.relation === 'references' && edge.evidence_status === 'metadata_only')).toBe(true)
     expect(graph.body.graph.nodes.some((node: Record<string, unknown>) => node.id === `paper:${otherPaperId}`)).toBe(false)
+    expect(graph.body.graph.nodes.find((node: Record<string, unknown>) => node.id === `paper:${paperId}`)).toMatchObject({ citation_count: 120 })
+    expect(graph.body.graph.nodes.find((node: Record<string, unknown>) => node.id === `paper:${secondPaperId}`)).toMatchObject({ citation_count: 40 })
 
     const gap = await json(`/api/projects/${projectId}/research-status/gap-candidates`, {
       method: 'POST',

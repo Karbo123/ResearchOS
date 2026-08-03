@@ -90,6 +90,7 @@ type GraphNode = {
   kind: 'candidate' | 'paper' | 'evidence' | 'claim_review'
   label: string
   status: string
+  citation_count?: number | null
   source: {
     source_type: string
     source_id: string
@@ -268,11 +269,13 @@ async function graphForProject(projectId: string) {
     const paper = paperId ? paperMap.get(paperId) : null
     const candidateMetadata = metadataObject(candidate.candidate)
     const candidateSourceUrl = typeof candidateMetadata.source_url === 'string' ? candidateMetadata.source_url : null
+    const paperMetadata = paper ? metadataObject(paper.metadata) : null
     addNode({
       id: paperId ? `paper:${paperId}` : `candidate:${String(candidate.id)}`,
       kind: paperId ? 'paper' : 'candidate',
       label: paper?.title || String(candidate.title),
       status: String(candidate.status || (paper?.confirmed ? 'confirmed' : 'candidate')),
+      citation_count: paper ? (typeof paperMetadata?.citation_count === 'number' ? paperMetadata.citation_count : null) : (typeof candidateMetadata.citation_count === 'number' ? candidateMetadata.citation_count : null),
       source: {
         source_type: 'provider',
         source_id: String(candidate.id),
@@ -285,7 +288,8 @@ async function graphForProject(projectId: string) {
     })
   }
   for (const paper of papers) {
-    addNode({ id: `paper:${paper.id}`, kind: 'paper', label: paper.title, status: paper.confirmed ? 'confirmed' : 'unconfirmed', source: { source_type: 'paper', source_id: paper.id, url: paper.source_url }, permission_status: 'project_scoped', evidence_status: 'metadata_only' })
+    const metadata = metadataObject(paper.metadata)
+    addNode({ id: `paper:${paper.id}`, kind: 'paper', label: paper.title, status: paper.confirmed ? 'confirmed' : 'unconfirmed', citation_count: typeof metadata.citation_count === 'number' ? metadata.citation_count : null, source: { source_type: 'paper', source_id: paper.id, url: paper.source_url }, permission_status: 'project_scoped', evidence_status: 'metadata_only' })
   }
   const edges: GraphEdge[] = []
   for (const edge of citationEdges) {
