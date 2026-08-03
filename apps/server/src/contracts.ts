@@ -68,6 +68,7 @@ export const proxySettings = z.object({
   enabled: z.boolean(),
   url: z.string().trim().max(500),
 }).strict().refine(value => !value.enabled || /^https?:\/\//i.test(value.url), 'proxy URL must start with http:// or https://')
+export const proxySettingsRequest = proxySettings
 export const modelSettingsRequest = z.object({
   simple: modelTierSettings,
   medium: modelTierSettings,
@@ -75,7 +76,7 @@ export const modelSettingsRequest = z.object({
   proxy: proxySettings.optional(),
 }).strict()
 
-export const voiceProvider = z.enum(['browser', 'groq'])
+export const voiceProvider = z.enum(['browser', 'api', 'groq'])
 export type VoiceProvider = z.infer<typeof voiceProvider>
 
 export const voiceSettingsRequest = z.object({

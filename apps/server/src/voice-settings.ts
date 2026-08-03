@@ -12,16 +12,23 @@ export interface VoiceSettings {
 
 const settingsPath = resolve(runtimeRoot, 'voice-settings.json')
 
+function normalizeProvider(value: string | undefined | null): VoiceProvider {
+  const candidate = value?.trim().toLowerCase()
+  if (candidate === 'groq' || candidate === 'api') return 'api'
+  return 'browser'
+}
+
 function envDefaults(): VoiceSettings {
   const configuredProvider = process.env.RESEARCH_VOICE_PROVIDER?.trim().toLowerCase()
-  const provider: VoiceProvider = voiceProvider.safeParse(configuredProvider).success
-    ? (configuredProvider as VoiceProvider)
-    : 'browser'
   return {
-    provider,
-    model: process.env.RESEARCH_VOICE_GROQ_MODEL?.trim() || 'whisper-large-v3-turbo',
-    url: process.env.RESEARCH_VOICE_GROQ_URL?.trim() || 'https://api.groq.com/openai/v1',
-    key: process.env.GROQ_API_KEY?.trim() || '',
+    provider: normalizeProvider(configuredProvider),
+    model: process.env.RESEARCH_VOICE_API_MODEL?.trim()
+      || process.env.RESEARCH_VOICE_GROQ_MODEL?.trim()
+      || 'whisper-large-v3-turbo',
+    url: process.env.RESEARCH_VOICE_API_URL?.trim()
+      || process.env.RESEARCH_VOICE_GROQ_URL?.trim()
+      || 'https://api.groq.com/openai/v1',
+    key: process.env.RESEARCH_VOICE_API_KEY?.trim() || process.env.GROQ_API_KEY?.trim() || '',
   }
 }
 
@@ -45,7 +52,7 @@ export function privateVoiceSettings(): VoiceSettings {
   const defaults = envDefaults()
   const saved = readSavedSettings()
   return {
-    provider: voiceProvider.safeParse(saved.provider).success ? (saved.provider as VoiceProvider) : defaults.provider,
+    provider: voiceProvider.safeParse(saved.provider).success ? normalizeProvider(saved.provider) : defaults.provider,
     model: String(saved.model || defaults.model),
     url: String(saved.url || defaults.url),
     key: typeof saved.key === 'string' && saved.key ? saved.key : defaults.key,
@@ -67,7 +74,7 @@ export function saveVoiceSettings(input: unknown) {
   const parsed: VoiceSettingsRequest = voiceSettingsRequest.parse(input)
   const current = privateVoiceSettings()
   const next: VoiceSettings = {
-    provider: parsed.provider,
+    provider: normalizeProvider(parsed.provider),
     model: parsed.model.trim() || current.model,
     url: parsed.url.trim() || current.url,
     key: parsed.key.trim() || current.key,

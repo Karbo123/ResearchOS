@@ -2,7 +2,7 @@ export type TierId = 'simple' | 'medium' | 'complex'
 
 export type ReasoningEffort = 'low' | 'medium' | 'high'
 
-export type VoiceProvider = 'browser' | 'groq'
+export type VoiceProvider = 'browser' | 'api' | 'groq'
 
 export type ResearchArea = 'overview' | 'related_work' | 'implementation' | 'paper'
 

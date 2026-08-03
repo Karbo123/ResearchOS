@@ -159,6 +159,7 @@ Research OS 要做的是一个本地、可审计的科研工作台：用户像�
 
 #### 4.2 多语言、主题与 404 页面
 
+- [x] `P0-SETTINGS-105` 重新设计左下角配置面板：按“通用 / 模型 / 语音 / Embedding”分组，把主题、语言、全局代理归入通用设置；语音识别支持任意 OpenAI 兼容接口 URL，不再只面向 Groq；修复 Groq/兼容 API 录音转写返回空文本的问题。已完成 Web 类型检查与构建、145 项服务端测试、docs 与语言边界检查，并在 Windows Chrome 中验证四栏布局、通用语言/主题/代理、语音 API 模式与代理从模型页移除。
 - [x] `P0-VOICE-KEY-104` Groq 语音识别支持在界面配置 API key：默认读取 `.env` 的 `GROQ_API_KEY`，留空保留现有 key，读取接口只返回 `key_configured`，运行时 key 以 0600 权限写入 `runtime/voice-settings.json`。已通过 Web 类型检查与构建、UI/i18n、docs 检查和完整服务端测试（142 项）。
 - [x] `P0-MODEL-PROXY-103` 模型配置增加全局代理开关（`enabled` + `url`），运行时控制 Mastra、模型桥接与 Groq 转写出口，关闭则直连、回环/私网目标始终直连；浏览器语音识别不再显示 Groq 模型/URL 配置。已通过代理直连/HTTP/HTTPS CONNECT 实测、Web 类型检查与构建、UI/i18n、docs 检查和完整服务端测试（141 项）。
 - [x] `P0-VOICE-PUNCT-102` 中文语音转写结果统一转换为全角中文标点（逗号、句号、问号、感叹号、分号、冒号、括号、引号等），Groq 与浏览器两条路径都应用；英文、西班牙语保持原标点，不破坏 URL、小数和英文缩写内部符号。已通过标点替换用例、Web 类型检查、Web 构建和 UI/i18n 检查。

@@ -60,4 +60,17 @@ describe('public model settings', () => {
     })
     expect(publicProxySettings()).toEqual({ enabled: true, url: 'http://127.0.0.1:7890' })
   })
+
+  it('saves the proxy through its own endpoint without touching model tiers', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-proxy-settings-${process.pid}`)
+    vi.resetModules()
+    const { privateModelSettings, saveProxySettings } = await import('../src/model-settings.js')
+    const before = privateModelSettings()
+    const saved = saveProxySettings({ enabled: true, url: 'http://127.0.0.1:7890' })
+    const after = privateModelSettings()
+    expect(saved).toEqual({ enabled: true, url: 'http://127.0.0.1:7890' })
+    expect(after.proxy).toEqual(saved)
+    expect(after.simple.model).toBe(before.simple.model)
+    expect(after.simple.key).toBe(before.simple.key)
+  })
 })

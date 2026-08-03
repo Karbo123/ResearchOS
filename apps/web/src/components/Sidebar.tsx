@@ -345,9 +345,9 @@ export function Sidebar({
           <span>{t('sidebar.memoryGraph')}</span>
         </button>
       </div>
-      <button className="side-settings" type="button" onClick={onOpenSettings} title={t('sidebar.modelSettings')}>
+      <button className="side-settings" type="button" onClick={onOpenSettings} title={t('sidebar.settings')}>
         <Settings size={17} />
-        <span>{t('sidebar.modelSettings')}</span>
+        <span>{t('sidebar.settings')}</span>
       </button>
     </aside>
   )

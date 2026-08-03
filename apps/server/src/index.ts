@@ -10,15 +10,15 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, projectEmbeddingSettingsRequest,
-  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
+  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
-import { privateModelSettings, publicModelSettings, publicProxySettings, saveModelSettings } from './model-settings.js'
+import { privateModelSettings, publicModelSettings, publicProxySettings, saveModelSettings, saveProxySettings } from './model-settings.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
-import { transcribeWithGroq } from './voice-transcription.js'
+import { transcribeVoice } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, enqueue, moveSessionUploadsIntoProject, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
@@ -161,6 +161,11 @@ app.put('/api/settings/models', async context => {
   const body = await jsonBody(context, modelSettingsRequest)
   return context.json({ tiers: saveModelSettings(body), proxy: publicProxySettings() })
 })
+app.get('/api/settings/proxy', context => context.json(publicProxySettings()))
+app.put('/api/settings/proxy', async context => {
+  const body = await jsonBody(context, proxySettingsRequest)
+  return context.json(saveProxySettings(body))
+})
 app.get('/api/settings/voice', context => context.json(publicVoiceSettings()))
 app.put('/api/settings/voice', async context => {
   const body = await jsonBody(context, voiceSettingsRequest)
@@ -172,7 +177,7 @@ app.post('/api/voice/transcribe', async context => {
   if (!(file instanceof File)) throw new ApiError(400, 'voice_file_required', '请求必须包含录音文件。')
   if (file.size === 0) throw new ApiError(400, 'voice_file_empty', '录音文件为空。')
   const language = form.get('language')
-  const text = await transcribeWithGroq(file, typeof language === 'string' && language ? language : undefined)
+  const text = await transcribeVoice(file, typeof language === 'string' && language ? language : undefined)
   return context.json({ text })
 })
 app.get('/api/mastra/open', context => context.redirect(process.env.MASTRA_STUDIO_URL || 'http://127.0.0.1:4111'))

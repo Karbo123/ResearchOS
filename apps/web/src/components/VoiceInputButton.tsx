@@ -39,10 +39,20 @@ function recognitionLanguage(locale: string): string {
   return 'zh-CN'
 }
 
-function groqLanguage(locale: string): string {
+function apiLanguage(locale: string): string {
   if (locale === 'en') return 'en'
   if (locale === 'es') return 'es'
   return 'zh'
+}
+
+function audioFileFor(mimeType: string): { type: string; name: string } {
+  const type = (mimeType || 'audio/webm').split(';')[0].trim().toLowerCase() || 'audio/webm'
+  if (type === 'audio/mp4' || type === 'audio/m4a' || type === 'audio/aac') return { type, name: 'voice.m4a' }
+  if (type === 'audio/ogg') return { type, name: 'voice.ogg' }
+  if (type === 'audio/wav' || type === 'audio/x-wav') return { type, name: 'voice.wav' }
+  if (type === 'audio/mpeg' || type === 'audio/mp3') return { type, name: 'voice.mp3' }
+  if (type === 'audio/flac') return { type, name: 'voice.flac' }
+  return { type, name: 'voice.webm' }
 }
 
 function createRecognition(): SpeechRecognitionLike | null {
@@ -100,7 +110,7 @@ export function VoiceInputButton({
   const { t } = useTranslation()
   const locale = useLocale()
   const [provider, setProvider] = useState<VoiceProvider>('browser')
-  const [groqReady, setGroqReady] = useState(false)
+  const [apiReady, setApiReady] = useState(false)
   const [listening, setListening] = useState(false)
   const [processing, setProcessing] = useState(false)
   const [errorKey, setErrorKey] = useState<TranslationKey | null>(null)
@@ -116,7 +126,7 @@ export function VoiceInputButton({
   const localeRef = useRef(locale)
   const disabledRef = useRef(disabled)
   const providerRef = useRef<VoiceProvider>(provider)
-  const groqReadyRef = useRef(groqReady)
+  const apiReadyRef = useRef(apiReady)
   const activeRef = useRef(false)
   const processingRef = useRef(false)
   const browserFinalRef = useRef('')
@@ -131,7 +141,7 @@ export function VoiceInputButton({
     localeRef.current = locale
     disabledRef.current = disabled
     providerRef.current = provider
-    groqReadyRef.current = groqReady
+    apiReadyRef.current = apiReady
   })
 
   useEffect(() => {
@@ -140,12 +150,12 @@ export function VoiceInputButton({
         .then(async response => {
           if (!response.ok) throw new Error(`voice_settings_${response.status}`)
           const result = (await response.json()) as VoiceSettingsResponse
-          setProvider(result.provider)
-          setGroqReady(result.provider === 'groq' && result.key_configured)
+          setProvider(result.provider === 'groq' ? 'api' : result.provider)
+          setApiReady((result.provider === 'api' || result.provider === 'groq') && result.key_configured)
         })
         .catch(() => {
           setProvider('browser')
-          setGroqReady(false)
+          setApiReady(false)
         })
     }
     loadSettings()
@@ -231,7 +241,7 @@ export function VoiceInputButton({
     }
   }, [])
 
-  const finishGroqRecording = async () => {
+  const finishApiRecording = async () => {
     if (processingRef.current) return
     const recorder = recorderRef.current
     const chunks = chunksRef.current
@@ -241,7 +251,8 @@ export function VoiceInputButton({
     chunksRef.current = []
     if (stream) for (const track of stream.getTracks()) track.stop()
 
-    const blob = new Blob(chunks, { type: recorder?.mimeType || 'audio/webm' })
+    const { type, name } = audioFileFor(recorder?.mimeType || 'audio/webm')
+    const blob = new Blob(chunks, { type })
     if (blob.size < 1024) {
       activeRef.current = false
       setListening(false)
@@ -255,8 +266,8 @@ export function VoiceInputButton({
     setProcessing(true)
     try {
       const form = new FormData()
-      form.append('file', blob, 'voice.webm')
-      form.append('language', groqLanguage(localeRef.current))
+      form.append('file', blob, name)
+      form.append('language', apiLanguage(localeRef.current))
       const response = await fetchWithTimeout(window.fetch.bind(window), '/api/voice/transcribe', {
         method: 'POST',
         body: form,
@@ -282,7 +293,7 @@ export function VoiceInputButton({
     }
   }
 
-  const startGroqRecording = async () => {
+  const startApiRecording = async () => {
     if (!navigator.mediaDevices?.getUserMedia) throw new Error('media_devices_unavailable')
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     mediaStreamRef.current = stream
@@ -292,7 +303,7 @@ export function VoiceInputButton({
     recorder.ondataavailable = event => {
       if (event.data.size > 0) chunksRef.current.push(event.data)
     }
-    recorder.onstop = () => void finishGroqRecording()
+    recorder.onstop = () => void finishApiRecording()
     recorderRef.current = recorder
     recorder.start(250)
   }
@@ -302,10 +313,10 @@ export function VoiceInputButton({
     activeRef.current = true
     setErrorKey(null)
     onSessionStartRef.current?.()
-    if (providerRef.current === 'groq') {
+    if (providerRef.current === 'api' || providerRef.current === 'groq') {
       setListening(true)
       try {
-        await startGroqRecording()
+        await startApiRecording()
       } catch (error) {
         activeRef.current = false
         setListening(false)
@@ -336,10 +347,10 @@ export function VoiceInputButton({
   }
 
   const stopVoice = () => {
-    if (providerRef.current === 'groq') {
+    if (providerRef.current === 'api' || providerRef.current === 'groq') {
       const recorder = recorderRef.current
       if (recorder && recorder.state !== 'inactive') {
-        try { recorder.stop() } catch { void finishGroqRecording() }
+        try { recorder.stop() } catch { void finishApiRecording() }
       }
       return
     }
@@ -384,9 +395,9 @@ export function VoiceInputButton({
   const mediaSupported = typeof MediaRecorder !== 'undefined' && Boolean(navigator.mediaDevices?.getUserMedia)
   const supported = provider === 'browser'
     ? recognitionRef.current !== null
-    : Boolean(mediaSupported && groqReady)
+    : Boolean(mediaSupported && apiReady)
   const label = !supported
-    ? (provider === 'groq' && !groqReady ? t('voice.keyPending') : t('voice.unsupported'))
+    ? ((provider === 'api' || provider === 'groq') && !apiReady ? t('voice.keyPending') : t('voice.unsupported'))
     : processing
       ? t('voice.processing')
       : listening

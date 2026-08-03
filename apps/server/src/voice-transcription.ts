@@ -11,27 +11,39 @@ export interface UploadedAudio {
 }
 
 function providerError(status: number): ApiError {
-  if (status === 401 || status === 403) return new ApiError(502, 'voice_auth_failed', '语音识别服务拒绝访问，请检查 GROQ_API_KEY。')
+  if (status === 401 || status === 403) return new ApiError(502, 'voice_auth_failed', '语音识别服务拒绝访问，请检查 API key。')
   if (status === 429) return new ApiError(502, 'voice_rate_limited', '语音识别服务暂时限流，请稍后重试。')
   return new ApiError(502, 'voice_provider_error', '语音识别服务返回错误。')
 }
 
-export async function transcribeWithGroq(file: UploadedAudio, language?: string): Promise<string> {
+function fileExtension(mimeType: string): string {
+  if (mimeType === 'audio/mp4' || mimeType === 'audio/m4a' || mimeType === 'audio/aac') return 'm4a'
+  if (mimeType === 'audio/ogg') return 'ogg'
+  if (mimeType === 'audio/wav' || mimeType === 'audio/x-wav') return 'wav'
+  if (mimeType === 'audio/mpeg' || mimeType === 'audio/mp3') return 'mp3'
+  if (mimeType === 'audio/flac') return 'flac'
+  return 'webm'
+}
+
+export async function transcribeVoice(file: UploadedAudio, language?: string): Promise<string> {
   const settings = privateVoiceSettings()
-  if (settings.provider !== 'groq') {
-    throw new ApiError(409, 'voice_provider_not_configured', '当前未启用 Groq 语音识别。')
+  if (settings.provider !== 'api' && settings.provider !== 'groq') {
+    throw new ApiError(409, 'voice_provider_not_configured', '当前未启用 API 语音识别。')
   }
   if (!settings.key) {
-    throw new ApiError(503, 'voice_key_missing', '未配置 GROQ_API_KEY，无法调用语音识别服务。')
+    throw new ApiError(503, 'voice_key_missing', '未配置语音识别 API key，无法调用服务。')
   }
 
   const baseUrl = settings.url.replace(/\/+$/, '')
+  const sourceMime = ((file.type || 'audio/webm').split(';')[0] ?? 'audio/webm').trim().toLowerCase() || 'audio/webm'
+  const extension = fileExtension(sourceMime)
+  const fileName = file.name?.toLowerCase().endsWith(`.${extension}`) ? file.name : `voice.${extension}`
   const form = new FormData()
   form.append('model', settings.model)
   form.append('response_format', 'json')
   form.append('temperature', '0')
   if (language) form.append('language', language)
-  form.append('file', new Blob([new Uint8Array(await file.arrayBuffer())], { type: file.type || 'audio/webm' }), file.name || 'voice.webm')
+  form.append('file', new Blob([new Uint8Array(await file.arrayBuffer())], { type: sourceMime }), fileName)
 
   let response: Response
   try {

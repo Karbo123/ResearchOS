@@ -1,16 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
 import { ConfirmDialog, Modal, StatusDot } from './ui'
+import { GeneralSettingsForm } from './GeneralSettingsForm'
 import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
 import { VoiceSettingsForm } from './VoiceSettingsForm'
-import { useTranslation } from '../i18n'
+import { useTranslation, type TranslationKey } from '../i18n'
 
 const TIERS: Array<{ id: TierId; label: string; defaultEffort: ReasoningEffort }> = [
   { id: 'simple', label: 'Luna', defaultEffort: 'low' },
   { id: 'medium', label: 'Terra', defaultEffort: 'medium' },
   { id: 'complex', label: 'Sol', defaultEffort: 'high' },
+]
+
+type SettingsTab = 'general' | 'models' | 'voice' | 'embedding'
+
+const TABS: Array<{ id: SettingsTab; labelKey: TranslationKey }> = [
+  { id: 'general', labelKey: 'settings.generalTab' },
+  { id: 'models', labelKey: 'settings.modelsTab' },
+  { id: 'voice', labelKey: 'settings.voiceTab' },
+  { id: 'embedding', labelKey: 'settings.embeddingTab' },
 ]
 
 interface TierFormValues extends ModelTierSettings {
@@ -21,23 +31,76 @@ function sourceLabelKey(value?: string) {
   return value === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv'
 }
 
+function SettingsSlidingNav({ active, onChange }: { active: SettingsTab; onChange: (next: SettingsTab) => void }) {
+  const { t } = useTranslation()
+  const navRef = useRef<HTMLDivElement>(null)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
+
+  useLayoutEffect(() => {
+    const nav = navRef.current
+    if (!nav) return undefined
+    const measure = () => {
+      const activeTab = nav.querySelector<HTMLElement>('button[data-active="true"]')
+      if (!activeTab) return
+      setIndicator({ left: activeTab.offsetLeft, width: activeTab.offsetWidth, ready: true })
+    }
+    measure()
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure)
+    observer?.observe(nav)
+    window.addEventListener('resize', measure)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [active])
+
+  return (
+    <div ref={navRef} className="sliding-nav settings-tabs" role="tablist" aria-label={t('settings.title')}>
+      <span
+        className={`sliding-tab-indicator${indicator.ready ? ' ready' : ''}`}
+        aria-hidden="true"
+        style={{ left: indicator.left, width: indicator.width }}
+      />
+      {TABS.map(tab => (
+        <button
+          key={tab.id}
+          type="button"
+          role="tab"
+          aria-selected={tab.id === active}
+          data-active={tab.id === active ? 'true' : 'false'}
+          onClick={() => onChange(tab.id)}
+        >
+          {t(tab.labelKey)}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean; onClose: () => void; projectId: string | null }) {
   const { t } = useTranslation()
-  const [tab, setTab] = useState<'models' | 'embedding' | 'voice'>('models')
+  const [tab, setTab] = useState<SettingsTab>('general')
   const [values, setValues] = useState<Record<TierId, TierFormValues> | null>(null)
-  const [proxy, setProxy] = useState<{ enabled: boolean; url: string }>({ enabled: false, url: '' })
   const [loading, setLoading] = useState(false)
-  const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [dirty, setDirty] = useState(false)
-  const [confirmClose, setConfirmClose] = useState(false)
+  const [confirmSwitchTo, setConfirmSwitchTo] = useState<SettingsTab | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   useEffect(() => {
     if (!open) return
-    setTab('models')
+    setTab('general')
+    setValues(null)
+    setDirty(false)
+    setError('')
+    setConfirmSwitchTo(null)
+    setConfirmOpen(false)
+  }, [open])
+
+  useEffect(() => {
+    if (!open || tab !== 'models') return
     setLoading(true)
     setError('')
-    setDirty(false)
     api<ModelSettingsResponse>('/api/settings/models')
       .then(result => {
         const next = {} as Record<TierId, TierFormValues>
@@ -53,11 +116,10 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           }
         }
         setValues(next)
-        setProxy(result.proxy || { enabled: false, url: '' })
       })
       .catch(err => setError(errorMessage(err)))
       .finally(() => setLoading(false))
-  }, [open])
+  }, [open, tab])
 
   if (!open) return null
 
@@ -69,32 +131,29 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
     setDirty(true)
   }
 
-  const updateProxy = (field: 'enabled' | 'url', value: boolean | string) => {
-    setProxy(previous => ({ ...previous, [field]: value }))
-    setDirty(true)
-  }
-
   const requestClose = () => {
     if (dirty) {
-      setConfirmClose(true)
+      setConfirmSwitchTo(null)
+      setConfirmOpen(true)
       return
     }
     onClose()
   }
 
-  const switchTab = (next: 'models' | 'embedding' | 'voice') => {
-    if (dirty) {
-      setConfirmClose(true)
+  const switchTab = (next: SettingsTab) => {
+    if (tab === 'models' && dirty && next !== 'models') {
+      setConfirmSwitchTo(next)
+      setConfirmOpen(true)
       return
     }
+    if (next === 'models') setValues(null)
     setError('')
     setTab(next)
   }
 
   const save = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (!values || saving) return
-    setSaving(true)
+    if (!values || loading) return
     setError('')
     try {
       const payload = {} as Record<TierId, { model: string; url: string; key: string; reasoning_effort: ReasoningEffort }>
@@ -109,13 +168,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
       }
       const result = await api<ModelSettingsResponse>('/api/settings/models', {
         method: 'PUT',
-        body: JSON.stringify({
-          ...payload,
-          proxy: {
-            enabled: proxy.enabled,
-            url: proxy.url.trim(),
-          },
-        }),
+        body: JSON.stringify(payload),
       })
       const next = {} as Record<TierId, TierFormValues>
       for (const tier of TIERS) {
@@ -130,34 +183,33 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
         }
       }
       setValues(next)
-      setProxy(result.proxy || { enabled: false, url: '' })
       setDirty(false)
       onClose()
     } catch (err) {
       setError(`${t('settings.saveFailed', { error: errorMessage(err) })}${t('settings.keyHint')}`)
-    } finally {
-      setSaving(false)
     }
   }
+
+  const description = tab === 'general'
+    ? t('settings.generalDescription')
+    : tab === 'models'
+      ? t('settings.modelsDescription')
+      : tab === 'voice'
+        ? t('settings.voiceDescription')
+        : t('settings.embeddingDescription')
 
   return (
     <>
       <Modal
         eyebrow={t('settings.eyebrow')}
         title={t('settings.title')}
-        description={tab === 'models'
-          ? t('settings.modelsDescription')
-          : tab === 'embedding'
-            ? t('settings.embeddingDescription')
-            : t('settings.voiceDescription')}
+        description={description}
         onClose={requestClose}
       >
-        <div className="settings-tabs" role="tablist">
-          <button className={tab === 'models' ? 'active' : ''} type="button" onClick={() => switchTab('models')}>{t('settings.modelsTab')}</button>
-          <button className={tab === 'embedding' ? 'active' : ''} type="button" onClick={() => switchTab('embedding')}>{t('settings.embeddingTab')}</button>
-          <button className={tab === 'voice' ? 'active' : ''} type="button" onClick={() => switchTab('voice')}>{t('settings.voiceTab')}</button>
-        </div>
-        {tab === 'embedding' ? (
+        <SettingsSlidingNav active={tab} onChange={switchTab} />
+        {tab === 'general' ? (
+          <GeneralSettingsForm onChanged={() => setDirty(false)} />
+        ) : tab === 'embedding' ? (
           projectId ? (
             <ProjectEmbeddingSettingsForm
               projectId={projectId}
@@ -172,43 +224,6 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           <div className="empty">{t('settings.loadingModels')}</div>
         ) : values ? (
           <form className="model-settings-form" onSubmit={save}>
-            <section className="model-tier">
-              <div className="model-tier-heading">
-                <div>
-                  <h3>{t('settings.proxyTitle')}</h3>
-                  <div className="tier-status">
-                    <StatusDot ready={!proxy.enabled || Boolean(proxy.url)} />
-                    {proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}
-                  </div>
-                </div>
-                <span className="tier-default">{t('settings.default')} {proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}</span>
-              </div>
-              <div className="model-tier-grid">
-                <label className="proxy-toggle">
-                  <input
-                    type="checkbox"
-                    checked={proxy.enabled}
-                    onChange={event => updateProxy('enabled', event.target.checked)}
-                  />
-                  <span>{t('settings.proxyEnabled')}</span>
-                </label>
-                <label>
-                  {t('settings.proxyUrl')}
-                  <input
-                    type="url"
-                    value={proxy.url}
-                    disabled={!proxy.enabled}
-                    maxLength={500}
-                    placeholder="http://127.0.0.1:7890"
-                    onChange={event => updateProxy('url', event.target.value)}
-                  />
-                </label>
-              </div>
-              <p className="settings-note">
-                <ShieldCheck size={16} />
-                <span>{t('settings.proxyNote')}</span>
-              </p>
-            </section>
             {TIERS.map(tier => {
               const item = values[tier.id]
               return (
@@ -221,8 +236,8 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
                         {item.key_configured ? t('settings.keyConfigured') : t('settings.keyPending')} · {item.url ? t('settings.urlReady') : t('settings.urlPending')}
                       </div>
                       <div className="tier-sources">
-                        <span>URL：{t(sourceLabelKey(item.sources?.url) as any)}</span>
-                        <span>key：{t(sourceLabelKey(item.sources?.key) as any)}</span>
+                        <span>{t('settings.urlLabel')} · {t(sourceLabelKey(item.sources?.url) as any)}</span>
+                        <span>{t('settings.keyLabel')} · {t(sourceLabelKey(item.sources?.key) as any)}</span>
                       </div>
                     </div>
                     <span className="tier-default">{t('settings.default')} {tier.defaultEffort}</span>
@@ -281,7 +296,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
             {error ? <div className="form-error" role="alert">{error}</div> : null}
             <div className="modal-actions">
               <button className="secondary" type="button" onClick={requestClose}>{t('common.cancel')}</button>
-              <button className="primary" type="submit" disabled={saving}>
+              <button className="primary" type="submit" disabled={loading}>
                 <Save size={16} />
                 {t('settings.save')}
               </button>
@@ -291,17 +306,28 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           <div className="form-error" role="alert">{error || t('settings.loadFailed')}</div>
         )}
       </Modal>
-      {confirmClose ? (
+      {confirmOpen ? (
         <ConfirmDialog
           title={t('settings.discardTitle')}
           description={t('settings.discardDescription')}
           confirmLabel={t('settings.discardConfirm')}
           onConfirm={() => {
-            setConfirmClose(false)
+            const target = confirmSwitchTo
+            setConfirmSwitchTo(null)
+            setConfirmOpen(false)
             setDirty(false)
-            onClose()
+            if (target) {
+              if (target === 'models') setValues(null)
+              setError('')
+              setTab(target)
+            } else {
+              onClose()
+            }
           }}
-          onCancel={() => setConfirmClose(false)}
+          onCancel={() => {
+            setConfirmSwitchTo(null)
+            setConfirmOpen(false)
+          }}
         />
       ) : null}
     </>

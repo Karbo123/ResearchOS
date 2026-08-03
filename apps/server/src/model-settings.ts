@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { modelSettingsRequest, type ModelTier } from './contracts.js'
+import { modelSettingsRequest, proxySettingsRequest, type ModelTier } from './contracts.js'
 import { runtimeRoot } from './paths.js'
 
 interface TierSettings {
@@ -77,13 +77,20 @@ export function saveModelSettings(input: unknown) {
     current[tier] = { ...parsed[tier], key: parsed[tier].key.trim() || current[tier].key }
   }
   if (parsed.proxy) {
-    current.proxy = {
-      enabled: parsed.proxy.enabled,
-      url: parsed.proxy.url.trim(),
-    }
+    current.proxy = { enabled: parsed.proxy.enabled, url: parsed.proxy.url.trim() }
   }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
   renameSync(temporary, settingsPath)
   return publicModelSettings()
+}
+
+export function saveProxySettings(input: unknown) {
+  const parsed = proxySettingsRequest.parse(input)
+  const current = privateModelSettings()
+  current.proxy = { enabled: parsed.enabled, url: parsed.url.trim() }
+  const temporary = `${settingsPath}.tmp`
+  writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
+  renameSync(temporary, settingsPath)
+  return current.proxy
 }

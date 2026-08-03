@@ -31,7 +31,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
     try {
       const result = await api<VoiceSettingsResponse>('/api/settings/voice')
       setValues({
-        provider: result.provider,
+        provider: result.provider === 'groq' ? 'api' : result.provider,
         model: result.model,
         url: result.url,
         key: '',
@@ -84,8 +84,8 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
   if (loading) return <div className="empty">{t('voice.loading')}</div>
   if (!values) return <div className="form-error" role="alert">{error || t('settings.loadFailed')}</div>
 
-  const groq = values.provider === 'groq'
-  const ready = !groq || values.key_configured
+  const apiMode = values.provider === 'api' || values.provider === 'groq'
+  const ready = !apiMode || values.key_configured
 
   return (
     <form className="model-settings-form" onSubmit={save}>
@@ -95,23 +95,33 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
             <h3>{t('voice.provider')}</h3>
             <div className="tier-status">
               <StatusDot ready={ready} />
-              {groq ? (values.key_configured ? t('voice.keyConfigured') : t('voice.keyPending')) : t('voice.providerBrowser')}
+              {apiMode ? (values.key_configured ? t('voice.keyConfigured') : t('voice.keyPending')) : t('voice.providerBrowser')}
             </div>
           </div>
-          <span className="tier-default">{t('settings.default')} {groq ? t('voice.providerGroq') : t('voice.providerBrowser')}</span>
+          <span className="tier-default">{t('settings.default')} {apiMode ? t('voice.providerApi') : t('voice.providerBrowser')}</span>
         </div>
         <div className="model-tier-grid">
-          <label>
-            {t('voice.provider')}
-            <select
-              value={values.provider}
-              onChange={event => update('provider', event.target.value as VoiceProvider)}
+          <div className="settings-segmented settings-voice-provider" role="radiogroup" aria-label={t('voice.provider')}>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={!apiMode}
+              className={!apiMode ? 'active' : ''}
+              onClick={() => update('provider', 'browser')}
             >
-              <option value="browser">{t('voice.providerBrowser')}</option>
-              <option value="groq">{t('voice.providerGroq')}</option>
-            </select>
-          </label>
-          {groq ? (
+              {t('voice.providerBrowser')}
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={apiMode}
+              className={apiMode ? 'active' : ''}
+              onClick={() => update('provider', 'api')}
+            >
+              {t('voice.providerApi')}
+            </button>
+          </div>
+          {apiMode ? (
             <>
               <label>
                 {t('voice.model')}
@@ -146,8 +156,12 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
             </>
           ) : null}
         </div>
-        {groq ? (
+        {apiMode ? (
           <>
+            <p className="settings-note">
+              <Mic size={16} />
+              <span>{t('voice.apiDescription')}</span>
+            </p>
             <p className="settings-note">
               <Mic size={16} />
               <span>{t('voice.securityNote')}</span>
