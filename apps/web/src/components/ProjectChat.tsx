@@ -115,7 +115,11 @@ export function ProjectChat({
           <Send size={17} />
         </button>
       </form>
-      {input.length === 0 ? <div className="composer-hint" aria-live="polite">{t('common.sendShortcutHint')}</div> : null}
+      {input.length === 0 ? (
+        <div className="composer-hint" aria-live="polite">
+          {t('common.sendShortcutHint')} · {t('voice.shortcutHint')}
+        </div>
+      ) : null}
     </aside>
   )
 }

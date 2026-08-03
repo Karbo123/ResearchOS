@@ -66,13 +66,19 @@ export function VoiceInputButton({
   const locale = useLocale()
   const [listening, setListening] = useState(false)
   const [errorKey, setErrorKey] = useState<TranslationKey | null>(null)
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
   const onTextRef = useRef(onText)
   const onErrorRef = useRef(onError)
+  const localeRef = useRef(locale)
+  const disabledRef = useRef(disabled)
+  const activeRef = useRef(false)
 
   useEffect(() => {
     onTextRef.current = onText
     onErrorRef.current = onError
+    localeRef.current = locale
+    disabledRef.current = disabled
   })
 
   useEffect(() => {
@@ -83,11 +89,16 @@ export function VoiceInputButton({
     recognition.maxAlternatives = 1
     recognition.lang = recognitionLanguage(locale)
     recognition.onstart = () => {
+      activeRef.current = true
       setListening(true)
       setErrorKey(null)
     }
-    recognition.onend = () => setListening(false)
+    recognition.onend = () => {
+      activeRef.current = false
+      setListening(false)
+    }
     recognition.onerror = event => {
+      activeRef.current = false
       setListening(false)
       const key = errorTranslation(event)
       setErrorKey(key)
@@ -120,6 +131,49 @@ export function VoiceInputButton({
     if (recognitionRef.current) recognitionRef.current.lang = recognitionLanguage(locale)
   }, [locale])
 
+  useEffect(() => {
+    const shortcutActive = () => {
+      if (!buttonRef.current || disabledRef.current || !recognitionRef.current) return false
+      return buttonRef.current.getClientRects().length > 0
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!event.ctrlKey || event.key !== ' ' || !shortcutActive()) return
+      event.preventDefault()
+      if (event.repeat || activeRef.current) return
+      const recognition = recognitionRef.current
+      activeRef.current = true
+      setErrorKey(null)
+      recognition.lang = recognitionLanguage(localeRef.current)
+      try {
+        recognition.start()
+      } catch {
+        activeRef.current = false
+        setErrorKey('voice.error')
+        onErrorRef.current?.('voice.error')
+      }
+    }
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key !== ' ' || !activeRef.current) return
+      const recognition = recognitionRef.current
+      if (!recognition) return
+      try {
+        recognition.stop()
+      } catch {
+        activeRef.current = false
+        setListening(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true)
+    window.addEventListener('keyup', handleKeyUp, true)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true)
+      window.removeEventListener('keyup', handleKeyUp, true)
+    }
+  }, [])
+
   const supported = recognitionRef.current !== null
   const label = !supported ? t('voice.unsupported') : listening ? t('voice.stop') : t('voice.start')
   const title = errorKey ? t(errorKey) : label
@@ -128,14 +182,21 @@ export function VoiceInputButton({
     const recognition = recognitionRef.current
     if (!recognition || disabled) return
     if (listening) {
-      recognition.stop()
+      activeRef.current = false
+      try {
+        recognition.stop()
+      } catch {
+        setListening(false)
+      }
       return
     }
     setErrorKey(null)
+    activeRef.current = true
     recognition.lang = recognitionLanguage(locale)
     try {
       recognition.start()
     } catch {
+      activeRef.current = false
       setErrorKey('voice.error')
       onErrorRef.current?.('voice.error')
     }
@@ -150,6 +211,8 @@ export function VoiceInputButton({
       title={title}
       aria-label={label}
       aria-pressed={listening}
+      aria-keyshortcuts="Control+Space"
+      ref={buttonRef}
       onClick={toggle}
     >
       {listening ? <Square size={17} fill="currentColor" /> : <Mic size={17} />}

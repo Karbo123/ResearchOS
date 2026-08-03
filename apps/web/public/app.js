@@ -12865,6 +12865,7 @@
     "voice.noSpeech": "\u6CA1\u6709\u542C\u5230\u8BED\u97F3\uFF0C\u8BF7\u91CD\u8BD5",
     "voice.audioError": "\u9EA6\u514B\u98CE\u4E0D\u53EF\u7528\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u5907",
     "voice.error": "\u8BED\u97F3\u8BC6\u522B\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5",
+    "voice.shortcutHint": "Ctrl+Space \u6309\u4F4F\u8BF4\u8BDD",
     "common.loadingProject": "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u5173\u95ED",
@@ -13887,6 +13888,7 @@
     "voice.noSpeech": "\u6C92\u6709\u807D\u5230\u8A9E\u97F3\uFF0C\u8ACB\u91CD\u8A66",
     "voice.audioError": "\u9EA5\u514B\u98A8\u4E0D\u53EF\u7528\uFF0C\u8ACB\u6AA2\u67E5\u88DD\u7F6E",
     "voice.error": "\u8A9E\u97F3\u8FA8\u8B58\u5931\u6557\uFF0C\u8ACB\u91CD\u8A66",
+    "voice.shortcutHint": "Ctrl+Space \u6309\u4F4F\u8AAA\u8A71",
     "common.loadingProject": "\u6B63\u5728\u8F09\u5165\u5C08\u6848\u2026",
     "common.seconds": "\u79D2",
     "common.close": "\u95DC\u9589",
@@ -14909,6 +14911,7 @@
     "voice.noSpeech": "No speech detected. Please try again.",
     "voice.audioError": "Microphone unavailable. Check your device.",
     "voice.error": "Voice recognition failed. Please try again.",
+    "voice.shortcutHint": "Hold Ctrl+Space to speak",
     "common.loadingProject": "Loading project\u2026",
     "common.seconds": "sec",
     "common.close": "Close",
@@ -15931,6 +15934,7 @@
     "voice.noSpeech": "No se detect\xF3 voz. Int\xE9ntalo de nuevo.",
     "voice.audioError": "Micr\xF3fono no disponible. Revisa tu dispositivo.",
     "voice.error": "El reconocimiento de voz fall\xF3. Int\xE9ntalo de nuevo.",
+    "voice.shortcutHint": "Mant\xE9n Ctrl+Space para hablar",
     "common.loadingProject": "Cargando proyecto\u2026",
     "common.seconds": "seg",
     "common.close": "Cerrar",
@@ -18911,12 +18915,18 @@
     const locale = useLocale();
     const [listening, setListening] = (0, import_react10.useState)(false);
     const [errorKey, setErrorKey] = (0, import_react10.useState)(null);
+    const buttonRef = (0, import_react10.useRef)(null);
     const recognitionRef = (0, import_react10.useRef)(null);
     const onTextRef = (0, import_react10.useRef)(onText);
     const onErrorRef = (0, import_react10.useRef)(onError);
+    const localeRef = (0, import_react10.useRef)(locale);
+    const disabledRef = (0, import_react10.useRef)(disabled);
+    const activeRef = (0, import_react10.useRef)(false);
     (0, import_react10.useEffect)(() => {
       onTextRef.current = onText;
       onErrorRef.current = onError;
+      localeRef.current = locale;
+      disabledRef.current = disabled;
     });
     (0, import_react10.useEffect)(() => {
       const recognition = createRecognition();
@@ -18926,11 +18936,16 @@
       recognition.maxAlternatives = 1;
       recognition.lang = recognitionLanguage(locale);
       recognition.onstart = () => {
+        activeRef.current = true;
         setListening(true);
         setErrorKey(null);
       };
-      recognition.onend = () => setListening(false);
+      recognition.onend = () => {
+        activeRef.current = false;
+        setListening(false);
+      };
       recognition.onerror = (event) => {
+        activeRef.current = false;
         setListening(false);
         const key = errorTranslation(event);
         setErrorKey(key);
@@ -18961,6 +18976,45 @@
     (0, import_react10.useEffect)(() => {
       if (recognitionRef.current) recognitionRef.current.lang = recognitionLanguage(locale);
     }, [locale]);
+    (0, import_react10.useEffect)(() => {
+      const shortcutActive = () => {
+        if (!buttonRef.current || disabledRef.current || !recognitionRef.current) return false;
+        return buttonRef.current.getClientRects().length > 0;
+      };
+      const handleKeyDown = (event) => {
+        if (!event.ctrlKey || event.key !== " " || !shortcutActive()) return;
+        event.preventDefault();
+        if (event.repeat || activeRef.current) return;
+        const recognition = recognitionRef.current;
+        activeRef.current = true;
+        setErrorKey(null);
+        recognition.lang = recognitionLanguage(localeRef.current);
+        try {
+          recognition.start();
+        } catch {
+          activeRef.current = false;
+          setErrorKey("voice.error");
+          onErrorRef.current?.("voice.error");
+        }
+      };
+      const handleKeyUp = (event) => {
+        if (event.key !== " " || !activeRef.current) return;
+        const recognition = recognitionRef.current;
+        if (!recognition) return;
+        try {
+          recognition.stop();
+        } catch {
+          activeRef.current = false;
+          setListening(false);
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown, true);
+      window.addEventListener("keyup", handleKeyUp, true);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown, true);
+        window.removeEventListener("keyup", handleKeyUp, true);
+      };
+    }, []);
     const supported = recognitionRef.current !== null;
     const label = !supported ? t("voice.unsupported") : listening ? t("voice.stop") : t("voice.start");
     const title = errorKey ? t(errorKey) : label;
@@ -18968,14 +19022,21 @@
       const recognition = recognitionRef.current;
       if (!recognition || disabled) return;
       if (listening) {
-        recognition.stop();
+        activeRef.current = false;
+        try {
+          recognition.stop();
+        } catch {
+          setListening(false);
+        }
         return;
       }
       setErrorKey(null);
+      activeRef.current = true;
       recognition.lang = recognitionLanguage(locale);
       try {
         recognition.start();
       } catch {
+        activeRef.current = false;
         setErrorKey("voice.error");
         onErrorRef.current?.("voice.error");
       }
@@ -18990,6 +19051,8 @@
         title,
         "aria-label": label,
         "aria-pressed": listening,
+        "aria-keyshortcuts": "Control+Space",
+        ref: buttonRef,
         onClick: toggle,
         children: [
           listening ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Square, { size: 17, fill: "currentColor" }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Mic, { size: 17 }),
@@ -19165,7 +19228,11 @@
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(VoiceInputButton, { disabled: chatBusy, onText: setInput }),
               /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: chatBusy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Send, { size: 17 }) })
             ] }),
-            input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "composer-hint", "aria-live": "polite", children: t("common.sendShortcutHint") }) : null,
+            input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "composer-hint", "aria-live": "polite", children: [
+              t("common.sendShortcutHint"),
+              " \xB7 ",
+              t("voice.shortcutHint")
+            ] }) : null,
             queuedFiles.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "file-queue", children: queuedFiles.map((file) => file.name).join(" \xB7 ") }) : null
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
@@ -19301,7 +19368,11 @@
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(VoiceInputButton, { disabled: busy, onText: setInput }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "send-btn", type: "submit", title: t("common.send"), "aria-label": t("common.send"), disabled: busy || !input.trim(), children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Send, { size: 17 }) })
       ] }),
-      input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "composer-hint", "aria-live": "polite", children: t("common.sendShortcutHint") }) : null
+      input.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "composer-hint", "aria-live": "polite", children: [
+        t("common.sendShortcutHint"),
+        " \xB7 ",
+        t("voice.shortcutHint")
+      ] }) : null
     ] });
   }
 
