@@ -2729,6 +2729,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
 @media (max-width: 760px) {
   .project-drawer-scrim {
     display: block;
+    inset: 0 0 0 min(var(--project-drawer-width, 276px), calc(100vw - 24px));
     animation: drawer-scrim-in .3s var(--ease) both;
   }
   .project-drawer-toggle {
@@ -2745,6 +2746,62 @@ a.secondary { text-decoration: none; color: var(--ink); }
   }
   .project-drawer-toggle:active {
     transform: translateY(-50%) scale(.92);
+  }
+  .project-drawer-shell .sidebar {
+    flex-direction: column;
+    align-items: stretch;
+    height: 100dvh;
+    min-height: 0;
+    padding: 20px 14px 16px;
+    border-right: 0;
+    border-bottom: 0;
+    box-shadow: none;
+  }
+  .project-drawer-shell .brand {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 0 8px;
+  }
+  .project-drawer-shell .side-label,
+  .project-drawer-shell .project-list,
+  .project-drawer-shell .service-links {
+    display: flex;
+  }
+  .project-drawer-shell .side-label {
+    display: block;
+    margin: 18px 9px 8px;
+    font-size: 10px;
+  }
+  .project-drawer-shell .project-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+  .project-drawer-shell .service-links {
+    display: grid;
+    margin: 0;
+    padding: 13px 5px 0;
+    border-top: 1px solid var(--sidebar-line);
+  }
+  .project-drawer-shell .service-links a,
+  .project-drawer-shell .service-links .side-service {
+    width: auto;
+    min-height: 38px;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 11px;
+    background: transparent;
+    font-size: 12px;
+    justify-content: flex-start;
+  }
+  .project-drawer-shell .side-settings {
+    width: auto;
+    height: auto;
+    margin: 11px 5px 0;
+    padding: 9px 10px;
+    justify-content: flex-start;
+  }
+  .project-drawer-shell .side-settings span {
+    display: inline;
   }
 }
 
