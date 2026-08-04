@@ -10,7 +10,10 @@ import { useTranslation, type Locale, type TranslationKey } from '../i18n'
 
 const SIDEBAR_MIN_WIDTH = 220
 const SIDEBAR_MAX_WIDTH = 380
-const RECENT_PROJECTS_LIMIT = 8
+const MAX_RECENT_PROJECTS = 12
+const RECENT_ROW_HEIGHT = 54
+const RECENT_ROW_GAP = 8
+const RECENT_LIST_OVERHEAD = 204
 
 function clampSidebarWidth(width: number) {
   return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
@@ -55,7 +58,7 @@ function formatLastSeenAt(
   }
 }
 
-function getRecentProjects(projects: ProjectSummary[], recentEntries: RecentProjectEntry[]) {
+function getRecentProjects(projects: ProjectSummary[], recentEntries: RecentProjectEntry[], limit: number) {
   const recentRank = new Map(recentEntries.map((entry, index) => [entry.id, index]))
   const pinned = projects.filter(project => project.pinned)
   const recent = projects
@@ -63,7 +66,12 @@ function getRecentProjects(projects: ProjectSummary[], recentEntries: RecentProj
     .sort((a, b) => (recentRank.get(a.id) ?? 0) - (recentRank.get(b.id) ?? 0))
   const fillers = projects.filter(project => !project.pinned && !recentRank.has(project.id))
     .sort((a, b) => String(b.updated_at || '').localeCompare(String(a.updated_at || '')))
-  return [...pinned, ...recent, ...fillers].slice(0, RECENT_PROJECTS_LIMIT)
+  return [...pinned, ...recent, ...fillers].slice(0, limit)
+}
+
+function fitRecentProjectCount(viewportHeight: number) {
+  const available = Math.max(0, viewportHeight - RECENT_LIST_OVERHEAD)
+  return Math.max(1, Math.min(MAX_RECENT_PROJECTS, Math.floor((available + RECENT_ROW_GAP) / (RECENT_ROW_HEIGHT + RECENT_ROW_GAP))))
 }
 
 export function HomeSidebar({
@@ -92,7 +100,8 @@ export function HomeSidebar({
   const { t, locale } = useTranslation()
   const [resizing, setResizing] = useState(false)
   const [now, setNow] = useState(() => Date.now())
-  const recentEntries = getRecentProjects(projects, recentProjects)
+  const [visibleRecentCount, setVisibleRecentCount] = useState(() => fitRecentProjectCount(window.innerHeight))
+  const recentEntries = getRecentProjects(projects, recentProjects, visibleRecentCount)
   const lastSeenAtById = new Map(recentProjects.map(entry => [entry.id, entry.lastSeenAt]))
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
@@ -100,6 +109,13 @@ export function HomeSidebar({
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 60_000)
     return () => window.clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    const updateFitCount = () => setVisibleRecentCount(fitRecentProjectCount(window.innerHeight))
+    updateFitCount()
+    window.addEventListener('resize', updateFitCount)
+    return () => window.removeEventListener('resize', updateFitCount)
   }, [])
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
