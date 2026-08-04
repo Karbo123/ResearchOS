@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   FlaskConical,
+  FolderKanban,
   Pin,
   RefreshCw,
   Settings,
@@ -166,6 +167,11 @@ export function HomeSidebar({
           </button>
         </div>
         <div className="home-sidebar-stats">
+          <div className="home-sidebar-stat">
+            <FolderKanban size={14} aria-hidden="true" />
+            <strong>{projects.length}</strong>
+            <small>{t('homeSidebar.totalProjects')}</small>
+          </div>
           <div className="home-sidebar-stat">
             <FlaskConical size={14} aria-hidden="true" />
             <strong>{running}</strong>

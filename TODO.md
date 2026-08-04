@@ -288,6 +288,8 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 修订记录（2026-08-05）：用户指出右侧面板“15 个项目”与侧栏项目统计重复、顶栏“全部项目”与 hero 标题重复，并要求把“已连接/刷新”移到侧栏。已删除首页侧栏的项目数统计，只保留“运行中实验/待审批”两项；首页顶栏不再显示健康与刷新按钮（仅项目工作区保留），侧栏新增“已连接 + 刷新”行；hero 标题由“全部项目”改为“项目总览”，顶栏仍为“全部项目”。浏览器实测：首页顶栏 actions=0、hero=Project overview、侧栏 Connected + 刷新 + 2 项统计；项目工作区顶栏仍显示 Connected + 刷新，抽屉 15 行不变。
 
+> 修订记录（2026-08-05）：用户澄清是希望侧栏保留项目总数，并删除右侧面板的“全部项目”标题。已将项目总数恢复为侧栏第 1 项统计（15 项目），侧栏共 3 项（项目/运行中实验/待审批）；右侧 hero 删除“全部项目/项目总览”大标题，仅保留“项目控制台”眉题与说明文字；顶栏“全部项目”作为页面标题保留。浏览器实测侧栏统计 `15/0/10`、hero 无标题、顶栏标题正常。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。

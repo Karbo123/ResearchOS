@@ -576,7 +576,7 @@ button { -webkit-font-smoothing: inherit; }
 .home-sidebar-refresh { width: 34px; height: 34px; flex: 0 0 auto; }
 .home-sidebar-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   margin: 0 3px;
 }
