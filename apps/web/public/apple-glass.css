@@ -2449,89 +2449,74 @@ a.secondary { text-decoration: none; color: var(--ink); }
   left: 2px;
   display: grid;
   place-items: center;
-  width: 18px;
-  min-width: 18px;
-  height: 62px;
-  min-height: 62px;
+  width: 20px;
+  min-width: 20px;
+  height: 84px;
+  min-height: 84px;
   padding: 0;
-  border: 1px solid rgba(0, 122, 255, .12);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, .38), rgba(255, 255, 255, .14));
-  color: rgba(0, 122, 255, .78);
-  box-shadow: 0 4px 12px rgba(0, 122, 255, .08), inset 0 1px 0 rgba(255, 255, 255, .52);
-  backdrop-filter: blur(20px) saturate(170%);
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(0, 122, 255, .72);
   pointer-events: auto;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transform: translateY(-50%);
-  opacity: .68;
-  transition: left .52s var(--spring), color .22s var(--ease), background .22s var(--ease), border-color .22s var(--ease), box-shadow .22s var(--ease), transform .2s var(--spring), opacity .22s var(--ease), width .22s var(--spring);
+  transition: left .52s var(--spring), color .24s var(--ease), transform .2s var(--spring);
 }
 .project-drawer-toggle::before {
   content: '';
   position: absolute;
-  top: 14%;
-  bottom: 14%;
-  left: 3px;
+  top: 12%;
+  bottom: 12%;
+  left: 5px;
   width: 2px;
   border-radius: 999px;
-  background: rgba(0, 122, 255, .42);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, .06);
-  transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring), opacity .24s var(--ease);
+  background: rgba(0, 122, 255, .46);
+  box-shadow: 0 0 0 5px rgba(0, 122, 255, .07);
+  transition: background .25s var(--ease), box-shadow .25s var(--ease);
 }
 .project-drawer-toggle:hover {
-  width: 22px;
-  min-width: 22px;
   color: var(--blue);
-  background: linear-gradient(180deg, rgba(255, 255, 255, .84), rgba(255, 255, 255, .46));
-  border-color: rgba(0, 122, 255, .26);
-  box-shadow: 0 7px 18px rgba(0, 122, 255, .14), inset 0 1px 0 rgba(255, 255, 255, .84);
-  opacity: 1;
 }
 .project-drawer-toggle:hover::before,
 .project-drawer-toggle:focus-visible::before {
   background: var(--blue);
-  box-shadow: 0 0 0 5px var(--blue-soft);
+  box-shadow: 0 0 0 6px var(--blue-soft);
 }
 .project-drawer-toggle:focus-visible {
   outline: none;
-  width: 22px;
-  min-width: 22px;
   color: var(--blue);
-  border-color: rgba(0, 122, 255, .34);
-  box-shadow: 0 0 0 3px var(--blue-soft), 0 6px 18px rgba(0, 122, 255, .16);
-  opacity: 1;
 }
 .project-drawer-toggle:focus-visible .project-drawer-arrow {
   filter: drop-shadow(0 0 6px rgba(0, 122, 255, .55));
 }
 .project-drawer-toggle:active {
-  transform: translateY(-50%) scale(.92);
+  transform: translateY(-50%) scale(.94);
 }
 .project-drawer-arrow {
   display: grid;
   place-items: center;
-  transform: translateX(3px);
+  transform: translateX(4px);
   transition: transform .36s var(--spring);
 }
 .project-drawer-toggle:hover .project-drawer-arrow {
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 .project-drawer-toggle:active .project-drawer-arrow {
-  transform: translateX(5px) scale(.88);
+  transform: translateX(6px) scale(.9);
 }
 .project-drawer-region.open .project-drawer-arrow {
-  transform: translateX(-3px) rotate(180deg);
-}
-.project-drawer-region.open .project-drawer-toggle:hover .project-drawer-arrow {
   transform: translateX(-4px) rotate(180deg);
 }
+.project-drawer-region.open .project-drawer-toggle:hover .project-drawer-arrow {
+  transform: translateX(-5px) rotate(180deg);
+}
 .project-drawer-region.open .project-drawer-toggle:active .project-drawer-arrow {
-  transform: translateX(-5px) rotate(180deg) scale(.88);
+  transform: translateX(-6px) rotate(180deg) scale(.9);
 }
 .project-drawer-region.open .project-drawer-toggle {
-  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 8px);
+  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 10px);
 }
 .project-drawer-scrim {
   position: absolute;
@@ -2564,6 +2549,11 @@ a.secondary { text-decoration: none; color: var(--ink); }
     min-height: 44px;
     transform: none;
   }
+  .project-drawer-toggle::before {
+    top: 12%;
+    bottom: 12%;
+    left: 9px;
+  }
   .project-drawer-toggle:active {
     transform: scale(.92);
   }
@@ -2575,22 +2565,15 @@ a.secondary { text-decoration: none; color: var(--ink); }
 }
 
 :root[data-theme='dark'] .project-drawer-toggle {
-  color: rgba(10, 132, 255, .78);
-  background: linear-gradient(180deg, rgba(58, 58, 60, .48), rgba(28, 28, 30, .30));
-  border-color: rgba(10, 132, 255, .20);
-  box-shadow: 0 5px 14px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .08);
+  color: rgba(10, 132, 255, .76);
 }
 :root[data-theme='dark'] .project-drawer-toggle::before {
-  background: rgba(10, 132, 255, .42);
-  box-shadow: 0 0 0 4px rgba(10, 132, 255, .06);
+  background: rgba(10, 132, 255, .46);
+  box-shadow: 0 0 0 5px rgba(10, 132, 255, .07);
 }
 :root[data-theme='dark'] .project-drawer-toggle:hover,
 :root[data-theme='dark'] .project-drawer-toggle:focus-visible {
   color: var(--blue);
-  background: linear-gradient(180deg, rgba(72, 72, 74, .78), rgba(44, 44, 46, .58));
-  border-color: rgba(10, 132, 255, .32);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .10);
-  opacity: 1;
 }
 :root[data-theme='dark'] .project-drawer-toggle:hover::before,
 :root[data-theme='dark'] .project-drawer-toggle:focus-visible::before {

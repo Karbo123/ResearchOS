@@ -264,9 +264,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-04）：真实浏览器 CDP 确认抽屉触发控件计算样式为 `22px × 96px`、`border-radius:999px`、浅色线性渐变磨砂背景、`rgba(0,122,255,.14)` 边框与 2px 蓝色 `::before` 竖线，窄三角保留；首页 `.sidebar .primary` 新项目按钮数量为 0，页面文本不含“新研究项目”，`home-project-title-line` 内无置顶按钮，`home-project-actions .home-pin-action` 每行恰好 1 个；置顶点击后路径保持 `/`、无 `.home-loading` 骨架、fetch 仅 `/api/projects/:id/pin`；指针式长按拖拽后路径保持 `/`、无加载骨架、fetch 仅 `/api/projects/order`；抽屉展开后 dispatch 到右侧工作区的真实 `pointerdown` 使 `open=false`。`npm run typecheck --workspace @research-os/web` 与 `npm run build --workspace @research-os/web` 均通过。
 
-- [x] `P0-UI-115` 按用户最新反馈收敛抽屉触发控件：去掉像独立按钮的大胶囊，改为贴合屏幕左边缘的低存在感 Apple 式边缘把手（18×62 半透明磨砂圆角条、2px 系统蓝细线、紧凑窄三角），平时半透明低对比度，悬停/聚焦平滑扩展、提升透明度并加深蓝色光晕；抽屉展开时把手随抽屉右缘平滑滑动，三角反向；浅/暗主题均使用语义变量，移动端保持底部圆角胶囊。 [Apple 设计验收]
+- [x] `P0-UI-115` 按用户最新反馈把抽屉触发控件做成与侧栏拖动条一致的蓝色长条风格：去掉胶囊/按钮背景，改为 20×84 透明命中区 + 2px 系统蓝细长条 + 窄三角，浅/暗主题使用语义变量；抽屉展开时把手随抽屉右缘滑动、三角反向；悬停/聚焦时蓝线变纯色并加柔和光晕。 [Apple 设计验收]
 
-> 验收记录（2026-08-04）：真实浏览器 CDP（干净标签页）确认抽屉触发控件为 `18×62`、`border-radius:999px`、浅/暗主题半透明磨砂背景、`::before` 2px 系统蓝细线；悬停时 `width 18→22px`、`opacity 0.68→1`、背景变亮、箭头方向随抽屉状态旋转；点击后抽屉展开 `translateX(0)` 且把手移动到抽屉右缘 `left:212px`；`index.html` 静态资源版本号更新为 `20260804-ui124` 以规避旧标签页缓存。`npm run typecheck`、`npm run build --workspace @research-os/web` 与 `npm run ui:check` 均通过，提交 `5ec0ef4`。
+> 验收记录（2026-08-04）：真实浏览器 CDP 计算样式确认触发控件为 `20×84`、`background:none`、`border-radius:0`、`::before` 2px 系统蓝线；视觉模型（`mimo-v2.5`）分别检查浅色关闭、浅色打开、暗色关闭、暗色打开四张截图，均描述为“细蓝线 + 小三角、无胶囊背景”，打开状态三角指向左、关闭状态指向右；抽屉展开 `translateX(0)` 后把手位于侧栏右缘。`index.html` 静态资源版本号更新为 `20260804-ui125`；`npm run typecheck --workspace @research-os/web`、`npm run build --workspace @research-os/web` 与 `npm run ui:check` 均通过。
 
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
