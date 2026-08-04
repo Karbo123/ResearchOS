@@ -19562,6 +19562,7 @@
     const suppressProjectClickRef = (0, import_react5.useRef)(false);
     const projectListRef = (0, import_react5.useRef)(null);
     const rowPositionsRef = (0, import_react5.useRef)(null);
+    const visibleProjects = dragPreviewProjects || projects;
     (0, import_react5.useLayoutEffect)(() => {
       const container = projectListRef.current;
       if (!container) return;
@@ -19601,7 +19602,7 @@
         return () => window.cancelAnimationFrame(frame);
       }
       rowPositionsRef.current = nextPositions;
-    }, [projects]);
+    }, [visibleProjects]);
     const startResize = (event) => {
       if (window.matchMedia("(max-width: 760px)").matches) return;
       event.preventDefault();
@@ -19762,7 +19763,6 @@
       if (state) window.clearTimeout(state.timer);
       clearProjectPointerListeners();
     }, []);
-    const visibleProjects = dragPreviewProjects || projects;
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", { className: "sidebar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         "div",
@@ -20154,6 +20154,8 @@
   var import_react7 = __toESM(require_react(), 1);
   var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
   var SLUG_PATTERN = /^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/;
+  var PROJECT_LONG_PRESS_MS2 = 420;
+  var PROJECT_DRAG_THRESHOLD2 = 8;
   function formatUpdatedAt(value, locale) {
     if (!value) return "";
     const date = new Date(value);
@@ -20176,6 +20178,19 @@
     next.splice(to, 0, moved);
     return next.map((project) => project.id);
   }
+  function reorderProjectPreview2(projects, draggedId, targetId, insertBefore) {
+    const draggedIndex = projects.findIndex((project) => project.id === draggedId);
+    const targetIndex = projects.findIndex((project) => project.id === targetId);
+    if (draggedIndex < 0 || targetIndex < 0 || draggedId === targetId) return projects;
+    const dragged = projects[draggedIndex];
+    const target = projects[targetIndex];
+    if (dragged.pinned !== target.pinned) return projects;
+    const remaining = projects.filter((project) => project.id !== draggedId);
+    const nextTargetIndex = remaining.findIndex((project) => project.id === targetId);
+    const insertIndex = nextTargetIndex + (insertBefore ? 0 : 1);
+    remaining.splice(insertIndex, 0, dragged);
+    return remaining;
+  }
   function HomeDashboard({
     projects,
     loading,
@@ -20195,10 +20210,14 @@
     const [submitting, setSubmitting] = (0, import_react7.useState)(false);
     const [draggingId, setDraggingId] = (0, import_react7.useState)(null);
     const [dragOverId, setDragOverId] = (0, import_react7.useState)(null);
-    const dragSourceRef = (0, import_react7.useRef)(null);
+    const [dragPreviewProjects, setDragPreviewProjects] = (0, import_react7.useState)(null);
     const [reorderBusy, setReorderBusy] = (0, import_react7.useState)(false);
+    const dragStateRef = (0, import_react7.useRef)(null);
+    const dragPreviewRef = (0, import_react7.useRef)(null);
+    const suppressProjectClickRef = (0, import_react7.useRef)(false);
     const homeRowsRef = (0, import_react7.useRef)(null);
     const rowPositionsRef = (0, import_react7.useRef)(null);
+    const visibleProjects = dragPreviewProjects || projects;
     (0, import_react7.useLayoutEffect)(() => {
       const container = homeRowsRef.current;
       if (!container) return;
@@ -20238,7 +20257,7 @@
         return () => window.cancelAnimationFrame(frame);
       }
       rowPositionsRef.current = nextPositions;
-    }, [projects]);
+    }, [visibleProjects]);
     const handleCreate = async (event) => {
       event.preventDefault();
       if (submitting) return;
@@ -20264,25 +20283,113 @@
         setSubmitting(false);
       }
     };
-    const handleDrop = (event, targetId) => {
-      event.preventDefault();
-      const sourceId = dragSourceRef.current;
-      dragSourceRef.current = null;
+    const clearProjectPointerListeners = () => {
+      window.removeEventListener("pointermove", handleProjectPointerMove);
+      window.removeEventListener("pointerup", handleProjectPointerUp);
+      window.removeEventListener("pointercancel", handleProjectPointerCancel);
+    };
+    const finishProjectPointer = (commit) => {
+      const state = dragStateRef.current;
+      if (!state) return;
+      window.clearTimeout(state.timer);
+      clearProjectPointerListeners();
+      if (state.row.hasPointerCapture?.(state.pointerId)) state.row.releasePointerCapture?.(state.pointerId);
+      dragStateRef.current = null;
+      const preview = dragPreviewRef.current;
+      const wasDragging = state.dragging;
+      const shouldCommit = commit && wasDragging && state.changed && preview;
       setDraggingId(null);
       setDragOverId(null);
-      if (!sourceId || sourceId === targetId || reorderBusy) return;
-      const source = projects.find((project) => project.id === sourceId);
-      const target = projects.find((project) => project.id === targetId);
-      if (!source || !target || source.pinned !== target.pinned) return;
-      const group = projects.filter((project) => project.pinned === source.pinned);
-      const sourceIndex = group.findIndex((project) => project.id === sourceId);
-      const targetIndex = group.findIndex((project) => project.id === targetId);
-      const next = group.slice();
-      const [moved] = next.splice(sourceIndex, 1);
-      next.splice(targetIndex, 0, moved);
+      setDragPreviewProjects(null);
+      dragPreviewRef.current = null;
+      if (!wasDragging) return;
+      if (commit) {
+        suppressProjectClickRef.current = true;
+        window.requestAnimationFrame(() => {
+          suppressProjectClickRef.current = false;
+        });
+      }
+      if (!shouldCommit || !preview) return;
+      const dragged = preview.find((project) => project.id === state.projectId);
+      if (!dragged) return;
+      const projectIds = preview.filter((project) => project.pinned === dragged.pinned).map((project) => project.id);
       setReorderBusy(true);
-      void onReorderProjects(next.map((project) => project.id)).finally(() => setReorderBusy(false));
+      void onReorderProjects(projectIds).finally(() => setReorderBusy(false));
     };
+    const handleProjectPointerMove = (event) => {
+      const state = dragStateRef.current;
+      if (!state || event.pointerId !== state.pointerId) return;
+      const distance = Math.hypot(event.clientX - state.startX, event.clientY - state.startY);
+      if (!state.dragging) {
+        if (distance > PROJECT_DRAG_THRESHOLD2) finishProjectPointer(false);
+        return;
+      }
+      event.preventDefault();
+      const targetElement = document.elementFromPoint(event.clientX, event.clientY)?.closest("[data-project-id]");
+      const targetId = targetElement?.dataset.projectId;
+      if (!targetId || targetId === state.projectId) {
+        setDragOverId(null);
+        return;
+      }
+      const current = dragPreviewRef.current || projects;
+      const dragged = current.find((project) => project.id === state.projectId);
+      const target = current.find((project) => project.id === targetId);
+      if (!dragged || !target || dragged.pinned !== target.pinned) {
+        setDragOverId(null);
+        return;
+      }
+      const bounds = targetElement?.getBoundingClientRect();
+      const next = reorderProjectPreview2(current, state.projectId, targetId, !bounds || event.clientY < bounds.top + bounds.height / 2);
+      if (next === current || next.map((project) => project.id).join("|") === current.map((project) => project.id).join("|")) {
+        setDragOverId(targetId);
+        return;
+      }
+      state.changed = true;
+      dragPreviewRef.current = next;
+      setDragPreviewProjects(next);
+      setDragOverId(targetId);
+    };
+    const handleProjectPointerUp = (event) => {
+      if (dragStateRef.current?.pointerId !== event.pointerId) return;
+      event.preventDefault();
+      finishProjectPointer(true);
+    };
+    const handleProjectPointerCancel = (event) => {
+      if (dragStateRef.current?.pointerId !== event.pointerId) return;
+      finishProjectPointer(false);
+    };
+    const handleProjectPointerDown = (event, project) => {
+      if (event.button !== 0 || reorderBusy || dragStateRef.current) return;
+      const state = {
+        projectId: project.id,
+        pointerId: event.pointerId,
+        row: event.currentTarget,
+        startX: event.clientX,
+        startY: event.clientY,
+        timer: 0,
+        dragging: false,
+        changed: false
+      };
+      dragStateRef.current = state;
+      state.timer = window.setTimeout(() => {
+        if (dragStateRef.current !== state) return;
+        state.dragging = true;
+        state.row.setPointerCapture?.(state.pointerId);
+        const preview = projects.slice();
+        dragPreviewRef.current = preview;
+        setDragPreviewProjects(preview);
+        setDraggingId(state.projectId);
+        setDragOverId(state.projectId);
+      }, PROJECT_LONG_PRESS_MS2);
+      window.addEventListener("pointermove", handleProjectPointerMove, { passive: false });
+      window.addEventListener("pointerup", handleProjectPointerUp, { once: true });
+      window.addEventListener("pointercancel", handleProjectPointerCancel, { once: true });
+    };
+    (0, import_react7.useEffect)(() => () => {
+      const state = dragStateRef.current;
+      if (state) window.clearTimeout(state.timer);
+      clearProjectPointerListeners();
+    }, []);
     const moveByKeyboard = async (projectId, direction) => {
       if (reorderBusy) return;
       const ids = reorderWithinPinnedGroup(projects, projectId, direction);
@@ -20407,7 +20514,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("home.updated") }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("home.actions") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "home-project-rows", ref: homeRowsRef, "aria-label": t("sidebar.projects"), children: projects.map((project) => {
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "home-project-rows", ref: homeRowsRef, "aria-label": t("sidebar.projects"), children: visibleProjects.map((project) => {
           const running = project.experiment_running ?? 0;
           const completed = project.experiment_completed ?? 0;
           return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
@@ -20416,25 +20523,7 @@
               "data-project-id": project.id,
               className: `home-project-row${draggingId === project.id ? " is-dragging" : ""}`,
               "data-drag-over": dragOverId === project.id && draggingId !== project.id ? "true" : "false",
-              draggable: !reorderBusy,
-              onDragStart: (event) => {
-                dragSourceRef.current = project.id;
-                setDraggingId(project.id);
-                event.dataTransfer.effectAllowed = "move";
-              },
-              onDragOver: (event) => {
-                event.preventDefault();
-                if (dragOverId !== project.id) setDragOverId(project.id);
-              },
-              onDragLeave: (event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) setDragOverId(null);
-              },
-              onDrop: (event) => handleDrop(event, project.id),
-              onDragEnd: () => {
-                dragSourceRef.current = null;
-                setDraggingId(null);
-                setDragOverId(null);
-              },
+              onPointerDown: (event) => handleProjectPointerDown(event, project),
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "home-project-drag", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(GripVertical, { size: 15 }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
@@ -20443,7 +20532,14 @@
                     className: "home-project-main",
                     type: "button",
                     title: project.title,
-                    onClick: () => onOpenProject(project.id),
+                    onClick: (event) => {
+                      if (suppressProjectClickRef.current) {
+                        event.preventDefault();
+                        suppressProjectClickRef.current = false;
+                        return;
+                      }
+                      onOpenProject(project.id);
+                    },
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "home-project-title-line", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: project.title }) }),
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { className: "home-project-slug", children: project.slug }),
@@ -20482,7 +20578,7 @@
                   ] })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("time", { className: "home-project-updated", dateTime: project.updated_at, children: formatUpdatedAt(project.updated_at, locale) }),
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "home-project-actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "home-project-actions", onPointerDown: (event) => event.stopPropagation(), children: [
                   /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
                     "button",
                     {
@@ -20526,6 +20622,7 @@
                     "aria-label": t("home.reorderProject", { title: project.title }),
                     title: t("home.reorderProject", { title: project.title }),
                     "aria-keyshortcuts": "Alt+ArrowUp Alt+ArrowDown",
+                    onPointerDown: (event) => event.stopPropagation(),
                     onKeyDown: (event) => {
                       if (event.key === "ArrowUp" && (event.altKey || event.ctrlKey)) {
                         event.preventDefault();
@@ -27885,7 +27982,7 @@
           method: "PATCH",
           body: JSON.stringify({ pinned: !target.pinned })
         });
-        setProjects((current) => applyPinned(current, target.id, updated.pinned, updated.sidebar_order));
+        setProjects((current) => current.map((project2) => project2.id === target.id ? { ...project2, ...updated } : project2));
         showToast(t(target.pinned ? "app.projectUnpinned" : "app.projectPinned"));
       } catch (error) {
         setProjects(previousProjects);
@@ -27915,7 +28012,6 @@
           method: "PATCH",
           body: JSON.stringify({ project_ids: projectIds })
         });
-        setProjects((current) => applyOrder(current, projectIds));
         showToast(t("app.projectOrderUpdated"));
       } catch (error) {
         setProjects(previousProjects);
@@ -28005,8 +28101,8 @@
           setProjectDrawerOpen(false);
         }
       };
-      document.addEventListener("pointerdown", closeDrawer);
-      return () => document.removeEventListener("pointerdown", closeDrawer);
+      document.addEventListener("pointerdown", closeDrawer, true);
+      return () => document.removeEventListener("pointerdown", closeDrawer, true);
     }, [projectDrawerOpen, view]);
     if (notFoundPath) {
       return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => goHome(true) }, notFoundPath);

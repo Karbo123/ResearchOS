@@ -209,7 +209,7 @@ export function App() {
         method: 'PATCH',
         body: JSON.stringify({ pinned: !target.pinned }),
       })
-      setProjects(current => applyPinned(current, target.id, updated.pinned, updated.sidebar_order))
+      setProjects(current => current.map(project => project.id === target.id ? { ...project, ...updated } : project))
       showToast(t(target.pinned ? 'app.projectUnpinned' : 'app.projectPinned'))
     } catch (error) {
       setProjects(previousProjects)
@@ -243,7 +243,6 @@ export function App() {
         method: 'PATCH',
         body: JSON.stringify({ project_ids: projectIds }),
       })
-      setProjects(current => applyOrder(current, projectIds))
       showToast(t('app.projectOrderUpdated'))
     } catch (error) {
       setProjects(previousProjects)
@@ -344,8 +343,8 @@ export function App() {
         setProjectDrawerOpen(false)
       }
     }
-    document.addEventListener('pointerdown', closeDrawer)
-    return () => document.removeEventListener('pointerdown', closeDrawer)
+    document.addEventListener('pointerdown', closeDrawer, true)
+    return () => document.removeEventListener('pointerdown', closeDrawer, true)
   }, [projectDrawerOpen, view])
 
   if (notFoundPath) {

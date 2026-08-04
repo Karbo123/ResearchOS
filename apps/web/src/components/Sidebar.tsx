@@ -74,6 +74,7 @@ export function Sidebar({
   const suppressProjectClickRef = useRef(false)
   const projectListRef = useRef<HTMLElement | null>(null)
   const rowPositionsRef = useRef<Map<string, number> | null>(null)
+  const visibleProjects = dragPreviewProjects || projects
 
   useLayoutEffect(() => {
     const container = projectListRef.current
@@ -114,7 +115,7 @@ export function Sidebar({
       return () => window.cancelAnimationFrame(frame)
     }
     rowPositionsRef.current = nextPositions
-  }, [projects])
+  }, [visibleProjects])
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -282,8 +283,6 @@ export function Sidebar({
     if (state) window.clearTimeout(state.timer)
     clearProjectPointerListeners()
   }, [])
-
-  const visibleProjects = dragPreviewProjects || projects
 
   return (
     <aside className="sidebar">

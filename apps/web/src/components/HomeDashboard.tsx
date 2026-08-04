@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ArrowUpRight,
   BookOpen,
@@ -18,6 +18,19 @@ import { useTranslation } from '../i18n'
 import { errorMessage } from '../api'
 
 const SLUG_PATTERN = /^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/
+const PROJECT_LONG_PRESS_MS = 420
+const PROJECT_DRAG_THRESHOLD = 8
+
+type ProjectPointerState = {
+  projectId: string
+  pointerId: number
+  row: HTMLElement
+  startX: number
+  startY: number
+  timer: number
+  dragging: boolean
+  changed: boolean
+}
 
 function formatUpdatedAt(value: string | undefined, locale: string): string {
   if (!value) return ''
@@ -41,6 +54,20 @@ function reorderWithinPinnedGroup(projects: ProjectSummary[], projectId: string,
   const [moved] = next.splice(from, 1)
   next.splice(to, 0, moved)
   return next.map(project => project.id)
+}
+
+function reorderProjectPreview(projects: ProjectSummary[], draggedId: string, targetId: string, insertBefore: boolean) {
+  const draggedIndex = projects.findIndex(project => project.id === draggedId)
+  const targetIndex = projects.findIndex(project => project.id === targetId)
+  if (draggedIndex < 0 || targetIndex < 0 || draggedId === targetId) return projects
+  const dragged = projects[draggedIndex]
+  const target = projects[targetIndex]
+  if (dragged.pinned !== target.pinned) return projects
+  const remaining = projects.filter(project => project.id !== draggedId)
+  const nextTargetIndex = remaining.findIndex(project => project.id === targetId)
+  const insertIndex = nextTargetIndex + (insertBefore ? 0 : 1)
+  remaining.splice(insertIndex, 0, dragged)
+  return remaining
 }
 
 export function HomeDashboard({
@@ -72,10 +99,14 @@ export function HomeDashboard({
   const [submitting, setSubmitting] = useState(false)
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
-  const dragSourceRef = useRef<string | null>(null)
+  const [dragPreviewProjects, setDragPreviewProjects] = useState<ProjectSummary[] | null>(null)
   const [reorderBusy, setReorderBusy] = useState(false)
+  const dragStateRef = useRef<ProjectPointerState | null>(null)
+  const dragPreviewRef = useRef<ProjectSummary[] | null>(null)
+  const suppressProjectClickRef = useRef(false)
   const homeRowsRef = useRef<HTMLDivElement | null>(null)
   const rowPositionsRef = useRef<Map<string, number> | null>(null)
+  const visibleProjects = dragPreviewProjects || projects
 
   useLayoutEffect(() => {
     const container = homeRowsRef.current
@@ -116,7 +147,7 @@ export function HomeDashboard({
       return () => window.cancelAnimationFrame(frame)
     }
     rowPositionsRef.current = nextPositions
-  }, [projects])
+  }, [visibleProjects])
 
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -144,25 +175,117 @@ export function HomeDashboard({
     }
   }
 
-  const handleDrop = (event: React.DragEvent, targetId: string) => {
-    event.preventDefault()
-    const sourceId = dragSourceRef.current
-    dragSourceRef.current = null
+  const clearProjectPointerListeners = () => {
+    window.removeEventListener('pointermove', handleProjectPointerMove)
+    window.removeEventListener('pointerup', handleProjectPointerUp)
+    window.removeEventListener('pointercancel', handleProjectPointerCancel)
+  }
+
+  const finishProjectPointer = (commit: boolean) => {
+    const state = dragStateRef.current
+    if (!state) return
+    window.clearTimeout(state.timer)
+    clearProjectPointerListeners()
+    if (state.row.hasPointerCapture?.(state.pointerId)) state.row.releasePointerCapture?.(state.pointerId)
+    dragStateRef.current = null
+    const preview = dragPreviewRef.current
+    const wasDragging = state.dragging
+    const shouldCommit = commit && wasDragging && state.changed && preview
     setDraggingId(null)
     setDragOverId(null)
-    if (!sourceId || sourceId === targetId || reorderBusy) return
-    const source = projects.find(project => project.id === sourceId)
-    const target = projects.find(project => project.id === targetId)
-    if (!source || !target || source.pinned !== target.pinned) return
-    const group = projects.filter(project => project.pinned === source.pinned)
-    const sourceIndex = group.findIndex(project => project.id === sourceId)
-    const targetIndex = group.findIndex(project => project.id === targetId)
-    const next = group.slice()
-    const [moved] = next.splice(sourceIndex, 1)
-    next.splice(targetIndex, 0, moved)
+    setDragPreviewProjects(null)
+    dragPreviewRef.current = null
+    if (!wasDragging) return
+    if (commit) {
+      suppressProjectClickRef.current = true
+      window.requestAnimationFrame(() => { suppressProjectClickRef.current = false })
+    }
+    if (!shouldCommit || !preview) return
+    const dragged = preview.find(project => project.id === state.projectId)
+    if (!dragged) return
+    const projectIds = preview.filter(project => project.pinned === dragged.pinned).map(project => project.id)
     setReorderBusy(true)
-    void onReorderProjects(next.map(project => project.id)).finally(() => setReorderBusy(false))
+    void onReorderProjects(projectIds).finally(() => setReorderBusy(false))
   }
+
+  const handleProjectPointerMove = (event: globalThis.PointerEvent) => {
+    const state = dragStateRef.current
+    if (!state || event.pointerId !== state.pointerId) return
+    const distance = Math.hypot(event.clientX - state.startX, event.clientY - state.startY)
+    if (!state.dragging) {
+      if (distance > PROJECT_DRAG_THRESHOLD) finishProjectPointer(false)
+      return
+    }
+    event.preventDefault()
+    const targetElement = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-project-id]')
+    const targetId = targetElement?.dataset.projectId
+    if (!targetId || targetId === state.projectId) {
+      setDragOverId(null)
+      return
+    }
+    const current = dragPreviewRef.current || projects
+    const dragged = current.find(project => project.id === state.projectId)
+    const target = current.find(project => project.id === targetId)
+    if (!dragged || !target || dragged.pinned !== target.pinned) {
+      setDragOverId(null)
+      return
+    }
+    const bounds = targetElement?.getBoundingClientRect()
+    const next = reorderProjectPreview(current, state.projectId, targetId, !bounds || event.clientY < bounds.top + bounds.height / 2)
+    if (next === current || next.map(project => project.id).join('|') === current.map(project => project.id).join('|')) {
+      setDragOverId(targetId)
+      return
+    }
+    state.changed = true
+    dragPreviewRef.current = next
+    setDragPreviewProjects(next)
+    setDragOverId(targetId)
+  }
+
+  const handleProjectPointerUp = (event: globalThis.PointerEvent) => {
+    if (dragStateRef.current?.pointerId !== event.pointerId) return
+    event.preventDefault()
+    finishProjectPointer(true)
+  }
+
+  const handleProjectPointerCancel = (event: globalThis.PointerEvent) => {
+    if (dragStateRef.current?.pointerId !== event.pointerId) return
+    finishProjectPointer(false)
+  }
+
+  const handleProjectPointerDown = (event: React.PointerEvent<HTMLElement>, project: ProjectSummary) => {
+    if (event.button !== 0 || reorderBusy || dragStateRef.current) return
+    const state: ProjectPointerState = {
+      projectId: project.id,
+      pointerId: event.pointerId,
+      row: event.currentTarget,
+      startX: event.clientX,
+      startY: event.clientY,
+      timer: 0,
+      dragging: false,
+      changed: false,
+    }
+    dragStateRef.current = state
+    state.timer = window.setTimeout(() => {
+      if (dragStateRef.current !== state) return
+      state.dragging = true
+      state.row.setPointerCapture?.(state.pointerId)
+      const preview = projects.slice()
+      dragPreviewRef.current = preview
+      setDragPreviewProjects(preview)
+      setDraggingId(state.projectId)
+      setDragOverId(state.projectId)
+    }, PROJECT_LONG_PRESS_MS)
+    window.addEventListener('pointermove', handleProjectPointerMove, { passive: false })
+    window.addEventListener('pointerup', handleProjectPointerUp, { once: true })
+    window.addEventListener('pointercancel', handleProjectPointerCancel, { once: true })
+  }
+
+  useEffect(() => () => {
+    const state = dragStateRef.current
+    if (state) window.clearTimeout(state.timer)
+    clearProjectPointerListeners()
+  }, [])
 
   const moveByKeyboard = async (projectId: string, direction: -1 | 1) => {
     if (reorderBusy) return
@@ -306,7 +429,7 @@ export function HomeDashboard({
             <span>{t('home.actions')}</span>
           </div>
           <div className="home-project-rows" ref={homeRowsRef} aria-label={t('sidebar.projects')}>
-            {projects.map(project => {
+            {visibleProjects.map(project => {
               const running = project.experiment_running ?? 0
               const completed = project.experiment_completed ?? 0
               return (
@@ -315,25 +438,7 @@ export function HomeDashboard({
                   data-project-id={project.id}
                   className={`home-project-row${draggingId === project.id ? ' is-dragging' : ''}`}
                   data-drag-over={dragOverId === project.id && draggingId !== project.id ? 'true' : 'false'}
-                  draggable={!reorderBusy}
-                  onDragStart={event => {
-                    dragSourceRef.current = project.id
-                    setDraggingId(project.id)
-                    event.dataTransfer.effectAllowed = 'move'
-                  }}
-                  onDragOver={event => {
-                    event.preventDefault()
-                    if (dragOverId !== project.id) setDragOverId(project.id)
-                  }}
-                  onDragLeave={event => {
-                    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragOverId(null)
-                  }}
-                  onDrop={event => handleDrop(event, project.id)}
-                  onDragEnd={() => {
-                    dragSourceRef.current = null
-                    setDraggingId(null)
-                    setDragOverId(null)
-                  }}
+                  onPointerDown={event => handleProjectPointerDown(event, project)}
                 >
                   <div className="home-project-drag" aria-hidden="true">
                     <GripVertical size={15} />
@@ -342,7 +447,14 @@ export function HomeDashboard({
                     className="home-project-main"
                     type="button"
                     title={project.title}
-                    onClick={() => onOpenProject(project.id)}
+                    onClick={event => {
+                      if (suppressProjectClickRef.current) {
+                        event.preventDefault()
+                        suppressProjectClickRef.current = false
+                        return
+                      }
+                      onOpenProject(project.id)
+                    }}
                   >
                     <span className="home-project-title-line">
                       <strong>{project.title}</strong>
@@ -377,7 +489,7 @@ export function HomeDashboard({
                   <time className="home-project-updated" dateTime={project.updated_at}>
                     {formatUpdatedAt(project.updated_at, locale)}
                   </time>
-                  <div className="home-project-actions">
+                  <div className="home-project-actions" onPointerDown={event => event.stopPropagation()}>
                     <button
                       className={`home-action home-pin-action${project.pinned ? ' is-pinned' : ''}`}
                       type="button"
@@ -413,6 +525,7 @@ export function HomeDashboard({
                     aria-label={t('home.reorderProject', { title: project.title })}
                     title={t('home.reorderProject', { title: project.title })}
                     aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
+                    onPointerDown={event => event.stopPropagation()}
                     onKeyDown={event => {
                       if (event.key === 'ArrowUp' && (event.altKey || event.ctrlKey)) {
                         event.preventDefault()
