@@ -326,6 +326,8 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 修订记录（2026-08-05）：使用 `mimo-v2.5` 视觉模型审查首页浅色/暗色桌面与移动端截图，反馈主要集中在小字号、操作图标偏小、次级信息对比与移动端密度。已提升首页描述文字至 14px 并使用更强的 `--muted-strong`；项目标题 14px、slug/更新时间 11px、统计小字 10px；操作按钮桌面 34px、图标 17px；统计卡间距 14px；移动端主标题 26px、项目行内边距与行距放宽；四个统计卡图标增加统一内描边以增强暗色辨识。静态资源版本升至 `20260805-ui148`。
 
+> 修订记录（2026-08-05）：对移动端 390px 完整页面截图做专项视觉审查，浅色与暗色均指出操作按钮触摸区偏小、统计/状态小字偏小、项目标题截断展示和子统计卡内边距偏紧。已为移动端提升新建按钮到 44px；操作按钮 40px、图标 18px、间距 8px；统计标签 12px、项目统计小字 11px、slug/更新时间 12px、状态标签 10px；子统计卡内边距放宽到 12px 并加大 2×2 网格间距；同时限制项目标题容器宽度以确保省略号正常显示。静态资源版本升至 `20260805-ui149`。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。

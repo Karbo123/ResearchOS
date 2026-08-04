@@ -862,6 +862,8 @@ button { -webkit-font-smoothing: inherit; }
   white-space: nowrap;
   transition: color .2s var(--ease);
 }
+.home-project-title-line { width: 100%; }
+.home-project-title-line strong { max-width: 100%; }
 .home-project-slug {
   grid-area: slug;
   max-width: 100%;
@@ -990,10 +992,11 @@ button { -webkit-font-smoothing: inherit; }
   .home-hero { align-items: flex-start; flex-direction: column; gap: 14px; }
   .home-hero h1.home-eyebrow, .home-hero h2 { font-size: 26px; }
   .home-hero-actions { width: 100%; }
-  .home-create-toggle { flex: 1 1 auto; }
+  .home-create-toggle { flex: 1 1 auto; min-height: 44px; }
   .home-summary { gap: 10px; }
   .home-summary-item { padding: 14px; border-radius: 16px; }
   .home-summary-item strong { font-size: 22px; }
+  .home-summary-item > span:not(.home-summary-icon) { font-size: 12px; }
   .create-project-panel { padding: 17px; border-radius: 19px; }
   .create-project-fields { grid-template-columns: 1fr; }
   .create-project-actions { flex-direction: column-reverse; }
@@ -1001,8 +1004,13 @@ button { -webkit-font-smoothing: inherit; }
   .home-project-row { grid-template-columns: 20px minmax(0, 1fr) auto; padding: 14px 14px; row-gap: 10px; }
   .home-project-main { grid-template-columns: minmax(0, 1fr) auto; }
   .home-project-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-project-actions { gap: 4px; }
-  .home-action { width: 29px; height: 29px; }
+  .home-project-slug { font-size: 12px; }
+  .home-project-updated { font-size: 12px; }
+  .home-project-stat small { font-size: 11px; }
+  .home-project-actions { gap: 8px; }
+  .home-action { width: 40px; height: 40px; border-radius: 12px; }
+  .home-action svg { width: 18px; height: 18px; }
+  .home-status-badge { font-size: 10px; }
 }
 
 @media (max-width: 460px) {
@@ -1012,7 +1020,7 @@ button { -webkit-font-smoothing: inherit; }
   .home-project-main { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "slug" "badge"; justify-items: start; }
   .home-status-badge { margin-top: 2px; }
   .home-project-stats { gap: 5px; }
-  .home-project-stat { padding: 8px 9px; }
+  .home-project-stat { padding: 10px 11px; }
 }
 
 /* Research-status surfaces stay dense and scannable without introducing a second card system. */
@@ -3922,4 +3930,22 @@ code {
     z-index: 3;
     margin: 8px 2px 2px 0;
   }
+}
+
+/* Home mobile final overrides: must stay after the global audit polish rules. */
+@media (max-width: 760px) {
+  .home-create-toggle.primary { height: 44px; min-height: 44px; }
+  .home-summary-item > span:not(.home-summary-icon) { font-size: 12px; }
+  .home-project-slug { font-size: 12px; }
+  .home-project-updated { font-size: 12px; }
+  .home-project-stat small { font-size: 11px; }
+  .home-project-actions { gap: 8px; }
+  .home-action { width: 40px; height: 40px; min-height: 40px; border-radius: 12px; }
+  .home-action svg { width: 18px; height: 18px; }
+  .home-status-badge { font-size: 10px; }
+}
+
+@media (max-width: 460px) {
+  .home-project-stat { padding: 12px; }
+  .home-project-stats { gap: 7px; }
 }
