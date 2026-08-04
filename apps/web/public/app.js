@@ -27288,7 +27288,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Languages, { size: 15, "aria-hidden": "true" }),
             t("settings.language")
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-segmented", role: "radiogroup", "aria-label": t("settings.language"), children: LOCALE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-segmented settings-language-segmented", role: "radiogroup", "aria-label": t("settings.language"), children: LOCALE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             "button",
             {
               type: "button",

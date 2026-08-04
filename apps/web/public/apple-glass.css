@@ -2257,6 +2257,13 @@ a.secondary { text-decoration: none; color: var(--ink); }
   background: var(--surface-2);
   box-shadow: inset 0 1px 0 var(--glass-highlight);
 }
+.settings-language-segmented {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.settings-language-segmented button {
+  padding-inline: 6px;
+  font-size: 11px;
+}
 .settings-segmented button {
   min-height: 34px;
   padding: 7px 10px;
@@ -2357,6 +2364,9 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .settings-field-row {
     grid-template-columns: 1fr;
     gap: 7px;
+  }
+  .settings-language-segmented {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .settings-proxy-row {
     grid-template-columns: 1fr;
@@ -3556,6 +3566,19 @@ code {
 }
 .home-project-title-line strong {
   display: block;
+}
+.home-summary-item span,
+.metric span {
+  line-height: 1.4;
+}
+.metric span {
+  margin-bottom: 7px;
+}
+.home-project-updated {
+  white-space: nowrap;
+}
+.workspace-state-legend-grid {
+  gap: 8px;
 }
 
 .not-found-countdown {

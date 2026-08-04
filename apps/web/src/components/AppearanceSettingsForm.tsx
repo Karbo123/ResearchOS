@@ -48,7 +48,7 @@ export function AppearanceSettingsForm({
             <Languages size={15} aria-hidden="true" />
             {t('settings.language')}
           </span>
-          <div className="settings-segmented" role="radiogroup" aria-label={t('settings.language')}>
+          <div className="settings-segmented settings-language-segmented" role="radiogroup" aria-label={t('settings.language')}>
             {LOCALE_OPTIONS.map(option => (
               <button
                 key={option.value}
