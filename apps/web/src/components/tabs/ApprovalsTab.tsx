@@ -58,6 +58,7 @@ export function ApprovalsTab({
         <div className="data-list">
           {project.proposals.map(proposal => {
             const execution = proposal.impact?.automatic_execution || {}
+            const impactEntries = Object.entries(proposal.impact || {}).filter(([, value]) => value !== null && value !== undefined)
             const rerunStatus = proposal.kind === 'experiment_rerun' && proposal.status === 'approved'
               ? execution.status === 'failed'
               ? t('approvals.rerunFailed')
@@ -72,7 +73,9 @@ export function ApprovalsTab({
                   <h3>{proposal.summary}</h3>
                   <p>{proposal.reason} · {t('approvals.estimatedCost')} ${Number(proposal.estimated_cost_usd || 0).toFixed(2)}</p>
                   {proposal.diff ? <pre className="code-block">{proposal.diff}</pre> : null}
-                  <p>{t('approvals.impact')} {JSON.stringify(proposal.impact)}</p>
+                  {impactEntries.length
+                    ? <p>{t('approvals.impact')} {impactEntries.map(([key, value]) => `${key}=${typeof value === 'object' ? JSON.stringify(value) : String(value)}`).join(', ')}</p>
+                    : <p className="muted">{t('approvals.noImpact')}</p>}
                 </div>
                 <div className="button-row">
                   <Badge status={proposal.status} />

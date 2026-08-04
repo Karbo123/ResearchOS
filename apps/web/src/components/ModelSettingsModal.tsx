@@ -144,7 +144,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
   }
 
   const description = tab === 'general'
-    ? t('settings.appearanceDescription')
+    ? t('settings.generalDescription')
     : tab === 'system'
       ? t('settings.systemDescription')
       : subTab === 'code'

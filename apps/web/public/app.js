@@ -13130,7 +13130,7 @@
     "settings.eyebrow": "\u8FD0\u884C\u65F6\u8BBE\u7F6E",
     "settings.title": "\u914D\u7F6E",
     "settings.generalTab": "\u901A\u7528",
-    "settings.generalDescription": "\u754C\u9762\u8BED\u8A00\u4E0E\u6D45\u8272/\u6697\u8272\u4E3B\u9898\u662F\u5168\u5C40\u8BBE\u7F6E\uFF0C\u6240\u6709\u9879\u76EE\u5171\u4EAB\uFF1B\u4FDD\u5B58\u540E\u7ACB\u5373\u751F\u6548\u3002",
+    "settings.generalDescription": "\u5728\u6B64\u7BA1\u7406\u754C\u9762\u5916\u89C2\u3001\u9879\u76EE\u7EA7\u6A21\u578B\u4E0E\u7CFB\u7EDF\u7EA7\u7F51\u7EDC\u4EE3\u7406\uFF1B\u9664\u8BED\u8A00/\u4E3B\u9898\u4E0E\u5168\u5C40\u4EE3\u7406\u5916\uFF0C\u6A21\u578B\u8BBE\u7F6E\u6309\u9879\u76EE\u72EC\u7ACB\u4FDD\u5B58\u3002",
     "settings.appearanceDescription": "\u754C\u9762\u8BED\u8A00\u4E0E\u6D45\u8272/\u6697\u8272\u4E3B\u9898\u662F\u5168\u5C40\u8BBE\u7F6E\uFF0C\u6240\u6709\u9879\u76EE\u5171\u4EAB\uFF1B\u4FDD\u5B58\u540E\u7ACB\u5373\u751F\u6548\u3002",
     "settings.systemTab": "\u7CFB\u7EDF",
     "settings.systemDescription": "\u5168\u5C40\u7F51\u7EDC\u4EE3\u7406\u4E3A\u7CFB\u7EDF\u7EA7\u8BBE\u7F6E\uFF0C\u5F00\u542F\u540E\u5F71\u54CD\u6A21\u578B\u3001\u8BED\u97F3\u8BC6\u522B\u4E0E Embedding \u7B49\u670D\u52A1\u51FA\u53E3\uFF1B\u56DE\u73AF\u4E0E\u79C1\u6709\u5730\u5740\u59CB\u7EC8\u76F4\u8FDE\u3002",
@@ -13458,6 +13458,7 @@
     "approvals.rerunPending": "\u5DF2\u6279\u51C6\uFF0C\u6B63\u5728\u81EA\u52A8\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1",
     "approvals.estimatedCost": "\u9884\u8BA1",
     "approvals.impact": "\u5F71\u54CD:",
+    "approvals.noImpact": "\u6682\u65E0\u5F71\u54CD\u8BB0\u5F55",
     "approvals.approve": "\u6279\u51C6",
     "approvals.reject": "\u9A73\u56DE",
     "approvals.runTopicPlan": "\u6267\u884C\u4E3B\u9898\u8BA1\u5212",
@@ -14766,7 +14767,7 @@
     "settings.eyebrow": "\u57F7\u884C\u968E\u6BB5\u8A2D\u5B9A",
     "settings.title": "\u8A2D\u5B9A",
     "settings.generalTab": "\u4E00\u822C",
-    "settings.generalDescription": "\u4ECB\u9762\u8A9E\u8A00\u8207\u6DFA\u8272/\u6697\u8272\u4E3B\u984C\u662F\u5168\u57DF\u8A2D\u5B9A\uFF0C\u6240\u6709\u5C08\u6848\u5171\u4EAB\uFF1B\u5132\u5B58\u5F8C\u7ACB\u5373\u751F\u6548\u3002",
+    "settings.generalDescription": "\u5728\u6B64\u7BA1\u7406\u4ECB\u9762\u5916\u89C0\u3001\u5C08\u6848\u7D1A\u6A21\u578B\u8207\u7CFB\u7D71\u7D1A\u7DB2\u8DEF\u4EE3\u7406\uFF1B\u9664\u8A9E\u8A00/\u4E3B\u984C\u8207\u5168\u57DF\u4EE3\u7406\u5916\uFF0C\u6A21\u578B\u8A2D\u5B9A\u6309\u5C08\u6848\u7368\u7ACB\u5132\u5B58\u3002",
     "settings.appearanceDescription": "\u4ECB\u9762\u8A9E\u8A00\u8207\u6DFA\u8272/\u6697\u8272\u4E3B\u984C\u662F\u5168\u57DF\u8A2D\u5B9A\uFF0C\u6240\u6709\u5C08\u6848\u5171\u4EAB\uFF1B\u5132\u5B58\u5F8C\u7ACB\u5373\u751F\u6548\u3002",
     "settings.systemTab": "\u7CFB\u7D71",
     "settings.systemDescription": "\u5168\u57DF\u7DB2\u8DEF\u4EE3\u7406\u70BA\u7CFB\u7D71\u7D1A\u8A2D\u5B9A\uFF0C\u958B\u555F\u5F8C\u5F71\u97FF\u6A21\u578B\u3001\u8A9E\u97F3\u8FA8\u8B58\u8207 Embedding \u7B49\u670D\u52D9\u51FA\u53E3\uFF1B\u56DE\u74B0\u8207\u79C1\u6709\u5730\u5740\u59CB\u7D42\u76F4\u9023\u3002",
@@ -15094,6 +15095,7 @@
     "approvals.rerunPending": "\u5DF2\u6838\u51C6\uFF0C\u6B63\u5728\u81EA\u52D5\u63D0\u4EA4\u5C40\u90E8\u91CD\u8DD1",
     "approvals.estimatedCost": "\u9810\u8A08",
     "approvals.impact": "\u5F71\u97FF:",
+    "approvals.noImpact": "\u66AB\u7121\u5F71\u97FF\u8A18\u9304",
     "approvals.approve": "\u6838\u51C6",
     "approvals.reject": "\u99C1\u56DE",
     "approvals.runTopicPlan": "\u57F7\u884C\u4E3B\u984C\u8A08\u756B",
@@ -16279,7 +16281,7 @@
     "settings.eyebrow": "Runtime settings",
     "settings.title": "Configuration",
     "settings.generalTab": "General",
-    "settings.generalDescription": "Interface language and light/dark theme are global settings shared by every project; they apply immediately after saving.",
+    "settings.generalDescription": "Manage appearance, per-project model overrides, and the system proxy here. Language/theme and proxy are global; model settings are saved per project and follow the active project.",
     "settings.appearanceDescription": "Interface language and light/dark theme are global settings shared by every project; they apply immediately after saving.",
     "settings.systemTab": "System",
     "settings.systemDescription": "The global network proxy is a system-level setting. When enabled it affects model, speech recognition, and Embedding traffic; loopback and private addresses always stay direct.",
@@ -16607,6 +16609,7 @@
     "approvals.rerunPending": "Approved; submitting the partial rerun automatically",
     "approvals.estimatedCost": "Estimated",
     "approvals.impact": "Impact:",
+    "approvals.noImpact": "No impact recorded",
     "approvals.approve": "Approve",
     "approvals.reject": "Reject",
     "approvals.runTopicPlan": "Run topic plan",
@@ -17792,7 +17795,7 @@
     "settings.eyebrow": "Configuraci\xF3n en tiempo de ejecuci\xF3n",
     "settings.title": "Configuraci\xF3n",
     "settings.generalTab": "General",
-    "settings.generalDescription": "El idioma de la interfaz y el tema claro/oscuro son ajustes globales compartidos por todos los proyectos; se aplican inmediatamente despu\xE9s de guardar.",
+    "settings.generalDescription": "Administre la apariencia, las coberturas de modelo por proyecto y el proxy del sistema aqu\xED. El idioma/tema y el proxy son globales; los ajustes de modelo se guardan por proyecto y siguen al proyecto activo.",
     "settings.appearanceDescription": "El idioma de la interfaz y el tema claro/oscuro son ajustes globales compartidos por todos los proyectos; se aplican inmediatamente despu\xE9s de guardar.",
     "settings.systemTab": "Sistema",
     "settings.systemDescription": "El proxy de red global es un ajuste a nivel de sistema. Si est\xE1 habilitado afecta al tr\xE1fico de modelos, reconocimiento de voz y Embedding; las direcciones de bucle local y privadas siempre van directas.",
@@ -18120,6 +18123,7 @@
     "approvals.rerunPending": "Aprobado; enviando la reejecuci\xF3n parcial autom\xE1ticamente",
     "approvals.estimatedCost": "Estimado",
     "approvals.impact": "Impacto:",
+    "approvals.noImpact": "Sin impacto registrado",
     "approvals.approve": "Aprobar",
     "approvals.reject": "Rechazar",
     "approvals.runTopicPlan": "Ejecutar plan tem\xE1tico",
@@ -24160,6 +24164,7 @@
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SectionHeading, { title: t("approvals.title"), hint: t("approvals.hint") }),
       project.proposals?.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "data-list", children: project.proposals.map((proposal) => {
         const execution = proposal.impact?.automatic_execution || {};
+        const impactEntries = Object.entries(proposal.impact || {}).filter(([, value]) => value !== null && value !== void 0);
         const rerunStatus = proposal.kind === "experiment_rerun" && proposal.status === "approved" ? execution.status === "failed" ? t("approvals.rerunFailed") : execution.run_id ? t("approvals.rerunSubmitted", { id: String(execution.run_id).slice(0, 8) }) : t("approvals.rerunPending") : null;
         const canLaunch = proposal.status === "approved" && proposal.kind === "experiment_plan";
         return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "data-row", children: [
@@ -24173,11 +24178,11 @@
               Number(proposal.estimated_cost_usd || 0).toFixed(2)
             ] }),
             proposal.diff ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("pre", { className: "code-block", children: proposal.diff }) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
+            impactEntries.length ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
               t("approvals.impact"),
               " ",
-              JSON.stringify(proposal.impact)
-            ] })
+              impactEntries.map(([key, value]) => `${key}=${typeof value === "object" ? JSON.stringify(value) : String(value)}`).join(", ")
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "muted", children: t("approvals.noImpact") })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "button-row", children: [
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Badge, { status: proposal.status }),
@@ -28660,7 +28665,7 @@
       setDirty(false);
       setPending(null);
     };
-    const description = tab === "general" ? t("settings.appearanceDescription") : tab === "system" ? t("settings.systemDescription") : subTab === "code" ? t("settings.codeModelsDescription") : subTab === "document" ? t("settings.documentDescription") : subTab === "vision" ? t("settings.visionDescription") : subTab === "image" ? t("settings.imageDescription") : subTab === "embedding" ? t("settings.embeddingDescription") : t("settings.voiceDescription");
+    const description = tab === "general" ? t("settings.generalDescription") : tab === "system" ? t("settings.systemDescription") : subTab === "code" ? t("settings.codeModelsDescription") : subTab === "document" ? t("settings.documentDescription") : subTab === "vision" ? t("settings.visionDescription") : subTab === "image" ? t("settings.imageDescription") : subTab === "embedding" ? t("settings.embeddingDescription") : t("settings.voiceDescription");
     return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_jsx_runtime30.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
         Modal,

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-05 -->
 
 # Research OS
 
@@ -89,9 +89,9 @@ npm test
 
 ## 模型设置
 
-左下角设置面板按用途组织：一级 `通用`（语言、主题、全局代理）与 `模型`；`模型` 内使用二级标签栏 `代码模型`、`文档文本`、`图片识别`、`图片生成`、`Embedding`、`语音识别`。通用页的语言与主题先进入草稿状态，只有点击“保存配置”才会真正应用；未保存就关闭会保留原值。
+左下角设置面板有三个一级标签：`通用`（只放外观，即界面语言与浅色/暗色主题，两者是全局设置）、`模型`（所有模型设置，按项目独立保存并随项目切换）、`系统`（全局代理）。语言与主题先进入草稿状态，只有点击“保存配置”才会真正应用；未保存就关闭会保留原值。没有打开项目时，模型页会提示先打开项目，因为代码三档、文档文本、图片识别、图片生成、Embedding 与语音识别全部都是项目级配置。
 
-代码模型内部使用 `simple` / `medium` / `complex` 三档。界面只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`，但 UI 永远不会显示这些名字。运行时覆盖保存在 `runtime/model-settings.json`；设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
+代码模型内部使用 `simple` / `medium` / `complex` 三档。界面只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`，但 UI 永远不会显示这些名字。项目级运行时覆盖保存在 `runtime/project-settings.json`（0600 权限、原子写入，删除项目时一并清理）；没有覆盖时回退到项目 `.env` 默认。全局代理仍保存在 `runtime/model-settings.json`。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`runtime/project-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
 项目 `.env` 当前将代码模型默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
 
@@ -105,11 +105,11 @@ npm test
 
 `document` 模型用于生成可读的聊天解释和文档式文本。默认 `deepseek-v4-flash` 在当前固定网关会返回 403（`The latest version of this model is only available hosted in China and requires explicit opt in`）。这是上游模型/网关可用性错误，不是请求格式问题；在设置面板配置可用文档模型前，聊天保持失败关闭。该阻塞已登记为 TODO 的 `[!] DOC-MODEL-107`。
 
-`vision` 模型在聊天或 Idea 讨论包含图片附件时负责理解图片内容；它与其他代码档一样使用 Responses API base URL，且失败关闭，不静默换模型。`image_generation` 通过 `/images/generations` 兼容接口生成图片，界面可选择 1k/2k/4k 与 low/medium/high，默认使用最省钱的 `1:1`、`1k`、`low`、`n=1`。两类密钥都只写入被忽略的 `runtime/model-settings.json`，读取接口只返回 `key_configured`。
+`vision` 模型在聊天或 Idea 讨论包含图片附件时负责理解图片内容；它与其他代码档一样使用 Responses API base URL，且失败关闭，不静默换模型。`image_generation` 通过 `/images/generations` 兼容接口生成图片，界面可选择 1k/2k/4k 与 low/medium/high，默认使用最省钱的 `1:1`、`1k`、`low`、`n=1`。两类密钥都是项目级配置，只写入被忽略的 `runtime/project-settings.json`，读取接口只返回 `key_configured`。
 
 每个已配置模型（代码三档、文档文本、图片识别、图片生成、语音识别）都提供“测试连接”按钮，使用最小请求体验证 URL、key 与模型是否可用；图片生成测试会提交一个最省钱的真实任务，不会下载或展示生成图片。
 
-`通用` 页还提供全局代理开关。开启时 URL 输入框与开关同一行显示，并控制 Mastra、Supermemory bridge、语音转写和远程 Embedding 出口；关闭时全部直连。回环与 RFC1918 私有地址始终绕过代理。
+`系统` 页提供全局代理开关。开启时 URL 输入框与开关同一行显示，并控制 Mastra、Supermemory bridge、语音转写和远程 Embedding 出口；关闭时全部直连。回环与 RFC1918 私有地址始终绕过代理。
 
 系统接受 HTTPS 端点；HTTP 只允许回环地址和 RFC1918 私有地址，包括本地 OpenAI-compatible 服务。
 
@@ -137,7 +137,7 @@ Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含
 
 ## 验证证据
 
-当前 Web UI 已经重写为 React + TypeScript 组件应用，不再使用原生 DOM/HTML 实现，并已在真实浏览器中检查。桌面和移动端的新 Idea 输入、项目概览、文献/材料检索、产物图库、模型设置、项目对话和 Mastra 入口均已覆盖；移动端没有横向溢出，控制台没有错误。模型设置流程使用 `通用 / 模型` 两级面板和按用途划分的模型区块；浏览器检查已覆盖滑动标签、代理 URL 显隐，以及只显示 key 状态、绝不显示 key 内容。
+当前 Web UI 已经重写为 React + TypeScript 组件应用，不再使用原生 DOM/HTML 实现，并已在真实浏览器中检查。桌面和移动端的新 Idea 输入、项目概览、文献/材料检索、产物图库、模型设置、项目对话和 Mastra 入口均已覆盖；移动端没有横向溢出，控制台没有错误。模型设置流程使用 `通用 / 模型 / 系统` 三个一级标签和按用途划分的模型区块；浏览器检查已覆盖滑动标签、项目级模型页、代理 URL 显隐，以及只显示 key 状态、绝不显示 key 内容。
 
 ![Research OS 总览](docs/assets/research-os-overview.jpg)
 

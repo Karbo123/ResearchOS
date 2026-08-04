@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-05 -->
 
 # Research OS
 
@@ -89,9 +89,9 @@ Run these in the WSL2 shell. Debug and verify the UI in Windows Chrome at `http:
 
 ## Model Settings
 
-The left-bottom settings panel is organized by purpose: a `General` tab (language, theme, global proxy) and a `Models` tab with second-level `Code models`, `Document text`, `Image recognition`, `Image generation`, `Embedding`, and `Voice recognition` sections. On the General tab, language and theme selections become a draft first and only apply after “Save configuration”; closing without saving keeps the previous values.
+The left-bottom settings panel has three top-level tabs: `General` (appearance only: interface language and theme, both global), `Models` (every model setting, stored per project and switching with the active project), and `System` (the global proxy). Language and theme selections become a draft first and only apply after “Save configuration”; closing without saving keeps the previous values. Model tabs show a “open a project first” hint when no project is active, because code tiers, document text, image recognition, image generation, Embedding, and voice recognition are all project-scoped.
 
-Code models use three internal tiers (`simple`, `medium`, `complex`). The UI intentionally labels them “Lightweight model”, “General model”, and “Most powerful model” instead of any vendor family, so different providers can fill the same tiers. Each tier has its own model, URL, key, and reasoning effort. The current `.env.example` maps them to `gpt-5.6-luna`, `gpt-5.6-terra`, and `gpt-5.6-sol`, but the UI never exposes those names. Runtime overrides live in `runtime/model-settings.json`; the settings API returns only `key_configured` and never returns a key. Runtime code reads project `.env` and `runtime/model-settings.json`, never Codex configuration or authentication files.
+Code models use three internal tiers (`simple`, `medium`, `complex`). The UI intentionally labels them “Lightweight model”, “General model”, and “Most powerful model” instead of any vendor family, so different providers can fill the same tiers. Each tier has its own model, URL, key, and reasoning effort. The current `.env.example` maps them to `gpt-5.6-luna`, `gpt-5.6-terra`, and `gpt-5.6-sol`, but the UI never exposes those names. Project-scoped runtime overrides live in `runtime/project-settings.json` (mode 0600, atomic write, deleted with the project); without an override the project falls back to `.env` defaults. The global proxy remains in `runtime/model-settings.json`. The settings API returns only `key_configured` and never returns a key. Runtime code reads project `.env`, `runtime/project-settings.json`, and `runtime/model-settings.json`, never Codex configuration or authentication files.
 
 The project `.env` currently defaults the code tiers to the local OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1` (the model gateway runs on the Windows host and is reached from WSL2 through the mirrored loopback). Research OS appends `/responses`; do not configure an operation URL such as `/chat/completions`, `/completions`, or `/responses`. Runtime settings may override each tier independently.
 
@@ -105,11 +105,11 @@ The project `.env` currently defaults the code tiers to the local OpenAI-compati
 
 The `document` model produces readable chat explanations and document-style text. The default `deepseek-v4-flash` currently returns 403 from the fixed local gateway (`The latest version of this model is only available hosted in China and requires explicit opt in`). That is an upstream model/gateway availability error, not a request-shape bug. Chat stays fail-closed until a usable document model is configured in the settings panel; this is tracked as `[!] DOC-MODEL-107` in TODO.
 
-The `vision` model understands image attachments in chat or Idea discussion. It uses the same Responses API base URL rules as the code tiers and stays fail-closed with no silent model switch. `image_generation` generates images through an `/images/generations` compatible endpoint; the UI offers 1k/2k/4k and low/medium/high, defaulting to the cheapest `1:1`, `1k`, `low`, `n=1`. Keys for both models are stored only in the ignored `runtime/model-settings.json` and the read API returns only `key_configured`.
+The `vision` model understands image attachments in chat or Idea discussion. It uses the same Responses API base URL rules as the code tiers and stays fail-closed with no silent model switch. `image_generation` generates images through an `/images/generations` compatible endpoint; the UI offers 1k/2k/4k and low/medium/high, defaulting to the cheapest `1:1`, `1k`, `low`, `n=1`. Keys for both models are project-scoped and stored only in the ignored `runtime/project-settings.json`; the read API returns only `key_configured`.
 
 Every configured model (code tiers, document text, image recognition, image generation, and voice recognition) has a “Test connection” button that sends a minimal request to verify the URL, key, and model. The image generation test submits one cheapest real task without downloading or displaying the generated image.
 
-The `General` tab also provides a global proxy switch. When enabled, its URL input appears on the same row and controls Mastra, the Supermemory bridge, voice transcription, and remote Embedding egress; when disabled, everything connects directly. Loopback and RFC1918 destinations always bypass the proxy.
+The `System` tab provides the global proxy switch. When enabled, its URL input appears on the same row and controls Mastra, the Supermemory bridge, voice transcription, and remote Embedding egress; when disabled, everything connects directly. Loopback and RFC1918 destinations always bypass the proxy.
 
 HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC1918 private addresses, including local OpenAI-compatible services.
 
@@ -137,7 +137,7 @@ For code reproduction, the Related Work Implementation page can query `GET /api/
 
 ## Verification Evidence
 
-The current local UI is a React + TypeScript component application with no native DOM/HTML implementation and was checked in a real browser. Desktop and mobile flows across the new-Idea composer, project overview, literature/material search, artifact gallery, model settings, project chat, and Mastra link were exercised; there is no horizontal overflow and no console error. The model-settings flow uses the two-level `General` / `Models` panel with purpose-based model sections; the browser check verified the sliding tabs, proxy URL visibility, and that only key status is displayed, never key material.
+The current local UI is a React + TypeScript component application with no native DOM/HTML implementation and was checked in a real browser. Desktop and mobile flows across the new-Idea composer, project overview, literature/material search, artifact gallery, model settings, project chat, and Mastra link were exercised; there is no horizontal overflow and no console error. The model-settings flow uses the `General` / `Models` / `System` panel with purpose-based model sections; the browser check verified the sliding tabs, project-scoped model tabs, proxy URL visibility, and that only key status is displayed, never key material.
 
 ![Research OS overview](docs/assets/research-os-overview.jpg)
 
