@@ -2480,8 +2480,8 @@ a.secondary { text-decoration: none; color: var(--ink); }
   left: 9px;
   width: 2px;
   border-radius: 999px;
-  background: rgba(0, 122, 255, .46);
-  box-shadow: 0 0 0 5px rgba(0, 122, 255, .07);
+  background: var(--blue);
+  box-shadow: 0 0 0 4px var(--blue-soft);
   transition: background .25s var(--ease), box-shadow .25s var(--ease);
 }
 .project-drawer-toggle:hover {
@@ -2490,7 +2490,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .project-drawer-toggle:hover::before,
 .project-drawer-toggle:focus-visible::before {
   background: var(--blue);
-  box-shadow: 0 0 0 6px var(--blue-soft);
+  box-shadow: 0 0 0 4px var(--blue-soft);
 }
 .project-drawer-toggle:focus-visible {
   outline: none;
