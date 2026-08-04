@@ -351,7 +351,7 @@ export function HomeDashboard({
               {t('home.newProject')}
             </button>
           ) : null}
-          <button className="secondary home-refresh" type="button" onClick={onRetry} aria-label={t('home.retry')} title={t('home.retry')}>
+          <button className="secondary home-refresh" type="button" onClick={onRetry} aria-label={t('home.refreshTooltip')} title={t('home.refreshTooltip')}>
             <RefreshCw size={15} aria-hidden="true" />
             {t('home.refresh')}
           </button>

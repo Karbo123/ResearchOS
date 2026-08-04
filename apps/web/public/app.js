@@ -12942,6 +12942,7 @@
     "home.newProject": "\u65B0\u5EFA\u9879\u76EE",
     "home.refresh": "\u5237\u65B0",
     "home.retry": "\u91CD\u8BD5",
+    "home.refreshTooltip": "\u91CD\u65B0\u52A0\u8F7D\u9996\u9875\u7684\u9879\u76EE\u5217\u8868",
     "home.summary": "\u9879\u76EE\u603B\u89C8",
     "home.totalProjects": "\u9879\u76EE\u603B\u6570",
     "home.runningExperiments": "\u8FD0\u884C\u4E2D\u5B9E\u9A8C",
@@ -14586,6 +14587,7 @@
     "home.newProject": "\u65B0\u589E\u5C08\u6848",
     "home.refresh": "\u91CD\u65B0\u6574\u7406",
     "home.retry": "\u91CD\u8A66",
+    "home.refreshTooltip": "\u91CD\u65B0\u8F09\u5165\u9996\u9801\u7684\u5C08\u6848\u5217\u8868",
     "home.summary": "\u5C08\u6848\u7E3D\u89BD",
     "home.totalProjects": "\u5C08\u6848\u7E3D\u6578",
     "home.runningExperiments": "\u57F7\u884C\u4E2D\u5BE6\u9A57",
@@ -16107,6 +16109,7 @@
     "home.newProject": "New Project",
     "home.refresh": "Refresh",
     "home.retry": "Retry",
+    "home.refreshTooltip": "Reload the project list",
     "home.summary": "Project overview",
     "home.totalProjects": "Total projects",
     "home.runningExperiments": "Running experiments",
@@ -17628,6 +17631,7 @@
     "home.newProject": "Nuevo proyecto",
     "home.refresh": "Actualizar",
     "home.retry": "Reintentar",
+    "home.refreshTooltip": "Recargar la lista de proyectos",
     "home.summary": "Resumen de proyectos",
     "home.totalProjects": "Total de proyectos",
     "home.runningExperiments": "Experimentos en curso",
@@ -20922,7 +20926,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Plus, { size: 16, "aria-hidden": "true" }),
             t("home.newProject")
           ] }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { className: "secondary home-refresh", type: "button", onClick: onRetry, "aria-label": t("home.retry"), title: t("home.retry"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { className: "secondary home-refresh", type: "button", onClick: onRetry, "aria-label": t("home.refreshTooltip"), title: t("home.refreshTooltip"), children: [
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RefreshCw, { size: 15, "aria-hidden": "true" }),
             t("home.refresh")
           ] })
