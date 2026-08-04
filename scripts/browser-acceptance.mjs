@@ -358,6 +358,49 @@ for (const locale of ['zh-CN', 'zh-TW', 'en', 'es']) {
   await capture(`108h-settings-${locale}.png`)
   settings.push({ locale, state })
 }
+const settingsModelsState = await evaluate(`(async () => {
+  document.querySelector('.side-settings')?.click()
+  await new Promise(resolve => setTimeout(resolve, 700))
+  const tabs = Array.from(document.querySelectorAll('.settings-tabs button')).map(button => button.textContent.trim())
+  const modelsTab = Array.from(document.querySelectorAll('.settings-tabs button')).find(button => /模型|Models|Modelos/.test(button.textContent || ''))
+  modelsTab?.click()
+  await new Promise(resolve => setTimeout(resolve, 450))
+  const sections = Array.from(document.querySelectorAll('.settings-model-sections button')).map(button => button.textContent.trim())
+  const testButtons = document.querySelectorAll('.model-test-button').length
+  const clickByText = async (patterns) => {
+    const button = Array.from(document.querySelectorAll('.settings-model-sections button')).find(candidate => patterns.some(pattern => (candidate.textContent || '').includes(pattern)))
+    button?.click()
+    await new Promise(resolve => setTimeout(resolve, 450))
+  }
+  await clickByText(['图片识别', 'Image recognition', 'Reconocimiento de imágenes'])
+  const vision = {
+    heading: document.querySelector('.model-tier h3')?.textContent?.trim() || null,
+    hasTest: !!document.querySelector('.model-test-button'),
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+  const imageFormState = await new Promise(resolveImage => {
+    setTimeout(async () => {
+      const imageButton = Array.from(document.querySelectorAll('.settings-model-sections button')).find(candidate => {
+        const text = candidate.textContent || ''
+        return text.includes('图片生成') || text.includes('Image generation') || text.includes('Generación de imágenes')
+      })
+      imageButton?.click()
+      setTimeout(() => {
+        resolveImage({
+          heading: document.querySelector('.model-tier h3')?.textContent?.trim() || null,
+          hasResolution: !!document.querySelector('.model-tier select'),
+          hasTest: !!document.querySelector('.model-test-button'),
+          overflowX: document.documentElement.scrollWidth > window.innerWidth,
+        })
+      }, 450)
+    }, 450)
+  })
+  return { tabs, sections, testButtons, vision, image: imageFormState }
+})()`)
+await capture('108h-settings-vision.png')
+await wait(350)
+await capture('108h-settings-image.png')
+await capture('108h-settings-image.png')
 await navigate(homeUrl, 'en', 'dark')
 await evaluate(`document.querySelector('.side-settings')?.click()`)
 await wait(700)
@@ -1145,5 +1188,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, workspaceStatePanel, seedExpansion, provenanceDrawer, relatedWorkLiterature, relatedWorkVisualization, graphNodeDetails, relatedWorkCrossProject, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsModelsState, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, workspaceStatePanel, seedExpansion, provenanceDrawer, relatedWorkLiterature, relatedWorkVisualization, graphNodeDetails, relatedWorkCrossProject, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
 socket.close()

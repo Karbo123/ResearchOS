@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
-import { StatusDot } from './ui'
+import { ModelTestButton, StatusDot } from './ui'
 import { useTranslation, type TranslationKey } from '../i18n'
 
 const TIERS: Array<{ id: TierId; labelKey: TranslationKey; descriptionKey: TranslationKey; defaultEffort: ReasoningEffort }> = [
@@ -136,6 +136,9 @@ export function CodeModelSettingsForm({
                 </div>
               </div>
               <span className="tier-default">{t('settings.default')} {t(tier.defaultEffort === 'low' ? 'settings.low' : tier.defaultEffort === 'medium' ? 'settings.medium' : 'settings.high')}</span>
+            </div>
+            <div className="model-tier-actions">
+              <ModelTestButton kind={tier.id} fields={{ model: item.model, url: item.url, key: item.key }} />
             </div>
             <div className="model-tier-grid">
               <label>

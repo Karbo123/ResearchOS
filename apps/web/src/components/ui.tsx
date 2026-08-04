@@ -1,5 +1,7 @@
-import { useEffect, useRef } from 'react'
-import { AlertTriangle, Ban, CheckCircle2, Clock3, FileQuestion, Inbox, Loader2, LockKeyhole, RotateCw, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { AlertTriangle, Ban, CheckCircle2, Clock3, FileQuestion, Inbox, Loader2, LockKeyhole, RotateCw, X, Zap } from 'lucide-react'
+import { api, errorMessage } from '../api'
+import type { ModelTestKind } from '../types'
 import { useTranslation, type TranslationKey } from '../i18n'
 
 export type BadgeKind = 'neutral' | 'live' | 'pending' | 'failed'
@@ -103,6 +105,56 @@ export function Badge({ status, children }: { status?: string | null; children?:
 
 export function StatusDot({ ready }: { ready: boolean }) {
   return <span className={`status-dot ${ready ? 'ready' : ''}`} />
+}
+
+export function ModelTestButton({
+  kind,
+  fields,
+  onResult,
+}: {
+  kind: ModelTestKind
+  fields: { model: string; url: string; key: string }
+  onResult?: (ok: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const [state, setState] = useState<'idle' | 'testing' | 'ok' | 'failed'>('idle')
+  const [message, setMessage] = useState('')
+  const run = async () => {
+    if (state === 'testing') return
+    setState('testing')
+    setMessage(t('settings.testing'))
+    try {
+      const result = await api<{ ok: boolean; elapsed: number; message: string }>('/api/settings/model-test', {
+        method: 'POST',
+        body: JSON.stringify({
+          kind,
+          model: fields.model.trim(),
+          url: fields.url.trim(),
+          key: fields.key,
+        }),
+      })
+      setState('ok')
+      setMessage(result.message)
+      onResult?.(true)
+    } catch (err) {
+      setState('failed')
+      setMessage(errorMessage(err))
+      onResult?.(false)
+    }
+  }
+  return (
+    <span className="model-test-control">
+      <button className="secondary model-test-button" type="button" disabled={state === 'testing'} onClick={() => void run()}>
+        {state === 'testing' ? <Loader2 size={14} className="spin" /> : <Zap size={14} />}
+        {t('settings.test')}
+      </button>
+      {state !== 'idle' ? (
+        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite">
+          {message}
+        </span>
+      ) : null}
+    </span>
+  )
 }
 
 export function EmptyState({ text, action }: { text: string; action?: React.ReactNode }) {

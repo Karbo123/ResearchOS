@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-03 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-04 -->
 
 # Research OS
 
@@ -89,7 +89,7 @@ npm test
 
 ## 模型设置
 
-左下角设置面板按用途组织：一级 `通用`（语言、主题、全局代理）与 `模型`；`模型` 内使用二级标签栏 `代码模型`、`文档文本`、`Embedding`、`语音识别`。
+左下角设置面板按用途组织：一级 `通用`（语言、主题、全局代理）与 `模型`；`模型` 内使用二级标签栏 `代码模型`、`文档文本`、`图片识别`、`图片生成`、`Embedding`、`语音识别`。通用页的语言与主题先进入草稿状态，只有点击“保存配置”才会真正应用；未保存就关闭会保留原值。
 
 代码模型内部使用 `simple` / `medium` / `complex` 三档。界面只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`，但 UI 永远不会显示这些名字。运行时覆盖保存在 `runtime/model-settings.json`；设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
@@ -99,9 +99,15 @@ npm test
 - `medium`：`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM`
 - `complex`：`RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX`
 - `document`：`RESEARCH_DOCUMENT_MODEL`（默认 `deepseek-v4-flash`）、`RESEARCH_DOCUMENT_MODEL_URL`（默认 `http://127.0.0.1:3000/v1`）、`RESEARCH_DOCUMENT_MODEL_KEY`（留空回退到 `RESEARCH_MODEL_KEY_MEDIUM`）
+- `vision`：`RESEARCH_VISION_MODEL`（默认 `mimo-v2.5`）、`RESEARCH_VISION_MODEL_URL`（默认 `http://10.31.107.77:3000/v1`）、`RESEARCH_VISION_MODEL_KEY`（留空回退到 `RESEARCH_MODEL_KEY_MEDIUM`）
+- `image_generation`：`RESEARCH_IMAGE_MODEL`（默认 `gpt-image-2-official`）、`RESEARCH_IMAGE_MODEL_URL`（默认 `https://api.apimart.ai/v1`）、`RESEARCH_IMAGE_MODEL_KEY`、`RESEARCH_IMAGE_RESOLUTION`（默认 `1k`）、`RESEARCH_IMAGE_QUALITY`（默认 `low`）
 - 共享请求时限：`MODEL_REQUEST_TIMEOUT_SECONDS`
 
 `document` 模型用于生成可读的聊天解释和文档式文本。默认 `deepseek-v4-flash` 在当前固定网关会返回 403（`The latest version of this model is only available hosted in China and requires explicit opt in`）。这是上游模型/网关可用性错误，不是请求格式问题；在设置面板配置可用文档模型前，聊天保持失败关闭。该阻塞已登记为 TODO 的 `[!] DOC-MODEL-107`。
+
+`vision` 模型在聊天或 Idea 讨论包含图片附件时负责理解图片内容；它与其他代码档一样使用 Responses API base URL，且失败关闭，不静默换模型。`image_generation` 通过 `/images/generations` 兼容接口生成图片，界面可选择 1k/2k/4k 与 low/medium/high，默认使用最省钱的 `1:1`、`1k`、`low`、`n=1`。两类密钥都只写入被忽略的 `runtime/model-settings.json`，读取接口只返回 `key_configured`。
+
+每个已配置模型（代码三档、文档文本、图片识别、图片生成、语音识别）都提供“测试连接”按钮，使用最小请求体验证 URL、key 与模型是否可用；图片生成测试会提交一个最省钱的真实任务，不会下载或展示生成图片。
 
 `通用` 页还提供全局代理开关。开启时 URL 输入框与开关同一行显示，并控制 Mastra、Supermemory bridge、语音转写和远程 Embedding 出口；关闭时全部直连。回环与 RFC1918 私有地址始终绕过代理。
 

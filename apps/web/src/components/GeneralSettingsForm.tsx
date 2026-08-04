@@ -8,9 +8,11 @@ import { StatusDot } from './ui'
 
 const EMPTY_PROXY: ProxySettings = { enabled: false, url: '' }
 
-export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
+export function GeneralSettingsForm({ onChanged, onDirtyChange }: { onChanged: () => void; onDirtyChange?: (dirty: boolean) => void }) {
   const { locale, t, setLocale } = useTranslation()
   const theme = useTheme()
+  const [draftLocale, setDraftLocale] = useState<Locale>(locale)
+  const [draftTheme, setDraftTheme] = useState<Theme>(theme)
   const [proxy, setProxy] = useState<ProxySettings>(EMPTY_PROXY)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -24,12 +26,18 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
       const result = await api<ProxySettings>('/api/settings/proxy')
       setProxy(result)
       setDirty(false)
+      onDirtyChange?.(false)
     } catch (err) {
       setError(errorMessage(err))
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    setDraftLocale(locale)
+    setDraftTheme(theme)
+  }, [locale, theme])
 
   useEffect(() => {
     void load()
@@ -39,6 +47,14 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
   const updateProxy = (field: 'enabled' | 'url', value: boolean | string) => {
     setProxy(previous => ({ ...previous, [field]: value }))
     setDirty(true)
+    onDirtyChange?.(true)
+  }
+
+  const updateAppearance = (field: 'locale' | 'theme', value: string) => {
+    if (field === 'locale') setDraftLocale(value as Locale)
+    else setDraftTheme(value as Theme)
+    setDirty(true)
+    onDirtyChange?.(true)
   }
 
   const save = async (event: React.FormEvent) => {
@@ -55,7 +71,10 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
         }),
       })
       setProxy(result)
+      setLocale(draftLocale)
+      setTheme(draftTheme)
       setDirty(false)
+      onDirtyChange?.(false)
       onChanged()
     } catch (err) {
       setError(t('settings.saveFailed', { error: errorMessage(err) }))
@@ -88,9 +107,9 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
                 key={option.value}
                 type="button"
                 role="radio"
-                aria-checked={option.value === locale}
-                className={option.value === locale ? 'active' : ''}
-                onClick={() => setLocale(option.value as Locale)}
+                aria-checked={option.value === draftLocale}
+                className={option.value === draftLocale ? 'active' : ''}
+                onClick={() => updateAppearance('locale', option.value)}
               >
                 {option.label}
               </button>
@@ -108,9 +127,9 @@ export function GeneralSettingsForm({ onChanged }: { onChanged: () => void }) {
                 key={option}
                 type="button"
                 role="radio"
-                aria-checked={option === theme}
-                className={option === theme ? 'active' : ''}
-                onClick={() => setTheme(option as Theme)}
+                aria-checked={option === draftTheme}
+                className={option === draftTheme ? 'active' : ''}
+                onClick={() => updateAppearance('theme', option)}
               >
                 {t(option === 'light' ? 'theme.light' : 'theme.dark')}
               </button>

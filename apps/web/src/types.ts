@@ -104,6 +104,27 @@ export interface DocumentModelSettings {
   source?: 'runtime_override' | 'env_default'
 }
 
+export interface VisionModelSettings {
+  model: string
+  url: string
+  key_configured: boolean
+  source?: 'runtime_override' | 'env_default'
+}
+
+export type ImageGenerationResolution = '1k' | '2k' | '4k'
+export type ImageGenerationQuality = 'low' | 'medium' | 'high'
+
+export interface ImageGenerationSettings {
+  model: string
+  url: string
+  key_configured: boolean
+  resolution: ImageGenerationResolution
+  quality: ImageGenerationQuality
+  source?: 'runtime_override' | 'env_default'
+}
+
+export type ModelTestKind = 'simple' | 'medium' | 'complex' | 'document' | 'vision' | 'image' | 'voice'
+
 export interface VoiceSettingsResponse {
   provider: VoiceProvider
   model: string

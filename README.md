@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-03 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-04 -->
 
 # Research OS
 
@@ -89,7 +89,7 @@ Run these in the WSL2 shell. Debug and verify the UI in Windows Chrome at `http:
 
 ## Model Settings
 
-The left-bottom settings panel is organized by purpose: a `General` tab (language, theme, global proxy) and a `Models` tab with second-level `Code models`, `Document text`, `Embedding`, and `Voice recognition` sections.
+The left-bottom settings panel is organized by purpose: a `General` tab (language, theme, global proxy) and a `Models` tab with second-level `Code models`, `Document text`, `Image recognition`, `Image generation`, `Embedding`, and `Voice recognition` sections. On the General tab, language and theme selections become a draft first and only apply after “Save configuration”; closing without saving keeps the previous values.
 
 Code models use three internal tiers (`simple`, `medium`, `complex`). The UI intentionally labels them “Lightweight model”, “General model”, and “Most powerful model” instead of any vendor family, so different providers can fill the same tiers. Each tier has its own model, URL, key, and reasoning effort. The current `.env.example` maps them to `gpt-5.6-luna`, `gpt-5.6-terra`, and `gpt-5.6-sol`, but the UI never exposes those names. Runtime overrides live in `runtime/model-settings.json`; the settings API returns only `key_configured` and never returns a key. Runtime code reads project `.env` and `runtime/model-settings.json`, never Codex configuration or authentication files.
 
@@ -99,9 +99,15 @@ The project `.env` currently defaults the code tiers to the local OpenAI-compati
 - `medium`: `RESEARCH_MODEL_MEDIUM`, `RESEARCH_MODEL_URL_MEDIUM`, `RESEARCH_MODEL_KEY_MEDIUM`, `RESEARCH_REASONING_MEDIUM`
 - `complex`: `RESEARCH_MODEL_COMPLEX`, `RESEARCH_MODEL_URL_COMPLEX`, `RESEARCH_MODEL_KEY_COMPLEX`, `RESEARCH_REASONING_COMPLEX`
 - `document`: `RESEARCH_DOCUMENT_MODEL` (default `deepseek-v4-flash`), `RESEARCH_DOCUMENT_MODEL_URL` (default `http://127.0.0.1:3000/v1`), `RESEARCH_DOCUMENT_MODEL_KEY` (empty falls back to `RESEARCH_MODEL_KEY_MEDIUM`)
+- `vision`: `RESEARCH_VISION_MODEL` (default `mimo-v2.5`), `RESEARCH_VISION_MODEL_URL` (default `http://10.31.107.77:3000/v1`), `RESEARCH_VISION_MODEL_KEY` (empty falls back to `RESEARCH_MODEL_KEY_MEDIUM`)
+- `image_generation`: `RESEARCH_IMAGE_MODEL` (default `gpt-image-2-official`), `RESEARCH_IMAGE_MODEL_URL` (default `https://api.apimart.ai/v1`), `RESEARCH_IMAGE_MODEL_KEY`, `RESEARCH_IMAGE_RESOLUTION` (default `1k`), `RESEARCH_IMAGE_QUALITY` (default `low`)
 - Shared request limit: `MODEL_REQUEST_TIMEOUT_SECONDS`
 
 The `document` model produces readable chat explanations and document-style text. The default `deepseek-v4-flash` currently returns 403 from the fixed local gateway (`The latest version of this model is only available hosted in China and requires explicit opt in`). That is an upstream model/gateway availability error, not a request-shape bug. Chat stays fail-closed until a usable document model is configured in the settings panel; this is tracked as `[!] DOC-MODEL-107` in TODO.
+
+The `vision` model understands image attachments in chat or Idea discussion. It uses the same Responses API base URL rules as the code tiers and stays fail-closed with no silent model switch. `image_generation` generates images through an `/images/generations` compatible endpoint; the UI offers 1k/2k/4k and low/medium/high, defaulting to the cheapest `1:1`, `1k`, `low`, `n=1`. Keys for both models are stored only in the ignored `runtime/model-settings.json` and the read API returns only `key_configured`.
+
+Every configured model (code tiers, document text, image recognition, image generation, and voice recognition) has a “Test connection” button that sends a minimal request to verify the URL, key, and model. The image generation test submits one cheapest real task without downloading or displaying the generated image.
 
 The `General` tab also provides a global proxy switch. When enabled, its URL input appears on the same row and controls Mastra, the Supermemory bridge, voice transcription, and remote Embedding egress; when disabled, everything connects directly. Loopback and RFC1918 destinations always bypass the proxy.
 

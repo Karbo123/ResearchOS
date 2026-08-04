@@ -2181,6 +2181,42 @@ a.secondary { text-decoration: none; color: var(--ink); }
   padding-top: 7px;
   padding-bottom: 7px;
 }
+.settings-model-sections {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.settings-model-sections > button {
+  flex: 0 1 auto;
+}
+
+.model-tier-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 34px;
+}
+.model-test-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.model-test-button {
+  flex: none;
+}
+.model-test-message {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.model-test-message.ok {
+  color: var(--green-dark);
+}
+.model-test-message.failed {
+  color: var(--danger-ink);
+}
 
 .settings-general-card,
 .settings-proxy-card {

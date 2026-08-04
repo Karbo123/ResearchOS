@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Mic, Save, ShieldCheck } from 'lucide-react'
 import { ApiError, api, errorMessage } from '../api'
 import type { VoiceProvider, VoiceSettingsResponse } from '../types'
-import { StatusDot } from './ui'
+import { ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
 interface FormValues {
@@ -175,6 +175,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
+        <ModelTestButton kind="voice" fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

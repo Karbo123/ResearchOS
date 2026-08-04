@@ -8,7 +8,7 @@ import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mas
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent,
+  configuredModel, configuredVisionModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent, visionModelName,
 } from './agents/research-agents.js'
 import {
   adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, paperSectionReviseRequestSchema, paperSectionReviseResultSchema, paperSectionTranslateRequestSchema, paperSectionTranslateResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
@@ -54,7 +54,7 @@ function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'deta
   if (conversationId) context.set('supermemoryConversationId', conversationId)
   return context
 }
-function generationOptions(context: RequestContext<z.infer<typeof agentRequestContextSchema>>) {
+function generationOptions(context: RequestContext<z.infer<typeof agentRequestContextSchema>>, vision = false) {
   const config = context.get('modelConfig')
   const projectId = context.get('supermemoryProjectId')
   const conversationId = context.get('supermemoryConversationId')
@@ -62,11 +62,13 @@ function generationOptions(context: RequestContext<z.infer<typeof agentRequestCo
   const memory = projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId) : {}
   return {
     requestContext: context,
-    model: configuredModel(context.get('tier')),
+    model: vision ? configuredVisionModel() : configuredModel(context.get('tier')),
     modelSettings: { maxRetries: 0 },
     // The fixed gateway does not resolve server-side Responses item references.
     // Expand tool history into ordinary input items so every request is self-contained.
-    providerOptions: { openai: { reasoningEffort: config.reasoningEffort, strictJsonSchema: true, store: false } },
+    providerOptions: vision
+      ? { openai: { store: false } }
+      : { openai: { reasoningEffort: config.reasoningEffort, strictJsonSchema: true, store: false } },
     inputProcessors: [...guardrails.inputProcessors, ...(memory.inputProcessors || [])],
     outputProcessors: [...guardrails.outputProcessors, ...(memory.outputProcessors || [])],
   }
@@ -127,8 +129,9 @@ const apiRoutes = [
           { type: 'text' as const, text: structuredJsonValue(payload) },
           ...body.attachment_images.map(image => ({ type: 'image' as const, image: image.data_url })),
         ]
+        const vision = body.attachment_images.length > 0
         const response = await ideaClarificationAgent.generate([{ role: 'user', content }], {
-          ...generationOptions(context),
+          ...generationOptions(context, vision),
           ...(body.memory_resource && body.memory_thread ? {
             memory: { resource: body.memory_resource, thread: body.memory_thread },
           } : {}),
@@ -136,7 +139,7 @@ const apiRoutes = [
         })
         const result = adaptiveClarificationResultSchema.parse(response.object)
         const config = context.get('modelConfig')
-        return c.json({ result, route: { tier: body.tier, model: config.model, reasoning_effort: config.reasoningEffort } })
+        return c.json({ result, route: { tier: vision ? 'vision' : body.tier, model: vision ? visionModelName() : config.model, reasoning_effort: config.reasoningEffort } })
       } catch (error) {
         const failure = routeError(error, 'Idea 澄清模型调用')
         return c.json(failure.body, safeStatus(failure.status))

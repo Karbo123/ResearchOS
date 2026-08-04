@@ -18,6 +18,14 @@ export function configuredModel(tier: ModelTier) {
   return createOpenAI({ baseURL: config.url, apiKey: config.key, fetch: proxyFetch() }).responses(model)
 }
 
+export function configuredVisionModel() {
+  return configuredModel('vision')
+}
+
+export function visionModelName(): string {
+  return loadModelConfig('vision').model
+}
+
 export const ideaClarificationAgent = new Agent({
   id: 'idea-clarification-agent',
   name: 'Research Idea Clarification Agent',

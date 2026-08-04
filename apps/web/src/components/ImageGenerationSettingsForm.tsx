@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { FileText, Save, ShieldCheck } from 'lucide-react'
+import { ImagePlus, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
-import type { DocumentModelSettings } from '../types'
+import type { ImageGenerationQuality, ImageGenerationResolution, ImageGenerationSettings } from '../types'
 import { ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
-interface FormValues extends DocumentModelSettings {
+interface FormValues extends ImageGenerationSettings {
   key: string
 }
 
-export function DocumentModelSettingsForm({
+export function ImageGenerationSettingsForm({
   onChanged,
   onDirtyChange,
 }: {
@@ -27,7 +27,7 @@ export function DocumentModelSettingsForm({
     setLoading(true)
     setError('')
     try {
-      const result = await api<DocumentModelSettings>('/api/settings/document')
+      const result = await api<ImageGenerationSettings>('/api/settings/image-generation')
       setValues({ ...result, key: '' })
       setDirty(false)
       onDirtyChange?.(false)
@@ -43,7 +43,7 @@ export function DocumentModelSettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const update = (field: 'model' | 'url' | 'key', value: string) => {
+  const update = (field: 'model' | 'url' | 'key' | 'resolution' | 'quality', value: string) => {
     setValues(previous => previous ? { ...previous, [field]: value } : previous)
     setDirty(true)
     onDirtyChange?.(true)
@@ -55,12 +55,14 @@ export function DocumentModelSettingsForm({
     setSaving(true)
     setError('')
     try {
-      const result = await api<DocumentModelSettings>('/api/settings/document', {
+      const result = await api<ImageGenerationSettings>('/api/settings/image-generation', {
         method: 'PUT',
         body: JSON.stringify({
           model: values.model.trim(),
           url: values.url.trim(),
           key: values.key,
+          resolution: values.resolution,
+          quality: values.quality,
         }),
       })
       setValues({ ...result, key: '' })
@@ -84,7 +86,7 @@ export function DocumentModelSettingsForm({
       <section className="model-tier">
         <div className="model-tier-heading">
           <div>
-            <h3>{t('documentModel.title')}</h3>
+            <h3>{t('imageModel.title')}</h3>
             <div className="tier-status">
               <StatusDot ready={ready} />
               {values.key_configured ? t('settings.keyConfigured') : t('settings.keyPending')} · {values.url ? t('settings.urlReady') : t('settings.urlPending')}
@@ -94,7 +96,7 @@ export function DocumentModelSettingsForm({
               <span>{t('settings.keyLabel')} · {t(values.source === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv')}</span>
             </div>
           </div>
-          <span className="tier-default">{t('documentModel.defaultModel')}</span>
+          <span className="tier-default">{t('imageModel.defaultModel')}</span>
         </div>
         <div className="model-tier-grid">
           <label>
@@ -103,6 +105,7 @@ export function DocumentModelSettingsForm({
               value={values.model}
               required
               maxLength={200}
+              placeholder={t('imageModel.modelPlaceholder')}
               onChange={event => update('model', event.target.value)}
             />
           </label>
@@ -113,7 +116,7 @@ export function DocumentModelSettingsForm({
               value={values.url}
               required
               maxLength={500}
-              placeholder="http://127.0.0.1:3000/v1"
+              placeholder={t('imageModel.urlPlaceholder')}
               onChange={event => update('url', event.target.value)}
             />
           </label>
@@ -128,19 +131,41 @@ export function DocumentModelSettingsForm({
               onChange={event => update('key', event.target.value)}
             />
           </label>
+          <label>
+            {t('imageModel.resolution')}
+            <select
+              value={values.resolution}
+              onChange={event => update('resolution', event.target.value as ImageGenerationResolution)}
+            >
+              <option value="1k">{t('imageModel.resolution1k')}</option>
+              <option value="2k">{t('imageModel.resolution2k')}</option>
+              <option value="4k">{t('imageModel.resolution4k')}</option>
+            </select>
+          </label>
+          <label>
+            {t('imageModel.quality')}
+            <select
+              value={values.quality}
+              onChange={event => update('quality', event.target.value as ImageGenerationQuality)}
+            >
+              <option value="low">{t('imageModel.qualityLow')}</option>
+              <option value="medium">{t('imageModel.qualityMedium')}</option>
+              <option value="high">{t('imageModel.qualityHigh')}</option>
+            </select>
+          </label>
         </div>
         <p className="settings-note">
-          <FileText size={16} />
-          <span>{t('documentModel.description')}</span>
+          <ImagePlus size={16} />
+          <span>{t('imageModel.costNote')}</span>
         </p>
         <p className="settings-note">
           <ShieldCheck size={16} />
-          <span>{t('settings.securityNote')}</span>
+          <span>{t('imageModel.description')}</span>
         </p>
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
-        <ModelTestButton kind="document" fields={{ model: values.model, url: values.url, key: values.key }} />
+        <ModelTestButton kind="image" fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

@@ -3,12 +3,14 @@ import { Modal, ConfirmDialog } from './ui'
 import { GeneralSettingsForm } from './GeneralSettingsForm'
 import { CodeModelSettingsForm } from './CodeModelSettingsForm'
 import { DocumentModelSettingsForm } from './DocumentModelSettingsForm'
+import { VisionModelSettingsForm } from './VisionModelSettingsForm'
+import { ImageGenerationSettingsForm } from './ImageGenerationSettingsForm'
 import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
 import { VoiceSettingsForm } from './VoiceSettingsForm'
 import { useTranslation, type TranslationKey } from '../i18n'
 
 type SettingsTab = 'general' | 'models'
-type ModelSubTab = 'code' | 'document' | 'embedding' | 'voice'
+type ModelSubTab = 'code' | 'document' | 'vision' | 'image' | 'embedding' | 'voice'
 type PendingSwitch = { kind: 'tab' | 'subtab'; value: string } | null
 
 const TABS: Array<{ id: SettingsTab; labelKey: TranslationKey }> = [
@@ -19,6 +21,8 @@ const TABS: Array<{ id: SettingsTab; labelKey: TranslationKey }> = [
 const MODEL_TABS: Array<{ id: ModelSubTab; labelKey: TranslationKey }> = [
   { id: 'code', labelKey: 'settings.codeModelsTab' },
   { id: 'document', labelKey: 'settings.documentTab' },
+  { id: 'vision', labelKey: 'settings.visionTab' },
+  { id: 'image', labelKey: 'settings.imageTab' },
   { id: 'embedding', labelKey: 'settings.embeddingTab' },
   { id: 'voice', labelKey: 'settings.voiceTab' },
 ]
@@ -143,9 +147,13 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
       ? t('settings.codeModelsDescription')
       : subTab === 'document'
         ? t('settings.documentDescription')
-        : subTab === 'embedding'
-          ? t('settings.embeddingDescription')
-          : t('settings.voiceDescription')
+        : subTab === 'vision'
+          ? t('settings.visionDescription')
+          : subTab === 'image'
+            ? t('settings.imageDescription')
+            : subTab === 'embedding'
+              ? t('settings.embeddingDescription')
+              : t('settings.voiceDescription')
 
   return (
     <>
@@ -162,7 +170,7 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           ariaLabel={t('settings.title')}
         />
         {tab === 'general' ? (
-          <GeneralSettingsForm onChanged={() => setDirty(false)} />
+          <GeneralSettingsForm onChanged={() => setDirty(false)} onDirtyChange={setDirty} />
         ) : (
           <>
             <SettingsSlidingNav
@@ -180,6 +188,16 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
               />
             ) : subTab === 'document' ? (
               <DocumentModelSettingsForm
+                onChanged={() => setDirty(false)}
+                onDirtyChange={setDirty}
+              />
+            ) : subTab === 'vision' ? (
+              <VisionModelSettingsForm
+                onChanged={() => setDirty(false)}
+                onDirtyChange={setDirty}
+              />
+            ) : subTab === 'image' ? (
+              <ImageGenerationSettingsForm
                 onChanged={() => setDirty(false)}
                 onDirtyChange={setDirty}
               />

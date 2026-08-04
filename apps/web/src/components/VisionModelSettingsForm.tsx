@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { FileText, Save, ShieldCheck } from 'lucide-react'
+import { Eye, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
-import type { DocumentModelSettings } from '../types'
+import type { VisionModelSettings } from '../types'
 import { ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
-interface FormValues extends DocumentModelSettings {
+interface FormValues extends VisionModelSettings {
   key: string
 }
 
-export function DocumentModelSettingsForm({
+export function VisionModelSettingsForm({
   onChanged,
   onDirtyChange,
 }: {
@@ -27,7 +27,7 @@ export function DocumentModelSettingsForm({
     setLoading(true)
     setError('')
     try {
-      const result = await api<DocumentModelSettings>('/api/settings/document')
+      const result = await api<VisionModelSettings>('/api/settings/vision')
       setValues({ ...result, key: '' })
       setDirty(false)
       onDirtyChange?.(false)
@@ -55,7 +55,7 @@ export function DocumentModelSettingsForm({
     setSaving(true)
     setError('')
     try {
-      const result = await api<DocumentModelSettings>('/api/settings/document', {
+      const result = await api<VisionModelSettings>('/api/settings/vision', {
         method: 'PUT',
         body: JSON.stringify({
           model: values.model.trim(),
@@ -84,7 +84,7 @@ export function DocumentModelSettingsForm({
       <section className="model-tier">
         <div className="model-tier-heading">
           <div>
-            <h3>{t('documentModel.title')}</h3>
+            <h3>{t('visionModel.title')}</h3>
             <div className="tier-status">
               <StatusDot ready={ready} />
               {values.key_configured ? t('settings.keyConfigured') : t('settings.keyPending')} · {values.url ? t('settings.urlReady') : t('settings.urlPending')}
@@ -94,7 +94,7 @@ export function DocumentModelSettingsForm({
               <span>{t('settings.keyLabel')} · {t(values.source === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv')}</span>
             </div>
           </div>
-          <span className="tier-default">{t('documentModel.defaultModel')}</span>
+          <span className="tier-default">{t('visionModel.defaultModel')}</span>
         </div>
         <div className="model-tier-grid">
           <label>
@@ -103,6 +103,7 @@ export function DocumentModelSettingsForm({
               value={values.model}
               required
               maxLength={200}
+              placeholder={t('visionModel.modelPlaceholder')}
               onChange={event => update('model', event.target.value)}
             />
           </label>
@@ -113,7 +114,7 @@ export function DocumentModelSettingsForm({
               value={values.url}
               required
               maxLength={500}
-              placeholder="http://127.0.0.1:3000/v1"
+              placeholder={t('visionModel.urlPlaceholder')}
               onChange={event => update('url', event.target.value)}
             />
           </label>
@@ -130,8 +131,8 @@ export function DocumentModelSettingsForm({
           </label>
         </div>
         <p className="settings-note">
-          <FileText size={16} />
-          <span>{t('documentModel.description')}</span>
+          <Eye size={16} />
+          <span>{t('visionModel.description')}</span>
         </p>
         <p className="settings-note">
           <ShieldCheck size={16} />
@@ -140,7 +141,7 @@ export function DocumentModelSettingsForm({
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
-        <ModelTestButton kind="document" fields={{ model: values.model, url: values.url, key: values.key }} />
+        <ModelTestButton kind="vision" fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

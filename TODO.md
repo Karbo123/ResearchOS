@@ -260,6 +260,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 #### 4.1.2 多语言、主题与 404 页面（旧）
 
+- [x] `P0-SETTINGS-112` 左下角模型设置新增“图片识别 / 图片生成”两个用途页签，并为每个已配置模型（代码三档、文档文本、图片识别、图片生成、语音识别）提供“测试连接”按钮。图片识别默认 `mimo-v2.5` + `http://10.31.107.77:3000/v1`，聊天/Idea 讨论带图片附件时优先使用该模型；图片生成默认 `gpt-image-2-official` + `https://api.apimart.ai/v1`，支持 1k/2k/4k 与 low/medium/high，默认 1k/low/n=1。测试按钮只发送最小请求验证连通性，图片生成测试提交一个最省钱的真实任务但不下载不展示。通用页的语言与主题改为草稿状态，点击“保存配置”后才生效。密钥只写入 `runtime/model-settings.json`，读取接口只返回 `key_configured`。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：真实浏览器打开设置面板，六个模型二级页签（代码模型、文档文本、图片识别、图片生成、Embedding、语音识别）均存在且无横向溢出；图片识别/图片生成页签渲染对应标题、字段与“测试连接”按钮，图片生成分辨率/质量下拉正常，桌面 1440 无溢出。通用页语言/主题改为保存后生效：真实浏览器点击暗色后主题仍为浅色，点击“保存配置”后变为暗色。服务端 `/api/settings/vision`、`/api/settings/image-generation`、`/api/settings/model-test` 已验证；`model-test` 对本地文档模型真实返回成功，图片生成/视觉目标在当前开发网络不可达时返回结构化错误而非静默成功。服务端 173 项测试、Web/server/Mastra 类型检查与构建、UI/i18n、docs、navigation、language-boundary 均通过；README/README.zh-CN/AGENTS/.env.example 已同步。
 - [x] `P0-SETTINGS-106` 重新设计左下角配置面板为“通用 / 模型”两级入口：模型页内使用第二级标签栏（代码模型、文档文本、Embedding、语音识别）；代码模型只使用“轻量级/通用/最强大”三个通用档位，不再显示 Luna/Terra/Sol 品牌名；新增文档文本模型（默认 `deepseek-v4-flash`、`http://127.0.0.1:3000/v1`），并接入聊天中的解释性回复链路；全局代理关闭时不显示 URL 输入框，开启时与开关同一行展示输入框。界面、API 与代理交互已完成浏览器与测试验收；默认文档模型在本机网关的 403 可用性问题单独登记为 `DOC-MODEL-107`。 [Apple 设计验收]
 - [x] `P0-SETTINGS-105` 重新设计左下角配置面板：按“通用 / 模型 / 语音 / Embedding”分组，把主题、语言、全局代理归入通用设置；语音识别支持任意 OpenAI 兼容接口 URL，不再只面向 Groq；修复 Groq/兼容 API 录音转写返回空文本的问题。已完成 Web 类型检查与构建、145 项服务端测试、docs 与语言边界检查，并在 Windows Chrome 中验证四栏布局、通用语言/主题/代理、语音 API 模式与代理从模型页移除。 [Apple 设计验收]
 - [x] `P0-VOICE-KEY-104` Groq 语音识别支持在界面配置 API key：默认读取 `.env` 的 `GROQ_API_KEY`，留空保留现有 key，读取接口只返回 `key_configured`，运行时 key 以 0600 权限写入 `runtime/voice-settings.json`。已通过 Web 类型检查与构建、UI/i18n、docs 检查和完整服务端测试（142 项）。 [Apple 设计验收]

@@ -9,14 +9,16 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, modelSettingsRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest,
+  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
+  visionModelSettingsRequest,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
-import { privateModelSettings, publicDocumentSettings, publicModelSettings, publicProxySettings, saveDocumentSettings, saveModelSettings, saveProxySettings } from './model-settings.js'
+import { privateModelSettings, publicDocumentSettings, publicImageGenerationSettings, publicModelSettings, publicProxySettings, publicVisionSettings, saveDocumentSettings, saveImageGenerationSettings, saveModelSettings, saveProxySettings, saveVisionSettings } from './model-settings.js'
+import { testModelConnection } from './model-test.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeVoice } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
@@ -189,6 +191,20 @@ app.get('/api/settings/document', context => context.json(publicDocumentSettings
 app.put('/api/settings/document', async context => {
   const body = await jsonBody(context, documentModelSettingsRequest)
   return context.json(saveDocumentSettings(body))
+})
+app.get('/api/settings/vision', context => context.json(publicVisionSettings()))
+app.put('/api/settings/vision', async context => {
+  const body = await jsonBody(context, visionModelSettingsRequest)
+  return context.json(saveVisionSettings(body))
+})
+app.get('/api/settings/image-generation', context => context.json(publicImageGenerationSettings()))
+app.put('/api/settings/image-generation', async context => {
+  const body = await jsonBody(context, imageGenerationSettingsRequest)
+  return context.json(saveImageGenerationSettings(body))
+})
+app.post('/api/settings/model-test', async context => {
+  const body = await jsonBody(context, modelTestRequest)
+  return context.json(await testModelConnection(body.kind, body))
 })
 app.get('/api/settings/proxy', context => context.json(publicProxySettings()))
 app.put('/api/settings/proxy', async context => {

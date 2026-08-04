@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const modelTierSchema = z.enum(['simple', 'medium', 'complex', 'document'])
+export const modelTierSchema = z.enum(['simple', 'medium', 'complex', 'document', 'vision'])
 export type ModelTier = z.infer<typeof modelTierSchema>
 export const reasoningEffortSchema = z.enum(['low', 'medium', 'high'])
 

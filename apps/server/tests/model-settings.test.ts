@@ -98,4 +98,53 @@ describe('public model settings', () => {
     })
     expect(privateModelSettings().document.key).toBe('document-key')
   })
+
+  it('persists the vision model settings without returning the key', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-vision-settings-${process.pid}`)
+    vi.resetModules()
+    const { privateModelSettings, publicVisionSettings, saveVisionSettings } = await import('../src/model-settings.js')
+    const saved = saveVisionSettings({
+      model: 'mimo-v2.5',
+      url: 'http://10.31.107.77:3000/v1',
+      key: 'vision-key',
+    })
+    expect(saved).toMatchObject({
+      model: 'mimo-v2.5',
+      url: 'http://10.31.107.77:3000/v1',
+      key_configured: true,
+    })
+    expect(publicVisionSettings()).not.toHaveProperty('key')
+    expect(privateModelSettings().vision.key).toBe('vision-key')
+  })
+
+  it('persists image generation settings and keeps a blank key unchanged', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-image-settings-${process.pid}`)
+    vi.resetModules()
+    const { privateModelSettings, publicImageGenerationSettings, saveImageGenerationSettings } = await import('../src/model-settings.js')
+    const saved = saveImageGenerationSettings({
+      model: 'gpt-image-2-official',
+      url: 'https://api.apimart.ai/v1',
+      key: 'image-key',
+      resolution: '1k',
+      quality: 'low',
+    })
+    expect(saved).toMatchObject({
+      model: 'gpt-image-2-official',
+      url: 'https://api.apimart.ai/v1',
+      key_configured: true,
+      resolution: '1k',
+      quality: 'low',
+    })
+    expect(publicImageGenerationSettings()).not.toHaveProperty('key')
+    expect(privateModelSettings().image_generation.key).toBe('image-key')
+
+    saveImageGenerationSettings({
+      model: 'gpt-image-2-official',
+      url: 'https://api.apimart.ai/v1',
+      key: '',
+      resolution: '2k',
+      quality: 'medium',
+    })
+    expect(privateModelSettings().image_generation).toMatchObject({ key: 'image-key', resolution: '2k', quality: 'medium' })
+  })
 })

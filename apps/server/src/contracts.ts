@@ -78,6 +78,25 @@ export const documentModelSettings = z.object({
   key: z.string().max(1000),
 }).strict()
 export const documentModelSettingsRequest = documentModelSettings
+export const visionModelSettings = z.object({
+  model: z.string().trim().min(1).max(200),
+  url: z.string().url().max(500)
+    .refine(isAllowedModelUrl, 'vision model URL must use HTTPS or loopback/private HTTP')
+    .refine(isResponsesBaseUrl, 'vision model URL must be a Responses API base URL, not an operation endpoint'),
+  key: z.string().max(1000),
+}).strict()
+export const visionModelSettingsRequest = visionModelSettings
+export const imageGenerationResolution = z.enum(['1k', '2k', '4k'])
+export const imageGenerationQuality = z.enum(['low', 'medium', 'high'])
+export const imageGenerationSettings = z.object({
+  model: z.string().trim().min(1).max(200),
+  url: z.string().url().max(500)
+    .refine(isAllowedModelUrl, 'image generation URL must use HTTPS or loopback/private HTTP'),
+  key: z.string().max(1000),
+  resolution: imageGenerationResolution.default('1k'),
+  quality: imageGenerationQuality.default('low'),
+}).strict()
+export const imageGenerationSettingsRequest = imageGenerationSettings
 export const proxySettings = z.object({
   enabled: z.boolean(),
   url: z.string().trim().max(500),
@@ -88,6 +107,14 @@ export const modelSettingsRequest = z.object({
   medium: modelTierSettings,
   complex: modelTierSettings,
   proxy: proxySettings.optional(),
+}).strict()
+export const modelTestKind = z.enum(['simple', 'medium', 'complex', 'document', 'vision', 'image', 'voice'])
+export type ModelTestKind = z.infer<typeof modelTestKind>
+export const modelTestRequest = z.object({
+  kind: modelTestKind,
+  model: z.string().trim().max(200).default(''),
+  url: z.string().trim().max(500).default(''),
+  key: z.string().max(1000).default(''),
 }).strict()
 
 export const voiceProvider = z.enum(['browser', 'api', 'groq'])
