@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  History,
   Pin,
   RefreshCw,
   Settings,
@@ -157,6 +158,7 @@ export function HomeSidebar({
                   <span className="home-sidebar-project-title">{project.title}</span>
                   {openedAtById.has(project.id) ? (
                     <span className="home-sidebar-project-meta">
+                      <History size={11} className="home-sidebar-project-clock" aria-hidden="true" />
                       {formatOpenedAt(openedAtById.get(project.id) ?? 0, locale)}
                     </span>
                   ) : null}

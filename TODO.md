@@ -300,6 +300,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-05）：`researchos.recentProjects` 升级为 `{ id, openedAt }` 记录，旧字符串记录自动迁移；首页侧栏最近项目在标题下方显示本地化访问时间（如 `8月5日 14:30` / `Aug 5, 14:30`）。四个统计卡分别使用项目文件夹、实验烧瓶、审批清单、论文文件的语义图标，配色使用系统蓝/绿/琥珀/靛蓝语义变量，浅色与暗色主题均适配。真实 Chrome CDP 检查桌面 1440 与移动 390：`.home-sidebar-project-meta` 与 4 个 `.home-summary-icon` 均渲染，明暗主题无横向溢出。`npm run typecheck`、Web 构建、`ui:check`、`language-boundary:check` 全部通过。
 
+- [x] `P0-UI-118` 按视觉模型反馈重构首页最近项目时间展示：从“纯文本贴上去”改为轻量磨砂卡片 + 小历史图标 + 次级元数据行，拉开标题与时间的字重/间距，提高暗色对比度，并强化悬浮与键盘焦点反馈。 [Apple 设计验收]
+
+> 验收记录（2026-08-05）：先用配置的 `mimo-v2.5` 视觉模型检查旧版截图，反馈为“时间像纯文本贴上去、行高过紧、暗色对比不足、缺容器感”，并建议轻量卡片/三段式布局。已按建议实现：每项改为 50px 轻量磨砂卡片，标题加粗，时间改为“历史图标 + 次级文字”两行元数据，悬浮/焦点使用半透明玻璃、蓝色边框与柔和阴影。视觉模型复查浅色/暗色特写后确认层级、暗色对比、长标题截断均明显改善，综合评分 4–5/5，未发现廉价或突兀之处；其“右侧放时间提高密度”的微调作为可选优化保留。真实 Chrome CDP 检查桌面 1440 无横向溢出；`typecheck`、Web 构建、`ui:check` 通过。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。

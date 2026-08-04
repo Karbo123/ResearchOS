@@ -19725,22 +19725,30 @@
   ];
   var RefreshCw = createLucideIcon("refresh-cw", __iconNode55);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
   var __iconNode56 = [
+    ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+    ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
+    ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
+  ];
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode56);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
+  var __iconNode57 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode56);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-cw.mjs
-  var __iconNode57 = [
+  var __iconNode58 = [
     ["path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8", key: "1p45f6" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }]
   ];
-  var RotateCw = createLucideIcon("rotate-cw", __iconNode57);
+  var RotateCw = createLucideIcon("rotate-cw", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode58 = [
+  var __iconNode59 = [
     [
       "path",
       {
@@ -19751,10 +19759,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode58);
+  var Save = createLucideIcon("save", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode59 = [
+  var __iconNode60 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -19763,10 +19771,10 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode59);
+  var ScanText = createLucideIcon("scan-text", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scroll-text.mjs
-  var __iconNode60 = [
+  var __iconNode61 = [
     ["path", { d: "M15 12h-5", key: "r7krc0" }],
     ["path", { d: "M15 8h-5", key: "1khuty" }],
     ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -19778,17 +19786,17 @@
       }
     ]
   ];
-  var ScrollText = createLucideIcon("scroll-text", __iconNode60);
+  var ScrollText = createLucideIcon("scroll-text", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode61 = [
+  var __iconNode62 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode61);
+  var Search = createLucideIcon("search", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode62 = [
+  var __iconNode63 = [
     [
       "path",
       {
@@ -19798,10 +19806,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode62);
+  var Send = createLucideIcon("send", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode63 = [
+  var __iconNode64 = [
     [
       "path",
       {
@@ -19811,20 +19819,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode63);
+  var Settings = createLucideIcon("settings", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode64 = [
+  var __iconNode65 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode64);
+  var Share2 = createLucideIcon("share-2", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode65 = [
+  var __iconNode66 = [
     [
       "path",
       {
@@ -19835,10 +19843,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode65);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode66 = [
+  var __iconNode67 = [
     [
       "path",
       {
@@ -19848,10 +19856,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode66);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode67);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode67 = [
+  var __iconNode68 = [
     [
       "path",
       {
@@ -19863,36 +19871,36 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode67);
+  var Sparkles = createLucideIcon("sparkles", __iconNode68);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode68 = [
+  var __iconNode69 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode68);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode69);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode69 = [
+  var __iconNode70 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode69);
+  var Square = createLucideIcon("square", __iconNode70);
 
   // ../../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode70 = [
+  var __iconNode71 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode70);
+  var Trash2 = createLucideIcon("trash-2", __iconNode71);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode71 = [
+  var __iconNode72 = [
     [
       "path",
       {
@@ -19903,10 +19911,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode71);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode72);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode72 = [
+  var __iconNode73 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -19915,25 +19923,25 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode72);
+  var Waypoints = createLucideIcon("waypoints", __iconNode73);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode73 = [
+  var __iconNode74 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode73);
+  var Workflow = createLucideIcon("workflow", __iconNode74);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode74 = [
+  var __iconNode75 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode74);
+  var X = createLucideIcon("x", __iconNode75);
 
   // ../../node_modules/lucide-react/dist/esm/icons/zap.mjs
-  var __iconNode75 = [
+  var __iconNode76 = [
     [
       "path",
       {
@@ -19942,7 +19950,7 @@
       }
     ]
   ];
-  var Zap = createLucideIcon("zap", __iconNode75);
+  var Zap = createLucideIcon("zap", __iconNode76);
 
   // src/components/HomeSidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -20070,7 +20078,10 @@
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "home-sidebar-project-main", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-project-title", children: project.title }),
-                openedAtById.has(project.id) ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-project-meta", children: formatOpenedAt(openedAtById.get(project.id) ?? 0, locale) }) : null
+                openedAtById.has(project.id) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "home-sidebar-project-meta", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RotateCcwClock, { size: 11, className: "home-sidebar-project-clock", "aria-hidden": "true" }),
+                  formatOpenedAt(openedAtById.get(project.id) ?? 0, locale)
+                ] }) : null
               ] }),
               project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { size: 11, className: "home-sidebar-project-pin", "aria-hidden": "true" }) : null
             ]
@@ -29791,6 +29802,7 @@ lucide-react/dist/esm/icons/play.mjs:
 lucide-react/dist/esm/icons/plus.mjs:
 lucide-react/dist/esm/icons/quote.mjs:
 lucide-react/dist/esm/icons/refresh-cw.mjs:
+lucide-react/dist/esm/icons/rotate-ccw-clock.mjs:
 lucide-react/dist/esm/icons/rotate-ccw.mjs:
 lucide-react/dist/esm/icons/rotate-cw.mjs:
 lucide-react/dist/esm/icons/save.mjs:
