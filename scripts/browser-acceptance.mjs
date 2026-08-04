@@ -775,6 +775,70 @@ const seedExpansion = await evaluate(`(async () => {
 })()`)
 await capture('108h-seed-expansion-attempts.png')
 
+const comparisonUrl = `${appBase}/project/${projectSlug}/implementation/reproduction`
+await navigate(comparisonUrl, 'en', 'light')
+await wait(1200)
+const comparison = await evaluate(`(async () => {
+  const scope = document.querySelector('.comparison-scope')
+  const form = document.querySelector('.comparison-form-panel')
+  const results = document.querySelector('.comparison-results')
+  const cards = Array.from(document.querySelectorAll('.comparison-card'))
+  const metricsRows = Array.from(document.querySelectorAll('.comparison-metrics tbody tr'))
+  const candidateRows = Array.from(document.querySelectorAll('.comparison-candidates .data-row'))
+  const pendingRow = candidateRows.find(row => row.querySelector('.button-row button'))
+  const firstCandidateButtons = pendingRow?.querySelectorAll('.button-row button') || []
+  const scopeText = scope?.textContent || ''
+  return {
+    panelVisible: !!scope && !!form && !!results,
+    scopeText,
+    hasCounts: /papers:/i.test(scopeText) && /artifacts:/i.test(scopeText) && /comparisons:/i.test(scopeText),
+    cardCount: cards.length,
+    metricsTable: metricsRows.length > 0 && metricsRows[0]?.textContent?.includes('accuracy'),
+    candidateRows: candidateRows.length,
+    candidateActions: Array.from(firstCandidateButtons).map(button => button.textContent?.trim() || null),
+    hasBlockingWarning: Array.from(document.querySelectorAll('.comparison-card .inline-warning')).some(node => node.textContent?.trim()),
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-comparison.png')
+if (!comparison.panelVisible || !comparison.hasCounts || comparison.cardCount < 1 || !comparison.metricsTable || comparison.candidateRows < 1 || !comparison.candidateActions.some(action => /Keep|Reject/i.test(action || '')) || comparison.overflowX) {
+  throw new Error(`Comparison workspace fixture did not render: ${JSON.stringify(comparison)}`)
+}
+
+const keepClicked = await evaluate(`(() => {
+  const row = Array.from(document.querySelectorAll('.comparison-candidates .data-row')).find(candidate => candidate.querySelector('.button-row button'))
+  const button = row?.querySelector('.button-row button')
+  if (!button || button.disabled) return false
+  button.click()
+  return true
+})()`)
+if (keepClicked) {
+  await wait(2600)
+  comparison.afterKeep = await evaluate(`(() => {
+    const cards = Array.from(document.querySelectorAll('.comparison-card'))
+    const acceptedBadges = Array.from(document.querySelectorAll('.comparison-candidates .badge')).filter(badge => /accepted|retained|kept/i.test(badge.textContent || ''))
+    const pendingKeep = Array.from(document.querySelectorAll('.comparison-candidates .button-row button')).filter(button => /keep/i.test(button.textContent || ''))
+    return { cardCount: cards.length, acceptedBadges: acceptedBadges.length, pendingKeep: pendingKeep.length }
+  })()`)
+  if (!comparison.afterKeep.acceptedBadges) throw new Error(`Comparison candidate decision did not persist: ${JSON.stringify(comparison.afterKeep)}`)
+}
+
+await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
+await navigate(comparisonUrl, 'en', 'light')
+await wait(1200)
+comparison.mobile = await evaluate(`(() => ({
+  panelVisible: !!document.querySelector('.comparison-results'),
+  cardCount: document.querySelectorAll('.comparison-card').length,
+  overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  scrollWidth: document.documentElement.scrollWidth,
+  innerWidth: window.innerWidth,
+}))()`)
+await capture('108h-comparison-mobile.png')
+if (!comparison.mobile.panelVisible || comparison.mobile.cardCount < 1 || comparison.mobile.overflowX) {
+  throw new Error(`Comparison mobile layout failed: ${JSON.stringify(comparison.mobile)}`)
+}
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+
 await navigate(homeUrl, 'en', 'light')
 const sidebarResize = await evaluate(`(() => {
   const resizer = document.querySelector('.sidebar-resizer')
@@ -833,5 +897,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
 socket.close()

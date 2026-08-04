@@ -20,6 +20,7 @@ import type { Artifact, Experiment, ProjectDetail, ProjectWorkspaceDetail, Repro
 import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from '../ui'
 import { ArtifactCard } from '../previews'
 import { useTranslation } from '../../i18n'
+import { ComparisonTab } from './ComparisonTab'
 
 export type ExperimentWorkspaceMode = 'method' | 'reproduction'
 
@@ -609,6 +610,12 @@ export function ExperimentWorkspace({
                   <div className="data-list">
                     <div className="data-row"><div><h3>{t('lineage.hint')}</h3><p>{t('workspace.lineageCount', { count: artifacts.length })}</p></div><Badge status={artifacts.length ? 'valid' : 'empty'} /></div>
                   </div>
+                </DetailSection>
+              ) : null}
+
+              {mode === 'reproduction' ? (
+                <DetailSection title={t('comparison.title')}>
+                  <ComparisonTab project={project} onRefresh={onRefresh} showToast={showToast} />
                 </DetailSection>
               ) : null}
             </>
