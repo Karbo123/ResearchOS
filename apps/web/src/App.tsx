@@ -9,6 +9,7 @@ import type {
   TabId,
 } from './types'
 import { Sidebar } from './components/Sidebar'
+import { HomeSidebar } from './components/HomeSidebar'
 import { Topbar } from './components/Topbar'
 import { HomeDashboard } from './components/HomeDashboard'
 import { ProjectView } from './components/ProjectView'
@@ -23,6 +24,25 @@ import { useTranslation } from './i18n'
 
 function nextMessageId() {
   return `m-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+const RECENT_PROJECTS_KEY = 'researchos.recentProjects'
+
+function readRecentProjectIds(): string[] {
+  try {
+    const value = JSON.parse(window.localStorage.getItem(RECENT_PROJECTS_KEY) || '[]')
+    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function recordRecentProject(id: string) {
+  const recent = readRecentProjectIds().filter(recentId => recentId !== id)
+  recent.unshift(id)
+  const next = recent.slice(0, 12)
+  window.localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(next))
+  return next
 }
 
 export function App() {
@@ -49,6 +69,7 @@ export function App() {
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [projectDrawerOpen, setProjectDrawerOpen] = useState(false)
   const [projectRefreshing, setProjectRefreshing] = useState(false)
+  const [recentProjectIds, setRecentProjectIds] = useState<string[]>(() => readRecentProjectIds())
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const stored = Number(window.localStorage.getItem('researchos.sidebarWidth'))
     return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276
@@ -131,6 +152,7 @@ export function App() {
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
       setProjectDrawerOpen(false)
+      setRecentProjectIds(recordRecentProject(detail.id))
       if (!options?.preserveTab) {
         setActiveArea('overview')
         setActiveTab('overview')
@@ -386,19 +408,13 @@ export function App() {
           onSidebarWidthChange={updateSidebarWidth}
         />
       ) : (
-        <Sidebar
+        <HomeSidebar
           projects={projects}
-          activeProjectId={projectId}
-          onNewProject={() => goHome()}
+          health={health}
+          recentProjectIds={recentProjectIds}
           onOpenProject={id => void openProject(id)}
-          onOpenMemory={() => {
-            if (!projectId) showToast(t('app.openProjectFirst'))
-            else setMemoryOpen(true)
-          }}
+          onOpenMemory={() => setMemoryOpen(true)}
           onOpenSettings={() => setSettingsOpen(true)}
-          onDeleteProject={requestDeleteProject}
-          onPinProject={project => void pinProject(project)}
-          onReorderProjects={reorderProjects}
           sidebarWidth={sidebarWidth}
           onSidebarWidthChange={updateSidebarWidth}
         />
