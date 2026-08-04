@@ -2811,6 +2811,11 @@ a.secondary { text-decoration: none; color: var(--ink); }
 }
 
 @media (max-width: 760px) {
+  .project-drawer-shell .home-sidebar {
+    background: var(--surface-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
   .project-drawer-shell .home-sidebar-section,
   .project-drawer-shell .home-sidebar-system-row {
     display: flex;
