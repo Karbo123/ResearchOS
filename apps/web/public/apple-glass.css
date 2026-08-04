@@ -479,6 +479,9 @@ button { -webkit-font-smoothing: inherit; }
   -webkit-backdrop-filter: blur(34px) saturate(180%);
 }
 .home-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   min-height: 0;
   margin-top: 18px;
 }
@@ -493,9 +496,12 @@ button { -webkit-font-smoothing: inherit; }
 .home-sidebar-quick-list {
   display: grid;
   gap: 8px;
-  max-height: min(62vh, 420px);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0 2px 0 0;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
 }

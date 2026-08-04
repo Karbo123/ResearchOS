@@ -312,6 +312,8 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 修订记录（2026-08-05）：用户确认“最近项目”时间应为“最后一次离开项目”的时间，而不是打开时间。已将 localStorage 字段从 `openedAt` 迁移为 `lastSeenAt`（旧数据自动兼容）；返回首页、从当前项目切换到另一个项目、浏览器 `pagehide/beforeunload` 关闭页面时都会写入离开时刻；仅刷新项目或切换项目内标签不会更新时间。静态资源版本升至 `20260805-ui138`；`typecheck`、Web 构建、`ui:check` 全部通过。
 
+> 修订记录（2026-08-05）：用户指出首页侧栏“最近项目”高度被 `max-height: min(62vh, 420px)` 固定，不够自然。已改为 `.home-sidebar-section` 与 `.home-sidebar-quick-list` 使用 `flex: 1 1 auto; min-height: 0`，列表占满侧栏剩余空间，项目多时在可用区域内滚动，系统状态行保持底部。静态资源版本升至 `20260805-ui139`；CDP 实测 1440×900 下列表高度由约 420px 上限扩为约 696px，浅/暗主题无横向溢出，Web 构建与 `ui:check` 通过。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。
