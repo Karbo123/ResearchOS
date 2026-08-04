@@ -2374,63 +2374,57 @@ a.secondary { text-decoration: none; color: var(--ink); }
   position: absolute;
   z-index: 60;
   top: 50%;
-  left: 6px;
+  left: 4px;
   display: grid;
   place-items: center;
-  width: 24px;
-  min-width: 24px;
-  height: 58px;
-  min-height: 58px;
+  width: 16px;
+  min-width: 16px;
+  height: 84px;
+  min-height: 84px;
   padding: 0;
-  border: 1px solid rgba(0, 122, 255, .26);
+  border: 0;
   border-radius: 999px;
-  background: var(--surface-2);
+  background: transparent;
   color: var(--blue);
-  box-shadow: 0 6px 18px rgba(0, 122, 255, .12), inset 0 1px 0 var(--glass-highlight);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: none;
   pointer-events: auto;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transform: translateY(-50%);
-  transition: left .52s var(--spring), color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
+  transition: left .52s var(--spring), color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
 }
 .project-drawer-toggle::before {
   content: '';
   position: absolute;
-  top: 24%;
-  bottom: 24%;
+  top: 18%;
+  bottom: 18%;
   left: 50%;
   width: 2px;
   border-radius: 999px;
-  background: var(--blue);
-  box-shadow: 0 0 0 4px var(--blue-soft);
+  background: rgba(0, 122, 255, .46);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, .07);
   transform: translateX(-50%);
   transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring);
 }
 .project-drawer-toggle:hover {
   color: var(--blue-dark);
-  background: var(--surface-elevated);
-  border-color: rgba(0, 122, 255, .38);
-  box-shadow: 0 9px 24px rgba(0, 122, 255, .18), inset 0 1px 0 var(--glass-highlight);
 }
 .project-drawer-toggle:hover::before,
 .project-drawer-toggle:focus-visible::before {
   background: var(--blue-dark);
   box-shadow: 0 0 0 6px var(--blue-soft);
-  transform: translateX(-50%) scaleY(1.08);
+  transform: translateX(-50%) scaleY(1.06);
 }
 .project-drawer-toggle:focus-visible {
   outline: none;
   color: var(--blue-dark);
-  border-color: rgba(0, 122, 255, .5);
-  box-shadow: 0 0 0 3px var(--blue-soft), 0 8px 22px rgba(0, 122, 255, .2), inset 0 1px 0 var(--glass-highlight);
+  box-shadow: 0 0 0 3px var(--blue-soft);
 }
 .project-drawer-toggle:focus-visible .project-drawer-arrow {
   filter: drop-shadow(0 0 6px rgba(0, 122, 255, .55));
 }
 .project-drawer-toggle:active {
-  transform: translateY(-50%) scale(.92);
+  transform: translateY(-50%) scale(.94);
 }
 .project-drawer-arrow {
   display: grid;
@@ -2453,7 +2447,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   transform: translateX(-2.5px) rotate(180deg) scale(.9);
 }
 .project-drawer-region.open .project-drawer-toggle {
-  left: min(var(--sidebar-width, 276px), calc(100vw - 24px));
+  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 8px);
 }
 .project-drawer-scrim {
   position: absolute;
@@ -2482,9 +2476,8 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .project-drawer-toggle {
     top: auto;
     bottom: 18px;
-    height: 48px;
-    min-height: 48px;
-    border-radius: 999px;
+    height: 52px;
+    min-height: 52px;
     transform: none;
   }
   .project-drawer-toggle:active {
@@ -2498,13 +2491,20 @@ a.secondary { text-decoration: none; color: var(--ink); }
 }
 
 :root[data-theme='dark'] .project-drawer-toggle {
-  border-color: rgba(10, 132, 255, .38);
-  background: rgba(28, 28, 30, .72);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, .32), inset 0 1px 0 rgba(255, 255, 255, .08);
+  color: var(--blue);
 }
-:root[data-theme='dark'] .project-drawer-toggle:hover {
-  background: rgba(58, 58, 60, .82);
-  border-color: rgba(10, 132, 255, .55);
+:root[data-theme='dark'] .project-drawer-toggle::before {
+  background: rgba(10, 132, 255, .52);
+  box-shadow: 0 0 0 4px rgba(10, 132, 255, .08);
+}
+:root[data-theme='dark'] .project-drawer-toggle:hover,
+:root[data-theme='dark'] .project-drawer-toggle:focus-visible {
+  color: var(--blue-dark);
+}
+:root[data-theme='dark'] .project-drawer-toggle:hover::before,
+:root[data-theme='dark'] .project-drawer-toggle:focus-visible::before {
+  background: var(--blue);
+  box-shadow: 0 0 0 6px var(--blue-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {

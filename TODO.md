@@ -222,6 +222,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-04）：真实浏览器 CDP 验收确认首页行不再带 `draggable`（0 个），操作列仍只有 1 个置顶按钮且标题旁无置顶图标；置顶点击后路径保持 `/`、无 `.home-loading` 骨架、`aria-pressed` 正确更新；指针式长按拖拽排序后路径保持 `/`、无加载骨架且顺序实际变化；抽屉触发控件为 24×58 的 999px 圆角蓝色胶囊，半透明背景 + `backdrop-filter`，浅/暗主题使用语义变量；抽屉展开后点击右侧工作区自动收起（CDP 真实 pointerdown 验证 closed=true）。完整 `scripts/browser-acceptance.mjs`、`npm run ui:check`、`npm run language-boundary:check`、`npm run navigation:check`、Web 类型检查与 Web 构建均通过。
 
+- [x] `P0-UI-113` 按用户再次反馈收敛左侧抽屉开关视觉：收起/展开按钮从 24×58 蓝色胶囊改为更贴近侧栏拖动条的窄蓝线手柄（保留窄三角方向提示，浅/暗主题使用语义变量）；彻底清理已移除的“新研究项目”按钮翻译残留；置顶、拖拽排序保持无整页刷新，抽屉打开后点击右侧工作区自动收起继续可用。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：真实浏览器 CDP 确认抽屉触发控件为 16×84 透明命中区，仅保留 2px 蓝色细线与窄三角，无边框/背景/大胶囊；首页 `.primary.full` 新项目按钮数量为 0，页面文本不再包含“新研究项目”残留；置顶点击后路径保持 `/`、导航计数不变、无 `.home-loading` 骨架；抽屉展开后点击右侧工作区自动收起（pointerdown 验证 closed=true）。`npm run typecheck`、`npm run build --workspace @research-os/web`、`npm run ui:check`、`npm run language-boundary:check`、`npm run navigation:check` 均通过（tsx 脚本需以 `TMPDIR=/tmp` 规避 `/mnt/c` 管道监听限制）。
+
 ### 4.1 旧任务池（当前非优先）
 
 > 以下 `4.1.1` 至 `4.1.12` 是之前的 TODO 收集区。它们仍被保留，但明确不是当前优先；只有 `P0-WORKSPACE-108A` 至 `108H` 完成并通过验收后，才重新评估。已被新工作台取代的旧结构（第三级实验标签、论文工具式顶层标签、旧首页 Idea 流程等）不得借旧任务恢复；已完成项 `[x]` 只作为历史记录。
