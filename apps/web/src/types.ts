@@ -193,6 +193,7 @@ export interface ProjectDetail {
   related_work_edges?: RelatedWorkEdge[]
   related_work_field_provenance?: RelatedWorkFieldProvenance[]
   related_work_candidate_reviews?: RelatedWorkCandidateReview[]
+  related_work_run_events?: RelatedWorkRunEvent[]
   research_comparisons?: ResearchComparison[]
   audit_events?: AuditEvent[]
   counts?: {
@@ -261,6 +262,7 @@ export interface RelatedWorkCandidate {
   provider: string
   stable_id: string
   title: string
+  match_methods?: string[]
   year?: number | null
   normalized_doi?: string | null
   paper_id?: string | null
@@ -297,6 +299,16 @@ export interface RelatedWorkCandidateReview {
   decision: 'approved' | 'rejected' | 'reopened'
   reason: string
   actor?: string
+  created_at?: string
+}
+
+export interface RelatedWorkRunEvent {
+  id: string
+  project_id: string
+  run_id: string
+  event_type: 'started' | 'progress' | 'finished' | 'failed' | 'cancel_requested' | 'edge_skipped_missing_node' | string
+  level?: number | null
+  payload?: Record<string, unknown>
   created_at?: string
 }
 

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { ChevronsDown, Download, GitBranch, GitFork, ScanText, Search, ShieldCheck, Square } from 'lucide-react'
 import { api, errorMessage, localizeFailure } from '../../api'
-import type { ClaimReview, MaterialSearchResponse, Paper, ProjectDetail, RelatedWorkAttempt, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
+import type { ClaimReview, MaterialSearchResponse, Paper, ProjectDetail, RelatedWorkAttempt, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, RelatedWorkRunEvent, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, Modal, SectionHeading, statusLabel } from '../ui'
-import { useTranslation } from '../../i18n'
+import { useTranslation, type TranslationKey } from '../../i18n'
 
 export function LiteratureTab({
   project,
@@ -68,6 +68,37 @@ export function LiteratureTab({
   const candidateProvenance = (candidateId: string) => (project.related_work_field_provenance || []).filter(item => item.candidate_id === candidateId)
   const provenanceCandidate = project.related_work_candidates?.find(candidate => candidate.id === provenanceCandidateId) || null
   const isNoMatchAttempt = (attempt: RelatedWorkAttempt) => attempt.status === 'succeeded' && !(attempt.result_count ?? 0)
+
+  const RUN_EVENT_LABELS: Record<string, TranslationKey> = {
+    started: 'literature.runEventType.started',
+    progress: 'literature.runEventType.progress',
+    finished: 'literature.runEventType.finished',
+    failed: 'literature.runEventType.failed',
+    cancel_requested: 'literature.runEventType.cancel_requested',
+    edge_skipped_missing_node: 'literature.runEventType.edge_skipped_missing_node',
+  }
+  const MATCH_METHOD_LABELS: Record<string, TranslationKey> = {
+    doi: 'literature.matchMethod.doi',
+    provider_stable_id: 'literature.matchMethod.provider_stable_id',
+    title_year: 'literature.matchMethod.title_year',
+    new: 'literature.matchMethod.new',
+  }
+
+  const runEventsForRun = (runId: string) => (project.related_work_run_events || []).filter(event => event.run_id === runId)
+  const runEventLabel = (eventType: string) => t(RUN_EVENT_LABELS[eventType] || 'literature.runEventUnknown')
+  const runEventSummary = (event: RelatedWorkRunEvent) => {
+    const payload = event.payload || {}
+    const parts: string[] = []
+    if (typeof payload.provider === 'string') parts.push(payload.provider)
+    if (typeof payload.depth === 'number') parts.push(`depth ${payload.depth}`)
+    if (typeof payload.discovered_count === 'number') parts.push(`${payload.discovered_count} ${t('literature.runEventCandidates')}`)
+    if (typeof payload.edge_count === 'number') parts.push(`${payload.edge_count} ${t('literature.runEventEdges')}`)
+    if (typeof payload.failure_count === 'number') parts.push(`${payload.failure_count} ${t('literature.runEventFailures')}`)
+    if (payload.truncated === true) parts.push(t('literature.runEventTruncated'))
+    if (payload.cancelled === true) parts.push(t('literature.runEventCancelled'))
+    if (typeof payload.message === 'string' && payload.message.trim()) parts.push(payload.message.slice(0, 160))
+    return parts.length ? parts.join(' · ') : t('literature.runEventDetailEmpty')
+  }
 
   const valueLabel = (value: unknown) => {
     if (value === null || value === undefined) return t('common.notProvided')
@@ -453,6 +484,19 @@ export function LiteratureTab({
               <h3>{statusLabel(run.status, t)} · {t('literature.runCandidates', { count: run.discovered_count || 0, edges: run.edge_count || 0 })}</h3>
               <p>depth {run.depth} · width {run.width} · max_total {run.max_total} · providers {run.providers.join(', ')}</p>
               {run.error ? <p className="error-text">{localizeFailure(run.status, run.error)}</p> : null}
+              {runEventsForRun(run.id).length ? (
+                <div className="run-event-list" aria-label={t('literature.runEventsTitle')}>
+                  <h4>{t('literature.runEventsTitle')}</h4>
+                  {runEventsForRun(run.id).map(event => (
+                    <p key={event.id}>
+                      <Badge status={event.event_type === 'failed' ? 'failed' : event.event_type === 'finished' ? 'completed' : event.event_type === 'cancel_requested' ? 'cancelled' : 'running'}>
+                        {runEventLabel(event.event_type)}
+                      </Badge>
+                      <span>{event.created_at ? new Date(event.created_at).toLocaleTimeString() : ''} · {runEventSummary(event)}</span>
+                    </p>
+                  ))}
+                </div>
+              ) : null}
             </div>
             <div className="button-row">
               <Badge status={run.status} />
@@ -509,6 +553,7 @@ export function LiteratureTab({
             <div>
               <h3>{candidate.title}</h3>
               <p>{candidate.provider} · depth {candidate.discovery_depth ?? 0} · {candidate.year || t('literature.yearUnknown')} · DOI {candidate.normalized_doi || t('common.notProvided')} · {t('literature.providerEvidenceCount', { count: candidate.source_count || 0 })}</p>
+              {candidate.match_methods?.length ? <p className="muted match-method-list">{t('literature.matchMethodsTitle')}：{candidate.match_methods.map(method => t(MATCH_METHOD_LABELS[method] || 'literature.matchMethod.new')).join(' · ')}</p> : null}
               {(() => {
                 const provenance = candidateProvenance(candidate.id)
                 const conflictFields = [...new Set(provenance.filter(item => item.status === 'conflict').map(item => item.field_name))]

@@ -187,7 +187,7 @@ export function ensureProjectGit(projectId: string): string {
 export async function projectDetail(projectId: string) {
   const project = await requireProject(projectId)
   const lineage = await reconcileProjectLineage(projectId)
-  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews, feedback, reproductions, reproductionRuns, relatedWorkSeeds, relatedWorkCandidates, relatedWorkRuns, relatedWorkAttempts, relatedWorkEdges, relatedWorkFieldProvenance, relatedWorkCandidateReviews, researchComparisons, researchComparisonCandidates, auditEvents] = await Promise.all([
+  const [ideas, papers, evidence, repositories, proposals, experiments, artifacts, policies, reports, tasks, checkpoints, claimReviews, feedback, reproductions, reproductionRuns, relatedWorkSeeds, relatedWorkCandidates, relatedWorkRuns, relatedWorkAttempts, relatedWorkEdges, relatedWorkFieldProvenance, relatedWorkCandidateReviews, relatedWorkRunEvents, researchComparisons, researchComparisonCandidates, auditEvents] = await Promise.all([
     rows('SELECT * FROM idea_versions WHERE project_id=$1 ORDER BY version DESC', [projectId]),
     rows('SELECT * FROM papers WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM evidence WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
@@ -207,8 +207,11 @@ export async function projectDetail(projectId: string) {
     rows('SELECT * FROM reproductions WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM reproduction_runs WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM related_work_seeds WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
-    rows(`SELECT c.*,COUNT(s.id)::integer AS source_count
-      FROM related_work_candidates c LEFT JOIN related_work_candidate_sources s ON s.candidate_id=c.id
+    rows(`SELECT c.*,COUNT(s.id)::integer AS source_count,
+        COALESCE(ARRAY_AGG(DISTINCT r.match_method) FILTER (WHERE r.match_method IS NOT NULL), ARRAY[]::varchar[]) AS match_methods
+      FROM related_work_candidates c
+      LEFT JOIN related_work_candidate_sources s ON s.candidate_id=c.id
+      LEFT JOIN related_work_seed_candidates r ON r.candidate_id=c.id
       WHERE c.project_id=$1 GROUP BY c.id ORDER BY c.updated_at DESC`, [projectId]),
     rows('SELECT * FROM related_work_recursive_runs WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM related_work_source_attempts WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
@@ -219,6 +222,7 @@ export async function projectDetail(projectId: string) {
       WHERE e.project_id=$1 ORDER BY e.created_at DESC`, [projectId]),
     rows('SELECT * FROM related_work_field_provenance WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM related_work_candidate_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
+    rows('SELECT * FROM related_work_run_events WHERE project_id=$1 ORDER BY created_at,id', [projectId]),
     rows('SELECT * FROM research_comparisons WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT * FROM research_comparison_candidates WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT id,project_id,actor,action,details,created_at FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC LIMIT 300', [projectId]),
@@ -285,6 +289,7 @@ export async function projectDetail(projectId: string) {
     related_work_edges: relatedWorkEdges,
     related_work_field_provenance: relatedWorkFieldProvenance,
     related_work_candidate_reviews: relatedWorkCandidateReviews,
+    related_work_run_events: relatedWorkRunEvents,
     research_comparisons: (researchComparisons as Array<Record<string, unknown>>).map(comparison => ({
       ...comparison,
       candidates: (researchComparisonCandidates as Array<Record<string, unknown>>).filter(candidate => candidate.comparison_id === comparison.id),

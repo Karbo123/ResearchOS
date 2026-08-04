@@ -13974,6 +13974,26 @@
     "literature.runsTitle": "\u5F15\u7528\u7F51\u7EDC\u8FD0\u884C",
     "literature.runsHint": "\u8FD0\u884C\u72B6\u6001\u548C provider attempt \u6765\u81EA\u771F\u5B9E\u8BF7\u6C42\uFF1B\u5931\u8D25\u3001\u53D6\u6D88\u548C\u4E0A\u9650\u622A\u65AD\u4E0D\u4F1A\u88AB\u6807\u8BB0\u4E3A\u6210\u529F\u3002",
     "literature.runCandidates": "{count} \u4E2A\u5019\u9009 \xB7 {edges} \u6761\u5F15\u7528\u8FB9",
+    "literature.runEventsTitle": "\u9012\u5F52\u8FDB\u5EA6\u4E8B\u4EF6",
+    "literature.runEventsHint": "\u6BCF\u6B21\u542F\u52A8\u3001\u8FDB\u5EA6\u3001\u5B8C\u6210\u3001\u5931\u8D25\u548C\u53D6\u6D88\u90FD\u4FDD\u7559\u771F\u5B9E\u4E8B\u4EF6\uFF1B\u4E0D\u4F1A\u7528\u7A7A\u6570\u636E\u8865\u9F50\u8FDB\u5EA6\u3002",
+    "literature.runEventType.started": "\u5DF2\u5F00\u59CB",
+    "literature.runEventType.progress": "\u8FDB\u5EA6",
+    "literature.runEventType.finished": "\u5DF2\u5B8C\u6210",
+    "literature.runEventType.failed": "\u5931\u8D25",
+    "literature.runEventType.cancel_requested": "\u5DF2\u8BF7\u6C42\u53D6\u6D88",
+    "literature.runEventType.edge_skipped_missing_node": "\u8DF3\u8FC7\u7F3A\u5931\u8282\u70B9\u8FB9",
+    "literature.runEventUnknown": "\u672A\u77E5\u4E8B\u4EF6",
+    "literature.runEventCandidates": "\u4E2A\u5019\u9009",
+    "literature.runEventEdges": "\u6761\u8FB9",
+    "literature.runEventFailures": "\u6B21\u5931\u8D25",
+    "literature.runEventTruncated": "\u8FBE\u5230\u4E0A\u9650",
+    "literature.runEventCancelled": "\u5DF2\u53D6\u6D88",
+    "literature.runEventDetailEmpty": "\u65E0\u66F4\u591A\u8BE6\u60C5",
+    "literature.matchMethodsTitle": "\u6765\u6E90\u53BB\u91CD\u65B9\u5F0F",
+    "literature.matchMethod.doi": "DOI \u5339\u914D",
+    "literature.matchMethod.provider_stable_id": "Provider \u7A33\u5B9A ID \u5339\u914D",
+    "literature.matchMethod.title_year": "\u6807\u9898 + \u5E74\u4EFD\u5339\u914D",
+    "literature.matchMethod.new": "\u65B0\u8BB0\u5F55",
     "literature.attemptsTitle": "\u6765\u6E90\u8BF7\u6C42\u8BB0\u5F55",
     "literature.attemptsHint": "\u6BCF\u6B21\u6765\u6E90\u5C1D\u8BD5\u90FD\u4F1A\u4FDD\u7559\u771F\u5B9E\u72B6\u6001\uFF1A\u6210\u529F\u3001\u65E0\u5339\u914D\u3001\u90E8\u5206\u6210\u529F\u3001\u9650\u6D41\u3001\u8D85\u65F6\u3001\u65E0\u6548\u54CD\u5E94\u3001\u4E0D\u652F\u6301\u6216\u53D6\u6D88\u3002",
     "literature.attemptsEmpty": "\u5F53\u524D\u9879\u76EE\u8FD8\u6CA1\u6709\u6765\u6E90\u8BF7\u6C42\u8BB0\u5F55\u3002",
@@ -15403,6 +15423,26 @@
     "literature.runsTitle": "\u5F15\u7528\u7DB2\u8DEF\u57F7\u884C",
     "literature.runsHint": "\u57F7\u884C\u72C0\u614B\u8207 provider attempt \u4F86\u81EA\u771F\u5BE6\u8ACB\u6C42\uFF1B\u5931\u6557\u3001\u53D6\u6D88\u8207\u4E0A\u9650\u622A\u65B7\u4E0D\u6703\u88AB\u6A19\u8A18\u70BA\u6210\u529F\u3002",
     "literature.runCandidates": "{count} \u500B\u5019\u9078 \xB7 {edges} \u689D\u5F15\u7528\u908A",
+    "literature.runEventsTitle": "\u905E\u8FF4\u9032\u5EA6\u4E8B\u4EF6",
+    "literature.runEventsHint": "\u6BCF\u6B21\u555F\u52D5\u3001\u9032\u5EA6\u3001\u5B8C\u6210\u3001\u5931\u6557\u8207\u53D6\u6D88\u90FD\u4FDD\u7559\u771F\u5BE6\u4E8B\u4EF6\uFF1B\u4E0D\u6703\u7528\u7A7A\u8CC7\u6599\u88DC\u9F4A\u9032\u5EA6\u3002",
+    "literature.runEventType.started": "\u5DF2\u958B\u59CB",
+    "literature.runEventType.progress": "\u9032\u5EA6",
+    "literature.runEventType.finished": "\u5DF2\u5B8C\u6210",
+    "literature.runEventType.failed": "\u5931\u6557",
+    "literature.runEventType.cancel_requested": "\u5DF2\u8ACB\u6C42\u53D6\u6D88",
+    "literature.runEventType.edge_skipped_missing_node": "\u8DF3\u904E\u7F3A\u5931\u7BC0\u9EDE\u908A",
+    "literature.runEventUnknown": "\u672A\u77E5\u4E8B\u4EF6",
+    "literature.runEventCandidates": "\u500B\u5019\u9078",
+    "literature.runEventEdges": "\u689D\u908A",
+    "literature.runEventFailures": "\u6B21\u5931\u6557",
+    "literature.runEventTruncated": "\u9054\u5230\u4E0A\u9650",
+    "literature.runEventCancelled": "\u5DF2\u53D6\u6D88",
+    "literature.runEventDetailEmpty": "\u7121\u66F4\u591A\u8A73\u60C5",
+    "literature.matchMethodsTitle": "\u4F86\u6E90\u53BB\u91CD\u65B9\u5F0F",
+    "literature.matchMethod.doi": "DOI \u5339\u914D",
+    "literature.matchMethod.provider_stable_id": "Provider \u7A69\u5B9A ID \u5339\u914D",
+    "literature.matchMethod.title_year": "\u6A19\u984C + \u5E74\u4EFD\u5339\u914D",
+    "literature.matchMethod.new": "\u65B0\u8A18\u9304",
     "literature.attemptsTitle": "\u4F86\u6E90\u8ACB\u6C42\u8A18\u9304",
     "literature.attemptsHint": "\u6BCF\u6B21\u4F86\u6E90\u5617\u8A66\u90FD\u6703\u4FDD\u7559\u771F\u5BE6\u72C0\u614B\uFF1A\u6210\u529F\u3001\u7121\u5339\u914D\u3001\u90E8\u5206\u6210\u529F\u3001\u9650\u6D41\u3001\u903E\u6642\u3001\u7121\u6548\u56DE\u61C9\u3001\u4E0D\u652F\u63F4\u6216\u53D6\u6D88\u3002",
     "literature.attemptsEmpty": "\u76EE\u524D\u5C08\u6848\u9084\u6C92\u6709\u4F86\u6E90\u8ACB\u6C42\u8A18\u9304\u3002",
@@ -16832,6 +16872,26 @@
     "literature.runsTitle": "Citation network runs",
     "literature.runsHint": "Run states and provider attempts come from real requests; failures, cancellations, and limit truncation are never marked successful.",
     "literature.runCandidates": "{count} candidates \xB7 {edges} citation edges",
+    "literature.runEventsTitle": "Recursive progress events",
+    "literature.runEventsHint": "Every start, progress, completion, failure, and cancellation is a real event; progress is never padded with empty data.",
+    "literature.runEventType.started": "Started",
+    "literature.runEventType.progress": "Progress",
+    "literature.runEventType.finished": "Finished",
+    "literature.runEventType.failed": "Failed",
+    "literature.runEventType.cancel_requested": "Cancel requested",
+    "literature.runEventType.edge_skipped_missing_node": "Edge skipped (missing node)",
+    "literature.runEventUnknown": "Unknown event",
+    "literature.runEventCandidates": "candidates",
+    "literature.runEventEdges": "edges",
+    "literature.runEventFailures": "failures",
+    "literature.runEventTruncated": "Limit reached",
+    "literature.runEventCancelled": "Cancelled",
+    "literature.runEventDetailEmpty": "No further detail",
+    "literature.matchMethodsTitle": "Deduplication match",
+    "literature.matchMethod.doi": "DOI match",
+    "literature.matchMethod.provider_stable_id": "Provider stable ID match",
+    "literature.matchMethod.title_year": "Title + year match",
+    "literature.matchMethod.new": "New record",
     "literature.attemptsTitle": "Source request log",
     "literature.attemptsHint": "Every source attempt keeps its real status: succeeded, no match, partial, rate limited, timed out, invalid response, unsupported, or cancelled.",
     "literature.attemptsEmpty": "No source requests have been recorded for this project yet.",
@@ -18261,6 +18321,26 @@
     "literature.runsTitle": "Ejecuciones de red de citas",
     "literature.runsHint": "Los estados de ejecuci\xF3n y los intentos de proveedor provienen de solicitudes reales; fallos, cancelaciones y truncamientos por l\xEDmite nunca se marcan como \xE9xito.",
     "literature.runCandidates": "{count} candidatos \xB7 {edges} aristas de citas",
+    "literature.runEventsTitle": "Eventos de progreso recursivo",
+    "literature.runEventsHint": "Cada inicio, progreso, finalizaci\xF3n, fallo y cancelaci\xF3n es un evento real; el progreso nunca se rellena con datos vac\xEDos.",
+    "literature.runEventType.started": "Iniciado",
+    "literature.runEventType.progress": "Progreso",
+    "literature.runEventType.finished": "Finalizado",
+    "literature.runEventType.failed": "Fallido",
+    "literature.runEventType.cancel_requested": "Cancelaci\xF3n solicitada",
+    "literature.runEventType.edge_skipped_missing_node": "Arista omitida (nodo faltante)",
+    "literature.runEventUnknown": "Evento desconocido",
+    "literature.runEventCandidates": "candidatos",
+    "literature.runEventEdges": "aristas",
+    "literature.runEventFailures": "fallos",
+    "literature.runEventTruncated": "L\xEDmite alcanzado",
+    "literature.runEventCancelled": "Cancelado",
+    "literature.runEventDetailEmpty": "Sin m\xE1s detalles",
+    "literature.matchMethodsTitle": "Coincidencia de deduplicaci\xF3n",
+    "literature.matchMethod.doi": "Coincidencia DOI",
+    "literature.matchMethod.provider_stable_id": "Coincidencia por ID estable del proveedor",
+    "literature.matchMethod.title_year": "Coincidencia por t\xEDtulo + a\xF1o",
+    "literature.matchMethod.new": "Nuevo registro",
     "literature.attemptsTitle": "Registro de solicitudes de fuentes",
     "literature.attemptsHint": "Cada intento de fuente conserva su estado real: \xE9xito, sin coincidencias, parcial, limitado, agotado, respuesta no v\xE1lida, no compatible o cancelado.",
     "literature.attemptsEmpty": "A\xFAn no se registran solicitudes de fuentes para este proyecto.",
@@ -22191,6 +22271,35 @@
     const candidateProvenance = (candidateId) => (project.related_work_field_provenance || []).filter((item) => item.candidate_id === candidateId);
     const provenanceCandidate = project.related_work_candidates?.find((candidate) => candidate.id === provenanceCandidateId) || null;
     const isNoMatchAttempt = (attempt) => attempt.status === "succeeded" && !(attempt.result_count ?? 0);
+    const RUN_EVENT_LABELS = {
+      started: "literature.runEventType.started",
+      progress: "literature.runEventType.progress",
+      finished: "literature.runEventType.finished",
+      failed: "literature.runEventType.failed",
+      cancel_requested: "literature.runEventType.cancel_requested",
+      edge_skipped_missing_node: "literature.runEventType.edge_skipped_missing_node"
+    };
+    const MATCH_METHOD_LABELS = {
+      doi: "literature.matchMethod.doi",
+      provider_stable_id: "literature.matchMethod.provider_stable_id",
+      title_year: "literature.matchMethod.title_year",
+      new: "literature.matchMethod.new"
+    };
+    const runEventsForRun = (runId) => (project.related_work_run_events || []).filter((event) => event.run_id === runId);
+    const runEventLabel = (eventType) => t(RUN_EVENT_LABELS[eventType] || "literature.runEventUnknown");
+    const runEventSummary = (event) => {
+      const payload = event.payload || {};
+      const parts = [];
+      if (typeof payload.provider === "string") parts.push(payload.provider);
+      if (typeof payload.depth === "number") parts.push(`depth ${payload.depth}`);
+      if (typeof payload.discovered_count === "number") parts.push(`${payload.discovered_count} ${t("literature.runEventCandidates")}`);
+      if (typeof payload.edge_count === "number") parts.push(`${payload.edge_count} ${t("literature.runEventEdges")}`);
+      if (typeof payload.failure_count === "number") parts.push(`${payload.failure_count} ${t("literature.runEventFailures")}`);
+      if (payload.truncated === true) parts.push(t("literature.runEventTruncated"));
+      if (payload.cancelled === true) parts.push(t("literature.runEventCancelled"));
+      if (typeof payload.message === "string" && payload.message.trim()) parts.push(payload.message.slice(0, 160));
+      return parts.length ? parts.join(" \xB7 ") : t("literature.runEventDetailEmpty");
+    };
     const valueLabel = (value) => {
       if (value === null || value === void 0) return t("common.notProvided");
       if (typeof value === "string") return value.length > 180 ? `${value.slice(0, 180)}\u2026` : value;
@@ -22567,7 +22676,18 @@
             " \xB7 providers ",
             run.providers.join(", ")
           ] }),
-          run.error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null
+          run.error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null,
+          runEventsForRun(run.id).length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "run-event-list", "aria-label": t("literature.runEventsTitle"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h4", { children: t("literature.runEventsTitle") }),
+            runEventsForRun(run.id).map((event) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: event.event_type === "failed" ? "failed" : event.event_type === "finished" ? "completed" : event.event_type === "cancel_requested" ? "cancelled" : "running", children: runEventLabel(event.event_type) }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+                event.created_at ? new Date(event.created_at).toLocaleTimeString() : "",
+                " \xB7 ",
+                runEventSummary(event)
+              ] })
+            ] }, event.id))
+          ] }) : null
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "button-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: run.status }),
@@ -22637,6 +22757,11 @@
             " \xB7 ",
             t("literature.providerEvidenceCount", { count: candidate.source_count || 0 })
           ] }),
+          candidate.match_methods?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { className: "muted match-method-list", children: [
+            t("literature.matchMethodsTitle"),
+            "\uFF1A",
+            candidate.match_methods.map((method) => t(MATCH_METHOD_LABELS[method] || "literature.matchMethod.new")).join(" \xB7 ")
+          ] }) : null,
           (() => {
             const provenance = candidateProvenance(candidate.id);
             const conflictFields = [...new Set(provenance.filter((item) => item.status === "conflict").map((item) => item.field_name))];
@@ -24234,7 +24359,7 @@
     return `M ${sourceX} ${sourceY} C ${sourceX + curve * controlDirection} ${sourceY}, ${targetX - curve * controlDirection} ${targetY}, ${targetX} ${targetY}`;
   }
   function YearTimeline({ papers }) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const bars = (0, import_react15.useMemo)(() => {
       const counts = /* @__PURE__ */ new Map();
       for (const paper of papers) {
@@ -24266,7 +24391,7 @@
     project,
     tab
   }) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const legacyTab = tab === "visualization" ? "citation_graph" : tab === "method" ? "method_design" : null;
     const [workspace, setWorkspace] = (0, import_react15.useState)(null);
     const [workspaceError, setWorkspaceError] = (0, import_react15.useState)(null);
@@ -24319,6 +24444,40 @@
             ] })
           ] }),
           researchStatus.graph_status === "partial" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "research-graph-alert", role: "status", children: t("graph.alert") }) : null,
+          researchStatus.matrix ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "section research-status-matrix-panel", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+              SectionHeading,
+              {
+                title: t("research.matrixVersion", { version: researchStatus.matrix.idea_version }),
+                hint: t("research.matrixMeta", { creator: researchStatus.matrix.created_by, time: formatDateTime(researchStatus.matrix.created_at, locale) })
+              }
+            ),
+            researchStatus.matrix.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "research-status-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("table", { className: "research-status-table", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.paper") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.theme") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.method") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.year") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.datasets") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.metrics") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.code") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: t("research.evidence") })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("tbody", { children: researchStatus.matrix.rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("td", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: row.paper?.title || row.paper_id }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: row.paper?.doi || t("research.doiUnrecorded") })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: row.theme || t("research.unresolved") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: row.method || t("research.unresolved") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: row.year || t("research.unresolved") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: row.datasets.length ? row.datasets.join(", ") : t("research.unresolved") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: row.metrics.length ? row.metrics.join(", ") : t("research.unresolved") }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: row.code_availability }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { status: row.evidence_status }) })
+              ] }, row.id)) })
+            ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EmptyState, { text: t("research.noFilteredRows") })
+          ] }) : null,
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(YearTimeline, { papers: project.papers || [] }),
           graphLayout.nodes.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "research-graph-panel", children: [
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "research-graph-legend", "aria-label": t("graph.legendAria"), children: [

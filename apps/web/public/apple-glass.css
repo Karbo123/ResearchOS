@@ -1360,6 +1360,10 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .citation-edge-list { border-color: rgba(10, 132, 255, .14); background: rgba(10, 132, 255, .04); }
 .related-work-failures h3, .citation-edge-list h3 { margin: 0 0 8px; font-size: 12px; }
 .related-work-failures p, .citation-edge-list p { margin: 4px 0; color: var(--muted); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.run-event-list { display: grid; gap: 4px; margin-top: 9px; padding: 8px 10px; border: 1px solid rgba(0, 122, 255, .14); border-radius: 11px; background: rgba(10, 132, 255, .04); }
+.run-event-list h4 { margin: 0 0 5px; font-size: 11px; color: var(--ink); }
+.run-event-list p { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin: 2px 0; color: var(--muted); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.match-method-list { margin-top: 5px !important; font-size: 11px; }
 .related-work-attempt-panel .section-head { margin-bottom: 12px; }
 .source-attempt-list { display: grid; gap: 6px; }
 .source-attempt-row {

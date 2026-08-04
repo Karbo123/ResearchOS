@@ -3,7 +3,7 @@ import { ExternalLink, Network, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { Paper, ProjectDetail, ProjectWorkspaceDetail, ResearchStatusGraphEdge, ResearchStatusGraphNode, ResearchStatusResponse, TabId } from '../../types'
 import { Badge, EmptyState, SectionHeading, statusLabel } from '../ui'
-import { useTranslation, type TranslationKey } from '../../i18n'
+import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 
 function text(value: unknown, t: (key: TranslationKey) => string) {
   return typeof value === 'string' && value.trim() ? value : t('common.unrecorded')
@@ -122,7 +122,7 @@ function graphEdgePath(edge: ResearchStatusGraphEdge, nodes: Map<string, Positio
 }
 
 function YearTimeline({ papers }: { papers: Paper[] }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const bars = useMemo(() => {
     const counts = new Map<number, number>()
     for (const paper of papers) {
@@ -163,7 +163,7 @@ export function WorkflowStageTab({
   project: ProjectDetail
   tab: TabId
 }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const legacyTab: string | null = tab === 'visualization' ? 'citation_graph' : tab === 'method' ? 'method_design' : null
   const [workspace, setWorkspace] = useState<ProjectWorkspaceDetail | null>(null)
   const [workspaceError, setWorkspaceError] = useState<string | null>(null)
@@ -207,6 +207,46 @@ export function WorkflowStageTab({
               <div className="data-row"><div><h3>{t('graph.scale')}</h3><p>{t('graph.scaleText', { nodes: researchStatus.graph.nodes.length, edges: researchStatus.graph.edges.length })}</p></div><Network size={16} className="muted" /></div>
             </div>
             {researchStatus.graph_status === 'partial' ? <div className="research-graph-alert" role="status">{t('graph.alert')}</div> : null}
+            {researchStatus.matrix ? (
+              <div className="section research-status-matrix-panel">
+                <SectionHeading
+                  title={t('research.matrixVersion', { version: researchStatus.matrix.idea_version })}
+                  hint={t('research.matrixMeta', { creator: researchStatus.matrix.created_by, time: formatDateTime(researchStatus.matrix.created_at, locale) })}
+                />
+                {researchStatus.matrix.rows.length ? (
+                  <div className="research-status-table-wrap">
+                    <table className="research-status-table">
+                      <thead>
+                        <tr>
+                          <th>{t('research.paper')}</th>
+                          <th>{t('research.theme')}</th>
+                          <th>{t('research.method')}</th>
+                          <th>{t('research.year')}</th>
+                          <th>{t('research.datasets')}</th>
+                          <th>{t('research.metrics')}</th>
+                          <th>{t('research.code')}</th>
+                          <th>{t('research.evidence')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {researchStatus.matrix.rows.map(row => (
+                          <tr key={row.id}>
+                            <td><strong>{row.paper?.title || row.paper_id}</strong><small>{row.paper?.doi || t('research.doiUnrecorded')}</small></td>
+                            <td>{row.theme || t('research.unresolved')}</td>
+                            <td>{row.method || t('research.unresolved')}</td>
+                            <td>{row.year || t('research.unresolved')}</td>
+                            <td>{row.datasets.length ? row.datasets.join(', ') : t('research.unresolved')}</td>
+                            <td>{row.metrics.length ? row.metrics.join(', ') : t('research.unresolved')}</td>
+                            <td><Badge status={row.code_availability} /></td>
+                            <td><Badge status={row.evidence_status} /></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : <EmptyState text={t('research.noFilteredRows')} />}
+              </div>
+            ) : null}
             <YearTimeline papers={project.papers || []} />
             {graphLayout.nodes.length ? (
               <div className="research-graph-panel">

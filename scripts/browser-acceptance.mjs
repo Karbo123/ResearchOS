@@ -37,7 +37,10 @@ function send(method, params = {}) {
 
 async function evaluate(expression) {
   const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })
-  if (result.exceptionDetails) throw new Error(result.exceptionDetails.text || 'Runtime.evaluate failed')
+  if (result.exceptionDetails) {
+    const detail = result.exceptionDetails.exception?.description || result.exceptionDetails.description || result.exceptionDetails.text
+    throw new Error(detail || 'Runtime.evaluate failed')
+  }
   return result.result.value
 }
 
@@ -747,6 +750,10 @@ const seedExpansion = await evaluate(`(async () => {
   const panel = document.querySelector('.related-work-attempt-panel')
   const empty = document.querySelector('.related-work-attempt-panel .empty')
   const form = document.querySelector('.related-work-seed-form')
+  const candidateRows = Array.from(document.querySelectorAll('.related-work-candidate-panel .data-row'))
+  const runRows = Array.from(document.querySelectorAll('.related-work-run-panel .data-row'))
+  const runEventRows = Array.from(document.querySelectorAll('.run-event-list p'))
+  const matchMethodRows = Array.from(document.querySelectorAll('.related-work-candidate-panel .match-method-list'))
   const select = form?.querySelector('select')
   const options = select ? Array.from(select.options).map(option => option.value) : []
   const setSelect = value => {
@@ -769,11 +776,139 @@ const seedExpansion = await evaluate(`(async () => {
     attemptsEmptyVisible: !!empty,
     attemptRows: attempts.length,
     attemptProviders: attempts.map(row => row.querySelector('.source-attempt-provider')?.textContent?.trim() || null).slice(0, 8),
+    attemptStatuses: attempts.map(row => row.querySelector('.badge')?.textContent?.trim() || null),
+    attemptFailures: attempts.filter(row => row.querySelector('.source-attempt-failure')).length,
+    noMatchAttempts: attempts.filter(row => row.querySelector('.source-attempt-no-match')).length,
+    candidateRows: candidateRows.length,
+    candidateTitles: candidateRows.map(row => row.querySelector('h3')?.textContent?.trim() || null),
+    matchMethodRows: matchMethodRows.length,
+    matchMethodText: matchMethodRows.slice(0, 4).map(row => row.textContent?.trim() || null),
+    provenanceButtons: candidateRows.filter(row => /view field provenance/i.test(row.textContent || '')).length,
+    runRows: runRows.length,
+    runEvents: runEventRows.length,
+    runEventText: runEventRows.slice(0, 6).map(row => row.textContent?.trim() || null),
     seedForm: { exists: !!form, options, artifactVisible, paperVisible },
     overflowX: document.documentElement.scrollWidth > window.innerWidth,
   }
 })()`)
 await capture('108h-seed-expansion-attempts.png')
+if (!seedExpansion.attemptsPanel || seedExpansion.attemptRows < 8 || seedExpansion.candidateRows < 4 || seedExpansion.runRows < 3 || seedExpansion.runEvents < 6 || seedExpansion.matchMethodRows < 1 || seedExpansion.provenanceButtons < 1 || seedExpansion.overflowX) {
+  throw new Error(`Related work fixture did not render: ${JSON.stringify(seedExpansion)}`)
+}
+
+await evaluate(`(() => {
+  const row = Array.from(document.querySelectorAll('.related-work-candidate-panel .data-row')).find(candidate => /view field provenance/i.test(candidate.textContent || ''))
+  row?.querySelector('button')?.click()
+  return true
+})()`)
+await wait(450)
+const provenanceDrawer = await evaluate(`(() => {
+  const modal = document.querySelector('.modal')
+  const fields = Array.from(document.querySelectorAll('.provenance-drawer-field'))
+  return {
+    open: !!modal,
+    fields: fields.length,
+    hasConflict: Array.from(document.querySelectorAll('.provenance-drawer-field .badge')).some(badge => /conflict/i.test(badge.textContent || '')),
+    hasSelected: Array.from(document.querySelectorAll('.provenance-drawer-field .badge')).some(badge => /selected/i.test(badge.textContent || '')),
+  }
+})()`)
+await capture('108h-related-work-provenance.png')
+if (!provenanceDrawer.open || provenanceDrawer.fields < 2 || !provenanceDrawer.hasConflict || !provenanceDrawer.hasSelected) {
+  throw new Error(`Related work provenance drawer did not render: ${JSON.stringify(provenanceDrawer)}`)
+}
+await evaluate(`document.querySelector('.modal .icon-btn')?.click()`)
+await wait(250)
+
+const literatureUrl = `${appBase}/project/${projectSlug}/related_work/literature`
+await navigate(literatureUrl, 'en', 'light')
+await wait(400)
+const relatedWorkLiterature = await evaluate(`(() => {
+  const repositoryRows = Array.from(document.querySelectorAll('.data-row')).filter(row => /github\\.com\\/example\\/related-work-fixture/i.test(row.textContent || ''))
+  const proposeButtons = repositoryRows.filter(row => /propose download/i.test(row.textContent || ''))
+  const paperRows = Array.from(document.querySelectorAll('.data-row')).filter(row => /fixture related work paper/i.test(row.textContent || ''))
+  const claimRows = Array.from(document.querySelectorAll('.claim-review-list .data-row'))
+  return {
+    repositoryRows: repositoryRows.length,
+    proposeButtons: proposeButtons.length,
+    paperRows: paperRows.length,
+    claimRows: claimRows.length,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-related-work-literature.png')
+if (!relatedWorkLiterature.repositoryRows || !relatedWorkLiterature.proposeButtons || !relatedWorkLiterature.paperRows || !relatedWorkLiterature.claimRows || relatedWorkLiterature.overflowX) {
+  throw new Error(`Related work literature view did not render: ${JSON.stringify(relatedWorkLiterature)}`)
+}
+
+const visualizationUrl = `${appBase}/project/${projectSlug}/related_work/visualization`
+await navigate(visualizationUrl, 'en', 'light')
+await wait(900)
+const relatedWorkVisualization = await evaluate(`(() => {
+  const matrix = document.querySelector('.research-status-matrix-panel')
+  const matrixRows = matrix?.querySelectorAll('.research-status-table tbody tr') || []
+  const graph = document.querySelector('.research-graph-svg')
+  const nodes = graph?.querySelectorAll('.research-graph-node-group') || []
+  const edges = graph?.querySelectorAll('.research-graph-edge') || []
+  const legend = document.querySelector('.research-graph-legend')
+  return {
+    matrixVisible: !!matrix,
+    matrixRows: matrixRows.length,
+    graphVisible: !!graph,
+    nodeCount: nodes.length,
+    edgeCount: edges.length,
+    legendVisible: !!legend,
+    timeline: document.querySelectorAll('.graph-year-bar').length,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-related-work-visualization.png')
+if (!relatedWorkVisualization.matrixVisible || relatedWorkVisualization.matrixRows < 1 || !relatedWorkVisualization.graphVisible || relatedWorkVisualization.nodeCount < 6 || relatedWorkVisualization.edgeCount < 3 || !relatedWorkVisualization.timeline || relatedWorkVisualization.overflowX) {
+  throw new Error(`Related work visualization did not render: ${JSON.stringify(relatedWorkVisualization)}`)
+}
+
+const nodeDetails = await evaluate(`(() => {
+  const node = document.querySelector('.research-graph-node-group')
+  if (!node) return null
+  node.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  return true
+})()`)
+await wait(350)
+const graphNodeDetails = await evaluate(`(() => {
+  const details = document.querySelector('.research-graph-details')
+  return {
+    selectedLabel: details?.querySelector('h3')?.textContent?.trim() || null,
+    hasType: /candidate|paper|evidence|claim review/i.test(details?.textContent || ''),
+    hasStableId: /stable id/i.test(details?.textContent || ''),
+    hasPermission: /project-scoped/i.test(details?.textContent || ''),
+  }
+})()`)
+if (!nodeDetails || !graphNodeDetails.selectedLabel || !graphNodeDetails.hasType || !graphNodeDetails.hasStableId || !graphNodeDetails.hasPermission) {
+  throw new Error(`Related work graph node details did not render: ${JSON.stringify(graphNodeDetails)}`)
+}
+
+await navigate(homeUrl, 'en', 'light')
+const otherProjectSlug = await evaluate(`(() => {
+  const slugs = Array.from(document.querySelectorAll('.home-project-slug')).map(node => node.textContent?.trim() || '')
+  return slugs.find(slug => slug !== ${JSON.stringify(projectSlug)}) || null
+})()`)
+let relatedWorkCrossProject = null
+if (otherProjectSlug) {
+  const otherRelatedWorkUrl = `${appBase}/project/${otherProjectSlug}/related_work/seed-expansion`
+  await navigate(otherRelatedWorkUrl, 'en', 'light')
+  await wait(500)
+  relatedWorkCrossProject = await evaluate(`(() => ({
+    path: location.pathname,
+    candidates: document.querySelectorAll('.related-work-candidate-panel .data-row').length,
+    attempts: document.querySelectorAll('.source-attempt-row').length,
+    runs: document.querySelectorAll('.related-work-run-panel .data-row').length,
+    empty: document.querySelectorAll('.related-work-attempt-panel .empty, .related-work-candidate-panel .empty').length,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }))()`)
+  await capture('108h-related-work-empty-project.png')
+  if (relatedWorkCrossProject.candidates > 0 || relatedWorkCrossProject.attempts > 0 || relatedWorkCrossProject.runs > 0 || relatedWorkCrossProject.overflowX) {
+    throw new Error(`Related work data leaked across projects: ${JSON.stringify(relatedWorkCrossProject)}`)
+  }
+}
 
 const comparisonUrl = `${appBase}/project/${projectSlug}/implementation/reproduction`
 await navigate(comparisonUrl, 'en', 'light')
@@ -897,5 +1032,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, provenanceDrawer, relatedWorkLiterature, relatedWorkVisualization, graphNodeDetails, relatedWorkCrossProject, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
 socket.close()
