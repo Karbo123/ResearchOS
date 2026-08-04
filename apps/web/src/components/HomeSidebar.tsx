@@ -104,7 +104,7 @@ export function HomeSidebar({
   const recentEntries = getRecentProjects(projects, recentProjects, visibleRecentCount)
   const lastSeenAtById = new Map(recentProjects.map(entry => [entry.id, entry.lastSeenAt]))
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
-  const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
+  const refreshLabel = refreshing ? t('home.refreshingTooltip') : t('home.refreshTooltip')
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 60_000)
