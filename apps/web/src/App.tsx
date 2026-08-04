@@ -28,18 +28,27 @@ function nextMessageId() {
 
 const RECENT_PROJECTS_KEY = 'researchos.recentProjects'
 
-function readRecentProjectIds(): string[] {
+function readRecentProjects(): Array<{ id: string; openedAt: number }> {
   try {
     const value = JSON.parse(window.localStorage.getItem(RECENT_PROJECTS_KEY) || '[]')
-    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
+    if (!Array.isArray(value)) return []
+    return value
+      .map(item => {
+        if (typeof item === 'string') return { id: item, openedAt: Date.now() }
+        if (item && typeof item.id === 'string' && typeof item.openedAt === 'number') {
+          return { id: item.id, openedAt: item.openedAt }
+        }
+        return null
+      })
+      .filter((item): item is { id: string; openedAt: number } => Boolean(item))
   } catch {
     return []
   }
 }
 
 function recordRecentProject(id: string) {
-  const recent = readRecentProjectIds().filter(recentId => recentId !== id)
-  recent.unshift(id)
+  const recent = readRecentProjects().filter(entry => entry.id !== id)
+  recent.unshift({ id, openedAt: Date.now() })
   const next = recent.slice(0, 12)
   window.localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(next))
   return next
@@ -69,7 +78,7 @@ export function App() {
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [projectDrawerOpen, setProjectDrawerOpen] = useState(false)
   const [projectRefreshing, setProjectRefreshing] = useState(false)
-  const [recentProjectIds, setRecentProjectIds] = useState<string[]>(() => readRecentProjectIds())
+  const [recentProjects, setRecentProjects] = useState<Array<{ id: string; openedAt: number }>>(() => readRecentProjects())
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const stored = Number(window.localStorage.getItem('researchos.sidebarWidth'))
     return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276
@@ -152,7 +161,7 @@ export function App() {
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
       setProjectDrawerOpen(false)
-      setRecentProjectIds(recordRecentProject(detail.id))
+      setRecentProjects(recordRecentProject(detail.id))
       if (!options?.preserveTab) {
         setActiveArea('overview')
         setActiveTab('overview')
@@ -412,7 +421,7 @@ export function App() {
           projects={projects}
           health={health}
           refreshing={projectRefreshing}
-          recentProjectIds={recentProjectIds}
+          recentProjects={recentProjects}
           onGoHome={() => goHome()}
           onOpenProject={id => void openProject(id)}
           onOpenSettings={() => setSettingsOpen(true)}

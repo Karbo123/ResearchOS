@@ -5,7 +5,7 @@ import {
   Settings,
 } from 'lucide-react'
 import type { ProjectSummary } from '../types'
-import { useTranslation } from '../i18n'
+import { useTranslation, type Locale } from '../i18n'
 
 const SIDEBAR_MIN_WIDTH = 220
 const SIDEBAR_MAX_WIDTH = 380
@@ -15,8 +15,27 @@ function clampSidebarWidth(width: number) {
   return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
 }
 
-function getRecentProjects(projects: ProjectSummary[], recentIds: string[]) {
-  const recentRank = new Map(recentIds.map((id, index) => [id, index]))
+type RecentProjectEntry = { id: string; openedAt: number }
+
+function formatOpenedAt(timestamp: number, locale: Locale): string {
+  const date = new Date(timestamp)
+  if (Number.isNaN(date.getTime())) return ''
+  const localeTag = locale === 'zh-CN' || locale === 'zh-TW' ? 'zh-CN' : locale
+  try {
+    return new Intl.DateTimeFormat(localeTag, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(date)
+  } catch {
+    return ''
+  }
+}
+
+function getRecentProjects(projects: ProjectSummary[], recentEntries: RecentProjectEntry[]) {
+  const recentRank = new Map(recentEntries.map((entry, index) => [entry.id, index]))
   const pinned = projects.filter(project => project.pinned)
   const recent = projects
     .filter(project => !project.pinned && recentRank.has(project.id))
@@ -30,7 +49,7 @@ export function HomeSidebar({
   projects,
   health,
   refreshing = false,
-  recentProjectIds,
+  recentProjects,
   onGoHome,
   onOpenProject,
   onOpenSettings,
@@ -41,7 +60,7 @@ export function HomeSidebar({
   projects: ProjectSummary[]
   health: 'connecting' | 'online' | 'offline'
   refreshing?: boolean
-  recentProjectIds: string[]
+  recentProjects: RecentProjectEntry[]
   onGoHome: () => void
   onOpenProject: (id: string) => void
   onOpenSettings: () => void
@@ -49,9 +68,10 @@ export function HomeSidebar({
   sidebarWidth: number
   onSidebarWidthChange: (width: number) => void
 }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const [resizing, setResizing] = useState(false)
-  const recentProjects = getRecentProjects(projects, recentProjectIds)
+  const recentEntries = getRecentProjects(projects, recentProjects)
+  const openedAtById = new Map(recentProjects.map(entry => [entry.id, entry.openedAt]))
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
 
@@ -123,9 +143,9 @@ export function HomeSidebar({
 
       <div className="home-sidebar-section">
         <div className="home-sidebar-section-label">{t('homeSidebar.recent')}</div>
-        {recentProjects.length ? (
+        {recentEntries.length ? (
           <div className="home-sidebar-quick-list">
-            {recentProjects.map(project => (
+            {recentEntries.map(project => (
               <button
                 key={project.id}
                 type="button"
@@ -133,7 +153,14 @@ export function HomeSidebar({
                 title={project.title}
                 onClick={() => onOpenProject(project.id)}
               >
-                <span className="home-sidebar-project-title">{project.title}</span>
+                <span className="home-sidebar-project-main">
+                  <span className="home-sidebar-project-title">{project.title}</span>
+                  {openedAtById.has(project.id) ? (
+                    <span className="home-sidebar-project-meta">
+                      {formatOpenedAt(openedAtById.get(project.id) ?? 0, locale)}
+                    </span>
+                  ) : null}
+                </span>
                 {project.pinned ? <Pin size={11} className="home-sidebar-project-pin" aria-hidden="true" /> : null}
               </button>
             ))}

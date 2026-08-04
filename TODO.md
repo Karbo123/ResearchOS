@@ -1,6 +1,6 @@
 # Research OS TODO
 
-最后更新：2026-08-04（Asia/Shanghai）
+最后更新：2026-08-05（Asia/Shanghai）
 
 状态只使用：`[ ]` 待处理、`[~]` 进行中、`[x]` 已完成且已验证、`[!]` 外部阻塞。
 
@@ -295,6 +295,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 > 修订记录（2026-08-05）：将首页 `h1` 由小字号眉题调整为正式页面主标题（30px、与原先 hero 标题同级），文案为“项目控制台”而非“全部项目”；首页无顶栏、右侧无重复标题，页面标题信息完整。
 
 > 修订记录（2026-08-05）：按用户意见收敛首页侧栏：删除“系统”统计块（项目/运行中实验/待审批与主区汇总卡完全重复）；“快速访问”更名“最近项目”，条目由 5 条增至 8 条，空态文案同步；连接状态与刷新合并为底部一行（绿色状态点 + 刷新图标按钮），视觉模型（`mimo-v2.5`）复核浅色/暗色截图，无高严重度问题；移动端隐藏最近项目与状态行，仅保留品牌与设置。`typecheck`、Web 构建、`ui:check` 通过。
+
+- [x] `P0-UI-117` 首页最近项目显示最近访问日期与时间（具体到月/日、时/分，随界面语言格式化），并为四个 `home-summary-item` 统计卡加入与统计语义匹配的 Apple 风格彩色图标，浅色/暗色主题均使用语义变量。 [Apple 设计验收]
+
+> 验收记录（2026-08-05）：`researchos.recentProjects` 升级为 `{ id, openedAt }` 记录，旧字符串记录自动迁移；首页侧栏最近项目在标题下方显示本地化访问时间（如 `8月5日 14:30` / `Aug 5, 14:30`）。四个统计卡分别使用项目文件夹、实验烧瓶、审批清单、论文文件的语义图标，配色使用系统蓝/绿/琥珀/靛蓝语义变量，浅色与暗色主题均适配。真实 Chrome CDP 检查桌面 1440 与移动 390：`.home-sidebar-project-meta` 与 4 个 `.home-summary-icon` 均渲染，明暗主题无横向溢出。`npm run typecheck`、Web 构建、`ui:check`、`language-boundary:check` 全部通过。
 
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 

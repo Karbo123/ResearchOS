@@ -5,6 +5,7 @@ import {
   ClipboardCheck,
   FileText,
   FlaskConical,
+  Folder,
   FolderPlus,
   GripVertical,
   Pin,
@@ -359,18 +360,30 @@ export function HomeDashboard({
 
       <div className="home-summary" aria-label={t('home.summary')}>
         <div className="home-summary-item">
+          <span className="home-summary-icon home-summary-icon-blue">
+            <Folder size={17} aria-hidden="true" />
+          </span>
           <strong>{projects.length}</strong>
           <span>{t('home.totalProjects')}</span>
         </div>
         <div className="home-summary-item">
+          <span className="home-summary-icon home-summary-icon-green">
+            <FlaskConical size={17} aria-hidden="true" />
+          </span>
           <strong>{totalRunning}</strong>
           <span>{t('home.runningExperiments')}</span>
         </div>
         <div className="home-summary-item">
+          <span className="home-summary-icon home-summary-icon-amber">
+            <ClipboardCheck size={17} aria-hidden="true" />
+          </span>
           <strong>{totalPendingApprovals}</strong>
           <span>{t('home.pendingApprovals')}</span>
         </div>
         <div className="home-summary-item">
+          <span className="home-summary-icon home-summary-icon-indigo">
+            <FileText size={17} aria-hidden="true" />
+          </span>
           <strong>{totalPapers}</strong>
           <span>{t('home.totalPapers')}</span>
         </div>
