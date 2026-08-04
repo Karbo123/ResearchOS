@@ -278,6 +278,8 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-04）：用户要求收起态短线必须常显且整体在窗口内；新增 `.project-drawer-region:not(.open) .project-drawer-toggle::before` 实心蓝 + `0 0 0 4px var(--blue-soft)`，收起态 `.project-drawer-toggle { left:-5px; }`、`::before { left:9px; }`，短线整体（含 4px 浅蓝光晕）位于 `x>=0` 完整可见；展开态恢复默认透明并保持中心对齐侧栏右边界。`index.html` 静态资源版本号更新为 `20260804-ui130`。
 
+> 验收记录（2026-08-04）：用户进一步要求短线无论抽屉展开或收起都始终显示；已将 `.project-drawer-toggle::before` 默认改为实心系统蓝 + `0 0 0 4px var(--blue-soft)`，移除展开态透明规则，收起/展开两种状态均常显。`index.html` 静态资源版本号更新为 `20260804-ui131`。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。
