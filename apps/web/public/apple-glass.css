@@ -2430,7 +2430,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   height: 100dvh;
   pointer-events: auto;
   transform: translateX(-100%);
-  transition: transform .52s var(--spring), box-shadow .52s var(--ease);
+  transition: transform .5s var(--spring), box-shadow .5s var(--ease);
 }
 .project-drawer-shell .sidebar {
   width: 100%;
@@ -2454,7 +2454,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   position: absolute;
   z-index: 60;
   top: 50%;
-  left: -10px;
+  left: -9px;
   display: grid;
   place-items: center;
   width: 20px;
@@ -2470,7 +2470,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transform: translateY(-50%);
-  transition: left .52s var(--spring), color .24s var(--ease), transform .2s var(--spring);
+  transition: left .5s var(--spring), color .24s var(--ease), transform .2s var(--spring);
 }
 .project-drawer-toggle::before {
   content: '';
@@ -2480,8 +2480,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   left: 9px;
   width: 2px;
   border-radius: 999px;
-  background: var(--blue);
-  box-shadow: 0 0 0 4px var(--blue-soft);
+  background: transparent;
   transition: background .25s var(--ease), box-shadow .25s var(--ease);
 }
 .project-drawer-toggle:hover {
@@ -2500,10 +2499,10 @@ a.secondary { text-decoration: none; color: var(--ink); }
   transform: translateY(-50%) scale(.94);
 }
 .project-drawer-region.open .project-drawer-toggle {
-  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 14px);
+  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 10px);
 }
 .project-drawer-region.open .project-drawer-toggle::before {
-  left: 13px;
+  left: 9px;
 }
 .project-drawer-scrim {
   position: absolute;
@@ -2554,18 +2553,9 @@ a.secondary { text-decoration: none; color: var(--ink); }
 :root[data-theme='dark'] .project-drawer-toggle {
   color: rgba(10, 132, 255, .76);
 }
-:root[data-theme='dark'] .project-drawer-toggle::before {
-  background: rgba(10, 132, 255, .46);
-  box-shadow: 0 0 0 5px rgba(10, 132, 255, .07);
-}
 :root[data-theme='dark'] .project-drawer-toggle:hover,
 :root[data-theme='dark'] .project-drawer-toggle:focus-visible {
   color: var(--blue);
-}
-:root[data-theme='dark'] .project-drawer-toggle:hover::before,
-:root[data-theme='dark'] .project-drawer-toggle:focus-visible::before {
-  background: var(--blue);
-  box-shadow: 0 0 0 6px var(--blue-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {
