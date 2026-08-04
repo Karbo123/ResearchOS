@@ -422,6 +422,31 @@ deleteDark.mask = await computedStyles('.modal')
 await capture('108h-delete-dark.png')
 
 await navigate(projectUrl, 'en', 'light')
+const workspaceStatePanel = await evaluate(`(() => {
+  const details = document.querySelector('.workspace-state-details')
+  const chips = Array.from(document.querySelectorAll('.workspace-state-legend .workspace-state-chip'))
+  const legendRows = Array.from(document.querySelectorAll('.workspace-state-legend-row'))
+  const notices = Array.from(document.querySelectorAll('.workspace-state-panel .state-notice'))
+  return {
+    detailsExists: !!details,
+    chipCount: chips.length,
+    chipLabels: chips.map(chip => chip.textContent?.trim() || null),
+    legendRowCount: legendRows.length,
+    legendRowsHaveMeta: legendRows.every(row => !!row.querySelector('code') && /workspace|工作区|工作區|espacio de trabajo/i.test(row.textContent || '')),
+    noticeCount: notices.length,
+    hasScope: !!document.querySelector('.workspace-context-title code')?.textContent?.trim(),
+    hasRetryable: Array.from(document.querySelectorAll('.state-notice-meta dd')).some(node => /retryable|可重试|可重試|reintentable/i.test(node.textContent || '')),
+    pendingBadge: !!document.querySelector('.workspace-context-actions .badge.pending'),
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await evaluate(`document.querySelector('.workspace-state-details summary')?.click()`)
+await wait(350)
+workspaceStatePanel.openAfterClick = await evaluate(`document.querySelector('.workspace-state-details')?.hasAttribute('open') || false`)
+await capture('108h-workspace-state-panel.png')
+if (!workspaceStatePanel.detailsExists || workspaceStatePanel.chipCount < 9 || workspaceStatePanel.legendRowCount < 9 || !workspaceStatePanel.legendRowsHaveMeta || workspaceStatePanel.noticeCount < 1 || !workspaceStatePanel.hasScope || !workspaceStatePanel.hasRetryable || !workspaceStatePanel.openAfterClick || workspaceStatePanel.overflowX) {
+  throw new Error(`Workspace state panel did not render: ${JSON.stringify(workspaceStatePanel)}`)
+}
 await evaluate(`document.querySelector('.project-drawer-toggle')?.click()`)
 await wait(700)
 const brand = await evaluate(`(() => {
@@ -1032,5 +1057,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, provenanceDrawer, relatedWorkLiterature, relatedWorkVisualization, graphNodeDetails, relatedWorkCrossProject, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, workspaceStatePanel, seedExpansion, provenanceDrawer, relatedWorkLiterature, relatedWorkVisualization, graphNodeDetails, relatedWorkCrossProject, comparison, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
 socket.close()

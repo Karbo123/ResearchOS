@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { api, errorMessage, localizeFailure } from '../../api'
 import type { Artifact, Experiment, ProjectDetail, ProjectWorkspaceDetail, Reproduction, ReproductionRun, Repository, TabId } from '../../types'
-import { Badge, ButtonRow, EmptyState, SectionHeading, statusLabel } from '../ui'
+import { Badge, ButtonRow, EmptyState, SectionHeading, StateNotice, statusLabel } from '../ui'
 import { ArtifactCard } from '../previews'
 import { useTranslation } from '../../i18n'
 import { ComparisonTab } from './ComparisonTab'
@@ -474,7 +474,7 @@ export function ExperimentWorkspace({
                     <div className="data-row"><div><h3>{t('workspace.goal')}</h3><p>{idea?.success_criteria?.join('；') || t('common.notConfirmed')}</p></div><Badge status={idea?.success_criteria?.length ? 'recorded' : 'unresolved'} /></div>
                     <div className="data-row"><div><h3>{t('workspace.method')}</h3><p>{idea?.expected_contributions?.join('；') || t('common.notConfirmed')}</p></div><Badge status={idea?.expected_contributions?.length ? 'candidate' : 'unresolved'} /></div>
                   </div>
-                  <WorkspaceFiles workspace={workspace} workspaceError={workspaceError} />
+                  <WorkspaceFiles workspace={workspace} workspaceError={workspaceError} scope={project.id} />
                 </>
               ) : null}
 
@@ -544,7 +544,7 @@ export function ExperimentWorkspace({
                           </div>
                         </DetailSection>
                       ) : null}
-                      <WorkspaceFiles workspace={workspace} workspaceError={workspaceError} />
+                      <WorkspaceFiles workspace={workspace} workspaceError={workspaceError} scope={project.id} />
                     </>
                   ) : null}
                 </>
@@ -635,11 +635,21 @@ function DetailSection({ title, children }: { title: string; children: ReactNode
   )
 }
 
-function WorkspaceFiles({ workspace, workspaceError }: { workspace: ProjectWorkspaceDetail | null; workspaceError: string | null }) {
+function WorkspaceFiles({ workspace, workspaceError, scope }: { workspace: ProjectWorkspaceDetail | null; workspaceError: string | null; scope: string }) {
   const { t } = useTranslation()
   return (
     <DetailSection title={t('workspace.fileTree')}>
-      {workspaceError ? <EmptyState text={t('code.error', { error: workspaceError })} /> : null}
+      {workspaceError ? (
+        <StateNotice
+          kind="error"
+          title={t('stateNotice.failed')}
+          message={workspaceError}
+          code="workspace"
+          source="server"
+          scope={scope}
+          nextStep={t('stateNotice.next.failed')}
+        />
+      ) : null}
       {workspace ? (
         <>
           <div className="data-list workspace-detail-list">
@@ -664,7 +674,9 @@ function WorkspaceFiles({ workspace, workspaceError }: { workspace: ProjectWorks
             </>
           ) : null}
         </>
-      ) : !workspaceError ? <EmptyState text={t('code.loading')} /> : null}
+      ) : !workspaceError ? (
+        <StateNotice kind="loading" title={t('stateNotice.loading')} scope={scope} nextStep={t('stateNotice.next.loading')} />
+      ) : null}
     </DetailSection>
   )
 }

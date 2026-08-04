@@ -1,6 +1,6 @@
 import { AlertTriangle, Clock3, Fingerprint, LockKeyhole, ShieldCheck } from 'lucide-react'
 import type { ProjectDetail } from '../types'
-import { Badge } from './ui'
+import { Badge, StateNotice, type StateNoticeKind } from './ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../i18n'
 import { localizeFailure } from '../api'
 
@@ -10,6 +10,18 @@ type ContextFailure = {
   source: string
   created_at?: string
 }
+
+const STATE_LEGEND: Array<{ kind: StateNoticeKind; labelKey: TranslationKey; nextKey: TranslationKey; retryable: boolean }> = [
+  { kind: 'empty', labelKey: 'stateNotice.empty', nextKey: 'stateNotice.next.empty', retryable: false },
+  { kind: 'loading', labelKey: 'stateNotice.loading', nextKey: 'stateNotice.next.loading', retryable: false },
+  { kind: 'ready', labelKey: 'stateNotice.success', nextKey: 'stateNotice.next.success', retryable: false },
+  { kind: 'error', labelKey: 'stateNotice.failed', nextKey: 'stateNotice.next.failed', retryable: true },
+  { kind: 'waiting', labelKey: 'stateNotice.waitingApproval', nextKey: 'stateNotice.next.waitingApproval', retryable: false },
+  { kind: 'cancelled', labelKey: 'stateNotice.cancelled', nextKey: 'stateNotice.next.cancelled', retryable: false },
+  { kind: 'partial', labelKey: 'stateNotice.partial', nextKey: 'stateNotice.next.partial', retryable: false },
+  { kind: 'no_evidence', labelKey: 'stateNotice.noEvidence', nextKey: 'stateNotice.next.noEvidence', retryable: false },
+  { kind: 'no_permission', labelKey: 'stateNotice.noPermission', nextKey: 'stateNotice.next.noPermission', retryable: false },
+]
 
 function latestFailure(project: ProjectDetail, t: (key: TranslationKey) => string): ContextFailure | null {
   const failures: ContextFailure[] = []
@@ -33,7 +45,15 @@ function latestFailure(project: ProjectDetail, t: (key: TranslationKey) => strin
   return failures.sort((left, right) => String(right.created_at || '').localeCompare(String(left.created_at || '')))[0] || null
 }
 
-export function WorkspaceContextBar({ project }: { project: ProjectDetail }) {
+export function WorkspaceContextBar({
+  project,
+  refreshing = false,
+  onRefresh,
+}: {
+  project: ProjectDetail
+  refreshing?: boolean
+  onRefresh?: () => void
+}) {
   const { t, locale } = useTranslation()
   const pending = (project.proposals || []).filter(proposal => proposal.status === 'pending').length
   const failure = latestFailure(project, t)
@@ -62,6 +82,55 @@ export function WorkspaceContextBar({ project }: { project: ProjectDetail }) {
           </span>
         ) : <span className="workspace-context-ok">{t('context.noRecentFailure')}</span>}
       </div>
+      <details className="workspace-state-details">
+        <summary><ShieldCheck size={13} aria-hidden="true" />{t('context.stateDetails')}</summary>
+        <div className="workspace-state-panel">
+          <div className="workspace-state-current">
+            <div className="workspace-state-current-meta">
+              <span>{refreshing ? t('context.refreshing') : t('context.dataReady')}</span>
+              <span>{t('context.updatedAt')} {formatDateTime(project.updated_at, locale)}</span>
+              <span>{pending ? t('context.pendingCount', { count: pending }) : t('context.noPending')}</span>
+              <span>{failure ? `${t('context.failureCode')} ${failure.code}` : t('context.noRecentFailure')}</span>
+            </div>
+            {failure ? (
+              <StateNotice
+                kind="error"
+                title={t('context.failureTitle')}
+                message={failure.message}
+                code={failure.code}
+                source={failure.source}
+                scope={scopeLabel}
+                retry={onRefresh}
+                nextStep={t('stateNotice.next.failed')}
+              />
+            ) : (
+              <StateNotice kind="ready" title={t('context.dataReady')} scope={scopeLabel} nextStep={t('stateNotice.next.success')} />
+            )}
+          </div>
+          <div className="workspace-state-legend">
+            <h4>{t('context.stateLegend')}</h4>
+            <div className="workspace-state-legend-grid">
+              {STATE_LEGEND.map(item => (
+                <span className={`workspace-state-chip state-legend-${item.kind}`} key={item.kind} title={t(item.nextKey)}>
+                  {t(item.labelKey)}
+                </span>
+              ))}
+            </div>
+            {pending ? <p className="workspace-state-next">{t('context.pendingNext')}</p> : null}
+            {STATE_LEGEND.map(item => (
+              <div className="workspace-state-legend-row" key={item.kind}>
+                <code>{item.kind}</code>
+                <div className="workspace-state-legend-copy">
+                  <strong>{t(item.labelKey)}</strong>
+                  <span>{t(item.nextKey)}</span>
+                  <small>{t('context.failureSource')}: workspace · {t('context.failureScope')}: {scopeLabel}</small>
+                </div>
+                <em>{item.retryable ? t('stateNotice.retryable.yes') : t('stateNotice.retryable.no')}</em>
+              </div>
+            ))}
+          </div>
+        </div>
+      </details>
     </section>
   )
 }

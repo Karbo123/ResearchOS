@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { api, errorMessage, localizeFailure } from '../../api'
 import type { Artifact, PaperSectionId, PaperWorkspaceDetail, ProjectDetail, TabId } from '../../types'
-import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
+import { Badge, ButtonRow, EmptyState, SectionHeading, StateNotice } from '../ui'
 import { useTranslation } from '../../i18n'
 
 const SECTION_ICONS: Record<PaperSectionId, ReactNode> = {
@@ -265,7 +265,18 @@ export function PaperWorkspace({
         </aside>
         <div className="workspace-detail-pane paper-editor-pane" aria-live="polite">
           {workspaceError ? (
-            <div className="inline-warning"><TriangleAlert size={15} /> {workspaceError}</div>
+            <StateNotice
+              kind="error"
+              title={t('stateNotice.failed')}
+              message={workspaceError}
+              code="paper_workspace"
+              source="server"
+              scope={project.id}
+              retry={() => { void loadWorkspace() }}
+              nextStep={t('stateNotice.next.failed')}
+            />
+          ) : !workspace ? (
+            <StateNotice kind="loading" title={t('stateNotice.loading')} scope={project.id} nextStep={t('stateNotice.next.loading')} />
           ) : !activeSection ? (
             <EmptyState text={t('paperWorkspace.emptyWorkspace')} />
           ) : (

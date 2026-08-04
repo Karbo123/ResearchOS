@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { X } from 'lucide-react'
+import { AlertTriangle, Ban, CheckCircle2, Clock3, FileQuestion, Inbox, Loader2, LockKeyhole, RotateCw, X } from 'lucide-react'
 import { useTranslation, type TranslationKey } from '../i18n'
 
 export type BadgeKind = 'neutral' | 'live' | 'pending' | 'failed'
@@ -110,6 +110,93 @@ export function EmptyState({ text, action }: { text: string; action?: React.Reac
     <div className="empty">
       <p>{text}</p>
       {action ? <div className="button-row" style={{ marginTop: 12 }}>{action}</div> : null}
+    </div>
+  )
+}
+
+export type StateNoticeKind =
+  | 'loading'
+  | 'ready'
+  | 'empty'
+  | 'error'
+  | 'partial'
+  | 'waiting'
+  | 'cancelled'
+  | 'no_evidence'
+  | 'no_permission'
+
+const STATE_NOTICE_KEYS: Record<StateNoticeKind, TranslationKey> = {
+  loading: 'stateNotice.loading',
+  ready: 'stateNotice.success',
+  empty: 'stateNotice.empty',
+  error: 'stateNotice.failed',
+  partial: 'stateNotice.partial',
+  waiting: 'stateNotice.waitingApproval',
+  cancelled: 'stateNotice.cancelled',
+  no_evidence: 'stateNotice.noEvidence',
+  no_permission: 'stateNotice.noPermission',
+}
+
+const STATE_NOTICE_ICONS: Record<StateNoticeKind, React.ReactNode> = {
+  loading: <Loader2 size={18} className="spin" />,
+  ready: <CheckCircle2 size={18} />,
+  empty: <Inbox size={18} />,
+  error: <AlertTriangle size={18} />,
+  partial: <AlertTriangle size={18} />,
+  waiting: <Clock3 size={18} />,
+  cancelled: <Ban size={18} />,
+  no_evidence: <FileQuestion size={18} />,
+  no_permission: <LockKeyhole size={18} />,
+}
+
+export function StateNotice({
+  kind = 'empty',
+  title,
+  message,
+  code,
+  source,
+  scope,
+  retry,
+  retryLabel,
+  retryable: retryableProp,
+  nextStep,
+}: {
+  kind?: StateNoticeKind
+  title?: string
+  message?: string
+  code?: string
+  source?: string
+  scope?: string
+  retry?: () => void
+  retryLabel?: string
+  retryable?: boolean
+  nextStep?: string
+}) {
+  const { t } = useTranslation()
+  const role = kind === 'loading' ? 'status' : kind === 'ready' ? 'status' : 'alert'
+  const retryable = retryableProp ?? Boolean(retry)
+  return (
+    <div className={`state-notice state-notice-${kind}`} role={role} aria-live="polite">
+      <div className="state-notice-icon">{STATE_NOTICE_ICONS[kind]}</div>
+      <div className="state-notice-copy">
+        <strong>{title ?? t(STATE_NOTICE_KEYS[kind])}</strong>
+        {message ? <p>{message}</p> : null}
+        {(code || source || scope) ? (
+          <dl className="state-notice-meta">
+            {code ? <div><dt>{t('context.failureCode')}</dt><dd><code>{code}</code></dd></div> : null}
+            {source ? <div><dt>{t('context.failureSource')}</dt><dd>{source}</dd></div> : null}
+            {scope ? <div><dt>{t('context.failureScope')}</dt><dd><code>{scope}</code></dd></div> : null}
+            <div><dt>{t('context.retryable')}</dt><dd>{retryable ? t('stateNotice.retryable.yes') : t('stateNotice.retryable.no')}</dd></div>
+          </dl>
+        ) : null}
+        {nextStep ? <p className="state-notice-next">{t('context.nextStep')} {nextStep}</p> : null}
+      </div>
+      {retry ? (
+        <button className="secondary state-notice-retry" type="button" onClick={retry}>
+          <RotateCw size={14} />
+          {retryLabel || t('context.retry')}
+        </button>
+      ) : null}
     </div>
   )
 }

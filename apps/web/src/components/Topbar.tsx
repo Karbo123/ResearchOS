@@ -47,7 +47,7 @@ export function Topbar({
           </button>
         </div>
       </div>
-      {project ? <WorkspaceContextBar project={project} /> : null}
+      {project ? <WorkspaceContextBar project={project} refreshing={refreshing} onRefresh={onRefresh} /> : null}
     </header>
   )
 }

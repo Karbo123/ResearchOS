@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Network, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type { Paper, ProjectDetail, ProjectWorkspaceDetail, ResearchStatusGraphEdge, ResearchStatusGraphNode, ResearchStatusResponse, TabId } from '../../types'
-import { Badge, EmptyState, SectionHeading, statusLabel } from '../ui'
+import { Badge, EmptyState, SectionHeading, StateNotice, statusLabel } from '../ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 
 function text(value: unknown, t: (key: TranslationKey) => string) {
@@ -175,21 +175,35 @@ export function WorkflowStageTab({
   const graphNodesById = useMemo(() => new Map(graphLayout.nodes.map(node => [node.id, node])), [graphLayout.nodes])
   const selectedGraphNode = selectedGraphNodeId ? graphNodesById.get(selectedGraphNodeId) || null : null
 
+  const loadResearchStatus = async () => {
+    setResearchStatus(null)
+    setResearchStatusError(null)
+    setSelectedGraphNodeId(null)
+    try {
+      const data = await api<ResearchStatusResponse>(`/api/projects/${project.id}/research-status`)
+      setResearchStatus(data)
+    } catch (error) {
+      setResearchStatusError(errorMessage(error))
+    }
+  }
+
+  const loadWorkspace = async () => {
+    setWorkspace(null)
+    setWorkspaceError(null)
+    try {
+      const data = await api<ProjectWorkspaceDetail>(`/api/projects/${project.id}/workspace`)
+      setWorkspace(data)
+    } catch (error) {
+      setWorkspaceError(errorMessage(error))
+    }
+  }
+
   useEffect(() => {
     if (legacyTab === 'code_workspace') {
-      setWorkspace(null)
-      setWorkspaceError(null)
-      api<ProjectWorkspaceDetail>(`/api/projects/${project.id}/workspace`)
-        .then(setWorkspace)
-        .catch(error => setWorkspaceError(errorMessage(error)))
+      void loadWorkspace()
     }
     if (legacyTab === 'citation_graph') {
-      setResearchStatus(null)
-      setResearchStatusError(null)
-      setSelectedGraphNodeId(null)
-      api<ResearchStatusResponse>(`/api/projects/${project.id}/research-status`)
-        .then(setResearchStatus)
-        .catch(error => setResearchStatusError(errorMessage(error)))
+      void loadResearchStatus()
     }
   }, [legacyTab, project.id, tab])
 
@@ -197,8 +211,21 @@ export function WorkflowStageTab({
     return (
       <>
         <SectionHeading title={t('graph.title')} hint={t('graph.hint')} extra={<Badge>{t('graph.edgeCount', { count: researchStatus?.graph.edges.length || 0 })}</Badge>} />
-        {researchStatusError ? <EmptyState text={t('graph.requestFailed', { error: researchStatusError })} /> : null}
-        {!researchStatus && !researchStatusError ? <EmptyState text={t('graph.loading')} /> : null}
+        {researchStatusError ? (
+          <StateNotice
+            kind="error"
+            title={t('stateNotice.failed')}
+            message={researchStatusError}
+            code="research_status"
+            source="server"
+            scope={project.id}
+            retry={() => { void loadResearchStatus() }}
+            nextStep={t('stateNotice.next.failed')}
+          />
+        ) : null}
+        {!researchStatus && !researchStatusError ? (
+          <StateNotice kind="loading" title={t('stateNotice.loading')} scope={project.id} nextStep={t('stateNotice.next.loading')} />
+        ) : null}
         {researchStatus ? (
           <>
             <div className="data-list">
@@ -362,7 +389,18 @@ export function WorkflowStageTab({
     return (
       <>
         <SectionHeading title={t('code.title')} hint={t('code.hint')} />
-        {workspaceError ? <EmptyState text={t('code.error', { error: workspaceError })} /> : null}
+        {workspaceError ? (
+          <StateNotice
+            kind="error"
+            title={t('stateNotice.failed')}
+            message={workspaceError}
+            code="workspace"
+            source="server"
+            scope={project.id}
+            retry={() => { void loadWorkspace() }}
+            nextStep={t('stateNotice.next.failed')}
+          />
+        ) : null}
         {workspace ? (
           <>
             <div className="data-list">
@@ -373,7 +411,9 @@ export function WorkflowStageTab({
             {workspace.files?.length ? <div className="section"><SectionHeading title={t('code.fileTree')} hint={t('code.fileTreeHint', { max: workspace.limits?.max_files || 600 })} /><div className="data-list">{workspace.files.map(file => <div className="data-row compact-row" key={file.path}><code>{file.kind === 'directory' ? `${file.path}/` : file.path}</code><span className="muted">{file.size_bytes} B</span></div>)}</div></div> : <EmptyState text={t('code.emptyDir')} />}
             {workspace.diff ? <div className="section"><SectionHeading title={t('code.currentDiff')} hint={workspace.diff_truncated ? t('code.diffTruncated') : t('code.diffReadonly')} /><pre className="code-block workspace-diff">{workspace.diff}</pre></div> : null}
           </>
-        ) : !workspaceError ? <EmptyState text={t('code.loading')} /> : null}
+        ) : !workspaceError ? (
+          <StateNotice kind="loading" title={t('stateNotice.loading')} scope={project.id} nextStep={t('stateNotice.next.loading')} />
+        ) : null}
       </>
     )
   }

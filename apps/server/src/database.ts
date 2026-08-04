@@ -360,7 +360,9 @@ CREATE INDEX IF NOT EXISTS ix_research_comparison_candidates_project ON research
 `
 
 export async function migrate(): Promise<void> {
-  await database.exec(migrationSql)
+  for (const statement of migrationSql.split(';').map(item => item.trim()).filter(Boolean)) {
+    await database.exec(`${statement};`)
+  }
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0001-native-typescript') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0002-lineage-checkpoint-integrity') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0003-supermemory-links') ON CONFLICT DO NOTHING")

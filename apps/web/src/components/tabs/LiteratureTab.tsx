@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronsDown, Download, GitBranch, GitFork, ScanText, Search, ShieldCheck, Square } from 'lucide-react'
 import { api, errorMessage, localizeFailure } from '../../api'
 import type { ClaimReview, MaterialSearchResponse, Paper, ProjectDetail, RelatedWorkAttempt, RelatedWorkCandidate, RelatedWorkFieldProvenance, RelatedWorkRun, RelatedWorkRunEvent, Repository, RepositoryDiscovery, SearchCandidate, TabId } from '../../types'
-import { Badge, ButtonRow, EmptyState, Modal, SectionHeading, statusLabel } from '../ui'
+import { Badge, ButtonRow, EmptyState, Modal, SectionHeading, StateNotice, statusLabel } from '../ui'
 import { useTranslation, type TranslationKey } from '../../i18n'
 
 export function LiteratureTab({
@@ -39,6 +39,7 @@ export function LiteratureTab({
   }
   const [materialQuery, setMaterialQuery] = useState('')
   const [materialLoading, setMaterialLoading] = useState(false)
+  const [materialError, setMaterialError] = useState<string | null>(null)
   const [materialRows, setMaterialRows] = useState<Array<Record<string, any>>>([])
   const [materialTotal, setMaterialTotal] = useState(0)
   const [nextOffset, setNextOffset] = useState<number | null>(null)
@@ -260,6 +261,7 @@ export function LiteratureTab({
     const query = materialQuery.trim()
     if (!query) return
     setMaterialLoading(true)
+    setMaterialError(null)
     try {
       const encoded = encodeURIComponent(query)
       const response = await api<MaterialSearchResponse>(
@@ -270,7 +272,9 @@ export function LiteratureTab({
       setMaterialTotal(Number(response.total_matches || 0))
       setNextOffset(response.next_offset == null ? null : Number(response.next_offset))
     } catch (error) {
-      showToast(errorMessage(error))
+      const message = errorMessage(error)
+      setMaterialError(message)
+      showToast(message)
     } finally {
       setMaterialLoading(false)
     }
@@ -743,8 +747,19 @@ export function LiteratureTab({
           </button>
         </form>
         <div className="material-search-results">
-          {materialLoading ? (
-            <EmptyState text={t('literature.searchingMaterials')} />
+          {materialError ? (
+            <StateNotice
+              kind="error"
+              title={t('stateNotice.failed')}
+              message={materialError}
+              code="material_search"
+              source="server"
+              scope={project.id}
+              retry={() => { void searchMaterials(0, false) }}
+              nextStep={t('stateNotice.next.failed')}
+            />
+          ) : materialLoading ? (
+            <StateNotice kind="loading" title={t('literature.searchingMaterials')} scope={project.id} nextStep={t('stateNotice.next.loading')} />
           ) : materialRows.length ? (
             <>
               <p className="muted">{t('literature.materialTotal', { count: materialTotal })}</p>
