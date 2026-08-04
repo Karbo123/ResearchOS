@@ -30,22 +30,24 @@ export function Topbar({
           <h1 title={title}>{title}</h1>
           <div className="muted">{meta}</div>
         </div>
-        <div className="top-actions">
-          <span className={`health ${health === 'online' ? 'ok' : ''}`}>
-            <span />
-            {healthLabel}
-          </span>
-          <button
-            className={`icon-btn refresh-btn${isRefreshing ? ' is-refreshing' : ''}`}
-            type="button"
-            disabled={isRefreshing}
-            onClick={onRefresh}
-            title={refreshLabel}
-            aria-label={refreshLabel}
-          >
-            <RefreshCw size={17} />
-          </button>
-        </div>
+        {project ? (
+          <div className="top-actions">
+            <span className={`health ${health === 'online' ? 'ok' : ''}`}>
+              <span />
+              {healthLabel}
+            </span>
+            <button
+              className={`icon-btn refresh-btn${isRefreshing ? ' is-refreshing' : ''}`}
+              type="button"
+              disabled={isRefreshing}
+              onClick={onRefresh}
+              title={refreshLabel}
+              aria-label={refreshLabel}
+            >
+              <RefreshCw size={17} />
+            </button>
+          </div>
+        ) : null}
       </div>
       {project ? <WorkspaceContextBar project={project} refreshing={refreshing} onRefresh={onRefresh} /> : null}
     </header>

@@ -341,7 +341,7 @@ export function HomeDashboard({
       <div className="home-hero">
         <div>
           <p className="home-eyebrow">{t('home.eyebrow')}</p>
-          <h2>{t('home.title')}</h2>
+          <h2>{t('home.summary')}</h2>
           <p className="home-description">{t('home.description')}</p>
         </div>
         <div className="home-hero-actions">

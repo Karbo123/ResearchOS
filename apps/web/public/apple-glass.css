@@ -544,9 +544,39 @@ button { -webkit-font-smoothing: inherit; }
   margin-top: 16px;
   padding: 2px;
 }
+.home-sidebar-system-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 3px 8px;
+}
+.home-sidebar-health {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  flex: 1 1 auto;
+  padding: 7px 11px;
+  border: 1px solid var(--sidebar-line);
+  border-radius: 999px;
+  color: var(--sidebar-muted);
+  background: var(--surface-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+.home-sidebar-health-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-soft);
+}
+.home-sidebar-health.is-ok .home-sidebar-health-dot { background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+.home-sidebar-health.is-offline .home-sidebar-health-dot { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
+.home-sidebar-refresh { width: 34px; height: 34px; flex: 0 0 auto; }
 .home-sidebar-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
   margin: 0 3px;
 }

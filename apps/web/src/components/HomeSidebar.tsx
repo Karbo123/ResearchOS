@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import {
   FlaskConical,
-  FolderKanban,
   Pin,
+  RefreshCw,
   Settings,
   ShieldCheck,
 } from 'lucide-react'
@@ -30,18 +30,24 @@ function getQuickAccessProjects(projects: ProjectSummary[], recentIds: string[])
 
 export function HomeSidebar({
   projects,
+  health,
+  refreshing = false,
   recentProjectIds,
   onGoHome,
   onOpenProject,
   onOpenSettings,
+  onRefresh,
   sidebarWidth,
   onSidebarWidthChange,
 }: {
   projects: ProjectSummary[]
+  health: 'connecting' | 'online' | 'offline'
+  refreshing?: boolean
   recentProjectIds: string[]
   onGoHome: () => void
   onOpenProject: (id: string) => void
   onOpenSettings: () => void
+  onRefresh: () => void
   sidebarWidth: number
   onSidebarWidthChange: (width: number) => void
 }) {
@@ -50,6 +56,8 @@ export function HomeSidebar({
   const quickProjects = getQuickAccessProjects(projects, recentProjectIds)
   const running = projects.reduce((sum, project) => sum + (project.experiment_running ?? 0), 0)
   const pending = projects.reduce((sum, project) => sum + (project.pending_approvals ?? 0), 0)
+  const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
+  const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -141,12 +149,23 @@ export function HomeSidebar({
 
       <div className="home-sidebar-system">
         <div className="home-sidebar-section-label">{t('homeSidebar.system')}</div>
+        <div className="home-sidebar-system-row">
+          <span className={`home-sidebar-health${health === 'online' ? ' is-ok' : health === 'offline' ? ' is-offline' : ''}`}>
+            <span className="home-sidebar-health-dot" aria-hidden="true" />
+            {healthLabel}
+          </span>
+          <button
+            className={`icon-btn refresh-btn home-sidebar-refresh${refreshing ? ' is-refreshing' : ''}`}
+            type="button"
+            disabled={refreshing}
+            onClick={onRefresh}
+            title={refreshLabel}
+            aria-label={refreshLabel}
+          >
+            <RefreshCw size={16} />
+          </button>
+        </div>
         <div className="home-sidebar-stats">
-          <div className="home-sidebar-stat">
-            <FolderKanban size={14} aria-hidden="true" />
-            <strong>{projects.length}</strong>
-            <small>{t('homeSidebar.totalProjects')}</small>
-          </div>
           <div className="home-sidebar-stat">
             <FlaskConical size={14} aria-hidden="true" />
             <strong>{running}</strong>

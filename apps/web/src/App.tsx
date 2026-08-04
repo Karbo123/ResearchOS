@@ -410,10 +410,13 @@ export function App() {
       ) : (
         <HomeSidebar
           projects={projects}
+          health={health}
+          refreshing={projectRefreshing}
           recentProjectIds={recentProjectIds}
           onGoHome={() => goHome()}
           onOpenProject={id => void openProject(id)}
           onOpenSettings={() => setSettingsOpen(true)}
+          onRefresh={() => void refreshProject()}
           sidebarWidth={sidebarWidth}
           onSidebarWidthChange={updateSidebarWidth}
         />
