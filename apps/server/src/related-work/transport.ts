@@ -199,6 +199,43 @@ export async function requestXml(payload: RequestPayload): Promise<RequestResult
   }
 }
 
+export async function requestText(payload: RequestPayload): Promise<RequestResult<string>> {
+  const startedAt = new Date().toISOString()
+  try {
+    const response = await requestBody(payload)
+    return {
+      value: response.body,
+      attempt: sourceAttempt.parse({
+        provider: payload.provider,
+        query: payload.query,
+        request_url: payload.request_url,
+        started_at: startedAt,
+        finished_at: new Date().toISOString(),
+        status: 'succeeded',
+        http_status: response.status,
+        result_count: 0,
+        failure: null,
+      }),
+    }
+  } catch (error) {
+    const requestError = failureFromError(error)
+    return {
+      value: null,
+      attempt: sourceAttempt.parse({
+        provider: payload.provider,
+        query: payload.query,
+        request_url: payload.request_url,
+        started_at: startedAt,
+        finished_at: new Date().toISOString(),
+        status: statusFor(requestError),
+        http_status: requestError.http_status,
+        result_count: 0,
+        failure: makeFailure(requestError),
+      }),
+    }
+  }
+}
+
 export function invalidResponseAttempt(attempt: SourceAttempt, message: string): SourceAttempt {
   return sourceAttempt.parse({
     ...attempt,

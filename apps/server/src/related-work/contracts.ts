@@ -6,6 +6,7 @@ export const relatedWorkProvider = z.enum([
   'semantic_scholar',
   'dblp',
   'arxiv',
+  'unpaywall',
 ])
 export type RelatedWorkProvider = z.infer<typeof relatedWorkProvider>
 
@@ -16,6 +17,11 @@ export const paperAuthor = z.object({
   name: z.string().trim().min(1).max(300),
   orcid: z.string().url().max(500).nullable().default(null),
   affiliations: z.array(z.string().trim().min(1).max(500)).max(50).default([]),
+  email: z.string().email().max(500).nullable().default(null),
+  is_corresponding: z.boolean().nullable().default(null),
+  scholar_id: z.string().trim().max(300).nullable().default(null),
+  interests: z.array(z.string().trim().min(1).max(300)).max(50).default([]),
+  citation_stats: z.record(z.string(), z.unknown()).nullable().default(null),
 }).strict()
 
 export const paperLicense = z.object({
@@ -212,7 +218,8 @@ export type RelatedWorkFieldSelectionRequest = z.infer<typeof relatedWorkFieldSe
 export const relatedWorkEnrichmentRequest = z.object({
   candidate_id: z.string().uuid(),
   fields: z.array(relatedWorkFieldName).min(1).max(9),
-  providers: z.array(relatedWorkProvider).min(1).max(5).default(['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv']),
+  providers: z.array(relatedWorkProvider).min(1).max(6).default(['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv', 'unpaywall']),
+  max_rounds: z.number().int().min(1).max(6).default(3),
   reason: z.string().trim().min(5).max(2_000),
 }).strict()
 export type RelatedWorkEnrichmentRequest = z.infer<typeof relatedWorkEnrichmentRequest>

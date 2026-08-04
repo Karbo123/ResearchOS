@@ -2,8 +2,16 @@ import { normalizeTitle } from './contracts.js'
 
 export type EnrichableAuthor = {
   name: string
+  orcid?: string | null
   affiliations?: string[]
+  email?: string | null
+  is_corresponding?: boolean | null
+  scholar_id?: string | null
+  interests?: string[]
+  citation_stats?: Record<string, unknown> | null
 }
+
+export type EnrichableAuthorWithExtra = EnrichableAuthor
 
 export type EnrichablePaper = {
   title?: string | null
@@ -95,6 +103,93 @@ export function matchAuthor(query: string | null | undefined, candidates: Array<
   return null
 }
 
+export function mergeEnrichedAuthors(
+  existing: Array<EnrichableAuthor | string> | null | undefined,
+  incoming: Array<EnrichableAuthor | string> | null | undefined,
+): Array<EnrichableAuthorWithExtra> {
+  const existingNames: string[] = []
+  const merged: Array<EnrichableAuthorWithExtra> = []
+  const existingCount = existing?.length || 0
+  for (const value of existing || []) {
+    const author = typeof value === 'string' ? { name: value } : value
+    if (!author?.name?.trim()) continue
+    existingNames.push(author.name)
+    merged.push({
+      name: author.name,
+      orcid: author.orcid ?? null,
+      affiliations: [...new Set((author.affiliations || []).filter(Boolean))],
+      email: author.email ?? null,
+      is_corresponding: author.is_corresponding ?? null,
+      scholar_id: author.scholar_id ?? null,
+      interests: author.interests || [],
+      citation_stats: author.citation_stats ?? null,
+    })
+  }
+
+  for (const value of incoming || []) {
+    const author = typeof value === 'string' ? { name: value } : value
+    if (!author?.name?.trim()) continue
+    const match = matchAuthor(author.name, existingNames)
+    if (match) {
+      const target = merged.find(candidate => candidate.name === match)
+      if (target) {
+        if (author.orcid && !target.orcid) target.orcid = author.orcid
+        target.affiliations = [...new Set([...(target.affiliations || []), ...(author.affiliations || []).filter(Boolean)])]
+        if (author.email && !target.email) target.email = author.email
+        if (author.is_corresponding) target.is_corresponding = true
+        if (author.scholar_id && !target.scholar_id) target.scholar_id = author.scholar_id
+        if (author.interests?.length) target.interests = [...new Set([...(target.interests || []), ...author.interests])]
+        if (author.citation_stats && !target.citation_stats) target.citation_stats = author.citation_stats
+      }
+      continue
+    }
+    if (existingCount === 0 || merged.length <= 1) {
+      merged.push({
+        name: author.name,
+        orcid: author.orcid ?? null,
+        affiliations: [...new Set((author.affiliations || []).filter(Boolean))],
+        email: author.email ?? null,
+        is_corresponding: author.is_corresponding ?? null,
+        scholar_id: author.scholar_id ?? null,
+        interests: author.interests || [],
+        citation_stats: author.citation_stats ?? null,
+      })
+      existingNames.push(author.name)
+    }
+  }
+  return merged
+}
+
+export function preferIncomingAuthors(
+  existing: Array<EnrichableAuthor | string> | null | undefined,
+  incoming: Array<EnrichableAuthor | string> | null | undefined,
+): Array<EnrichableAuthorWithExtra> {
+  const incomingAuthors = (incoming || []).flatMap(value => {
+    const author = typeof value === 'string' ? { name: value } : value
+    return author?.name?.trim() ? [{ name: author.name.trim(), orcid: author.orcid ?? null, affiliations: author.affiliations || [], email: author.email ?? null, is_corresponding: author.is_corresponding ?? null, scholar_id: author.scholar_id ?? null, interests: author.interests || [], citation_stats: author.citation_stats ?? null }] : []
+  })
+  if (!incomingAuthors.length) return []
+  const existingAuthors = (existing || []).flatMap(value => {
+    const author = typeof value === 'string' ? { name: value } : value
+    return author?.name?.trim() ? [{ name: author.name.trim(), orcid: author.orcid ?? null, affiliations: author.affiliations || [], email: author.email ?? null, is_corresponding: author.is_corresponding ?? null, scholar_id: author.scholar_id ?? null, interests: author.interests || [], citation_stats: author.citation_stats ?? null }] : []
+  })
+  const existingNames = existingAuthors.map(author => author.name)
+  return incomingAuthors.map(incomingAuthor => {
+    const match = matchAuthor(incomingAuthor.name, existingNames)
+    const existingAuthor = match ? existingAuthors.find(author => author.name === match) : null
+    return {
+      ...incomingAuthor,
+      orcid: incomingAuthor.orcid || existingAuthor?.orcid || null,
+      affiliations: [...new Set([...(existingAuthor?.affiliations || []), ...incomingAuthor.affiliations].filter(Boolean))],
+      email: incomingAuthor.email || existingAuthor?.email || null,
+      is_corresponding: incomingAuthor.is_corresponding || existingAuthor?.is_corresponding || null,
+      scholar_id: incomingAuthor.scholar_id || existingAuthor?.scholar_id || null,
+      interests: [...new Set([...(existingAuthor?.interests || []), ...incomingAuthor.interests])],
+      citation_stats: incomingAuthor.citation_stats || existingAuthor?.citation_stats || null,
+    }
+  })
+}
+
 export function missingFields(paper: EnrichablePaper): string[] {
   const authors = paper.authors || []
   const institutionCount = new Set((paper.institutions || []).filter(Boolean)).size
@@ -102,11 +197,13 @@ export function missingFields(paper: EnrichablePaper): string[] {
   const missing: string[] = []
   if (!paper.title?.trim()) missing.push('title')
   if (!authors.length) missing.push('authors')
-  if (!paper.abstract || paper.abstract.trim().length < 100) missing.push('abstract')
+  else if (authorsWithAffiliations === 0) missing.push('affiliations')
+  else if (authorsWithAffiliations < authors.length * 0.5) missing.push(`affiliations(部分: ${authorsWithAffiliations}/${authors.length})`)
+  if (!paper.abstract || paper.abstract.trim().length < 150) missing.push('abstract')
   if (!paper.doi?.trim()) missing.push('doi')
   if (!paper.year) missing.push('year')
   if (!paper.venue?.trim()) missing.push('venue')
-  if (!institutionCount || (authors.length > 0 && authorsWithAffiliations / authors.length < 0.5)) missing.push('institutions')
+  if (!institutionCount) missing.push('institutions')
   if (!paper.bibtex?.trim()) missing.push('bibtex')
   return missing
 }
@@ -115,17 +212,22 @@ export function paperCompleteness(paper: EnrichablePaper): number {
   const authors = paper.authors || []
   const institutionCount = new Set((paper.institutions || []).filter(Boolean)).size
   const authorsWithAffiliations = authors.filter(author => typeof author !== 'string' && (author.affiliations || []).length > 0).length
-  let score = 0
-  if (paper.title?.trim()) score += 0.15
-  if (authors.length) score += 0.1
-  if (authors.length && authorsWithAffiliations / authors.length >= 0.5) score += 0.05
-  if (paper.abstract?.trim()) score += Math.min(0.2, Math.max(0.05, paper.abstract.trim().length / 2_000 * 0.2))
-  if (paper.doi?.trim()) score += 0.1
-  if (paper.year) score += 0.1
-  if (paper.venue?.trim()) score += 0.1
-  if (institutionCount) score += 0.1
-  if (paper.bibtex?.trim()) score += 0.1
-  return Math.min(1, Math.max(0, score))
+  const checks: number[] = []
+  checks.push(paper.title?.trim() ? 1 : 0)
+  if (!authors.length) checks.push(0)
+  else if (typeof authors[0] === 'object') checks.push(0.5 + 0.5 * (authorsWithAffiliations / authors.length))
+  else checks.push(0.5)
+  const abstract = paper.abstract?.trim() || ''
+  if (!abstract) checks.push(0)
+  else if (abstract.length > 300) checks.push(1)
+  else if (abstract.length > 100) checks.push(0.6)
+  else checks.push(0.3)
+  checks.push(institutionCount ? Math.min(1, institutionCount / 3) : 0)
+  checks.push(paper.venue?.trim() ? 1 : 0.3)
+  checks.push(paper.doi?.trim() ? 1 : 0.2)
+  checks.push(paper.year ? 1 : 0)
+  checks.push(paper.bibtex?.trim() ? 1 : 0)
+  return checks.reduce((sum, value) => sum + value, 0) / checks.length
 }
 
 export function backoff(attempt: number, options: {

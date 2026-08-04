@@ -39,6 +39,35 @@ describe('project-scoped related work API', () => {
     ])
     fetchMock.mockImplementation(async input => {
       const url = String(input)
+      if (url.includes('export.arxiv.org/api/query') && url.includes('id_list=2401.00001')) {
+        return new Response(`<?xml version="1.0" encoding="UTF-8"?>
+          <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+              <id>http://arxiv.org/abs/2401.00001v1</id>
+              <title>Multi Round Fixture</title>
+              <published>2024-01-01T00:00:00Z</published>
+              <summary>The complete abstract for the multi-round fixture paper.</summary>
+              <author><name>Ada Lovelace</name></author>
+              <author><name>Charles Babbage</name></author>
+            </entry>
+          </feed>`, { status: 200, headers: { 'content-type': 'application/atom+xml' } })
+      }
+      if (url.includes('arxiv.org/html/2401.00001')) {
+        return new Response(`<html><body>
+          <div class="ltx_authors"><span class="ltx_personname">Ada Lovelace<sup>1</sup></span></div>
+          <p>1 Analytical Engine Lab</p>
+          <div class="ltx_abstract"><p>Abstract</p></div>
+        </body></html>`, { status: 200, headers: { 'content-type': 'text/html' } })
+      }
+      if (url.includes('api.unpaywall.org')) {
+        return new Response(JSON.stringify({
+          is_oa: true,
+          title: 'Multi Round Fixture',
+          year: 2024,
+          landing_page_url: 'https://example.test/oa',
+          oa_locations: [{ url_for_pdf: 'https://example.test/paper.pdf', url_for_landing_page: 'https://example.test/oa' }],
+        }), { status: 200 })
+      }
       if (url.includes('/works/') && url.includes('root')) {
         return new Response(JSON.stringify({ message: { reference: [{ DOI: '10.1000/child', 'article-title': 'Child Reference', year: '2023', key: 'child' }] } }), { status: 200 })
       }
@@ -196,6 +225,50 @@ describe('project-scoped related work API', () => {
     const stored = await rows<{ candidate: Record<string, unknown> }>('SELECT candidate FROM related_work_candidates WHERE id=$1 AND project_id=$2', [candidateId, projectId])
     expect((stored[0]?.candidate.enrichment as Record<string, unknown>).institutions).toEqual(['Analytical Engine Lab'])
   })
+
+  it('runs bounded multi-round enrichment with arXiv id metadata, HTML affiliations, and Unpaywall PDF', async () => {
+    const candidateId = crypto.randomUUID()
+    const candidate = {
+      provider: 'arxiv',
+      stable_id: 'arxiv:http://arxiv.org/abs/2401.00001v1',
+      title: 'Multi Round Fixture',
+      authors: [{ name: 'Ada Lovelace' }],
+      year: 2024,
+      venue: null,
+      doi: '10.1000/arxiv',
+      abstract: null,
+      pdf_url: null,
+      html_url: 'https://arxiv.org/abs/2401.00001v1',
+      license: null,
+      citation_count: null,
+      open_access: true,
+      source_url: 'https://arxiv.org/abs/2401.00001v1',
+      query: 'fixture',
+      retrieved_at: new Date().toISOString(),
+    }
+    await database.query(`INSERT INTO related_work_candidates
+      (id,project_id,provider,stable_id,normalized_title,year,title,candidate)
+      VALUES ($1,$2,'arxiv','arxiv:http://arxiv.org/abs/2401.00001v1',$3,2024,$4,$5)`, [candidateId, projectId, 'multi round fixture', candidate.title, candidate])
+    const proposal = await requestJson(`/api/projects/${projectId}/related-work/candidate-enrichment`, {
+      method: 'POST',
+      body: JSON.stringify({ candidate_id: candidateId, fields: ['abstract', 'institutions', 'pdf_url'], providers: ['arxiv', 'unpaywall'], max_rounds: 2, reason: '验证多轮补全、arXiv 机构与 Unpaywall PDF' }),
+    })
+    expect(proposal.response.status).toBe(201)
+    const enrichment = await requestJson(`/api/proposals/${proposal.body.proposal_id}/decision`, {
+      method: 'POST',
+      body: JSON.stringify({ decision: 'approved', actor: 'test-user' }),
+    })
+    expect(enrichment.response.status).toBe(200)
+    const result = enrichment.body.related_work_enrichment as Record<string, unknown>
+    expect(result.status).toBe('completed')
+    expect((result.rounds as Array<Record<string, unknown>>).length).toBeLessThanOrEqual(2)
+    const stored = await rows<{ candidate: Record<string, unknown> }>('SELECT candidate FROM related_work_candidates WHERE id=$1 AND project_id=$2', [candidateId, projectId])
+    const paper = stored[0]?.candidate
+    expect((paper?.authors as Array<Record<string, unknown>>).map(author => author.name)).toEqual(['Ada Lovelace', 'Charles Babbage'])
+    expect(String(paper?.abstract || '')).toContain('complete abstract')
+    expect((paper?.enrichment as Record<string, unknown>).institutions).toContain('Analytical Engine Lab')
+    expect(String(paper?.pdf_url || '')).toBe('https://example.test/paper.pdf')
+  }, 30_000)
 
   it('does not write an unrelated provider result during field enrichment', async () => {
     const candidateId = crypto.randomUUID()

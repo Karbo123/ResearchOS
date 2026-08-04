@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { paperCandidate, type SourceAttempt } from '../src/related-work/contracts.js'
-import { backoff, matchAuthor, missingFields, normalizeText, paperCompleteness, stripControlChars, titlesMatch } from '../src/related-work/paper-fields.js'
+import { backoff, matchAuthor, mergeEnrichedAuthors, missingFields, normalizeText, paperCompleteness, preferIncomingAuthors, stripControlChars, titlesMatch } from '../src/related-work/paper-fields.js'
 import { recursiveCollect, type ReferenceBatch } from '../src/related-work/recursive-search.js'
 
 function paper(stableId: string, title: string, doi: string | null = null, year = 2024) {
@@ -71,6 +71,51 @@ describe('TypeScript related-work core', () => {
     }
     expect(paperCompleteness(complete)).toBeGreaterThan(paperCompleteness(minimal))
     expect(paperCompleteness({})).toBeLessThan(0.3)
+  })
+
+  it('incrementally merges author affiliations and corresponding flags without duplicating names', () => {
+    const merged = mergeEnrichedAuthors(
+      [{ name: 'Ada Lovelace', affiliations: ['Analytical Engine Lab'] }],
+      [{ name: 'Lovelace, Ada', affiliations: ['Computing Laboratory'], email: 'ada@example.test', is_corresponding: true }],
+    )
+    expect(merged).toHaveLength(1)
+    expect(merged[0]?.affiliations).toEqual(['Analytical Engine Lab', 'Computing Laboratory'])
+    expect(merged[0]?.email).toBe('ada@example.test')
+    expect(merged[0]?.is_corresponding).toBe(true)
+  })
+
+  it('keeps Python-style BibTeX author priority by only appending when the existing list is small', () => {
+    expect(mergeEnrichedAuthors([{ name: 'Alice' }], [{ name: 'Bob' }])).toHaveLength(2)
+    expect(mergeEnrichedAuthors([{ name: 'Alice' }, { name: 'Carol' }], [{ name: 'Bob' }])).toHaveLength(2)
+    expect(mergeEnrichedAuthors([], [{ name: 'A' }, { name: 'B' }, { name: 'C' }]).map(author => author.name)).toEqual(['A', 'B', 'C'])
+  })
+
+  it('prefers a longer arXiv author list while preserving matched author metadata', () => {
+    const replaced = preferIncomingAuthors(
+      [{ name: 'Ada Lovelace', affiliations: ['Analytical Engine Lab'] }],
+      [
+        { name: 'Lovelace, Ada', affiliations: ['Computing Laboratory'], email: 'ada@example.test', is_corresponding: true },
+        { name: 'Charles Babbage', affiliations: ['Difference Engine Works'] },
+      ],
+    )
+    expect(replaced.map(author => author.name)).toEqual(['Lovelace, Ada', 'Charles Babbage'])
+    expect(replaced[0]?.affiliations).toEqual(['Analytical Engine Lab', 'Computing Laboratory'])
+    expect(replaced[0]?.email).toBe('ada@example.test')
+    expect(replaced[0]?.is_corresponding).toBe(true)
+  })
+
+  it('uses the Python completeness weights so enrichment can stop at the 85% threshold', () => {
+    expect(paperCompleteness({})).toBeCloseTo(0.0625, 2)
+    expect(paperCompleteness({
+      title: 'T',
+      authors: [{ name: 'A', affiliations: ['Lab'] }],
+      abstract: 'x '.repeat(160),
+      doi: '10.1000/test',
+      year: 2024,
+      venue: 'Venue',
+      institutions: ['Lab'],
+      bibtex: '@article{test}',
+    })).toBeGreaterThan(0.85)
   })
 
   it('recursively collects by depth and width with deterministic deduplication and non-dangling edges', async () => {

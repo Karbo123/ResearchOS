@@ -5,7 +5,9 @@ import {
   CrossrefSourceAdapter,
   DblpSourceAdapter,
   OpenAlexSourceAdapter,
+  parseArxivAuthorAffiliations,
   SemanticScholarSourceAdapter,
+  UnpaywallSourceAdapter,
 } from '../src/related-work/source-adapters.js'
 
 function jsonFetch(payload: unknown, status = 200, capture?: (input: RequestInfo | URL, init?: RequestInit) => void): typeof fetch {
@@ -148,6 +150,115 @@ describe('related work source contracts', () => {
     expect(result.attempt.status).toBe('succeeded')
     expect(result.ranked_references?.[0]).toMatchObject({ ranking_reasons: ['is_influential', 'contexts:1', 'intent:methodology', 'citation_count:42'] })
     expect(result.candidates[0]).toMatchObject({ stable_id: 'semantic_scholar:child', doi: '10.1000/child' })
+  })
+
+  it('maps Unpaywall open-access PDF links by DOI', async () => {
+    const adapter = new UnpaywallSourceAdapter({ fetch_impl: jsonFetch({
+      is_oa: true,
+      title: 'Open Access Result',
+      year: 2024,
+      landing_page_url: 'https://example.test/oa',
+      oa_locations: [{ url_for_pdf: 'https://example.test/paper.pdf', url_for_landing_page: 'https://example.test/oa' }],
+    }) })
+    const result = await adapter.search('10.1000/oa', options)
+    expect(result.attempt.status).toBe('succeeded')
+    expect(result.candidates[0]).toMatchObject({
+      provider: 'unpaywall',
+      stable_id: 'unpaywall:10.1000/oa',
+      doi: '10.1000/oa',
+      pdf_url: 'https://example.test/paper.pdf',
+      open_access: true,
+    })
+  })
+
+  it('returns a successful no-match for non-open-access Unpaywall responses', async () => {
+    const adapter = new UnpaywallSourceAdapter({ fetch_impl: jsonFetch({ is_oa: false, oa_locations: [] }) })
+    const result = await adapter.search('10.1000/closed', options)
+    expect(result.attempt.status).toBe('succeeded')
+    expect(result.candidates).toEqual([])
+  })
+
+  it('parses arXiv HTML author affiliations and keeps them auditable under the arxiv provider', async () => {
+    const adapter = new ArxivSourceAdapter({ fetch_impl: (async () => new Response(`<html><body>
+      <div class="ltx_authors"><span class="ltx_personname">Ada Lovelace<sup>1</sup></span></div>
+      <p>1 Analytical Engine Lab</p>
+      <div class="ltx_abstract"><p>Abstract</p></div>
+    </body></html>`, { status: 200, headers: { 'content-type': 'text/html' } })) as typeof fetch })
+    const root = paperCandidate.parse({
+      provider: 'arxiv',
+      stable_id: 'arxiv:https://arxiv.org/abs/2401.00001',
+      title: 'An Arxiv Result',
+      authors: [{ name: 'Ada Lovelace' }],
+      year: 2024,
+      venue: null,
+      doi: null,
+      abstract: null,
+      pdf_url: null,
+      html_url: 'https://arxiv.org/abs/2401.00001',
+      license: null,
+      citation_count: null,
+      open_access: true,
+      source_url: 'https://arxiv.org/abs/2401.00001',
+      query: 'fixture',
+      retrieved_at: new Date().toISOString(),
+    })
+    const result = await adapter.fetchAuthorAffiliations(root, options)
+    expect(result.attempt.status).toBe('succeeded')
+    expect(result.candidates[0]?.authors[0]?.affiliations).toContain('Analytical Engine Lab')
+  })
+
+  it('parses compressed arXiv author blocks without treating person names as institutions', async () => {
+    const parsed = parseArxivAuthorAffiliations(`<html><body>
+      <div class="ltx_authors"><span class="ltx_personname">Ada Lovelace<br>Analytical Engine Lab &amp; Charles Babbage<br>Computing Laboratory</span></div>
+      <div class="ltx_abstract"><p>Abstract</p></div>
+    </body></html>`)
+    expect(parsed.authors.map(author => author.name)).toEqual(['Ada Lovelace', 'Charles Babbage'])
+    expect(parsed.authors[0]?.affiliations).toContain('Analytical Engine Lab')
+    expect(parsed.authors[1]?.affiliations).toContain('Computing Laboratory')
+  })
+
+  it('fetches complete authors and abstract by arXiv id', async () => {
+    const adapter = new ArxivSourceAdapter({ fetch_impl: (async () => new Response(`<?xml version="1.0" encoding="UTF-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <entry>
+          <id>http://arxiv.org/abs/2401.00001v1</id>
+          <title>Full Author Fixture</title>
+          <published>2024-01-01T00:00:00Z</published>
+          <summary>The complete abstract for the fixture paper.</summary>
+          <author><name>Ada Lovelace</name></author>
+          <author><name>Charles Babbage</name></author>
+        </entry>
+      </feed>`, { status: 200, headers: { 'content-type': 'application/atom+xml' } })) as typeof fetch })
+    const result = await adapter.fetchByArxivId('2401.00001', options)
+    expect(result.attempt.status).toBe('succeeded')
+    expect(result.candidates[0]?.authors.map(author => author.name)).toEqual(['Ada Lovelace', 'Charles Babbage'])
+    expect(result.candidates[0]?.abstract).toContain('complete abstract')
+  })
+
+  it('treats a missing arXiv HTML5 version as a successful no-match', async () => {
+    const adapter = new ArxivSourceAdapter({ fetch_impl: (async () => new Response('Not Found', { status: 404 })) as typeof fetch })
+    const root = paperCandidate.parse({
+      provider: 'arxiv',
+      stable_id: 'arxiv:https://arxiv.org/abs/2401.00001',
+      title: 'An Arxiv Result',
+      authors: [],
+      year: 2024,
+      venue: null,
+      doi: null,
+      abstract: null,
+      pdf_url: null,
+      html_url: 'https://arxiv.org/abs/2401.00001',
+      license: null,
+      citation_count: null,
+      open_access: true,
+      source_url: 'https://arxiv.org/abs/2401.00001',
+      query: 'fixture',
+      retrieved_at: new Date().toISOString(),
+    })
+    const result = await adapter.fetchAuthorAffiliations(root, options)
+    expect(result.attempt.status).toBe('succeeded')
+    expect(result.attempt.http_status).toBe(404)
+    expect(result.candidates).toEqual([])
   })
 
   it('parses Crossref reference entries and uses an explicit no-signal reason', async () => {

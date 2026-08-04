@@ -22712,7 +22712,7 @@
       try {
         const result = await api(`/api/projects/${project.id}/related-work/candidate-enrichment`, {
           method: "POST",
-          body: JSON.stringify({ candidate_id: candidate.id, fields, providers: ["crossref", "openalex", "semantic_scholar", "dblp", "arxiv"], reason: t("literature.enrichReason") })
+          body: JSON.stringify({ candidate_id: candidate.id, fields, providers: ["crossref", "openalex", "semantic_scholar", "dblp", "arxiv", "unpaywall"], reason: t("literature.enrichReason") })
         });
         await onRefresh();
         onNavigate("approvals");

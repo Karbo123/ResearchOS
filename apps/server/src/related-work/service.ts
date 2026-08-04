@@ -29,8 +29,9 @@ import {
   type SourceSearchOptions,
   stablePaperId,
 } from './contracts.js'
-import { titlesMatch } from './paper-fields.js'
-import { createDefaultCitationSourceAdapters, createDefaultSourceAdapters } from './source-adapters.js'
+import { mergeEnrichedAuthors, paperCompleteness, preferIncomingAuthors, titlesMatch } from './paper-fields.js'
+import { parseBibTeX } from './bibtex.js'
+import { ArxivSourceAdapter, createDefaultCitationSourceAdapters, createDefaultEnrichmentAdapters, createDefaultSourceAdapters, findArxivId } from './source-adapters.js'
 import { recursiveCollect, type RankedReference, type ReferenceBatch } from './recursive-search.js'
 import { readRelatedWorkCache, writeRelatedWorkCache, type RelatedWorkCacheDescriptor } from './cache.js'
 
@@ -117,7 +118,8 @@ type FieldProvenanceRow = {
   created_at: string
 }
 
-const allProviders: RelatedWorkProvider[] = ['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv']
+const allProviders: RelatedWorkProvider[] = ['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv', 'unpaywall']
+const searchProviders: RelatedWorkProvider[] = ['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv']
 const runningControllers = new Map<string, AbortController>()
 
 function inputValue(input: RelatedWorkSeedRequest, key: string): unknown {
@@ -157,6 +159,7 @@ function sourceUrlForProvider(provider: RelatedWorkProvider): string {
     semantic_scholar: 'https://api.semanticscholar.org/graph/v1/paper',
     dblp: 'https://dblp.org/search/publ/api',
     arxiv: 'https://export.arxiv.org/api/query',
+    unpaywall: 'https://api.unpaywall.org/v2/',
   }
   return urls[provider]
 }
@@ -266,6 +269,11 @@ function normalizeProviders(providers: RelatedWorkProvider[]): RelatedWorkProvid
   return allProviders.filter(provider => requested.has(provider))
 }
 
+function normalizeSearchProviders(providers: RelatedWorkProvider[]): RelatedWorkProvider[] {
+  const requested = new Set(providers)
+  return searchProviders.filter(provider => requested.has(provider))
+}
+
 const provenanceFields: RelatedWorkFieldName[] = ['title', 'authors', 'abstract', 'venue', 'doi', 'year', 'institutions', 'pdf_url', 'bibtex']
 
 function candidateFieldValues(paper: PaperCandidate): CandidateFieldValue[] {
@@ -316,6 +324,24 @@ function mergeMissingCandidateFields(existing: PaperCandidate, incoming: PaperCa
   return paperCandidate.parse(merged)
 }
 
+function mergeEnrichedCandidate(existing: PaperCandidate, incoming: PaperCandidate): PaperCandidate {
+  const merged = mergeMissingCandidateFields(existing, incoming)
+  if (incoming.authors.length) {
+    const replaced = incoming.provider === 'arxiv' && incoming.authors.length > existing.authors.length
+    merged.authors = (replaced ? preferIncomingAuthors(existing.authors, incoming.authors) : mergeEnrichedAuthors(existing.authors, incoming.authors)).map(author => ({
+      ...author,
+      orcid: author.orcid || null,
+      email: author.email ?? null,
+      is_corresponding: author.is_corresponding ?? null,
+      scholar_id: author.scholar_id ?? null,
+      affiliations: author.affiliations || [],
+      interests: author.interests || [],
+      citation_stats: author.citation_stats ?? null,
+    }))
+  }
+  return paperCandidate.parse(merged)
+}
+
 async function persistCandidateFieldProvenance(
   projectId: string,
   candidateId: string,
@@ -346,14 +372,20 @@ async function persistSeedInputProvenance(
   artifactId: string | null,
 ): Promise<void> {
   const bibtex = textInput(input, 'bibtex')
+  const parsedBibtex = bibtex ? parseBibTeX(bibtex) : null
   const values: CandidateFieldValue[] = []
   const add = (field_name: RelatedWorkFieldName, value: unknown, locator: string) => {
     if (value === null || value === undefined || (typeof value === 'string' && !value.trim())) return
     values.push({ field_name, value, locator })
   }
-  add('title', textInput(input, 'title') || (bibtex ? bibtexField(bibtex, 'title') : null), `seed:${seedId}:title`)
-  add('doi', normalizeDoi(textInput(input, 'doi')) || (bibtex ? normalizeDoi(bibtexField(bibtex, 'doi')) : null), `seed:${seedId}:doi`)
-  add('year', yearInput(input) ?? (bibtex ? Number(bibtexField(bibtex, 'year')) || null : null), `seed:${seedId}:year`)
+  add('title', textInput(input, 'title') || parsedBibtex?.title, `seed:${seedId}:title`)
+  add('doi', normalizeDoi(textInput(input, 'doi')) || parsedBibtex?.doi, `seed:${seedId}:doi`)
+  add('year', yearInput(input) ?? parsedBibtex?.year, `seed:${seedId}:year`)
+  add('venue', parsedBibtex?.venue, `seed:${seedId}:venue`)
+  add('abstract', parsedBibtex?.abstract, `seed:${seedId}:abstract`)
+  if (parsedBibtex?.authors.length) {
+    add('authors', parsedBibtex.authors.map(name => ({ name, orcid: null, affiliations: [], email: null, is_corresponding: null, scholar_id: null, interests: [], citation_stats: null })), `seed:${seedId}:authors`)
+  }
   add('bibtex', bibtex, `seed:${seedId}:bibtex`)
   if (!values.length) return
 
@@ -364,9 +396,27 @@ async function persistSeedInputProvenance(
   const title = values.find(item => item.field_name === 'title')?.value
   const doi = values.find(item => item.field_name === 'doi')?.value
   const year = values.find(item => item.field_name === 'year')?.value
+  const venue = values.find(item => item.field_name === 'venue')?.value
+  const abstract = values.find(item => item.field_name === 'abstract')?.value
+  const authors = values.find(item => item.field_name === 'authors')?.value
   if (!next.title && typeof title === 'string') next.title = title
   if (!next.doi && typeof doi === 'string') next.doi = doi
   if (!next.year && typeof year === 'number') next.year = year
+  if (!next.venue && typeof venue === 'string') next.venue = venue
+  if (!next.abstract && typeof abstract === 'string') next.abstract = abstract
+  if (Array.isArray(authors)) {
+    const mergedAuthors = mergeEnrichedAuthors(next.authors, authors)
+    next.authors = mergedAuthors.map(author => ({
+      ...author,
+      orcid: author.orcid || null,
+      email: author.email ?? null,
+      is_corresponding: author.is_corresponding ?? null,
+      scholar_id: author.scholar_id ?? null,
+      affiliations: author.affiliations || [],
+      interests: author.interests || [],
+      citation_stats: author.citation_stats ?? null,
+    }))
+  }
   const enrichment = { ...current.enrichment }
   if (bibtex) enrichment.bibtex = bibtex
   const stored = { ...paperCandidate.parse(next), ...(Object.keys(enrichment).length ? { enrichment } : {}) }
@@ -527,9 +577,10 @@ export async function createRelatedWorkSeed(projectId: string, input: RelatedWor
   let artifact: { sha256: string; name: string } | null = null
   const artifactId = typeof inputValue(input, 'artifact_id') === 'string' ? String(inputValue(input, 'artifact_id')) : null
   if (artifactId) artifact = await verifySeedArtifact(projectId, artifactId)
-  const doi = normalizeDoi(textInput(input, 'doi'))
-  const title = textInput(input, 'title') || (textInput(input, 'bibtex') ? bibtexField(textInput(input, 'bibtex')!, 'title') : null)
-  const year = yearInput(input) ?? (textInput(input, 'bibtex') ? Number(bibtexField(textInput(input, 'bibtex')!, 'year')) || null : null)
+  const parsedBibtex = textInput(input, 'bibtex') ? parseBibTeX(textInput(input, 'bibtex')!) : null
+  const doi = normalizeDoi(textInput(input, 'doi')) || parsedBibtex?.doi || null
+  const title = textInput(input, 'title') || parsedBibtex?.title || null
+  const year = yearInput(input) ?? parsedBibtex?.year ?? null
   let existingProjectPaper: Record<string, unknown> | null = null
   if (input.source_type === 'existing_paper') {
     existingProjectPaper = await one<Record<string, unknown>>('SELECT * FROM papers WHERE id=$1 AND project_id=$2', [input.paper_id, projectId])
@@ -555,7 +606,7 @@ export async function createRelatedWorkSeed(projectId: string, input: RelatedWor
 
   const query = seedQuery(input, artifact?.name || null)
   const adapters = new Map(createDefaultSourceAdapters(providerAdapterOptions()).map(adapter => [adapter.provider, adapter]))
-  const providers = normalizeProviders(input.providers)
+  const providers = normalizeSearchProviders(input.providers)
   const responses = await Promise.all(providers.map(async provider => {
     const adapter = adapters.get(provider)
     if (!adapter) return {
@@ -725,10 +776,10 @@ export async function createRelatedWorkEnrichmentProposal(projectId: string, inp
   await requireProject(projectId, true)
   const candidate = await candidateForProject(projectId, input.candidate_id)
   if (candidate.paper_id) throw new ApiError(409, 'related_work_candidate_already_confirmed', '已确认 Paper 不需要候选补全。')
-  const payload = { candidate_id: input.candidate_id, fields: input.fields, providers: normalizeProviders(input.providers) }
+  const payload = { candidate_id: input.candidate_id, fields: input.fields, providers: normalizeProviders(input.providers), max_rounds: input.max_rounds }
   const proposalId = crypto.randomUUID()
   await database.query(`INSERT INTO proposals(id,project_id,kind,reason,summary,impact,payload)
-    VALUES ($1,$2,'related_work_field_enrichment',$3,$4,$5,$6)`, [proposalId, projectId, input.reason, `Enrich fields for candidate ${candidate.title}`, { candidate_id: candidate.id, fields: input.fields, providers: input.providers, external_requests: true }, payload])
+    VALUES ($1,$2,'related_work_field_enrichment',$3,$4,$5,$6)`, [proposalId, projectId, input.reason, `Enrich fields for candidate ${candidate.title}`, { candidate_id: candidate.id, fields: input.fields, providers: input.providers, max_rounds: input.max_rounds, external_requests: true }, payload])
   await audit('related_work.field_enrichment_proposal_created', projectId, { proposal_id: proposalId, ...payload }, actor)
   return { proposal_id: proposalId, status: 'pending', candidate_id: candidate.id, fields: input.fields, providers: payload.providers }
 }
@@ -741,57 +792,116 @@ async function attachEnrichmentSource(projectId: string, target: CandidateRow, p
     crypto.randomUUID(), projectId, target.id, paper.provider, paper.stable_id, paper, paper.retrieved_at,
   ])
   const current = candidateCore(target.candidate || {})
-  const merged = current.paper ? mergeMissingCandidateFields(current.paper, paper) : paper
-  const storedCandidate = { ...merged, ...(Object.keys(current.enrichment).length ? { enrichment: current.enrichment } : {}) }
+  const merged = current.paper ? mergeEnrichedCandidate(current.paper, paper) : paper
+  const enrichment = { ...current.enrichment }
+  const institutions = [...new Set(merged.authors.flatMap(author => author.affiliations).filter(Boolean))]
+  if (institutions.length) enrichment.institutions = institutions
+  const storedCandidate = { ...merged, ...(Object.keys(enrichment).length ? { enrichment } : {}) }
   await database.query(`UPDATE related_work_candidates SET title=$2,normalized_title=$3,normalized_doi=COALESCE(normalized_doi,$4),year=COALESCE(year,$5),candidate=$6,updated_at=NOW() WHERE id=$1 AND project_id=$7`, [target.id, merged.title, normalizeTitle(merged.title), normalizeDoi(merged.doi), merged.year, storedCandidate, projectId])
   await persistCandidateFieldProvenance(projectId, target.id, paper, attemptId, null, fields)
+  target.candidate = storedCandidate
 }
 
 export async function executeRelatedWorkEnrichment(projectId: string, proposalId: string, actor = 'local-user') {
   const proposal = await one<{ id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown> }>('SELECT id,project_id,kind,status,payload FROM proposals WHERE id=$1 AND project_id=$2', [proposalId, projectId])
   if (!proposal || proposal.kind !== 'related_work_field_enrichment') throw new ApiError(404, 'related_work_enrichment_proposal_not_found', '相关工作字段补全 Proposal 不存在。')
   if (proposal.status !== 'approved') throw new ApiError(409, 'related_work_enrichment_proposal_not_approved', '字段补全必须先获得明确批准。')
-  const payload = z.object({ candidate_id: z.string().uuid(), fields: z.array(relatedWorkFieldName), providers: z.array(relatedWorkProvider) }).parse(proposal.payload)
-  const candidate = await candidateForProject(projectId, payload.candidate_id)
-  const adapters = new Map(createDefaultSourceAdapters(providerAdapterOptions()).map(adapter => [adapter.provider, adapter]))
+  const payload = z.object({
+    candidate_id: z.string().uuid(),
+    fields: z.array(relatedWorkFieldName),
+    providers: z.array(relatedWorkProvider),
+    max_rounds: z.number().int().min(1).max(6).optional(),
+  }).parse(proposal.payload)
+  const adapters = new Map(createDefaultEnrichmentAdapters(providerAdapterOptions()).map(adapter => [adapter.provider, adapter]))
   const attempts: SourceAttempt[] = []
   const savedProviders: RelatedWorkProvider[] = []
   const matchedCounts: Array<{ provider: RelatedWorkProvider; returned_count: number; matched_count: number; rejected_mismatch_count: number }> = []
-  for (const provider of normalizeProviders(payload.providers)) {
-    const adapter = adapters.get(provider)
-    let response: CachedExecution<import('./contracts.js').SourceSearchResult>
-    try {
-      response = adapter
-        ? await searchWithCache(projectId, provider, candidate.title, { limit: 10, timeout_ms: 15_000 }, () => adapter.search(candidate.title, { limit: 10, timeout_ms: 15_000 }))
-        : {
-          result: { provider, query: candidate.title, candidates: [], attempt: unexpectedAttempt(provider, candidate.title, new Error('provider adapter unavailable')) },
+  const rounds: Array<{ round: number; completeness: number; improved: boolean; providers_with_results: string[] }> = []
+  const maxRounds = payload.max_rounds ?? 3
+  let candidate = await candidateForProject(projectId, payload.candidate_id)
+
+  const candidateScore = (row: CandidateRow): number => {
+    const current = candidateCore(row.candidate || {})
+    if (!current.paper) return 0
+    const enrichment = current.enrichment || {}
+    return paperCompleteness({
+      ...current.paper,
+      institutions: Array.isArray(enrichment.institutions) ? enrichment.institutions as string[] : [],
+    })
+  }
+
+  for (let round = 1; round <= maxRounds; round += 1) {
+    const beforeScore = candidateScore(candidate)
+    let roundImproved = false
+    const providersWithResults: string[] = []
+    for (const provider of normalizeProviders(payload.providers)) {
+      candidate = await candidateForProject(projectId, payload.candidate_id)
+      const currentPaper = candidateCore(candidate.candidate || {}).paper
+      if (!currentPaper) continue
+      const adapter = adapters.get(provider)
+      const targetDoi = normalizeDoi(currentPaper.doi)
+      if (provider === 'unpaywall' && !targetDoi) continue
+      const arxivId = findArxivId(currentPaper)
+      const query = provider === 'unpaywall' ? targetDoi! : provider === 'arxiv' && arxivId ? `arxiv:${arxivId}` : currentPaper.title
+      let response: CachedExecution<import('./contracts.js').SourceSearchResult>
+      try {
+        response = adapter
+          ? await searchWithCache(projectId, provider, query, { limit: 10, timeout_ms: 15_000 }, () => provider === 'arxiv' && arxivId && adapter instanceof ArxivSourceAdapter
+            ? adapter.fetchByArxivId(arxivId, { limit: 10, timeout_ms: 15_000 })
+            : adapter.search(query, { limit: 10, timeout_ms: 15_000 }))
+          : {
+            result: { provider, query, candidates: [], attempt: unexpectedAttempt(provider, query, new Error('provider adapter unavailable')) },
+            from_cache: false,
+            request_hash: null,
+          }
+      } catch (error) {
+        response = {
+          result: { provider, query, candidates: [], attempt: unexpectedAttempt(provider, query, error) },
           from_cache: false,
           request_hash: null,
         }
-    } catch (error) {
-      response = {
-        result: { provider, query: candidate.title, candidates: [], attempt: unexpectedAttempt(provider, candidate.title, error) },
-        from_cache: false,
-        request_hash: null,
+      }
+      const attemptId = await persistAttempt(projectId, response.result.attempt, null, null, candidate.id)
+      attempts.push(response.result.attempt)
+      const matched = response.result.candidates.filter(paper => {
+        const paperDoi = normalizeDoi(paper.doi)
+        if (targetDoi && paperDoi) return targetDoi === paperDoi
+        if (provider === 'arxiv' && arxivId) return String(paper.stable_id).toLowerCase().includes(arxivId.toLowerCase()) || titlesMatch(currentPaper.title, paper.title)
+        if (provider === 'unpaywall') return paperDoi === targetDoi
+        return titlesMatch(currentPaper.title, paper.title)
+      })
+      matchedCounts.push({ provider, returned_count: response.result.candidates.length, matched_count: matched.length, rejected_mismatch_count: response.result.candidates.length - matched.length })
+      if (matched.length) {
+        savedProviders.push(provider)
+        providersWithResults.push(provider)
+        roundImproved = true
+        for (const paper of matched) await attachEnrichmentSource(projectId, candidate, paper, attemptId, payload.fields)
+      }
+      if (provider === 'arxiv' && adapter instanceof ArxivSourceAdapter && payload.fields.includes('institutions')) {
+        const affiliationResult = await adapter.fetchAuthorAffiliations(currentPaper, { limit: 1, timeout_ms: 15_000 })
+        const affiliationAttemptId = await persistAttempt(projectId, affiliationResult.attempt, null, null, candidate.id)
+        attempts.push(affiliationResult.attempt)
+        if (affiliationResult.candidates.length) {
+          matchedCounts.push({ provider, returned_count: 1, matched_count: 1, rejected_mismatch_count: 0 })
+          if (!savedProviders.includes(provider)) savedProviders.push(provider)
+          if (!providersWithResults.includes(provider)) providersWithResults.push(provider)
+          roundImproved = true
+          for (const paper of affiliationResult.candidates) await attachEnrichmentSource(projectId, candidate, paper, affiliationAttemptId, payload.fields)
+        }
       }
     }
-    const attemptId = await persistAttempt(projectId, response.result.attempt, null, null, candidate.id)
-    attempts.push(response.result.attempt)
-    const targetDoi = normalizeDoi(candidateCore(candidate.candidate || {}).paper?.doi)
-    const matched = response.result.candidates.filter(paper => {
-      const paperDoi = normalizeDoi(paper.doi)
-      if (targetDoi && paperDoi) return targetDoi === paperDoi
-      return titlesMatch(candidate.title, paper.title)
-    })
-    matchedCounts.push({ provider, returned_count: response.result.candidates.length, matched_count: matched.length, rejected_mismatch_count: response.result.candidates.length - matched.length })
-    if (matched.length) savedProviders.push(provider)
-    for (const paper of matched) await attachEnrichmentSource(projectId, candidate, paper, attemptId, payload.fields)
+    candidate = await candidateForProject(projectId, payload.candidate_id)
+    const afterScore = candidateScore(candidate)
+    const improved = roundImproved || afterScore - beforeScore > 0.001
+    rounds.push({ round, completeness: afterScore, improved, providers_with_results: providersWithResults })
+    if (afterScore >= 0.85) break
+    if (!improved) break
   }
   const hasFailures = attempts.some(item => item.status !== 'succeeded')
   const hasMatches = matchedCounts.some(item => item.matched_count > 0)
   const status = hasMatches ? (hasFailures ? 'partial' : 'completed') : hasFailures ? 'failed' : 'no_match'
-  await audit(`related_work.field_enrichment_${status}`, projectId, { proposal_id: proposalId, candidate_id: candidate.id, attempts: attempts.map(item => ({ provider: item.provider, status: item.status, result_count: item.result_count })), matched_counts: matchedCounts }, actor)
-  return { proposal_id: proposalId, candidate_id: candidate.id, status, attempts, providers_with_results: savedProviders, matched_counts: matchedCounts }
+  await audit(`related_work.field_enrichment_${status}`, projectId, { proposal_id: proposalId, candidate_id: candidate.id, attempts: attempts.map(item => ({ provider: item.provider, status: item.status, result_count: item.result_count })), matched_counts: matchedCounts, rounds }, actor)
+  return { proposal_id: proposalId, candidate_id: candidate.id, status, attempts, providers_with_results: [...new Set(savedProviders)], matched_counts: matchedCounts, rounds }
 }
 
 export async function createRelatedWorkRecursiveProposal(projectId: string, input: RelatedWorkRecursivePlanRequest, actor = 'local-user') {

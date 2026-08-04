@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-02 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-04-03 -->
 
 # Research OS
 
@@ -115,9 +115,11 @@ PDF 页码原文在人工创建并决定 Claim Review 前都只是证据候选�
 
 ## 相关工作调研流水线
 
-相关工作现在是参考用户自己的 `D:\auto-related-work` 后全部重写的 TypeScript 科研流水线，不依赖 Python 运行时。`apps/server/src/related-work/` 已有严格 Zod 契约 `PaperCandidate`、`SourceAttempt`、`SourceFailure`、`CitationEdge`，并完成 Crossref、OpenAlex、Semantic Scholar、DBLP、arXiv 五个搜索适配器及离线 fixture 测试。每次来源尝试都会保留 provider、请求 URL、HTTP 状态、结果数、检索时间，以及超时、限流、取消和无效响应等结构化失败。
+相关工作现在是参考用户自己的 `D:\auto-related-work` 后全部重写的 TypeScript 科研流水线，不依赖 Python 运行时。`apps/server/src/related-work/` 已有严格 Zod 契约 `PaperCandidate`、`SourceAttempt`、`SourceFailure`、`CitationEdge`，并完成 Crossref、OpenAlex、Semantic Scholar、DBLP、arXiv、Unpaywall 六个来源适配器及离线 fixture 测试。每次来源尝试都会保留 provider、请求 URL、HTTP 状态、结果数、检索时间，以及超时、限流、取消和无效响应等结构化失败。
 
 当前 TypeScript 确定性内核还覆盖标题/作者规范化、标题匹配、字段完整度、缺失字段报告、有界退避，以及带确定性去重、进度、取消和非悬空引用边的 `depth/width/max_total` 递归收集。项目范围的种子和递归 API 已接入“文献”页：`POST /api/projects/<project-id>/related-work/seeds` 接受 DOI、标题、HTTPS URL、BibTeX、受控 PDF Artifact 或当前项目已有 Paper；`POST /api/projects/<project-id>/related-work/recursive-plan` 只创建待审批 Proposal；批准后会持久化 provider attempt、进度事件、候选、排序原因和引用边。Crossref、OpenAlex、Semantic Scholar 的 references API 已实现；DBLP/arXiv 目前仍是搜索适配器，待补充引用契约。候选审阅和字段 provenance 也已经是项目范围的：provider、用户输入和受控 Artifact 来源彼此区分，provider 补全必须通过 DOI/标题匹配，不匹配结果不会写入候选，字段冲突必须由用户选择，确认 Paper 仍必须人工批准。研究现状页现在只从 `confirmed` Paper、带页码/章节定位的 Evidence 和 accepted ClaimReview 建立矩阵，保存行级 provenance，支持主题/方法/年份筛选以及 JSON/CSV/Markdown 导出；引用图 API 只投影当前项目中明确保存的引用、Paper-Evidence 和 ClaimReview-Evidence 关系。研究空白、聚类和重复风险只能记录为可审计的待核验候选，不能直接当成结论。旧项目只能提供字段设计、规范化、匹配、完整度评分、缓存、排序、递归搜索思路和测试意图；Research OS 的运行模块、API、持久化、worker 和测试必须全部使用 TypeScript，不能导入或执行旧 Python 文件、虚拟环境、Google Scholar 隧道、硬编码代理、密钥、缓存或业务模块。provider 失败必须保留并显示为结构化失败，不能当作成功的空结果。
+
+种子 BibTeX 会按嵌套花括号解析为标题、作者、venue、年份、DOI 和摘要，再写入用户输入 provenance。字段补全采用有界多轮迭代，使用 Python 项目的完整度评分（达到 85% 提前停止），Unpaywall 按 DOI 补全开放获取 PDF，arXiv 按 ID 拉取完整作者列表和摘要，并按匹配姓名增量合并 Crossref/OpenAlex/DBLP 作者机构；arXiv HTML5 作者块还会显式提供机构、邮箱和通讯作者标记，作为可审计的 arXiv 补全策略。Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按设计排除。
 
 Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含项目、provider、操作、规范化请求参数和当前 schema 版本；行中保留请求 URL、参数、真实响应、provider 状态、TTL、过期时间和命中次数。只有同一项目、同一请求、schema 兼容且未过期的条目才会回放。命中、未命中、过期、schema 不兼容、缓存响应损坏以及“失败保留已有成功”的写入跳过都会写入审计；失败不能覆盖已有成功，取消请求不进入缓存。默认 TTL 为 `RESEARCH_RELATED_WORK_CACHE_TTL_SECONDS=86400`。
 

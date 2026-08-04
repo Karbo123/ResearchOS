@@ -27,6 +27,7 @@
     "ops:monitor": "tsx scripts/ops-monitor.ts",
     "ops:recovery-drill": "tsx scripts/ops-recovery-drill.ts",
     "acceptance": "tsx scripts/acceptance-test.ts",
+    "related-work:restart:check": "tsx scripts/related-work-restart-acceptance.ts",
     "navigation:check": "tsx scripts/check-navigation.ts",
   "ui:check": "npm run ui:i18n:check && tsx scripts/check-ui.ts && tsx scripts/check-markdown-preview.ts",
     "ui:i18n:check": "tsx scripts/check-ui-i18n.ts",

@@ -230,6 +230,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-04）：真实浏览器 CDP 确认抽屉触发控件计算样式为 `22px × 96px`、`border-radius:999px`、浅色线性渐变磨砂背景、`rgba(0,122,255,.14)` 边框与 2px 蓝色 `::before` 竖线，窄三角保留；首页 `.sidebar .primary` 新项目按钮数量为 0，页面文本不含“新研究项目”，`home-project-title-line` 内无置顶按钮，`home-project-actions .home-pin-action` 每行恰好 1 个；置顶点击后路径保持 `/`、无 `.home-loading` 骨架、fetch 仅 `/api/projects/:id/pin`；指针式长按拖拽后路径保持 `/`、无加载骨架、fetch 仅 `/api/projects/order`；抽屉展开后 dispatch 到右侧工作区的真实 `pointerdown` 使 `open=false`。`npm run typecheck --workspace @research-os/web` 与 `npm run build --workspace @research-os/web` 均通过。
 
+- [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。
+
 ### 4.1 旧任务池（当前非优先）
 
 > 以下 `4.1.1` 至 `4.1.12` 是之前的 TODO 收集区。它们仍被保留，但明确不是当前优先；只有 `P0-WORKSPACE-108A` 至 `108H` 完成并通过验收后，才重新评估。已被新工作台取代的旧结构（第三级实验标签、论文工具式顶层标签、旧首页 Idea 流程等）不得借旧任务恢复；已完成项 `[x]` 只作为历史记录。
