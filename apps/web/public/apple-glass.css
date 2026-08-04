@@ -2454,7 +2454,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   position: absolute;
   z-index: 60;
   top: 50%;
-  left: -9px;
+  left: -5px;
   display: grid;
   place-items: center;
   width: 20px;
@@ -2482,6 +2482,10 @@ a.secondary { text-decoration: none; color: var(--ink); }
   border-radius: 999px;
   background: transparent;
   transition: background .25s var(--ease), box-shadow .25s var(--ease);
+}
+.project-drawer-region:not(.open) .project-drawer-toggle::before {
+  background: var(--blue);
+  box-shadow: 0 0 0 4px var(--blue-soft);
 }
 .project-drawer-toggle:hover {
   color: var(--blue);
