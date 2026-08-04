@@ -3,23 +3,6 @@ import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 import { Sidebar } from './Sidebar'
 
-function DrawerArrow() {
-  return (
-    <span className="project-drawer-arrow" aria-hidden="true">
-      <svg width="11" height="11" viewBox="0 0 12 12" focusable="false">
-        <path
-          d="M4.1 2.6 L8.6 6 L4.1 9.4 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  )
-}
-
 export function ProjectDrawer({
   open,
   drawerWidth,
@@ -69,9 +52,7 @@ export function ProjectDrawer({
         aria-controls="project-drawer-panel"
         title={label}
         onClick={() => onOpenChange(!open)}
-      >
-        <DrawerArrow />
-      </button>
+      />
     </div>
   )
 }

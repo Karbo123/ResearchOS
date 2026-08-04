@@ -27050,19 +27050,6 @@
 
   // src/components/ProjectDrawer.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
-  function DrawerArrow() {
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "project-drawer-arrow", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("svg", { width: "11", height: "11", viewBox: "0 0 12 12", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-      "path",
-      {
-        d: "M4.1 2.6 L8.6 6 L4.1 9.4 Z",
-        fill: "none",
-        stroke: "currentColor",
-        strokeWidth: "1.7",
-        strokeLinecap: "round",
-        strokeLinejoin: "round"
-      }
-    ) }) });
-  }
   function ProjectDrawer({
     open,
     drawerWidth,
@@ -27097,8 +27084,7 @@
               "aria-expanded": open,
               "aria-controls": "project-drawer-panel",
               title: label,
-              onClick: () => onOpenChange(!open),
-              children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(DrawerArrow, {})
+              onClick: () => onOpenChange(!open)
             }
           )
         ]

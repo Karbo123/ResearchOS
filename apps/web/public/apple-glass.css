@@ -2438,6 +2438,14 @@ a.secondary { text-decoration: none; color: var(--ink); }
   border-right: 0;
   box-shadow: none;
 }
+.project-drawer-shell .sidebar .sidebar-resizer {
+  opacity: 0;
+  pointer-events: none;
+}
+.project-drawer-region.open .project-drawer-shell .sidebar .sidebar-resizer {
+  opacity: 1;
+  pointer-events: auto;
+}
 .project-drawer-region.open .project-drawer-shell {
   transform: translateX(0);
   box-shadow: 14px 0 42px rgba(25, 25, 35, .10);
@@ -2446,7 +2454,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   position: absolute;
   z-index: 60;
   top: 50%;
-  left: 2px;
+  left: -10px;
   display: grid;
   place-items: center;
   width: 20px;
@@ -2469,7 +2477,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   position: absolute;
   top: 12%;
   bottom: 12%;
-  left: 5px;
+  left: 9px;
   width: 2px;
   border-radius: 999px;
   background: rgba(0, 122, 255, .46);
@@ -2488,35 +2496,11 @@ a.secondary { text-decoration: none; color: var(--ink); }
   outline: none;
   color: var(--blue);
 }
-.project-drawer-toggle:focus-visible .project-drawer-arrow {
-  filter: drop-shadow(0 0 6px rgba(0, 122, 255, .55));
-}
 .project-drawer-toggle:active {
   transform: translateY(-50%) scale(.94);
 }
-.project-drawer-arrow {
-  display: grid;
-  place-items: center;
-  transform: translateX(4px);
-  transition: transform .36s var(--spring);
-}
-.project-drawer-toggle:hover .project-drawer-arrow {
-  transform: translateX(5px);
-}
-.project-drawer-toggle:active .project-drawer-arrow {
-  transform: translateX(6px) scale(.9);
-}
-.project-drawer-region.open .project-drawer-arrow {
-  transform: translateX(-4px) rotate(180deg);
-}
-.project-drawer-region.open .project-drawer-toggle:hover .project-drawer-arrow {
-  transform: translateX(-5px) rotate(180deg);
-}
-.project-drawer-region.open .project-drawer-toggle:active .project-drawer-arrow {
-  transform: translateX(-6px) rotate(180deg) scale(.9);
-}
 .project-drawer-region.open .project-drawer-toggle {
-  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 10px);
+  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 14px);
 }
 .project-drawer-region.open .project-drawer-toggle::before {
   left: 13px;
@@ -2587,7 +2571,6 @@ a.secondary { text-decoration: none; color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   .project-drawer-shell,
   .project-drawer-toggle,
-  .project-drawer-arrow,
   .project-drawer-scrim,
   .refresh-btn.is-refreshing svg {
     transition-duration: .01ms !important;
