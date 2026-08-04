@@ -20870,7 +20870,7 @@
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("section", { className: "home-dashboard", "aria-busy": loading, children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "home-hero", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "home-eyebrow", children: t("home.eyebrow") }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h1", { className: "home-eyebrow", children: t("home.eyebrow") }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "home-description", children: t("home.description") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "home-hero-actions", children: [
@@ -29588,21 +29588,21 @@
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+        view === "project" ? /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
           Topbar,
           {
-            title: view === "project" ? project?.title || t("app.researchProject") : t("home.title"),
-            meta: view === "project" ? t("app.projectMeta", {
+            title: project?.title || t("app.researchProject"),
+            meta: t("app.projectMeta", {
               stage: project?.current_stage === "initialized" ? t("overview.stageInitialized") : project?.current_stage || t("overview.stageUnknown"),
               version: project?.current_idea_version ?? 1,
               id: project?.slug || String(projectId || "").slice(0, 8)
-            }) : t("home.meta", { count: projects.length }),
+            }),
             health,
             refreshing: projectRefreshing,
             onRefresh: () => void refreshProject(),
-            project: view === "project" ? project : null
+            project
           }
-        ),
+        ) : null,
         view === "project" ? project ? /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
           ProjectView,
           {

@@ -627,6 +627,15 @@ button { -webkit-font-smoothing: inherit; }
   letter-spacing: .09em;
   text-transform: uppercase;
 }
+.home-hero h1.home-eyebrow {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 30px;
+  font-weight: 760;
+  letter-spacing: -.035em;
+  line-height: 1.08;
+  text-transform: none;
+}
 .home-hero h2 {
   margin: 0 0 7px;
   font-size: 30px;

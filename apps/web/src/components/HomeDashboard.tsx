@@ -340,7 +340,7 @@ export function HomeDashboard({
     <section className="home-dashboard" aria-busy={loading}>
       <div className="home-hero">
         <div>
-          <p className="home-eyebrow">{t('home.eyebrow')}</p>
+          <h1 className="home-eyebrow">{t('home.eyebrow')}</h1>
           <p className="home-description">{t('home.description')}</p>
         </div>
         <div className="home-hero-actions">

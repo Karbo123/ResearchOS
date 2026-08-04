@@ -422,22 +422,22 @@ export function App() {
         />
       )}
       <main className="workspace">
-        <Topbar
-          title={view === 'project' ? project?.title || t('app.researchProject') : t('home.title')}
-          meta={view === 'project'
-            ? t('app.projectMeta', {
-                stage: project?.current_stage === 'initialized'
-                  ? t('overview.stageInitialized')
-                  : project?.current_stage || t('overview.stageUnknown'),
-                version: project?.current_idea_version ?? 1,
-                id: project?.slug || String(projectId || '').slice(0, 8),
-              })
-            : t('home.meta', { count: projects.length })}
-          health={health}
-          refreshing={projectRefreshing}
-          onRefresh={() => void refreshProject()}
-          project={view === 'project' ? project : null}
-        />
+        {view === 'project' ? (
+          <Topbar
+            title={project?.title || t('app.researchProject')}
+            meta={t('app.projectMeta', {
+              stage: project?.current_stage === 'initialized'
+                ? t('overview.stageInitialized')
+                : project?.current_stage || t('overview.stageUnknown'),
+              version: project?.current_idea_version ?? 1,
+              id: project?.slug || String(projectId || '').slice(0, 8),
+            })}
+            health={health}
+            refreshing={projectRefreshing}
+            onRefresh={() => void refreshProject()}
+            project={project}
+          />
+        ) : null}
         {view === 'project' ? (
           project ? (
             <ProjectView
