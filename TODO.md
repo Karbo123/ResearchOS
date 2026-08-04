@@ -294,6 +294,8 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 修订记录（2026-08-05）：将首页 `h1` 由小字号眉题调整为正式页面主标题（30px、与原先 hero 标题同级），文案为“项目控制台”而非“全部项目”；首页无顶栏、右侧无重复标题，页面标题信息完整。
 
+> 修订记录（2026-08-05）：按用户意见收敛首页侧栏：删除“系统”统计块（项目/运行中实验/待审批与主区汇总卡完全重复）；“快速访问”更名“最近项目”，条目由 5 条增至 8 条，空态文案同步；连接状态与刷新合并为底部一行（绿色状态点 + 刷新图标按钮），视觉模型（`mimo-v2.5`）复核浅色/暗色截图，无高严重度问题；移动端隐藏最近项目与状态行，仅保留品牌与设置。`typecheck`、Web 构建、`ui:check` 通过。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。

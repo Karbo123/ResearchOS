@@ -1,24 +1,21 @@
 import { useState } from 'react'
 import {
-  FlaskConical,
-  FolderKanban,
   Pin,
   RefreshCw,
   Settings,
-  ShieldCheck,
 } from 'lucide-react'
 import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 
 const SIDEBAR_MIN_WIDTH = 220
 const SIDEBAR_MAX_WIDTH = 380
-const QUICK_ACCESS_LIMIT = 5
+const RECENT_PROJECTS_LIMIT = 8
 
 function clampSidebarWidth(width: number) {
   return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
 }
 
-function getQuickAccessProjects(projects: ProjectSummary[], recentIds: string[]) {
+function getRecentProjects(projects: ProjectSummary[], recentIds: string[]) {
   const recentRank = new Map(recentIds.map((id, index) => [id, index]))
   const pinned = projects.filter(project => project.pinned)
   const recent = projects
@@ -26,7 +23,7 @@ function getQuickAccessProjects(projects: ProjectSummary[], recentIds: string[])
     .sort((a, b) => (recentRank.get(a.id) ?? 0) - (recentRank.get(b.id) ?? 0))
   const fillers = projects.filter(project => !project.pinned && !recentRank.has(project.id))
     .sort((a, b) => String(b.updated_at || '').localeCompare(String(a.updated_at || '')))
-  return [...pinned, ...recent, ...fillers].slice(0, QUICK_ACCESS_LIMIT)
+  return [...pinned, ...recent, ...fillers].slice(0, RECENT_PROJECTS_LIMIT)
 }
 
 export function HomeSidebar({
@@ -54,9 +51,7 @@ export function HomeSidebar({
 }) {
   const { t } = useTranslation()
   const [resizing, setResizing] = useState(false)
-  const quickProjects = getQuickAccessProjects(projects, recentProjectIds)
-  const running = projects.reduce((sum, project) => sum + (project.experiment_running ?? 0), 0)
-  const pending = projects.reduce((sum, project) => sum + (project.pending_approvals ?? 0), 0)
+  const recentProjects = getRecentProjects(projects, recentProjectIds)
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
 
@@ -127,10 +122,10 @@ export function HomeSidebar({
       </button>
 
       <div className="home-sidebar-section">
-        <div className="home-sidebar-section-label">{t('homeSidebar.quickAccess')}</div>
-        {quickProjects.length ? (
+        <div className="home-sidebar-section-label">{t('homeSidebar.recent')}</div>
+        {recentProjects.length ? (
           <div className="home-sidebar-quick-list">
-            {quickProjects.map(project => (
+            {recentProjects.map(project => (
               <button
                 key={project.id}
                 type="button"
@@ -144,45 +139,25 @@ export function HomeSidebar({
             ))}
           </div>
         ) : (
-          <div className="home-sidebar-empty">{t('homeSidebar.noQuickProjects')}</div>
+          <div className="home-sidebar-empty">{t('homeSidebar.noRecentProjects')}</div>
         )}
       </div>
 
-      <div className="home-sidebar-system">
-        <div className="home-sidebar-section-label">{t('homeSidebar.system')}</div>
-        <div className="home-sidebar-system-row">
-          <span className={`home-sidebar-health${health === 'online' ? ' is-ok' : health === 'offline' ? ' is-offline' : ''}`}>
-            <span className="home-sidebar-health-dot" aria-hidden="true" />
-            {healthLabel}
-          </span>
-          <button
-            className={`icon-btn refresh-btn home-sidebar-refresh${refreshing ? ' is-refreshing' : ''}`}
-            type="button"
-            disabled={refreshing}
-            onClick={onRefresh}
-            title={refreshLabel}
-            aria-label={refreshLabel}
-          >
-            <RefreshCw size={16} />
-          </button>
-        </div>
-        <div className="home-sidebar-stats">
-          <div className="home-sidebar-stat">
-            <FolderKanban size={14} aria-hidden="true" />
-            <strong>{projects.length}</strong>
-            <small>{t('homeSidebar.totalProjects')}</small>
-          </div>
-          <div className="home-sidebar-stat">
-            <FlaskConical size={14} aria-hidden="true" />
-            <strong>{running}</strong>
-            <small>{t('homeSidebar.runningExperiments')}</small>
-          </div>
-          <div className="home-sidebar-stat">
-            <ShieldCheck size={14} aria-hidden="true" />
-            <strong>{pending}</strong>
-            <small>{t('homeSidebar.pendingApprovals')}</small>
-          </div>
-        </div>
+      <div className="home-sidebar-system-row">
+        <span className={`home-sidebar-health${health === 'online' ? ' is-ok' : health === 'offline' ? ' is-offline' : ''}`}>
+          <span className="home-sidebar-health-dot" aria-hidden="true" />
+          {healthLabel}
+        </span>
+        <button
+          className={`icon-btn refresh-btn home-sidebar-refresh${refreshing ? ' is-refreshing' : ''}`}
+          type="button"
+          disabled={refreshing}
+          onClick={onRefresh}
+          title={refreshLabel}
+          aria-label={refreshLabel}
+        >
+          <RefreshCw size={16} />
+        </button>
       </div>
 
       <button className="side-settings" type="button" onClick={onOpenSettings} title={t('sidebar.settings')}>
