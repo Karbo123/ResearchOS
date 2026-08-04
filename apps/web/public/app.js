@@ -19805,6 +19805,7 @@
     const projectListRef = (0, import_react5.useRef)(null);
     const dragStartPositionsRef = (0, import_react5.useRef)(null);
     const rowAnimationsRef = (0, import_react5.useRef)([]);
+    const pendingReorderRef = (0, import_react5.useRef)(false);
     const visibleProjects = dragPreviewProjects || projects;
     const captureRowPositions = () => {
       const container = projectListRef.current;
@@ -19858,6 +19859,14 @@
     (0, import_react5.useEffect)(() => () => {
       for (const animation of rowAnimationsRef.current) animation.cancel();
     }, []);
+    (0, import_react5.useEffect)(() => {
+      if (!pendingReorderRef.current) return;
+      if (projects !== dragPreviewProjects) {
+        pendingReorderRef.current = false;
+        dragPreviewRef.current = null;
+        setDragPreviewProjects(null);
+      }
+    }, [projects, dragPreviewProjects]);
     const startResize = (event) => {
       if (window.matchMedia("(max-width: 760px)").matches) return;
       event.preventDefault();
@@ -19928,8 +19937,12 @@
       const shouldCommit = commit && wasDragging && state.changed && preview;
       setDraggingProjectId(null);
       setDragOverProjectId(null);
-      setDragPreviewProjects(null);
-      dragPreviewRef.current = null;
+      if (shouldCommit) {
+        pendingReorderRef.current = true;
+      } else {
+        setDragPreviewProjects(null);
+        dragPreviewRef.current = null;
+      }
       if (!wasDragging) return;
       if (commit) {
         suppressProjectClickRef.current = true;
@@ -20616,6 +20629,7 @@
     const homeRowsRef = (0, import_react7.useRef)(null);
     const dragStartPositionsRef = (0, import_react7.useRef)(null);
     const rowAnimationsRef = (0, import_react7.useRef)([]);
+    const pendingReorderRef = (0, import_react7.useRef)(false);
     const visibleProjects = dragPreviewProjects || projects;
     const captureRowPositions = () => {
       const container = homeRowsRef.current;
@@ -20669,6 +20683,14 @@
     (0, import_react7.useEffect)(() => () => {
       for (const animation of rowAnimationsRef.current) animation.cancel();
     }, []);
+    (0, import_react7.useEffect)(() => {
+      if (!pendingReorderRef.current) return;
+      if (projects !== dragPreviewProjects) {
+        pendingReorderRef.current = false;
+        dragPreviewRef.current = null;
+        setDragPreviewProjects(null);
+      }
+    }, [projects, dragPreviewProjects]);
     const handleCreate = async (event) => {
       event.preventDefault();
       if (submitting) return;
@@ -20711,8 +20733,12 @@
       const shouldCommit = commit && wasDragging && state.changed && preview;
       setDraggingId(null);
       setDragOverId(null);
-      setDragPreviewProjects(null);
-      dragPreviewRef.current = null;
+      if (shouldCommit) {
+        pendingReorderRef.current = true;
+      } else {
+        setDragPreviewProjects(null);
+        dragPreviewRef.current = null;
+      }
       if (!wasDragging) return;
       if (commit) {
         suppressProjectClickRef.current = true;
@@ -26808,7 +26834,7 @@
   // src/components/ProjectDrawer.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   function DrawerArrow() {
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "project-drawer-arrow", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("svg", { width: "12", height: "16", viewBox: "0 0 12 16", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "project-drawer-arrow", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("svg", { width: "10", height: "14", viewBox: "0 0 12 16", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
       "path",
       {
         d: "M3.6 3.8 L8.8 8 L3.6 12.2 Z",
@@ -28556,11 +28582,10 @@
       };
       setProjects((current) => applyPinned(current, target.id, desiredPinned));
       try {
-        const updated = await api(`/api/projects/${target.id}/pin`, {
+        await api(`/api/projects/${target.id}/pin`, {
           method: "PATCH",
           body: JSON.stringify({ pinned: !target.pinned })
         });
-        setProjects((current) => current.map((project2) => project2.id === target.id ? { ...project2, pinned: updated.pinned, sidebar_order: updated.sidebar_order } : project2));
         showToast(t(target.pinned ? "app.projectUnpinned" : "app.projectPinned"));
       } catch (error) {
         setProjects(previousProjects);
@@ -28679,8 +28704,18 @@
           setProjectDrawerOpen(false);
         }
       };
+      const closeDrawerOnFocus = (event) => {
+        const target = event.target;
+        if (target instanceof Element && !target.closest(".project-drawer-region")) {
+          setProjectDrawerOpen(false);
+        }
+      };
       document.addEventListener("pointerdown", closeDrawer, true);
-      return () => document.removeEventListener("pointerdown", closeDrawer, true);
+      document.addEventListener("focusin", closeDrawerOnFocus, true);
+      return () => {
+        document.removeEventListener("pointerdown", closeDrawer, true);
+        document.removeEventListener("focusin", closeDrawerOnFocus, true);
+      };
     }, [projectDrawerOpen, view]);
     if (notFoundPath) {
       return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => goHome(true) }, notFoundPath);

@@ -226,6 +226,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-04）：真实浏览器 CDP 确认抽屉触发控件为 16×84 透明命中区，仅保留 2px 蓝色细线与窄三角，无边框/背景/大胶囊；首页 `.primary.full` 新项目按钮数量为 0，页面文本不再包含“新研究项目”残留；置顶点击后路径保持 `/`、导航计数不变、无 `.home-loading` 骨架；抽屉展开后点击右侧工作区自动收起（pointerdown 验证 closed=true）。`npm run typecheck`、`npm run build --workspace @research-os/web`、`npm run ui:check`、`npm run language-boundary:check`、`npm run navigation:check` 均通过（tsx 脚本需以 `TMPDIR=/tmp` 规避 `/mnt/c` 管道监听限制）。
 
+- [x] `P0-UI-114` 按用户最新反馈把抽屉触发控件做成与侧栏拖动条一致的蓝色手柄样式：22×96 圆角胶囊、半透明磨砂背景、2px 系统蓝竖线与窄三角方向提示，浅/暗主题都使用语义变量；确认侧栏不存在独立的“新研究项目”按钮，首页标题旁没有第二个置顶图标，操作列只保留一个置顶按钮；置顶与指针式拖拽排序只更新本地 `projects`，不触发整页刷新或加载骨架；抽屉打开后点击右侧工作区或聚焦右侧内容自动收起。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：真实浏览器 CDP 确认抽屉触发控件计算样式为 `22px × 96px`、`border-radius:999px`、浅色线性渐变磨砂背景、`rgba(0,122,255,.14)` 边框与 2px 蓝色 `::before` 竖线，窄三角保留；首页 `.sidebar .primary` 新项目按钮数量为 0，页面文本不含“新研究项目”，`home-project-title-line` 内无置顶按钮，`home-project-actions .home-pin-action` 每行恰好 1 个；置顶点击后路径保持 `/`、无 `.home-loading` 骨架、fetch 仅 `/api/projects/:id/pin`；指针式长按拖拽后路径保持 `/`、无加载骨架、fetch 仅 `/api/projects/order`；抽屉展开后 dispatch 到右侧工作区的真实 `pointerdown` 使 `open=false`。`npm run typecheck --workspace @research-os/web` 与 `npm run build --workspace @research-os/web` 均通过。
+
 ### 4.1 旧任务池（当前非优先）
 
 > 以下 `4.1.1` 至 `4.1.12` 是之前的 TODO 收集区。它们仍被保留，但明确不是当前优先；只有 `P0-WORKSPACE-108A` 至 `108H` 完成并通过验收后，才重新评估。已被新工作台取代的旧结构（第三级实验标签、论文工具式顶层标签、旧首页 Idea 流程等）不得借旧任务恢复；已完成项 `[x]` 只作为历史记录。
@@ -346,7 +350,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 #### 4.1.6 相关工作调研链路（旧）
 
-- [~] `070-C3` 递归搜索按 depth/width/max_total 分层执行，支持审批、稳定排序、去重、引用边、进度、取消、部分/失败和恢复；补独立进程重启 API 验收。 [Apple 设计验收]
+- [x] `070-C3` 递归搜索按 depth/width/max_total 分层执行，支持审批、稳定排序、去重、引用边、进度、取消、部分/失败和恢复；补独立进程重启 API 验收。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：`related-work-core.test.ts` 覆盖 depth/width/max_total 分层、稳定去重、非悬挂引用边、进度回调、max_total 截断与取消；`related-work-api.test.ts` 覆盖审批门禁、递归运行与引用边持久化、跨项目拒绝；`related-work-recovery.test.ts` 覆盖 `running -> queued/partial` 与 `native_process_restarted` 标记。新增 `scripts/related-work-restart-acceptance.ts`（已注册为 `npm run related-work:restart:check`）启动真实 API 子进程两次，使用独立 `RESEARCH_RUNTIME_DIR` 验证重启前后同一个 `queued` 递归运行都能通过 `/api/projects/:slug` 读取且状态、ID、错误一致；临时运行时目录在脚本结束后清理。配合 `070-C9e` 的真实浏览器验收，`070-C3` 全部出口通过。
 - [~] `070-C4` PDF 全文证据要保存稳定 URL、SHA-256、页码/章节、原文 quote 和证据状态；没有 quote 的元数据只能当候选，不能进入已确认矩阵。 [Apple 设计验收]
 - [~] `070-C5` 字段来源冲突要按字段展示 provider、来源尝试、用户值、冲突组和人工决定；模型补全必须走 Proposal，失败不能覆盖已有成功字段。 [Apple 设计验收]
 - [~] `070-C6` 研究现状矩阵只消费已确认 Paper、带页码/章节的 Evidence 和已接受 ClaimReview，保留 Idea 版本和来源快照；gap/聚类/重复风险只能是待核验候选。 [Apple 设计验收]
@@ -356,7 +362,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
   - [~] `070-C8b` 验证 DOI/精确标题匹配、SPDX 许可证、默认分支、40 位 commit、入口、依赖、数据、系统/GPU 要求；任一未知就保持 candidate/blocked。 [Apple 设计验收]
   - [~] `070-C8c` 下载、依赖安装、运行、产物写入分别建立 Proposal；复核归档限制、路径穿越、链接文件、源码 hash、`.venv` 隔离和有界日志。 [Apple 设计验收]
   - [~] `070-C8d` 复现 Run 记录 source commit、入口、seed、配置、原始指标、日志、Artifact hash 和失败码；用与当前 topic 相关且用户允许的真实 Linux 仓库做端到端验收。 [Apple 设计验收]
-- [~] `070-C9c` 缓存命中/过期、schema/请求哈希、失败不覆盖成功、项目隔离、审计和 running -> queued/partial 已测试；补同一候选多 provider provenance 和独立进程重启 API。 [Apple 设计验收]
+- [x] `070-C9c` 缓存命中/过期、schema/请求哈希、失败不覆盖成功、项目隔离、审计和 running -> queued/partial 已测试；补同一候选多 provider provenance 和独立进程重启 API。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：`related-work-cache.test.ts` 覆盖 miss/hit、TTL 过期、schema 不兼容、请求哈希、项目隔离、失败不覆盖成功、失败保持失败与审计；`related-work-recovery.test.ts` 覆盖 running -> queued/partial 与重启标记；`related-work-api.test.ts` 与 `scripts/seed-related-work-fixture.ts` 覆盖同一候选多 provider provenance（Crossref/OpenAlex 冲突、用户值、冲突组、人工选择）以及跨项目矩阵拒绝。`scripts/related-work-restart-acceptance.ts` 以独立 API 子进程验证重启前后递归运行状态与 ID 一致，脚本真实运行通过；浏览器验收 `provenanceDrawer.hasConflict/hasSelected` 为真且无横向溢出。所有出口均已关闭。
 - [~] `070-C9d` seed/候选/Proposal/递归运行/人工确认/项目隔离 API 主链已测试；补 Artifact/证据跨项目矩阵和“失败可重试但不覆盖成功”的完整 fixture。 [Apple 设计验收]
 - [ ] `070-C9f` 用当前 `.env` 的合法配置做真实来源验收；失败如实记录为外部阻塞，不使用旧缓存、不换 provider、不做 fallback。 [Apple 设计验收]
 

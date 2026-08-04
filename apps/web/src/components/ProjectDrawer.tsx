@@ -6,7 +6,7 @@ import { Sidebar } from './Sidebar'
 function DrawerArrow() {
   return (
     <span className="project-drawer-arrow" aria-hidden="true">
-      <svg width="12" height="16" viewBox="0 0 12 16" focusable="false">
+      <svg width="10" height="14" viewBox="0 0 12 16" focusable="false">
         <path
           d="M3.6 3.8 L8.8 8 L3.6 12.2 Z"
           fill="none"

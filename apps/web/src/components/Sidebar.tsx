@@ -75,6 +75,7 @@ export function Sidebar({
   const projectListRef = useRef<HTMLElement | null>(null)
   const dragStartPositionsRef = useRef<Map<string, number> | null>(null)
   const rowAnimationsRef = useRef<Animation[]>([])
+  const pendingReorderRef = useRef(false)
   const visibleProjects = dragPreviewProjects || projects
 
   const captureRowPositions = () => {
@@ -133,6 +134,15 @@ export function Sidebar({
   useEffect(() => () => {
     for (const animation of rowAnimationsRef.current) animation.cancel()
   }, [])
+
+  useEffect(() => {
+    if (!pendingReorderRef.current) return
+    if (projects !== dragPreviewProjects) {
+      pendingReorderRef.current = false
+      dragPreviewRef.current = null
+      setDragPreviewProjects(null)
+    }
+  }, [projects, dragPreviewProjects])
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -207,8 +217,12 @@ export function Sidebar({
     const shouldCommit = commit && wasDragging && state.changed && preview
     setDraggingProjectId(null)
     setDragOverProjectId(null)
-    setDragPreviewProjects(null)
-    dragPreviewRef.current = null
+    if (shouldCommit) {
+      pendingReorderRef.current = true
+    } else {
+      setDragPreviewProjects(null)
+      dragPreviewRef.current = null
+    }
     if (!wasDragging) return
     if (commit) {
       suppressProjectClickRef.current = true

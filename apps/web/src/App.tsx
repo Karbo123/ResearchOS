@@ -205,13 +205,10 @@ export function App() {
     }
     setProjects(current => applyPinned(current, target.id, desiredPinned))
     try {
-      const updated = await api<Pick<ProjectSummary, 'pinned' | 'sidebar_order'>>(`/api/projects/${target.id}/pin`, {
+      await api(`/api/projects/${target.id}/pin`, {
         method: 'PATCH',
         body: JSON.stringify({ pinned: !target.pinned }),
       })
-      // The optimistic update already placed the project in the right group;
-      // merge only the authoritative fields so the list does not re-render/jump.
-      setProjects(current => current.map(project => project.id === target.id ? { ...project, pinned: updated.pinned, sidebar_order: updated.sidebar_order } : project))
       showToast(t(target.pinned ? 'app.projectUnpinned' : 'app.projectPinned'))
     } catch (error) {
       setProjects(previousProjects)
@@ -345,8 +342,18 @@ export function App() {
         setProjectDrawerOpen(false)
       }
     }
+    const closeDrawerOnFocus = (event: FocusEvent) => {
+      const target = event.target
+      if (target instanceof Element && !target.closest('.project-drawer-region')) {
+        setProjectDrawerOpen(false)
+      }
+    }
     document.addEventListener('pointerdown', closeDrawer, true)
-    return () => document.removeEventListener('pointerdown', closeDrawer, true)
+    document.addEventListener('focusin', closeDrawerOnFocus, true)
+    return () => {
+      document.removeEventListener('pointerdown', closeDrawer, true)
+      document.removeEventListener('focusin', closeDrawerOnFocus, true)
+    }
   }, [projectDrawerOpen, view])
 
   if (notFoundPath) {

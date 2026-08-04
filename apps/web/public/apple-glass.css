@@ -2380,53 +2380,55 @@ a.secondary { text-decoration: none; color: var(--ink); }
   position: absolute;
   z-index: 60;
   top: 50%;
-  left: 4px;
+  left: 5px;
   display: grid;
   place-items: center;
-  width: 16px;
-  min-width: 16px;
-  height: 84px;
-  min-height: 84px;
+  width: 22px;
+  min-width: 22px;
+  height: 96px;
+  min-height: 96px;
   padding: 0;
-  border: 0;
+  border: 1px solid rgba(0, 122, 255, .14);
   border-radius: 999px;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .30));
   color: var(--blue);
-  box-shadow: none;
+  box-shadow: 0 6px 18px rgba(0, 122, 255, .10), inset 0 1px 0 rgba(255, 255, 255, .72);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
   pointer-events: auto;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transform: translateY(-50%);
-  transition: left .52s var(--spring), color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
+  transition: left .52s var(--spring), color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--spring), opacity .2s var(--ease);
 }
 .project-drawer-toggle::before {
   content: '';
   position: absolute;
-  top: 18%;
-  bottom: 18%;
-  left: 50%;
+  top: 20%;
+  bottom: 20%;
+  left: 5px;
   width: 2px;
   border-radius: 999px;
-  background: rgba(0, 122, 255, .46);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, .07), 0 2px 8px rgba(0, 122, 255, .18);
-  transform: translateX(-50%);
+  background: rgba(0, 122, 255, .58);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, .08), 0 2px 8px rgba(0, 122, 255, .18);
   transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring), opacity .24s var(--ease);
 }
 .project-drawer-toggle:hover {
   color: var(--blue-dark);
-  background: rgba(0, 122, 255, .06);
-  box-shadow: 0 0 0 1px rgba(0, 122, 255, .10);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .82), rgba(255, 255, 255, .46));
+  border-color: rgba(0, 122, 255, .28);
+  box-shadow: 0 9px 24px rgba(0, 122, 255, .16), inset 0 1px 0 rgba(255, 255, 255, .80);
 }
 .project-drawer-toggle:hover::before,
 .project-drawer-toggle:focus-visible::before {
   background: var(--blue-dark);
   box-shadow: 0 0 0 6px var(--blue-soft);
-  transform: translateX(-50%) scaleY(1.06);
 }
 .project-drawer-toggle:focus-visible {
   outline: none;
   color: var(--blue-dark);
-  box-shadow: 0 0 0 3px var(--blue-soft);
+  border-color: rgba(0, 122, 255, .38);
+  box-shadow: 0 0 0 3px var(--blue-soft), 0 8px 22px rgba(0, 122, 255, .18);
 }
 .project-drawer-toggle:focus-visible .project-drawer-arrow {
   filter: drop-shadow(0 0 6px rgba(0, 122, 255, .55));
@@ -2437,25 +2439,26 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .project-drawer-arrow {
   display: grid;
   place-items: center;
+  transform: translateX(2px);
   transition: transform .36s var(--spring);
 }
 .project-drawer-toggle:hover .project-drawer-arrow {
-  transform: translateX(1.5px);
+  transform: translateX(3px);
 }
 .project-drawer-toggle:active .project-drawer-arrow {
-  transform: translateX(2.5px) scale(.9);
+  transform: translateX(4px) scale(.9);
 }
 .project-drawer-region.open .project-drawer-arrow {
-  transform: rotate(180deg);
+  transform: translateX(-2px) rotate(180deg);
 }
 .project-drawer-region.open .project-drawer-toggle:hover .project-drawer-arrow {
-  transform: translateX(-1.5px) rotate(180deg);
+  transform: translateX(-3px) rotate(180deg);
 }
 .project-drawer-region.open .project-drawer-toggle:active .project-drawer-arrow {
-  transform: translateX(-2.5px) rotate(180deg) scale(.9);
+  transform: translateX(-4px) rotate(180deg) scale(.9);
 }
 .project-drawer-region.open .project-drawer-toggle {
-  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 8px);
+  left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 10px);
 }
 .project-drawer-scrim {
   position: absolute;
@@ -2500,14 +2503,20 @@ a.secondary { text-decoration: none; color: var(--ink); }
 
 :root[data-theme='dark'] .project-drawer-toggle {
   color: var(--blue);
+  background: linear-gradient(180deg, rgba(58, 58, 60, .72), rgba(28, 28, 30, .58));
+  border-color: rgba(10, 132, 255, .24);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .08);
 }
 :root[data-theme='dark'] .project-drawer-toggle::before {
-  background: rgba(10, 132, 255, .52);
-  box-shadow: 0 0 0 4px rgba(10, 132, 255, .08);
+  background: rgba(10, 132, 255, .58);
+  box-shadow: 0 0 0 4px rgba(10, 132, 255, .08), 0 2px 8px rgba(0, 0, 0, .22);
 }
 :root[data-theme='dark'] .project-drawer-toggle:hover,
 :root[data-theme='dark'] .project-drawer-toggle:focus-visible {
   color: var(--blue-dark);
+  background: linear-gradient(180deg, rgba(72, 72, 74, .82), rgba(44, 44, 46, .70));
+  border-color: rgba(10, 132, 255, .36);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .32), inset 0 1px 0 rgba(255, 255, 255, .10);
 }
 :root[data-theme='dark'] .project-drawer-toggle:hover::before,
 :root[data-theme='dark'] .project-drawer-toggle:focus-visible::before {

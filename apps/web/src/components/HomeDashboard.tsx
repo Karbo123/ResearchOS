@@ -107,6 +107,7 @@ export function HomeDashboard({
   const homeRowsRef = useRef<HTMLDivElement | null>(null)
   const dragStartPositionsRef = useRef<Map<string, number> | null>(null)
   const rowAnimationsRef = useRef<Animation[]>([])
+  const pendingReorderRef = useRef(false)
   const visibleProjects = dragPreviewProjects || projects
 
   const captureRowPositions = () => {
@@ -166,6 +167,15 @@ export function HomeDashboard({
     for (const animation of rowAnimationsRef.current) animation.cancel()
   }, [])
 
+  useEffect(() => {
+    if (!pendingReorderRef.current) return
+    if (projects !== dragPreviewProjects) {
+      pendingReorderRef.current = false
+      dragPreviewRef.current = null
+      setDragPreviewProjects(null)
+    }
+  }, [projects, dragPreviewProjects])
+
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault()
     if (submitting) return
@@ -210,8 +220,12 @@ export function HomeDashboard({
     const shouldCommit = commit && wasDragging && state.changed && preview
     setDraggingId(null)
     setDragOverId(null)
-    setDragPreviewProjects(null)
-    dragPreviewRef.current = null
+    if (shouldCommit) {
+      pendingReorderRef.current = true
+    } else {
+      setDragPreviewProjects(null)
+      dragPreviewRef.current = null
+    }
     if (!wasDragging) return
     if (commit) {
       suppressProjectClickRef.current = true
