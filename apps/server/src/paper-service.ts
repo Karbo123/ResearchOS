@@ -202,6 +202,7 @@ export async function translatePaperSection(projectId: string, sectionId: string
     section_id: sectionId,
     heading: section.heading,
     source: section.body,
+    project_id: projectId,
   })
   await savePaperTranslations(projectId, sectionId, result.result.sentences)
   return { section_id: sectionId, sentences: result.result.sentences }
@@ -219,6 +220,7 @@ export async function revisePaperSection(projectId: string, sectionId: string) {
     heading: section.heading,
     source: section.body,
     project_context: paperProjectContext(project),
+    project_id: projectId,
   })
   const revised = replacePaperSection(source.toString('utf8'), sectionId, result.result.revised_source)
   const proposalId = crypto.randomUUID()

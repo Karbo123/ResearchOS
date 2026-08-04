@@ -110,10 +110,12 @@ export function StatusDot({ ready }: { ready: boolean }) {
 export function ModelTestButton({
   kind,
   fields,
+  projectId,
   onResult,
 }: {
   kind: ModelTestKind
   fields: { model: string; url: string; key: string }
+  projectId?: string
   onResult?: (ok: boolean) => void
 }) {
   const { t } = useTranslation()
@@ -131,6 +133,7 @@ export function ModelTestButton({
           model: fields.model.trim(),
           url: fields.url.trim(),
           key: fields.key,
+          project_id: projectId || undefined,
         }),
       })
       setState('ok')

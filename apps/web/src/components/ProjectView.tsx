@@ -231,6 +231,7 @@ export function ProjectView({
         <ProjectChat
           messages={chatMessages}
           busy={chatBusy}
+          projectId={project.id}
           onSend={onSendProjectChat}
           onClose={() => onToggleMobileChat(false)}
           mobileOpen={mobileChatOpen}

@@ -4,6 +4,7 @@ import { database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
 import { removeProjectEmbeddingSettings } from './project-embedding-settings.js'
+import { removeProjectSettings } from './project-settings.js'
 import { stopPoolInstance } from './supermemory-instance.js'
 
 type ProjectFile = { relative_path: string }
@@ -83,6 +84,7 @@ export async function deleteProject(projectId: string, projectTitle: string, con
   }
 
   const settings = removeProjectEmbeddingSettings(projectId)
+  removeProjectSettings(projectId)
   await removeProjectRows(projectId)
   try {
     removeFiles([...artifactFiles, ...uploadedFiles], projectId)

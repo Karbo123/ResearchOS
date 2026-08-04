@@ -18,7 +18,7 @@ function normalizeProvider(value: string | undefined | null): VoiceProvider {
   return 'browser'
 }
 
-function envDefaults(): VoiceSettings {
+export function envDefaults(): VoiceSettings {
   const configuredProvider = process.env.RESEARCH_VOICE_PROVIDER?.trim().toLowerCase()
   return {
     provider: normalizeProvider(configuredProvider),

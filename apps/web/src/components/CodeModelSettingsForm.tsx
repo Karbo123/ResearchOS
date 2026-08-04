@@ -16,14 +16,17 @@ interface TierFormValues extends ModelTierSettings {
 }
 
 function sourceLabelKey(value?: string) {
+  if (value === 'project_override') return 'settings.sourceProject'
   return value === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv'
 }
 
 export function CodeModelSettingsForm({
+  projectId,
   onClose,
   onDirtyChange,
   onSaved,
 }: {
+  projectId: string
   onClose: () => void
   onDirtyChange: (dirty: boolean) => void
   onSaved: () => void
@@ -38,7 +41,7 @@ export function CodeModelSettingsForm({
   useEffect(() => {
     setLoading(true)
     setError('')
-    api<ModelSettingsResponse>('/api/settings/models')
+    api<ModelSettingsResponse>(`/api/projects/${projectId}/settings/models`)
       .then(result => {
         const next = {} as Record<TierId, TierFormValues>
         for (const tier of TIERS) {
@@ -59,7 +62,7 @@ export function CodeModelSettingsForm({
       .catch(err => setError(errorMessage(err)))
       .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [projectId])
 
   const update = (tier: TierId, field: keyof TierFormValues, value: string | ReasoningEffort) => {
     setValues(previous => previous ? {
@@ -86,7 +89,7 @@ export function CodeModelSettingsForm({
           reasoning_effort: item.reasoning_effort || tier.defaultEffort,
         }
       }
-      const result = await api<ModelSettingsResponse>('/api/settings/models', {
+      const result = await api<ModelSettingsResponse>(`/api/projects/${projectId}/settings/models`, {
         method: 'PUT',
         body: JSON.stringify(payload),
       })
@@ -138,7 +141,7 @@ export function CodeModelSettingsForm({
               <span className="tier-default">{t('settings.default')} {t(tier.defaultEffort === 'low' ? 'settings.low' : tier.defaultEffort === 'medium' ? 'settings.medium' : 'settings.high')}</span>
             </div>
             <div className="model-tier-actions">
-              <ModelTestButton kind={tier.id} fields={{ model: item.model, url: item.url, key: item.key }} />
+              <ModelTestButton kind={tier.id} projectId={projectId} fields={{ model: item.model, url: item.url, key: item.key }} />
             </div>
             <div className="model-tier-grid">
               <label>

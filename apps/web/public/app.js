@@ -12755,7 +12755,7 @@
   var import_client = __toESM(require_client(), 1);
 
   // src/App.tsx
-  var import_react33 = __toESM(require_react(), 1);
+  var import_react34 = __toESM(require_react(), 1);
 
   // src/i18n.ts
   var import_react = __toESM(require_react(), 1);
@@ -12924,6 +12924,7 @@
     "notFound.description": "\u4F60\u8BBF\u95EE\u7684\u5730\u5740\u4E0D\u5B58\u5728\uFF0C\u6216\u94FE\u63A5\u5DF2\u7ECF\u5931\u6548\u3002",
     "notFound.pathLabel": "\u5F53\u524D\u5730\u5740",
     "notFound.redirect": "{seconds} \u79D2\u540E\u8FD4\u56DE\u9996\u9875",
+    "notFound.returnHint": "\u4E5F\u53EF\u4EE5\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\u7ACB\u5373\u8FD4\u56DE\u9996\u9875",
     "notFound.home": "\u8FD4\u56DE\u9996\u9875",
     "app.researchProject": "\u7814\u7A76\u9879\u76EE",
     "app.projectCreated": "\u9879\u76EE\u5DF2\u521B\u5EFA",
@@ -13129,8 +13130,12 @@
     "settings.eyebrow": "\u8FD0\u884C\u65F6\u8BBE\u7F6E",
     "settings.title": "\u914D\u7F6E",
     "settings.generalTab": "\u901A\u7528",
-    "settings.generalDescription": "\u7BA1\u7406\u754C\u9762\u8BED\u8A00\u3001\u6D45\u8272/\u6697\u8272\u4E3B\u9898\u548C\u5168\u5C40\u7F51\u7EDC\u4EE3\u7406\u3002\u4EE3\u7406\u5F00\u542F\u540E\u4F1A\u5F71\u54CD\u6A21\u578B\u3001\u8BED\u97F3\u8BC6\u522B\u4E0E Embedding \u7B49\u670D\u52A1\u51FA\u53E3\u3002",
-    "settings.modelsDescription": "\u6A21\u578B\u8BBE\u7F6E\u6309\u7528\u9014\u5206\u7EC4\uFF1A\u4EE3\u7801\u6A21\u578B\u5206\u8F7B\u91CF\u7EA7\u3001\u901A\u7528\u3001\u6700\u5F3A\u5927\u4E09\u6863\uFF0C\u53E6\u8BBE\u6587\u6863\u6587\u672C\u3001Embedding \u4E0E\u8BED\u97F3\u8BC6\u522B\u6A21\u578B\u3002",
+    "settings.generalDescription": "\u754C\u9762\u8BED\u8A00\u4E0E\u6D45\u8272/\u6697\u8272\u4E3B\u9898\u662F\u5168\u5C40\u8BBE\u7F6E\uFF0C\u6240\u6709\u9879\u76EE\u5171\u4EAB\uFF1B\u4FDD\u5B58\u540E\u7ACB\u5373\u751F\u6548\u3002",
+    "settings.appearanceDescription": "\u754C\u9762\u8BED\u8A00\u4E0E\u6D45\u8272/\u6697\u8272\u4E3B\u9898\u662F\u5168\u5C40\u8BBE\u7F6E\uFF0C\u6240\u6709\u9879\u76EE\u5171\u4EAB\uFF1B\u4FDD\u5B58\u540E\u7ACB\u5373\u751F\u6548\u3002",
+    "settings.systemTab": "\u7CFB\u7EDF",
+    "settings.systemDescription": "\u5168\u5C40\u7F51\u7EDC\u4EE3\u7406\u4E3A\u7CFB\u7EDF\u7EA7\u8BBE\u7F6E\uFF0C\u5F00\u542F\u540E\u5F71\u54CD\u6A21\u578B\u3001\u8BED\u97F3\u8BC6\u522B\u4E0E Embedding \u7B49\u670D\u52A1\u51FA\u53E3\uFF1B\u56DE\u73AF\u4E0E\u79C1\u6709\u5730\u5740\u59CB\u7EC8\u76F4\u8FDE\u3002",
+    "settings.sourceProject": "\u9879\u76EE\u7EA7\u8986\u76D6",
+    "settings.modelsDescription": "\u6A21\u578B\u8BBE\u7F6E\u6309\u9879\u76EE\u72EC\u7ACB\u4FDD\u5B58\uFF1A\u4EE3\u7801\u6A21\u578B\u5206\u8F7B\u91CF\u7EA7\u3001\u901A\u7528\u3001\u6700\u5F3A\u5927\u4E09\u6863\uFF0C\u53E6\u8BBE\u6587\u6863\u6587\u672C\u3001\u56FE\u7247\u8BC6\u522B\u3001\u56FE\u7247\u751F\u6210\u3001Embedding \u4E0E\u8BED\u97F3\u8BC6\u522B\u6A21\u578B\u3002",
     "settings.embeddingDescription": "\u6BCF\u4E2A\u79D1\u7814\u9879\u76EE\u53EF\u4EE5\u72EC\u7ACB\u914D\u7F6E\u8BED\u4E49\u8BB0\u5FC6 Embedding\uFF1B\u4E0D\u8986\u76D6\u65F6\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08\u5B9E\u6D4B\u672C\u5730 bge-m3 \u6BD4\u8FDC\u7A0B\u5FEB\u7EA6 10 \u500D\uFF09\u3002",
     "settings.modelsTab": "\u6A21\u578B",
     "settings.codeModelsTab": "\u4EE3\u7801\u6A21\u578B",
@@ -13176,7 +13181,7 @@
     "documentModel.title": "\u6587\u6863\u6587\u672C\u6A21\u578B",
     "documentModel.defaultModel": "\u9ED8\u8BA4 deepseek-v4-flash",
     "documentModel.description": "\u804A\u5929\u4E2D\u7684\u89E3\u91CA\u6027\u56DE\u590D\u3001\u8BF4\u660E\u548C\u6587\u6863\u5F0F\u6587\u672C\u9ED8\u8BA4\u7531\u8BE5\u6A21\u578B\u751F\u6210\uFF1B\u4EE3\u7801\u4E0E\u7ED3\u6784\u5316\u63A8\u7406\u4ECD\u7531\u4E0A\u9762\u7684\u4EE3\u7801\u6A21\u578B\u5B8C\u6210\u3002",
-    "settings.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF0C\u518D\u914D\u7F6E\u9879\u76EE\u7EA7 Embedding\u3002",
+    "settings.openProjectFirst": "\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A\u7814\u7A76\u9879\u76EE\uFF1B\u6240\u6709\u6A21\u578B\u8BBE\u7F6E\u90FD\u662F\u9879\u76EE\u7EA7\u914D\u7F6E\uFF0C\u4F1A\u968F\u9879\u76EE\u5207\u6362\u3002",
     "settings.loadingModels": "\u6B63\u5728\u8BFB\u53D6\u6A21\u578B\u914D\u7F6E\u2026",
     "settings.appearanceTitle": "\u5916\u89C2",
     "settings.language": "\u754C\u9762\u8BED\u8A00",
@@ -14432,6 +14437,7 @@
     "notFound.description": "\u4F60\u9020\u8A2A\u7684\u5730\u5740\u4E0D\u5B58\u5728\uFF0C\u6216\u9023\u7D50\u5DF2\u7D93\u5931\u6548\u3002",
     "notFound.pathLabel": "\u76EE\u524D\u5730\u5740",
     "notFound.redirect": "{seconds} \u79D2\u5F8C\u8FD4\u56DE\u9996\u9801",
+    "notFound.returnHint": "\u4E5F\u53EF\u4EE5\u9EDE\u64CA\u4E0B\u65B9\u6309\u9215\u7ACB\u5373\u8FD4\u56DE\u9996\u9801",
     "notFound.home": "\u8FD4\u56DE\u9996\u9801",
     "common.select": "\u8ACB\u9078\u64C7",
     "errors.timeout": "\u8ACB\u6C42\u903E\u6642\uFF0C\u8ACB\u6AA2\u67E5\u672C\u6A5F\u670D\u52D9\u72C0\u614B\u5F8C\u91CD\u8A66\u3002",
@@ -14760,8 +14766,12 @@
     "settings.eyebrow": "\u57F7\u884C\u968E\u6BB5\u8A2D\u5B9A",
     "settings.title": "\u8A2D\u5B9A",
     "settings.generalTab": "\u4E00\u822C",
-    "settings.generalDescription": "\u7BA1\u7406\u4ECB\u9762\u8A9E\u8A00\u3001\u6DFA\u8272/\u6697\u8272\u4E3B\u984C\u548C\u5168\u57DF\u7DB2\u8DEF\u4EE3\u7406\u3002\u4EE3\u7406\u958B\u555F\u5F8C\u6703\u5F71\u97FF\u6A21\u578B\u3001\u8A9E\u97F3\u8FA8\u8B58\u8207 Embedding \u7B49\u670D\u52D9\u51FA\u53E3\u3002",
-    "settings.modelsDescription": "\u6A21\u578B\u8A2D\u5B9A\u4F9D\u7528\u9014\u5206\u7D44\uFF1A\u7A0B\u5F0F\u78BC\u6A21\u578B\u5206\u8F15\u91CF\u7D1A\u3001\u901A\u7528\u3001\u6700\u5F37\u5927\u4E09\u6A94\uFF0C\u53E6\u8A2D\u6587\u4EF6\u6587\u5B57\u3001Embedding \u8207\u8A9E\u97F3\u8FA8\u8B58\u6A21\u578B\u3002",
+    "settings.generalDescription": "\u4ECB\u9762\u8A9E\u8A00\u8207\u6DFA\u8272/\u6697\u8272\u4E3B\u984C\u662F\u5168\u57DF\u8A2D\u5B9A\uFF0C\u6240\u6709\u5C08\u6848\u5171\u4EAB\uFF1B\u5132\u5B58\u5F8C\u7ACB\u5373\u751F\u6548\u3002",
+    "settings.appearanceDescription": "\u4ECB\u9762\u8A9E\u8A00\u8207\u6DFA\u8272/\u6697\u8272\u4E3B\u984C\u662F\u5168\u57DF\u8A2D\u5B9A\uFF0C\u6240\u6709\u5C08\u6848\u5171\u4EAB\uFF1B\u5132\u5B58\u5F8C\u7ACB\u5373\u751F\u6548\u3002",
+    "settings.systemTab": "\u7CFB\u7D71",
+    "settings.systemDescription": "\u5168\u57DF\u7DB2\u8DEF\u4EE3\u7406\u70BA\u7CFB\u7D71\u7D1A\u8A2D\u5B9A\uFF0C\u958B\u555F\u5F8C\u5F71\u97FF\u6A21\u578B\u3001\u8A9E\u97F3\u8FA8\u8B58\u8207 Embedding \u7B49\u670D\u52D9\u51FA\u53E3\uFF1B\u56DE\u74B0\u8207\u79C1\u6709\u5730\u5740\u59CB\u7D42\u76F4\u9023\u3002",
+    "settings.sourceProject": "\u5C08\u6848\u7D1A\u8986\u84CB",
+    "settings.modelsDescription": "\u6A21\u578B\u8A2D\u5B9A\u4F9D\u5C08\u6848\u7368\u7ACB\u5132\u5B58\uFF1A\u7A0B\u5F0F\u78BC\u6A21\u578B\u5206\u8F15\u91CF\u7D1A\u3001\u901A\u7528\u3001\u6700\u5F37\u5927\u4E09\u6A94\uFF0C\u53E6\u8A2D\u6587\u4EF6\u6587\u5B57\u3001\u5716\u7247\u8FA8\u8B58\u3001\u5716\u7247\u751F\u6210\u3001Embedding \u8207\u8A9E\u97F3\u8FA8\u8B58\u6A21\u578B\u3002",
     "settings.embeddingDescription": "\u6BCF\u500B\u79D1\u7814\u5C08\u6848\u53EF\u4EE5\u7368\u7ACB\u8A2D\u5B9A\u8A9E\u610F\u8A18\u61B6 Embedding\uFF1B\u4E0D\u8986\u84CB\u6642\u4F7F\u7528\u5168\u57DF\u9810\u8A2D\uFF08\u5BE6\u6E2C\u672C\u6A5F bge-m3 \u6BD4\u9060\u7AEF\u5FEB\u7D04 10 \u500D\uFF09\u3002",
     "settings.modelsTab": "\u6A21\u578B",
     "settings.codeModelsTab": "\u7A0B\u5F0F\u78BC\u6A21\u578B",
@@ -14807,7 +14817,7 @@
     "documentModel.title": "\u6587\u4EF6\u6587\u5B57\u6A21\u578B",
     "documentModel.defaultModel": "\u9810\u8A2D deepseek-v4-flash",
     "documentModel.description": "\u804A\u5929\u4E2D\u7684\u89E3\u91CB\u6027\u56DE\u8986\u3001\u8AAA\u660E\u8207\u6587\u4EF6\u5F0F\u6587\u5B57\u9810\u8A2D\u7531\u8A72\u6A21\u578B\u7522\u751F\uFF1B\u7A0B\u5F0F\u78BC\u8207\u7D50\u69CB\u5316\u63A8\u7406\u4ECD\u7531\u4E0A\u9762\u7684\u7A0B\u5F0F\u78BC\u6A21\u578B\u5B8C\u6210\u3002",
-    "settings.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\uFF0C\u518D\u8A2D\u5B9A\u5C08\u6848\u7D1A Embedding\u3002",
+    "settings.openProjectFirst": "\u8ACB\u5148\u958B\u555F\u4E00\u500B\u7814\u7A76\u5C08\u6848\uFF1B\u6240\u6709\u6A21\u578B\u8A2D\u5B9A\u90FD\u662F\u5C08\u6848\u7D1A\u914D\u7F6E\uFF0C\u6703\u96A8\u5C08\u6848\u5207\u63DB\u3002",
     "settings.loadingModels": "\u6B63\u5728\u8B80\u53D6\u6A21\u578B\u8A2D\u5B9A\u2026",
     "settings.appearanceTitle": "\u5916\u89C0",
     "settings.language": "\u4ECB\u9762\u8A9E\u8A00",
@@ -15940,6 +15950,7 @@
     "notFound.description": "The address you opened does not exist or the link has expired.",
     "notFound.pathLabel": "Current address",
     "notFound.redirect": "Returning home in {seconds}s",
+    "notFound.returnHint": "You can also return immediately with the button below.",
     "notFound.home": "Return home",
     "common.select": "Select",
     "errors.timeout": "Request timed out. Check that the local service is running and try again.",
@@ -16268,8 +16279,12 @@
     "settings.eyebrow": "Runtime settings",
     "settings.title": "Configuration",
     "settings.generalTab": "General",
-    "settings.generalDescription": "Manage interface language, light/dark theme, and the global network proxy. The proxy affects model, speech recognition, and Embedding traffic.",
-    "settings.modelsDescription": "Model settings are grouped by purpose: code models have lightweight, general, and most powerful tiers, plus document text, Embedding, and speech recognition models.",
+    "settings.generalDescription": "Interface language and light/dark theme are global settings shared by every project; they apply immediately after saving.",
+    "settings.appearanceDescription": "Interface language and light/dark theme are global settings shared by every project; they apply immediately after saving.",
+    "settings.systemTab": "System",
+    "settings.systemDescription": "The global network proxy is a system-level setting. When enabled it affects model, speech recognition, and Embedding traffic; loopback and private addresses always stay direct.",
+    "settings.sourceProject": "Project override",
+    "settings.modelsDescription": "Model settings are saved per project: code models have lightweight, general, and most powerful tiers, plus document text, image recognition, image generation, Embedding, and speech recognition models.",
     "settings.embeddingDescription": "Each research project can configure semantic memory Embedding independently; without an override the global default is used (local bge-m3 is about 10x faster than remote in testing).",
     "settings.modelsTab": "Models",
     "settings.codeModelsTab": "Code models",
@@ -16315,7 +16330,7 @@
     "documentModel.title": "Document text model",
     "documentModel.defaultModel": "Default deepseek-v4-flash",
     "documentModel.description": "Explanatory chat replies, notes, and document-style text use this model by default; code and structured reasoning still use the code models above.",
-    "settings.openProjectFirst": "Open a research project first to configure project-level Embedding.",
+    "settings.openProjectFirst": "Open a research project first; every model setting is project-scoped and follows the active project.",
     "settings.loadingModels": "Loading model settings\u2026",
     "settings.appearanceTitle": "Appearance",
     "settings.language": "Interface language",
@@ -17448,6 +17463,7 @@
     "notFound.description": "La direcci\xF3n que abriste no existe o el enlace ha caducado.",
     "notFound.pathLabel": "Direcci\xF3n actual",
     "notFound.redirect": "Volver\xE1s al inicio en {seconds}s",
+    "notFound.returnHint": "Tambi\xE9n puedes volver al inicio con el bot\xF3n de abajo.",
     "notFound.home": "Volver al inicio",
     "common.select": "Seleccionar",
     "errors.timeout": "La solicitud super\xF3 el tiempo de espera. Revisa que el servicio local est\xE9 en ejecuci\xF3n e int\xE9ntalo de nuevo.",
@@ -17776,8 +17792,12 @@
     "settings.eyebrow": "Configuraci\xF3n en tiempo de ejecuci\xF3n",
     "settings.title": "Configuraci\xF3n",
     "settings.generalTab": "General",
-    "settings.generalDescription": "Administra el idioma de la interfaz, el tema claro/oscuro y el proxy de red global. El proxy afecta al tr\xE1fico de modelos, reconocimiento de voz y Embedding.",
-    "settings.modelsDescription": "La configuraci\xF3n de modelos se agrupa por prop\xF3sito: modelos de c\xF3digo con niveles ligero, general y m\xE1s potente, adem\xE1s de texto de documentos, Embedding y reconocimiento de voz.",
+    "settings.generalDescription": "El idioma de la interfaz y el tema claro/oscuro son ajustes globales compartidos por todos los proyectos; se aplican inmediatamente despu\xE9s de guardar.",
+    "settings.appearanceDescription": "El idioma de la interfaz y el tema claro/oscuro son ajustes globales compartidos por todos los proyectos; se aplican inmediatamente despu\xE9s de guardar.",
+    "settings.systemTab": "Sistema",
+    "settings.systemDescription": "El proxy de red global es un ajuste a nivel de sistema. Si est\xE1 habilitado afecta al tr\xE1fico de modelos, reconocimiento de voz y Embedding; las direcciones de bucle local y privadas siempre van directas.",
+    "settings.sourceProject": "Anulaci\xF3n del proyecto",
+    "settings.modelsDescription": "La configuraci\xF3n de modelos se guarda por proyecto: niveles ligero, general y m\xE1s potente para c\xF3digo, m\xE1s texto de documentos, reconocimiento de im\xE1genes, generaci\xF3n de im\xE1genes, Embedding y reconocimiento de voz.",
     "settings.embeddingDescription": "Cada proyecto de investigaci\xF3n puede configurar su propio Embedding de memoria sem\xE1ntica; sin anulaci\xF3n se usa el predeterminado global (bge-m3 local es unas 10 veces m\xE1s r\xE1pido que remoto en pruebas).",
     "settings.modelsTab": "Modelos",
     "settings.codeModelsTab": "Modelos de c\xF3digo",
@@ -17823,7 +17843,7 @@
     "documentModel.title": "Modelo de texto de documentos",
     "documentModel.defaultModel": "Por defecto deepseek-v4-flash",
     "documentModel.description": "Las respuestas explicativas del chat, las notas y el texto con estilo documental usan este modelo por defecto; el c\xF3digo y el razonamiento estructurado siguen usando los modelos de c\xF3digo anteriores.",
-    "settings.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n para configurar el Embedding del proyecto.",
+    "settings.openProjectFirst": "Abre primero un proyecto de investigaci\xF3n; toda la configuraci\xF3n de modelos es por proyecto y sigue al proyecto activo.",
     "settings.loadingModels": "Cargando configuraci\xF3n de modelos\u2026",
     "settings.appearanceTitle": "Apariencia",
     "settings.language": "Idioma de la interfaz",
@@ -20223,7 +20243,7 @@
                     }
                     onOpenProject(project.id);
                   },
-                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "project-title-text", children: project.title })
+                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "project-title-text", title: project.title, children: project.title })
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "project-actions", onPointerDown: (event) => event.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "project-actions-track", children: [
@@ -20386,6 +20406,7 @@
   function ModelTestButton({
     kind,
     fields,
+    projectId,
     onResult
   }) {
     const { t } = useTranslation();
@@ -20402,7 +20423,8 @@
             kind,
             model: fields.model.trim(),
             url: fields.url.trim(),
-            key: fields.key
+            key: fields.key,
+            project_id: projectId || void 0
           })
         });
         setState("ok");
@@ -21162,8 +21184,8 @@
                       onOpenProject(project.id);
                     },
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "home-project-title-line", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: project.title }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { className: "home-project-slug", children: project.slug }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "home-project-title-line", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { title: project.title, children: project.title }) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { className: "home-project-slug", title: project.slug, children: project.slug }),
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: `home-status-badge status-${project.status || "active"}`, children: project.status === "paused" ? t("home.statusPaused") : project.status === "cancelled" ? t("home.statusCancelled") : t("home.statusActive") })
                     ]
                   }
@@ -21459,6 +21481,7 @@
   }
   function VoiceInputButton({
     disabled = false,
+    projectId,
     onText,
     onError,
     onSessionStart,
@@ -21482,6 +21505,7 @@
     const onSessionEndRef = (0, import_react8.useRef)(onSessionEnd);
     const localeRef = (0, import_react8.useRef)(locale);
     const disabledRef = (0, import_react8.useRef)(disabled);
+    const projectIdRef = (0, import_react8.useRef)(projectId);
     const providerRef = (0, import_react8.useRef)(provider);
     const apiReadyRef = (0, import_react8.useRef)(apiReady);
     const activeRef = (0, import_react8.useRef)(false);
@@ -21496,12 +21520,14 @@
       onSessionEndRef.current = onSessionEnd;
       localeRef.current = locale;
       disabledRef.current = disabled;
+      projectIdRef.current = projectId;
       providerRef.current = provider;
       apiReadyRef.current = apiReady;
     });
     (0, import_react8.useEffect)(() => {
       const loadSettings = () => {
-        void fetchWithTimeout(window.fetch.bind(window), "/api/settings/voice", {}, 3e4).then(async (response) => {
+        const settingsUrl = projectIdRef.current ? `/api/projects/${projectIdRef.current}/settings/voice` : "/api/settings/voice";
+        void fetchWithTimeout(window.fetch.bind(window), settingsUrl, {}, 3e4).then(async (response) => {
           if (!response.ok) throw new Error(`voice_settings_${response.status}`);
           const result = await response.json();
           setProvider(result.provider === "groq" ? "api" : result.provider);
@@ -21514,7 +21540,7 @@
       loadSettings();
       window.addEventListener("researchos:voice-settings-changed", loadSettings);
       return () => window.removeEventListener("researchos:voice-settings-changed", loadSettings);
-    }, []);
+    }, [projectId]);
     (0, import_react8.useEffect)(() => {
       const recognition = createRecognition();
       if (!recognition) return;
@@ -21618,6 +21644,7 @@
         const form = new FormData();
         form.append("file", blob, name);
         form.append("language", apiLanguage(localeRef.current));
+        if (projectIdRef.current) form.append("projectId", projectIdRef.current);
         const response = await fetchWithTimeout(window.fetch.bind(window), "/api/voice/transcribe", {
           method: "POST",
           body: form
@@ -21867,6 +21894,7 @@
   function ProjectChat({
     messages,
     busy,
+    projectId,
     onSend,
     onClose,
     mobileOpen
@@ -21939,6 +21967,7 @@
           VoiceInputButton,
           {
             disabled: busy,
+            projectId,
             onText: voiceInsertion.handleText,
             onSessionStart: voiceInsertion.reset,
             onSessionEnd: voiceInsertion.reset
@@ -24075,8 +24104,8 @@
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-pdf-card", children: [
       /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "paper-pdf-card-icon", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FileText, { size: 16 }) }),
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "paper-pdf-card-copy", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: artifact.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("small", { children: artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}\u2026` : t("common.unrecorded") })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { title: artifact.name, children: artifact.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("small", { title: artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}\u2026` : t("common.unrecorded"), children: artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}\u2026` : t("common.unrecorded") })
       ] }),
       artifact.download_url ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("a", { className: "paper-pdf-open", href: artifact.download_url, target: "_blank", rel: "noreferrer", "aria-label": `${t("paperWorkspace.openPdf")} ${artifact.name}`, children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ExternalLink, { size: 14 }),
@@ -26340,8 +26369,8 @@
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "workspace-entry-icon", children: entry.kind === "method_workspace" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Waypoints, { size: 15 }) : entry.kind === "experiment" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FlaskConical, { size: 15 }) : entry.kind === "reproduction" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(GitBranch, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Play, { size: 14 }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "workspace-entry-copy", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: entry.title }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: entry.meta || t("common.unrecorded") })
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { title: entry.title, children: entry.title }),
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { title: entry.meta || t("common.unrecorded"), children: entry.meta || t("common.unrecorded") })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "workspace-entry-side", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: entry.status }),
@@ -26356,7 +26385,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "workspace-detail-head", children: [
             /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "workspace-detail-title", children: [
               /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "eyebrow", children: selected.kind === "method_workspace" ? t("workspace.methodDesign") : selected.kind === "experiment" ? t("workspace.experimentItem") : selected.kind === "reproduction" ? t("workspace.reproductionItem") : t("workspace.runItem") }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: selected.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { title: selected.title, children: selected.title }),
               /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "muted", children: selected.meta || t("common.unrecorded") })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { status: selected.status, children: statusLabel(selected.status, t) })
@@ -27002,6 +27031,7 @@
               {
                 messages: chatMessages,
                 busy: chatBusy,
+                projectId: project.id,
                 onSend: onSendProjectChat,
                 onClose: () => onToggleMobileChat(false),
                 mobileOpen: mobileChatOpen
@@ -27186,9 +27216,9 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_react29 = __toESM(require_react(), 1);
+  var import_react30 = __toESM(require_react(), 1);
 
-  // src/components/GeneralSettingsForm.tsx
+  // src/components/AppearanceSettingsForm.tsx
   var import_react22 = __toESM(require_react(), 1);
 
   // src/theme.ts
@@ -27222,82 +27252,36 @@
     return (0, import_react21.useSyncExternalStore)(subscribe2, getTheme, getTheme);
   }
 
-  // src/components/GeneralSettingsForm.tsx
+  // src/components/AppearanceSettingsForm.tsx
   var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
-  var EMPTY_PROXY = { enabled: false, url: "" };
-  function GeneralSettingsForm({ onChanged, onDirtyChange }) {
+  function AppearanceSettingsForm({
+    onChanged,
+    onDirtyChange
+  }) {
     const { locale, t, setLocale: setLocale2 } = useTranslation();
     const theme = useTheme();
     const [draftLocale, setDraftLocale] = (0, import_react22.useState)(locale);
     const [draftTheme, setDraftTheme] = (0, import_react22.useState)(theme);
-    const [proxy, setProxy] = (0, import_react22.useState)(EMPTY_PROXY);
-    const [loading, setLoading] = (0, import_react22.useState)(true);
-    const [saving, setSaving] = (0, import_react22.useState)(false);
-    const [error, setError] = (0, import_react22.useState)("");
     const [dirty, setDirty] = (0, import_react22.useState)(false);
-    const load = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const result = await api("/api/settings/proxy");
-        setProxy(result);
-        setDirty(false);
-        onDirtyChange?.(false);
-      } catch (err) {
-        setError(errorMessage(err));
-      } finally {
-        setLoading(false);
-      }
-    };
-    (0, import_react22.useEffect)(() => {
-      setDraftLocale(locale);
-      setDraftTheme(theme);
-    }, [locale, theme]);
-    (0, import_react22.useEffect)(() => {
-      void load();
-    }, []);
-    const updateProxy = (field, value) => {
-      setProxy((previous) => ({ ...previous, [field]: value }));
-      setDirty(true);
-      onDirtyChange?.(true);
-    };
     const updateAppearance = (field, value) => {
       if (field === "locale") setDraftLocale(value);
       else setDraftTheme(value);
       setDirty(true);
       onDirtyChange?.(true);
     };
-    const save = async (event) => {
+    const save = (event) => {
       event.preventDefault();
-      if (saving) return;
-      setSaving(true);
-      setError("");
-      try {
-        const result = await api("/api/settings/proxy", {
-          method: "PUT",
-          body: JSON.stringify({
-            enabled: proxy.enabled,
-            url: proxy.url.trim()
-          })
-        });
-        setProxy(result);
-        setLocale2(draftLocale);
-        setTheme(draftTheme);
-        setDirty(false);
-        onDirtyChange?.(false);
-        onChanged();
-      } catch (err) {
-        setError(t("settings.saveFailed", { error: errorMessage(err) }));
-      } finally {
-        setSaving(false);
-      }
+      setLocale2(draftLocale);
+      setTheme(draftTheme);
+      setDirty(false);
+      onDirtyChange?.(false);
+      onChanged();
     };
-    const proxyReady = !proxy.enabled || Boolean(proxy.url);
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { className: "model-tier settings-general-card", children: [
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "model-tier-heading", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { children: t("settings.appearanceTitle") }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "tier-status", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: t("settings.generalDescription") }) })
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "tier-status", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: t("settings.appearanceDescription") }) })
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "settings-field-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "settings-field-label", children: [
@@ -27336,24 +27320,92 @@
           )) })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { className: "model-tier settings-proxy-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "model-tier-heading", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { children: t("settings.proxyTitle") }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(StatusDot, { ready: proxyReady }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "modal-actions", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "primary", type: "submit", disabled: !dirty, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Save, { size: 16 }),
+        t("settings.save")
+      ] }) })
+    ] });
+  }
+
+  // src/components/SystemSettingsForm.tsx
+  var import_react23 = __toESM(require_react(), 1);
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  var EMPTY_PROXY = { enabled: false, url: "" };
+  function SystemSettingsForm({
+    onChanged,
+    onDirtyChange
+  }) {
+    const { t } = useTranslation();
+    const [proxy, setProxy] = (0, import_react23.useState)(EMPTY_PROXY);
+    const [loading, setLoading] = (0, import_react23.useState)(true);
+    const [saving, setSaving] = (0, import_react23.useState)(false);
+    const [error, setError] = (0, import_react23.useState)("");
+    const [dirty, setDirty] = (0, import_react23.useState)(false);
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const result = await api("/api/settings/proxy");
+        setProxy(result);
+        setDirty(false);
+        onDirtyChange?.(false);
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    (0, import_react23.useEffect)(() => {
+      void load();
+    }, []);
+    const updateProxy = (field, value) => {
+      setProxy((previous) => ({ ...previous, [field]: value }));
+      setDirty(true);
+      onDirtyChange?.(true);
+    };
+    const save = async (event) => {
+      event.preventDefault();
+      if (saving) return;
+      setSaving(true);
+      setError("");
+      try {
+        const result = await api("/api/settings/proxy", {
+          method: "PUT",
+          body: JSON.stringify({
+            enabled: proxy.enabled,
+            url: proxy.url.trim()
+          })
+        });
+        setProxy(result);
+        setDirty(false);
+        onDirtyChange?.(false);
+        onChanged();
+      } catch (err) {
+        setError(t("settings.saveFailed", { error: errorMessage(err) }));
+      } finally {
+        setSaving(false);
+      }
+    };
+    const proxyReady = !proxy.enabled || Boolean(proxy.url);
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("section", { className: "model-tier settings-proxy-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "model-tier-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t("settings.proxyTitle") }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "tier-status", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(StatusDot, { ready: proxyReady }),
               loading ? t("common.waiting") : proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "tier-default", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "tier-default", children: [
             t("settings.default"),
             " ",
             proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "settings-proxy-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "settings-switch", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "settings-proxy-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "settings-switch", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               "input",
               {
                 type: "checkbox",
@@ -27362,12 +27414,12 @@
                 onChange: (event) => updateProxy("enabled", event.target.checked)
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "settings-switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", {}) }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: t("settings.proxyEnabled") })
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "settings-switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", {}) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: t("settings.proxyEnabled") })
           ] }),
-          proxy.enabled ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "settings-proxy-url", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: t("settings.proxyUrl") }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+          proxy.enabled ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "settings-proxy-url", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: t("settings.proxyUrl") }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               "input",
               {
                 type: "url",
@@ -27378,18 +27430,18 @@
                 onChange: (event) => updateProxy("url", event.target.value)
               }
             )
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "settings-proxy-state", children: t("settings.proxyDisabled") })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "settings-proxy-state", children: t("settings.proxyDisabled") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldCheck, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: t("settings.proxyNote") })
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { className: "settings-note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ShieldCheck, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: t("settings.proxyNote") })
         ] })
       ] }),
-      error ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty || loading, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Save, { size: 16 }),
+      error ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "modal-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty || loading, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Save, { size: 16 }),
           t("settings.save")
         ] })
       ] })
@@ -27397,31 +27449,33 @@
   }
 
   // src/components/CodeModelSettingsForm.tsx
-  var import_react23 = __toESM(require_react(), 1);
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  var import_react24 = __toESM(require_react(), 1);
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   var TIERS = [
     { id: "simple", labelKey: "settings.tierLight", descriptionKey: "settings.tierLightDescription", defaultEffort: "low" },
     { id: "medium", labelKey: "settings.tierGeneral", descriptionKey: "settings.tierGeneralDescription", defaultEffort: "medium" },
     { id: "complex", labelKey: "settings.tierPowerful", descriptionKey: "settings.tierPowerfulDescription", defaultEffort: "high" }
   ];
   function sourceLabelKey(value) {
+    if (value === "project_override") return "settings.sourceProject";
     return value === "runtime_override" ? "settings.sourceRuntime" : "settings.sourceEnv";
   }
   function CodeModelSettingsForm({
+    projectId,
     onClose,
     onDirtyChange,
     onSaved
   }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react23.useState)(null);
-    const [loading, setLoading] = (0, import_react23.useState)(false);
-    const [saving, setSaving] = (0, import_react23.useState)(false);
-    const [error, setError] = (0, import_react23.useState)("");
-    const [dirty, setDirty] = (0, import_react23.useState)(false);
-    (0, import_react23.useEffect)(() => {
+    const [values, setValues] = (0, import_react24.useState)(null);
+    const [loading, setLoading] = (0, import_react24.useState)(false);
+    const [saving, setSaving] = (0, import_react24.useState)(false);
+    const [error, setError] = (0, import_react24.useState)("");
+    const [dirty, setDirty] = (0, import_react24.useState)(false);
+    (0, import_react24.useEffect)(() => {
       setLoading(true);
       setError("");
-      api("/api/settings/models").then((result) => {
+      api(`/api/projects/${projectId}/settings/models`).then((result) => {
         const next = {};
         for (const tier of TIERS) {
           const item = result.tiers[tier.id] || {};
@@ -27438,7 +27492,7 @@
         setDirty(false);
         onDirtyChange(false);
       }).catch((err) => setError(errorMessage(err))).finally(() => setLoading(false));
-    }, []);
+    }, [projectId]);
     const update = (tier, field, value) => {
       setValues((previous) => previous ? {
         ...previous,
@@ -27463,7 +27517,7 @@
             reasoning_effort: item.reasoning_effort || tier.defaultEffort
           };
         }
-        const result = await api("/api/settings/models", {
+        const result = await api(`/api/projects/${projectId}/settings/models`, {
           method: "PUT",
           body: JSON.stringify(payload)
         });
@@ -27489,46 +27543,46 @@
         setSaving(false);
       }
     };
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "empty", children: t("settings.loadingModels") });
-    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "empty", children: t("settings.loadingModels") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
       TIERS.map((tier) => {
         const item = values[tier.id];
-        return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("section", { className: "model-tier", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "model-tier-heading", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { children: t(tier.labelKey) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "model-tier-description", children: t(tier.descriptionKey) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "tier-status", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
+        return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { className: "model-tier", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "model-tier-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t(tier.labelKey) }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "model-tier-description", children: t(tier.descriptionKey) }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tier-status", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
                 item.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
                 " \xB7 ",
                 item.url ? t("settings.urlReady") : t("settings.urlPending")
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "tier-sources", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tier-sources", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { children: [
                   t("settings.urlLabel"),
                   " \xB7 ",
                   t(sourceLabelKey(item.sources?.url))
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { children: [
                   t("settings.keyLabel"),
                   " \xB7 ",
                   t(sourceLabelKey(item.sources?.key))
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "tier-default", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { className: "tier-default", children: [
               t("settings.default"),
               " ",
               t(tier.defaultEffort === "low" ? "settings.low" : tier.defaultEffort === "medium" ? "settings.medium" : "settings.high")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "model-tier-actions", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ModelTestButton, { kind: tier.id, fields: { model: item.model, url: item.url, key: item.key } }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "model-tier-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "model-tier-actions", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ModelTestButton, { kind: tier.id, projectId, fields: { model: item.model, url: item.url, key: item.key } }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "model-tier-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
               t("settings.modelName"),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                 "input",
                 {
                   value: item.model,
@@ -27538,24 +27592,24 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
               t("settings.reasoningEffort"),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
                 "select",
                 {
                   value: item.reasoning_effort,
                   onChange: (event) => update(tier.id, "reasoning_effort", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "low", children: t("settings.low") }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "medium", children: t("settings.medium") }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "high", children: t("settings.high") })
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "low", children: t("settings.low") }),
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "medium", children: t("settings.medium") }),
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "high", children: t("settings.high") })
                   ]
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
               t("settings.modelUrl"),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                 "input",
                 {
                   type: "url",
@@ -27567,9 +27621,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
               t("settings.apiKey"),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                 "input",
                 {
                   type: "password",
@@ -27584,165 +27638,14 @@
           ] })
         ] }, tier.id);
       }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { className: "settings-note", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ShieldCheck, { size: 16 }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: t("settings.securityNote") })
-      ] }),
-      error ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { className: "secondary", type: "button", onClick: onClose, children: t("common.cancel") }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("button", { className: "primary", type: "submit", disabled: loading || saving, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Save, { size: 16 }),
-          t("settings.save")
-        ] })
-      ] })
-    ] });
-  }
-
-  // src/components/DocumentModelSettingsForm.tsx
-  var import_react24 = __toESM(require_react(), 1);
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
-  function DocumentModelSettingsForm({
-    onChanged,
-    onDirtyChange
-  }) {
-    const { t } = useTranslation();
-    const [values, setValues] = (0, import_react24.useState)(null);
-    const [loading, setLoading] = (0, import_react24.useState)(false);
-    const [saving, setSaving] = (0, import_react24.useState)(false);
-    const [error, setError] = (0, import_react24.useState)("");
-    const [dirty, setDirty] = (0, import_react24.useState)(false);
-    const load = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const result = await api("/api/settings/document");
-        setValues({ ...result, key: "" });
-        setDirty(false);
-        onDirtyChange?.(false);
-      } catch (err) {
-        setError(errorMessage(err));
-      } finally {
-        setLoading(false);
-      }
-    };
-    (0, import_react24.useEffect)(() => {
-      void load();
-    }, []);
-    const update = (field, value) => {
-      setValues((previous) => previous ? { ...previous, [field]: value } : previous);
-      setDirty(true);
-      onDirtyChange?.(true);
-    };
-    const save = async (event) => {
-      event.preventDefault();
-      if (!values || saving) return;
-      setSaving(true);
-      setError("");
-      try {
-        const result = await api("/api/settings/document", {
-          method: "PUT",
-          body: JSON.stringify({
-            model: values.model.trim(),
-            url: values.url.trim(),
-            key: values.key
-          })
-        });
-        setValues({ ...result, key: "" });
-        setDirty(false);
-        onDirtyChange?.(false);
-        onChanged();
-      } catch (err) {
-        setError(t("settings.saveFailed", { error: errorMessage(err) }));
-      } finally {
-        setSaving(false);
-      }
-    };
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "empty", children: t("settings.loadingModels") });
-    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
-    const ready = Boolean(values.url && values.key_configured);
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { className: "model-tier", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "model-tier-heading", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("documentModel.title") }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(StatusDot, { ready }),
-              values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
-              " \xB7 ",
-              values.url ? t("settings.urlReady") : t("settings.urlPending")
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tier-sources", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { children: [
-                t("settings.urlLabel"),
-                " \xB7 ",
-                t(values.source === "runtime_override" ? "settings.sourceRuntime" : "settings.sourceEnv")
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { children: [
-                t("settings.keyLabel"),
-                " \xB7 ",
-                t(values.source === "runtime_override" ? "settings.sourceRuntime" : "settings.sourceEnv")
-              ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "tier-default", children: t("documentModel.defaultModel") })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "model-tier-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-            t("settings.modelName"),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-              "input",
-              {
-                value: values.model,
-                required: true,
-                maxLength: 200,
-                onChange: (event) => update("model", event.target.value)
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-            t("settings.modelUrl"),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-              "input",
-              {
-                type: "url",
-                value: values.url,
-                required: true,
-                maxLength: 500,
-                placeholder: "http://127.0.0.1:3000/v1",
-                onChange: (event) => update("url", event.target.value)
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
-            t("settings.apiKey"),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-              "input",
-              {
-                type: "password",
-                value: values.key,
-                placeholder: values.key_configured ? t("settings.keyKeep") : t("settings.keyPlaceholder"),
-                autoComplete: "new-password",
-                maxLength: 1e3,
-                onChange: (event) => update("key", event.target.value)
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FileText, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: t("documentModel.description") })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ShieldCheck, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: t("settings.securityNote") })
-        ] })
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { className: "settings-note", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ShieldCheck, { size: 16 }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: t("settings.securityNote") })
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ModelTestButton, { kind: "document", fields: { model: values.model, url: values.url, key: values.key } }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "secondary", type: "button", onClick: onClose, children: t("common.cancel") }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("button", { className: "primary", type: "submit", disabled: loading || saving, children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Save, { size: 16 }),
           t("settings.save")
         ] })
@@ -27750,10 +27653,11 @@
     ] });
   }
 
-  // src/components/VisionModelSettingsForm.tsx
+  // src/components/DocumentModelSettingsForm.tsx
   var import_react25 = __toESM(require_react(), 1);
   var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
-  function VisionModelSettingsForm({
+  function DocumentModelSettingsForm({
+    projectId,
     onChanged,
     onDirtyChange
   }) {
@@ -27767,7 +27671,7 @@
       setLoading(true);
       setError("");
       try {
-        const result = await api("/api/settings/vision");
+        const result = await api(`/api/projects/${projectId}/settings/document`);
         setValues({ ...result, key: "" });
         setDirty(false);
         onDirtyChange?.(false);
@@ -27779,7 +27683,7 @@
     };
     (0, import_react25.useEffect)(() => {
       void load();
-    }, []);
+    }, [projectId]);
     const update = (field, value) => {
       setValues((previous) => previous ? { ...previous, [field]: value } : previous);
       setDirty(true);
@@ -27791,7 +27695,7 @@
       setSaving(true);
       setError("");
       try {
-        const result = await api("/api/settings/vision", {
+        const result = await api(`/api/projects/${projectId}/settings/document`, {
           method: "PUT",
           body: JSON.stringify({
             model: values.model.trim(),
@@ -27816,7 +27720,7 @@
       /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { className: "model-tier", children: [
         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "model-tier-heading", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h3", { children: t("visionModel.title") }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h3", { children: t("documentModel.title") }),
             /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "tier-status", children: [
               /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(StatusDot, { ready }),
               values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
@@ -27836,7 +27740,7 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "tier-default", children: t("visionModel.defaultModel") })
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "tier-default", children: t("documentModel.defaultModel") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
@@ -27847,7 +27751,6 @@
                 value: values.model,
                 required: true,
                 maxLength: 200,
-                placeholder: t("visionModel.modelPlaceholder"),
                 onChange: (event) => update("model", event.target.value)
               }
             )
@@ -27861,7 +27764,7 @@
                 value: values.url,
                 required: true,
                 maxLength: 500,
-                placeholder: t("visionModel.urlPlaceholder"),
+                placeholder: "http://127.0.0.1:3000/v1",
                 onChange: (event) => update("url", event.target.value)
               }
             )
@@ -27882,8 +27785,8 @@
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Eye, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: t("visionModel.description") })
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FileText, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: t("documentModel.description") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { className: "settings-note", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ShieldCheck, { size: 16 }),
@@ -27892,7 +27795,7 @@
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ModelTestButton, { kind: "vision", fields: { model: values.model, url: values.url, key: values.key } }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ModelTestButton, { kind: "document", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Save, { size: 16 }),
@@ -27902,10 +27805,11 @@
     ] });
   }
 
-  // src/components/ImageGenerationSettingsForm.tsx
+  // src/components/VisionModelSettingsForm.tsx
   var import_react26 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
-  function ImageGenerationSettingsForm({
+  function VisionModelSettingsForm({
+    projectId,
     onChanged,
     onDirtyChange
   }) {
@@ -27919,7 +27823,7 @@
       setLoading(true);
       setError("");
       try {
-        const result = await api("/api/settings/image-generation");
+        const result = await api(`/api/projects/${projectId}/settings/vision`);
         setValues({ ...result, key: "" });
         setDirty(false);
         onDirtyChange?.(false);
@@ -27931,7 +27835,7 @@
     };
     (0, import_react26.useEffect)(() => {
       void load();
-    }, []);
+    }, [projectId]);
     const update = (field, value) => {
       setValues((previous) => previous ? { ...previous, [field]: value } : previous);
       setDirty(true);
@@ -27943,14 +27847,12 @@
       setSaving(true);
       setError("");
       try {
-        const result = await api("/api/settings/image-generation", {
+        const result = await api(`/api/projects/${projectId}/settings/vision`, {
           method: "PUT",
           body: JSON.stringify({
             model: values.model.trim(),
             url: values.url.trim(),
-            key: values.key,
-            resolution: values.resolution,
-            quality: values.quality
+            key: values.key
           })
         });
         setValues({ ...result, key: "" });
@@ -27970,7 +27872,7 @@
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: "model-tier", children: [
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-heading", children: [
           /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: t("imageModel.title") }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: t("visionModel.title") }),
             /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "tier-status", children: [
               /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(StatusDot, { ready }),
               values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
@@ -27990,7 +27892,7 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "tier-default", children: t("imageModel.defaultModel") })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "tier-default", children: t("visionModel.defaultModel") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
@@ -28001,7 +27903,7 @@
                 value: values.model,
                 required: true,
                 maxLength: 200,
-                placeholder: t("imageModel.modelPlaceholder"),
+                placeholder: t("visionModel.modelPlaceholder"),
                 onChange: (event) => update("model", event.target.value)
               }
             )
@@ -28015,7 +27917,7 @@
                 value: values.url,
                 required: true,
                 maxLength: 500,
-                placeholder: t("imageModel.urlPlaceholder"),
+                placeholder: t("visionModel.urlPlaceholder"),
                 onChange: (event) => update("url", event.target.value)
               }
             )
@@ -28033,50 +27935,20 @@
                 onChange: (event) => update("key", event.target.value)
               }
             )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
-            t("imageModel.resolution"),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
-              "select",
-              {
-                value: values.resolution,
-                onChange: (event) => update("resolution", event.target.value),
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "1k", children: t("imageModel.resolution1k") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "2k", children: t("imageModel.resolution2k") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "4k", children: t("imageModel.resolution4k") })
-                ]
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
-            t("imageModel.quality"),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
-              "select",
-              {
-                value: values.quality,
-                onChange: (event) => update("quality", event.target.value),
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "low", children: t("imageModel.qualityLow") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "medium", children: t("imageModel.qualityMedium") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "high", children: t("imageModel.qualityHigh") })
-                ]
-              }
-            )
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { className: "settings-note", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ImagePlus, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("imageModel.costNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Eye, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("visionModel.description") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { className: "settings-note", children: [
           /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ShieldCheck, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("imageModel.description") })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("settings.securityNote") })
         ] })
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ModelTestButton, { kind: "image", fields: { model: values.model, url: values.url, key: values.key } }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ModelTestButton, { kind: "vision", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
           /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Save, { size: 16 }),
@@ -28086,18 +27958,203 @@
     ] });
   }
 
-  // src/components/ProjectEmbeddingSettingsForm.tsx
+  // src/components/ImageGenerationSettingsForm.tsx
   var import_react27 = __toESM(require_react(), 1);
   var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
-  function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
+  function ImageGenerationSettingsForm({
+    projectId,
+    onChanged,
+    onDirtyChange
+  }) {
     const { t } = useTranslation();
     const [values, setValues] = (0, import_react27.useState)(null);
-    const [instance, setInstance] = (0, import_react27.useState)(null);
     const [loading, setLoading] = (0, import_react27.useState)(false);
     const [saving, setSaving] = (0, import_react27.useState)(false);
     const [error, setError] = (0, import_react27.useState)("");
     const [dirty, setDirty] = (0, import_react27.useState)(false);
-    const [confirmReset, setConfirmReset] = (0, import_react27.useState)(false);
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const result = await api(`/api/projects/${projectId}/settings/image-generation`);
+        setValues({ ...result, key: "" });
+        setDirty(false);
+        onDirtyChange?.(false);
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    (0, import_react27.useEffect)(() => {
+      void load();
+    }, [projectId]);
+    const update = (field, value) => {
+      setValues((previous) => previous ? { ...previous, [field]: value } : previous);
+      setDirty(true);
+      onDirtyChange?.(true);
+    };
+    const save = async (event) => {
+      event.preventDefault();
+      if (!values || saving) return;
+      setSaving(true);
+      setError("");
+      try {
+        const result = await api(`/api/projects/${projectId}/settings/image-generation`, {
+          method: "PUT",
+          body: JSON.stringify({
+            model: values.model.trim(),
+            url: values.url.trim(),
+            key: values.key,
+            resolution: values.resolution,
+            quality: values.quality
+          })
+        });
+        setValues({ ...result, key: "" });
+        setDirty(false);
+        onDirtyChange?.(false);
+        onChanged();
+      } catch (err) {
+        setError(t("settings.saveFailed", { error: errorMessage(err) }));
+      } finally {
+        setSaving(false);
+      }
+    };
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("settings.loadingModels") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
+    const ready = Boolean(values.url && values.key_configured);
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "model-tier", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h3", { children: t("imageModel.title") }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-status", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot, { ready }),
+              values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
+              " \xB7 ",
+              values.url ? t("settings.urlReady") : t("settings.urlPending")
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-sources", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { children: [
+                t("settings.urlLabel"),
+                " \xB7 ",
+                t(values.source === "runtime_override" ? "settings.sourceRuntime" : "settings.sourceEnv")
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { children: [
+                t("settings.keyLabel"),
+                " \xB7 ",
+                t(values.source === "runtime_override" ? "settings.sourceRuntime" : "settings.sourceEnv")
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "tier-default", children: t("imageModel.defaultModel") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("settings.modelName"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              "input",
+              {
+                value: values.model,
+                required: true,
+                maxLength: 200,
+                placeholder: t("imageModel.modelPlaceholder"),
+                onChange: (event) => update("model", event.target.value)
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("settings.modelUrl"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              "input",
+              {
+                type: "url",
+                value: values.url,
+                required: true,
+                maxLength: 500,
+                placeholder: t("imageModel.urlPlaceholder"),
+                onChange: (event) => update("url", event.target.value)
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("settings.apiKey"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              "input",
+              {
+                type: "password",
+                value: values.key,
+                placeholder: values.key_configured ? t("settings.keyKeep") : t("settings.keyPlaceholder"),
+                autoComplete: "new-password",
+                maxLength: 1e3,
+                onChange: (event) => update("key", event.target.value)
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("imageModel.resolution"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+              "select",
+              {
+                value: values.resolution,
+                onChange: (event) => update("resolution", event.target.value),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "1k", children: t("imageModel.resolution1k") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "2k", children: t("imageModel.resolution2k") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "4k", children: t("imageModel.resolution4k") })
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            t("imageModel.quality"),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+              "select",
+              {
+                value: values.quality,
+                onChange: (event) => update("quality", event.target.value),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "low", children: t("imageModel.qualityLow") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "medium", children: t("imageModel.qualityMedium") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "high", children: t("imageModel.qualityHigh") })
+                ]
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ImagePlus, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("imageModel.costNote") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("imageModel.description") })
+        ] })
+      ] }),
+      error ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "modal-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ModelTestButton, { kind: "image", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Save, { size: 16 }),
+          t("settings.save")
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/components/ProjectEmbeddingSettingsForm.tsx
+  var import_react28 = __toESM(require_react(), 1);
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  function ProjectEmbeddingSettingsForm({ projectId, onChanged }) {
+    const { t } = useTranslation();
+    const [values, setValues] = (0, import_react28.useState)(null);
+    const [instance, setInstance] = (0, import_react28.useState)(null);
+    const [loading, setLoading] = (0, import_react28.useState)(false);
+    const [saving, setSaving] = (0, import_react28.useState)(false);
+    const [error, setError] = (0, import_react28.useState)("");
+    const [dirty, setDirty] = (0, import_react28.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react28.useState)(false);
     const load = async () => {
       setLoading(true);
       setError("");
@@ -28120,7 +28177,7 @@
         setLoading(false);
       }
     };
-    (0, import_react27.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       if (projectId) void load();
     }, [projectId]);
     const update = (field, value) => {
@@ -28160,26 +28217,26 @@
         setSaving(false);
       }
     };
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "empty", children: t("embedding.loading") });
-    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("embedding.loading") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
     const custom = values.mode === "custom";
     const remote = custom && values.provider !== "local";
     const ready = custom && (values.provider === "local" || Boolean(values.base_url && (values.key || values.key_configured)));
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "model-settings-form", onSubmit: (event) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { className: "model-settings-form", onSubmit: (event) => {
         event.preventDefault();
         void save(false);
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "model-tier", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-heading", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h3", { children: t("embedding.providerTitle") }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-status", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot, { ready }),
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "model-tier", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h3", { children: t("embedding.providerTitle") }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "tier-status", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(StatusDot, { ready }),
                 values.mode === "global" ? t("embedding.globalDefault") : values.provider === "local" ? t("embedding.localOnnx") : t("embedding.remoteApi")
               ] })
             ] }),
-            instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
+            instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "tier-default", children: [
               t("embedding.instance"),
               " :",
               instance.port,
@@ -28187,48 +28244,48 @@
               instance.shared_projects > 1 ? t("embedding.sharedProjects", { count: instance.shared_projects }) : ""
             ] }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
               t("embedding.mode"),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
                 "select",
                 {
                   value: values.mode,
                   onChange: (event) => update("mode", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "global", children: t("embedding.modeGlobal") }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "custom", children: t("embedding.modeCustom") })
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "global", children: t("embedding.modeGlobal") }),
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "custom", children: t("embedding.modeCustom") })
                   ]
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
               t("embedding.provider"),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
                 "select",
                 {
                   value: values.provider,
                   disabled: !custom,
                   onChange: (event) => update("provider", event.target.value),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("option", { value: "local", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("option", { value: "local", children: [
                       "local (",
                       t("embedding.localOnnx"),
                       ")"
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("option", { value: "openai", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("option", { value: "openai", children: [
                       "openai (",
                       t("embedding.openaiCompatible"),
                       ")"
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "gemini", children: "gemini" })
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "gemini", children: "gemini" })
                   ]
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
               t("embedding.model"),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                 "input",
                 {
                   value: values.model,
@@ -28239,9 +28296,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
               t("embedding.dimensions"),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                 "input",
                 {
                   type: "number",
@@ -28253,10 +28310,10 @@
                 }
               )
             ] }),
-            remote ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+            remote ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
                 t("embedding.baseUrl"),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                   "input",
                   {
                     value: values.base_url,
@@ -28266,9 +28323,9 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
                 t("settings.apiKey"),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                   "input",
                   {
                     type: "password",
@@ -28282,25 +28339,25 @@
               ] })
             ] }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Database, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("embedding.poolNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Database, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("embedding.poolNote") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ShieldCheck, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("embedding.securityNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ShieldCheck, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("embedding.securityNote") })
           ] })
         ] }),
-        error ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "modal-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Save, { size: 16 }),
+        error ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "modal-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Save, { size: 16 }),
             t("settings.save")
           ] })
         ] })
       ] }),
-      confirmReset ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      confirmReset ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         ConfirmDialog,
         {
           title: t("embedding.resetTitle"),
@@ -28314,21 +28371,21 @@
   }
 
   // src/components/VoiceSettingsForm.tsx
-  var import_react28 = __toESM(require_react(), 1);
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
-  function VoiceSettingsForm({ onChanged }) {
+  var import_react29 = __toESM(require_react(), 1);
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  function VoiceSettingsForm({ projectId, onChanged }) {
     const { t } = useTranslation();
-    const [values, setValues] = (0, import_react28.useState)(null);
-    const [loading, setLoading] = (0, import_react28.useState)(false);
-    const [saving, setSaving] = (0, import_react28.useState)(false);
-    const [error, setError] = (0, import_react28.useState)("");
-    const [dirty, setDirty] = (0, import_react28.useState)(false);
+    const [values, setValues] = (0, import_react29.useState)(null);
+    const [loading, setLoading] = (0, import_react29.useState)(false);
+    const [saving, setSaving] = (0, import_react29.useState)(false);
+    const [error, setError] = (0, import_react29.useState)("");
+    const [dirty, setDirty] = (0, import_react29.useState)(false);
     const friendlyError = (err) => err instanceof ApiError && err.code === "not_found" ? t("voice.endpointMissing") : errorMessage(err);
     const load = async () => {
       setLoading(true);
       setError("");
       try {
-        const result = await api("/api/settings/voice");
+        const result = await api(`/api/projects/${projectId}/settings/voice`);
         setValues({
           provider: result.provider === "groq" ? "api" : result.provider,
           model: result.model,
@@ -28343,9 +28400,9 @@
         setLoading(false);
       }
     };
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       void load();
-    }, []);
+    }, [projectId]);
     const update = (field, value) => {
       setValues((previous) => previous ? { ...previous, [field]: value } : previous);
       setDirty(true);
@@ -28356,7 +28413,7 @@
       setSaving(true);
       setError("");
       try {
-        const result = await api("/api/settings/voice", {
+        const result = await api(`/api/projects/${projectId}/settings/voice`, {
           method: "PUT",
           body: JSON.stringify({
             provider: values.provider,
@@ -28375,29 +28432,29 @@
         setSaving(false);
       }
     };
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "empty", children: t("voice.loading") });
-    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
+    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "empty", children: t("voice.loading") });
+    if (!values) return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "form-error", role: "alert", children: error || t("settings.loadFailed") });
     const apiMode = values.provider === "api" || values.provider === "groq";
     const ready = !apiMode || values.key_configured;
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "model-tier", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-heading", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h3", { children: t("voice.provider") }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(StatusDot, { ready }),
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("section", { className: "model-tier", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "model-tier-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h3", { children: t("voice.provider") }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "tier-status", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(StatusDot, { ready }),
               apiMode ? values.key_configured ? t("voice.keyConfigured") : t("voice.keyPending") : t("voice.providerBrowser")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "tier-default", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "tier-default", children: [
             t("settings.default"),
             " ",
             apiMode ? t("voice.providerApi") : t("voice.providerBrowser")
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "settings-segmented settings-voice-provider", role: "radiogroup", "aria-label": t("voice.provider"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "model-tier-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "settings-segmented settings-voice-provider", role: "radiogroup", "aria-label": t("voice.provider"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
               "button",
               {
                 type: "button",
@@ -28408,7 +28465,7 @@
                 children: t("voice.providerBrowser")
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
               "button",
               {
                 type: "button",
@@ -28420,10 +28477,10 @@
               }
             )
           ] }),
-          apiMode ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
+          apiMode ? /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("label", { children: [
               t("voice.model"),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
                 "input",
                 {
                   value: values.model,
@@ -28433,9 +28490,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("label", { children: [
               t("voice.url"),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
                 "input",
                 {
                   type: "url",
@@ -28446,9 +28503,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("label", { children: [
               t("voice.key"),
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
                 "input",
                 {
                   type: "password",
@@ -28462,27 +28519,27 @@
             ] })
           ] }) : null
         ] }),
-        apiMode ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Mic, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("voice.apiDescription") })
+        apiMode ? /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Mic, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { children: t("voice.apiDescription") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Mic, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("voice.securityNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Mic, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { children: t("voice.securityNote") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { className: "settings-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ShieldCheck, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("voice.keyNote") })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "settings-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ShieldCheck, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { children: t("voice.keyNote") })
           ] })
         ] }) : null
       ] }),
-      error ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelTestButton, { kind: "voice", fields: { model: values.model, url: values.url, key: values.key } }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Save, { size: 16 }),
+      error ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "modal-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ModelTestButton, { kind: "voice", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Save, { size: 16 }),
           t("settings.save")
         ] })
       ] })
@@ -28490,10 +28547,11 @@
   }
 
   // src/components/ModelSettingsModal.tsx
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
   var TABS = [
     { id: "general", labelKey: "settings.generalTab" },
-    { id: "models", labelKey: "settings.modelsTab" }
+    { id: "models", labelKey: "settings.modelsTab" },
+    { id: "system", labelKey: "settings.systemTab" }
   ];
   var MODEL_TABS = [
     { id: "code", labelKey: "settings.codeModelsTab" },
@@ -28511,9 +28569,9 @@
     ariaLabel
   }) {
     const { t } = useTranslation();
-    const navRef = (0, import_react29.useRef)(null);
-    const [indicator, setIndicator] = (0, import_react29.useState)({ left: 0, width: 0, ready: false });
-    (0, import_react29.useLayoutEffect)(() => {
+    const navRef = (0, import_react30.useRef)(null);
+    const [indicator, setIndicator] = (0, import_react30.useState)({ left: 0, width: 0, ready: false });
+    (0, import_react30.useLayoutEffect)(() => {
       const nav = navRef.current;
       if (!nav) return void 0;
       const measure = () => {
@@ -28530,8 +28588,8 @@
         window.removeEventListener("resize", measure);
       };
     }, [active, items]);
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { ref: navRef, className: `sliding-nav settings-tabs ${className}`.trim(), role: "tablist", "aria-label": ariaLabel, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { ref: navRef, className: `sliding-nav settings-tabs ${className}`.trim(), role: "tablist", "aria-label": ariaLabel, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
         "span",
         {
           className: `sliding-tab-indicator${indicator.ready ? " ready" : ""}`,
@@ -28539,7 +28597,7 @@
           style: { left: indicator.left, width: indicator.width }
         }
       ),
-      items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+      items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
         "button",
         {
           type: "button",
@@ -28555,11 +28613,11 @@
   }
   function ModelSettingsModal({ open, onClose, projectId }) {
     const { t } = useTranslation();
-    const [tab, setTab] = (0, import_react29.useState)("general");
-    const [subTab, setSubTab] = (0, import_react29.useState)("code");
-    const [dirty, setDirty] = (0, import_react29.useState)(false);
-    const [pending, setPending] = (0, import_react29.useState)(null);
-    (0, import_react29.useEffect)(() => {
+    const [tab, setTab] = (0, import_react30.useState)("general");
+    const [subTab, setSubTab] = (0, import_react30.useState)("code");
+    const [dirty, setDirty] = (0, import_react30.useState)(false);
+    const [pending, setPending] = (0, import_react30.useState)(null);
+    (0, import_react30.useEffect)(() => {
       if (!open) return;
       setTab("general");
       setSubTab("code");
@@ -28602,9 +28660,9 @@
       setDirty(false);
       setPending(null);
     };
-    const description = tab === "general" ? t("settings.generalDescription") : subTab === "code" ? t("settings.codeModelsDescription") : subTab === "document" ? t("settings.documentDescription") : subTab === "vision" ? t("settings.visionDescription") : subTab === "image" ? t("settings.imageDescription") : subTab === "embedding" ? t("settings.embeddingDescription") : t("settings.voiceDescription");
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+    const description = tab === "general" ? t("settings.appearanceDescription") : tab === "system" ? t("settings.systemDescription") : subTab === "code" ? t("settings.codeModelsDescription") : subTab === "document" ? t("settings.documentDescription") : subTab === "vision" ? t("settings.visionDescription") : subTab === "image" ? t("settings.imageDescription") : subTab === "embedding" ? t("settings.embeddingDescription") : t("settings.voiceDescription");
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_jsx_runtime30.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
         Modal,
         {
           eyebrow: t("settings.eyebrow"),
@@ -28612,7 +28670,7 @@
           description,
           onClose: requestClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
               SettingsSlidingNav,
               {
                 active: tab,
@@ -28621,8 +28679,8 @@
                 ariaLabel: t("settings.title")
               }
             ),
-            tab === "general" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(GeneralSettingsForm, { onChanged: () => setDirty(false), onDirtyChange: setDirty }) : /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+            tab === "general" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(AppearanceSettingsForm, { onChanged: () => setDirty(false), onDirtyChange: setDirty }) : tab === "system" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(SystemSettingsForm, { onChanged: () => setDirty(false), onDirtyChange: setDirty }) : projectId ? /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_jsx_runtime30.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 SettingsSlidingNav,
                 {
                   active: subTab,
@@ -28632,43 +28690,47 @@
                   ariaLabel: t("settings.modelsTab")
                 }
               ),
-              subTab === "code" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              subTab === "code" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 CodeModelSettingsForm,
                 {
+                  projectId,
                   onClose: requestClose,
                   onDirtyChange: setDirty,
                   onSaved: () => setDirty(false)
                 }
-              ) : subTab === "document" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              ) : subTab === "document" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 DocumentModelSettingsForm,
                 {
+                  projectId,
                   onChanged: () => setDirty(false),
                   onDirtyChange: setDirty
                 }
-              ) : subTab === "vision" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              ) : subTab === "vision" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 VisionModelSettingsForm,
                 {
+                  projectId,
                   onChanged: () => setDirty(false),
                   onDirtyChange: setDirty
                 }
-              ) : subTab === "image" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              ) : subTab === "image" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 ImageGenerationSettingsForm,
                 {
+                  projectId,
                   onChanged: () => setDirty(false),
                   onDirtyChange: setDirty
                 }
-              ) : subTab === "embedding" ? projectId ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              ) : subTab === "embedding" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 ProjectEmbeddingSettingsForm,
                 {
                   projectId,
                   onChanged: () => setDirty(false)
                 }
-              ) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") }) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(VoiceSettingsForm, { onChanged: () => setDirty(false) })
-            ] })
+              ) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(VoiceSettingsForm, { projectId, onChanged: () => setDirty(false) })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "empty", children: t("settings.openProjectFirst") })
           ]
         }
       ),
-      pending ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+      pending ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
         ConfirmDialog,
         {
           title: t("settings.discardTitle"),
@@ -28682,8 +28744,8 @@
   }
 
   // src/components/MemoryGraphModal.tsx
-  var import_react30 = __toESM(require_react(), 1);
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  var import_react31 = __toESM(require_react(), 1);
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
   function GraphCanvas({ graph }) {
     const { t } = useTranslation();
     if (!graph) return null;
@@ -28693,27 +28755,27 @@
       x: 80 + index % 5 * 150,
       y: 70 + Math.floor(index / 5) * 120
     }]));
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { className: "memory-graph-canvas", viewBox: "0 0 760 360", role: "img", "aria-label": t("memory.graphAria"), children: [
       edges.map((edge) => {
         const source = positions.get(edge.source);
         const target = positions.get(edge.target);
-        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
+        return source && target ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("line", { className: "memory-graph-edge", x1: source.x, y1: source.y, x2: target.x, y2: target.y }, edge.id) : null;
       }),
       nodes.map((node) => {
         const position = positions.get(node.id);
         if (!position) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("g", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("g", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
             "circle",
             {
               className: `memory-graph-node ${node.kind !== "memory" ? "related" : ""}`,
               cx: position.x,
               cy: position.y,
               r: "18",
-              children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("title", { children: node.label })
+              children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("title", { children: node.label })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("text", { className: "memory-graph-label", x: position.x, y: position.y + 36, textAnchor: "middle", children: node.label.slice(0, 20) })
         ] }, node.id);
       })
     ] });
@@ -28725,13 +28787,13 @@
     showToast
   }) {
     const { t } = useTranslation();
-    const [view, setView] = (0, import_react30.useState)("graph");
-    const [query, setQuery] = (0, import_react30.useState)("");
-    const [status, setStatus] = (0, import_react30.useState)(t("memory.graphPrompt"));
-    const [graph, setGraph] = (0, import_react30.useState)(null);
-    const [search, setSearch] = (0, import_react30.useState)(null);
-    const [loading, setLoading] = (0, import_react30.useState)(false);
-    (0, import_react30.useEffect)(() => {
+    const [view, setView] = (0, import_react31.useState)("graph");
+    const [query, setQuery] = (0, import_react31.useState)("");
+    const [status, setStatus] = (0, import_react31.useState)(t("memory.graphPrompt"));
+    const [graph, setGraph] = (0, import_react31.useState)(null);
+    const [search, setSearch] = (0, import_react31.useState)(null);
+    const [loading, setLoading] = (0, import_react31.useState)(false);
+    (0, import_react31.useEffect)(() => {
       if (!open || !projectId) return;
       setView("graph");
       setQuery("");
@@ -28779,7 +28841,7 @@
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
       Modal,
       {
         eyebrow: t("memory.eyebrow"),
@@ -28788,8 +28850,8 @@
         onClose,
         wide: true,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "memory-view-switch", role: "tablist", "aria-label": t("memory.viewAria"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
               "button",
               {
                 className: view === "graph" ? "active" : "",
@@ -28801,12 +28863,12 @@
                   setStatus(t("memory.graphPrompt"));
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Share2, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Share2, { size: 16 }),
                   t("memory.graphView")
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
               "button",
               {
                 className: view === "search" ? "active" : "",
@@ -28818,16 +28880,16 @@
                   setStatus(t("memory.searchPrompt"));
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Search, { size: 16 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Search, { size: 16 }),
                   t("memory.searchView")
                 ]
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "memory-graph-query", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("form", { className: "memory-graph-form", onSubmit: submit, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("label", { htmlFor: "memoryGraphQuery", children: t("memory.queryLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "memory-graph-query", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
                 "input",
                 {
                   id: "memoryGraphQuery",
@@ -28838,29 +28900,29 @@
                   onChange: (event) => setQuery(event.target.value)
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Search, { size: 16 }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("button", { className: "primary", type: "submit", disabled: loading, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Search, { size: 16 }),
                 t("memory.search")
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
-          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_jsx_runtime30.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(GraphCanvas, { graph }),
-            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("article", { className: "memory-graph-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("strong", { children: node.label }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "empty", children: loading ? t("memory.searching") : status }),
+          view === "graph" ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(import_jsx_runtime31.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(GraphCanvas, { graph }),
+            graph?.nodes?.filter((node) => node.kind === "memory").length ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "memory-graph-results", children: graph.nodes.filter((node) => node.kind === "memory").map((node) => /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("article", { className: "memory-graph-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("strong", { children: node.label }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { children: t("memory.projectScope", { projectId: graph.project_id }) })
             ] }, node.id)) }) : null
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "memory-search-results", children: search?.results?.length ? search.results.map((item, index) => {
             const source = item.source_type ? `${item.source_type}${item.source_id ? ` \xB7 ${item.source_id}` : ""}` : "Supermemory semantic result";
-            return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("article", { className: "memory-search-result", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("article", { className: "memory-search-result", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("h3", { children: String(item.memory || t("memory.unnamedCandidate")) }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { children: [
                 t("memory.similarity", { value: String(item.similarity ?? t("common.notProvided")) }),
                 " \xB7 ",
                 t("memory.source", { source })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { children: [
                 t("memory.artifact", { value: String(item.artifact_id || item.metadata?.artifact_id || t("common.none")) }),
                 " \xB7 ",
                 t("memory.evidenceStatus", { value: String(item.evidence_status || "semantic_candidate") })
@@ -28873,16 +28935,16 @@
   }
 
   // src/components/NotFoundView.tsx
-  var import_react31 = __toESM(require_react(), 1);
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
+  var import_react32 = __toESM(require_react(), 1);
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
   function NotFoundView({ path, onGoHome }) {
     const { t } = useTranslation();
-    const [seconds, setSeconds] = (0, import_react31.useState)(3);
-    const onGoHomeRef = (0, import_react31.useRef)(onGoHome);
-    (0, import_react31.useEffect)(() => {
+    const [seconds, setSeconds] = (0, import_react32.useState)(3);
+    const onGoHomeRef = (0, import_react32.useRef)(onGoHome);
+    (0, import_react32.useEffect)(() => {
       onGoHomeRef.current = onGoHome;
     }, [onGoHome]);
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       const countdown = window.setInterval(() => {
         setSeconds((value) => Math.max(0, value - 1));
       }, 1e3);
@@ -28892,27 +28954,31 @@
         window.clearTimeout(redirect);
       };
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "not-found-path-wrap", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("code", { className: "not-found-path", children: path })
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("main", { className: "not-found-shell", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("section", { className: "not-found-card", "aria-labelledby": "not-found-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "not-found-icon", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(FileQuestionMark, { size: 34, strokeWidth: 1.7 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "not-found-badge", children: t("notFound.badge") }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "not-found-code", "aria-label": "404", children: "404" }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h1", { id: "not-found-title", children: t("notFound.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "not-found-description", children: t("notFound.description") }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "not-found-path-wrap", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "not-found-path-label", children: t("notFound.pathLabel") }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("code", { className: "not-found-path", children: path })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "not-found-countdown", "aria-live": "polite", children: t("notFound.redirect", { seconds }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(House, { size: 16, "aria-hidden": "true" }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "not-found-countdown", "aria-live": "polite", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { children: t("notFound.redirect", { seconds }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "not-found-progress", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { style: { width: `${seconds / 3 * 100}%` } }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "not-found-hint", children: t("notFound.returnHint") }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("button", { className: "not-found-home primary", type: "button", onClick: onGoHome, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(House, { size: 16, "aria-hidden": "true" }),
         t("notFound.home")
       ] })
     ] }) });
   }
 
   // src/components/DeleteProjectDialog.tsx
-  var import_react32 = __toESM(require_react(), 1);
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
+  var import_react33 = __toESM(require_react(), 1);
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime(), 1);
   function DeleteProjectDialog({
     project,
     busy,
@@ -28920,22 +28986,22 @@
     onConfirm
   }) {
     const { t } = useTranslation();
-    const [confirmation, setConfirmation] = (0, import_react32.useState)("");
+    const [confirmation, setConfirmation] = (0, import_react33.useState)("");
     const canDelete = confirmation === "DELETE" && !busy;
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
       Modal,
       {
         eyebrow: t("deleteProject.eyebrow"),
         title: t("deleteProject.title"),
         description: t("deleteProject.description"),
         onClose: busy ? () => void 0 : onClose,
-        children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "delete-project-content", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "delete-project-target", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { children: t("deleteProject.projectLabel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("strong", { title: project.title, children: project.title })
+        children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "delete-project-content", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "delete-project-target", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { children: t("deleteProject.projectLabel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("strong", { title: project.title, children: project.title })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("label", { className: "field-label", htmlFor: "delete-project-confirmation", children: t("deleteProject.confirmationLabel") }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
             "input",
             {
               id: "delete-project-confirmation",
@@ -28953,10 +29019,10 @@
               autoFocus: true
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "modal-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "delete-project-warning", children: t("deleteProject.warning") }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "modal-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("button", { className: "secondary", type: "button", disabled: busy, onClick: onClose, children: t("common.cancel") }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("button", { className: "reject", type: "button", disabled: !canDelete, onClick: () => onConfirm(confirmation), children: busy ? t("deleteProject.deleting") : t("deleteProject.confirm") })
           ] })
         ] })
       }
@@ -28964,47 +29030,47 @@
   }
 
   // src/App.tsx
-  var import_jsx_runtime33 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime34 = __toESM(require_jsx_runtime(), 1);
   function nextMessageId() {
     return `m-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
   function App() {
     const { t } = useTranslation();
-    const [projects, setProjects] = (0, import_react33.useState)([]);
-    const [projectId, setProjectId] = (0, import_react33.useState)(null);
-    const [project, setProject] = (0, import_react33.useState)(null);
-    const [view, setView] = (0, import_react33.useState)("home");
-    const [activeArea, setActiveArea] = (0, import_react33.useState)("overview");
-    const [activeTab, setActiveTab] = (0, import_react33.useState)("overview");
-    const [health, setHealth] = (0, import_react33.useState)("connecting");
-    const [toast, setToast] = (0, import_react33.useState)(null);
-    const [projectMessages, setProjectMessages] = (0, import_react33.useState)([]);
-    const [projectChatBusy, setProjectChatBusy] = (0, import_react33.useState)(false);
-    const [sessionId, setSessionId] = (0, import_react33.useState)(null);
-    const [settingsOpen, setSettingsOpen] = (0, import_react33.useState)(false);
-    const [memoryOpen, setMemoryOpen] = (0, import_react33.useState)(false);
-    const [confirm, setConfirm] = (0, import_react33.useState)(null);
-    const [mobileChatOpen, setMobileChatOpen] = (0, import_react33.useState)(false);
-    const [notFoundPath, setNotFoundPath] = (0, import_react33.useState)(null);
-    const [homeLoading, setHomeLoading] = (0, import_react33.useState)(true);
-    const [homeError, setHomeError] = (0, import_react33.useState)(null);
-    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react33.useState)(null);
-    const [deleteBusy, setDeleteBusy] = (0, import_react33.useState)(false);
-    const [projectDrawerOpen, setProjectDrawerOpen] = (0, import_react33.useState)(false);
-    const [projectRefreshing, setProjectRefreshing] = (0, import_react33.useState)(false);
-    const [sidebarWidth, setSidebarWidth] = (0, import_react33.useState)(() => {
+    const [projects, setProjects] = (0, import_react34.useState)([]);
+    const [projectId, setProjectId] = (0, import_react34.useState)(null);
+    const [project, setProject] = (0, import_react34.useState)(null);
+    const [view, setView] = (0, import_react34.useState)("home");
+    const [activeArea, setActiveArea] = (0, import_react34.useState)("overview");
+    const [activeTab, setActiveTab] = (0, import_react34.useState)("overview");
+    const [health, setHealth] = (0, import_react34.useState)("connecting");
+    const [toast, setToast] = (0, import_react34.useState)(null);
+    const [projectMessages, setProjectMessages] = (0, import_react34.useState)([]);
+    const [projectChatBusy, setProjectChatBusy] = (0, import_react34.useState)(false);
+    const [sessionId, setSessionId] = (0, import_react34.useState)(null);
+    const [settingsOpen, setSettingsOpen] = (0, import_react34.useState)(false);
+    const [memoryOpen, setMemoryOpen] = (0, import_react34.useState)(false);
+    const [confirm, setConfirm] = (0, import_react34.useState)(null);
+    const [mobileChatOpen, setMobileChatOpen] = (0, import_react34.useState)(false);
+    const [notFoundPath, setNotFoundPath] = (0, import_react34.useState)(null);
+    const [homeLoading, setHomeLoading] = (0, import_react34.useState)(true);
+    const [homeError, setHomeError] = (0, import_react34.useState)(null);
+    const [deleteProjectTarget, setDeleteProjectTarget] = (0, import_react34.useState)(null);
+    const [deleteBusy, setDeleteBusy] = (0, import_react34.useState)(false);
+    const [projectDrawerOpen, setProjectDrawerOpen] = (0, import_react34.useState)(false);
+    const [projectRefreshing, setProjectRefreshing] = (0, import_react34.useState)(false);
+    const [sidebarWidth, setSidebarWidth] = (0, import_react34.useState)(() => {
       const stored = Number(window.localStorage.getItem("researchos.sidebarWidth"));
       return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276;
     });
-    const projectChatBusyRef = (0, import_react33.useRef)(false);
-    const sessionIdRef = (0, import_react33.useRef)(null);
-    const toastTimerRef = (0, import_react33.useRef)(null);
-    const pinningProjectIdsRef = (0, import_react33.useRef)(/* @__PURE__ */ new Set());
-    const projectsRef = (0, import_react33.useRef)([]);
-    (0, import_react33.useEffect)(() => {
+    const projectChatBusyRef = (0, import_react34.useRef)(false);
+    const sessionIdRef = (0, import_react34.useRef)(null);
+    const toastTimerRef = (0, import_react34.useRef)(null);
+    const pinningProjectIdsRef = (0, import_react34.useRef)(/* @__PURE__ */ new Set());
+    const projectsRef = (0, import_react34.useRef)([]);
+    (0, import_react34.useEffect)(() => {
       window.localStorage.setItem("researchos.sidebarWidth", String(sidebarWidth));
     }, [sidebarWidth]);
-    (0, import_react33.useEffect)(() => {
+    (0, import_react34.useEffect)(() => {
       projectsRef.current = projects;
     }, [projects]);
     const updateSidebarWidth = (width) => setSidebarWidth(Math.min(380, Math.max(220, Math.round(width))));
@@ -29220,7 +29286,7 @@
       const slug = project?.slug || projectId;
       if (slug) writeWorkspacePath(slug, area, tab);
     };
-    (0, import_react33.useEffect)(() => {
+    (0, import_react34.useEffect)(() => {
       void loadProjects();
       api("/api/health").then(() => setHealth("online")).catch(() => setHealth("offline"));
       const restoreWorkspace = () => {
@@ -29248,7 +29314,7 @@
         window.removeEventListener("hashchange", restoreWorkspace);
       };
     }, []);
-    (0, import_react33.useEffect)(() => {
+    (0, import_react34.useEffect)(() => {
       if (!projectDrawerOpen || view !== "project") return;
       const closeDrawer = (event) => {
         const target = event.target;
@@ -29270,10 +29336,10 @@
       };
     }, [projectDrawerOpen, view]);
     if (notFoundPath) {
-      return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => goHome(true) }, notFoundPath);
+      return /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(NotFoundView, { path: notFoundPath, onGoHome: () => goHome(true) }, notFoundPath);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: `app-shell${view === "project" ? " project-mode" : ""}`, style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
-      view === "project" ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: `app-shell${view === "project" ? " project-mode" : ""}`, style: { "--sidebar-width": `${sidebarWidth}px` }, children: [
+      view === "project" ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
         ProjectDrawer,
         {
           open: projectDrawerOpen,
@@ -29297,7 +29363,7 @@
           sidebarWidth,
           onSidebarWidthChange: updateSidebarWidth
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      ) : /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
         Sidebar,
         {
           projects,
@@ -29316,8 +29382,8 @@
           onSidebarWidthChange: updateSidebarWidth
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("main", { className: "workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("main", { className: "workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
           Topbar,
           {
             title: view === "project" ? project?.title || t("app.researchProject") : t("home.title"),
@@ -29332,7 +29398,7 @@
             project: view === "project" ? project : null
           }
         ),
-        view === "project" ? project ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+        view === "project" ? project ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
           ProjectView,
           {
             project,
@@ -29350,7 +29416,7 @@
             mobileChatOpen,
             onToggleMobileChat: setMobileChatOpen
           }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "empty", children: t("common.loadingProject") }) }) : /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+        ) : /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "loading-view", children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "empty", children: t("common.loadingProject") }) }) : /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
           HomeDashboard,
           {
             projects,
@@ -29365,8 +29431,8 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(ModelSettingsModal, { open: settingsOpen, onClose: () => setSettingsOpen(false), projectId }),
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
         MemoryGraphModal,
         {
           open: memoryOpen,
@@ -29375,7 +29441,7 @@
           showToast
         }
       ),
-      confirm ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      confirm ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
         ConfirmDialog,
         {
           title: confirm.title,
@@ -29389,7 +29455,7 @@
           onCancel: () => setConfirm(null)
         }
       ) : null,
-      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      deleteProjectTarget ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
         DeleteProjectDialog,
         {
           project: deleteProjectTarget,
@@ -29399,15 +29465,15 @@
         },
         deleteProjectTarget.id
       ) : null,
-      toast ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Toast, { message: toast }) : null
+      toast ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Toast, { message: toast }) : null
     ] });
   }
 
   // src/main.tsx
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime35 = __toESM(require_jsx_runtime(), 1);
   var rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Missing #root mount element");
-  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime34.jsx)(App, {}));
+  (0, import_client.createRoot)(rootElement).render(/* @__PURE__ */ (0, import_jsx_runtime35.jsx)(App, {}));
 })();
 /*! Bundled license information:
 

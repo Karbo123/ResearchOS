@@ -490,9 +490,9 @@ export function HomeDashboard({
                     }}
                   >
                     <span className="home-project-title-line">
-                      <strong>{project.title}</strong>
+                      <strong title={project.title}>{project.title}</strong>
                     </span>
-                    <code className="home-project-slug">{project.slug}</code>
+                    <code className="home-project-slug" title={project.slug}>{project.slug}</code>
                     <span className={`home-status-badge status-${project.status || 'active'}`}>
                       {project.status === 'paused' ? t('home.statusPaused') : project.status === 'cancelled' ? t('home.statusCancelled') : t('home.statusActive')}
                     </span>

@@ -48,7 +48,7 @@ function containsToolInvocation(content: unknown): boolean {
 function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'detailed', projectId?: string | null, conversationId?: string | null) {
   const context = new RequestContext<z.infer<typeof agentRequestContextSchema>>()
   context.set('tier', tier)
-  context.set('modelConfig', loadModelConfig(tier))
+  context.set('modelConfig', loadModelConfig(tier, projectId ?? undefined))
   if (clarificationMode) context.set('clarificationMode', clarificationMode)
   if (projectId) context.set('supermemoryProjectId', projectId)
   if (conversationId) context.set('supermemoryConversationId', conversationId)
@@ -62,7 +62,7 @@ function generationOptions(context: RequestContext<z.infer<typeof agentRequestCo
   const memory = projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId) : {}
   return {
     requestContext: context,
-    model: vision ? configuredVisionModel() : configuredModel(context.get('tier')),
+    model: vision ? configuredVisionModel(projectId) : configuredModel(context.get('tier'), projectId),
     modelSettings: { maxRetries: 0 },
     // The fixed gateway does not resolve server-side Responses item references.
     // Expand tool history into ordinary input items so every request is self-contained.
@@ -139,7 +139,7 @@ const apiRoutes = [
         })
         const result = adaptiveClarificationResultSchema.parse(response.object)
         const config = context.get('modelConfig')
-        return c.json({ result, route: { tier: vision ? 'vision' : body.tier, model: vision ? visionModelName() : config.model, reasoning_effort: config.reasoningEffort } })
+        return c.json({ result, route: { tier: vision ? 'vision' : body.tier, model: vision ? visionModelName(context.get('supermemoryProjectId')) : config.model, reasoning_effort: config.reasoningEffort } })
       } catch (error) {
         const failure = routeError(error, 'Idea 澄清模型调用')
         return c.json(failure.body, safeStatus(failure.status))
@@ -196,7 +196,7 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, documentReplyRequestSchema)
-        const context = requestContext('document')
+        const context = requestContext('document', undefined, body.project_id)
         const response = await documentReplyAgent.generate(structuredJsonValue({
           user_message: body.user_message,
           context: body.context,
@@ -220,7 +220,7 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, paperSectionTranslateRequestSchema)
-        const context = requestContext('document')
+        const context = requestContext('document', undefined, body.project_id)
         const response = await paperTranslationAgent.generate(structuredJsonValue({
           section_id: body.section_id,
           heading: body.heading,
@@ -243,7 +243,7 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, paperSectionReviseRequestSchema)
-        const context = requestContext('document')
+        const context = requestContext('document', undefined, body.project_id)
         const response = await paperRevisionAgent.generate(structuredJsonValue({
           section_id: body.section_id,
           heading: body.heading,

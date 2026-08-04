@@ -9,7 +9,7 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest,
+  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
 } from './contracts.js'
@@ -18,6 +18,7 @@ import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraJson } from './mastra-client.js'
 import { privateModelSettings, publicDocumentSettings, publicImageGenerationSettings, publicModelSettings, publicProxySettings, publicVisionSettings, saveDocumentSettings, saveImageGenerationSettings, saveModelSettings, saveProxySettings, saveVisionSettings } from './model-settings.js'
+import { publicProjectDocumentSettings, publicProjectImageGenerationSettings, publicProjectModelSettings, publicProjectVisionSettings, publicProjectVoiceSettings, saveProjectDocumentSettings, saveProjectImageGenerationSettings, saveProjectModelSettings, saveProjectVisionSettings, saveProjectVoiceSettings } from './project-settings.js'
 import { testModelConnection } from './model-test.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeVoice } from './voice-transcription.js'
@@ -97,8 +98,12 @@ async function readableDocumentReply(input: {
   user_message: string
   context: string
   draft_reply: string
+  project_id?: string
 }) {
-  return mastraJson<{ result: { reply: string }; route: { model: string; reasoning_effort: string } }>('/internal/agents/document-reply', input)
+  return mastraJson<{ result: { reply: string }; route: { model: string; reasoning_effort: string } }>('/internal/agents/document-reply', {
+    ...input,
+    project_id: input.project_id || undefined,
+  })
 }
 
 async function chatTurn(input: z.infer<typeof chatRequest>) {
@@ -134,6 +139,7 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
       user_message: input.message,
       context: JSON.stringify({ project_context: project, recent_conversation: recentTranscript }).slice(0, 12_000),
       draft_reply: modelResult.result.assistant_reply,
+      project_id: projectId,
     })
     reply = documentResult.result.reply
     const assistantMessageId = crypto.randomUUID()
@@ -204,7 +210,8 @@ app.put('/api/settings/image-generation', async context => {
 })
 app.post('/api/settings/model-test', async context => {
   const body = await jsonBody(context, modelTestRequest)
-  return context.json(await testModelConnection(body.kind, body))
+  const { project_id: projectId, ...testFields } = body
+  return context.json(await testModelConnection(body.kind, { ...testFields, ...(projectId ? { project_id: projectId } : {}) }))
 })
 app.get('/api/settings/proxy', context => context.json(publicProxySettings()))
 app.put('/api/settings/proxy', async context => {
@@ -216,13 +223,71 @@ app.put('/api/settings/voice', async context => {
   const body = await jsonBody(context, voiceSettingsRequest)
   return context.json(saveVoiceSettings(body))
 })
+app.get('/api/projects/:projectId/settings/models', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(publicProjectModelSettings(projectId))
+})
+app.put('/api/projects/:projectId/settings/models', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, projectModelSettingsRequest)
+  return context.json(saveProjectModelSettings(projectId, body))
+})
+app.get('/api/projects/:projectId/settings/document', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(publicProjectDocumentSettings(projectId))
+})
+app.put('/api/projects/:projectId/settings/document', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, documentModelSettingsRequest)
+  return context.json(saveProjectDocumentSettings(projectId, body))
+})
+app.get('/api/projects/:projectId/settings/vision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(publicProjectVisionSettings(projectId))
+})
+app.put('/api/projects/:projectId/settings/vision', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, visionModelSettingsRequest)
+  return context.json(saveProjectVisionSettings(projectId, body))
+})
+app.get('/api/projects/:projectId/settings/image-generation', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(publicProjectImageGenerationSettings(projectId))
+})
+app.put('/api/projects/:projectId/settings/image-generation', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, imageGenerationSettingsRequest)
+  return context.json(saveProjectImageGenerationSettings(projectId, body))
+})
+app.get('/api/projects/:projectId/settings/voice', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(publicProjectVoiceSettings(projectId))
+})
+app.put('/api/projects/:projectId/settings/voice', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, voiceSettingsRequest)
+  return context.json(saveProjectVoiceSettings(projectId, body))
+})
 app.post('/api/voice/transcribe', async context => {
   const form = await context.req.formData()
   const file = form.get('file')
   if (!(file instanceof File)) throw new ApiError(400, 'voice_file_required', '请求必须包含录音文件。')
   if (file.size === 0) throw new ApiError(400, 'voice_file_empty', '录音文件为空。')
   const language = form.get('language')
-  const text = await transcribeVoice(file, typeof language === 'string' && language ? language : undefined)
+  const projectIdValue = form.get('projectId')
+  const projectId = typeof projectIdValue === 'string' && projectIdValue ? uuid.parse(projectIdValue) : null
+  if (projectId) await requireProject(projectId)
+  const text = await transcribeVoice(file, typeof language === 'string' && language ? language : undefined, projectId ?? undefined)
   return context.json({ text })
 })
 app.get('/api/mastra/open', context => context.redirect(process.env.MASTRA_STUDIO_URL || 'http://127.0.0.1:4111'))

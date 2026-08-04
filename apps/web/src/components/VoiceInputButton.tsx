@@ -96,12 +96,14 @@ function voiceApiErrorKey(error: unknown): TranslationKey {
 
 export function VoiceInputButton({
   disabled = false,
+  projectId,
   onText,
   onError,
   onSessionStart,
   onSessionEnd,
 }: {
   disabled?: boolean
+  projectId?: string
   onText: (text: string) => void
   onError?: (key: TranslationKey) => void
   onSessionStart?: () => void
@@ -125,6 +127,7 @@ export function VoiceInputButton({
   const onSessionEndRef = useRef(onSessionEnd)
   const localeRef = useRef(locale)
   const disabledRef = useRef(disabled)
+  const projectIdRef = useRef(projectId)
   const providerRef = useRef<VoiceProvider>(provider)
   const apiReadyRef = useRef(apiReady)
   const activeRef = useRef(false)
@@ -140,13 +143,17 @@ export function VoiceInputButton({
     onSessionEndRef.current = onSessionEnd
     localeRef.current = locale
     disabledRef.current = disabled
+    projectIdRef.current = projectId
     providerRef.current = provider
     apiReadyRef.current = apiReady
   })
 
   useEffect(() => {
     const loadSettings = () => {
-      void fetchWithTimeout(window.fetch.bind(window), '/api/settings/voice', {}, 30_000)
+      const settingsUrl = projectIdRef.current
+        ? `/api/projects/${projectIdRef.current}/settings/voice`
+        : '/api/settings/voice'
+      void fetchWithTimeout(window.fetch.bind(window), settingsUrl, {}, 30_000)
         .then(async response => {
           if (!response.ok) throw new Error(`voice_settings_${response.status}`)
           const result = (await response.json()) as VoiceSettingsResponse
@@ -161,7 +168,7 @@ export function VoiceInputButton({
     loadSettings()
     window.addEventListener('researchos:voice-settings-changed', loadSettings)
     return () => window.removeEventListener('researchos:voice-settings-changed', loadSettings)
-  }, [])
+  }, [projectId])
 
   useEffect(() => {
     const recognition = createRecognition()
@@ -268,6 +275,7 @@ export function VoiceInputButton({
       const form = new FormData()
       form.append('file', blob, name)
       form.append('language', apiLanguage(localeRef.current))
+      if (projectIdRef.current) form.append('projectId', projectIdRef.current)
       const response = await fetchWithTimeout(window.fetch.bind(window), '/api/voice/transcribe', {
         method: 'POST',
         body: form,

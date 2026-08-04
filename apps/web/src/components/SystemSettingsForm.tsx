@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
-import { Languages, Palette, Save, ShieldCheck } from 'lucide-react'
+import { Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
-import { LOCALE_OPTIONS, useTranslation, type Locale } from '../i18n'
-import { THEME_OPTIONS, setTheme, useTheme, type Theme } from '../theme'
+import { useTranslation } from '../i18n'
 import type { ProxySettings } from '../types'
 import { StatusDot } from './ui'
 
 const EMPTY_PROXY: ProxySettings = { enabled: false, url: '' }
 
-export function GeneralSettingsForm({ onChanged, onDirtyChange }: { onChanged: () => void; onDirtyChange?: (dirty: boolean) => void }) {
-  const { locale, t, setLocale } = useTranslation()
-  const theme = useTheme()
-  const [draftLocale, setDraftLocale] = useState<Locale>(locale)
-  const [draftTheme, setDraftTheme] = useState<Theme>(theme)
+export function SystemSettingsForm({
+  onChanged,
+  onDirtyChange,
+}: {
+  onChanged: () => void
+  onDirtyChange?: (dirty: boolean) => void
+}) {
+  const { t } = useTranslation()
   const [proxy, setProxy] = useState<ProxySettings>(EMPTY_PROXY)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -35,24 +37,12 @@ export function GeneralSettingsForm({ onChanged, onDirtyChange }: { onChanged: (
   }
 
   useEffect(() => {
-    setDraftLocale(locale)
-    setDraftTheme(theme)
-  }, [locale, theme])
-
-  useEffect(() => {
     void load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const updateProxy = (field: 'enabled' | 'url', value: boolean | string) => {
     setProxy(previous => ({ ...previous, [field]: value }))
-    setDirty(true)
-    onDirtyChange?.(true)
-  }
-
-  const updateAppearance = (field: 'locale' | 'theme', value: string) => {
-    if (field === 'locale') setDraftLocale(value as Locale)
-    else setDraftTheme(value as Theme)
     setDirty(true)
     onDirtyChange?.(true)
   }
@@ -71,8 +61,6 @@ export function GeneralSettingsForm({ onChanged, onDirtyChange }: { onChanged: (
         }),
       })
       setProxy(result)
-      setLocale(draftLocale)
-      setTheme(draftTheme)
       setDirty(false)
       onDirtyChange?.(false)
       onChanged()
@@ -87,57 +75,6 @@ export function GeneralSettingsForm({ onChanged, onDirtyChange }: { onChanged: (
 
   return (
     <form className="model-settings-form" onSubmit={save}>
-      <section className="model-tier settings-general-card">
-        <div className="model-tier-heading">
-          <div>
-            <h3>{t('settings.appearanceTitle')}</h3>
-            <div className="tier-status">
-              <span>{t('settings.generalDescription')}</span>
-            </div>
-          </div>
-        </div>
-        <div className="settings-field-row">
-          <span className="settings-field-label">
-            <Languages size={15} aria-hidden="true" />
-            {t('settings.language')}
-          </span>
-          <div className="settings-segmented" role="radiogroup" aria-label={t('settings.language')}>
-            {LOCALE_OPTIONS.map(option => (
-              <button
-                key={option.value}
-                type="button"
-                role="radio"
-                aria-checked={option.value === draftLocale}
-                className={option.value === draftLocale ? 'active' : ''}
-                onClick={() => updateAppearance('locale', option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="settings-field-row">
-          <span className="settings-field-label">
-            <Palette size={15} aria-hidden="true" />
-            {t('settings.theme')}
-          </span>
-          <div className="settings-segmented settings-theme-segmented" role="radiogroup" aria-label={t('settings.theme')}>
-            {THEME_OPTIONS.map(option => (
-              <button
-                key={option}
-                type="button"
-                role="radio"
-                aria-checked={option === draftTheme}
-                className={option === draftTheme ? 'active' : ''}
-                onClick={() => updateAppearance('theme', option)}
-              >
-                {t(option === 'light' ? 'theme.light' : 'theme.dark')}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="model-tier settings-proxy-card">
         <div className="model-tier-heading">
           <div>
@@ -181,7 +118,6 @@ export function GeneralSettingsForm({ onChanged, onDirtyChange }: { onChanged: (
           <span>{t('settings.proxyNote')}</span>
         </p>
       </section>
-
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>

@@ -41,9 +41,13 @@ export function NotFoundView({ path, onGoHome }: NotFoundViewProps) {
           <span className="not-found-path-label">{t('notFound.pathLabel')}</span>
           <code className="not-found-path">{path}</code>
         </div>
-        <p className="not-found-countdown" aria-live="polite">
-          {t('notFound.redirect', { seconds })}
-        </p>
+        <div className="not-found-countdown" aria-live="polite">
+          <span>{t('notFound.redirect', { seconds })}</span>
+          <span className="not-found-progress" aria-hidden="true">
+            <span style={{ width: `${(seconds / 3) * 100}%` }} />
+          </span>
+        </div>
+        <p className="not-found-hint">{t('notFound.returnHint')}</p>
         <button className="not-found-home primary" type="button" onClick={onGoHome}>
           <House size={16} aria-hidden="true" />
           {t('notFound.home')}

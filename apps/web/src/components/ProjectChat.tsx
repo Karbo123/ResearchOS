@@ -37,12 +37,14 @@ function ProjectProgress() {
 export function ProjectChat({
   messages,
   busy,
+  projectId,
   onSend,
   onClose,
   mobileOpen,
 }: {
   messages: ChatMessage[]
   busy: boolean
+  projectId?: string
   onSend: (message: string) => Promise<void>
   onClose: () => void
   mobileOpen: boolean
@@ -120,6 +122,7 @@ export function ProjectChat({
         />
         <VoiceInputButton
           disabled={busy}
+          projectId={projectId}
           onText={voiceInsertion.handleText}
           onSessionStart={voiceInsertion.reset}
           onSessionEnd={voiceInsertion.reset}

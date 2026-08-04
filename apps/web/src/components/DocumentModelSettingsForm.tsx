@@ -10,9 +10,11 @@ interface FormValues extends DocumentModelSettings {
 }
 
 export function DocumentModelSettingsForm({
+  projectId,
   onChanged,
   onDirtyChange,
 }: {
+  projectId: string
   onChanged: () => void
   onDirtyChange?: (dirty: boolean) => void
 }) {
@@ -27,7 +29,7 @@ export function DocumentModelSettingsForm({
     setLoading(true)
     setError('')
     try {
-      const result = await api<DocumentModelSettings>('/api/settings/document')
+      const result = await api<DocumentModelSettings>(`/api/projects/${projectId}/settings/document`)
       setValues({ ...result, key: '' })
       setDirty(false)
       onDirtyChange?.(false)
@@ -41,7 +43,7 @@ export function DocumentModelSettingsForm({
   useEffect(() => {
     void load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [projectId])
 
   const update = (field: 'model' | 'url' | 'key', value: string) => {
     setValues(previous => previous ? { ...previous, [field]: value } : previous)
@@ -55,7 +57,7 @@ export function DocumentModelSettingsForm({
     setSaving(true)
     setError('')
     try {
-      const result = await api<DocumentModelSettings>('/api/settings/document', {
+      const result = await api<DocumentModelSettings>(`/api/projects/${projectId}/settings/document`, {
         method: 'PUT',
         body: JSON.stringify({
           model: values.model.trim(),
@@ -140,7 +142,7 @@ export function DocumentModelSettingsForm({
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
-        <ModelTestButton kind="document" fields={{ model: values.model, url: values.url, key: values.key }} />
+        <ModelTestButton kind="document" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

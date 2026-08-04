@@ -3428,3 +3428,217 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .paper-bilingual-pane { padding: 11px; }
   .paper-pdf-grid { grid-template-columns: 1fr; }
 }
+
+/* 2026-08-04 visual audit polish: contrast, overflow, and interaction clarity. */
+:root {
+  --muted: #5f6066;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+.workspace-context-title code,
+.state-notice-meta code,
+.workspace-state-legend-copy small,
+.research-graph-details-list code,
+.comparison-provenance code,
+.paper-workspace-detail-list code,
+.data-row code {
+  overflow-wrap: anywhere;
+}
+
+.badge {
+  line-height: 1.2;
+}
+.badge.live {
+  color: #1f7a45;
+}
+.badge.pending {
+  color: #8a5100;
+}
+.badge.failed {
+  color: #b42318;
+}
+:root[data-theme='dark'] .badge.live {
+  color: #63e68a;
+}
+:root[data-theme='dark'] .badge.pending {
+  color: #ffd60a;
+}
+:root[data-theme='dark'] .badge.failed {
+  color: #ff6961;
+}
+
+.workspace-context {
+  align-items: stretch;
+}
+.workspace-context-main {
+  flex: 1 1 auto;
+}
+.workspace-context-title,
+.workspace-context-meta,
+.workspace-context-actions {
+  gap: 6px 10px;
+}
+.workspace-context-title code {
+  display: inline-block;
+  max-width: min(44vw, 420px);
+  vertical-align: bottom;
+}
+.workspace-context-actions {
+  flex: 0 1 auto;
+  justify-content: flex-start;
+}
+.workspace-context-failure {
+  max-width: min(260px, 100%);
+}
+.workspace-state-details {
+  margin-top: 2px;
+}
+
+.project-chat {
+  min-height: 0;
+}
+.project-chat .messages.compact {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.project-chat .composer.compact {
+  flex: 0 0 auto;
+}
+.project-chat .composer-hint {
+  margin: 0 14px 12px;
+  text-align: right;
+}
+.composer textarea {
+  display: block;
+}
+.composer textarea:focus-visible {
+  outline: 0;
+}
+
+.workspace-detail-head {
+  flex-wrap: wrap;
+}
+.workspace-detail-head .button-row {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.workspace-detail-head .secondary,
+.paper-workspace-compile-rows .secondary {
+  white-space: nowrap;
+}
+.workspace-detail-title h3 {
+  overflow-wrap: anywhere;
+}
+
+.settings-tabs.sliding-nav > button {
+  white-space: nowrap;
+}
+.settings-model-sections > button {
+  flex: 0 0 auto;
+}
+
+.home-summary {
+  margin-bottom: 18px;
+}
+.home-project-row {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.home-project-actions {
+  gap: 7px;
+}
+.home-action {
+  width: 32px;
+  height: 32px;
+}
+.home-project-title-line strong {
+  display: block;
+}
+
+.not-found-countdown {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  min-height: 34px;
+  color: var(--ink);
+}
+.not-found-progress {
+  display: block;
+  width: min(240px, 70%);
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(60, 60, 67, .14);
+  overflow: hidden;
+}
+.not-found-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue-soft);
+  transition: width .9s linear;
+}
+.not-found-hint {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.not-found-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+}
+.not-found-path {
+  color: var(--ink);
+}
+
+.secondary:active,
+.approve:active,
+.reject:active,
+.home-action:active,
+.project-action:active {
+  transform: scale(.96);
+}
+.tabs button:focus-visible,
+.project-subtabs button:focus-visible,
+.workflow-local-nav button:focus-visible {
+  outline: 3px solid rgba(0, 122, 255, .48);
+  outline-offset: -2px;
+}
+
+@media (max-width: 760px) {
+  .workspace-context-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .workspace-context-failure {
+    max-width: 100%;
+  }
+  .topbar .muted {
+    font-size: 11px;
+  }
+  .project-chat .composer.compact {
+    margin: 0 10px calc(10px + env(safe-area-inset-bottom));
+  }
+  .project-chat .composer-hint {
+    margin: 0 10px calc(10px + env(safe-area-inset-bottom));
+  }
+  .mobile-chat-toggle {
+    align-self: flex-end;
+    margin: 8px 2px 2px 0;
+  }
+  .paper-workspace .workspace-detail-head .button-row {
+    justify-content: flex-start;
+  }
+  .settings-tabs.sliding-nav > button {
+    min-width: 0;
+    flex: 1 1 0;
+  }
+  .settings-model-sections > button {
+    flex: 0 0 auto;
+  }
+}

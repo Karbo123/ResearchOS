@@ -9,8 +9,8 @@ import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
 const ideaMemory = new Memory({ options: { lastMessages: 12 } })
 
-export function configuredModel(tier: ModelTier) {
-  const config = loadModelConfig(tier)
+export function configuredModel(tier: ModelTier, projectId?: string) {
+  const config = loadModelConfig(tier, projectId)
   const model = config.model.replace(/^openai\//i, '').trim()
   if (!model || model.includes('/')) {
     throw new ModelConfigurationError(`${tier} Responses 模型名无效`)
@@ -18,12 +18,12 @@ export function configuredModel(tier: ModelTier) {
   return createOpenAI({ baseURL: config.url, apiKey: config.key, fetch: proxyFetch() }).responses(model)
 }
 
-export function configuredVisionModel() {
-  return configuredModel('vision')
+export function configuredVisionModel(projectId?: string) {
+  return configuredModel('vision', projectId)
 }
 
-export function visionModelName(): string {
-  return loadModelConfig('vision').model
+export function visionModelName(projectId?: string): string {
+  return loadModelConfig('vision', projectId).model
 }
 
 export const ideaClarificationAgent = new Agent({

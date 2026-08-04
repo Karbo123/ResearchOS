@@ -13,7 +13,7 @@ interface FormValues {
   key_configured: boolean
 }
 
-export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
+export function VoiceSettingsForm({ projectId, onChanged }: { projectId: string; onChanged: () => void }) {
   const { t } = useTranslation()
   const [values, setValues] = useState<FormValues | null>(null)
   const [loading, setLoading] = useState(false)
@@ -29,7 +29,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
     setLoading(true)
     setError('')
     try {
-      const result = await api<VoiceSettingsResponse>('/api/settings/voice')
+      const result = await api<VoiceSettingsResponse>(`/api/projects/${projectId}/settings/voice`)
       setValues({
         provider: result.provider === 'groq' ? 'api' : result.provider,
         model: result.model,
@@ -48,7 +48,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
   useEffect(() => {
     void load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [projectId])
 
   const update = (field: keyof FormValues, value: string | boolean) => {
     setValues(previous => previous ? { ...previous, [field]: value } : previous)
@@ -61,7 +61,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
     setSaving(true)
     setError('')
     try {
-      const result = await api<VoiceSettingsResponse>('/api/settings/voice', {
+      const result = await api<VoiceSettingsResponse>(`/api/projects/${projectId}/settings/voice`, {
         method: 'PUT',
         body: JSON.stringify({
           provider: values.provider,
@@ -175,7 +175,7 @@ export function VoiceSettingsForm({ onChanged }: { onChanged: () => void }) {
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
-        <ModelTestButton kind="voice" fields={{ model: values.model, url: values.url, key: values.key }} />
+        <ModelTestButton kind="voice" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

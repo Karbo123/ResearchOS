@@ -43,14 +43,17 @@ type ModelSettings = Record<ModelTier, TierSettings> & {
 }
 
 const settingsPath = resolve(runtimeRoot, 'model-settings.json')
-const defaults: ModelSettings = {
-  simple: envTier('SIMPLE', 'gpt-5.6-luna', 'low'),
-  medium: envTier('MEDIUM', 'gpt-5.6-terra', 'medium'),
-  complex: envTier('COMPLEX', 'gpt-5.6-sol', 'high'),
-  document: envDocument(),
-  vision: envVision(),
-  image_generation: envImageGeneration(),
-  proxy: envProxy(),
+
+export function envModelDefaults(): ModelSettings {
+  return {
+    simple: envTier('SIMPLE', 'gpt-5.6-luna', 'low'),
+    medium: envTier('MEDIUM', 'gpt-5.6-terra', 'medium'),
+    complex: envTier('COMPLEX', 'gpt-5.6-sol', 'high'),
+    document: envDocument(),
+    vision: envVision(),
+    image_generation: envImageGeneration(),
+    proxy: envProxy(),
+  }
 }
 
 function envTier(suffix: string, model: string, effort: 'low' | 'medium' | 'high') {
@@ -94,7 +97,7 @@ function envImageGeneration(): ImageGenerationSettings {
 }
 
 export function privateModelSettings() {
-  const merged = structuredClone(defaults)
+  const merged = envModelDefaults()
   if (!existsSync(settingsPath)) return merged
   const saved = JSON.parse(readFileSync(settingsPath, 'utf8')) as Partial<typeof merged>
   for (const tier of ['simple', 'medium', 'complex'] as const) {

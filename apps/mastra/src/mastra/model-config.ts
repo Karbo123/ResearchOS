@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import type { ModelConfig, ModelTier } from './contracts.js'
 import { modelConfigSchema } from './contracts.js'
-import { modelSettingsPath } from './env.js'
+import { modelSettingsPath, projectSettingsPath } from './env.js'
 
 const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'medium' | 'high' }> = {
   simple: { model: 'gpt-5.6-luna', reasoningEffort: 'low' },
@@ -81,7 +81,16 @@ export function loadProxyConfig(): ProxyConfig {
   return result
 }
 
-export function loadModelConfig(tier: ModelTier): ModelConfig {
+function validateConfig(tier: ModelTier, merged: ModelConfig): ModelConfig {
+  const result = modelConfigSchema.safeParse(merged)
+  if (!result.success || !result.data.key || !isAllowedModelUrl(result.data.url) || !isResponsesBaseUrl(result.data.url)) {
+    throw new ModelConfigurationError(`${tier} model configuration is incomplete`)
+  }
+  return result.data
+}
+
+export function loadModelConfig(tier: ModelTier, projectId?: string): ModelConfig {
+  if (projectId) return loadProjectModelConfig(tier, projectId)
   const merged = environmentSettings(tier)
   const path = modelSettingsPath
   try {
@@ -101,9 +110,27 @@ export function loadModelConfig(tier: ModelTier): ModelConfig {
       throw error
     }
   }
-  const result = modelConfigSchema.safeParse(merged)
-  if (!result.success || !result.data.key || !isAllowedModelUrl(result.data.url) || !isResponsesBaseUrl(result.data.url)) {
-    throw new ModelConfigurationError(`${tier} model configuration is incomplete`)
+  return validateConfig(tier, merged)
+}
+
+function loadProjectModelConfig(tier: ModelTier, projectId: string): ModelConfig {
+  const merged = environmentSettings(tier)
+  try {
+    const parsed = JSON.parse(readFileSync(projectSettingsPath, 'utf8')) as Record<string, { model?: Record<string, Record<string, unknown>> }>
+    const item = parsed[projectId]?.model?.[tier]
+    if (!item || typeof item !== 'object') throw new ModelConfigurationError('invalid project settings tier')
+    for (const field of ['model', 'url', 'key'] as const) {
+      const value = typeof item[field] === 'string' ? item[field].trim() : ''
+      if (value) merged[field] = value
+    }
+    const effort = typeof item.reasoning_effort === 'string' ? item.reasoning_effort.trim() : ''
+    if (effort) merged.reasoningEffort = effort as ModelConfig['reasoningEffort']
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      if (error instanceof ModelConfigurationError) throw error
+      if (error instanceof SyntaxError) throw new ModelConfigurationError('project settings file is invalid')
+      throw error
+    }
   }
-  return result.data
+  return validateConfig(tier, merged)
 }

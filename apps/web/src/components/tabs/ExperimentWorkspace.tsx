@@ -441,8 +441,8 @@ export function ExperimentWorkspace({
                   {entry.kind === 'method_workspace' ? <Waypoints size={15} /> : entry.kind === 'experiment' ? <FlaskConical size={15} /> : entry.kind === 'reproduction' ? <GitBranch size={15} /> : <Play size={14} />}
                 </span>
                 <span className="workspace-entry-copy">
-                  <strong>{entry.title}</strong>
-                  <small>{entry.meta || t('common.unrecorded')}</small>
+                  <strong title={entry.title}>{entry.title}</strong>
+                  <small title={entry.meta || t('common.unrecorded')}>{entry.meta || t('common.unrecorded')}</small>
                 </span>
                 <span className="workspace-entry-side">
                   <Badge status={entry.status} />
@@ -458,9 +458,9 @@ export function ExperimentWorkspace({
           ) : (
             <>
               <div className="workspace-detail-head">
-                <div className="workspace-detail-title">
-                  <div className="eyebrow">{selected.kind === 'method_workspace' ? t('workspace.methodDesign') : selected.kind === 'experiment' ? t('workspace.experimentItem') : selected.kind === 'reproduction' ? t('workspace.reproductionItem') : t('workspace.runItem')}</div>
-                  <h3>{selected.title}</h3>
+                  <div className="workspace-detail-title">
+                    <div className="eyebrow">{selected.kind === 'method_workspace' ? t('workspace.methodDesign') : selected.kind === 'experiment' ? t('workspace.experimentItem') : selected.kind === 'reproduction' ? t('workspace.reproductionItem') : t('workspace.runItem')}</div>
+                    <h3 title={selected.title}>{selected.title}</h3>
                   <p className="muted">{selected.meta || t('common.unrecorded')}</p>
                 </div>
                 <Badge status={selected.status}>{statusLabel(selected.status, t)}</Badge>

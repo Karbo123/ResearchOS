@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Modal, ConfirmDialog } from './ui'
-import { GeneralSettingsForm } from './GeneralSettingsForm'
+import { AppearanceSettingsForm } from './AppearanceSettingsForm'
+import { SystemSettingsForm } from './SystemSettingsForm'
 import { CodeModelSettingsForm } from './CodeModelSettingsForm'
 import { DocumentModelSettingsForm } from './DocumentModelSettingsForm'
 import { VisionModelSettingsForm } from './VisionModelSettingsForm'
@@ -9,13 +10,14 @@ import { ProjectEmbeddingSettingsForm } from './ProjectEmbeddingSettingsForm'
 import { VoiceSettingsForm } from './VoiceSettingsForm'
 import { useTranslation, type TranslationKey } from '../i18n'
 
-type SettingsTab = 'general' | 'models'
+type SettingsTab = 'general' | 'models' | 'system'
 type ModelSubTab = 'code' | 'document' | 'vision' | 'image' | 'embedding' | 'voice'
 type PendingSwitch = { kind: 'tab' | 'subtab'; value: string } | null
 
 const TABS: Array<{ id: SettingsTab; labelKey: TranslationKey }> = [
   { id: 'general', labelKey: 'settings.generalTab' },
   { id: 'models', labelKey: 'settings.modelsTab' },
+  { id: 'system', labelKey: 'settings.systemTab' },
 ]
 
 const MODEL_TABS: Array<{ id: ModelSubTab; labelKey: TranslationKey }> = [
@@ -142,18 +144,20 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
   }
 
   const description = tab === 'general'
-    ? t('settings.generalDescription')
-    : subTab === 'code'
-      ? t('settings.codeModelsDescription')
-      : subTab === 'document'
-        ? t('settings.documentDescription')
-        : subTab === 'vision'
-          ? t('settings.visionDescription')
-          : subTab === 'image'
-            ? t('settings.imageDescription')
-            : subTab === 'embedding'
-              ? t('settings.embeddingDescription')
-              : t('settings.voiceDescription')
+    ? t('settings.appearanceDescription')
+    : tab === 'system'
+      ? t('settings.systemDescription')
+      : subTab === 'code'
+        ? t('settings.codeModelsDescription')
+        : subTab === 'document'
+          ? t('settings.documentDescription')
+          : subTab === 'vision'
+            ? t('settings.visionDescription')
+            : subTab === 'image'
+              ? t('settings.imageDescription')
+              : subTab === 'embedding'
+                ? t('settings.embeddingDescription')
+                : t('settings.voiceDescription')
 
   return (
     <>
@@ -170,8 +174,10 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
           ariaLabel={t('settings.title')}
         />
         {tab === 'general' ? (
-          <GeneralSettingsForm onChanged={() => setDirty(false)} onDirtyChange={setDirty} />
-        ) : (
+          <AppearanceSettingsForm onChanged={() => setDirty(false)} onDirtyChange={setDirty} />
+        ) : tab === 'system' ? (
+          <SystemSettingsForm onChanged={() => setDirty(false)} onDirtyChange={setDirty} />
+        ) : projectId ? (
           <>
             <SettingsSlidingNav
               active={subTab}
@@ -182,38 +188,40 @@ export function ModelSettingsModal({ open, onClose, projectId }: { open: boolean
             />
             {subTab === 'code' ? (
               <CodeModelSettingsForm
+                projectId={projectId}
                 onClose={requestClose}
                 onDirtyChange={setDirty}
                 onSaved={() => setDirty(false)}
               />
             ) : subTab === 'document' ? (
               <DocumentModelSettingsForm
+                projectId={projectId}
                 onChanged={() => setDirty(false)}
                 onDirtyChange={setDirty}
               />
             ) : subTab === 'vision' ? (
               <VisionModelSettingsForm
+                projectId={projectId}
                 onChanged={() => setDirty(false)}
                 onDirtyChange={setDirty}
               />
             ) : subTab === 'image' ? (
               <ImageGenerationSettingsForm
+                projectId={projectId}
                 onChanged={() => setDirty(false)}
                 onDirtyChange={setDirty}
               />
             ) : subTab === 'embedding' ? (
-              projectId ? (
-                <ProjectEmbeddingSettingsForm
-                  projectId={projectId}
-                  onChanged={() => setDirty(false)}
-                />
-              ) : (
-                <div className="empty">{t('settings.openProjectFirst')}</div>
-              )
+              <ProjectEmbeddingSettingsForm
+                projectId={projectId}
+                onChanged={() => setDirty(false)}
+              />
             ) : (
-              <VoiceSettingsForm onChanged={() => setDirty(false)} />
+              <VoiceSettingsForm projectId={projectId} onChanged={() => setDirty(false)} />
             )}
           </>
+        ) : (
+          <div className="empty">{t('settings.openProjectFirst')}</div>
         )}
       </Modal>
       {pending ? (

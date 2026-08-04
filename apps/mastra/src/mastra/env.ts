@@ -11,5 +11,8 @@ export const modelSettingsPath = process.env.MODEL_SETTINGS_PATH
   : process.env.RESEARCH_RUNTIME_DIR
     ? resolve(researchRoot, process.env.RESEARCH_RUNTIME_DIR, 'model-settings.json')
     : resolve(researchRoot, 'runtime', 'model-settings.json')
+export const projectSettingsPath = process.env.RESEARCH_RUNTIME_DIR
+  ? resolve(researchRoot, process.env.RESEARCH_RUNTIME_DIR, 'project-settings.json')
+  : resolve(researchRoot, 'runtime', 'project-settings.json')
 const envPath = resolve(researchRoot, '.env')
 if (existsSync(envPath) && typeof process.loadEnvFile === 'function') process.loadEnvFile(envPath)

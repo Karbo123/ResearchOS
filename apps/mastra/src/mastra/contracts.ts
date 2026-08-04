@@ -82,6 +82,7 @@ export const documentReplyRequestSchema = z.object({
   context: z.string().max(12_000).default(''),
   draft_reply: z.string().max(6000).default(''),
   purpose: z.enum(['clarify', 'supervise']).default('supervise'),
+  project_id: z.string().uuid().optional(),
 }).strict()
 export const documentReplyResultSchema = z.object({
   reply: z.string().trim().min(1).max(6000),
@@ -92,6 +93,7 @@ export const paperSectionTranslateRequestSchema = z.object({
   section_id: paperSectionIdSchema,
   heading: z.string().max(120),
   source: z.string().max(20_000),
+  project_id: z.string().uuid().optional(),
 }).strict()
 export const paperTranslationSentenceSchema = z.object({
   en: z.string().min(1).max(4000),
@@ -105,6 +107,7 @@ export const paperSectionReviseRequestSchema = z.object({
   heading: z.string().max(120),
   source: z.string().max(20_000),
   project_context: z.string().max(12_000).default(''),
+  project_id: z.string().uuid().optional(),
 }).strict()
 export const paperSectionReviseResultSchema = z.object({
   revised_source: z.string().min(1).max(20_000),

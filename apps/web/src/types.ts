@@ -82,8 +82,8 @@ export interface ModelTierSettings {
   key_configured?: boolean
   reasoning_effort?: ReasoningEffort
   sources?: {
-    url?: 'runtime_override' | 'env_default'
-    key?: 'runtime_override' | 'env_default'
+    url?: 'runtime_override' | 'env_default' | 'project_override'
+    key?: 'runtime_override' | 'env_default' | 'project_override'
   }
 }
 
@@ -95,20 +95,21 @@ export interface ProxySettings {
 export interface ModelSettingsResponse {
   tiers: Record<TierId, ModelTierSettings>
   proxy?: ProxySettings
+  project_id?: string
 }
 
 export interface DocumentModelSettings {
   model: string
   url: string
   key_configured: boolean
-  source?: 'runtime_override' | 'env_default'
+  source?: 'runtime_override' | 'env_default' | 'project_override'
 }
 
 export interface VisionModelSettings {
   model: string
   url: string
   key_configured: boolean
-  source?: 'runtime_override' | 'env_default'
+  source?: 'runtime_override' | 'env_default' | 'project_override'
 }
 
 export type ImageGenerationResolution = '1k' | '2k' | '4k'
@@ -120,7 +121,7 @@ export interface ImageGenerationSettings {
   key_configured: boolean
   resolution: ImageGenerationResolution
   quality: ImageGenerationQuality
-  source?: 'runtime_override' | 'env_default'
+  source?: 'runtime_override' | 'env_default' | 'project_override'
 }
 
 export type ModelTestKind = 'simple' | 'medium' | 'complex' | 'document' | 'vision' | 'image' | 'voice'
@@ -130,7 +131,7 @@ export interface VoiceSettingsResponse {
   model: string
   url: string
   key_configured: boolean
-  source?: 'runtime_override' | 'env_default'
+  source?: 'runtime_override' | 'env_default' | 'project_override'
 }
 
 export interface SupermemoryEmbeddingStatus {

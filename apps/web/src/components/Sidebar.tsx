@@ -363,7 +363,7 @@ export function Sidebar({
                     onOpenProject(project.id)
                   }}
                 >
-                  <span className="project-title-text">{project.title}</span>
+                  <span className="project-title-text" title={project.title}>{project.title}</span>
                 </button>
                 <div className="project-actions" onPointerDown={event => event.stopPropagation()}>
                   <div className="project-actions-track">

@@ -108,6 +108,7 @@ export const modelSettingsRequest = z.object({
   complex: modelTierSettings,
   proxy: proxySettings.optional(),
 }).strict()
+export const projectModelSettingsRequest = modelSettingsRequest.omit({ proxy: true })
 export const modelTestKind = z.enum(['simple', 'medium', 'complex', 'document', 'vision', 'image', 'voice'])
 export type ModelTestKind = z.infer<typeof modelTestKind>
 export const modelTestRequest = z.object({
@@ -115,6 +116,7 @@ export const modelTestRequest = z.object({
   model: z.string().trim().max(200).default(''),
   url: z.string().trim().max(500).default(''),
   key: z.string().max(1000).default(''),
+  project_id: z.string().uuid().optional(),
 }).strict()
 
 export const voiceProvider = z.enum(['browser', 'api', 'groq'])

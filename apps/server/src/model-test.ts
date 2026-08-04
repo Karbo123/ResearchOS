@@ -1,8 +1,7 @@
 import { ApiError } from './http.js'
 import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
-import { privateModelSettings } from './model-settings.js'
 import { proxyFetch } from './proxy-fetch.js'
-import { privateVoiceSettings } from './voice-settings.js'
+import { privateProjectModelSettings, privateProjectVoiceSettings } from './project-settings.js'
 
 const TEST_TIMEOUT_MS = 25_000
 
@@ -15,21 +14,24 @@ interface TestTarget {
 function targetFor(
   kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision' | 'image' | 'voice',
   input: { model: string; url: string; key: string },
+  projectId?: string,
 ): TestTarget {
-  const settings = privateModelSettings()
+  const settings = projectId ? privateProjectModelSettings(projectId) : undefined
   if (kind === 'voice') {
-    const voice = privateVoiceSettings()
+    const voice = projectId ? privateProjectVoiceSettings(projectId) : undefined
     return {
-      model: input.model || voice.model,
-      url: input.url || voice.url,
-      key: input.key || voice.key,
+      model: input.model || voice?.model || '',
+      url: input.url || voice?.url || '',
+      key: input.key || voice?.key || '',
     }
   }
-  const source = kind === 'image' ? settings.image_generation : kind === 'vision' ? settings.vision : kind === 'document' ? settings.document : settings[kind]
+  const source = settings
+    ? kind === 'image' ? settings.image_generation : kind === 'vision' ? settings.vision : kind === 'document' ? settings.document : settings[kind]
+    : null
   return {
-    model: input.model || source.model,
-    url: input.url || source.url,
-    key: input.key || source.key,
+    model: input.model || source?.model || '',
+    url: input.url || source?.url || '',
+    key: input.key || source?.key || '',
   }
 }
 
@@ -74,8 +76,8 @@ function assertConfigured(target: TestTarget): void {
   if (!target.url) throw new ApiError(422, 'model_test_missing_url', '请先填写 API 地址。')
 }
 
-async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision', input: { model: string; url: string; key: string }) {
-  const target = targetFor(kind, input)
+async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision', input: { model: string; url: string; key: string }, projectId?: string) {
+  const target = targetFor(kind, input, projectId)
   assertConfigured(target)
   if (!isAllowedModelUrl(target.url) || !isResponsesBaseUrl(target.url)) {
     throw new ApiError(422, 'model_test_invalid_url', '该模型地址必须是 Responses API base URL，不能包含 /responses 或 /chat/completions。')
@@ -100,8 +102,8 @@ async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'docum
   throw new ApiError(502, 'model_test_upstream_error', `模型服务已响应但返回错误（HTTP ${response.status}）：${upstreamMessage(body)}`)
 }
 
-async function testVoiceModel(input: { model: string; url: string; key: string }) {
-  const target = targetFor('voice', input)
+async function testVoiceModel(input: { model: string; url: string; key: string }, projectId?: string) {
+  const target = targetFor('voice', input, projectId)
   assertConfigured(target)
   if (!isAllowedModelUrl(target.url)) {
     throw new ApiError(422, 'model_test_invalid_url', '语音识别地址必须是 HTTPS 或回环/私有 HTTP。')
@@ -121,8 +123,8 @@ async function testVoiceModel(input: { model: string; url: string; key: string }
   throw new ApiError(502, 'model_test_upstream_error', `语音识别服务已响应（HTTP ${response.status}）：${upstreamMessage(body)}`)
 }
 
-async function testImageGenerationModel(input: { model: string; url: string; key: string }) {
-  const target = targetFor('image', input)
+async function testImageGenerationModel(input: { model: string; url: string; key: string }, projectId?: string) {
+  const target = targetFor('image', input, projectId)
   assertConfigured(target)
   if (!isAllowedModelUrl(target.url)) {
     throw new ApiError(422, 'model_test_invalid_url', '图片生成地址必须是 HTTPS 或回环/私有 HTTP。')
@@ -155,9 +157,10 @@ async function testImageGenerationModel(input: { model: string; url: string; key
 
 export async function testModelConnection(
   kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision' | 'image' | 'voice',
-  input: { model: string; url: string; key: string },
+  input: { model: string; url: string; key: string; project_id?: string },
 ) {
-  if (kind === 'image') return testImageGenerationModel(input)
-  if (kind === 'voice') return testVoiceModel(input)
-  return testResponsesModel(kind, input)
+  const projectId = input.project_id
+  if (kind === 'image') return testImageGenerationModel(input, projectId)
+  if (kind === 'voice') return testVoiceModel(input, projectId)
+  return testResponsesModel(kind, input, projectId)
 }

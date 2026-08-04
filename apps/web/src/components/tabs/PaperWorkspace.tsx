@@ -460,8 +460,8 @@ function PdfCard({ artifact }: { artifact: Artifact }) {
     <div className="paper-pdf-card">
       <div className="paper-pdf-card-icon"><FileText size={16} /></div>
       <div className="paper-pdf-card-copy">
-        <strong>{artifact.name}</strong>
-        <small>{artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}…` : t('common.unrecorded')}</small>
+        <strong title={artifact.name}>{artifact.name}</strong>
+        <small title={artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}…` : t('common.unrecorded')}>{artifact.sha256 ? `SHA-256 ${artifact.sha256.slice(0, 12)}…` : t('common.unrecorded')}</small>
       </div>
       {artifact.download_url ? (
         <a className="paper-pdf-open" href={artifact.download_url} target="_blank" rel="noreferrer" aria-label={`${t('paperWorkspace.openPdf')} ${artifact.name}`}>

@@ -1,5 +1,6 @@
 import { ApiError } from './http.js'
 import { proxyFetch } from './proxy-fetch.js'
+import { privateProjectVoiceSettings } from './project-settings.js'
 import { privateVoiceSettings } from './voice-settings.js'
 
 const TRANSCRIPTION_TIMEOUT_MS = 60_000
@@ -25,8 +26,8 @@ function fileExtension(mimeType: string): string {
   return 'webm'
 }
 
-export async function transcribeVoice(file: UploadedAudio, language?: string): Promise<string> {
-  const settings = privateVoiceSettings()
+export async function transcribeVoice(file: UploadedAudio, language?: string, projectId?: string): Promise<string> {
+  const settings = projectId ? privateProjectVoiceSettings(projectId) : privateVoiceSettings()
   if (settings.provider !== 'api' && settings.provider !== 'groq') {
     throw new ApiError(409, 'voice_provider_not_configured', '当前未启用 API 语音识别。')
   }
