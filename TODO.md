@@ -318,7 +318,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 - [x] `070-C2` 补齐用户输入种子、Artifact 和候选来源的完整前端展示与校验，让用户清楚每条候选来自哪里。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：`种子文献扩展` 的种子表单提供 DOI、标题、URL、BibTeX、受控 PDF 与已有论文六种输入，切换 PDF/已有论文时对应受控选项即时出现；种子列表展示输入摘要、来源类型、状态与时间，候选行展示 provider、发现深度、年份、DOI 和来源证据数，字段来源抽屉展示 provider、来源类型、请求尝试、Artifact、定位、哈希与原始值并支持逐字段选择。服务端严格 Zod 校验种子与项目范围，PDF 必须属于当前项目且为有效 Artifact，已有论文必须属于当前项目；用户 BibTeX 与字段选择来源测试覆盖 `user_input` provenance，跨项目种子/递归被拒绝。真实浏览器在 `related_work/seed-expansion` 验证六种选项与 PDF/已有论文联动且无横向溢出，Web 类型检查、构建、UI/i18n、navigation 与相关服务端测试均通过。
-- [~] `070-C9e` 浏览器验收相关工作调研全流程：候选审阅、来源抽屉、去重理由、递归进度、研究现状矩阵、引用图、复现 Proposal，以及空/加载/部分/失败/阻塞状态和切换项目。 [Apple 设计验收]
+- [x] `070-C9e` 浏览器验收相关工作调研全流程：候选审阅、来源抽屉、去重理由、递归进度、研究现状矩阵、引用图、复现 Proposal，以及空/加载/部分/失败/阻塞状态和切换项目。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：`scripts/seed-related-work-fixture.ts` 现在为 `uncertainty-based-d9a5` 写入 4 个递归运行、8 个来源 Attempt、3 条引用边与字段 provenance 冲突/选中样例；运行状态覆盖 `queued/cancelled/failed/completed`，Attempt 覆盖 `succeeded/partial/rate_limited/timed_out/invalid_response/unsupported/cancelled`，并保留真实失败消息（如 `Fixture provider timed out; no silent fallback was used.`、`DBLP does not support citation recursion`）。前端运行与 Attempt 失败提示直接展示结构化错误文本，不再被本地化成笼统的 “Request failed”。`scripts/browser-acceptance.mjs` 新增对应状态断言，并把材料搜索加载/失败状态移到 `related_work/literature` 页面验证；验收脚本在每次导航后启用 `Page.bringToFront` 与焦点模拟，避免后台标签页冻结动画。完整真实浏览器验收通过：候选审阅、来源抽屉、去重理由、递归进度、研究现状矩阵、引用图节点详情、复现下载 Proposal、材料加载/失败、跨项目空状态与切换项目均正常，桌面 1440/窄桌面 1024/移动 390 无横向溢出。
 
 > 进度记录（2026-08-04）：本轮补齐相关工作验收数据与可见信息：候选行展示来源去重方式（DOI / provider stable ID / 标题+年份），引用网络运行展示逐条递归进度事件；新增相关工作验收 fixture，并在研究可视化页直接呈现研究现状矩阵；浏览器验收扩展候选审阅、来源抽屉、递归进度、图节点详情、复现 Proposal 与跨项目空状态检查，`scripts/browser-acceptance.mjs` 真实浏览器通过并输出 `108h-related-work-*` 截图。加载/部分/失败/阻塞状态仍需补齐为显式验收断言后才能关闭本项。
 - [x] `070-C10d` 效果比较列表、详情、审批、指标/门禁/Artifact/候选状态的浏览器与窄屏截图验收。 [Apple 设计验收]

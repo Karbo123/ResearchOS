@@ -61,6 +61,8 @@ async function navigate(url, locale, theme, reduced = false) {
     features: [{ name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' }],
   })
   await send('Page.navigate', { url })
+  await send('Page.bringToFront')
+  await send('Emulation.setFocusEmulationEnabled', { enabled: true })
   await new Promise(resolveTimeout => setTimeout(resolveTimeout, reduced ? 1200 : 1800))
   await waitForApp()
   await new Promise(resolveTimeout => setTimeout(resolveTimeout, reduced ? 150 : 500))
@@ -802,7 +804,9 @@ const seedExpansion = await evaluate(`(async () => {
     attemptRows: attempts.length,
     attemptProviders: attempts.map(row => row.querySelector('.source-attempt-provider')?.textContent?.trim() || null).slice(0, 8),
     attemptStatuses: attempts.map(row => row.querySelector('.badge')?.textContent?.trim() || null),
+    attemptRawStatuses: attempts.map(row => row.dataset.status || null),
     attemptFailures: attempts.filter(row => row.querySelector('.source-attempt-failure')).length,
+    attemptFailureTexts: attempts.map(row => row.querySelector('.source-attempt-failure')?.textContent?.trim() || null).filter(Boolean),
     noMatchAttempts: attempts.filter(row => row.querySelector('.source-attempt-no-match')).length,
     candidateRows: candidateRows.length,
     candidateTitles: candidateRows.map(row => row.querySelector('h3')?.textContent?.trim() || null),
@@ -810,6 +814,8 @@ const seedExpansion = await evaluate(`(async () => {
     matchMethodText: matchMethodRows.slice(0, 4).map(row => row.textContent?.trim() || null),
     provenanceButtons: candidateRows.filter(row => /view field provenance/i.test(row.textContent || '')).length,
     runRows: runRows.length,
+    runRawStatuses: runRows.map(row => row.dataset.status || null),
+    runFailureTexts: runRows.map(row => row.querySelector('.error-text')?.textContent?.trim() || null).filter(Boolean),
     runEvents: runEventRows.length,
     runEventText: runEventRows.slice(0, 6).map(row => row.textContent?.trim() || null),
     seedForm: { exists: !!form, options, artifactVisible, paperVisible },
@@ -819,6 +825,17 @@ const seedExpansion = await evaluate(`(async () => {
 await capture('108h-seed-expansion-attempts.png')
 if (!seedExpansion.attemptsPanel || seedExpansion.attemptRows < 8 || seedExpansion.candidateRows < 4 || seedExpansion.runRows < 3 || seedExpansion.runEvents < 6 || seedExpansion.matchMethodRows < 1 || seedExpansion.provenanceButtons < 1 || seedExpansion.overflowX) {
   throw new Error(`Related work fixture did not render: ${JSON.stringify(seedExpansion)}`)
+}
+const requiredAttemptStatuses = ['succeeded', 'partial', 'rate_limited', 'timed_out', 'invalid_response', 'unsupported', 'cancelled']
+const requiredRunStatuses = ['completed', 'failed', 'cancelled', 'queued']
+if (!requiredAttemptStatuses.every(status => seedExpansion.attemptRawStatuses.includes(status))) {
+  throw new Error(`Related work attempt states missing: ${JSON.stringify(seedExpansion.attemptRawStatuses)}`)
+}
+if (!requiredRunStatuses.every(status => seedExpansion.runRawStatuses.includes(status)) || !seedExpansion.runFailureTexts.some(text => /timed out|Fixture provider/i.test(text))) {
+  throw new Error(`Related work run states missing: ${JSON.stringify(seedExpansion.runRawStatuses)} / ${JSON.stringify(seedExpansion.runFailureTexts)}`)
+}
+if (!seedExpansion.attemptFailureTexts.some(text => /rate limit|fixture rate limit/i.test(text)) || !seedExpansion.attemptFailureTexts.some(text => /DBLP does not support/i.test(text))) {
+  throw new Error(`Related work failure/blocked attempts missing: ${JSON.stringify(seedExpansion.attemptFailureTexts)}`)
 }
 
 await evaluate(`(() => {
@@ -847,6 +864,77 @@ await wait(250)
 const literatureUrl = `${appBase}/project/${projectSlug}/related_work/literature`
 await navigate(literatureUrl, 'en', 'light')
 await wait(400)
+const materialLoadingState = await evaluate(`(async () => {
+  const input = document.querySelector('#materialSearchQuery')
+  const form = document.querySelector('.material-search-form')
+  if (!input || !form) return { missing: true }
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+  setter.call(input, 'fixture material loading')
+  input.dispatchEvent(new Event('input', { bubbles: true }))
+  await new Promise(resolve => setTimeout(resolve, 60))
+  const originalFetch = window.fetch
+  window.fetch = async (...args) => {
+    const url = String(args[0] || '')
+    if (url.includes('/materials/search')) await new Promise(resolve => setTimeout(resolve, 1200))
+    return originalFetch(...args)
+  }
+  form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  await new Promise(resolve => setTimeout(resolve, 150))
+  const loading = {
+    visible: !!document.querySelector('.material-search-results .state-notice-loading'),
+    role: document.querySelector('.material-search-results .state-notice-loading')?.getAttribute('role') || null,
+    next: document.querySelector('.material-search-results .state-notice-loading .state-notice-next')?.textContent?.trim() || null,
+  }
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  const finished = {
+    loadingGone: !document.querySelector('.material-search-results .state-notice-loading'),
+    error: !!document.querySelector('.material-search-results .state-notice-error'),
+    rows: document.querySelectorAll('.material-search-results .data-row').length,
+  }
+  window.fetch = originalFetch
+  return { loading, finished }
+})()`)
+if (!materialLoadingState.loading.visible || materialLoadingState.loading.role !== 'status' || !materialLoadingState.loading.next || !materialLoadingState.finished.loadingGone) {
+  throw new Error(`Related work material loading state missing: ${JSON.stringify(materialLoadingState)}`)
+}
+
+const materialFailureState = await evaluate(`(async () => {
+  const input = document.querySelector('#materialSearchQuery')
+  const form = document.querySelector('.material-search-form')
+  if (!input || !form) return { missing: true }
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+  setter.call(input, 'fixture material failure')
+  input.dispatchEvent(new Event('input', { bubbles: true }))
+  await new Promise(resolve => setTimeout(resolve, 60))
+  const originalFetch = window.fetch
+  window.fetch = async (...args) => {
+    const url = String(args[0] || '')
+    if (url.includes('/materials/search')) {
+      return new Response(JSON.stringify({ code: 'material_search_unavailable', message: 'Fixture material search failure' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    return originalFetch(...args)
+  }
+  form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  await new Promise(resolve => setTimeout(resolve, 500))
+  const notice = document.querySelector('.material-search-results .state-notice-error')
+  const state = {
+    visible: !!notice,
+    code: notice?.querySelector('code')?.textContent?.trim() || null,
+    source: notice?.querySelector('.state-notice-meta dd:nth-of-type(2)')?.textContent?.trim() || null,
+    retryable: notice?.querySelector('.state-notice-meta')?.textContent?.includes('Yes') || null,
+    retryButton: !!notice?.querySelector('.state-notice-retry'),
+    message: notice?.querySelector('.state-notice-copy p')?.textContent?.trim() || null,
+  }
+  window.fetch = originalFetch
+  return state
+})()`)
+if (!materialFailureState.visible || !materialFailureState.retryButton || !/material_search_unavailable/.test(materialFailureState.message || '')) {
+  throw new Error(`Related work material failure state missing: ${JSON.stringify(materialFailureState)}`)
+}
+
 const relatedWorkLiterature = await evaluate(`(() => {
   const repositoryRows = Array.from(document.querySelectorAll('.data-row')).filter(row => /github\\.com\\/example\\/related-work-fixture/i.test(row.textContent || ''))
   const proposeButtons = repositoryRows.filter(row => /propose download/i.test(row.textContent || ''))

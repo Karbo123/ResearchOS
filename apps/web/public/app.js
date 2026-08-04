@@ -19803,8 +19803,19 @@
     const dragPreviewRef = (0, import_react5.useRef)(null);
     const suppressProjectClickRef = (0, import_react5.useRef)(false);
     const projectListRef = (0, import_react5.useRef)(null);
-    const rowPositionsRef = (0, import_react5.useRef)(null);
+    const dragStartPositionsRef = (0, import_react5.useRef)(null);
+    const rowAnimationsRef = (0, import_react5.useRef)([]);
     const visibleProjects = dragPreviewProjects || projects;
+    const captureRowPositions = () => {
+      const container = projectListRef.current;
+      if (!container) return;
+      const positions = /* @__PURE__ */ new Map();
+      for (const row of Array.from(container.querySelectorAll("[data-project-id]"))) {
+        const id = row.dataset.projectId;
+        if (id) positions.set(id, row.getBoundingClientRect().top);
+      }
+      dragStartPositionsRef.current = positions;
+    };
     (0, import_react5.useLayoutEffect)(() => {
       const container = projectListRef.current;
       if (!container) return;
@@ -19814,37 +19825,39 @@
         const id = row.dataset.projectId;
         if (id) nextPositions.set(id, row.getBoundingClientRect().top);
       }
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        rowPositionsRef.current = nextPositions;
-        return;
+      const previousPositions = dragStartPositionsRef.current;
+      const movedRows = previousPositions && previousPositions.size ? rows.filter((row) => {
+        const id = row.dataset.projectId;
+        if (!id) return false;
+        const from = previousPositions.get(id);
+        const to = nextPositions.get(id) ?? row.getBoundingClientRect().top;
+        return from !== void 0 && Math.abs(from - to) >= 0.5;
+      }) : [];
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !movedRows.length) return;
+      for (const animation of rowAnimationsRef.current) animation.cancel();
+      rowAnimationsRef.current = [];
+      for (const row of movedRows) {
+        const id = row.dataset.projectId;
+        if (!id) continue;
+        const from = previousPositions.get(id);
+        const to = nextPositions.get(id) ?? row.getBoundingClientRect().top;
+        if (from === void 0 || Math.abs(from - to) < 0.5) continue;
+        const delta = from - to;
+        const animation = row.animate(
+          [{ transform: `translateY(${delta}px)` }, { transform: "translateY(0px)" }],
+          { duration: 500, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "none" }
+        );
+        animation.addEventListener("finish", () => {
+          const index = rowAnimationsRef.current.indexOf(animation);
+          if (index >= 0) rowAnimationsRef.current.splice(index, 1);
+        }, { once: true });
+        rowAnimationsRef.current.push(animation);
       }
-      const previousPositions = rowPositionsRef.current;
-      if (previousPositions && previousPositions.size) {
-        const frame = window.requestAnimationFrame(() => {
-          for (const row of rows) {
-            const id = row.dataset.projectId;
-            if (!id) continue;
-            const from = previousPositions.get(id);
-            const to = row.getBoundingClientRect().top;
-            if (from === void 0 || Math.abs(from - to) < 0.5) continue;
-            row.style.transition = "none";
-            row.style.transform = `translateY(${from - to}px)`;
-            row.style.willChange = "transform";
-            window.requestAnimationFrame(() => {
-              row.style.transition = "transform .5s var(--spring)";
-              row.style.transform = "";
-              row.style.willChange = "";
-              window.setTimeout(() => {
-                row.style.transition = "";
-              }, 560);
-            });
-          }
-        });
-        rowPositionsRef.current = nextPositions;
-        return () => window.cancelAnimationFrame(frame);
-      }
-      rowPositionsRef.current = nextPositions;
+      dragStartPositionsRef.current = null;
     }, [visibleProjects]);
+    (0, import_react5.useEffect)(() => () => {
+      for (const animation of rowAnimationsRef.current) animation.cancel();
+    }, []);
     const startResize = (event) => {
       if (window.matchMedia("(max-width: 760px)").matches) return;
       event.preventDefault();
@@ -19960,6 +19973,7 @@
         return;
       }
       state.changed = true;
+      captureRowPositions();
       dragPreviewRef.current = next;
       setDragPreviewProjects(next);
       setDragOverProjectId(targetId);
@@ -19990,6 +20004,7 @@
         if (dragStateRef.current !== state) return;
         state.dragging = true;
         state.button.setPointerCapture?.(state.pointerId);
+        captureRowPositions();
         const preview = projects.slice();
         dragPreviewRef.current = preview;
         setDragPreviewProjects(preview);
@@ -20068,6 +20083,7 @@
                     onPointerDown: (event) => event.stopPropagation(),
                     onClick: (event) => {
                       event.stopPropagation();
+                      captureRowPositions();
                       onPinProject(project);
                     },
                     children: project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PinOff, { size: 15, strokeWidth: 2.2 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { size: 15, strokeWidth: 2.2 })
@@ -20598,8 +20614,19 @@
     const dragPreviewRef = (0, import_react7.useRef)(null);
     const suppressProjectClickRef = (0, import_react7.useRef)(false);
     const homeRowsRef = (0, import_react7.useRef)(null);
-    const rowPositionsRef = (0, import_react7.useRef)(null);
+    const dragStartPositionsRef = (0, import_react7.useRef)(null);
+    const rowAnimationsRef = (0, import_react7.useRef)([]);
     const visibleProjects = dragPreviewProjects || projects;
+    const captureRowPositions = () => {
+      const container = homeRowsRef.current;
+      if (!container) return;
+      const positions = /* @__PURE__ */ new Map();
+      for (const row of Array.from(container.querySelectorAll("[data-project-id]"))) {
+        const id = row.dataset.projectId;
+        if (id) positions.set(id, row.getBoundingClientRect().top);
+      }
+      dragStartPositionsRef.current = positions;
+    };
     (0, import_react7.useLayoutEffect)(() => {
       const container = homeRowsRef.current;
       if (!container) return;
@@ -20609,37 +20636,39 @@
         const id = row.dataset.projectId;
         if (id) nextPositions.set(id, row.getBoundingClientRect().top);
       }
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        rowPositionsRef.current = nextPositions;
-        return;
+      const previousPositions = dragStartPositionsRef.current;
+      const movedRows = previousPositions && previousPositions.size ? rows.filter((row) => {
+        const id = row.dataset.projectId;
+        if (!id) return false;
+        const from = previousPositions.get(id);
+        const to = nextPositions.get(id) ?? row.getBoundingClientRect().top;
+        return from !== void 0 && Math.abs(from - to) >= 0.5;
+      }) : [];
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !movedRows.length) return;
+      for (const animation of rowAnimationsRef.current) animation.cancel();
+      rowAnimationsRef.current = [];
+      for (const row of movedRows) {
+        const id = row.dataset.projectId;
+        if (!id) continue;
+        const from = previousPositions.get(id);
+        const to = nextPositions.get(id) ?? row.getBoundingClientRect().top;
+        if (from === void 0 || Math.abs(from - to) < 0.5) continue;
+        const delta = from - to;
+        const animation = row.animate(
+          [{ transform: `translateY(${delta}px)` }, { transform: "translateY(0px)" }],
+          { duration: 560, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "none" }
+        );
+        animation.addEventListener("finish", () => {
+          const index = rowAnimationsRef.current.indexOf(animation);
+          if (index >= 0) rowAnimationsRef.current.splice(index, 1);
+        }, { once: true });
+        rowAnimationsRef.current.push(animation);
       }
-      const previousPositions = rowPositionsRef.current;
-      if (previousPositions && previousPositions.size) {
-        const frame = window.requestAnimationFrame(() => {
-          for (const row of rows) {
-            const id = row.dataset.projectId;
-            if (!id) continue;
-            const from = previousPositions.get(id);
-            const to = row.getBoundingClientRect().top;
-            if (from === void 0 || Math.abs(from - to) < 0.5) continue;
-            row.style.transition = "none";
-            row.style.transform = `translateY(${from - to}px)`;
-            row.style.willChange = "transform";
-            window.requestAnimationFrame(() => {
-              row.style.transition = "transform .56s var(--spring)";
-              row.style.transform = "";
-              row.style.willChange = "";
-              window.setTimeout(() => {
-                row.style.transition = "";
-              }, 620);
-            });
-          }
-        });
-        rowPositionsRef.current = nextPositions;
-        return () => window.cancelAnimationFrame(frame);
-      }
-      rowPositionsRef.current = nextPositions;
+      dragStartPositionsRef.current = null;
     }, [visibleProjects]);
+    (0, import_react7.useEffect)(() => () => {
+      for (const animation of rowAnimationsRef.current) animation.cancel();
+    }, []);
     const handleCreate = async (event) => {
       event.preventDefault();
       if (submitting) return;
@@ -20727,6 +20756,7 @@
         return;
       }
       state.changed = true;
+      captureRowPositions();
       dragPreviewRef.current = next;
       setDragPreviewProjects(next);
       setDragOverId(targetId);
@@ -20757,6 +20787,7 @@
         if (dragStateRef.current !== state) return;
         state.dragging = true;
         state.row.setPointerCapture?.(state.pointerId);
+        captureRowPositions();
         const preview = projects.slice();
         dragPreviewRef.current = preview;
         setDragPreviewProjects(preview);
@@ -20969,7 +21000,10 @@
                       "aria-label": t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
                       title: t(project.pinned ? "sidebar.unpinProjectAction" : "sidebar.pinProjectAction", { title: project.title }),
                       "aria-pressed": project.pinned === true,
-                      onClick: () => void onPinProject(project),
+                      onClick: () => {
+                        captureRowPositions();
+                        void onPinProject(project);
+                      },
                       children: project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(PinOff, { size: 15, "aria-hidden": "true" }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Pin, { size: 15, "aria-hidden": "true" })
                     }
                   ),
@@ -22965,7 +22999,7 @@
     ] });
     const runPanel = project.related_work_runs?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-run-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.runsTitle"), hint: t("literature.runsHint") }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: project.related_work_runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", "data-status": run.status, children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("h3", { children: [
             statusLabel(run.status, t),
@@ -22982,7 +23016,7 @@
             " \xB7 providers ",
             run.providers.join(", ")
           ] }),
-          run.error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "error-text", children: localizeFailure(run.status, run.error) }) : null,
+          run.error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "error-text", children: run.error }) : null,
           runEventsForRun(run.id).length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "run-event-list", "aria-label": t("literature.runEventsTitle"), children: [
             /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h4", { children: t("literature.runEventsTitle") }),
             runEventsForRun(run.id).map((event) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { children: [
@@ -23018,7 +23052,7 @@
     ] }) : null;
     const attemptsPanel = /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section related-work-attempt-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SectionHeading, { title: t("literature.attemptsTitle"), hint: t("literature.attemptsHint") }),
-      project.related_work_attempts?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "source-attempt-list", children: project.related_work_attempts.map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className: "source-attempt-row", children: [
+      project.related_work_attempts?.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "source-attempt-list", children: project.related_work_attempts.map((attempt) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className: "source-attempt-row", "data-status": attempt.status, children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "source-attempt-heading", children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { className: "source-attempt-provider", children: attempt.provider }),
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Badge, { status: attempt.status }),
@@ -23043,7 +23077,7 @@
             attempt.started_at ? ` \xB7 ${t("literature.attemptStartedAt")}: ${new Date(attempt.started_at).toLocaleString()}` : "",
             attempt.finished_at ? ` \xB7 ${t("literature.attemptFinishedAt")}: ${new Date(attempt.finished_at).toLocaleString()}` : ""
           ] }),
-          attempt.failure ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "source-attempt-failure", children: localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message) }) : null
+          attempt.failure ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "source-attempt-failure", children: attempt.failure.message || localizeFailure(attempt.failure.code || attempt.status, "") }) : null
         ] })
       ] }, attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(EmptyState, { text: t("literature.attemptsEmpty") })
     ] });
@@ -28526,7 +28560,7 @@
           method: "PATCH",
           body: JSON.stringify({ pinned: !target.pinned })
         });
-        setProjects((current) => current.map((project2) => project2.id === target.id ? { ...project2, ...updated } : project2));
+        setProjects((current) => current.map((project2) => project2.id === target.id ? { ...project2, pinned: updated.pinned, sidebar_order: updated.sidebar_order } : project2));
         showToast(t(target.pinned ? "app.projectUnpinned" : "app.projectPinned"));
       } catch (error) {
         setProjects(previousProjects);

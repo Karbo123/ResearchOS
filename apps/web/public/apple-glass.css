@@ -736,6 +736,12 @@ button { -webkit-font-smoothing: inherit; }
   border-color: rgba(0, 122, 255, .26);
   box-shadow: 0 5px 13px rgba(0, 122, 255, .13);
 }
+.home-pin-action.is-pinned:hover {
+  color: var(--red);
+  background: var(--red-soft);
+  border-color: rgba(255, 59, 48, .22);
+  box-shadow: 0 5px 13px rgba(255, 59, 48, .12);
+}
 .home-delete-action:hover { color: var(--red); border-color: var(--red-soft); background: var(--red-soft); }
 .home-open-action { color: var(--blue); }
 .home-open-action:hover { background: var(--blue-soft); border-color: rgba(0, 122, 255, .28); box-shadow: 0 5px 13px rgba(0, 122, 255, .13); }
@@ -2402,12 +2408,14 @@ a.secondary { text-decoration: none; color: var(--ink); }
   width: 2px;
   border-radius: 999px;
   background: rgba(0, 122, 255, .46);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, .07);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, .07), 0 2px 8px rgba(0, 122, 255, .18);
   transform: translateX(-50%);
-  transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring);
+  transition: background .24s var(--ease), box-shadow .24s var(--ease), transform .24s var(--spring), opacity .24s var(--ease);
 }
 .project-drawer-toggle:hover {
   color: var(--blue-dark);
+  background: rgba(0, 122, 255, .06);
+  box-shadow: 0 0 0 1px rgba(0, 122, 255, .10);
 }
 .project-drawer-toggle:hover::before,
 .project-drawer-toggle:focus-visible::before {

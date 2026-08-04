@@ -19,16 +19,18 @@ const fixtureIds = {
   proposal1: '60000000-0000-4000-8000-000000000001',
   proposal2: '60000000-0000-4000-8000-000000000002',
   proposal3: '60000000-0000-4000-8000-000000000003',
+  proposal4: '60000000-0000-4000-8000-000000000004',
   run1: '70000000-0000-4000-8000-000000000001',
   run2: '70000000-0000-4000-8000-000000000002',
   run3: '70000000-0000-4000-8000-000000000003',
+  run4: '70000000-0000-4000-8000-000000000004',
   repository: 'b0000000-0000-4000-8000-000000000001',
 }
 
 const candidateIds = Object.values(fixtureIds).filter(id => id.startsWith('2'))
 const seedIds = [fixtureIds.seed1, fixtureIds.seed2, fixtureIds.seed3]
-const runIds = [fixtureIds.run1, fixtureIds.run2, fixtureIds.run3]
-const proposalIds = [fixtureIds.proposal1, fixtureIds.proposal2, fixtureIds.proposal3]
+const runIds = [fixtureIds.run1, fixtureIds.run2, fixtureIds.run3, fixtureIds.run4]
+const proposalIds = [fixtureIds.proposal1, fixtureIds.proposal2, fixtureIds.proposal3, fixtureIds.proposal4]
 
 async function cleanup(projectId: string) {
   await database.query('DELETE FROM related_work_candidate_reviews WHERE project_id=$1 AND candidate_id=ANY($2::uuid[])', [projectId, candidateIds])
@@ -230,6 +232,7 @@ async function main() {
           provider: candidate.provider,
           stable_id: candidate.stable_id,
           title: candidate.title,
+          query: candidate.title,
           authors: [{ name: 'Ada Fixture' }, { name: 'Ben Sample' }],
           year: candidate.year,
           doi: candidate.doi,
@@ -278,6 +281,7 @@ async function main() {
     { id: fixtureIds.proposal1, runId: fixtureIds.run1 },
     { id: fixtureIds.proposal2, runId: fixtureIds.run2 },
     { id: fixtureIds.proposal3, runId: fixtureIds.run3 },
+    { id: fixtureIds.proposal4, runId: fixtureIds.run4 },
   ]) {
     await database.query(
       `INSERT INTO proposals(id,project_id,kind,status,reason,summary,payload)
@@ -322,6 +326,18 @@ async function main() {
       error: null,
       startedAt,
       finishedAt,
+    },
+    {
+      id: fixtureIds.run4,
+      proposalId: fixtureIds.proposal4,
+      status: 'queued',
+      cancelRequested: true,
+      discovered: 0,
+      edges: 0,
+      failures: 0,
+      error: null,
+      startedAt: null,
+      finishedAt: null,
     },
   ]
   for (const run of runs) {

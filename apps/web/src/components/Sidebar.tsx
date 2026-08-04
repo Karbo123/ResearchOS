@@ -73,8 +73,20 @@ export function Sidebar({
   const dragPreviewRef = useRef<ProjectSummary[] | null>(null)
   const suppressProjectClickRef = useRef(false)
   const projectListRef = useRef<HTMLElement | null>(null)
-  const rowPositionsRef = useRef<Map<string, number> | null>(null)
+  const dragStartPositionsRef = useRef<Map<string, number> | null>(null)
+  const rowAnimationsRef = useRef<Animation[]>([])
   const visibleProjects = dragPreviewProjects || projects
+
+  const captureRowPositions = () => {
+    const container = projectListRef.current
+    if (!container) return
+    const positions = new Map<string, number>()
+    for (const row of Array.from(container.querySelectorAll<HTMLElement>('[data-project-id]'))) {
+      const id = row.dataset.projectId
+      if (id) positions.set(id, row.getBoundingClientRect().top)
+    }
+    dragStartPositionsRef.current = positions
+  }
 
   useLayoutEffect(() => {
     const container = projectListRef.current
@@ -85,37 +97,42 @@ export function Sidebar({
       const id = row.dataset.projectId
       if (id) nextPositions.set(id, row.getBoundingClientRect().top)
     }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      rowPositionsRef.current = nextPositions
-      return
-    }
-    const previousPositions = rowPositionsRef.current
-    if (previousPositions && previousPositions.size) {
-      const frame = window.requestAnimationFrame(() => {
-        for (const row of rows) {
+    const previousPositions = dragStartPositionsRef.current
+    const movedRows = previousPositions && previousPositions.size
+      ? rows.filter(row => {
           const id = row.dataset.projectId
-          if (!id) continue
+          if (!id) return false
           const from = previousPositions.get(id)
-          const to = row.getBoundingClientRect().top
-          if (from === undefined || Math.abs(from - to) < 0.5) continue
-          row.style.transition = 'none'
-          row.style.transform = `translateY(${from - to}px)`
-          row.style.willChange = 'transform'
-          window.requestAnimationFrame(() => {
-            row.style.transition = 'transform .5s var(--spring)'
-            row.style.transform = ''
-            row.style.willChange = ''
-            window.setTimeout(() => {
-              row.style.transition = ''
-            }, 560)
-          })
-        }
-      })
-      rowPositionsRef.current = nextPositions
-      return () => window.cancelAnimationFrame(frame)
+          const to = nextPositions.get(id) ?? row.getBoundingClientRect().top
+          return from !== undefined && Math.abs(from - to) >= 0.5
+        })
+      : []
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !movedRows.length) return
+    for (const animation of rowAnimationsRef.current) animation.cancel()
+    rowAnimationsRef.current = []
+    for (const row of movedRows) {
+      const id = row.dataset.projectId
+      if (!id) continue
+      const from = previousPositions.get(id)
+      const to = nextPositions.get(id) ?? row.getBoundingClientRect().top
+      if (from === undefined || Math.abs(from - to) < 0.5) continue
+      const delta = from - to
+      const animation = row.animate(
+        [{ transform: `translateY(${delta}px)` }, { transform: 'translateY(0px)' }],
+        { duration: 500, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'none' },
+      )
+      animation.addEventListener('finish', () => {
+        const index = rowAnimationsRef.current.indexOf(animation)
+        if (index >= 0) rowAnimationsRef.current.splice(index, 1)
+      }, { once: true })
+      rowAnimationsRef.current.push(animation)
     }
-    rowPositionsRef.current = nextPositions
+    dragStartPositionsRef.current = null
   }, [visibleProjects])
+
+  useEffect(() => () => {
+    for (const animation of rowAnimationsRef.current) animation.cancel()
+  }, [])
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -234,6 +251,7 @@ export function Sidebar({
       return
     }
     state.changed = true
+    captureRowPositions()
     dragPreviewRef.current = next
     setDragPreviewProjects(next)
     setDragOverProjectId(targetId)
@@ -267,6 +285,7 @@ export function Sidebar({
       if (dragStateRef.current !== state) return
       state.dragging = true
       state.button.setPointerCapture?.(state.pointerId)
+      captureRowPositions()
       const preview = projects.slice()
       dragPreviewRef.current = preview
       setDragPreviewProjects(preview)
@@ -344,6 +363,7 @@ export function Sidebar({
                       onPointerDown={event => event.stopPropagation()}
                       onClick={event => {
                         event.stopPropagation()
+                        captureRowPositions()
                         onPinProject(project)
                       }}
                     >

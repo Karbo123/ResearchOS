@@ -209,7 +209,9 @@ export function App() {
         method: 'PATCH',
         body: JSON.stringify({ pinned: !target.pinned }),
       })
-      setProjects(current => current.map(project => project.id === target.id ? { ...project, ...updated } : project))
+      // The optimistic update already placed the project in the right group;
+      // merge only the authoritative fields so the list does not re-render/jump.
+      setProjects(current => current.map(project => project.id === target.id ? { ...project, pinned: updated.pinned, sidebar_order: updated.sidebar_order } : project))
       showToast(t(target.pinned ? 'app.projectUnpinned' : 'app.projectPinned'))
     } catch (error) {
       setProjects(previousProjects)

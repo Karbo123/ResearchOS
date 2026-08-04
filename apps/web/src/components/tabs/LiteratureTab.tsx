@@ -483,11 +483,11 @@ export function LiteratureTab({
       <SectionHeading title={t('literature.runsTitle')} hint={t('literature.runsHint')} />
       <div className="data-list">
         {project.related_work_runs.map(run => (
-          <div className="data-row" key={run.id}>
+          <div className="data-row" key={run.id} data-status={run.status}>
             <div>
               <h3>{statusLabel(run.status, t)} · {t('literature.runCandidates', { count: run.discovered_count || 0, edges: run.edge_count || 0 })}</h3>
               <p>depth {run.depth} · width {run.width} · max_total {run.max_total} · providers {run.providers.join(', ')}</p>
-              {run.error ? <p className="error-text">{localizeFailure(run.status, run.error)}</p> : null}
+              {run.error ? <p className="error-text">{run.error}</p> : null}
               {runEventsForRun(run.id).length ? (
                 <div className="run-event-list" aria-label={t('literature.runEventsTitle')}>
                   <h4>{t('literature.runEventsTitle')}</h4>
@@ -524,7 +524,7 @@ export function LiteratureTab({
       {project.related_work_attempts?.length ? (
         <div className="source-attempt-list">
           {project.related_work_attempts.map(attempt => (
-            <article className="source-attempt-row" key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`}>
+            <article className="source-attempt-row" key={attempt.id || `${attempt.provider}-${attempt.query}-${attempt.finished_at}`} data-status={attempt.status}>
               <div className="source-attempt-heading">
                 <strong className="source-attempt-provider">{attempt.provider}</strong>
                 <Badge status={attempt.status} />
@@ -539,7 +539,7 @@ export function LiteratureTab({
                   {attempt.started_at ? ` · ${t('literature.attemptStartedAt')}: ${new Date(attempt.started_at).toLocaleString()}` : ''}
                   {attempt.finished_at ? ` · ${t('literature.attemptFinishedAt')}: ${new Date(attempt.finished_at).toLocaleString()}` : ''}
                 </p>
-                {attempt.failure ? <p className="source-attempt-failure">{localizeFailure(attempt.failure.code || attempt.status, attempt.failure.message)}</p> : null}
+                {attempt.failure ? <p className="source-attempt-failure">{attempt.failure.message || localizeFailure(attempt.failure.code || attempt.status, '')}</p> : null}
               </div>
             </article>
           ))}
