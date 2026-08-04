@@ -2805,6 +2805,35 @@ a.secondary { text-decoration: none; color: var(--ink); }
   }
 }
 
+/* Home uses the same mobile drawer pattern, but stays fixed on desktop. */
+@media (min-width: 761px) {
+  .home-drawer-region { display: none; }
+}
+
+@media (max-width: 760px) {
+  .project-drawer-shell .home-sidebar-section,
+  .project-drawer-shell .home-sidebar-system-row {
+    display: flex;
+  }
+  .project-drawer-shell .home-sidebar-section {
+    flex: 1 1 auto;
+    margin-top: 18px;
+  }
+  .project-drawer-shell .home-sidebar-quick-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+  .project-drawer-shell .home-sidebar .brand {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 0 8px;
+  }
+  .project-drawer-shell .home-sidebar-system-row {
+    margin-top: auto;
+    padding: 2px 3px 8px;
+  }
+}
+
 @keyframes drawer-scrim-in {
   from { opacity: 0; }
   to { opacity: 1; }

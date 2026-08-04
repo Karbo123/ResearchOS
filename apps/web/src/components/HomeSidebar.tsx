@@ -19,7 +19,7 @@ function clampSidebarWidth(width: number) {
   return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
 }
 
-type RecentProjectEntry = { id: string; lastSeenAt: number }
+export type RecentProjectEntry = { id: string; lastSeenAt: number }
 
 function formatLastSeenAt(
   timestamp: number,
@@ -74,6 +74,19 @@ function fitRecentProjectCount(viewportHeight: number) {
   return Math.max(1, Math.min(MAX_RECENT_PROJECTS, Math.floor((available + RECENT_ROW_GAP) / (RECENT_ROW_HEIGHT + RECENT_ROW_GAP))))
 }
 
+export type HomeSidebarProps = {
+  projects: ProjectSummary[]
+  health: 'connecting' | 'online' | 'offline'
+  refreshing?: boolean
+  recentProjects: RecentProjectEntry[]
+  onGoHome: () => void
+  onOpenProject: (id: string) => void
+  onOpenSettings: () => void
+  onRefresh: () => void
+  sidebarWidth: number
+  onSidebarWidthChange: (width: number) => void
+}
+
 export function HomeSidebar({
   projects,
   health,
@@ -85,18 +98,7 @@ export function HomeSidebar({
   onRefresh,
   sidebarWidth,
   onSidebarWidthChange,
-}: {
-  projects: ProjectSummary[]
-  health: 'connecting' | 'online' | 'offline'
-  refreshing?: boolean
-  recentProjects: RecentProjectEntry[]
-  onGoHome: () => void
-  onOpenProject: (id: string) => void
-  onOpenSettings: () => void
-  onRefresh: () => void
-  sidebarWidth: number
-  onSidebarWidthChange: (width: number) => void
-}) {
+}: HomeSidebarProps) {
   const { t, locale } = useTranslation()
   const [resizing, setResizing] = useState(false)
   const [now, setNow] = useState(() => Date.now())

@@ -10,6 +10,7 @@ import type {
 } from './types'
 import { Sidebar } from './components/Sidebar'
 import { HomeSidebar } from './components/HomeSidebar'
+import { HomeDrawer } from './components/HomeDrawer'
 import { Topbar } from './components/Topbar'
 import { HomeDashboard } from './components/HomeDashboard'
 import { ProjectView } from './components/ProjectView'
@@ -80,6 +81,7 @@ export function App() {
   const [deleteProjectTarget, setDeleteProjectTarget] = useState<ProjectSummary | null>(null)
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [projectDrawerOpen, setProjectDrawerOpen] = useState(false)
+  const [homeDrawerOpen, setHomeDrawerOpen] = useState(false)
   const [projectRefreshing, setProjectRefreshing] = useState(false)
   const [recentProjects, setRecentProjects] = useState<Array<{ id: string; lastSeenAt: number }>>(() => readRecentProjects())
   const [sidebarWidth, setSidebarWidth] = useState(() => {
@@ -155,6 +157,7 @@ export function App() {
     setProjectMessages([])
     setMobileChatOpen(false)
     setProjectDrawerOpen(false)
+    setHomeDrawerOpen(false)
     setNotFoundPath(null)
     if (replace) window.history.replaceState(null, '', '/')
     else window.history.pushState(null, '', '/')
@@ -177,6 +180,7 @@ export function App() {
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
       setProjectDrawerOpen(false)
+      setHomeDrawerOpen(false)
       if (!options?.preserveTab) {
         setActiveArea('overview')
         setActiveTab('overview')
@@ -361,6 +365,7 @@ export function App() {
         if (isHome) {
           recordLeaveCurrentProject()
           activeProjectIdRef.current = null
+          setHomeDrawerOpen(false)
           setNotFoundPath(null)
           setView('home')
           return
@@ -413,6 +418,15 @@ export function App() {
     }
   }, [projectDrawerOpen, view])
 
+  useEffect(() => {
+    const desktopMedia = window.matchMedia('(min-width: 761px)')
+    const closeOnDesktop = () => {
+      if (desktopMedia.matches) setHomeDrawerOpen(false)
+    }
+    desktopMedia.addEventListener('change', closeOnDesktop)
+    return () => desktopMedia.removeEventListener('change', closeOnDesktop)
+  }, [])
+
   if (notFoundPath) {
     return <NotFoundView key={notFoundPath} path={notFoundPath} onGoHome={() => goHome(true)} />
   }
@@ -443,18 +457,38 @@ export function App() {
           onSidebarWidthChange={updateSidebarWidth}
         />
       ) : (
-        <HomeSidebar
-          projects={projects}
-          health={health}
-          refreshing={projectRefreshing}
-          recentProjects={recentProjects}
-          onGoHome={() => goHome()}
-          onOpenProject={id => void openProject(id)}
-          onOpenSettings={() => setSettingsOpen(true)}
-          onRefresh={() => void refreshProject()}
-          sidebarWidth={sidebarWidth}
-          onSidebarWidthChange={updateSidebarWidth}
-        />
+        <>
+          <HomeSidebar
+            projects={projects}
+            health={health}
+            refreshing={projectRefreshing}
+            recentProjects={recentProjects}
+            onGoHome={() => goHome()}
+            onOpenProject={id => void openProject(id)}
+            onOpenSettings={() => setSettingsOpen(true)}
+            onRefresh={() => void refreshProject()}
+            sidebarWidth={sidebarWidth}
+            onSidebarWidthChange={updateSidebarWidth}
+          />
+          <HomeDrawer
+            open={homeDrawerOpen}
+            drawerWidth={sidebarWidth}
+            onOpenChange={setHomeDrawerOpen}
+            projects={projects}
+            health={health}
+            refreshing={projectRefreshing}
+            recentProjects={recentProjects}
+            onGoHome={() => goHome()}
+            onOpenProject={id => void openProject(id)}
+            onOpenSettings={() => {
+              setHomeDrawerOpen(false)
+              setSettingsOpen(true)
+            }}
+            onRefresh={() => void refreshProject()}
+            sidebarWidth={sidebarWidth}
+            onSidebarWidthChange={updateSidebarWidth}
+          />
+        </>
       )}
       <main className="workspace">
         {view === 'project' ? (
