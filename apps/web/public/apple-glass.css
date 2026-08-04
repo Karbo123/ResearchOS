@@ -2274,6 +2274,9 @@ a.secondary { text-decoration: none; color: var(--ink); }
   .workspace {
     height: calc(100dvh - 58px);
   }
+  .app-shell.project-mode .workspace {
+    height: 100dvh;
+  }
   .project-layout {
     display: flex;
     flex-direction: column;
@@ -3997,8 +4000,17 @@ code {
     min-width: 0;
     flex: 1 1 0;
   }
-  .settings-model-sections > button {
+  .settings-tabs.sliding-nav.settings-model-sections > button {
     flex: 0 0 auto;
+  }
+  .tier-status {
+    flex-wrap: wrap;
+    line-height: 1.45;
+  }
+  .modal-actions {
+    gap: 10px;
+    padding-top: 14px;
+    padding-bottom: 18px;
   }
 }
 

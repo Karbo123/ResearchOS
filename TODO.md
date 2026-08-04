@@ -338,6 +338,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 修订记录（2026-08-05）：用户反馈移动端首页弹出的侧栏不应是半透明毛玻璃。已把抽屉内侧栏改为不透明 `--surface-solid` 背景并关闭 `backdrop-filter`，浅色/暗色主题都保持实体面板，遮罩模糊只作用于抽屉右侧内容。静态资源版本升至 `20260805-ui153`。
 
+- [x] `P0-UI-124` 移动端项目详情页布局修正：底部“项目对话”按钮不再因工作区少算 58px 而悬空，改为贴近屏幕底部并保留安全区；模型设置二级页签在窄屏下不再被压缩截断，可横向滑动完整显示，弹窗底部操作区与状态行增加呼吸间距。 [Apple 设计验收]
+
+> 验收记录（2026-08-05）：`mimo-v2.5` 复核修复前 390×844 截图后给出意见：`project chat` 按钮下边距过大、位置悬空；模型二级页签标题被截断；底部按钮区上下空间略拥挤。已按意见修改：`.app-shell.project-mode .workspace` 移动端使用 `100dvh`，CDP 实测 `.workspace bottom=844`、`.mobile-chat-toggle bottom=833`（约 11px 安全边距）；二级页签改为内容自适应后文字完整（`scrollWidth 539 > clientWidth 340`，可横向滑动、无页面横向溢出）；浅色/暗色表单均正常加载（`formError=null`、12 个字段），六个项目级模型设置接口全部返回 200，配置面板可正常进入与保存，若点击“测试连接”失败属于外部模型网关连通性而非面板不可用。Web 类型检查、构建、`ui:check` 通过；静态资源版本升至 `20260805-ui154`。
+
 - [x] `P0-RELATED-115` 按 `/mnt/d/auto-related-work` 的算法尽可能完整补齐 TypeScript 相关工作引擎：完整 BibTeX 解析（作者列表、venue、年份、DOI、摘要）并写入用户输入 provenance；Unpaywall 按 DOI 补全开放获取 PDF；补全引擎改为多轮迭代，按 Python 版完整性阈值（85%）提前停止，并把 Crossref/OpenAlex/DBLP/arXiv 的作者机构按姓名增量合并；arXiv API 按 ID 拉取完整作者与摘要，arXiv HTML5 作者机构、邮箱与通讯作者解析作为显式可审计的 arXiv 补全策略；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍按 AGENTS 绝对禁止，不迁移。完成前不把测试 fixture 或旧缓存冒充真实来源。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：与 `/mnt/d/auto-related-work` 的 `references.py`、`recursive_search.py`、`enrich_fields.py`、`scholar_search.py` 逐项对照后补齐：嵌套花括号 BibTeX 解析、Python 版完整度评分与 85% 提前停止、多轮字段补全、Unpaywall OA PDF、按姓名增量合并机构、arXiv API 完整作者/摘要、arXiv HTML5 机构/邮箱/通讯作者，并修复同一 provider 多次补全时内存目标未同步导致完整作者列表被覆盖的问题；Google Scholar 爬虫、Cookie、住宅代理和 CAPTCHA 隧道仍不迁移。新增 Unpaywall/arXiv HTML/arXiv ID/作者替换与多轮 API 测试；真实外部抽查 `10.1371/journal.pcbi.1004668` 拿到 OA PDF、`1706.03762v1` 解析 8 位作者与 Google Brain 机构。`.env.example` 补充 `UNPAYWALL_EMAIL`/`RESEARCH_CONTACT_EMAIL`，README/README.zh-CN 与 `DOCS_SYNC_VERSION=2026-08-04-03` 同步。`npm run typecheck`、完整服务端 171 项测试、`npm run build`、`docs:check`、`ui:check`、`language-boundary:check`、`navigation:check` 与 `related-work:restart:check` 全部通过。
