@@ -614,6 +614,18 @@ button { -webkit-font-smoothing: inherit; }
 .home-sidebar-health.is-offline .home-sidebar-health-dot { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
 .home-sidebar-refresh { width: 34px; height: 34px; flex: 0 0 auto; }
 @media (max-width: 760px) {
+  .home-sidebar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .home-sidebar .brand {
+    margin: 0;
+  }
+  .home-sidebar .side-settings {
+    margin: 0;
+  }
+  .home-sidebar-section { display: none; }
   .home-sidebar-system-row { display: none; }
 }
 .home-hero {
