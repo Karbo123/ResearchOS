@@ -2518,6 +2518,9 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .project-drawer-region.open .project-drawer-toggle {
   left: calc(min(var(--sidebar-width, 276px), calc(100vw - 24px)) - 10px);
 }
+.project-drawer-region.open .project-drawer-toggle::before {
+  left: 13px;
+}
 .project-drawer-scrim {
   position: absolute;
   inset: 0;
