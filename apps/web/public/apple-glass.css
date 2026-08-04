@@ -668,7 +668,7 @@ button { -webkit-font-smoothing: inherit; }
   line-height: 1.55;
 }
 .home-hero-actions { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; }
-.home-create-toggle, .home-refresh { min-height: 38px; border-radius: 12px; font-size: 12px; }
+.home-create-toggle, .home-refresh { height: 38px; min-height: 38px; border-radius: 12px; font-size: 12px; }
 .home-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -734,10 +734,13 @@ button { -webkit-font-smoothing: inherit; }
   gap: 13px;
 }
 .create-project-fields label { display: grid; gap: 6px; min-width: 0; color: var(--muted); font-size: 11px; font-weight: 680; }
+.create-project-fields label { grid-template-rows: 16px 40px 15px; }
+.create-project-fields label > span { display: flex; align-items: center; min-height: 16px; line-height: 1.2; }
 .create-project-fields small { color: var(--muted); font-size: 10px; font-weight: 500; line-height: 1.45; }
 .home-input {
   width: 100%;
   min-width: 0;
+  height: 40px;
   min-height: 40px;
   padding: 9px 11px;
   border: 1px solid var(--line);
