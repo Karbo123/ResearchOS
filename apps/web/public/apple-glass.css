@@ -9,6 +9,7 @@
   --surface-elevated: rgba(255, 255, 255, .94);
   --ink: #1d1d1f;
   --muted: #6e6e73;
+  --muted-strong: #4f5056;
   --line: rgba(60, 60, 67, .14);
   --line-strong: rgba(60, 60, 67, .24);
   --blue: #007aff;
@@ -661,18 +662,18 @@ button { -webkit-font-smoothing: inherit; }
   line-height: 1.08;
 }
 .home-description {
-  max-width: 640px;
+  max-width: 680px;
   margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.55;
+  color: var(--muted-strong);
+  font-size: 14px;
+  line-height: 1.6;
 }
 .home-hero-actions { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; }
 .home-create-toggle, .home-refresh { height: 38px; min-height: 38px; border-radius: 12px; font-size: 12px; }
 .home-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 16px;
   animation: surface-in .5s var(--spring) .04s both;
 }
@@ -699,10 +700,10 @@ button { -webkit-font-smoothing: inherit; }
   height: 34px;
   border-radius: 11px;
 }
-.home-summary-icon-blue { color: var(--blue); background: var(--blue-soft); }
-.home-summary-icon-green { color: var(--green); background: var(--green-soft); }
-.home-summary-icon-amber { color: var(--amber); background: var(--amber-soft); }
-.home-summary-icon-indigo { color: var(--indigo); background: var(--indigo-soft); }
+.home-summary-icon-blue { color: var(--blue); background: var(--blue-soft); box-shadow: inset 0 0 0 1px rgba(0, 122, 255, .16); }
+.home-summary-icon-green { color: var(--green); background: var(--green-soft); box-shadow: inset 0 0 0 1px rgba(52, 199, 89, .18); }
+.home-summary-icon-amber { color: var(--amber); background: var(--amber-soft); box-shadow: inset 0 0 0 1px rgba(255, 149, 0, .18); }
+.home-summary-icon-indigo { color: var(--indigo); background: var(--indigo-soft); box-shadow: inset 0 0 0 1px rgba(88, 86, 214, .18); }
 .home-summary-item strong {
   font-size: 26px;
   font-weight: 740;
@@ -987,17 +988,17 @@ button { -webkit-font-smoothing: inherit; }
 @media (max-width: 760px) {
   .home-dashboard { padding: 16px 12px 28px; }
   .home-hero { align-items: flex-start; flex-direction: column; gap: 14px; }
-  .home-hero h2 { font-size: 25px; }
+  .home-hero h1.home-eyebrow, .home-hero h2 { font-size: 26px; }
   .home-hero-actions { width: 100%; }
   .home-create-toggle { flex: 1 1 auto; }
-  .home-summary { gap: 9px; }
+  .home-summary { gap: 10px; }
   .home-summary-item { padding: 14px; border-radius: 16px; }
   .home-summary-item strong { font-size: 22px; }
   .create-project-panel { padding: 17px; border-radius: 19px; }
   .create-project-fields { grid-template-columns: 1fr; }
   .create-project-actions { flex-direction: column-reverse; }
   .create-project-actions .primary, .create-project-actions .secondary { width: 100%; }
-  .home-project-row { grid-template-columns: 20px minmax(0, 1fr) auto; padding: 12px 13px; }
+  .home-project-row { grid-template-columns: 20px minmax(0, 1fr) auto; padding: 14px 14px; row-gap: 10px; }
   .home-project-main { grid-template-columns: minmax(0, 1fr) auto; }
   .home-project-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-project-actions { gap: 4px; }
@@ -1011,7 +1012,7 @@ button { -webkit-font-smoothing: inherit; }
   .home-project-main { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "slug" "badge"; justify-items: start; }
   .home-status-badge { margin-top: 2px; }
   .home-project-stats { gap: 5px; }
-  .home-project-stat { padding: 6px; }
+  .home-project-stat { padding: 8px 9px; }
 }
 
 /* Research-status surfaces stay dense and scannable without introducing a second card system. */
@@ -1721,6 +1722,7 @@ a.secondary { text-decoration: none; color: var(--ink); }
   --surface-elevated: rgba(58, 58, 60, .94);
   --ink: #f5f5f7;
   --muted: #a1a1a6;
+  --muted-strong: #c7c7cc;
   --line: rgba(255, 255, 255, .14);
   --line-strong: rgba(255, 255, 255, .26);
   --blue: #0a84ff;
@@ -3747,6 +3749,7 @@ code {
 
 .home-summary {
   margin-bottom: 18px;
+  gap: clamp(10px, 1.2vw, 14px);
 }
 .home-project-row {
   padding-top: 14px;
@@ -3756,10 +3759,12 @@ code {
   gap: 4px 12px;
 }
 .home-project-title-line strong {
+  font-size: 14px;
   line-height: 1.45;
 }
 .home-project-slug {
   margin-top: 1px;
+  font-size: 11px;
   line-height: 1.45;
 }
 .home-project-stats {
@@ -3768,12 +3773,23 @@ code {
 .home-project-stat {
   padding: 9px 10px;
 }
+.home-project-stat small {
+  font-size: 10px;
+  line-height: 1.35;
+}
 .home-project-actions {
   gap: 7px;
 }
 .home-action {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
+}
+.home-action svg {
+  width: 17px;
+  height: 17px;
+}
+.home-project-updated {
+  font-size: 11px;
 }
 .home-project-title-line strong {
   display: block;
