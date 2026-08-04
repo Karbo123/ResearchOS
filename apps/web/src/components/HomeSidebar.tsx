@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import {
-  FolderKanban,
   History,
   Pin,
   RefreshCw,
@@ -181,9 +180,6 @@ export function HomeSidebar({
                 title={project.title}
                 onClick={() => onOpenProject(project.id)}
               >
-                <span className="home-sidebar-project-icon" aria-hidden="true">
-                  <FolderKanban size={16} strokeWidth={1.9} />
-                </span>
                 <span className="home-sidebar-project-main">
                   <span className="home-sidebar-project-title">{project.title}</span>
                   {openedAtById.has(project.id) ? (
