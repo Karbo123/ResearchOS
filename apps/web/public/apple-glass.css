@@ -423,8 +423,7 @@ button { -webkit-font-smoothing: inherit; }
   .side-label, .project-list, .sidebar .service-links { display: none; }
   .side-settings { width: 40px; height: 40px; min-height: 40px; margin: 0 0 0 8px; padding: 10px; justify-content: center; border-radius: 12px; }
   .side-settings span { display: none; }
-  .home-sidebar-brand { height: 40px; margin: 0 auto 0 0; padding: 0; gap: 9px; }
-  .home-sidebar-nav, .home-sidebar-section, .home-sidebar-system { display: none; }
+  .home-sidebar-section, .home-sidebar-system { display: none; }
   .topbar { height: 70px; padding: 12px 14px; }
   .topbar h1 { max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; }
   .health { min-height: 30px; padding: 6px 8px; }
@@ -477,69 +476,6 @@ button { -webkit-font-smoothing: inherit; }
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, .55), 8px 0 30px rgba(25, 25, 35, .07);
   backdrop-filter: blur(34px) saturate(180%);
   -webkit-backdrop-filter: blur(34px) saturate(180%);
-}
-.home-sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 44px;
-  margin: 0 2px 14px;
-  padding: 0 8px;
-  color: var(--sidebar-ink);
-  -webkit-user-select: none;
-  user-select: none;
-}
-.home-sidebar-brand-mark {
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 9px;
-  background: var(--ink);
-  color: var(--on-accent);
-  box-shadow: 0 3px 9px rgba(25, 25, 35, .14);
-}
-.home-sidebar-brand-name {
-  min-width: 0;
-  overflow: hidden;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -.015em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.home-sidebar-nav {
-  display: grid;
-  gap: 3px;
-  padding: 2px;
-}
-.home-sidebar-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 38px;
-  padding: 9px 11px;
-  border: 1px solid transparent;
-  border-radius: 11px;
-  color: var(--sidebar-muted);
-  background: transparent;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: left;
-  transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
-}
-.home-sidebar-nav-item:hover {
-  color: var(--sidebar-ink);
-  background: rgba(60, 60, 67, .07);
-  transform: translateX(1px);
-}
-.home-sidebar-nav-item.is-active {
-  color: var(--blue-dark);
-  background: var(--blue-soft);
-  border-color: rgba(0, 122, 255, .16);
-  box-shadow: inset 2px 0 0 var(--blue);
 }
 .home-sidebar-section {
   min-height: 0;
@@ -594,16 +530,6 @@ button { -webkit-font-smoothing: inherit; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.home-sidebar-status-dot {
-  flex: 0 0 auto;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: var(--green);
-  box-shadow: 0 0 0 3px var(--green-soft);
-}
-.home-sidebar-status-dot.is-paused { background: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
-.home-sidebar-status-dot.is-cancelled { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
 .home-sidebar-project-pin { flex: 0 0 auto; color: var(--blue); opacity: .9; }
 .home-sidebar-empty {
   margin: 0 4px;
@@ -618,31 +544,6 @@ button { -webkit-font-smoothing: inherit; }
   margin-top: 16px;
   padding: 2px;
 }
-.home-sidebar-health {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 34px;
-  margin: 0 3px 8px;
-  padding: 7px 10px;
-  border: 1px solid var(--sidebar-line);
-  border-radius: 11px;
-  color: var(--sidebar-muted);
-  background: var(--surface-2);
-  font-size: 11px;
-  font-weight: 600;
-  transition: border-color .2s var(--ease), background .2s var(--ease);
-}
-.home-sidebar-health:hover { border-color: var(--line-strong); background: var(--surface-elevated); }
-.home-sidebar-health-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--amber);
-  box-shadow: 0 0 0 3px var(--amber-soft);
-}
-.home-sidebar-health.is-ok .home-sidebar-health-dot { background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
-.home-sidebar-health.is-offline .home-sidebar-health-dot { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
 .home-sidebar-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -679,9 +580,6 @@ button { -webkit-font-smoothing: inherit; }
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-@media (max-width: 760px) {
-  .home-sidebar-nav { display: none; }
 }
 .home-hero {
   display: flex;

@@ -12837,9 +12837,6 @@
     "sidebar.memoryGraph": "\u9879\u76EE\u8BB0\u5FC6\u56FE",
     "sidebar.settings": "\u8BBE\u7F6E",
     "sidebar.resize": "\u8C03\u6574\u4FA7\u680F\u5BBD\u5EA6",
-    "homeSidebar.workspace": "\u5DE5\u4F5C\u533A",
-    "homeSidebar.projectConsole": "\u9879\u76EE\u63A7\u5236\u53F0",
-    "homeSidebar.memoryGraph": "\u8BB0\u5FC6\u56FE\u8C31",
     "homeSidebar.quickAccess": "\u5FEB\u901F\u8BBF\u95EE",
     "homeSidebar.noQuickProjects": "\u8FD8\u6CA1\u6709\u53EF\u5FEB\u901F\u8BBF\u95EE\u7684\u9879\u76EE",
     "homeSidebar.system": "\u7CFB\u7EDF",
@@ -14360,9 +14357,6 @@
     "sidebar.memoryGraph": "\u5C08\u6848\u8A18\u61B6\u5716",
     "sidebar.settings": "\u8A2D\u5B9A",
     "sidebar.resize": "\u8ABF\u6574\u5074\u6B04\u5BEC\u5EA6",
-    "homeSidebar.workspace": "\u5DE5\u4F5C\u5340",
-    "homeSidebar.projectConsole": "\u5C08\u6848\u63A7\u5236\u53F0",
-    "homeSidebar.memoryGraph": "\u8A18\u61B6\u5716\u8B5C",
     "homeSidebar.quickAccess": "\u5FEB\u901F\u5B58\u53D6",
     "homeSidebar.noQuickProjects": "\u5C1A\u7121\u53EF\u5FEB\u901F\u5B58\u53D6\u7684\u5C08\u6848",
     "homeSidebar.system": "\u7CFB\u7D71",
@@ -15883,9 +15877,6 @@
     "sidebar.memoryGraph": "Project Memory Graph",
     "sidebar.settings": "Settings",
     "sidebar.resize": "Resize sidebar",
-    "homeSidebar.workspace": "Workspace",
-    "homeSidebar.projectConsole": "Project Console",
-    "homeSidebar.memoryGraph": "Memory Graph",
     "homeSidebar.quickAccess": "Quick Access",
     "homeSidebar.noQuickProjects": "No quick access projects yet",
     "homeSidebar.system": "System",
@@ -17406,9 +17397,6 @@
     "sidebar.memoryGraph": "Grafo de memoria del proyecto",
     "sidebar.settings": "Configuraci\xF3n",
     "sidebar.resize": "Cambiar el ancho de la barra lateral",
-    "homeSidebar.workspace": "Espacio de trabajo",
-    "homeSidebar.projectConsole": "Consola de proyectos",
-    "homeSidebar.memoryGraph": "Gr\xE1fico de memoria",
     "homeSidebar.quickAccess": "Acceso r\xE1pido",
     "homeSidebar.noQuickProjects": "A\xFAn no hay proyectos de acceso r\xE1pido",
     "homeSidebar.system": "Sistema",
@@ -19984,22 +19972,17 @@
     return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)));
   }
   function getQuickAccessProjects(projects, recentIds) {
-    const byId = new Map(projects.map((project) => [project.id, project]));
     const recentRank = new Map(recentIds.map((id, index) => [id, index]));
     const pinned = projects.filter((project) => project.pinned);
     const recent = projects.filter((project) => !project.pinned && recentRank.has(project.id)).sort((a, b) => (recentRank.get(a.id) ?? 0) - (recentRank.get(b.id) ?? 0));
     const fillers = projects.filter((project) => !project.pinned && !recentRank.has(project.id)).sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")));
     return [...pinned, ...recent, ...fillers].slice(0, QUICK_ACCESS_LIMIT);
   }
-  function StatusDot({ status }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: `home-sidebar-status-dot${status === "paused" ? " is-paused" : status === "cancelled" ? " is-cancelled" : ""}`, "aria-hidden": "true" });
-  }
   function HomeSidebar({
     projects,
-    health,
     recentProjectIds,
+    onGoHome,
     onOpenProject,
-    onOpenMemory,
     onOpenSettings,
     sidebarWidth,
     onSidebarWidthChange
@@ -20054,7 +20037,6 @@
         onSidebarWidthChange(SIDEBAR_MAX_WIDTH);
       }
     };
-    const healthLabel = health === "online" ? t("topbar.connected") : health === "offline" ? t("topbar.offline") : t("topbar.connecting");
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", { className: "sidebar home-sidebar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         "div",
@@ -20071,19 +20053,9 @@
           onKeyDown: resizeByKeyboard
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "home-sidebar-brand", role: "presentation", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-brand-mark", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Activity, { size: 15, strokeWidth: 2.4 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-brand-name", children: "Research OS" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", { className: "home-sidebar-nav", "aria-label": t("homeSidebar.workspace"), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { type: "button", className: "home-sidebar-nav-item is-active", "aria-current": "page", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LayoutDashboard, { size: 16, strokeWidth: 2.1 }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: t("homeSidebar.projectConsole") })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { type: "button", className: "home-sidebar-nav-item", onClick: onOpenMemory, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Share2, { size: 16, strokeWidth: 2.1 }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: t("homeSidebar.memoryGraph") })
-        ] })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "brand home-sidebar-brand", type: "button", onClick: onGoHome, "aria-label": t("sidebar.goHome"), title: t("sidebar.goHome"), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { className: "brand-mark", src: "/favicon.svg", alt: "", "aria-hidden": "true" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Research OS" })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "home-sidebar-section", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "home-sidebar-section-label", children: t("homeSidebar.quickAccess") }),
@@ -20095,7 +20067,6 @@
             title: project.title,
             onClick: () => onOpenProject(project.id),
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusDot, { status: project.status }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-project-title", children: project.title }),
               project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { size: 11, className: "home-sidebar-project-pin", "aria-hidden": "true" }) : null
             ]
@@ -20105,10 +20076,6 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "home-sidebar-system", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "home-sidebar-section-label", children: t("homeSidebar.system") }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `home-sidebar-health${health === "online" ? " is-ok" : health === "offline" ? " is-offline" : ""}`, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-health-dot", "aria-hidden": "true" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: healthLabel })
-        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "home-sidebar-stats", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "home-sidebar-stat", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FolderKanban, { size: 14, "aria-hidden": "true" }),
@@ -20230,7 +20197,7 @@
     const { t } = useTranslation();
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `badge ${badgeKind(status)}`, children: children ?? statusLabel(status, t) });
   }
-  function StatusDot2({ ready }) {
+  function StatusDot({ ready }) {
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-dot ${ready ? "ready" : ""}` });
   }
   function ModelTestButton({
@@ -27595,7 +27562,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { children: t("settings.proxyTitle") }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(StatusDot2, { ready: proxyReady }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(StatusDot, { ready: proxyReady }),
               loading ? t("common.waiting") : proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
             ] })
           ] }),
@@ -27756,7 +27723,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h3", { children: t(tier.labelKey) }),
               /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "model-tier-description", children: t(tier.descriptionKey) }),
               /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "tier-status", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(StatusDot2, { ready: Boolean(item.key_configured && item.url) }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(StatusDot, { ready: Boolean(item.key_configured && item.url) }),
                 item.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
                 " \xB7 ",
                 item.url ? t("settings.urlReady") : t("settings.urlPending")
@@ -27924,7 +27891,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: t("documentModel.title") }),
             /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(StatusDot2, { ready }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(StatusDot, { ready }),
               values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
               " \xB7 ",
               values.url ? t("settings.urlReady") : t("settings.urlPending")
@@ -28076,7 +28043,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h3", { children: t("visionModel.title") }),
             /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot2, { ready }),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(StatusDot, { ready }),
               values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
               " \xB7 ",
               values.url ? t("settings.urlReady") : t("settings.urlPending")
@@ -28231,7 +28198,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h3", { children: t("imageModel.title") }),
             /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(StatusDot2, { ready }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(StatusDot, { ready }),
               values.key_configured ? t("settings.keyConfigured") : t("settings.keyPending"),
               " \xB7 ",
               values.url ? t("settings.urlReady") : t("settings.urlPending")
@@ -28434,7 +28401,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h3", { children: t("embedding.providerTitle") }),
               /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "tier-status", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(StatusDot2, { ready }),
+                /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(StatusDot, { ready }),
                 values.mode === "global" ? t("embedding.globalDefault") : values.provider === "local" ? t("embedding.localOnnx") : t("embedding.remoteApi")
               ] })
             ] }),
@@ -28644,7 +28611,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("h3", { children: t("voice.provider") }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "tier-status", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(StatusDot2, { ready }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(StatusDot, { ready }),
               apiMode ? values.key_configured ? t("voice.keyConfigured") : t("voice.keyPending") : t("voice.providerBrowser")
             ] })
           ] }),
@@ -29587,10 +29554,9 @@
         HomeSidebar,
         {
           projects,
-          health,
           recentProjectIds,
+          onGoHome: () => goHome(),
           onOpenProject: (id) => void openProject(id),
-          onOpenMemory: () => setMemoryOpen(true),
           onOpenSettings: () => setSettingsOpen(true),
           sidebarWidth,
           onSidebarWidthChange: updateSidebarWidth

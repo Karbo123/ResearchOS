@@ -1,12 +1,9 @@
 import { useState } from 'react'
 import {
-  Activity,
   FlaskConical,
   FolderKanban,
-  LayoutDashboard,
   Pin,
   Settings,
-  Share2,
   ShieldCheck,
 } from 'lucide-react'
 import type { ProjectSummary } from '../types'
@@ -21,7 +18,6 @@ function clampSidebarWidth(width: number) {
 }
 
 function getQuickAccessProjects(projects: ProjectSummary[], recentIds: string[]) {
-  const byId = new Map(projects.map(project => [project.id, project]))
   const recentRank = new Map(recentIds.map((id, index) => [id, index]))
   const pinned = projects.filter(project => project.pinned)
   const recent = projects
@@ -32,25 +28,19 @@ function getQuickAccessProjects(projects: ProjectSummary[], recentIds: string[])
   return [...pinned, ...recent, ...fillers].slice(0, QUICK_ACCESS_LIMIT)
 }
 
-function StatusDot({ status }: { status?: string }) {
-  return <span className={`home-sidebar-status-dot${status === 'paused' ? ' is-paused' : status === 'cancelled' ? ' is-cancelled' : ''}`} aria-hidden="true" />
-}
-
 export function HomeSidebar({
   projects,
-  health,
   recentProjectIds,
+  onGoHome,
   onOpenProject,
-  onOpenMemory,
   onOpenSettings,
   sidebarWidth,
   onSidebarWidthChange,
 }: {
   projects: ProjectSummary[]
-  health: 'connecting' | 'online' | 'offline'
   recentProjectIds: string[]
+  onGoHome: () => void
   onOpenProject: (id: string) => void
-  onOpenMemory: () => void
   onOpenSettings: () => void
   sidebarWidth: number
   onSidebarWidthChange: (width: number) => void
@@ -108,8 +98,6 @@ export function HomeSidebar({
     }
   }
 
-  const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
-
   return (
     <aside className="sidebar home-sidebar">
       <div
@@ -124,23 +112,10 @@ export function HomeSidebar({
         onPointerDown={startResize}
         onKeyDown={resizeByKeyboard}
       />
-      <div className="home-sidebar-brand" role="presentation">
-        <span className="home-sidebar-brand-mark" aria-hidden="true">
-          <Activity size={15} strokeWidth={2.4} />
-        </span>
-        <span className="home-sidebar-brand-name">Research OS</span>
-      </div>
-
-      <nav className="home-sidebar-nav" aria-label={t('homeSidebar.workspace')}>
-        <button type="button" className="home-sidebar-nav-item is-active" aria-current="page">
-          <LayoutDashboard size={16} strokeWidth={2.1} />
-          <span>{t('homeSidebar.projectConsole')}</span>
-        </button>
-        <button type="button" className="home-sidebar-nav-item" onClick={onOpenMemory}>
-          <Share2 size={16} strokeWidth={2.1} />
-          <span>{t('homeSidebar.memoryGraph')}</span>
-        </button>
-      </nav>
+      <button className="brand home-sidebar-brand" type="button" onClick={onGoHome} aria-label={t('sidebar.goHome')} title={t('sidebar.goHome')}>
+        <img className="brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
+        <span>Research OS</span>
+      </button>
 
       <div className="home-sidebar-section">
         <div className="home-sidebar-section-label">{t('homeSidebar.quickAccess')}</div>
@@ -154,7 +129,6 @@ export function HomeSidebar({
                 title={project.title}
                 onClick={() => onOpenProject(project.id)}
               >
-                <StatusDot status={project.status} />
                 <span className="home-sidebar-project-title">{project.title}</span>
                 {project.pinned ? <Pin size={11} className="home-sidebar-project-pin" aria-hidden="true" /> : null}
               </button>
@@ -167,10 +141,6 @@ export function HomeSidebar({
 
       <div className="home-sidebar-system">
         <div className="home-sidebar-section-label">{t('homeSidebar.system')}</div>
-        <div className={`home-sidebar-health${health === 'online' ? ' is-ok' : health === 'offline' ? ' is-offline' : ''}`}>
-          <span className="home-sidebar-health-dot" aria-hidden="true" />
-          <span>{healthLabel}</span>
-        </div>
         <div className="home-sidebar-stats">
           <div className="home-sidebar-stat">
             <FolderKanban size={14} aria-hidden="true" />
