@@ -19980,7 +19980,7 @@
   function clampSidebarWidth(width) {
     return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)));
   }
-  function formatOpenedAt(timestamp, locale, t, now) {
+  function formatLastSeenAt(timestamp, locale, t, now) {
     const elapsed = Math.max(0, now - timestamp);
     if (elapsed < 6e4) return t("homeSidebar.justNow");
     if (elapsed < 36e5) return t("homeSidebar.minutesAgo", { n: Math.floor(elapsed / 6e4) });
@@ -20034,7 +20034,7 @@
     const [resizing, setResizing] = (0, import_react5.useState)(false);
     const [now, setNow] = (0, import_react5.useState)(() => Date.now());
     const recentEntries = getRecentProjects(projects, recentProjects);
-    const openedAtById = new Map(recentProjects.map((entry) => [entry.id, entry.openedAt]));
+    const lastSeenAtById = new Map(recentProjects.map((entry) => [entry.id, entry.lastSeenAt]));
     const healthLabel = health === "online" ? t("topbar.connected") : health === "offline" ? t("topbar.offline") : t("topbar.connecting");
     const refreshLabel = refreshing ? t("topbar.refreshingProject") : t("home.refresh");
     (0, import_react5.useEffect)(() => {
@@ -20118,9 +20118,9 @@
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "home-sidebar-project-main", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "home-sidebar-project-title", children: project.title }),
-                openedAtById.has(project.id) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "home-sidebar-project-meta", children: [
+                lastSeenAtById.has(project.id) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "home-sidebar-project-meta", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RotateCcwClock, { size: 11, className: "home-sidebar-project-clock", "aria-hidden": "true" }),
-                  formatOpenedAt(openedAtById.get(project.id) ?? 0, locale, t, now)
+                  formatLastSeenAt(lastSeenAtById.get(project.id) ?? 0, locale, t, now)
                 ] }) : null
               ] }),
               project.pinned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pin, { size: 11, className: "home-sidebar-project-pin", "aria-hidden": "true" }) : null
@@ -29265,9 +29265,12 @@
       const value = JSON.parse(window.localStorage.getItem(RECENT_PROJECTS_KEY) || "[]");
       if (!Array.isArray(value)) return [];
       return value.map((item) => {
-        if (typeof item === "string") return { id: item, openedAt: Date.now() };
+        if (typeof item === "string") return { id: item, lastSeenAt: Date.now() };
+        if (item && typeof item.id === "string" && typeof item.lastSeenAt === "number") {
+          return { id: item.id, lastSeenAt: item.lastSeenAt };
+        }
         if (item && typeof item.id === "string" && typeof item.openedAt === "number") {
-          return { id: item.id, openedAt: item.openedAt };
+          return { id: item.id, lastSeenAt: item.openedAt };
         }
         return null;
       }).filter((item) => Boolean(item));
@@ -29275,9 +29278,9 @@
       return [];
     }
   }
-  function recordRecentProject(id) {
+  function recordRecentProject(id, at = Date.now()) {
     const recent = readRecentProjects().filter((entry) => entry.id !== id);
-    recent.unshift({ id, openedAt: Date.now() });
+    recent.unshift({ id, lastSeenAt: at });
     const next = recent.slice(0, 12);
     window.localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(next));
     return next;
@@ -29313,6 +29316,7 @@
     });
     const projectChatBusyRef = (0, import_react35.useRef)(false);
     const sessionIdRef = (0, import_react35.useRef)(null);
+    const activeProjectIdRef = (0, import_react35.useRef)(null);
     const toastTimerRef = (0, import_react35.useRef)(null);
     const pinningProjectIdsRef = (0, import_react35.useRef)(/* @__PURE__ */ new Set());
     const projectsRef = (0, import_react35.useRef)([]);
@@ -29352,10 +29356,17 @@
       sessionIdRef.current = id;
       setSessionId(id);
     };
+    const recordLeaveCurrentProject = () => {
+      const currentId = activeProjectIdRef.current;
+      if (!currentId) return;
+      setRecentProjects(recordRecentProject(currentId, Date.now()));
+    };
     const goHome = (replace = false) => {
+      recordLeaveCurrentProject();
       setProjectId(null);
       setProject(null);
       setActiveSession(null);
+      activeProjectIdRef.current = null;
       setView("home");
       setActiveArea("overview");
       setActiveTab("overview");
@@ -29371,15 +29382,18 @@
       try {
         const detail = await api(`/api/projects/${encodeURIComponent(reference)}`);
         if (projectId !== detail.id) {
+          recordLeaveCurrentProject();
+        }
+        if (projectId !== detail.id) {
           setProjectMessages([]);
           setMobileChatOpen(false);
         }
         setProjectId(detail.id);
+        activeProjectIdRef.current = detail.id;
         setProject(detail);
         setActiveSession(detail.session_id || sessionIdRef.current);
         setView("project");
         setProjectDrawerOpen(false);
-        setRecentProjects(recordRecentProject(detail.id));
         if (!options?.preserveTab) {
           setActiveArea("overview");
           setActiveTab("overview");
@@ -29544,6 +29558,8 @@
         if (!location) {
           const isHome = (window.location.pathname === "/" || window.location.pathname === "/new" || window.location.pathname === "/new/") && !window.location.hash;
           if (isHome) {
+            recordLeaveCurrentProject();
+            activeProjectIdRef.current = null;
             setNotFoundPath(null);
             setView("home");
             return;
@@ -29557,9 +29573,18 @@
         void openProject(location.projectRef, { preserveTab: true, route: { area: location.area, tab: location.tab } });
       };
       restoreWorkspace();
+      const recordPageClose = () => {
+        if (activeProjectIdRef.current) {
+          recordRecentProject(activeProjectIdRef.current, Date.now());
+        }
+      };
+      window.addEventListener("pagehide", recordPageClose);
+      window.addEventListener("beforeunload", recordPageClose);
       window.addEventListener("popstate", restoreWorkspace);
       window.addEventListener("hashchange", restoreWorkspace);
       return () => {
+        window.removeEventListener("pagehide", recordPageClose);
+        window.removeEventListener("beforeunload", recordPageClose);
         window.removeEventListener("popstate", restoreWorkspace);
         window.removeEventListener("hashchange", restoreWorkspace);
       };

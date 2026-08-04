@@ -16,9 +16,9 @@ function clampSidebarWidth(width: number) {
   return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
 }
 
-type RecentProjectEntry = { id: string; openedAt: number }
+type RecentProjectEntry = { id: string; lastSeenAt: number }
 
-function formatOpenedAt(
+function formatLastSeenAt(
   timestamp: number,
   locale: Locale,
   t: (key: TranslationKey, params?: Record<string, string | number>) => string,
@@ -93,7 +93,7 @@ export function HomeSidebar({
   const [resizing, setResizing] = useState(false)
   const [now, setNow] = useState(() => Date.now())
   const recentEntries = getRecentProjects(projects, recentProjects)
-  const openedAtById = new Map(recentProjects.map(entry => [entry.id, entry.openedAt]))
+  const lastSeenAtById = new Map(recentProjects.map(entry => [entry.id, entry.lastSeenAt]))
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
 
@@ -182,10 +182,10 @@ export function HomeSidebar({
               >
                 <span className="home-sidebar-project-main">
                   <span className="home-sidebar-project-title">{project.title}</span>
-                  {openedAtById.has(project.id) ? (
+                  {lastSeenAtById.has(project.id) ? (
                     <span className="home-sidebar-project-meta">
                       <History size={11} className="home-sidebar-project-clock" aria-hidden="true" />
-                      {formatOpenedAt(openedAtById.get(project.id) ?? 0, locale, t, now)}
+                      {formatLastSeenAt(lastSeenAtById.get(project.id) ?? 0, locale, t, now)}
                     </span>
                   ) : null}
                 </span>

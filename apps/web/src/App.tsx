@@ -28,27 +28,30 @@ function nextMessageId() {
 
 const RECENT_PROJECTS_KEY = 'researchos.recentProjects'
 
-function readRecentProjects(): Array<{ id: string; openedAt: number }> {
+function readRecentProjects(): Array<{ id: string; lastSeenAt: number }> {
   try {
     const value = JSON.parse(window.localStorage.getItem(RECENT_PROJECTS_KEY) || '[]')
     if (!Array.isArray(value)) return []
     return value
       .map(item => {
-        if (typeof item === 'string') return { id: item, openedAt: Date.now() }
+        if (typeof item === 'string') return { id: item, lastSeenAt: Date.now() }
+        if (item && typeof item.id === 'string' && typeof item.lastSeenAt === 'number') {
+          return { id: item.id, lastSeenAt: item.lastSeenAt }
+        }
         if (item && typeof item.id === 'string' && typeof item.openedAt === 'number') {
-          return { id: item.id, openedAt: item.openedAt }
+          return { id: item.id, lastSeenAt: item.openedAt }
         }
         return null
       })
-      .filter((item): item is { id: string; openedAt: number } => Boolean(item))
+      .filter((item): item is { id: string; lastSeenAt: number } => Boolean(item))
   } catch {
     return []
   }
 }
 
-function recordRecentProject(id: string) {
+function recordRecentProject(id: string, at = Date.now()) {
   const recent = readRecentProjects().filter(entry => entry.id !== id)
-  recent.unshift({ id, openedAt: Date.now() })
+  recent.unshift({ id, lastSeenAt: at })
   const next = recent.slice(0, 12)
   window.localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(next))
   return next
@@ -78,7 +81,7 @@ export function App() {
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [projectDrawerOpen, setProjectDrawerOpen] = useState(false)
   const [projectRefreshing, setProjectRefreshing] = useState(false)
-  const [recentProjects, setRecentProjects] = useState<Array<{ id: string; openedAt: number }>>(() => readRecentProjects())
+  const [recentProjects, setRecentProjects] = useState<Array<{ id: string; lastSeenAt: number }>>(() => readRecentProjects())
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const stored = Number(window.localStorage.getItem('researchos.sidebarWidth'))
     return Number.isFinite(stored) ? Math.min(380, Math.max(220, stored)) : 276
@@ -86,6 +89,7 @@ export function App() {
 
   const projectChatBusyRef = useRef(false)
   const sessionIdRef = useRef<string | null>(null)
+  const activeProjectIdRef = useRef<string | null>(null)
   const toastTimerRef = useRef<number | null>(null)
   const pinningProjectIdsRef = useRef<Set<string>>(new Set())
   const projectsRef = useRef<ProjectSummary[]>([])
@@ -133,10 +137,18 @@ export function App() {
     setSessionId(id)
   }
 
+  const recordLeaveCurrentProject = () => {
+    const currentId = activeProjectIdRef.current
+    if (!currentId) return
+    setRecentProjects(recordRecentProject(currentId, Date.now()))
+  }
+
   const goHome = (replace = false) => {
+    recordLeaveCurrentProject()
     setProjectId(null)
     setProject(null)
     setActiveSession(null)
+    activeProjectIdRef.current = null
     setView('home')
     setActiveArea('overview')
     setActiveTab('overview')
@@ -153,15 +165,18 @@ export function App() {
     try {
       const detail = await api<ProjectDetail>(`/api/projects/${encodeURIComponent(reference)}`)
       if (projectId !== detail.id) {
+        recordLeaveCurrentProject()
+      }
+      if (projectId !== detail.id) {
         setProjectMessages([])
         setMobileChatOpen(false)
       }
       setProjectId(detail.id)
+      activeProjectIdRef.current = detail.id
       setProject(detail)
       setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
       setProjectDrawerOpen(false)
-      setRecentProjects(recordRecentProject(detail.id))
       if (!options?.preserveTab) {
         setActiveArea('overview')
         setActiveTab('overview')
@@ -344,6 +359,8 @@ export function App() {
       if (!location) {
         const isHome = (window.location.pathname === '/' || window.location.pathname === '/new' || window.location.pathname === '/new/') && !window.location.hash
         if (isHome) {
+          recordLeaveCurrentProject()
+          activeProjectIdRef.current = null
           setNotFoundPath(null)
           setView('home')
           return
@@ -357,9 +374,18 @@ export function App() {
       void openProject(location.projectRef, { preserveTab: true, route: { area: location.area, tab: location.tab } })
     }
     restoreWorkspace()
+    const recordPageClose = () => {
+      if (activeProjectIdRef.current) {
+        recordRecentProject(activeProjectIdRef.current, Date.now())
+      }
+    }
+    window.addEventListener('pagehide', recordPageClose)
+    window.addEventListener('beforeunload', recordPageClose)
     window.addEventListener('popstate', restoreWorkspace)
     window.addEventListener('hashchange', restoreWorkspace)
     return () => {
+      window.removeEventListener('pagehide', recordPageClose)
+      window.removeEventListener('beforeunload', recordPageClose)
       window.removeEventListener('popstate', restoreWorkspace)
       window.removeEventListener('hashchange', restoreWorkspace)
     }
