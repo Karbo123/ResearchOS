@@ -362,8 +362,12 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 #### 4.1.8 项目概述：定期汇报与反馈闭环（旧）
 
 - [~] `070-F1` 报告按时间窗口读取真实对话、审计、任务、实验、Proposal、来源尝试和反馈，保存 event_count、时间窗口、cutoff、来源 ID、失败/阻塞和证据边界；补 Mastra report run 和完整 source snapshot（段落 provenance 已由 `070-F2` 完成）。 [Apple 设计验收]
-- [ ] `070-F3` 反馈只能创建 feedback/Proposal；支持逐条确认、拒绝、要求修订、指派上游实体、状态变更和审计，不能直接触发代码、依赖、实验或 Git。 [Apple 设计验收]
-- [ ] `070-F4` Markdown 预览使用受控渲染器，保留标题、表格、代码、图片和上游链接；历史版本不可变，重试生成新版本。 [Apple 设计验收]
+- [x] `070-F3` 反馈只能创建 feedback/Proposal；支持逐条确认、拒绝、要求修订、指派上游实体、状态变更和审计，不能直接触发代码、依赖、实验或 Git。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：`/api/projects/:id/feedback` 只写入 `human_feedback` 并创建审计；`/feedback/:id/decision` 支持 `acknowledged / rejected / revision_requested`，`/feedback/:id/proposal` 只创建 `pending` Proposal，拒绝后的反馈不能创建动作，跨项目决策返回 404；反馈携带 `reference_id` 指派上游报告/实体，Proposal payload 保留 `feedback_id / feedback_reference_id / feedback_instruction`。`反馈与汇报` 页面提供逐条确认、拒绝、要求修订、创建 Proposal 按钮，并为每条反馈显示状态徽标、下一步和决策说明。真实浏览器验收显示反馈行 1 条 `Waiting decision`、操作按钮 4 个、包含“Create Proposal”动作且无横向溢出；`feedback-api` 2 项、`reports-api` 2 项、`report-lineage` 4 项服务端测试通过，Web 类型检查、构建、UI/i18n、navigation 与完整浏览器验收通过。
+- [x] `070-F4` Markdown 预览使用受控渲染器，保留标题、表格、代码、图片和上游链接；历史版本不可变，重试生成新版本。 [Apple 设计验收]
+
+> 验收记录（2026-08-04）：Markdown 解析与渲染拆分为 `apps/web/src/markdownParser.ts` 和 `MarkdownPreview.tsx`，只允许 `https://` 与 `/api/` 图片源和 `https://` 链接，表格解析会跳过分隔行，代码块、标题、列表、引用、表格、图片与上游链接均保留；`javascript:` 等不安全图片源不会被识别为图片。新增 `scripts/check-markdown-preview.ts` 并纳入 `npm run ui:check`，断言标题、带表头的 2 列表格、HTTPS 图片、代码块和上游链接均正确解析。真实浏览器验收通过 fetch 注入带表格/图片/链接的报告内容，确认 `.markdown-preview table`、惰性加载图片与外部链接渲染正常且无横向溢出，截图 `108h-markdown-preview.png`；报告生成每次写入新版本，历史版本可回看，重试生成不会覆盖旧版本。Web 类型检查、构建、UI/i18n、navigation 与完整浏览器验收通过。
 - [~] `070-F6` 报告读取侧校验 source snapshot、项目范围、实体存在性和 Artifact 有效性；跨项目/缺失来源标记为 `blocked`，只渲染有效 Markdown；事件驱动生成、反馈引用和完整复现 lineage 仍待完成。 [Apple 设计验收]
 
 #### 4.1.9 学术论文撰写（旧）

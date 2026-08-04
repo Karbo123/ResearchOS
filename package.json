@@ -28,7 +28,7 @@
     "ops:recovery-drill": "tsx scripts/ops-recovery-drill.ts",
     "acceptance": "tsx scripts/acceptance-test.ts",
     "navigation:check": "tsx scripts/check-navigation.ts",
-    "ui:check": "npm run ui:i18n:check && tsx scripts/check-ui.ts",
+  "ui:check": "npm run ui:i18n:check && tsx scripts/check-ui.ts && tsx scripts/check-markdown-preview.ts",
     "ui:i18n:check": "tsx scripts/check-ui-i18n.ts",
     "supermemory:start": "tsx scripts/start-supermemory.ts",
     "supermemory:stop": "tsx scripts/start-supermemory.ts stop",

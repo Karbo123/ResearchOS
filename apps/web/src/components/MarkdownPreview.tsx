@@ -1,16 +1,9 @@
 import { type ReactNode } from 'react'
 import { useTranslation } from '../i18n'
-
-type MarkdownBlock =
-  | { kind: 'heading'; level: number; text: string }
-  | { kind: 'paragraph'; text: string }
-  | { kind: 'unordered'; items: string[] }
-  | { kind: 'ordered'; items: string[] }
-  | { kind: 'quote'; text: string }
-  | { kind: 'code'; language: string; text: string }
+import { parseBlocks } from '../markdownParser'
 
 function inlineNodes(value: string, prefix: string): ReactNode[] {
-  const pattern = /(`[^`]+`|\*\*[^*]+\*\*|_[^_]+_|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g
+  const pattern = /(`[^`]+`|\*\*[^*]+\*\*|_[^_]+_|!\[[^\]]*\]\((?:https?:\/\/[^)\s]+|\/api\/[^)\s]+)\)|\[[^\]]+\]\((?:https?:\/\/[^)\s]+)\))/g
   const nodes: ReactNode[] = []
   let cursor = 0
   let match: RegExpExecArray | null
@@ -25,6 +18,21 @@ function inlineNodes(value: string, prefix: string): ReactNode[] {
       nodes.push(<strong key={`${prefix}-strong-${index}`}>{token.slice(2, -2)}</strong>)
     } else if (token.startsWith('_')) {
       nodes.push(<em key={`${prefix}-em-${index}`}>{token.slice(1, -1)}</em>)
+    } else if (token.startsWith('![')) {
+      const image = token.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+|\/api\/[^)\s]+)\)$/)
+      if (image) {
+        nodes.push(
+          <img
+            key={`${prefix}-image-${index}`}
+            src={image[2]}
+            alt={image[1] || 'image'}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />,
+        )
+      } else {
+        nodes.push(token)
+      }
     } else {
       const link = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/)
       if (link) {
@@ -42,85 +50,6 @@ function inlineNodes(value: string, prefix: string): ReactNode[] {
   }
   if (cursor < value.length) nodes.push(value.slice(cursor))
   return nodes
-}
-
-function parseBlocks(content: string): MarkdownBlock[] {
-  const blocks: MarkdownBlock[] = []
-  const lines = content.replace(/\r\n?/g, '\n').split('\n')
-  let paragraph: string[] = []
-  let unordered: string[] = []
-  let ordered: string[] = []
-  let code: string[] = []
-  let codeLanguage = ''
-  let inCode = false
-
-  const flushParagraph = () => {
-    if (paragraph.length) blocks.push({ kind: 'paragraph', text: paragraph.join(' ') })
-    paragraph = []
-  }
-  const flushLists = () => {
-    if (unordered.length) blocks.push({ kind: 'unordered', items: unordered })
-    if (ordered.length) blocks.push({ kind: 'ordered', items: ordered })
-    unordered = []
-    ordered = []
-  }
-  const flushText = () => {
-    flushParagraph()
-    flushLists()
-  }
-
-  for (const line of lines) {
-    if (line.startsWith('```')) {
-      if (inCode) {
-        blocks.push({ kind: 'code', language: codeLanguage, text: code.join('\n') })
-        code = []
-        codeLanguage = ''
-        inCode = false
-      } else {
-        flushText()
-        codeLanguage = line.slice(3).trim()
-        inCode = true
-      }
-      continue
-    }
-    if (inCode) {
-      code.push(line)
-      continue
-    }
-    if (!line.trim()) {
-      flushText()
-      continue
-    }
-    const heading = line.match(/^(#{1,4})\s+(.+)$/)
-    if (heading) {
-      flushText()
-      blocks.push({ kind: 'heading', level: heading[1].length, text: heading[2].trim() })
-      continue
-    }
-    const bullet = line.match(/^\s*[-*+]\s+(.+)$/)
-    if (bullet) {
-      flushParagraph()
-      if (ordered.length) flushLists()
-      unordered.push(bullet[1])
-      continue
-    }
-    const numbered = line.match(/^\s*\d+[.)]\s+(.+)$/)
-    if (numbered) {
-      flushParagraph()
-      if (unordered.length) flushLists()
-      ordered.push(numbered[1])
-      continue
-    }
-    if (line.startsWith('> ')) {
-      flushText()
-      blocks.push({ kind: 'quote', text: line.slice(2) })
-      continue
-    }
-    paragraph.push(line.trim())
-  }
-  if (inCode) blocks.push({ kind: 'code', language: codeLanguage, text: code.join('\n') })
-  flushText()
-  return blocks
 }
 
 export function MarkdownPreview({ content }: { content: string }) {
@@ -143,6 +72,34 @@ export function MarkdownPreview({ content }: { content: string }) {
           )
         }
         if (block.kind === 'quote') return <blockquote key={key}>{inlineNodes(block.text, key)}</blockquote>
+        if (block.kind === 'image') {
+          return (
+            <figure className="markdown-figure" key={key}>
+              <img src={block.src} alt={block.alt || t('md.imageAlt')} loading="lazy" referrerPolicy="no-referrer" />
+            </figure>
+          )
+        }
+        if (block.kind === 'table') {
+          const [head, ...body] = block.rows
+          return (
+            <div className="markdown-table-wrap" key={key}>
+              <table>
+                {head ? (
+                  <thead>
+                    <tr>{head.map((cell, cellIndex) => <th key={`${key}-h-${cellIndex}`}>{inlineNodes(cell, `${key}-h-${cellIndex}`)}</th>)}</tr>
+                  </thead>
+                ) : null}
+                <tbody>
+                  {body.map((row, rowIndex) => (
+                    <tr key={`${key}-r-${rowIndex}`}>
+                      {row.map((cell, cellIndex) => <td key={`${key}-c-${rowIndex}-${cellIndex}`}>{inlineNodes(cell, `${key}-c-${rowIndex}-${cellIndex}`)}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        }
         if (block.kind === 'code') return <pre key={key} data-language={block.language || undefined}><code>{block.text}</code></pre>
         return <p key={key}>{inlineNodes(block.text, key)}</p>
       })}

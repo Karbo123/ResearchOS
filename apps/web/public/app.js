@@ -13060,6 +13060,7 @@
     "context.reportLineageFailed": "\u62A5\u544A\u6765\u6E90\u8C31\u7CFB\u65E0\u6CD5\u9A8C\u8BC1",
     "context.projectScoped": "\u9879\u76EE\u8303\u56F4\u5185",
     "md.noPreview": "\u6682\u65E0\u53EF\u9884\u89C8\u5185\u5BB9\u3002",
+    "md.imageAlt": "\u56FE\u7247",
     "preview.noPoints": "\u6CA1\u6709\u53EF\u663E\u793A\u7684\u6709\u6548\u70B9",
     "preview.resetView": "\u91CD\u7F6E\u89C6\u56FE",
     "preview.pointCloud": "\u70B9\u4E91\u9884\u89C8",
@@ -14611,6 +14612,7 @@
     "context.reportLineageFailed": "\u5831\u544A\u4F86\u6E90\u8B5C\u7CFB\u7121\u6CD5\u9A57\u8B49",
     "context.projectScoped": "\u5C08\u6848\u7BC4\u570D\u5167",
     "md.noPreview": "\u66AB\u7121\u53EF\u9810\u89BD\u5167\u5BB9\u3002",
+    "md.imageAlt": "\u5716\u7247",
     "preview.noPoints": "\u6C92\u6709\u53EF\u986F\u793A\u7684\u6709\u6548\u9EDE",
     "preview.resetView": "\u91CD\u8A2D\u6AA2\u8996",
     "preview.pointCloud": "\u9EDE\u96F2\u9810\u89BD",
@@ -16039,6 +16041,7 @@
     "context.reportLineageFailed": "Report source lineage cannot be verified",
     "context.projectScoped": "Project-scoped",
     "md.noPreview": "Nothing to preview yet.",
+    "md.imageAlt": "Image",
     "preview.noPoints": "No valid points to display",
     "preview.resetView": "Reset view",
     "preview.pointCloud": "Point cloud preview",
@@ -17467,6 +17470,7 @@
     "context.reportLineageFailed": "No se puede verificar el linaje del informe",
     "context.projectScoped": "Dentro del \xE1mbito del proyecto",
     "md.noPreview": "Nada que previsualizar todav\xEDa.",
+    "md.imageAlt": "Imagen",
     "preview.noPoints": "No hay puntos v\xE1lidos para mostrar",
     "preview.resetView": "Restablecer vista",
     "preview.pointCloud": "Vista previa de nube de puntos",
@@ -23394,39 +23398,7 @@
   // src/components/tabs/ReportsTab.tsx
   var import_react14 = __toESM(require_react(), 1);
 
-  // src/components/MarkdownPreview.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
-  function inlineNodes(value, prefix) {
-    const pattern = /(`[^`]+`|\*\*[^*]+\*\*|_[^_]+_|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g;
-    const nodes = [];
-    let cursor = 0;
-    let match;
-    let index = 0;
-    while (match = pattern.exec(value)) {
-      if (match.index > cursor) nodes.push(value.slice(cursor, match.index));
-      const token = match[0];
-      if (token.startsWith("`")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: token.slice(1, -1) }, `${prefix}-code-${index}`));
-      } else if (token.startsWith("**")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: token.slice(2, -2) }, `${prefix}-strong-${index}`));
-      } else if (token.startsWith("_")) {
-        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("em", { children: token.slice(1, -1) }, `${prefix}-em-${index}`));
-      } else {
-        const link = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
-        if (link) {
-          nodes.push(
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: link[2], target: "_blank", rel: "noreferrer", children: link[1] }, `${prefix}-link-${index}`)
-          );
-        } else {
-          nodes.push(token);
-        }
-      }
-      cursor = match.index + token.length;
-      index += 1;
-    }
-    if (cursor < value.length) nodes.push(value.slice(cursor));
-    return nodes;
-  }
+  // src/markdownParser.ts
   function parseBlocks(content) {
     const blocks = [];
     const lines = content.replace(/\r\n?/g, "\n").split("\n");
@@ -23436,6 +23408,7 @@
     let code = [];
     let codeLanguage = "";
     let inCode = false;
+    let index = 0;
     const flushParagraph = () => {
       if (paragraph.length) blocks.push({ kind: "paragraph", text: paragraph.join(" ") });
       paragraph = [];
@@ -23450,7 +23423,9 @@
       flushParagraph();
       flushLists();
     };
-    for (const line of lines) {
+    while (index < lines.length) {
+      const line = lines[index] ?? "";
+      index += 1;
       if (line.startsWith("```")) {
         if (inCode) {
           blocks.push({ kind: "code", language: codeLanguage, text: code.join("\n") });
@@ -23468,6 +23443,28 @@
         code.push(line);
         continue;
       }
+      const image = line.match(/^\s*!\[([^\]]*)\]\((https?:\/\/[^)\s]+|\/api\/[^)\s]+)\)\s*$/);
+      if (image) {
+        flushText();
+        blocks.push({ kind: "image", alt: image[1] ?? "", src: image[2] ?? "" });
+        continue;
+      }
+      const separatorRow = /^\s*\|?[\s:|-]+\|?\s*$/;
+      const nextLine = lines[index] ?? "";
+      if (line.includes("|") && nextLine && separatorRow.test(nextLine)) {
+        flushText();
+        const rows = [line, nextLine];
+        index += 1;
+        while (index < lines.length && (lines[index] ?? "").includes("|")) {
+          rows.push(lines[index] ?? "");
+          index += 1;
+        }
+        blocks.push({
+          kind: "table",
+          rows: rows.filter((row) => !separatorRow.test(row.trim())).map((row) => row.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim()))
+        });
+        continue;
+      }
       if (!line.trim()) {
         flushText();
         continue;
@@ -23475,21 +23472,21 @@
       const heading = line.match(/^(#{1,4})\s+(.+)$/);
       if (heading) {
         flushText();
-        blocks.push({ kind: "heading", level: heading[1].length, text: heading[2].trim() });
+        blocks.push({ kind: "heading", level: (heading[1] ?? "").length, text: (heading[2] ?? "").trim() });
         continue;
       }
       const bullet = line.match(/^\s*[-*+]\s+(.+)$/);
       if (bullet) {
         flushParagraph();
         if (ordered.length) flushLists();
-        unordered.push(bullet[1]);
+        unordered.push(bullet[1] ?? "");
         continue;
       }
       const numbered = line.match(/^\s*\d+[.)]\s+(.+)$/);
       if (numbered) {
         flushParagraph();
         if (unordered.length) flushLists();
-        ordered.push(numbered[1]);
+        ordered.push(numbered[1] ?? "");
         continue;
       }
       if (line.startsWith("> ")) {
@@ -23502,6 +23499,58 @@
     if (inCode) blocks.push({ kind: "code", language: codeLanguage, text: code.join("\n") });
     flushText();
     return blocks;
+  }
+
+  // src/components/MarkdownPreview.tsx
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  function inlineNodes(value, prefix) {
+    const pattern = /(`[^`]+`|\*\*[^*]+\*\*|_[^_]+_|!\[[^\]]*\]\((?:https?:\/\/[^)\s]+|\/api\/[^)\s]+)\)|\[[^\]]+\]\((?:https?:\/\/[^)\s]+)\))/g;
+    const nodes = [];
+    let cursor = 0;
+    let match;
+    let index = 0;
+    while (match = pattern.exec(value)) {
+      if (match.index > cursor) nodes.push(value.slice(cursor, match.index));
+      const token = match[0];
+      if (token.startsWith("`")) {
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: token.slice(1, -1) }, `${prefix}-code-${index}`));
+      } else if (token.startsWith("**")) {
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: token.slice(2, -2) }, `${prefix}-strong-${index}`));
+      } else if (token.startsWith("_")) {
+        nodes.push(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)("em", { children: token.slice(1, -1) }, `${prefix}-em-${index}`));
+      } else if (token.startsWith("![")) {
+        const image = token.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+|\/api\/[^)\s]+)\)$/);
+        if (image) {
+          nodes.push(
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              "img",
+              {
+                src: image[2],
+                alt: image[1] || "image",
+                loading: "lazy",
+                referrerPolicy: "no-referrer"
+              },
+              `${prefix}-image-${index}`
+            )
+          );
+        } else {
+          nodes.push(token);
+        }
+      } else {
+        const link = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+        if (link) {
+          nodes.push(
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: link[2], target: "_blank", rel: "noreferrer", children: link[1] }, `${prefix}-link-${index}`)
+          );
+        } else {
+          nodes.push(token);
+        }
+      }
+      cursor = match.index + token.length;
+      index += 1;
+    }
+    if (cursor < value.length) nodes.push(value.slice(cursor));
+    return nodes;
   }
   function MarkdownPreview({ content }) {
     const { t } = useTranslation();
@@ -23518,6 +23567,16 @@
           return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(List, { children: block.items.map((item, itemIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("li", { children: inlineNodes(item, `${key}-${itemIndex}`) }, `${key}-${itemIndex}`)) }, key);
         }
         if (block.kind === "quote") return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("blockquote", { children: inlineNodes(block.text, key) }, key);
+        if (block.kind === "image") {
+          return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("figure", { className: "markdown-figure", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: block.src, alt: block.alt || t("md.imageAlt"), loading: "lazy", referrerPolicy: "no-referrer" }) }, key);
+        }
+        if (block.kind === "table") {
+          const [head, ...body] = block.rows;
+          return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "markdown-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("table", { children: [
+            head ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tr", { children: head.map((cell, cellIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { children: inlineNodes(cell, `${key}-h-${cellIndex}`) }, `${key}-h-${cellIndex}`)) }) }) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tbody", { children: body.map((row, rowIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tr", { children: row.map((cell, cellIndex) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { children: inlineNodes(cell, `${key}-c-${rowIndex}-${cellIndex}`) }, `${key}-c-${rowIndex}-${cellIndex}`)) }, `${key}-r-${rowIndex}`)) })
+          ] }) }, key);
+        }
         if (block.kind === "code") return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("pre", { "data-language": block.language || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { children: block.text }) }, key);
         return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: inlineNodes(block.text, key) }, key);
       }),

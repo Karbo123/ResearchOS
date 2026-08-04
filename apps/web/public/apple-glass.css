@@ -1176,6 +1176,13 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .markdown-preview code { padding: 2px 5px; border-radius: 5px; background: rgba(60, 60, 67, .08); font: 0.92em ui-monospace, SFMono-Regular, Consolas, monospace; }
 .markdown-preview pre code { padding: 0; background: transparent; }
 .markdown-preview a { color: var(--blue-dark); text-decoration: underline; text-decoration-color: rgba(0, 102, 204, .32); text-underline-offset: 2px; }
+.markdown-preview .markdown-table-wrap { margin: 0 0 13px; overflow-x: auto; border: 1px solid var(--line); border-radius: 11px; }
+.markdown-preview table { width: 100%; min-width: 420px; border-collapse: collapse; font-size: 12px; }
+.markdown-preview th, .markdown-preview td { padding: 8px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.markdown-preview thead th { background: rgba(60, 60, 67, .05); font-weight: 650; }
+.markdown-preview tbody tr:last-child td { border-bottom: 0; }
+.markdown-preview figure { margin: 0 0 13px; }
+.markdown-preview figure img { display: block; max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(25, 25, 35, .10); }
 .report-blocked { color: var(--danger-ink); border-color: rgba(255, 59, 48, .18); background: rgba(255, 59, 48, .05); }
 .report-state-legend {
   display: grid;

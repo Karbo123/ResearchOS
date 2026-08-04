@@ -522,6 +522,9 @@ const reportStates = await evaluate(`(() => {
     paragraphSummary: paragraphSummary?.textContent?.trim() || null,
     paragraphUnavailable: document.querySelector('.report-paragraph-sources')?.textContent?.includes('report-level source snapshot') || false,
     paragraphRows: document.querySelectorAll('.report-paragraph-source-row').length,
+    feedbackButtonCount: document.querySelectorAll('.feedback-row .button-row button').length,
+    feedbackOpenCount: Array.from(document.querySelectorAll('.feedback-row')).filter(row => row.textContent?.includes('Waiting decision')).length,
+    feedbackProposalAction: Array.from(document.querySelectorAll('.feedback-row button')).some(button => /create proposal|建立 Proposal/i.test(button.textContent || '')),
     overflowX: document.documentElement.scrollWidth > window.innerWidth,
   }
 })()`)
@@ -533,6 +536,50 @@ const reportStatesDark = await evaluate(`({
   overflowX: document.documentElement.scrollWidth > window.innerWidth,
 })`)
 await capture('108h-report-states-dark.png')
+
+const markdownFixtureSource = `(() => {
+  const originalFetch = window.fetch
+  window.fetch = async (input, init) => {
+    const response = await originalFetch(input, init)
+    const url = typeof input === 'string' ? input : input && input.url ? input.url : ''
+    if (url.includes('/api/projects/') && !url.includes('/feedback') && !url.includes('/audit') && !url.includes('/related-work') && !url.includes('/paper-workspace')) {
+      const copy = response.clone()
+      try {
+        const json = await copy.json()
+        if (Array.isArray(json.reports) && json.reports.length) {
+          json.reports[0] = Object.assign({}, json.reports[0], {
+            status: 'valid',
+            content: '## Verification\\n\\n| Metric | Value |\\n| --- | --- |\\n| Accuracy | 0.92 |\\n| Loss | 0.31 |\\n\\n![Chart](https://example.com/chart.png)\\n\\nSee the [upstream source](https://example.com/paper).',
+          })
+          return new Response(JSON.stringify(json), { status: response.status, headers: response.headers })
+        }
+      } catch {}
+    }
+    return response
+  }
+})()`
+const markdownScript = await send('Page.addScriptToEvaluateOnNewDocument', { source: markdownFixtureSource })
+await navigate(reportUrl, 'en', 'light')
+const markdownState = await evaluate(`(() => {
+  const table = document.querySelector('.markdown-preview table')
+  const image = document.querySelector('.markdown-preview figure img')
+  const link = document.querySelector('.markdown-preview a')
+  return {
+    tableExists: !!table,
+    headerCells: table?.querySelectorAll('thead th').length || 0,
+    bodyRows: table?.querySelectorAll('tbody tr').length || 0,
+    imageExists: !!image,
+    imageSrc: image?.getAttribute('src') || null,
+    imageLazy: image?.getAttribute('loading') || null,
+    linkHref: link?.getAttribute('href') || null,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }
+})()`)
+await capture('108h-markdown-preview.png')
+await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: markdownScript.identifier })
+if (!markdownState.tableExists || markdownState.headerCells < 2 || markdownState.bodyRows < 2 || !markdownState.imageExists || markdownState.imageSrc !== 'https://example.com/chart.png' || markdownState.imageLazy !== 'lazy' || !markdownState.linkHref || markdownState.overflowX) {
+  throw new Error(`Controlled Markdown preview failed: ${JSON.stringify(markdownState)}`)
+}
 
 const paperUrl = `${appBase}/project/${projectSlug}/paper/introduction`
 await navigate(paperUrl, 'en', 'light')
@@ -786,5 +833,5 @@ await navigate(homeUrl, 'en', 'light')
 await capture('108h-brand-high-dpi.png')
 await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
 
-console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
+console.log(JSON.stringify({ status: 'passed', drawer, reducedMotion, darkHome, darkProject, mobileHome, mobileHomeOffenders, mobileProject, projectTabsMobile, narrowHome, narrowProject, projectTabsDesktop, results, notFound, notFoundDark, notFoundMobile, settings, settingsDark, settingsMobile, deleteLight, deleteDark, brand, faviconLight, faviconDark, homeUi, pinMotion, themePersist, contextSwitch, reportStates, reportStatesDark, markdownState, longContent, actionMotion, drawerOutsideClose, tabMotion, seedExpansion, sidebarResize, specFieldState, noveltySourced, timelineState }, null, 2))
 socket.close()
