@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
+  FolderKanban,
   History,
   Pin,
   RefreshCw,
   Settings,
 } from 'lucide-react'
 import type { ProjectSummary } from '../types'
-import { useTranslation, type Locale } from '../i18n'
+import { useTranslation, type Locale, type TranslationKey } from '../i18n'
 
 const SIDEBAR_MIN_WIDTH = 220
 const SIDEBAR_MAX_WIDTH = 380
@@ -18,10 +19,30 @@ function clampSidebarWidth(width: number) {
 
 type RecentProjectEntry = { id: string; openedAt: number }
 
-function formatOpenedAt(timestamp: number, locale: Locale): string {
+function formatOpenedAt(
+  timestamp: number,
+  locale: Locale,
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string,
+  now: number,
+): string {
+  const elapsed = Math.max(0, now - timestamp)
+  if (elapsed < 60_000) return t('homeSidebar.justNow')
+  if (elapsed < 3_600_000) return t('homeSidebar.minutesAgo', { n: Math.floor(elapsed / 60_000) })
+  if (elapsed < 86_400_000) return t('homeSidebar.hoursAgo', { n: Math.floor(elapsed / 3_600_000) })
   const date = new Date(timestamp)
   if (Number.isNaN(date.getTime())) return ''
   const localeTag = locale === 'zh-CN' || locale === 'zh-TW' ? 'zh-CN' : locale
+  if (elapsed < 172_800_000) {
+    const time = new Intl.DateTimeFormat(localeTag, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(date)
+    return t('homeSidebar.yesterday', { time })
+  }
+  if (elapsed < 604_800_000) {
+    return t('homeSidebar.daysAgo', { n: Math.floor(elapsed / 86_400_000) })
+  }
   try {
     return new Intl.DateTimeFormat(localeTag, {
       month: 'short',
@@ -71,10 +92,16 @@ export function HomeSidebar({
 }) {
   const { t, locale } = useTranslation()
   const [resizing, setResizing] = useState(false)
+  const [now, setNow] = useState(() => Date.now())
   const recentEntries = getRecentProjects(projects, recentProjects)
   const openedAtById = new Map(recentProjects.map(entry => [entry.id, entry.openedAt]))
   const healthLabel = health === 'online' ? t('topbar.connected') : health === 'offline' ? t('topbar.offline') : t('topbar.connecting')
   const refreshLabel = refreshing ? t('topbar.refreshingProject') : t('home.refresh')
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 60_000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia('(max-width: 760px)').matches) return
@@ -154,12 +181,15 @@ export function HomeSidebar({
                 title={project.title}
                 onClick={() => onOpenProject(project.id)}
               >
+                <span className="home-sidebar-project-icon" aria-hidden="true">
+                  <FolderKanban size={16} strokeWidth={1.9} />
+                </span>
                 <span className="home-sidebar-project-main">
                   <span className="home-sidebar-project-title">{project.title}</span>
                   {openedAtById.has(project.id) ? (
                     <span className="home-sidebar-project-meta">
                       <History size={11} className="home-sidebar-project-clock" aria-hidden="true" />
-                      {formatOpenedAt(openedAtById.get(project.id) ?? 0, locale)}
+                      {formatOpenedAt(openedAtById.get(project.id) ?? 0, locale, t, now)}
                     </span>
                   ) : null}
                 </span>
