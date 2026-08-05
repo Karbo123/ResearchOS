@@ -434,7 +434,7 @@ export function HomeDashboard({
             <button className="secondary" type="button" onClick={() => setCreating(false)} disabled={submitting}>
               {t('common.cancel')}
             </button>
-            <button className="primary" type="submit" disabled={submitting}>
+            <button className="primary" type="submit" disabled={submitting || !title.trim() || !slug.trim()}>
               {t('home.createProject')}
             </button>
           </div>

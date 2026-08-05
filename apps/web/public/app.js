@@ -21214,7 +21214,7 @@
         formError ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "form-error home-form-error", role: "alert", children: formError }) : null,
         /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "create-project-actions", children: [
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "secondary", type: "button", onClick: () => setCreating(false), disabled: submitting, children: t("common.cancel") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "primary", type: "submit", disabled: submitting, children: t("home.createProject") })
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "primary", type: "submit", disabled: submitting || !title.trim() || !slug.trim(), children: t("home.createProject") })
         ] })
       ] }) : null,
       loading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "home-panel home-loading", "aria-label": t("home.loading"), children: [
