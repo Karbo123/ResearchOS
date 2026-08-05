@@ -459,8 +459,8 @@ app.post('/api/projects', async context => {
   const title = body.title
   let slug: string
   try { slug = normalizeProjectSlug(body.slug) }
-  catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由两个英文小写单词和四位小写字母或数字组成，并用连字符连接。') }
-  if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换两个词和四位后缀。')
+  catch { throw new ApiError(422, 'project_slug_invalid', '此项目缩写不符合规范要求，请换一个缩写名称。') }
+  if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [slug])) throw new ApiError(409, 'project_slug_conflict', '此项目缩写已被使用，请换一个缩写名称。')
   const id = slug
   const spec = { schema_version: '1.0', idea: { title } }
   await database.transaction(async transaction => {

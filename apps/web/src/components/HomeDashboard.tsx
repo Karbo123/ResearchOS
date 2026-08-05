@@ -187,11 +187,11 @@ export function HomeDashboard({
     if (submitting) return
     const normalizedSlug = slug.trim().toLocaleLowerCase('en-US')
     if (!normalizedSlug || !isValidProjectSlug(normalizedSlug)) {
-      setFormError(t('home.slugHint'))
+      setFormError(t('home.slugInvalid'))
       return
     }
     if (projects.some(project => project.slug === normalizedSlug || project.id === normalizedSlug)) {
-      setFormError(t('apiError.project_slug_conflict'))
+      setFormError(t('home.slugConflict'))
       return
     }
     if (!title.trim()) {
@@ -434,7 +434,7 @@ export function HomeDashboard({
             <button className="secondary" type="button" onClick={() => setCreating(false)} disabled={submitting}>
               {t('common.cancel')}
             </button>
-            <button className="primary" type="submit" disabled={submitting || !title.trim() || !slug.trim()}>
+            <button className="primary" type="submit" disabled={submitting}>
               {t('home.createProject')}
             </button>
           </div>

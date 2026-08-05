@@ -12956,7 +12956,9 @@
     "home.slugLabel": "\u9879\u76EE\u7F29\u5199",
     "home.slugPlaceholder": "cnn-minimal-2q95",
     "home.slugHint": "\u4E24\u4E2A\u82F1\u6587\u5C0F\u5199\u5355\u8BCD\u52A0\u56DB\u4F4D\u5C0F\u5199\u5B57\u6BCD\u6216\u6570\u5B57\uFF0C\u7528\u8FDE\u5B57\u7B26\u8FDE\u63A5\u3002",
-    "home.titleRequired": "\u8BF7\u8F93\u5165\u9879\u76EE\u6807\u9898\u3002",
+    "home.slugInvalid": "\u6B64\u9879\u76EE\u7F29\u5199\u4E0D\u7B26\u5408\u89C4\u8303\u8981\u6C42\uFF0C\u8BF7\u6362\u4E00\u4E2A\u7F29\u5199\u540D\u79F0\u3002",
+    "home.slugConflict": "\u6B64\u9879\u76EE\u7F29\u5199\u5DF2\u88AB\u4F7F\u7528\uFF0C\u8BF7\u6362\u4E00\u4E2A\u7F29\u5199\u540D\u79F0\u3002",
+    "home.titleRequired": "\u8BF7\u7ED9\u5B9A\u4E00\u4E2A\u6070\u5F53\u7684\u9879\u76EE\u6807\u9898\u3002",
     "home.createProject": "\u521B\u5EFA\u9879\u76EE",
     "home.loading": "\u6B63\u5728\u52A0\u8F7D\u9879\u76EE\u2026",
     "home.loadFailed": "\u9879\u76EE\u5217\u8868\u52A0\u8F7D\u5931\u8D25",
@@ -13649,8 +13651,8 @@
     "apiError.project_cancelled": "\u5DF2\u53D6\u6D88\u9879\u76EE\u4E0D\u80FD\u6062\u590D\u3002",
     "apiError.project_not_active": "\u9879\u76EE\u5F53\u524D\u4E0D\u53EF\u6267\u884C\u8BE5\u64CD\u4F5C\u3002",
     "apiError.project_not_found": "\u9879\u76EE\u4E0D\u5B58\u5728\u3002",
-    "apiError.project_slug_conflict": "\u8FD9\u4E2A\u9879\u76EE\u5730\u5740\u6807\u8BC6\u5DF2\u7ECF\u88AB\u4F7F\u7528\uFF0C\u8BF7\u66F4\u6362\u4E24\u4E2A\u5355\u8BCD\u6216\u56DB\u4F4D\u540E\u7F00\u3002",
-    "apiError.project_slug_invalid": "\u9879\u76EE\u5730\u5740\u6807\u8BC6\u5FC5\u987B\u662F\u4E24\u4E2A\u82F1\u6587\u5C0F\u5199\u5355\u8BCD\u548C\u56DB\u4F4D\u5C0F\u5199\u5B57\u6BCD\u6216\u6570\u5B57\uFF0C\u5E76\u7528\u8FDE\u5B57\u7B26\u8FDE\u63A5\uFF0C\u4F8B\u5982 cnn-minimal-2q95\u3002",
+    "apiError.project_slug_conflict": "\u6B64\u9879\u76EE\u7F29\u5199\u5DF2\u88AB\u4F7F\u7528\uFF0C\u8BF7\u6362\u4E00\u4E2A\u7F29\u5199\u540D\u79F0\u3002",
+    "apiError.project_slug_invalid": "\u6B64\u9879\u76EE\u7F29\u5199\u4E0D\u7B26\u5408\u89C4\u8303\u8981\u6C42\uFF0C\u8BF7\u6362\u4E00\u4E2A\u7F29\u5199\u540D\u79F0\u3002",
     "apiError.project_slug_generation_failed": "\u6A21\u578B\u751F\u6210\u7684\u9879\u76EE\u5730\u5740\u6807\u8BC6\u6CA1\u6709\u7B26\u5408\u4E24\u4E2A\u8BED\u4E49\u5355\u8BCD\u7684\u683C\u5F0F\u3002",
     "apiError.project_slug_unavailable": "\u6682\u65F6\u65E0\u6CD5\u751F\u6210\u552F\u4E00\u7684\u9879\u76EE\u5730\u5740\u6807\u8BC6\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002",
     "apiError.proposal_not_found": "Proposal \u4E0D\u5B58\u5728\u3002",
@@ -14524,8 +14526,8 @@
     "apiError.project_cancelled": "\u5DF2\u53D6\u6D88\u5C08\u6848\u4E0D\u80FD\u6062\u5FA9\u3002",
     "apiError.project_not_active": "\u5C08\u6848\u76EE\u524D\u4E0D\u53EF\u57F7\u884C\u8A72\u64CD\u4F5C\u3002",
     "apiError.project_not_found": "\u5C08\u6848\u4E0D\u5B58\u5728\u3002",
-    "apiError.project_slug_conflict": "\u9019\u500B\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\u5DF2\u88AB\u4F7F\u7528\uFF0C\u8ACB\u66F4\u63DB\u5169\u500B\u55AE\u8A5E\u6216\u56DB\u4F4D\u5F8C\u7DB4\u3002",
-    "apiError.project_slug_invalid": "\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\u5FC5\u9808\u662F\u5169\u500B\u82F1\u6587\u5C0F\u5BEB\u55AE\u8A5E\u548C\u56DB\u4F4D\u5C0F\u5BEB\u5B57\u6BCD\u6216\u6578\u5B57\uFF0C\u4E26\u4EE5\u9023\u5B57\u865F\u9023\u63A5\uFF0C\u4F8B\u5982 cnn-minimal-2q95\u3002",
+    "apiError.project_slug_conflict": "\u6B64\u5C08\u6848\u7E2E\u5BEB\u5DF2\u88AB\u4F7F\u7528\uFF0C\u8ACB\u63DB\u4E00\u500B\u7E2E\u5BEB\u540D\u7A31\u3002",
+    "apiError.project_slug_invalid": "\u6B64\u5C08\u6848\u7E2E\u5BEB\u4E0D\u7B26\u5408\u898F\u7BC4\u8981\u6C42\uFF0C\u8ACB\u63DB\u4E00\u500B\u7E2E\u5BEB\u540D\u7A31\u3002",
     "apiError.project_slug_generation_failed": "\u6A21\u578B\u7522\u751F\u7684\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\u4E0D\u7B26\u5408\u5169\u500B\u8A9E\u610F\u55AE\u8A5E\u7684\u683C\u5F0F\u3002",
     "apiError.project_slug_unavailable": "\u66AB\u6642\u7121\u6CD5\u7522\u751F\u552F\u4E00\u7684\u5C08\u6848\u7DB2\u5740\u8B58\u5225\u78BC\uFF0C\u8ACB\u7A0D\u5F8C\u91CD\u8A66\u3002",
     "apiError.proposal_not_found": "Proposal \u4E0D\u5B58\u5728\u3002",
@@ -14635,7 +14637,9 @@
     "home.slugLabel": "\u5C08\u6848\u7E2E\u5BEB",
     "home.slugPlaceholder": "cnn-minimal-2q95",
     "home.slugHint": "\u5169\u500B\u82F1\u6587\u5C0F\u5BEB\u55AE\u5B57\u52A0\u4E0A\u56DB\u4F4D\u5C0F\u5BEB\u5B57\u6BCD\u6216\u6578\u5B57\uFF0C\u4EE5\u9023\u5B57\u865F\u9023\u63A5\u3002",
-    "home.titleRequired": "\u8ACB\u8F38\u5165\u5C08\u6848\u6A19\u984C\u3002",
+    "home.slugInvalid": "\u6B64\u5C08\u6848\u7E2E\u5BEB\u4E0D\u7B26\u5408\u898F\u7BC4\u8981\u6C42\uFF0C\u8ACB\u63DB\u4E00\u500B\u7E2E\u5BEB\u540D\u7A31\u3002",
+    "home.slugConflict": "\u6B64\u5C08\u6848\u7E2E\u5BEB\u5DF2\u88AB\u4F7F\u7528\uFF0C\u8ACB\u63DB\u4E00\u500B\u7E2E\u5BEB\u540D\u7A31\u3002",
+    "home.titleRequired": "\u8ACB\u63D0\u4F9B\u4E00\u500B\u5408\u9069\u7684\u5C08\u6848\u6A19\u984C\u3002",
     "home.createProject": "\u5EFA\u7ACB\u5C08\u6848",
     "home.loading": "\u6B63\u5728\u8F09\u5165\u5C08\u6848\u2026",
     "home.loadFailed": "\u5C08\u6848\u5217\u8868\u8F09\u5165\u5931\u6557",
@@ -16080,8 +16084,8 @@
     "apiError.project_cancelled": "A cancelled project cannot be resumed.",
     "apiError.project_not_active": "The project cannot perform this action right now.",
     "apiError.project_not_found": "Project not found.",
-    "apiError.project_slug_conflict": "That project URL identifier is already in use. Choose different words or a different four-character suffix.",
-    "apiError.project_slug_invalid": "The project URL identifier must contain two lowercase English words and four lowercase letters or digits, joined with hyphens, for example cnn-minimal-2q95.",
+    "apiError.project_slug_conflict": "This project slug is already in use. Please choose a different slug.",
+    "apiError.project_slug_invalid": "This project slug does not meet the required format. Please choose a different slug.",
     "apiError.project_slug_generation_failed": "The model-generated project URL identifier did not match the two-word format.",
     "apiError.project_slug_unavailable": "A unique project URL identifier could not be generated. Please try again later.",
     "apiError.proposal_not_found": "Proposal not found.",
@@ -16191,7 +16195,9 @@
     "home.slugLabel": "Project slug",
     "home.slugPlaceholder": "cnn-minimal-2q95",
     "home.slugHint": "Two lowercase English words plus four lowercase letters or digits, joined with hyphens.",
-    "home.titleRequired": "Enter a project title.",
+    "home.slugInvalid": "This project slug does not meet the required format. Please choose a different slug.",
+    "home.slugConflict": "This project slug is already in use. Please choose a different slug.",
+    "home.titleRequired": "Please provide a meaningful project title.",
     "home.createProject": "Create Project",
     "home.loading": "Loading projects\u2026",
     "home.loadFailed": "Could not load projects",
@@ -17636,8 +17642,8 @@
     "apiError.project_cancelled": "Un proyecto cancelado no se puede reanudar.",
     "apiError.project_not_active": "El proyecto no puede realizar esta acci\xF3n en este momento.",
     "apiError.project_not_found": "Proyecto no encontrado.",
-    "apiError.project_slug_conflict": "Ese identificador de URL ya est\xE1 en uso. Elige otras palabras o un sufijo de cuatro caracteres diferente.",
-    "apiError.project_slug_invalid": "El identificador de URL debe contener dos palabras inglesas min\xFAsculas y cuatro letras min\xFAsculas o d\xEDgitos, unidos con guiones; por ejemplo, cnn-minimal-2q95.",
+    "apiError.project_slug_conflict": "Este slug de proyecto ya est\xE1 en uso. Elige otro slug.",
+    "apiError.project_slug_invalid": "Este slug de proyecto no cumple el formato requerido. Elige otro slug.",
     "apiError.project_slug_generation_failed": "El identificador generado por el modelo no cumple el formato de dos palabras.",
     "apiError.project_slug_unavailable": "No se pudo generar un identificador de URL \xFAnico. Int\xE9ntalo de nuevo m\xE1s tarde.",
     "apiError.proposal_not_found": "Propuesta no encontrada.",
@@ -17747,7 +17753,9 @@
     "home.slugLabel": "Slug del proyecto",
     "home.slugPlaceholder": "cnn-minimal-2q95",
     "home.slugHint": "Dos palabras en ingl\xE9s en min\xFAsculas m\xE1s cuatro letras o d\xEDgitos, unidos con guiones.",
-    "home.titleRequired": "Introduce un t\xEDtulo para el proyecto.",
+    "home.slugInvalid": "Este slug de proyecto no cumple el formato requerido. Elige otro slug.",
+    "home.slugConflict": "Este slug de proyecto ya est\xE1 en uso. Elige otro slug.",
+    "home.titleRequired": "Proporciona un t\xEDtulo de proyecto adecuado.",
     "home.createProject": "Crear proyecto",
     "home.loading": "Cargando proyectos\u2026",
     "home.loadFailed": "No se pudieron cargar los proyectos",
@@ -20979,11 +20987,11 @@
       if (submitting) return;
       const normalizedSlug = slug.trim().toLocaleLowerCase("en-US");
       if (!normalizedSlug || !isValidProjectSlug(normalizedSlug)) {
-        setFormError(t("home.slugHint"));
+        setFormError(t("home.slugInvalid"));
         return;
       }
       if (projects.some((project) => project.slug === normalizedSlug || project.id === normalizedSlug)) {
-        setFormError(t("apiError.project_slug_conflict"));
+        setFormError(t("home.slugConflict"));
         return;
       }
       if (!title.trim()) {
@@ -21206,7 +21214,7 @@
         formError ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "form-error home-form-error", role: "alert", children: formError }) : null,
         /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "create-project-actions", children: [
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "secondary", type: "button", onClick: () => setCreating(false), disabled: submitting, children: t("common.cancel") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "primary", type: "submit", disabled: submitting || !title.trim() || !slug.trim(), children: t("home.createProject") })
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "primary", type: "submit", disabled: submitting, children: t("home.createProject") })
         ] })
       ] }) : null,
       loading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "home-panel home-loading", "aria-label": t("home.loading"), children: [
