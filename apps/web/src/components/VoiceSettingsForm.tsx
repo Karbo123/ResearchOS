@@ -98,28 +98,38 @@ export function VoiceSettingsForm({ projectId, onChanged }: { projectId: string;
               {apiMode ? (values.key_configured ? t('voice.keyConfigured') : t('voice.keyPending')) : t('voice.providerBrowser')}
             </div>
           </div>
-          <span className="tier-default">{t('settings.default')} {apiMode ? t('voice.providerApi') : t('voice.providerBrowser')}</span>
+          {apiMode ? (
+            <div className="model-tier-tools">
+              <ModelTestButton kind="voice" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
+            </div>
+          ) : null}
         </div>
         <div className="model-tier-grid">
-          <div className="settings-segmented settings-voice-provider" role="radiogroup" aria-label={t('voice.provider')}>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={!apiMode}
-              className={!apiMode ? 'active' : ''}
-              onClick={() => update('provider', 'browser')}
-            >
-              {t('voice.providerBrowser')}
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={apiMode}
-              className={apiMode ? 'active' : ''}
-              onClick={() => update('provider', 'api')}
-            >
-              {t('voice.providerApi')}
-            </button>
+          <div className="settings-voice-field">
+            <span className="model-tier-label">
+              <span>{t('voice.provider')}</span>
+              <span className="tier-default">{t('settings.default')} {apiMode ? t('voice.providerApi') : t('voice.providerBrowser')}</span>
+            </span>
+            <div className="settings-segmented settings-voice-provider" role="radiogroup" aria-label={t('voice.provider')}>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={!apiMode}
+                className={!apiMode ? 'active' : ''}
+                onClick={() => update('provider', 'browser')}
+              >
+                {t('voice.providerBrowser')}
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={apiMode}
+                className={apiMode ? 'active' : ''}
+                onClick={() => update('provider', 'api')}
+              >
+                {t('voice.providerApi')}
+              </button>
+            </div>
           </div>
           {apiMode ? (
             <>
@@ -175,7 +185,6 @@ export function VoiceSettingsForm({ projectId, onChanged }: { projectId: string;
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
-        <ModelTestButton kind="voice" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

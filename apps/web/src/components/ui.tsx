@@ -160,6 +160,58 @@ export function ModelTestButton({
   )
 }
 
+export function EmbeddingTestButton({
+  fields,
+  projectId,
+  onResult,
+}: {
+  fields: { mode: 'global' | 'custom'; provider: 'local' | 'openai'; model: string; dimensions: number; base_url: string; key: string }
+  projectId: string
+  onResult?: (ok: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const [state, setState] = useState<'idle' | 'testing' | 'ok' | 'failed'>('idle')
+  const [message, setMessage] = useState('')
+  const run = async () => {
+    if (state === 'testing') return
+    setState('testing')
+    setMessage(t('settings.testing'))
+    try {
+      const result = await api<{ ok: boolean; elapsed: number; message: string }>(`/api/projects/${projectId}/embedding-test`, {
+        method: 'POST',
+        body: JSON.stringify({
+          mode: fields.mode,
+          provider: fields.provider,
+          model: fields.model.trim(),
+          dimensions: Number(fields.dimensions) || 1024,
+          base_url: fields.base_url.trim(),
+          key: fields.key,
+        }),
+      })
+      setState('ok')
+      setMessage(result.message)
+      onResult?.(true)
+    } catch (err) {
+      setState('failed')
+      setMessage(errorMessage(err))
+      onResult?.(false)
+    }
+  }
+  return (
+    <span className="model-test-control">
+      <button className="secondary model-test-button" type="button" disabled={state === 'testing'} onClick={() => void run()}>
+        {state === 'testing' ? <Loader2 size={14} className="spin" /> : <Zap size={14} />}
+        {t('settings.test')}
+      </button>
+      {state !== 'idle' ? (
+        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite">
+          {message}
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
 export function EmptyState({ text, action }: { text: string; action?: React.ReactNode }) {
   return (
     <div className="empty">

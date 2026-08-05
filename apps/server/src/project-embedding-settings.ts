@@ -141,6 +141,7 @@ export function hasProjectEmbeddingOverride(projectId: string): boolean {
 export function publicProjectEmbeddingSettings(projectId: string) {
   const saved = readProjectOverrides()[projectId]
   const effective = saved ?? { ...envDefaults(), pool_key: GLOBAL_POOL_KEY }
+  const envBaseUrl = process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || ''
   return {
     project_id: projectId,
     mode: saved ? 'custom' : 'global',
@@ -148,6 +149,7 @@ export function publicProjectEmbeddingSettings(projectId: string) {
     model: effective.model,
     dimensions: effective.dimensions,
     base_url: effective.provider === 'local' ? '' : effective.base_url,
+    env_base_url: envBaseUrl,
     key_configured: Boolean(effective.key),
     source: saved ? 'project_override' : 'env_default',
     pool_key: effective.pool_key,

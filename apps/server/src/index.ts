@@ -9,7 +9,7 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest,
+  approvalDecision, chatRequest, documentModelSettingsRequest, embeddingTestRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectSlug, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
   workflowEditProposalRequest,
@@ -39,7 +39,7 @@ import { scanFile } from './malware-scanner.js'
 import { canonicalRepositoryUrl, discoverRepositoryCandidates, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
 import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
-import { applyMemoryRevocation, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError } from './supermemory-service.js'
+import { applyMemoryRevocation, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError, testEmbeddingConnection } from './supermemory-service.js'
 import { computedEmbeddingSettings, projectEmbeddingSettings, publicProjectEmbeddingSettings, saveProjectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, stopPoolInstance } from './supermemory-instance.js'
 import { buildArtifactPreview, verifyArtifactFile } from './artifact-preview-service.js'
@@ -377,6 +377,12 @@ app.put('/api/projects/:projectId/embedding-settings', async context => {
   })
   const instance = await projectInstanceStatus(projectId)
   return context.json({ ...publicProjectEmbeddingSettings(projectId), instance })
+})
+app.post('/api/projects/:projectId/embedding-test', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, embeddingTestRequest)
+  return context.json(await testEmbeddingConnection({ ...body, project_id: projectId }))
 })
 app.get('/api/projects/:projectId/memory/links', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))

@@ -138,10 +138,9 @@ export function CodeModelSettingsForm({
                   <span>{t('settings.keyLabel')} · {t(sourceLabelKey(item.sources?.key) as any)}</span>
                 </div>
               </div>
-              <span className="tier-default">{t('settings.default')} {t(tier.defaultEffort === 'low' ? 'settings.low' : tier.defaultEffort === 'medium' ? 'settings.medium' : 'settings.high')}</span>
-            </div>
-            <div className="model-tier-actions">
-              <ModelTestButton kind={tier.id} projectId={projectId} fields={{ model: item.model, url: item.url, key: item.key }} />
+              <div className="model-tier-tools">
+                <ModelTestButton kind={tier.id} projectId={projectId} fields={{ model: item.model, url: item.url, key: item.key }} />
+              </div>
             </div>
             <div className="model-tier-grid">
               <label>
@@ -154,7 +153,10 @@ export function CodeModelSettingsForm({
                 />
               </label>
               <label>
-                {t('settings.reasoningEffort')}
+                <span className="model-tier-label">
+                  <span>{t('settings.reasoningEffort')}</span>
+                  <span className="tier-default">{t('settings.default')} {t(tier.defaultEffort === 'low' ? 'settings.low' : tier.defaultEffort === 'medium' ? 'settings.medium' : 'settings.high')}</span>
+                </span>
                 <select
                   value={item.reasoning_effort}
                   onChange={event => update(tier.id, 'reasoning_effort', event.target.value as ReasoningEffort)}

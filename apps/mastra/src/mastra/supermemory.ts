@@ -32,15 +32,15 @@ const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-m3'
 // pgvector HNSW upsert ceiling; see TODO 053-C).
 const DEFAULT_EMBEDDING_DIMENSIONS = 1024
 const DEFAULT_REMOTE_EMBEDDING_DIMENSIONS = 1024
-// Remote embedding (OpenAI / OpenAI-compatible / Gemini) is implemented by the
-// official server-v0.0.5 build only. server-v0.0.6 and 0.0.7-rc.2 regressed it
-// to the local ONNX worker, so scripts/start-supermemory.ts refuses to start a
+// Remote embedding (OpenAI-compatible) is implemented by the official
+// server-v0.0.5 build only. server-v0.0.6 and 0.0.7-rc.2 regressed it to the
+// local ONNX worker, so scripts/start-supermemory.ts refuses to start a
 // non-v0.0.5 binary when SUPERMEMORY_EMBEDDING_PROVIDER is remote; the API
 // guard below also fails closed instead of silently using local vectors.
 const REMOTE_EMBEDDING_SUPPORTED = true
 
 interface MastraProjectEmbeddingSettings {
-  provider: 'local' | 'openai' | 'gemini'
+  provider: 'local' | 'openai'
   model: string
   dimensions: number
   base_url: string
@@ -49,7 +49,7 @@ interface MastraProjectEmbeddingSettings {
 }
 
 interface MastraEmbeddingPool {
-  provider: 'local' | 'openai' | 'gemini'
+  provider: 'local' | 'openai'
   model: string
   dimensions: number
   base_url: string
@@ -112,7 +112,8 @@ function localAutoAuthAllowed(baseURL: string): boolean {
 
 function embeddingProfile(projectId?: string) {
   const override = projectId ? mastraProjectEmbeddingSettings()[projectId] : null
-  const provider = override?.provider ?? (process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER)
+  const rawProvider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase()
+  const provider = override?.provider ?? (rawProvider === 'openai' ? 'openai' : DEFAULT_EMBEDDING_PROVIDER)
   const model = override ? override.model : (process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : ''))
   const parsedDimensions = Number(process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS)
   const defaultDimensions = provider === 'local' ? DEFAULT_EMBEDDING_DIMENSIONS : DEFAULT_REMOTE_EMBEDDING_DIMENSIONS

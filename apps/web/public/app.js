@@ -20643,6 +20643,47 @@
       state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", children: message }) : null
     ] });
   }
+  function EmbeddingTestButton({
+    fields,
+    projectId,
+    onResult
+  }) {
+    const { t } = useTranslation();
+    const [state, setState] = (0, import_react7.useState)("idle");
+    const [message, setMessage] = (0, import_react7.useState)("");
+    const run = async () => {
+      if (state === "testing") return;
+      setState("testing");
+      setMessage(t("settings.testing"));
+      try {
+        const result = await api(`/api/projects/${projectId}/embedding-test`, {
+          method: "POST",
+          body: JSON.stringify({
+            mode: fields.mode,
+            provider: fields.provider,
+            model: fields.model.trim(),
+            dimensions: Number(fields.dimensions) || 1024,
+            base_url: fields.base_url.trim(),
+            key: fields.key
+          })
+        });
+        setState("ok");
+        setMessage(result.message);
+        onResult?.(true);
+      } catch (err) {
+        setState("failed");
+        setMessage(errorMessage(err));
+        onResult?.(false);
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "model-test-control", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { className: "secondary model-test-button", type: "button", disabled: state === "testing", onClick: () => void run(), children: [
+        state === "testing" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LoaderCircle, { size: 14, className: "spin" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Zap, { size: 14 }),
+        t("settings.test")
+      ] }),
+      state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", children: message }) : null
+    ] });
+  }
   function EmptyState({ text: text2, action }) {
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "empty", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { children: text2 }),
@@ -28331,13 +28372,8 @@
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
-              t("settings.default"),
-              " ",
-              t(tier.defaultEffort === "low" ? "settings.low" : tier.defaultEffort === "medium" ? "settings.medium" : "settings.high")
-            ] })
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ModelTestButton, { kind: tier.id, projectId, fields: { model: item.model, url: item.url, key: item.key } }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "model-tier-actions", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ModelTestButton, { kind: tier.id, projectId, fields: { model: item.model, url: item.url, key: item.key } }) }),
           /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "model-tier-grid", children: [
             /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
               t("settings.modelName"),
@@ -28352,7 +28388,14 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { children: [
-              t("settings.reasoningEffort"),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "model-tier-label", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: t("settings.reasoningEffort") }),
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "tier-default", children: [
+                  t("settings.default"),
+                  " ",
+                  t(tier.defaultEffort === "low" ? "settings.low" : tier.defaultEffort === "medium" ? "settings.medium" : "settings.high")
+                ] })
+              ] }),
               /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
                 "select",
                 {
@@ -28499,11 +28542,14 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: "tier-default", children: t("documentModel.defaultModel") })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelTestButton, { kind: "document", projectId, fields: { model: values.model, url: values.url, key: values.key } }) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
-            t("settings.modelName"),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "model-tier-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { children: t("settings.modelName") }),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: "tier-default", children: t("documentModel.defaultModel") })
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
               "input",
               {
@@ -28554,7 +28600,6 @@
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelTestButton, { kind: "document", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
         /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
         /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
           /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Save, { size: 16 }),
@@ -28651,11 +28696,14 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "tier-default", children: t("visionModel.defaultModel") })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ModelTestButton, { kind: "vision", projectId, fields: { model: values.model, url: values.url, key: values.key } }) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("label", { children: [
-            t("settings.modelName"),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "model-tier-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { children: t("settings.modelName") }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "tier-default", children: t("visionModel.defaultModel") })
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
               "input",
               {
@@ -28707,7 +28755,6 @@
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ModelTestButton, { kind: "vision", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
         /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
         /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
           /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Save, { size: 16 }),
@@ -28806,11 +28853,14 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "tier-default", children: t("imageModel.defaultModel") })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ModelTestButton, { kind: "image", projectId, fields: { model: values.model, url: values.url, key: values.key } }) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { children: [
-            t("settings.modelName"),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "model-tier-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: t("settings.modelName") }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "tier-default", children: t("imageModel.defaultModel") })
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
               "input",
               {
@@ -28892,7 +28942,6 @@
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ModelTestButton, { kind: "image", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
           /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Save, { size: 16 }),
@@ -28925,6 +28974,7 @@
           model: result.model,
           dimensions: result.dimensions,
           base_url: result.base_url,
+          env_base_url: result.env_base_url || "",
           key: "",
           key_configured: result.key_configured
         });
@@ -28941,6 +28991,14 @@
     }, [projectId]);
     const update = (field, value) => {
       setValues((previous) => previous ? { ...previous, [field]: value } : previous);
+      setDirty(true);
+    };
+    const updateProvider = (provider) => {
+      setValues((previous) => previous ? {
+        ...previous,
+        provider,
+        base_url: provider === "openai" ? previous.base_url || previous.env_base_url || "" : ""
+      } : previous);
       setDirty(true);
     };
     const save = async (resetData) => {
@@ -28995,13 +29053,29 @@
                 values.mode === "global" ? t("embedding.globalDefault") : values.provider === "local" ? t("embedding.localOnnx") : t("embedding.remoteApi")
               ] })
             ] }),
-            instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "tier-default", children: [
-              t("embedding.instance"),
-              " :",
-              instance.port,
-              instance.running ? t("embedding.running") : t("embedding.notRunning"),
-              instance.shared_projects > 1 ? t("embedding.sharedProjects", { count: instance.shared_projects }) : ""
-            ] }) : null
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "model-tier-tools", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                EmbeddingTestButton,
+                {
+                  projectId,
+                  fields: {
+                    mode: values.mode,
+                    provider: values.provider,
+                    model: values.model,
+                    dimensions: values.dimensions,
+                    base_url: values.base_url,
+                    key: values.key
+                  }
+                }
+              ),
+              instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "tier-default", children: [
+                t("embedding.instance"),
+                " :",
+                instance.port,
+                instance.running ? t("embedding.running") : t("embedding.notRunning"),
+                instance.shared_projects > 1 ? t("embedding.sharedProjects", { count: instance.shared_projects }) : ""
+              ] }) : null
+            ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "model-tier-grid", children: [
             /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { children: [
@@ -29025,7 +29099,7 @@
                 {
                   value: values.provider,
                   disabled: !custom,
-                  onChange: (event) => update("provider", event.target.value),
+                  onChange: (event) => updateProvider(event.target.value),
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("option", { value: "local", children: [
                       "local (",
@@ -29036,8 +29110,7 @@
                       "openai (",
                       t("embedding.openaiCompatible"),
                       ")"
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("option", { value: "gemini", children: "gemini" })
+                    ] })
                   ]
                 }
               )
@@ -29205,36 +29278,42 @@
               apiMode ? values.key_configured ? t("voice.keyConfigured") : t("voice.keyPending") : t("voice.providerBrowser")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "tier-default", children: [
-            t("settings.default"),
-            " ",
-            apiMode ? t("voice.providerApi") : t("voice.providerBrowser")
-          ] })
+          apiMode ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(ModelTestButton, { kind: "voice", projectId, fields: { model: values.model, url: values.url, key: values.key } }) }) : null
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "model-tier-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "settings-segmented settings-voice-provider", role: "radiogroup", "aria-label": t("voice.provider"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
-              "button",
-              {
-                type: "button",
-                role: "radio",
-                "aria-checked": !apiMode,
-                className: !apiMode ? "active" : "",
-                onClick: () => update("provider", "browser"),
-                children: t("voice.providerBrowser")
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
-              "button",
-              {
-                type: "button",
-                role: "radio",
-                "aria-checked": apiMode,
-                className: apiMode ? "active" : "",
-                onClick: () => update("provider", "api"),
-                children: t("voice.providerApi")
-              }
-            )
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "settings-voice-field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "model-tier-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { children: t("voice.provider") }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "tier-default", children: [
+                t("settings.default"),
+                " ",
+                apiMode ? t("voice.providerApi") : t("voice.providerBrowser")
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "settings-segmented settings-voice-provider", role: "radiogroup", "aria-label": t("voice.provider"), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+                "button",
+                {
+                  type: "button",
+                  role: "radio",
+                  "aria-checked": !apiMode,
+                  className: !apiMode ? "active" : "",
+                  onClick: () => update("provider", "browser"),
+                  children: t("voice.providerBrowser")
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+                "button",
+                {
+                  type: "button",
+                  role: "radio",
+                  "aria-checked": apiMode,
+                  className: apiMode ? "active" : "",
+                  onClick: () => update("provider", "api"),
+                  children: t("voice.providerApi")
+                }
+              )
+            ] })
           ] }),
           apiMode ? /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(import_jsx_runtime32.Fragment, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("label", { children: [
@@ -29295,7 +29374,6 @@
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "form-error", role: "alert", children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "modal-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(ModelTestButton, { kind: "voice", projectId, fields: { model: values.model, url: values.url, key: values.key } }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("button", { className: "secondary", type: "button", onClick: () => void load(), children: t("topbar.refresh") }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("button", { className: "primary", type: "submit", disabled: saving || !dirty, children: [
           /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Save, { size: 16 }),

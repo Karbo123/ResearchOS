@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react'
 import { Database, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ProjectEmbeddingSettingsResponse } from '../types'
-import { ConfirmDialog, StatusDot } from './ui'
+import { ConfirmDialog, EmbeddingTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
 interface FormValues {
   mode: 'global' | 'custom'
-  provider: 'local' | 'openai' | 'gemini'
+  provider: 'local' | 'openai'
   model: string
   dimensions: number
   base_url: string
+  env_base_url: string
   key: string
   key_configured: boolean
 }
@@ -21,6 +22,7 @@ const EMPTY: FormValues = {
   model: 'Xenova/bge-m3',
   dimensions: 1024,
   base_url: '',
+  env_base_url: '',
   key: '',
   key_configured: false,
 }
@@ -46,6 +48,7 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
         model: result.model,
         dimensions: result.dimensions,
         base_url: result.base_url,
+        env_base_url: result.env_base_url || '',
         key: '',
         key_configured: result.key_configured,
       })
@@ -65,6 +68,15 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
 
   const update = (field: keyof FormValues, value: string | number | boolean) => {
     setValues(previous => previous ? { ...previous, [field]: value } : previous)
+    setDirty(true)
+  }
+
+  const updateProvider = (provider: FormValues['provider']) => {
+    setValues(previous => previous ? {
+      ...previous,
+      provider,
+      base_url: provider === 'openai' ? (previous.base_url || previous.env_base_url || '') : '',
+    } : previous)
     setDirty(true)
   }
 
@@ -121,11 +133,24 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
                 {values.mode === 'global' ? t('embedding.globalDefault') : values.provider === 'local' ? t('embedding.localOnnx') : t('embedding.remoteApi')}
               </div>
             </div>
-            {instance?.mode === 'custom' && instance.port ? (
-              <span className="tier-default">{t('embedding.instance')} :{instance.port}{instance.running ? t('embedding.running') : t('embedding.notRunning')}
-                {instance.shared_projects > 1 ? t('embedding.sharedProjects', { count: instance.shared_projects }) : ''}
-              </span>
-            ) : null}
+            <div className="model-tier-tools">
+              <EmbeddingTestButton
+                projectId={projectId}
+                fields={{
+                  mode: values.mode,
+                  provider: values.provider,
+                  model: values.model,
+                  dimensions: values.dimensions,
+                  base_url: values.base_url,
+                  key: values.key,
+                }}
+              />
+              {instance?.mode === 'custom' && instance.port ? (
+                <span className="tier-default">{t('embedding.instance')} :{instance.port}{instance.running ? t('embedding.running') : t('embedding.notRunning')}
+                  {instance.shared_projects > 1 ? t('embedding.sharedProjects', { count: instance.shared_projects }) : ''}
+                </span>
+              ) : null}
+            </div>
           </div>
           <div className="model-tier-grid">
             <label>
@@ -143,11 +168,10 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
               <select
                 value={values.provider}
                 disabled={!custom}
-                onChange={event => update('provider', event.target.value as FormValues['provider'])}
+                onChange={event => updateProvider(event.target.value as FormValues['provider'])}
               >
                 <option value="local">local ({t('embedding.localOnnx')})</option>
                 <option value="openai">openai ({t('embedding.openaiCompatible')})</option>
-                <option value="gemini">gemini</option>
               </select>
             </label>
             <label>

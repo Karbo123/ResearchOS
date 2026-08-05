@@ -210,6 +210,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-05）：迁移链路已落地为 `projects.id VARCHAR(120) PRIMARY KEY` 与全业务表 slug 外键，旧语义地址写入 `project_slug_aliases`；项目目录、`project-settings.json`、`project-embedding-settings.json`、workflow 缓存/运行/审计文件和 Mastra workflow id 均使用 slug。旧 UUID 项目标识不再兼容：API 直接 404，旧 UUID 库启动失败关闭，别名与文件迁移只处理语义 slug。
 - [x] `P0-WORKFLOW-126` 增加 Mastra Studio 桥接：把每个项目当前激活的 workflow 暴露到 Mastra `/workflows` 列表与详情接口，热加载后只展示最新版本；因 `@mastra/core@1.55.0` 无 `removeWorkflow`，采用应用层注册表 + 实例方法桥接，而不是修改 Mastra 源码。真实 API 验证：临时 Mastra 实例 `/api/workflows` 返回 75 个项目 workflow，详情含 `stepGraph`。 [Apple 设计验收]
+- [x] `P0-SETTINGS-137` 修复项目级模型设置未继承运行时全局配置导致“测试连接”失败：`privateProjectModelSettings()` 改为以 `privateModelSettings()` 为基础，`/api/projects/:id/settings/*` 现在返回 `grok-4.5` 等真实运行时模型；所有模型表单的“测试连接”统一到 `section.model-tier` 右上角，默认徽标移到对应字段标签右侧；Embedding 提供方式新增测试按钮（本地 ONNX 与 OpenAI-compatible 都覆盖），移除 Gemini 选项，切到 OpenAI-compatible 时自动填入 `SUPERMEMORY_EMBEDDING_BASE_URL`，测试接口复用已保存/环境 key 而不要求重新输入。已验证：197 个服务端测试、Web/Server/Mastra 类型检查、构建、UI/i18n、语言边界检查通过；Windows Chrome DOM 确认代码/文档卡片测试按钮位置与默认徽标，API 实测文档模型、本地与远程 Embedding 测试均成功。 [Apple 设计验收]
 - [~] `P0-WORKFLOW-125` 按 `TODO-workflow.md` 实施项目级单一 Mastra Workflow：每个项目一个 `projects/<project-id>/workflow.ts`，默认模板初始化，运行期热加载，自然语言经审批修改工作流，并使用 Mastra Studio/序列化图实现可视化。Phase 0-5 主体已完成并通过核心检查（见 `TODO-workflow.md`）；Phase 6 收尾中：真实浏览器截图验收、部分 API 动作直接调用 Agent 的迁移、全量文档同步与提交推送。 [Apple 设计验收]
 
 ### 4.0 当前唯一优先：项目工作台重构（2026-08-03，必须严格按顺序）

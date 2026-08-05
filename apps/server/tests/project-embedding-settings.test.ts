@@ -47,6 +47,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('falls back to the global .env defaults when a project has no override', () => {
+    process.env.SUPERMEMORY_EMBEDDING_BASE_URL = 'https://ai.gitee.com/v1'
     const projectId = testProjectSlug()
     expect(hasProjectEmbeddingOverride(projectId)).toBe(false)
     expect(projectEmbeddingSettings(projectId)).toMatchObject({
@@ -63,6 +64,7 @@ describe('project-level embedding settings', () => {
       dimensions: 1024,
       key_configured: false,
       source: 'env_default',
+      env_base_url: 'https://ai.gitee.com/v1',
     })
   })
 

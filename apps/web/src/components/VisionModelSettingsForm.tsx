@@ -96,11 +96,16 @@ export function VisionModelSettingsForm({
               <span>{t('settings.keyLabel')} · {t(values.source === 'runtime_override' ? 'settings.sourceRuntime' : 'settings.sourceEnv')}</span>
             </div>
           </div>
-          <span className="tier-default">{t('visionModel.defaultModel')}</span>
+          <div className="model-tier-tools">
+            <ModelTestButton kind="vision" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
+          </div>
         </div>
         <div className="model-tier-grid">
           <label>
-            {t('settings.modelName')}
+            <span className="model-tier-label">
+              <span>{t('settings.modelName')}</span>
+              <span className="tier-default">{t('visionModel.defaultModel')}</span>
+            </span>
             <input
               value={values.model}
               required
@@ -143,7 +148,6 @@ export function VisionModelSettingsForm({
       </section>
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       <div className="modal-actions">
-        <ModelTestButton kind="vision" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
         <button className="secondary" type="button" onClick={() => void load()}>{t('topbar.refresh')}</button>
         <button className="primary" type="submit" disabled={saving || !dirty}>
           <Save size={16} />

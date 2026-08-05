@@ -11,7 +11,7 @@ import {
   type ModelTier,
   type VoiceProvider,
 } from './contracts.js'
-import { envModelDefaults } from './model-settings.js'
+import { privateModelSettings } from './model-settings.js'
 import { runtimeRoot } from './paths.js'
 import { envDefaults as envVoiceDefaults } from './voice-settings.js'
 
@@ -149,7 +149,10 @@ function savedVoice(projectId: string): Partial<ProjectVoiceSettings> | undefine
 }
 
 export function privateProjectModelSettings(projectId: string): ProjectModelSettings {
-  const base = envModelDefaults()
+  // Project settings inherit the same global runtime overrides as the Mastra
+  // process (env defaults merged with runtime/model-settings.json), then only
+  // project-specific overrides are layered on top.
+  const base = privateModelSettings()
   const saved = savedModel(projectId)
   return {
     simple: mergeTier(base.simple, saved?.simple),

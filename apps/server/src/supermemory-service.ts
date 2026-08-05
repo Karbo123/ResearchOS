@@ -2,11 +2,14 @@ import { createHash } from 'node:crypto'
 import { createReadStream, lstatSync } from 'node:fs'
 import { Supermemory } from 'supermemory'
 import { z } from 'zod'
+import { ApiError } from './http.js'
 import { audit, database, one, rows } from './database.js'
 import { memoryIngestRequest } from './contracts.js'
+import { isAllowedModelUrl } from './model-url.js'
 import { projectFilePath } from './project-storage.js'
 import { GLOBAL_POOL_KEY, poolForKey, projectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, resolveProjectBaseUrl } from './supermemory-instance.js'
+import { proxyFetch } from './proxy-fetch.js'
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
 const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'
@@ -17,9 +20,9 @@ const DEFAULT_EMBEDDING_MODEL = 'Xenova/bge-m3'
 // pgvector HNSW upsert ceiling; see TODO 053-C).
 const DEFAULT_EMBEDDING_DIMENSIONS = 1024
 const DEFAULT_REMOTE_EMBEDDING_DIMENSIONS = 1024
-// Remote embedding (OpenAI / OpenAI-compatible / Gemini) is implemented by the
-// official server-v0.0.5 build only. server-v0.0.6 and 0.0.7-rc.2 regressed it
-// to the local ONNX worker, so scripts/start-supermemory.ts refuses to start a
+// Remote embedding (OpenAI-compatible) is implemented by the official
+// server-v0.0.5 build only. server-v0.0.6 and 0.0.7-rc.2 regressed it to the
+// local ONNX worker, so scripts/start-supermemory.ts refuses to start a
 // non-v0.0.5 binary when SUPERMEMORY_EMBEDDING_PROVIDER is remote; the API
 // guard below also fails closed instead of silently using local vectors.
 const REMOTE_EMBEDDING_SUPPORTED = true
@@ -101,7 +104,8 @@ function localAutoAuthAllowed(baseURL: string): boolean {
 
 export function embeddingProfile(projectId?: string) {
   const override = projectId ? projectEmbeddingSettings(projectId) : null
-  const provider = override?.provider ?? (process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() || DEFAULT_EMBEDDING_PROVIDER)
+  const rawProvider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase()
+  const provider = override?.provider ?? (rawProvider === 'openai' ? 'openai' : DEFAULT_EMBEDDING_PROVIDER)
   const model = override ? override.model : (process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || (provider === 'local' ? DEFAULT_EMBEDDING_MODEL : ''))
   const parsedDimensions = Number(process.env.SUPERMEMORY_EMBEDDING_DIMENSIONS)
   const defaultDimensions = provider === 'local' ? DEFAULT_EMBEDDING_DIMENSIONS : DEFAULT_REMOTE_EMBEDDING_DIMENSIONS
@@ -116,6 +120,111 @@ export function embeddingProfile(projectId?: string) {
     key_configured: keyConfigured,
     remote_embedding_supported: REMOTE_EMBEDDING_SUPPORTED,
     current_build_behavior: provider === 'local' ? 'local_onnx' : 'remote_openai_compatible',
+  }
+}
+
+export async function testEmbeddingConnection(input: {
+  mode: 'global' | 'custom'
+  provider: 'local' | 'openai'
+  model: string
+  dimensions: number
+  base_url: string
+  key: string
+  project_id?: string
+}) {
+  const start = Date.now()
+  const saved = input.project_id ? projectEmbeddingSettings(input.project_id) : null
+  const globalProvider = process.env.SUPERMEMORY_EMBEDDING_PROVIDER?.trim().toLowerCase() === 'openai' ? 'openai' : 'local'
+  const globalBaseUrl = process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || ''
+  const globalKey = process.env.SUPERMEMORY_EMBEDDING_API_KEY?.trim() || ''
+  const globalModel = process.env.SUPERMEMORY_EMBEDDING_MODEL?.trim() || ''
+  const effectiveProvider = input.mode === 'global'
+    ? globalProvider
+    : input.provider
+  const effectiveBaseUrl = input.mode === 'global'
+    ? globalBaseUrl
+    : (input.base_url || saved?.base_url || '')
+  const effectiveKey = input.mode === 'global'
+    ? globalKey
+    : (input.key || saved?.key || globalKey)
+  const effectiveModel = input.mode === 'global'
+    ? globalModel
+    : (input.model || saved?.model || '')
+
+  if (effectiveProvider === 'local') {
+    const projectId = input.project_id
+    if (!projectId) throw new ApiError(422, 'embedding_test_project_required', '请先打开一个研究项目后再测试本地 Embedding。')
+    try {
+      await resolveProjectBaseUrl(projectId)
+      const status = await projectInstanceStatus(projectId)
+      const baseUrl = await resolveProjectBaseUrl(projectId)
+      const elapsed = Math.round((Date.now() - start) / 100) / 10
+      const port = status.port ? `:${status.port}` : ':6767'
+      return {
+        ok: true,
+        elapsed,
+        message: status.mode === 'custom'
+          ? `Supermemory 实例已启动并运行（端口 ${port}，耗时 ${elapsed} 秒）。`
+          : `Supermemory 全局实例已运行（${baseUrl}，耗时 ${elapsed} 秒）。`,
+      }
+    } catch (error) {
+      if (error instanceof ApiError) throw error
+      throw new ApiError(502, 'embedding_test_unreachable', `Supermemory 本地实例无法连接或未启动：${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+
+  const model = effectiveModel.trim()
+  const baseUrl = effectiveBaseUrl.trim()
+  const key = effectiveKey.trim()
+  if (!model) throw new ApiError(422, 'embedding_test_missing_model', '请先填写 Embedding 模型名称。')
+  if (!baseUrl) throw new ApiError(422, 'embedding_test_missing_base_url', '请先填写 Embedding 基础 URL。')
+  if (!key) throw new ApiError(422, 'embedding_test_missing_key', '请先配置 Embedding API key。')
+  if (!isAllowedModelUrl(baseUrl)) {
+    throw new ApiError(422, 'embedding_test_invalid_url', 'Embedding 地址必须是 HTTPS 或回环/私有 HTTP。')
+  }
+  const endpoint = `${baseUrl.replace(/\/+$/, '')}/embeddings`
+  try {
+    const response = await proxyFetch()(endpoint, {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${key}`,
+        'content-type': 'application/json',
+        'user-agent': 'research-os-embedding-test/1',
+      },
+      body: JSON.stringify({ model, input: 'ping' }),
+      signal: AbortSignal.timeout(25_000),
+    })
+    const body = await response.json().catch(() => null)
+    const data = body && typeof body === 'object' && Array.isArray((body as Record<string, unknown>).data)
+      ? (body as { data: Array<{ embedding?: unknown }> }).data
+      : []
+    const dimensionCount = typeof data[0]?.embedding === 'object' && data[0].embedding !== null
+      ? Object.keys(data[0].embedding as Record<string, unknown>).length
+      : Array.isArray(data[0]?.embedding)
+        ? (data[0].embedding as unknown[]).length
+        : 0
+    const elapsed = Math.round((Date.now() - start) / 100) / 10
+    if (!response.ok) {
+      const message = body && typeof body === 'object'
+        ? (body as { error?: { message?: string } }).error?.message
+          || (body as { message?: string }).message
+          || `HTTP ${response.status}`
+        : `HTTP ${response.status}`
+      throw new ApiError(502, 'embedding_test_upstream_error', `Embedding 服务已响应但返回错误：${message}`)
+    }
+    if (dimensionCount < 1) throw new ApiError(502, 'embedding_test_invalid_response', 'Embedding 服务返回了无效响应。')
+    return {
+      ok: true,
+      elapsed,
+      message: `Embedding 连接正常，返回 ${dimensionCount} 维向量（${elapsed} 秒）。`,
+    }
+  } catch (error) {
+    if (error instanceof ApiError) throw error
+    if (error instanceof Error && error.name === 'TimeoutError') {
+      throw new ApiError(504, 'embedding_test_timeout', 'Embedding 测试超时，请检查网络与代理设置。')
+    }
+    throw new ApiError(502, 'embedding_test_unreachable', `无法连接 Embedding 服务：${error instanceof Error ? error.message : String(error)}`)
   }
 }
 

@@ -164,10 +164,11 @@ export interface ProjectEmbeddingInstanceStatus {
 export interface ProjectEmbeddingSettingsResponse {
   project_id: string
   mode: 'global' | 'custom'
-  provider: 'local' | 'openai' | 'gemini'
+  provider: 'local' | 'openai'
   model: string
   dimensions: number
   base_url: string
+  env_base_url: string
   key_configured: boolean
   source: string
   instance: ProjectEmbeddingInstanceStatus

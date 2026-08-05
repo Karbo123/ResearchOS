@@ -31,6 +31,23 @@ describe('project-scoped model settings', () => {
     expect(privateProjectModelSettings('project-a').simple.key).toBe('env-secret')
   })
 
+  it('inherits global runtime model settings before project overrides', async () => {
+    setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-project-settings-runtime-${process.pid}`)
+    vi.resetModules()
+    const { saveDocumentSettings, saveModelSettings } = await import('../src/model-settings.js')
+    saveModelSettings({
+      simple: { model: 'grok-4.5', url: 'http://127.0.0.1:3000/v1', key: 'runtime-secret', reasoning_effort: 'low' },
+      medium: { model: 'grok-4.5', url: 'http://127.0.0.1:3000/v1', key: 'runtime-secret', reasoning_effort: 'medium' },
+      complex: { model: 'grok-4.5', url: 'http://127.0.0.1:3000/v1', key: 'runtime-secret', reasoning_effort: 'high' },
+    })
+    saveDocumentSettings({ model: 'grok-4.5-doc', url: 'http://127.0.0.1:3000/v1', key: 'runtime-doc-secret' })
+    const { privateProjectModelSettings, publicProjectModelSettings } = await import('../src/project-settings.js')
+    expect(privateProjectModelSettings('project-a').simple).toMatchObject({ model: 'grok-4.5', url: 'http://127.0.0.1:3000/v1', key: 'runtime-secret' })
+    expect(privateProjectModelSettings('project-a').document).toMatchObject({ model: 'grok-4.5-doc', key: 'runtime-doc-secret' })
+    expect(publicProjectModelSettings('project-a').tiers.simple).toMatchObject({ model: 'grok-4.5', key_configured: true })
+    expect(publicProjectModelSettings('project-a').document).toMatchObject({ model: 'grok-4.5-doc', key_configured: true })
+  })
+
   it('persists a project override without leaking to other projects', async () => {
     setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-project-settings-${process.pid}`)
     setEnvironment('RESEARCH_MODEL_URL_SIMPLE', 'http://127.0.0.1:3000/v1')
