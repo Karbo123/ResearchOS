@@ -196,6 +196,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 ### 4.0.2 下一阶段规划：项目级单一 Workflow 与热加载（2026-08-05）
 
+- [x] `P0-UI-136` 首页侧边栏最近项目列表使用固定行高：`home-sidebar-quick-list` 改为 `grid-auto-rows:54px + align-content:start`，项目按钮固定 `height:54px`，避免只有一个项目时被网格拉伸占满整块高度；真实浏览器模拟单项目验证按钮高度为 54px 且小于列表区域高度。 [Apple 设计验收]
 - [x] `P0-UI-133` 创建项目表单按具体原因提示错误：缩写不符合规范时显示“此项目缩写不符合规范要求，请换一个缩写名称。”；缩写已存在时显示“此项目缩写已被使用，请换一个缩写名称。”；标题或缩写去除首尾空白后为空时，“创建项目”按钮保持 `disabled`，不提交也不显示错误；网络/服务端其他失败继续走通用错误提示。四语言 i18n 同步，并用真实 Headless Chrome 验证非空格式/重复场景的错误提示与空值禁用；`index.html` 的 `app.js` 静态版本号已更新，避免浏览器继续缓存旧构建。 [Apple 设计验收]
 - [x] `P0-PROJECT-SLUG-132` 创建项目时强制 slug 唯一：服务端 `/api/projects` 同时检查 `projects.slug` 与 `project_slug_aliases`，重复时返回 409 `project_slug_conflict`；前端提交前先对照当前项目列表拦截重复，不发出创建请求。新增服务端回归测试，并用 Headless Chrome 模拟已有同名项目验证表单显示冲突提示且没有 POST。 [Apple 设计验收]
 - [x] `P0-UI-131` 首页没有任何科研项目时隐藏右上角 `primary home-create-toggle` 按钮，只保留空状态卡片中的“新建项目”入口；项目缩写前端校验与后端对齐：两个不要求是词典词的小写英文字母组合（各 2–32 位）+ 四位小写字母/数字后缀，用连字符连接，且两个词不能重复。已用真实 Headless Chrome 在空项目列表下验证：`home-create-toggle` 数量为 0、空状态主按钮数量为 1；Web 类型检查、Web 构建与 `project-slug` 服务端测试通过。 [Apple 设计验收]
