@@ -201,6 +201,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 - [x] `P0-PROJECT-SLUG-132` 创建项目时强制 slug 唯一：服务端 `/api/projects` 同时检查 `projects.slug` 与 `project_slug_aliases`，重复时返回 409 `project_slug_conflict`；前端提交前先对照当前项目列表拦截重复，不发出创建请求。新增服务端回归测试，并用 Headless Chrome 模拟已有同名项目验证表单显示冲突提示且没有 POST。 [Apple 设计验收]
 - [x] `P0-UI-131` 首页没有任何科研项目时隐藏右上角 `primary home-create-toggle` 按钮，只保留空状态卡片中的“新建项目”入口；项目缩写前端校验与后端对齐：两个不要求是词典词的小写英文字母组合（各 2–32 位）+ 四位小写字母/数字后缀，用连字符连接，且两个词不能重复。已用真实 Headless Chrome 在空项目列表下验证：`home-create-toggle` 数量为 0、空状态主按钮数量为 1；Web 类型检查、Web 构建与 `project-slug` 服务端测试通过。 [Apple 设计验收]
 - [x] `P0-VISUAL-123` 修复首页无项目空状态的新建项目按钮配色：`+` 图标与按钮文字统一使用 `--on-accent`，外层大图标保持品牌蓝色；Chrome 计算样式验证按钮文字与图标均为 `rgb(255,255,255)`。 [Apple 设计验收]
+- [x] `P0-VISUAL-124` 修复首页项目表格表头被 CSS Grid 撑成两行的问题：原 7 个表头 `<span>` 被放进 5 列网格导致“论文/更新时间/操作”自动换到第二行。现改为与项目行一致的 5 列结构，第三列用四等分内部网格分别对齐“实验/审批/文献/论文”四张统计卡，窄桌面同步切换为 2×2；`mimo-v2.5` 视觉复核确认表头只有一行、与项目行逐列对齐、无异常间距或换行。 [Apple 设计验收]
 - [x] `P0-WORKFLOW-127` 让 Mastra Studio 的 workflow 使用项目语义 slug（如 `native-acceptance-a8b9`）作为名称，并使用项目完整标题作为 description；新增轻量项目元数据接口 `/api/projects/:projectRef/meta` 供 workflow runtime 获取 `slug/title`。 [Apple 设计验收]
 - [x] `P0-PROJECT-SLUG-128` 把语义 slug 提升为项目唯一标识：数据库 `projects.id`、全部 `project_id` 外键、项目目录、Mastra workflow id/缓存、Supermemory container tag、runtime 项目设置与 embedding 设置全部改用 slug；旧语义地址只保留为兼容别名，禁止 UUID 出现在项目主键、路径、workflow、container tag、设置键或新日志中。 [Apple 设计验收]
 - [x] `P0-PROJECT-SLUG-129` 彻底移除旧项目 UUID 兼容：API 项目引用、前端 URL、别名表解析、迁移逻辑、测试与文档均不再接受、迁移或展示旧 UUID 项目标识；遇到旧 UUID 直接 404。旧语义 slug 的别名兼容保留。

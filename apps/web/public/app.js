@@ -21237,13 +21237,16 @@
         ] })
       ] }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "home-panel project-list-panel", children: [
         /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "project-table-header", "aria-hidden": "true", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.project") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.experiments") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.approvals") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.literature") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.paper") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.updated") }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.actions") })
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "project-table-col-drag", "aria-hidden": "true" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "project-table-col-main", children: t("home.project") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "project-table-col-stats", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.experiments") }),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.approvals") }),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.literature") }),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: t("home.paper") })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "project-table-col-updated", children: t("home.updated") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "project-table-col-actions", children: t("home.actions") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "home-project-rows", ref: homeRowsRef, "aria-label": t("sidebar.projects"), children: visibleProjects.map((project) => {
           const running = project.experiment_running ?? 0;

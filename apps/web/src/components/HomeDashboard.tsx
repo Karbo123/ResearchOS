@@ -470,13 +470,16 @@ export function HomeDashboard({
       ) : (
         <div className="home-panel project-list-panel">
           <div className="project-table-header" aria-hidden="true">
-            <span>{t('home.project')}</span>
-            <span>{t('home.experiments')}</span>
-            <span>{t('home.approvals')}</span>
-            <span>{t('home.literature')}</span>
-            <span>{t('home.paper')}</span>
-            <span>{t('home.updated')}</span>
-            <span>{t('home.actions')}</span>
+            <span className="project-table-col-drag" aria-hidden="true" />
+            <span className="project-table-col-main">{t('home.project')}</span>
+            <div className="project-table-col-stats">
+              <span>{t('home.experiments')}</span>
+              <span>{t('home.approvals')}</span>
+              <span>{t('home.literature')}</span>
+              <span>{t('home.paper')}</span>
+            </div>
+            <span className="project-table-col-updated">{t('home.updated')}</span>
+            <span className="project-table-col-actions">{t('home.actions')}</span>
           </div>
           <div className="home-project-rows" ref={homeRowsRef} aria-label={t('sidebar.projects')}>
             {visibleProjects.map(project => {
