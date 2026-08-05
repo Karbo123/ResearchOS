@@ -89,12 +89,9 @@ function validateConfig(tier: ModelTier, merged: ModelConfig): ModelConfig {
   return result.data
 }
 
-export function loadModelConfig(tier: ModelTier, projectId?: string): ModelConfig {
-  if (projectId) return loadProjectModelConfig(tier, projectId)
-  const merged = environmentSettings(tier)
-  const path = modelSettingsPath
+function applyGlobalModelSettings(tier: ModelTier, merged: ModelConfig): ModelConfig {
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8')) as Record<string, Record<string, unknown>>
+    const parsed = JSON.parse(readFileSync(modelSettingsPath, 'utf8')) as Record<string, Record<string, unknown>>
     const item = parsed[tier]
     if (!item || typeof item !== 'object') throw new ModelConfigurationError('invalid settings tier')
     for (const field of ['model', 'url', 'key'] as const) {
@@ -110,11 +107,16 @@ export function loadModelConfig(tier: ModelTier, projectId?: string): ModelConfi
       throw error
     }
   }
-  return validateConfig(tier, merged)
+  return merged
+}
+
+export function loadModelConfig(tier: ModelTier, projectId?: string): ModelConfig {
+  if (projectId) return loadProjectModelConfig(tier, projectId)
+  return validateConfig(tier, applyGlobalModelSettings(tier, environmentSettings(tier)))
 }
 
 function loadProjectModelConfig(tier: ModelTier, projectId: string): ModelConfig {
-  const merged = environmentSettings(tier)
+  const merged = applyGlobalModelSettings(tier, environmentSettings(tier))
   try {
     const parsed = JSON.parse(readFileSync(projectSettingsPath, 'utf8')) as Record<string, { model?: Record<string, Record<string, unknown>> }>
     const item = parsed[projectId]?.model?.[tier]
