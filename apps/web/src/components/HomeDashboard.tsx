@@ -190,6 +190,10 @@ export function HomeDashboard({
       setFormError(t('home.slugHint'))
       return
     }
+    if (projects.some(project => project.slug === normalizedSlug || project.id === normalizedSlug)) {
+      setFormError(t('apiError.project_slug_conflict'))
+      return
+    }
     if (!title.trim()) {
       setFormError(t('home.titleRequired'))
       return

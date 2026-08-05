@@ -61,6 +61,17 @@ describe('project URL slugs', () => {
     rmSync(projectRoot(created.project_id), { recursive: true, force: true })
   })
 
+  it('rejects creating a project whose slug is already used', async () => {
+    const response = await app.request('/api/projects', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ slug: newProjectId, title: 'Duplicate slug test' }),
+    })
+    expect(response.status).toBe(409)
+    const body = await response.json() as { code: string }
+    expect(body.code).toBe('project_slug_conflict')
+  })
+
   it('rejects missing, repeated, extra, or malformed slug parts', () => {
     expect(() => normalizeProjectSlug('research-project')).toThrow('project_slug_invalid')
     expect(() => normalizeProjectSlug('cnn-cnn-2q95')).toThrow('project_slug_invalid')
