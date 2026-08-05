@@ -418,7 +418,7 @@ POC 结论决定最终方案：
 - 更新 `.env.example` 中的 workflow 相关配置。
 - 真实浏览器验收所有可见功能。
 
-当前状态（2026-08-05 收尾）：`npm run check` 全部通过（42 个测试文件 / 187 个测试），`npm run build`、`npm run mastra:hitl:check` 均通过；使用最终构建重启后，11 个 active 项目的 workflow 图全部 `active` 且 `last_error` 为空。README/AGENTS/架构/运维/安全/.env.example 已同步；仍待真实浏览器四语言/双主题截图验收与部分 API 动作迁移到 workflow 入口的后续工作。
+当前状态（2026-08-05 收尾）：`npm run check` 全部通过（42 个测试文件 / 187 个测试），`npm run build`、`npm run mastra:hitl:check` 均通过；使用最终构建重启后，11 个 active 项目的 workflow 图全部 `active` 且 `last_error` 为空。README/AGENTS/架构/运维/安全/.env.example 已同步；实现已提交为 `20b0337` 并推送 `feat/project-workspace-redesign`。仍待真实浏览器四语言/双主题截图验收与部分 API 动作迁移到 workflow 入口的后续工作。
 
 ## 10. 关键决策与风险
 
