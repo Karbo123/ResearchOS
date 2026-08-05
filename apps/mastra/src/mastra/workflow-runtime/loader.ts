@@ -47,6 +47,11 @@ type ProjectState = {
   lastError: { at: string; message: string } | null
 }
 
+type MastraWorkflowRegistry = {
+  listWorkflows(props?: { serialized?: boolean }): Record<string, AnyWorkflow>
+  getWorkflowById(id: string): AnyWorkflow
+}
+
 type RunRecord = {
   mastra_run_id: string
   project_id: string
@@ -113,6 +118,8 @@ export class ProjectWorkflowRuntime {
   private states = new Map<string, ProjectState>()
   private runs = new Map<string, RunRecord>()
   private refToProjectId = new Map<string, string>()
+  private exposedWorkflows = new Map<string, AnyWorkflow>()
+  private exposedProjectKeys = new Map<string, string>()
   private timer: ReturnType<typeof setInterval> | null = null
   private readonly pollIntervalMs: number
   private readonly apiBase: string
@@ -124,6 +131,42 @@ export class ProjectWorkflowRuntime {
     this.apiBase = (process.env.RESEARCH_API_INTERNAL_URL || 'http://127.0.0.1:8080').replace(/\/$/, '')
     this.kitHash = workflowKitHash()
     for (const run of readRuns()) this.runs.set(run.mastra_run_id, run)
+    this.installStudioBridge()
+  }
+
+  private installStudioBridge(): void {
+    const mastra = this.mastra as MastraWorkflowRegistry
+    const originalListWorkflows = mastra.listWorkflows.bind(mastra)
+    const originalGetWorkflowById = mastra.getWorkflowById.bind(mastra)
+    // Mastra has no public removeWorkflow in 1.55.0, so the runtime keeps its own
+    // active registry and only surfaces the latest version through Studio's lookup methods.
+    mastra.listWorkflows = ((props?: { serialized?: boolean }) => {
+      const workflows = originalListWorkflows(props)
+      for (const [key, workflow] of this.exposedWorkflows) {
+        workflows[key] = props?.serialized ? { name: workflow.name } as AnyWorkflow : workflow
+      }
+      return workflows
+    }) as MastraWorkflowRegistry['listWorkflows']
+    mastra.getWorkflowById = ((id: string) => {
+      const byKey = this.exposedWorkflows.get(id)
+      if (byKey) return byKey
+      const byId = [...this.exposedWorkflows.values()].find(workflow => workflow.id === id)
+      if (byId) return byId
+      return originalGetWorkflowById(id)
+    }) as MastraWorkflowRegistry['getWorkflowById']
+  }
+
+  private exposeWorkflow(projectId: string, workflow: AnyWorkflow): void {
+    const previousKey = this.exposedProjectKeys.get(projectId)
+    if (previousKey) this.exposedWorkflows.delete(previousKey)
+    this.exposedWorkflows.set(workflow.id, workflow)
+    this.exposedProjectKeys.set(projectId, workflow.id)
+  }
+
+  private unexposeProject(projectId: string): void {
+    const key = this.exposedProjectKeys.get(projectId)
+    if (key) this.exposedWorkflows.delete(key)
+    this.exposedProjectKeys.delete(projectId)
   }
 
   async start(): Promise<void> {
@@ -215,6 +258,7 @@ export class ProjectWorkflowRuntime {
     state.versions.set(loaded.version, loaded)
     state.active = loaded
     state.lastError = null
+    this.exposeWorkflow(projectId, loaded.workflow)
     auditWorkflow(projectId, 'workflow.activated', {
       version: loaded.version,
       source_hash: loaded.sourceHash,
@@ -457,6 +501,7 @@ export class ProjectWorkflowRuntime {
   }
 
   dispose(projectId: string): void {
+    this.unexposeProject(projectId)
     const state = this.states.get(projectId)
     if (!state) return
     this.states.delete(projectId)

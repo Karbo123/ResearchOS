@@ -325,7 +325,9 @@ POC 需要确认 Mastra 的 workflow schedule 是否能可靠绑定“每个项�
 
 Mastra Studio 已经内置 workflow graph、实时步骤状态、输入表单、trace 和时间旅行，运行于 `http://127.0.0.1:4111`。
 
-需要先做 POC 验证：
+现状（2026-08-05）：`ProjectWorkflowRuntime` 通过应用层桥接把每个项目当前激活的 workflow 暴露给 Studio 的 `mastra.listWorkflows()` 与 `mastra.getWorkflowById()`；`/api/workflows` 会列出项目 workflow，详情接口返回 `stepGraph`，因此 Studio 可以直接打开并可视化。由于 `@mastra/core@1.55.0` 没有公开 `removeWorkflow`，热加载不会“删旧加新”，而是让同一个 Studio 入口始终指向项目注册表中的最新实例；旧版本只保留在 `state.versions` 供挂起运行恢复，不进入 Studio 列表。
+
+历史 POC 验证点：
 
 - 动态 `addWorkflow(workflow, 'project:<id>:v<hash>')` 后，Studio 是否立即列出该 workflow。
 - 热加载后旧版本是否残留在 Studio 列表；如果残留，是否能用唯一 key 的“仅展示最新图”策略。

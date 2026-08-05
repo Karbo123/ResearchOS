@@ -11,6 +11,12 @@ let root: string
 let projectsRoot: string
 let runtimeRoot: string
 let runtime: import('../../mastra/src/mastra/workflow-runtime/loader.js').ProjectWorkflowRuntime
+let mastra: {
+  getLogger(): unknown
+  getStorage(): unknown
+  listWorkflows(props?: { serialized?: boolean }): Record<string, unknown>
+  getWorkflowById(id: string): unknown
+}
 
 async function loadRuntime() {
   vi.resetModules()
@@ -29,11 +35,14 @@ describe('project workflow runtime', () => {
     process.env.RESEARCH_PROJECTS_DIR = projectsRoot
     process.env.RESEARCH_RUNTIME_DIR = runtimeRoot
     const ProjectWorkflowRuntime = await loadRuntime()
-    runtime = new ProjectWorkflowRuntime({
+    mastra = {
       getLogger: () => ({ debug: () => {}, info: () => {}, warn: () => {}, error: () => {} }),
       getStorage: () => ({ getStore: async () => undefined }),
       generateId: () => crypto.randomUUID(),
-    })
+      listWorkflows: () => ({}),
+      getWorkflowById: () => { throw new Error('workflow not found') },
+    }
+    runtime = new ProjectWorkflowRuntime(mastra)
   })
 
   afterAll(() => {
@@ -51,6 +60,26 @@ describe('project workflow runtime', () => {
     expect(graph.status).toBe('active')
     expect(graph.step_ids).toEqual(expect.arrayContaining(['workflow-entry', 'workflow-exit']))
     expect(graph.source_hash).toBeTruthy()
+  })
+
+  it('exposes only the latest workflow version to Mastra Studio', async () => {
+    await runtime.scanProject(projectId)
+    const listed = mastra.listWorkflows()
+    const workflowKey = `project-${projectId}-research`
+    const before = listed[workflowKey] as { description: string; id: string }
+    expect(before).toBeDefined()
+    expect(mastra.getWorkflowById(workflowKey)).toBe(before)
+
+    const updatedSource = `// hot reloaded for studio\n${template}`
+    writeFileSync(resolve(projectsRoot, projectId, 'workflow.ts'), updatedSource, 'utf8')
+    await runtime.scanProject(projectId)
+
+    const afterList = mastra.listWorkflows()
+    const after = afterList[workflowKey] as { description: string; id: string }
+    expect(after).toBeDefined()
+    expect(after).not.toBe(before)
+    expect(Object.keys(afterList).filter(key => key.startsWith(`project-${projectId}-`))).toHaveLength(1)
+    expect(mastra.getWorkflowById(workflowKey)).toBe(after)
   })
 
   it('hot reloads a changed workflow.ts without replacing the old graph on invalid source', async () => {
