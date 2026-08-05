@@ -10,8 +10,8 @@ import {
   createResearchBootstrapStep,
   createWorkflowEditProposalStep,
   extractBranchOutput,
-  projectWorkflowInputSchema,
   projectWorkflowOutputSchema,
+  projectWorkflowStudioInputSchema,
   type ProjectWorkflowContext,
 } from '@research-os/workflow-kit'
 import { createWorkflow } from '@mastra/core/workflows'
@@ -26,7 +26,7 @@ export const workflowManifest = {
 export default function defineProjectWorkflow(ctx: ProjectWorkflowContext) {
   return createWorkflow({
     id: ctx.workflowId,
-    inputSchema: projectWorkflowInputSchema,
+    inputSchema: projectWorkflowStudioInputSchema,
     outputSchema: projectWorkflowOutputSchema,
   })
     .then(createProjectContextStep(ctx))

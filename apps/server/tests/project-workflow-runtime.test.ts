@@ -77,6 +77,11 @@ describe('project workflow runtime', () => {
     expect(graph.source_hash).toBeTruthy()
   })
 
+  it('keeps the Studio-facing workflow input schema free of discriminated unions', () => {
+    expect(template).toContain('inputSchema: projectWorkflowStudioInputSchema')
+    expect(template).not.toContain('inputSchema: projectWorkflowInputSchema')
+  })
+
   it('exposes only the latest workflow version to Mastra Studio', async () => {
     await runtime.scanProject(projectId)
     const listed = mastra.listWorkflows()

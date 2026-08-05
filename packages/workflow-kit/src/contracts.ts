@@ -95,6 +95,11 @@ export const projectWorkflowInputSchema = z.discriminatedUnion('action', [
 ])
 export type ProjectWorkflowInput = z.infer<typeof projectWorkflowInputSchema>
 
+// Mastra Studio's AutoForm cannot render zod discriminated unions and crashes
+// on the workflow graph page. Runtime validation stays on the strict schema at
+// the API boundary; Studio only needs a form that does not crash.
+export const projectWorkflowStudioInputSchema = z.any()
+
 export const projectWorkflowAuditSchema = z.object({
   workflow_version: z.number().int().min(1),
   source_hash: z.string().min(1).max(128),
