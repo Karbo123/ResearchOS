@@ -33,6 +33,11 @@ describe('project URL slugs', () => {
     expect(isProjectUuidReference('60145276-6a59-4a1d-880e-b5f0cc3db2e9')).toBe(true)
   })
 
+  it('accepts two lowercase letter sequences that are not dictionary words', () => {
+    expect(normalizeProjectSlug('abcxyz-qwerty-1a2b')).toBe('abcxyz-qwerty-1a2b')
+    expect(isCurrentProjectSlug('abcxyz-qwerty-1a2b')).toBe(true)
+  })
+
   it('creates a project from strict slug and title without an Idea session', async () => {
     const slug = `create-test-${projectId.slice(0, 4)}`
     const response = await app.request('/api/projects', {

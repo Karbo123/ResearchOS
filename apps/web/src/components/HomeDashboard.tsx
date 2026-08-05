@@ -18,9 +18,14 @@ import type { ProjectSummary } from '../types'
 import { useTranslation } from '../i18n'
 import { errorMessage } from '../api'
 
-const SLUG_PATTERN = /^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/
+const SLUG_PATTERN = /^([a-z]{2,32})-([a-z]{2,32})-([a-z0-9]{4})$/
 const PROJECT_LONG_PRESS_MS = 420
 const PROJECT_DRAG_THRESHOLD = 8
+
+function isValidProjectSlug(value: string): boolean {
+  const match = SLUG_PATTERN.exec(value)
+  return Boolean(match && match[1] !== match[2])
+}
 
 type ProjectPointerState = {
   projectId: string
@@ -181,7 +186,7 @@ export function HomeDashboard({
     event.preventDefault()
     if (submitting) return
     const normalizedSlug = slug.trim().toLocaleLowerCase('en-US')
-    if (!normalizedSlug || !SLUG_PATTERN.test(normalizedSlug)) {
+    if (!normalizedSlug || !isValidProjectSlug(normalizedSlug)) {
       setFormError(t('home.slugHint'))
       return
     }
@@ -345,7 +350,7 @@ export function HomeDashboard({
           <p className="home-description">{t('home.description')}</p>
         </div>
         <div className="home-hero-actions">
-          {!creating ? (
+          {!creating && projects.length > 0 ? (
             <button className="primary home-create-toggle" type="button" onClick={() => setCreating(true)}>
               <Plus size={16} aria-hidden="true" />
               {t('home.newProject')}

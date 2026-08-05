@@ -20843,9 +20843,13 @@
   // src/components/HomeDashboard.tsx
   var import_react8 = __toESM(require_react(), 1);
   var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
-  var SLUG_PATTERN = /^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/;
+  var SLUG_PATTERN = /^([a-z]{2,32})-([a-z]{2,32})-([a-z0-9]{4})$/;
   var PROJECT_LONG_PRESS_MS = 420;
   var PROJECT_DRAG_THRESHOLD = 8;
+  function isValidProjectSlug(value) {
+    const match = SLUG_PATTERN.exec(value);
+    return Boolean(match && match[1] !== match[2]);
+  }
   function formatUpdatedAt(value, locale) {
     if (!value) return "";
     const date = new Date(value);
@@ -20974,7 +20978,7 @@
       event.preventDefault();
       if (submitting) return;
       const normalizedSlug = slug.trim().toLocaleLowerCase("en-US");
-      if (!normalizedSlug || !SLUG_PATTERN.test(normalizedSlug)) {
+      if (!normalizedSlug || !isValidProjectSlug(normalizedSlug)) {
         setFormError(t("home.slugHint"));
         return;
       }
@@ -21128,7 +21132,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h1", { className: "home-eyebrow", children: t("home.eyebrow") }),
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "home-description", children: t("home.description") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "home-hero-actions", children: !creating ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("button", { className: "primary home-create-toggle", type: "button", onClick: () => setCreating(true), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "home-hero-actions", children: !creating && projects.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("button", { className: "primary home-create-toggle", type: "button", onClick: () => setCreating(true), children: [
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Plus, { size: 16, "aria-hidden": "true" }),
           t("home.newProject")
         ] }) : null })
