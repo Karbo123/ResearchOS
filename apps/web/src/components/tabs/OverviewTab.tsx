@@ -1,4 +1,4 @@
-import { FileCheck, FilePenLine, Pause, Play, Search, ShieldAlert, Square } from 'lucide-react'
+import { Archive, BookOpen, ClipboardCheck, FileCheck, FilePenLine, FlaskConical, Pause, Play, Search, ShieldAlert, Square } from 'lucide-react'
 import { api, errorMessage } from '../../api'
 import type {
   Artifact,
@@ -464,10 +464,22 @@ export function OverviewTab({
   return (
     <>
       <div className="metric-grid">
-        <div className="metric"><span>{t('overview.papers')}</span><strong>{counts.papers ?? 0}</strong></div>
-        <div className="metric"><span>{t('overview.experiments')}</span><strong>{counts.experiments ?? 0}</strong></div>
-        <div className="metric"><span>{t('overview.artifacts')}</span><strong>{counts.artifacts ?? 0}</strong></div>
-        <div className="metric"><span>{t('common.pendingApproval')}</span><strong>{pendingCount}</strong></div>
+        <div className="metric">
+          <span className="metric-icon metric-icon-blue"><BookOpen size={17} aria-hidden="true" /></span>
+          <div className="metric-copy"><span>{t('overview.papers')}</span><strong>{counts.papers ?? 0}</strong></div>
+        </div>
+        <div className="metric">
+          <span className="metric-icon metric-icon-green"><FlaskConical size={17} aria-hidden="true" /></span>
+          <div className="metric-copy"><span>{t('overview.experiments')}</span><strong>{counts.experiments ?? 0}</strong></div>
+        </div>
+        <div className="metric">
+          <span className="metric-icon metric-icon-amber"><Archive size={17} aria-hidden="true" /></span>
+          <div className="metric-copy"><span>{t('overview.artifacts')}</span><strong>{counts.artifacts ?? 0}</strong></div>
+        </div>
+        <div className="metric">
+          <span className="metric-icon metric-icon-indigo"><ClipboardCheck size={17} aria-hidden="true" /></span>
+          <div className="metric-copy"><span>{t('common.pendingApproval')}</span><strong>{pendingCount}</strong></div>
+        </div>
       </div>
 
       <WorkflowGraphCard projectId={project.id} />
