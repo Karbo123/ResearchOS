@@ -196,6 +196,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 ### 4.0.2 下一阶段规划：项目级单一 Workflow 与热加载（2026-08-05）
 
+- [x] `P0-VISUAL-123` 修复首页无项目空状态的新建项目按钮配色：`+` 图标与按钮文字统一使用 `--on-accent`，外层大图标保持品牌蓝色；Chrome 计算样式验证按钮文字与图标均为 `rgb(255,255,255)`。 [Apple 设计验收]
 - [x] `P0-WORKFLOW-127` 让 Mastra Studio 的 workflow 使用项目语义 slug（如 `native-acceptance-a8b9`）作为名称，并使用项目完整标题作为 description；新增轻量项目元数据接口 `/api/projects/:projectRef/meta` 供 workflow runtime 获取 `slug/title`。 [Apple 设计验收]
 - [x] `P0-PROJECT-SLUG-128` 把语义 slug 提升为项目唯一标识：数据库 `projects.id`、全部 `project_id` 外键、项目目录、Mastra workflow id/缓存、Supermemory container tag、runtime 项目设置与 embedding 设置全部改用 slug；旧语义地址只保留为兼容别名，禁止 UUID 出现在项目主键、路径、workflow、container tag、设置键或新日志中。 [Apple 设计验收]
 - [x] `P0-PROJECT-SLUG-129` 彻底移除旧项目 UUID 兼容：API 项目引用、前端 URL、别名表解析、迁移逻辑、测试与文档均不再接受、迁移或展示旧 UUID 项目标识；遇到旧 UUID 直接 404。旧语义 slug 的别名兼容保留。

@@ -793,7 +793,8 @@ button { -webkit-font-smoothing: inherit; }
   padding: 38px 24px;
   text-align: center;
 }
-.home-error svg, .home-empty svg { color: var(--blue); }
+.home-error > svg, .home-empty > svg { color: var(--blue); }
+.home-empty .primary, .home-empty .primary svg { color: var(--on-accent); }
 .home-error h3, .home-empty h3 { margin: 2px 0 0; font-size: 16px; font-weight: 720; }
 .home-error p, .home-empty p { max-width: 460px; margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.55; }
 .home-error .secondary { min-height: 36px; border-radius: 11px; }
