@@ -84,16 +84,19 @@ export function createChatStep(ctx: ProjectWorkflowContext) {
     ctx,
     id: 'run-project-chat-agent',
     action: 'project_chat',
-    run: async input => callResearchApi('/api/chat', {
-      method: 'POST',
-      body: JSON.stringify({
-        session_id: input.action === 'project_chat' ? input.session_id ?? null : null,
-        project_id: input.project_id,
-        message: input.action === 'project_chat' ? input.message : '',
-        attachments: input.action === 'project_chat' ? input.attachments ?? [] : [],
-        clarification_mode: input.action === 'project_chat' ? input.clarification_mode ?? 'automatic' : 'automatic',
-      }),
-    }, ctx),
+    run: async input => {
+      if (input.action !== 'project_chat') throw new Error('unexpected_action')
+      return callResearchApi('/internal/chat', {
+        method: 'POST',
+        body: JSON.stringify({
+          session_id: input.session_id ?? null,
+          project_id: input.project_id,
+          message: input.message,
+          attachments: input.attachments ?? [],
+          clarification_mode: input.clarification_mode ?? 'automatic',
+        }),
+      }, ctx)
+    },
   })
 }
 
@@ -179,7 +182,7 @@ export function createPaperTranslateStep(ctx: ProjectWorkflowContext) {
     action: 'paper_translate',
     run: async input => {
       if (input.action !== 'paper_translate') throw new Error('unexpected_action')
-      return callResearchApi(`/api/projects/${input.project_id}/paper-translate`, {
+      return callResearchApi(`/internal/projects/${input.project_id}/paper-translate`, {
         method: 'POST',
         body: JSON.stringify({ section_id: input.section_id }),
       }, ctx)
@@ -194,7 +197,7 @@ export function createPaperReviseStep(ctx: ProjectWorkflowContext) {
     action: 'paper_revise',
     run: async input => {
       if (input.action !== 'paper_revise') throw new Error('unexpected_action')
-      return callResearchApi(`/api/projects/${input.project_id}/paper-revise`, {
+      return callResearchApi(`/internal/projects/${input.project_id}/paper-revise`, {
         method: 'POST',
         body: JSON.stringify({
           section_id: input.section_id,
@@ -212,12 +215,10 @@ export function createExperimentPlanStep(ctx: ProjectWorkflowContext) {
     action: 'experiment_plan',
     run: async input => {
       if (input.action !== 'experiment_plan') throw new Error('unexpected_action')
-      return callResearchApi(`/api/projects/${input.project_id}/experiment-plan`, {
+      return callResearchApi(`/internal/projects/${input.project_id}/experiment-plan`, {
         method: 'POST',
         body: JSON.stringify({
           project_id: input.project_id,
-          idea_version: input.idea_version,
-          planning_context: input.planning_context,
         }),
       }, ctx)
     },

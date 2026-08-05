@@ -193,6 +193,53 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
   return { session_id: session.id, project_id: null, phase, reply, spec: phase === 'ready_for_confirmation' ? { schema_version: '1.0', idea: draft, feasibility: 'medium', feasibility_notes: [], required_approvals: [], candidate_modifications: [], policies: [] } : null, missing_fields: modelResult.result.unresolved_items, action_required: null, model_tier: 'document', model: documentResult.route.model, reasoning_effort: documentResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
 }
 
+async function projectIdForChat(input: z.infer<typeof chatRequest>): Promise<string | null> {
+  if (input.project_id) return input.project_id
+  if (!input.session_id) return null
+  const session = await one<{ project_id: string | null }>('SELECT project_id FROM conversation_sessions WHERE id=$1', [input.session_id])
+  return session?.project_id ?? null
+}
+
+async function runProjectWorkflow(projectId: string, input: Record<string, unknown>): Promise<{ status: string; result: unknown; run_id: string; suspended: string[][] | null; suspend_payload: unknown }> {
+  return mastraJson<{ status: string; result: unknown; run_id: string; suspended: string[][] | null; suspend_payload: unknown }>(`/internal/workflows/project/${encodeURIComponent(projectId)}/run`, input)
+}
+
+function projectWorkflowSuccess(result: { status: string; result: unknown }): unknown {
+  if (result.status !== 'success') throw new ApiError(502, 'workflow_failed', '项目工作流执行失败。')
+  return result.result
+}
+
+async function chatDispatch(input: z.infer<typeof chatRequest>): Promise<Record<string, unknown>> {
+  const projectId = await projectIdForChat(input)
+  if (!projectId) return chatTurn(input)
+  const result = await runProjectWorkflow(projectId, {
+    action: 'project_chat',
+    project_id: projectId,
+    session_id: input.session_id ?? null,
+    message: input.message,
+    attachments: input.attachments,
+    clarification_mode: input.clarification_mode,
+  })
+  const inner = projectWorkflowSuccess(result)
+  if (!inner || typeof inner !== 'object' || Array.isArray(inner)) throw new ApiError(502, 'workflow_invalid_result', '项目工作流返回了无效的对话结果。')
+  return inner as Record<string, unknown>
+}
+
+async function createExperimentPlan(projectId: string): Promise<{ proposal_id: string; status: 'pending' }> {
+  const project = await projectDetail(projectId)
+  if (project.status !== 'active') throw new ApiError(409, 'project_not_active', '项目当前不可执行实验规划。')
+  requireConfirmedSpecFields(projectId, project.spec, project.idea_versions || [])
+  const idea = project.idea_versions[0] as Record<string, unknown> | undefined
+  const result = await mastraJson<{ result: Record<string, unknown> }>('/internal/agents/experiment-plan', {
+    project_id: projectId,
+    idea_version: project.current_idea_version,
+    planning_context: { idea: idea?.spec, evidence: project.evidence, policies: project.policies },
+  })
+  const proposalId = crypto.randomUUID()
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', 'Mastra topic-specific plan', 'Topic-specific experiment plan requiring approval', { experiment_type: 'topic_specific', config: {}, random_seeds: result.result.random_seeds, topic_plan: result.result }])
+  return { proposal_id: proposalId, status: 'pending' }
+}
+
 app.get('/api/health', async context => context.json({ status: 'ok', runtime: 'native-typescript', database: 'pglite', container_runtime_required: false, secrets_exposed: false }))
 app.get('/api/settings/models', context => context.json({ tiers: publicModelSettings(), proxy: publicProxySettings() }))
 app.put('/api/settings/models', async context => {
@@ -381,17 +428,29 @@ app.get('/api/sessions/:sessionId/messages', async context => {
   return context.json({ session_id: sessionId, messages })
 })
 
-app.post('/api/chat', async context => context.json(await chatTurn(await jsonBody(context, chatRequest))))
+app.post('/api/chat', async context => context.json(await chatDispatch(await jsonBody(context, chatRequest))))
 app.post('/api/chat/stream', async context => {
   const body = await jsonBody(context, chatRequest)
   return streamSSE(context, async stream => {
     await stream.writeSSE({ event: 'stage', data: JSON.stringify({ stage: 'model_request' }) })
-    try { await stream.writeSSE({ event: 'result', data: JSON.stringify(await chatTurn(body)) }) }
+    try { await stream.writeSSE({ event: 'result', data: JSON.stringify(await chatDispatch(body)) }) }
     catch (error) {
       const failure = error instanceof ApiError ? { code: error.code, message: error.message, status: error.status } : { code: 'internal_error', message: '服务器处理请求失败。', status: 500 }
       await stream.writeSSE({ event: 'error', data: JSON.stringify(failure) })
     }
   })
+})
+app.post('/internal/chat', async context => context.json(await chatTurn(await jsonBody(context, chatRequest))))
+app.post('/internal/projects/:projectId/paper-translate', async context => {
+  const body = await jsonBody(context, paperSectionModelRequest)
+  return context.json(await translatePaperSection(uuid.parse(context.req.param('projectId')), body.section_id))
+})
+app.post('/internal/projects/:projectId/paper-revise', async context => {
+  const body = await jsonBody(context, paperSectionModelRequest)
+  return context.json(await revisePaperSection(uuid.parse(context.req.param('projectId')), body.section_id), 201)
+})
+app.post('/internal/projects/:projectId/experiment-plan', async context => {
+  return context.json(await createExperimentPlan(uuid.parse(context.req.param('projectId'))), 201)
 })
 
 app.post('/api/projects', async context => {
@@ -696,13 +755,14 @@ app.post('/api/proposals', async context => {
 app.post('/api/projects/:projectId/experiment-plan', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const project = await projectDetail(projectId)
-  if (project.status !== 'active') throw new ApiError(409, 'project_not_active', '项目当前不可执行实验规划。')
-  requireConfirmedSpecFields(projectId, project.spec, project.idea_versions || [])
   const idea = project.idea_versions[0] as Record<string, unknown> | undefined
-  const result = await mastraJson<{ result: Record<string, unknown> }>('/internal/agents/experiment-plan', { project_id: projectId, idea_version: project.current_idea_version, planning_context: { idea: idea?.spec, evidence: project.evidence, policies: project.policies } })
-  const proposalId = crypto.randomUUID()
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', 'Mastra topic-specific plan', 'Topic-specific experiment plan requiring approval', { experiment_type: 'topic_specific', config: {}, random_seeds: result.result.random_seeds, topic_plan: result.result }])
-  return context.json({ proposal_id: proposalId, status: 'pending' }, 201)
+  const workflowResult = await runProjectWorkflow(projectId, {
+    action: 'experiment_plan',
+    project_id: projectId,
+    idea_version: project.current_idea_version,
+    planning_context: { idea: idea?.spec, evidence: project.evidence, policies: project.policies },
+  })
+  return context.json(projectWorkflowSuccess(workflowResult), 201)
 })
 
 app.post('/api/projects/:projectId/workflow-edit-proposal', async context => {
@@ -839,11 +899,27 @@ app.post('/api/projects/:projectId/paper-section', async context => {
 })
 app.post('/api/projects/:projectId/paper-translate', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
-  return context.json(await translatePaperSection(uuid.parse(context.req.param('projectId')), body.section_id))
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const workflowResult = await runProjectWorkflow(projectId, {
+    action: 'paper_translate',
+    project_id: projectId,
+    section_id: body.section_id,
+    heading: '',
+    source: '',
+  })
+  return context.json(projectWorkflowSuccess(workflowResult))
 })
 app.post('/api/projects/:projectId/paper-revise', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
-  return context.json(await revisePaperSection(uuid.parse(context.req.param('projectId')), body.section_id), 201)
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const workflowResult = await runProjectWorkflow(projectId, {
+    action: 'paper_revise',
+    project_id: projectId,
+    section_id: body.section_id,
+    heading: '',
+    source: '',
+  })
+  return context.json(projectWorkflowSuccess(workflowResult), 201)
 })
 app.post('/api/projects/:projectId/compile-plan', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))

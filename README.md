@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-05-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-05-02 -->
 
 # Research OS
 
@@ -120,6 +120,8 @@ Every production Mastra Agent, delegated sub-Agent, guardrail detector, and expe
 Every research project owns one Mastra workflow at `projects/<project-id>/workflow.ts`, committed in the project-local Git. New projects copy the default template; existing projects were migrated idempotently without overwriting customized files. The Mastra process scans all project files every 500 ms by default (`RESEARCH_WORKFLOW_POLL_INTERVAL_MS`), compiles changed sources into `runtime/workflow-cache/<project-id>/`, validates the manifest, graph, imports, and a dry run, then atomically activates the new version without restarting services. Invalid files keep the previous active version and return a structured error; suspended runs are pinned to their original version and resumed from `runtime/workflow-runs.json`.
 
 Workflow changes can be requested in the project conversation. The workflow edit Agent produces a reviewable diff, the API validates it in a temporary workspace, and approval writes `workflow.ts` back to the project Git before hot loading. The project page renders the current workflow graph, version, source hash, and recent runs from `serializedStepGraph`; Mastra Studio remains available as a development view.
+
+Project chat, paper translation/revision, and experiment planning requests are dispatched through the project workflow entry; the workflow branches call restricted internal API endpoints for the actual model and state work. Idea clarification before project creation remains outside a project workflow by design.
 
 The API report scheduler dispatches one project workflow per active project (`RESEARCH_REPORT_POLL_SECONDS`, `RESEARCH_REPORT_DAILY_TIME`, `RESEARCH_REPORT_WEEKLY_TIME`, `RESEARCH_REPORT_WEEKDAY`, `RESEARCH_REPORT_TIMEOUT_SECONDS`). Deleting a project removes its workflow registry entry, compile cache, and run records together with the project directory.
 

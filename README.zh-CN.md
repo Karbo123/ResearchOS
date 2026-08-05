@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-05-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-05-02 -->
 
 # Research OS
 
@@ -120,6 +120,8 @@ npm test
 每个科研项目在 `projects/<project-id>/workflow.ts` 拥有自己独立的 Mastra workflow，并纳入项目内 Git。新项目从默认模板复制；已有项目通过幂等脚本补齐，不覆盖已定制文件。Mastra 默认每 500ms 扫描一次项目文件（`RESEARCH_WORKFLOW_POLL_INTERVAL_MS` 可调），把变更源码编译到 `runtime/workflow-cache/<project-id>/`，校验 manifest、图结构、导入白名单与 dry-run 后原子替换为新版本，无需重启服务。非法文件保留上一有效版本并返回结构化错误；挂起运行固定使用创建时的旧版本，通过 `runtime/workflow-runs.json` 恢复。
 
 在项目对话中可以直接提出工作流修改需求。工作流编辑 Agent 只生成可审阅 diff，API 先在临时工作区校验，审批通过后写回项目 `workflow.ts` 并提交项目 Git，再由 loader 热加载。项目页会展示当前工作流图、版本、源码哈希与最近运行（数据源为 Mastra `serializedStepGraph`）；Mastra Studio 保留为开发辅助视图。
+
+项目对话、论文翻译/修订和实验规划请求都会先经过项目级 workflow 入口；workflow 分支再通过受限内部 API 端点执行真实的模型与状态写入。项目创建前的 Idea 澄清按设计仍不归属任何项目 workflow。
 
 汇报调度由 API 的确定性调度器逐项目分发（`RESEARCH_REPORT_POLL_SECONDS`、`RESEARCH_REPORT_DAILY_TIME`、`RESEARCH_REPORT_WEEKLY_TIME`、`RESEARCH_REPORT_WEEKDAY`、`RESEARCH_REPORT_TIMEOUT_SECONDS`）。删除项目时会同步清理该项目的 workflow 注册表、编译缓存、运行记录与项目目录。
 

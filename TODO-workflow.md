@@ -389,7 +389,7 @@ POC 结论决定最终方案：
 
 验收：现有聊天、Idea、审批、汇报、论文、实验入口全部通过项目级 workflow 工作，旧路由兼容期间不破坏前端。
 
-实施记录：`apps/mastra/src/mastra/index.ts` 新增 `/internal/workflows/project/:projectId/{run,resume,graph,preview,runs}` 与 DELETE；旧 `research-bootstrap`、`approval-gate`、`supervisionReports` 路由已删除；`apps/server/src/task-worker.ts` 和 `apps/server/src/report-scheduler.ts` 逐项目分发 workflow；API 暴露 `/api/projects/:projectId/workflow-graph|runs` 与 workflow 编辑闭环。已知偏差：项目创建前的 Idea 讨论没有项目 workflow，仍由 Idea Agent 直接处理；项目对话、论文翻译/修订、实验规划的 API 层仍直接调用 Mastra Agent（这些动作的 workflow 分支已经存在并通过同一契约运行），完整“一切 API 动作都经 workflow”的迁移列入 Phase 6。
+实施记录：`apps/mastra/src/mastra/index.ts` 新增 `/internal/workflows/project/:projectId/{run,resume,graph,preview,runs}` 与 DELETE；旧 `research-bootstrap`、`approval-gate`、`supervisionReports` 路由已删除；`apps/server/src/task-worker.ts` 和 `apps/server/src/report-scheduler.ts` 逐项目分发 workflow；API 暴露 `/api/projects/:projectId/workflow-graph|runs` 与 workflow 编辑闭环。项目对话、论文翻译/修订、实验规划的公开 API 已改为先调用项目级 workflow 入口：`/api/chat`（含 `/api/chat/stream`）、`/api/projects/:projectId/paper-translate|paper-revise|experiment-plan` 在项目范围内统一走 `POST /internal/workflows/project/:projectId/run`；workflow 分支通过新增的受限内部执行端点 `/internal/chat`、`/internal/projects/:projectId/paper-translate|paper-revise|experiment-plan` 完成真实模型与状态写入，避免公开路由递归。已知偏差：项目创建前的 Idea 讨论没有项目 workflow，仍由 Idea Agent 直接处理，这是设计边界，不属于项目级 workflow。
 
 ### Phase 4：自然语言编辑工作流
 
@@ -409,7 +409,7 @@ POC 结论决定最终方案：
 
 验收：每个项目只能看到自己的 workflow 图；运行中节点状态实时更新；空、失败、加载状态完整；无横向溢出，交互符合 Apple 设计契约。
 
-实施记录：`apps/web/src/components/WorkflowGraphCard.tsx` 展示当前项目 `serializedStepGraph`、版本、源码哈希、最近运行，并提供打开 Mastra Studio 的链接；四语言文案已补齐，浅/暗主题使用语义 CSS 变量；真实浏览器四语言/双主题截图验收仍在 Phase 6 收尾。
+实施记录：`apps/web/src/components/WorkflowGraphCard.tsx` 展示当前项目 `serializedStepGraph`、版本、源码哈希、最近运行，并提供打开 Mastra Studio 的链接；四语言文案已补齐，浅/暗主题使用语义 CSS 变量；2026-08-05 已用 `scripts/browser-acceptance.mjs` 通过真实 Chrome 全量验收（四语言、浅/暗主题、桌面/移动端、全部工作区标签、404、设置面板、动效、侧栏拖拽、对比工作区等），输出 `runtime/browser-verification-final/`。
 
 ### Phase 6：全量验证与文档
 
@@ -418,7 +418,7 @@ POC 结论决定最终方案：
 - 更新 `.env.example` 中的 workflow 相关配置。
 - 真实浏览器验收所有可见功能。
 
-当前状态（2026-08-05 收尾）：`npm run check` 全部通过（42 个测试文件 / 187 个测试），`npm run build`、`npm run mastra:hitl:check` 均通过；使用最终构建重启后，11 个 active 项目的 workflow 图全部 `active` 且 `last_error` 为空。README/AGENTS/架构/运维/安全/.env.example 已同步；实现已提交为 `20b0337` 并推送 `feat/project-workspace-redesign`。仍待真实浏览器四语言/双主题截图验收与部分 API 动作迁移到 workflow 入口的后续工作。
+当前状态（2026-08-05 收尾）：项目对话、论文翻译/修订、实验规划的公开 API 已完成 workflow 入口迁移，`apps/server/tests/workflow-entry-routing.test.ts` 新增 3 个路由测试；`TMPDIR=/tmp npm run check` 全部通过（43 个测试文件 / 190 个测试），`npm run build`、`npm run mastra:hitl:check`、`npm run idea-cases:check` 均通过；`scripts/browser-acceptance.mjs` 真实 Chrome 全量验收通过并生成 `runtime/browser-verification-final/` 截图。README/AGENTS/架构/运维/安全/.env.example 已同步至 `DOCS_SYNC_VERSION=2026-08-05-02`；实现已提交为 `20b0337` 并推送 `feat/project-workspace-redesign`。仍待运行记录从 `runtime/workflow-runs.json` 迁移到 PGlite `workflow_runs` 表的后续工作（字段契约见 5.4）。
 
 ## 10. 关键决策与风险
 
@@ -442,11 +442,11 @@ POC 结论决定最终方案：
 - [x] 非法文件不会替换 active 版本，并返回结构化错误。
 - [x] suspend/resume、服务重启后能按 `mastra_run_id` 恢复对应版本（运行记录暂存 JSON，见 5.4 已知偏差）。
 - [x] 删除项目后注册表、缓存、运行记录与项目目录全部清理。
-- [~] 项目 chat、Idea、相关工作、实验、审批、论文、汇报都只通过项目级单一 workflow 入口（workflow 分支已覆盖，API 层部分动作仍直接调用 Agent，见 Phase 3 已知偏差）。
+- [x] 项目 chat、Idea、相关工作、实验、审批、论文、汇报都只通过项目级单一 workflow 入口（项目创建前的 Idea 讨论按设计仍由 Idea Agent 直接处理；项目范围内的 chat、论文翻译/修订、实验规划公开 API 已统一走 workflow，见 Phase 3 实施记录）。
 - [x] 自然语言 workflow 修改必须经过 Proposal、校验、审批、Git commit 和热加载。
 - [x] Mastra Studio 或前端图面板展示当前项目的完整 workflow 图、版本和实时状态。
-- [~] UI 通过四语言、浅/暗主题、桌面/移动端真实浏览器截图验收，符合 Apple 设计契约。
-- [~] 全量检查、Mastra HITL、适用 acceptance 与文档同步通过（核心检查已通过，Phase 6 收尾中）。
+- [x] UI 通过四语言、浅/暗主题、桌面/移动端真实浏览器截图验收，符合 Apple 设计契约（2026-08-05 `scripts/browser-acceptance.mjs` 全量通过）。
+- [x] 全量检查、Mastra HITL、适用 acceptance 与文档同步通过（`TMPDIR=/tmp npm run check`、`npm run build`、`npm run mastra:hitl:check`、`npm run idea-cases:check` 均通过，`DOCS_SYNC_VERSION=2026-08-05-02`）。
 
 ## 12. 参考资料
 
