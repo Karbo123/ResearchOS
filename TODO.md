@@ -196,6 +196,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 ### 4.0.2 下一阶段规划：项目级单一 Workflow 与热加载（2026-08-05）
 
+- [x] `P0-WORKFLOW-127` 让 Mastra Studio 的 workflow 使用项目语义 slug（如 `native-acceptance-a8b9`）作为名称，并使用项目完整标题作为 description；新增轻量项目元数据接口 `/api/projects/:projectRef/meta` 供 workflow runtime 获取 `slug/title`。 [Apple 设计验收]
 - [x] `P0-WORKFLOW-126` 增加 Mastra Studio 桥接：把每个项目当前激活的 workflow 暴露到 Mastra `/workflows` 列表与详情接口，热加载后只展示最新版本；因 `@mastra/core@1.55.0` 无 `removeWorkflow`，采用应用层注册表 + 实例方法桥接，而不是修改 Mastra 源码。真实 API 验证：临时 Mastra 实例 `/api/workflows` 返回 75 个项目 workflow，详情含 `stepGraph`。 [Apple 设计验收]
 - [~] `P0-WORKFLOW-125` 按 `TODO-workflow.md` 实施项目级单一 Mastra Workflow：每个项目一个 `projects/<project-id>/workflow.ts`，默认模板初始化，运行期热加载，自然语言经审批修改工作流，并使用 Mastra Studio/序列化图实现可视化。Phase 0-5 主体已完成并通过核心检查（见 `TODO-workflow.md`）；Phase 6 收尾中：真实浏览器截图验收、部分 API 动作直接调用 Agent 的迁移、全量文档同步与提交推送。 [Apple 设计验收]
 

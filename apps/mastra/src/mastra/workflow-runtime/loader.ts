@@ -52,6 +52,11 @@ type MastraWorkflowRegistry = {
   getWorkflowById(id: string): AnyWorkflow
 }
 
+type ProjectDisplayInfo = {
+  slug: string
+  title: string
+}
+
 type RunRecord = {
   mastra_run_id: string
   project_id: string
@@ -120,6 +125,8 @@ export class ProjectWorkflowRuntime {
   private refToProjectId = new Map<string, string>()
   private exposedWorkflows = new Map<string, AnyWorkflow>()
   private exposedProjectKeys = new Map<string, string>()
+  private metadataCache = new Map<string, ProjectDisplayInfo>()
+  private metadataFetching = new Map<string, Promise<ProjectDisplayInfo>>()
   private timer: ReturnType<typeof setInterval> | null = null
   private readonly pollIntervalMs: number
   private readonly apiBase: string
@@ -156,11 +163,44 @@ export class ProjectWorkflowRuntime {
     }) as MastraWorkflowRegistry['getWorkflowById']
   }
 
-  private exposeWorkflow(projectId: string, workflow: AnyWorkflow): void {
+  private async exposeWorkflow(projectId: string, workflow: AnyWorkflow): Promise<void> {
+    const display = await this.projectDisplayInfo(projectId)
+    const key = display.slug || workflow.id
+    const named = workflow as AnyWorkflow & { name?: string }
+    named.name = display.slug || workflow.id
+    workflow.description = display.title || workflow.description
     const previousKey = this.exposedProjectKeys.get(projectId)
     if (previousKey) this.exposedWorkflows.delete(previousKey)
-    this.exposedWorkflows.set(workflow.id, workflow)
-    this.exposedProjectKeys.set(projectId, workflow.id)
+    this.exposedWorkflows.set(key, workflow)
+    this.exposedProjectKeys.set(projectId, key)
+  }
+
+  private async projectDisplayInfo(projectId: string): Promise<ProjectDisplayInfo> {
+    const cached = this.metadataCache.get(projectId)
+    if (cached) return cached
+    const inFlight = this.metadataFetching.get(projectId)
+    if (inFlight) return inFlight
+    const request = this.fetchProjectDisplayInfo(projectId)
+    this.metadataFetching.set(projectId, request)
+    try {
+      const display = await request
+      this.metadataCache.set(projectId, display)
+      return display
+    } catch {
+      return { slug: projectId, title: '' }
+    } finally {
+      this.metadataFetching.delete(projectId)
+    }
+  }
+
+  private async fetchProjectDisplayInfo(projectId: string): Promise<ProjectDisplayInfo> {
+    const response = await fetch(`${this.apiBase}/api/projects/${encodeURIComponent(projectId)}/meta`, {
+      signal: AbortSignal.timeout(5_000),
+    })
+    if (!response.ok) throw new Error(`project_meta_http_${response.status}`)
+    const body = await response.json() as { slug?: unknown; title?: unknown }
+    if (typeof body.slug !== 'string' || typeof body.title !== 'string') throw new Error('project_meta_invalid')
+    return { slug: body.slug, title: body.title }
   }
 
   private unexposeProject(projectId: string): void {
@@ -258,7 +298,7 @@ export class ProjectWorkflowRuntime {
     state.versions.set(loaded.version, loaded)
     state.active = loaded
     state.lastError = null
-    this.exposeWorkflow(projectId, loaded.workflow)
+    await this.exposeWorkflow(projectId, loaded.workflow)
     auditWorkflow(projectId, 'workflow.activated', {
       version: loaded.version,
       source_hash: loaded.sourceHash,

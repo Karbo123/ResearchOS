@@ -82,6 +82,24 @@ describe('project URL slugs', () => {
     await expect(byId.json()).resolves.toMatchObject({ id: projectId, slug: 'mnist-cnn-example' })
   })
 
+  it('returns lightweight slug and title metadata by slug or UUID', async () => {
+    const bySlug = await app.request('/api/projects/cnn-minimal-2q95/meta')
+    expect(bySlug.status).toBe(200)
+    await expect(bySlug.json()).resolves.toMatchObject({
+      id: newProjectId,
+      slug: 'cnn-minimal-2q95',
+      title: 'New slug test',
+    })
+
+    const byId = await app.request(`/api/projects/${projectId}/meta`)
+    expect(byId.status).toBe(200)
+    await expect(byId.json()).resolves.toMatchObject({
+      id: projectId,
+      slug: 'mnist-cnn-example',
+      title: 'Legacy slug test',
+    })
+  })
+
   it('serves the SPA shell for a clean workspace path', async () => {
     const response = await app.request('/project/cnn-minimal-2q95/overview/idea')
     expect(response.status).toBe(200)

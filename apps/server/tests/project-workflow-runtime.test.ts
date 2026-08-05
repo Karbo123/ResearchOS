@@ -34,6 +34,19 @@ describe('project workflow runtime', () => {
     process.env.RESEARCH_ROOT = repositoryRoot
     process.env.RESEARCH_PROJECTS_DIR = projectsRoot
     process.env.RESEARCH_RUNTIME_DIR = runtimeRoot
+    vi.stubGlobal('fetch', vi.fn(async (input: string | URL | Request) => {
+      const url = String(input)
+      if (url.includes('/meta')) {
+        return new Response(JSON.stringify({ id: projectId, slug: 'mnist-cnn-example', title: 'Point cloud acceptance title' }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        })
+      }
+      return new Response(JSON.stringify({ id: projectId }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    }))
     const ProjectWorkflowRuntime = await loadRuntime()
     mastra = {
       getLogger: () => ({ debug: () => {}, info: () => {}, warn: () => {}, error: () => {} }),
@@ -47,6 +60,7 @@ describe('project workflow runtime', () => {
 
   afterAll(() => {
     runtime?.dispose(projectId)
+    vi.unstubAllGlobals()
     rmSync(root, { recursive: true, force: true })
     delete process.env.RESEARCH_ROOT
     delete process.env.RESEARCH_PROJECTS_DIR
@@ -65,9 +79,11 @@ describe('project workflow runtime', () => {
   it('exposes only the latest workflow version to Mastra Studio', async () => {
     await runtime.scanProject(projectId)
     const listed = mastra.listWorkflows()
-    const workflowKey = `project-${projectId}-research`
-    const before = listed[workflowKey] as { description: string; id: string }
+    const workflowKey = 'mnist-cnn-example'
+    const before = listed[workflowKey] as { name: string; description: string; id: string }
     expect(before).toBeDefined()
+    expect(before.name).toBe('mnist-cnn-example')
+    expect(before.description).toBe('Point cloud acceptance title')
     expect(mastra.getWorkflowById(workflowKey)).toBe(before)
 
     const updatedSource = `// hot reloaded for studio\n${template}`
@@ -75,10 +91,11 @@ describe('project workflow runtime', () => {
     await runtime.scanProject(projectId)
 
     const afterList = mastra.listWorkflows()
-    const after = afterList[workflowKey] as { description: string; id: string }
+    const after = afterList[workflowKey] as { name: string; description: string; id: string }
     expect(after).toBeDefined()
+    expect(after.name).toBe('mnist-cnn-example')
     expect(after).not.toBe(before)
-    expect(Object.keys(afterList).filter(key => key.startsWith(`project-${projectId}-`))).toHaveLength(1)
+    expect(Object.keys(afterList).filter(key => key.startsWith('mnist-cnn-example'))).toHaveLength(1)
     expect(mastra.getWorkflowById(workflowKey)).toBe(after)
   })
 

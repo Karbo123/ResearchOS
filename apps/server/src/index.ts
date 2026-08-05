@@ -481,6 +481,11 @@ app.get('/api/projects', async context => {
   return context.json(await listProjectSummaries(status || undefined))
 })
 app.get('/api/projects/:projectRef/id', async context => context.json({ id: await projectIdForReference(context.req.param('projectRef')) }))
+app.get('/api/projects/:projectRef/meta', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectRef'))
+  const project = await requireProject(projectId)
+  return context.json({ id: project.id, slug: project.slug, title: project.title })
+})
 app.patch('/api/projects/order', async context => {
   const body = await jsonBody(context, projectOrderRequest)
   const ordered = await reorderProjectGroup(body.project_ids)
