@@ -7,13 +7,42 @@ import { EmptyState, SectionHeading } from './ui'
 
 const STEP_LABEL_KEYS: Record<string, TranslationKey> = {
   'run-project-chat-agent': 'workflowGraph.step.chat',
+  'project-conversation': 'workflowGraph.step.chat',
   'research-bootstrap': 'workflowGraph.step.relatedWork',
+  'literature-review': 'workflowGraph.step.literatureReview',
+  'literature-search': 'workflowGraph.step.literatureSearch',
+  'literature-novelty-review': 'workflowGraph.step.literatureNoveltyReview',
+  'research-phase-context': 'workflowGraph.step.phaseContext',
+  'research-lifecycle': 'workflowGraph.step.lifecycle',
+  'research-lifecycle-entry': 'workflowGraph.step.lifecycleEntry',
+  'research-lifecycle-exit': 'workflowGraph.step.lifecycleExit',
+  'literature-phase': 'workflowGraph.step.literaturePhase',
+  'literature-phase-output': 'workflowGraph.step.literaturePhaseOutput',
+  'method-and-experiment-phase': 'workflowGraph.step.methodExperimentPhase',
+  'method-and-experiment-phase-output': 'workflowGraph.step.methodExperimentPhaseOutput',
+  'paper-writing-phase': 'workflowGraph.step.paperWritingPhase',
+  'paper-writing-phase-output': 'workflowGraph.step.paperWritingPhaseOutput',
+  'reporting-phase': 'workflowGraph.step.reportingPhase',
+  'reporting-phase-output': 'workflowGraph.step.reportingPhaseOutput',
+  'approval-phase': 'workflowGraph.step.approvalPhase',
+  'approval-phase-output': 'workflowGraph.step.approvalPhaseOutput',
+  'workflow-edit-phase': 'workflowGraph.step.workflowEditPhase',
+  'workflow-edit-phase-output': 'workflowGraph.step.workflowEditPhaseOutput',
+  'conversation-phase': 'workflowGraph.step.conversationPhase',
+  'conversation-phase-output': 'workflowGraph.step.conversationPhaseOutput',
   'human-approval': 'workflowGraph.step.approval',
   'generate-project-reports': 'workflowGraph.step.reports',
+  'reporting-and-feedback': 'workflowGraph.step.reports',
   'paper-translate': 'workflowGraph.step.paperTranslate',
   'paper-revise': 'workflowGraph.step.paperRevise',
   'create-experiment-plan': 'workflowGraph.step.experimentPlan',
+  'method-design-and-experiment-planning': 'workflowGraph.step.methodExperimentPlanning',
   'workflow-edit-proposal': 'workflowGraph.step.workflowEdit',
+  'paper-introduction': 'workflowGraph.step.paperIntroduction',
+  'paper-related-work': 'workflowGraph.step.paperRelatedWork',
+  'paper-method': 'workflowGraph.step.paperMethod',
+  'paper-experiments': 'workflowGraph.step.paperExperiments',
+  'paper-conclusion': 'workflowGraph.step.paperConclusion',
 }
 
 const RUN_STATUS_KEYS: Record<WorkflowRunRecord['status'], TranslationKey> = {
@@ -44,6 +73,19 @@ function GraphNode({ entry, t }: { entry: WorkflowGraphEntry; t: (key: Translati
     )
   }
   const stepId = entry.step?.id || 'unknown-step'
+  if (entry.type === 'step' && entry.step?.component === 'WORKFLOW' && entry.step.serializedStepFlow?.length) {
+    return (
+      <div className="workflow-graph-branch workflow-graph-nested">
+        <div className="workflow-graph-branch-label">
+          <GitBranch size={13} />
+          {stepLabel(stepId, t)}
+        </div>
+        <div className="workflow-graph-branch-body">
+          {entry.step.serializedStepFlow.map((child, index) => <GraphNode key={`${stepId}-${index}`} entry={child} t={t} />)}
+        </div>
+      </div>
+    )
+  }
   const isEntry = stepId === 'workflow-entry'
   const isExit = stepId === 'workflow-exit'
   const isMap = Boolean(entry.step?.mapConfig)

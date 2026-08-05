@@ -234,6 +234,8 @@ export interface WorkflowGraphStep {
   id: string
   canSuspend?: boolean
   mapConfig?: string
+  component?: string
+  serializedStepFlow?: WorkflowGraphEntry[]
 }
 
 export interface WorkflowGraphEntry {

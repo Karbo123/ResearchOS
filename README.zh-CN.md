@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-05-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-06-01 -->
 
 # Research OS
 
@@ -121,7 +121,7 @@ npm test
 
 在项目对话中可以直接提出工作流修改需求。工作流编辑 Agent 只生成可审阅 diff，API 先在临时工作区校验，审批通过后写回项目 `workflow.ts` 并提交项目 Git，再由 loader 热加载。项目页会展示当前工作流图、版本、源码哈希与最近运行（数据源为 Mastra `serializedStepGraph`）；Mastra Studio 保留为开发辅助视图。
 
-项目对话、论文翻译/修订和实验规划请求都会先经过项目级 workflow 入口；workflow 分支再通过受限内部 API 端点执行真实的模型与状态写入。项目创建前的 Idea 澄清按设计仍不归属任何项目 workflow。
+项目对话、论文翻译/修订和实验规划请求都会先经过项目级 workflow 入口；workflow 阶段子图再通过受限内部 API 端点执行真实的模型与状态写入。默认模板是科研语义有向图，而不是串行流水线或动作 if-else 分发：科研生命周期入口按语义阶段进入嵌套子图，包括文献调研（检索 -> 新颖性复核）、方法设计与实验规划、论文五章（并行）、汇报与反馈、审批/工作流编辑、项目对话。项目创建前的 Idea 澄清按设计仍不归属任何项目 workflow。
 
 汇报调度由 API 的确定性调度器逐项目分发（`RESEARCH_REPORT_POLL_SECONDS`、`RESEARCH_REPORT_DAILY_TIME`、`RESEARCH_REPORT_WEEKLY_TIME`、`RESEARCH_REPORT_WEEKDAY`、`RESEARCH_REPORT_TIMEOUT_SECONDS`）。删除项目时会同步清理该项目的 workflow 注册表、编译缓存、运行记录与项目目录。
 

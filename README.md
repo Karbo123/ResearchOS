@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-05-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-06-01 -->
 
 # Research OS
 
@@ -121,7 +121,7 @@ Every research project owns one Mastra workflow at `projects/<project-id>/workfl
 
 Workflow changes can be requested in the project conversation. The workflow edit Agent produces a reviewable diff, the API validates it in a temporary workspace, and approval writes `workflow.ts` back to the project Git before hot loading. The project page renders the current workflow graph, version, source hash, and recent runs from `serializedStepGraph`; Mastra Studio remains available as a development view.
 
-Project chat, paper translation/revision, and experiment planning requests are dispatched through the project workflow entry; the workflow branches call restricted internal API endpoints for the actual model and state work. Idea clarification before project creation remains outside a project workflow by design.
+Project chat, paper translation/revision, and experiment planning requests are dispatched through the project workflow entry; workflow phase subgraphs call restricted internal API endpoints for the actual model and state work. The default template is a semantic research-directed graph, not a serial pipeline or an action if/else router: a research lifecycle dispatches into nested phase subgraphs for literature review (search -> novelty review), method design and experiment planning, the five paper sections (parallel), reporting, approval/workflow editing, and project conversation. Idea clarification before project creation remains outside a project workflow by design.
 
 The API report scheduler dispatches one project workflow per active project (`RESEARCH_REPORT_POLL_SECONDS`, `RESEARCH_REPORT_DAILY_TIME`, `RESEARCH_REPORT_WEEKLY_TIME`, `RESEARCH_REPORT_WEEKDAY`, `RESEARCH_REPORT_TIMEOUT_SECONDS`). Deleting a project removes its workflow registry entry, compile cache, and run records together with the project directory.
 

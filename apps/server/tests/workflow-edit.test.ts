@@ -29,7 +29,7 @@ function addLeadingCommentDiff(): string {
     '@@ -1,2 +1,3 @@',
     '+// workflow edit test',
     ' import {',
-    '   createApprovalGateStep,',
+    '   createFinalizeStep,',
     '',
   ].join('\n')
 }

@@ -2,6 +2,7 @@ import { testProjectSlug } from './test-project.js'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { LibSQLStore } from '@mastra/libsql'
 
 const repositoryRoot = resolve(import.meta.dirname, '../../..')
 const templatePath = resolve(repositoryRoot, 'apps/mastra/src/mastra/workflows/templates/default-project-workflow.ts')
@@ -12,6 +13,7 @@ let root: string
 let projectsRoot: string
 let runtimeRoot: string
 let runtime: import('../../mastra/src/mastra/workflow-runtime/loader.js').ProjectWorkflowRuntime
+let storage: LibSQLStore
 let mastra: {
   getLogger(): unknown
   getStorage(): unknown
@@ -49,9 +51,12 @@ describe('project workflow runtime', () => {
       })
     }))
     const ProjectWorkflowRuntime = await loadRuntime()
+    storage = new LibSQLStore({ id: 'runtime-test', url: ':memory:' })
+    await storage.init()
     mastra = {
-      getLogger: () => ({ debug: () => {}, info: () => {}, warn: () => {}, error: () => {} }),
-      getStorage: () => ({ getStore: async () => undefined }),
+      getLogger: () => ({ debug: () => {}, info: () => {}, warn: () => {}, error: () => {}, trackException: () => {} }),
+      getStorage: () => storage,
+      getServer: () => ({}),
       generateId: () => crypto.randomUUID(),
       listWorkflows: () => ({}),
       getWorkflowById: () => { throw new Error('workflow not found') },
@@ -103,6 +108,41 @@ describe('project workflow runtime', () => {
     expect(after).not.toBe(before)
     expect(Object.keys(afterList).filter(key => key.startsWith(projectId))).toHaveLength(1)
     expect(mastra.getWorkflowById(workflowKey)).toBe(after)
+  })
+
+  it('suspends and resumes the nested approval phase through the project workflow', async () => {
+    await runtime.scanProject(projectId)
+    const proposalId = crypto.randomUUID()
+    const argsFingerprint = 'a'.repeat(64)
+    const started = await runtime.run(projectId, {
+      action: 'approval_gate',
+      project_id: projectId,
+      proposal_id: proposalId,
+      tool_name: 'runtime.test_approval',
+      args_fingerprint: argsFingerprint,
+      policy_version: 'runtime-test-v1',
+      actor: 'runtime-test',
+      reason: 'Verify nested approval phase suspend and resume.',
+    })
+    expect(started.status).toBe('suspended')
+    expect(started.suspended?.[0]).toEqual(expect.arrayContaining(['research-lifecycle', 'approval-phase', 'human-approval']))
+    expect(started.suspend_payload).toMatchObject({
+      project_id: projectId,
+      proposal_id: proposalId,
+      tool_name: 'runtime.test_approval',
+      args_fingerprint: argsFingerprint,
+      policy_version: 'runtime-test-v1',
+    })
+
+    const resumed = await runtime.resume(projectId, started.run_id, {
+      approved: false,
+      actor: 'runtime-test',
+      comment: 'Rejected by runtime test.',
+    })
+    expect(resumed.status).toBe('success')
+    const decision = (resumed.result as { result: { decision: string } }).result
+    expect(decision.decision).toBe('rejected')
+    expect(decision.proposal_id).toBe(proposalId)
   })
 
   it('hot reloads a changed workflow.ts without replacing the old graph on invalid source', async () => {

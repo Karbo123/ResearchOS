@@ -12,6 +12,17 @@ export const projectWorkflowActionSchema = z.enum([
 ])
 export type ProjectWorkflowAction = z.infer<typeof projectWorkflowActionSchema>
 
+export const researchPhaseSchema = z.enum([
+  'literature',
+  'method_and_experiment',
+  'paper',
+  'reporting',
+  'approval',
+  'workflow_edit',
+  'conversation',
+])
+export type ResearchPhaseId = z.infer<typeof researchPhaseSchema>
+
 const projectIdSchema = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/)
 
 const projectChatSchema = z.object({
@@ -51,7 +62,8 @@ const reportsSchema = z.object({
   period: z.enum(['daily', 'weekly']),
 }).strict()
 
-const paperSectionSchema = z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'])
+export const paperSectionSchema = z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'])
+export type PaperSectionId = z.infer<typeof paperSectionSchema>
 
 const paperTranslateSchema = z.object({
   action: z.literal('paper_translate'),

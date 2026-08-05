@@ -65,6 +65,7 @@ type RunRecord = {
   source_hash: string
   status: 'running' | 'suspended' | 'success' | 'failed'
   created_at: string
+  suspended_steps?: string[][]
 }
 
 export type WorkflowGraphResponse = {
@@ -81,8 +82,9 @@ function collectStepIds(entries: unknown[]): string[] {
   const ids: string[] = []
   for (const entry of entries) {
     if (!entry || typeof entry !== 'object') continue
-    const item = entry as { type?: string; step?: { id?: string }; steps?: unknown[] }
+    const item = entry as { type?: string; step?: { id?: string; serializedStepFlow?: unknown[] }; steps?: unknown[] }
     if (item.type === 'step' && item.step?.id) ids.push(item.step.id)
+    if (item.step?.serializedStepFlow) ids.push(...collectStepIds(item.step.serializedStepFlow))
     if (Array.isArray(item.steps)) ids.push(...collectStepIds(item.steps))
   }
   return ids
@@ -117,6 +119,18 @@ function writeRuns(runs: RunRecord[]): void {
   const temporaryPath = `${runsFile}.tmp`
   writeFileSync(temporaryPath, `${JSON.stringify(runs, null, 2)}\n`, 'utf8')
   renameSync(temporaryPath, runsFile)
+}
+
+function findSuspendPayload(steps: unknown): unknown {
+  if (!steps || typeof steps !== 'object') return null
+  for (const value of Object.values(steps as Record<string, unknown>)) {
+    if (!value || typeof value !== 'object') continue
+    const candidate = (value as { suspendPayload?: unknown }).suspendPayload
+    if (candidate !== undefined && candidate !== null) return candidate
+    const nested = findSuspendPayload(value)
+    if (nested !== null) return nested
+  }
+  return null
 }
 
 export class ProjectWorkflowRuntime {
@@ -447,11 +461,12 @@ export class ProjectWorkflowRuntime {
     this.persistRuns()
     const result = await run.start({ inputData: input })
     record.status = result.status === 'suspended' ? 'suspended' : result.status === 'success' ? 'success' : 'failed'
+    if (result.status === 'suspended' && result.suspended?.length) {
+      record.suspended_steps = result.suspended
+    }
     this.persistRuns()
     const suspended = result.status === 'suspended' ? result.suspended : undefined
-    const suspendPayload = suspended?.length
-      ? (result.steps as Record<string, { suspendPayload?: unknown }>)[(suspended[0] as string[]).at(-1) ?? '']?.suspendPayload ?? null
-      : null
+    const suspendPayload = suspended?.length ? findSuspendPayload(result.steps) : null
     return {
       status: result.status,
       result: result.status === 'success' ? result.result : null,
@@ -468,7 +483,8 @@ export class ProjectWorkflowRuntime {
     const version = state.versions.get(record.workflow_version) ?? await this.loadCachedVersion(projectId, record.source_hash, record.workflow_version)
     const run = await version.workflow.createRun({ runId })
     const resumeWithRunId = { ...(resumeData as Record<string, unknown>), mastra_run_id: runId }
-    const result = await run.resume({ step: 'human-approval', resumeData: resumeWithRunId })
+    const suspendedPath = record.suspended_steps?.[0]
+    const result = await run.resume({ step: suspendedPath ?? ['human-approval'], resumeData: resumeWithRunId })
     record.status = result.status === 'suspended' ? 'suspended' : result.status === 'success' ? 'success' : 'failed'
     this.persistRuns()
     return { status: result.status, result: result.status === 'success' ? result.result : null, run_id: runId }

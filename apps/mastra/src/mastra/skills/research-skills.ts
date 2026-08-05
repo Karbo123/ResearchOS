@@ -116,9 +116,22 @@ Allowed building blocks:
 - Mastra createWorkflow, then, branch, map, parallel, loop, suspend, and commit primitives.
 - workflow-kit helpers imported from @research-os/workflow-kit: projectWorkflowInputSchema,
   projectWorkflowOutputSchema, createProjectContextStep, createProjectActionStep,
-  createChatStep, createResearchBootstrapStep, createApprovalGateStep, createReportsStep,
-  createPaperTranslateStep, createPaperReviseStep, createExperimentPlanStep,
-  createWorkflowEditProposalStep, createFinalizeStep, extractBranchOutput, and ProjectWorkflowContext.
+  createResearchPhaseStep, createResearchPhaseContextStep, researchPhaseFor,
+  createResearchLifecycleWorkflow, createResearchLifecycleEntryStep,
+  createResearchLifecycleExitStep, createLiteratureSearchStep, createNoveltyReviewStep,
+  createLiteraturePhaseWorkflow, createMethodAndExperimentPhaseWorkflow,
+  createPaperWritingPhaseWorkflow, createReportingPhaseWorkflow, createApprovalPhaseWorkflow,
+  createWorkflowEditPhaseWorkflow, createConversationPhaseWorkflow, createPhaseOutputStep,
+  createProjectConversationStep, createLiteratureReviewStep,
+  createMethodDesignAndExperimentPlanningStep, createPaperSectionStep, createReportingStep,
+  createHumanApprovalStep, createWorkflowEditStep, createFinalizeStep, extractBranchOutput,
+  and ProjectWorkflowContext.
+- The default project workflow is a semantic research-directed graph, not a serial pipeline and
+  not an action if/else router. Preserve the research lifecycle entry, the literature phase
+  (literature search -> novelty review), method and experiment planning, paper writing with the
+  five paper sections as a parallel group, reporting and feedback, approval, workflow editing,
+  and project conversation. Each phase is a nested Mastra workflow subgraph; phases may contain
+  real sequential or parallel dependencies. Preserve workflow-entry and workflow-exit.
 - Only call Research OS APIs through the supplied workflow-kit api helper; do not construct new
   fetch, network, filesystem, shell, SQL, or process access.
 

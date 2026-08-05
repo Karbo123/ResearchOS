@@ -3,6 +3,7 @@
 > 文档状态：Phase 0-5 主体完成，Phase 6 收尾中
 > 对应 TODO：`P0-WORKFLOW-125`  
 > 创建日期：2026-08-05（Asia/Shanghai）  
+> 2026-08-06 修订：默认 workflow 从动作 if/else 路由改为科研语义有向图。顶层是科研生命周期入口，按语义阶段进入文献、方法与实验、论文五章、汇报、审批、工作流编辑、项目对话等嵌套阶段子图；阶段子图内部允许真实顺序依赖和并行，不是串行流水线，也不是单纯的多分支并行图。
 > 适用代码副本：`/mnt/d/ResearchOS`（WSL2 内开发，Windows 侧为 `D:\ResearchOS`）
 
 ## 1. 目标
@@ -78,19 +79,20 @@ flowchart LR
     API[Research OS API] -->|run action| R[Workflow Loader / Registry]
     R --> P[project-id workflow.ts]
     P --> W[One Project Research Workflow]
-    W --> C[Context & Entry]
-    W --> Route[Action Router]
-    Route --> Chat[Project Chat]
-    Route --> Idea[Idea Clarify]
-    Route --> RW[Related Work]
-    Route --> Exp[Experiment Plan]
-    Route --> Paper[Paper Translate / Revise]
-    Route --> Reports[Reports]
-    Route --> Edit[Workflow Edit Proposal]
-    Chat & Idea & RW & Exp & Paper & Reports --> A[Approval Gate]
-    A --> F[Finalize & Audit]
+    W --> E[Entry]
+    E --> LC[Research Lifecycle]
+    LC --> L[Literature: search -> novelty review]
+    LC --> M[Method & Experiment Planning]
+    LC --> P[Paper Writing: five sections in parallel]
+    LC --> R[Reporting & Feedback]
+    LC --> A[Human Approval]
+    LC --> E2[Workflow Edit]
+    LC --> C[Project Conversation]
+    L & M & P & R & A & E2 & C --> F[Finalize & Audit]
     W -->|Studio / graph endpoint| Studio[Mastra Studio / Project Graph UI]
 ```
+
+生命周期内的 `LC` 是语义阶段分发点，不是“动作 if-else 路由器”；每个阶段都是一棵嵌套 Mastra workflow 子图，子图内部按科研依赖关系使用串行、并行或挂起原语（例如文献检索必须先于新颖性复核，论文五章可并行修订）。
 
 ### 4.2 项目 workflow 文件
 
@@ -112,8 +114,7 @@ export default function defineProjectWorkflow(ctx: ProjectWorkflowContext) {
     outputSchema: ProjectWorkflowOutputSchema,
   })
     .then(projectContextStep)
-    .then(routeProjectActionStep)
-    .branch([...])
+    .then(researchLifecycleWorkflow)
     .then(finalizeStep)
     .commit()
 }
@@ -137,7 +138,7 @@ type ProjectWorkflowContext = {
 
 ### 4.3 统一输入/输出契约
 
-顶层输入使用严格 Zod discriminated union，所有动作共享同一个入口：
+顶层输入使用严格 Zod discriminated union，所有动作共享同一个入口。动作不直接进入“哪一个大 if/else 分支”，而是由科研生命周期入口映射到对应语义阶段子图；阶段子图内部再按真实科研依赖执行。默认图始终以科研流程的语义分组呈现，而不是以动作名称组织成 if/else。
 
 ```ts
 type ProjectWorkflowInput =
@@ -171,23 +172,22 @@ type ProjectWorkflowOutput = {
 
 ### 4.4 默认 workflow 的图内容
 
-默认模板把当前 4 个 workflow 与论文相关 Agent 能力统一进一个图：
+默认模板把当前 4 个 workflow 与论文相关 Agent 能力统一进一个科研语义有向图：
 
 | 图节点区域 | 步骤示例 | 来源 |
 | --- | --- | --- |
 | 入口 | `workflow-entry`：校验输入、加载项目上下文、读取项目设置、记录 run 版本 | 新增 |
-| 路由 | `route-project-action`：按 `action` 分支 | 新增 |
-| 项目对话 | `run-project-chat-agent`：调用现有 `/api/chat` 或统一对话 Agent | 原 `projectChatWorkflow` |
-| Idea | `clarify-idea`、`record-idea-version`：现有 Idea Agent 能力 | 原 `researchBootstrapWorkflow` 相关部分 |
-| 相关工作 | `search-literature-and-resources`、`recursive-expand`、`evaluate-evidence-coverage`、`summarize-research-matrix` | 原 `researchBootstrapWorkflow` |
-| 实验规划 | `create-experiment-plan`、`queue-experiment` | 现有实验 Agent/队列服务 |
+| 科研生命周期 | `research-lifecycle`：入口/出口包裹语义阶段分发，生命周期内的阶段按科研语义组织 | 新增 |
+| 文献调研 | `literature-search -> literature-novelty-review`：先检索，再对证据覆盖与创新点做复核 | 原 `researchBootstrapWorkflow` |
+| 方法与实验 | `method-design-and-experiment-planning`：生成实验计划 Proposal | 现有实验 Agent/队列服务 |
+| 论文五章 | `paper-introduction`、`paper-related-work`、`paper-method`、`paper-experiments`、`paper-conclusion`：按章节执行翻译/修订，五章并行 | 现有论文 Agent 能力 |
+| 汇报与反馈 | `reporting-and-feedback`：生成日报/周报 | 原 `supervisionReportsWorkflow` |
 | 审批 | `human-approval`：suspend/resume | 原 `approvalGateWorkflow` |
-| 论文 | `paper-translate`、`paper-revise`、`create-patch-proposal`、`compile-latex` | 现有论文 Agent 能力 |
-| 汇报 | `list-active-projects`、`foreach generate-project-reports` | 原 `supervisionReportsWorkflow` |
-| 工作流编辑 | `generate-workflow-diff`、`apply-workflow-patch` | 新增 |
+| 工作流编辑 | `workflow-edit-proposal`：生成可审阅 diff Proposal | 新增 |
+| 项目对话 | `project-conversation`：调用现有 `/api/chat` 或统一对话 Agent | 原 `projectChatWorkflow` |
 | 出口 | `workflow-exit`：审计、归一化输出 | 新增 |
 
-子图以“步骤库/helper”形式被模板组合，不注册为独立 Mastra workflow，不暴露为独立 API 入口。
+每个阶段子图都是共享 workflow-kit 的阶段步骤：不匹配当前动作时透传，匹配时执行受限内部 API 并写入阶段结果；最终统一由 `workflow-exit` 归一化为 `ProjectWorkflowOutput`。子图以“步骤库/helper”形式被模板组合，不注册为独立 Mastra workflow，不暴露为独立 API 入口。
 
 ### 4.5 共享 workflow-kit
 
@@ -391,7 +391,7 @@ POC 结论决定最终方案：
 
 验收：现有聊天、Idea、审批、汇报、论文、实验入口全部通过项目级 workflow 工作，旧路由兼容期间不破坏前端。
 
-实施记录：`apps/mastra/src/mastra/index.ts` 新增 `/internal/workflows/project/:projectId/{run,resume,graph,preview,runs}` 与 DELETE；旧 `research-bootstrap`、`approval-gate`、`supervisionReports` 路由已删除；`apps/server/src/task-worker.ts` 和 `apps/server/src/report-scheduler.ts` 逐项目分发 workflow；API 暴露 `/api/projects/:projectId/workflow-graph|runs` 与 workflow 编辑闭环。项目对话、论文翻译/修订、实验规划的公开 API 已改为先调用项目级 workflow 入口：`/api/chat`（含 `/api/chat/stream`）、`/api/projects/:projectId/paper-translate|paper-revise|experiment-plan` 在项目范围内统一走 `POST /internal/workflows/project/:projectId/run`；workflow 分支通过新增的受限内部执行端点 `/internal/chat`、`/internal/projects/:projectId/paper-translate|paper-revise|experiment-plan` 完成真实模型与状态写入，避免公开路由递归。已知偏差：项目创建前的 Idea 讨论没有项目 workflow，仍由 Idea Agent 直接处理，这是设计边界，不属于项目级 workflow。
+实施记录：`apps/mastra/src/mastra/index.ts` 新增 `/internal/workflows/project/:projectId/{run,resume,graph,preview,runs}` 与 DELETE；旧 `research-bootstrap`、`approval-gate`、`supervisionReports` 路由已删除；`apps/server/src/task-worker.ts` 和 `apps/server/src/report-scheduler.ts` 逐项目分发 workflow；API 暴露 `/api/projects/:projectId/workflow-graph|runs` 与 workflow 编辑闭环。项目对话、论文翻译/修订、实验规划的公开 API 已改为先调用项目级 workflow 入口：`/api/chat`（含 `/api/chat/stream`）、`/api/projects/:projectId/paper-translate|paper-revise|experiment-plan` 在项目范围内统一走 `POST /internal/workflows/project/:projectId/run`；workflow 阶段节点通过新增的受限内部执行端点 `/internal/chat`、`/internal/projects/:projectId/paper-translate|paper-revise|experiment-plan` 完成真实模型与状态写入，避免公开路由递归。已知偏差：项目创建前的 Idea 讨论没有项目 workflow，仍由 Idea Agent 直接处理，这是设计边界，不属于项目级 workflow。
 
 ### Phase 4：自然语言编辑工作流
 
@@ -412,6 +412,8 @@ POC 结论决定最终方案：
 验收：每个项目只能看到自己的 workflow 图；运行中节点状态实时更新；空、失败、加载状态完整；无横向溢出，交互符合 Apple 设计契约。
 
 实施记录：`apps/web/src/components/WorkflowGraphCard.tsx` 展示当前项目 `serializedStepGraph`、版本、源码哈希、最近运行，并提供打开 Mastra Studio 的链接；四语言文案已补齐，浅/暗主题使用语义 CSS 变量；2026-08-05 已用 `scripts/browser-acceptance.mjs` 通过真实 Chrome 全量验收（四语言、浅/暗主题、桌面/移动端、全部工作区标签、404、设置面板、动效、侧栏拖拽、对比工作区等），输出 `runtime/browser-verification-final/`。
+
+2026-08-06 图结构修订：默认模板改为科研语义有向图，顶层为 `workflow-entry -> research-lifecycle -> workflow-exit`；`research-lifecycle` 是嵌套 Mastra 子图，按文献、方法实验、论文、汇报、审批、工作流编辑、对话等语义阶段分发。文献阶段内部为 `literature-search -> literature-novelty-review` 的真实顺序依赖，论文阶段内部五章并行，审批阶段保持嵌套 `human-approval` suspend/resume。loader 记录完整挂起路径并递归提取 `suspend_payload`；`project-workflow-runtime.test.ts` 已覆盖嵌套挂起/恢复，196 个服务端测试与真实 Mastra HITL 验收均通过。
 
 ### Phase 6：全量验证与文档
 
