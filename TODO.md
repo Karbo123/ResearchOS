@@ -409,6 +409,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 #### 4.1.3 项目列表与工作区交互（旧）
 
+- [x] `P3-ARTIFACTS-CLEAN-115` 清理根 `artifacts/` 中已确认废弃的旧 Docker runner 状态、桥接日志、n8n 转储、历史截图，以及 `ops/`、`inbox/`、`literature/`、`reproducibility/`、`runs/`、`test-materials/` 等不再被代码和脚本引用的目录；保留 `backups/`、`acceptance/`、`acceptance-supermemory/`、`idea-tests/` 和 `.gitkeep`，并同步 README/README.zh-CN 与 `DOCS_SYNC_VERSION`。
 - [x] `086d` 置顶/删除动作层、项目排序和多语言的真实浏览器验收；完整 server 测试、构建、导航/文档/语言边界检查已通过，浏览器截图和主链 acceptance 均已完成。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：`scripts/browser-acceptance.mjs` 已把动作层滑入/收回、置顶/排序本地无刷新更新、删除确认磨砂遮罩、四语言与明暗主题纳入常驻验收：鼠标悬浮与键盘焦点动作层 transform 在 0ms/80ms/220ms/520ms 连续变化，置顶点击无 `.home-loading` 骨架且路径保持 `/`，删除弹窗 `z-index:100` 完整覆盖顶栏；桌面 1440/窄桌面 1024/移动 390 均无横向溢出。`npm run acceptance` 于 2026-08-04 通过 2 次真实模型调用、模型 key 隐藏、模型 URL 与 `.env` 一致和项目状态门禁，结果写入 `artifacts/acceptance/acceptance-20260804003245.json`。

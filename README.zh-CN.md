@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-05-03 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-05-04 -->
 
 # Research OS
 
@@ -41,7 +41,7 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 
 项目自己的文件按项目目录隔离：上传材料、证据 PDF、实验运行目录、复现归档、论文输出和受控 Artifact 都解析到 `projects/<project-id>/artifacts/` 或该项目工作区下的其他明确子目录。PGlite 只保存共享索引、ID、哈希、状态、权限和审计记录，不会把项目文件变成全局文件。删除项目时，会同时删除数据库记录、语义记忆、项目配置以及完整的 `projects/<project-id>/` 目录。
 
-根目录 `artifacts/` 不是第二个仍在使用的项目文件仓库。`artifacts/backups/`、`artifacts/acceptance/`、`artifacts/acceptance-supermemory/`、`artifacts/ops/`、`artifacts/idea-tests/` 和 `artifacts/test-materials/` 保存全局运维、验收或测试材料。旧项目路径可能作为历史迁移来源继续存在；服务启动时会把有数据库索引的项目文件复制到所属项目目录，读取侧暂时保留只读兼容回退，直到迁移或明确清理。新的应用写入不会再指向这些旧路径。
+根目录 `artifacts/` 不是第二个仍在使用的项目文件仓库。`artifacts/backups/`、`artifacts/acceptance/`、`artifacts/acceptance-supermemory/` 和 `artifacts/idea-tests/` 保存全局运维、验收或测试材料。旧项目路径可能作为历史迁移来源继续存在；服务启动时会把有数据库索引的项目文件复制到所属项目目录，读取侧暂时保留只读兼容回退，直到迁移或明确清理。新的应用写入不会再指向这些旧路径。
 
 ## 界面语言与主题
 

@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-05-03 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-05-04 -->
 
 # Research OS
 
@@ -41,7 +41,7 @@ Paper sections live in `projects/<project-id>/paper/` and are versioned in the p
 
 Project-specific files are isolated by project directory: uploads, evidence PDFs, experiment runs, reproduction archives, paper outputs, and controlled Artifacts resolve below `projects/<project-id>/artifacts/` or another explicit subdirectory of that same project workspace. PGlite keeps shared indexes, IDs, hashes, status, permissions, and audit rows; it does not make project files global. Deleting a project removes its database rows, semantic memory, project configuration, and entire `projects/<project-id>/` directory.
 
-The root `artifacts/` directory is not a second live project store. `artifacts/backups/`, `artifacts/acceptance/`, `artifacts/acceptance-supermemory/`, `artifacts/ops/`, `artifacts/idea-tests/`, and `artifacts/test-materials/` hold global operator, acceptance, or test material. Older project-shaped paths can remain there as legacy migration sources; startup migration copies indexed project files into the owning project directory, while a read-only fallback preserves old records until they are migrated or explicitly cleaned up. New application writes do not target those legacy paths.
+The root `artifacts/` directory is not a second live project store. `artifacts/backups/`, `artifacts/acceptance/`, `artifacts/acceptance-supermemory/`, and `artifacts/idea-tests/` hold global operator, acceptance, or test material. Older project-shaped paths can remain there as legacy migration sources; startup migration copies indexed project files into the owning project directory, while a read-only fallback preserves old records until they are migrated or explicitly cleaned up. New application writes do not target those legacy paths.
 
 ## Interface Language and Theme
 
