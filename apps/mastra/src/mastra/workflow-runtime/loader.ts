@@ -22,6 +22,7 @@ const projectsRoot = process.env.RESEARCH_PROJECTS_DIR
 const cacheRoot = resolve(runtimeRoot, 'workflow-cache')
 const runsFile = resolve(runtimeRoot, 'workflow-runs.json')
 const workflowKitRoot = resolve(researchRoot, 'packages/workflow-kit/src')
+const PROJECT_SLUG_PATTERN = /^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/
 
 type WorkflowManifest = {
   schemaVersion: 1
@@ -247,9 +248,9 @@ export class ProjectWorkflowRuntime {
   private async scanProjectRef(ref: string, projectId: string): Promise<void> {
     const sourcePath = resolve(projectsRoot, ref, 'workflow.ts')
     if (!existsSync(sourcePath)) {
-      // Only the canonical UUID directory represents the project source. Legacy
-      // semantic-name directories may resolve to the same project without a
-      // workflow.ts and must not mark an otherwise active project as missing.
+      // Only the canonical slug directory represents the project source. Legacy
+      // alias directories may resolve to the same project without a workflow.ts
+      // and must not mark an otherwise active project as missing.
       if (ref.toLowerCase() === projectId.toLowerCase()) {
         const state = this.states.get(projectId)
         if (state?.active) this.setLastError(projectId, new Error('workflow_source_missing'))
@@ -273,10 +274,9 @@ export class ProjectWorkflowRuntime {
   private async resolveProjectId(ref: string): Promise<string> {
     const cached = this.refToProjectId.get(ref)
     if (cached) return cached
-    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    if (uuidPattern.test(ref)) {
-      this.refToProjectId.set(ref, ref.toLowerCase())
-      return ref.toLowerCase()
+    if (PROJECT_SLUG_PATTERN.test(ref)) {
+      this.refToProjectId.set(ref, ref)
+      return ref
     }
     const response = await fetch(`${this.apiBase}/api/projects/${encodeURIComponent(ref)}/id`, {
       signal: AbortSignal.timeout(10_000),

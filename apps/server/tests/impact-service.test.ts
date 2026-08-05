@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { createHash } from 'node:crypto'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -9,7 +10,7 @@ import { assertCheckpointRecoverable, fingerprintValue, invalidateFromNodes, reg
 describe('semantic lineage invalidation', () => {
   it('propagates an Idea change through experiments, artifacts, and checkpoints', async () => {
     await migrate()
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const ideaId = crypto.randomUUID()
     const proposalId = crypto.randomUUID()
     const experimentId = crypto.randomUUID()
@@ -46,7 +47,7 @@ describe('semantic lineage invalidation', () => {
 
   it('detects an upstream fingerprint drift and invalidates the dependent edge', async () => {
     await migrate()
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const ideaId = crypto.randomUUID()
     const proposalId = crypto.randomUUID()
     const artifactId = crypto.randomUUID()
@@ -72,7 +73,7 @@ describe('semantic lineage invalidation', () => {
 
   it('rejects checkpoint recovery after an artifact file hash changes', async () => {
     await migrate()
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const ideaId = crypto.randomUUID()
     const proposalId = crypto.randomUUID()
     const experimentId = crypto.randomUUID()

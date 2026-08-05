@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { beforeAll, afterAll, describe, expect, it } from 'vitest'
 import { readFileSync, rmSync } from 'node:fs'
 import { app } from '../src/index.js'
@@ -7,8 +8,8 @@ import { createPaperDraftProposal } from '../src/paper-service.js'
 import { applyApprovedPatch } from '../src/patch-service.js'
 import { pathInside, projectsRoot } from '../src/paths.js'
 
-const projectId = crypto.randomUUID()
-const otherProjectId = crypto.randomUUID()
+const projectId = testProjectSlug()
+const otherProjectId = testProjectSlug()
 const evidenceId = crypto.randomUUID()
 const otherEvidenceId = crypto.randomUUID()
 

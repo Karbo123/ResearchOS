@@ -10,11 +10,11 @@ import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest,
-  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
+  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectSlug, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
   workflowEditProposalRequest,
 } from './contracts.js'
-import { audit, database, migrate, one, rows } from './database.js'
+import { audit, database, migrate, migrateProjectPrimaryKeyToSlug, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
 import { mastraGet, mastraJson } from './mastra-client.js'
@@ -26,7 +26,7 @@ import { transcribeVoice } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, enqueue, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
-import { normalizeProjectSlug } from './project-slug.js'
+import { isCurrentProjectSlug, normalizeProjectSlug } from './project-slug.js'
 import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal, createPaperSectionProposal, revisePaperSection, translatePaperSection } from './paper-service.js'
@@ -55,6 +55,7 @@ import { createResearchComparison, createResearchComparisonCandidate, decideRese
 import { deleteProject } from './project-delete-service.js'
 import { migrateProjectArtifactFiles } from './project-artifact-migration.js'
 import { migrateProjectSlugs } from './project-slug-migration.js'
+import { migrateProjectIdentifierStorage } from './project-identifier-migration.js'
 import { projectArtifactPath, projectArtifactRelativePath, projectFilePath } from './project-storage.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown> }
@@ -67,8 +68,7 @@ type PaperIdentity = { id: string; title: string; doi: string | null }
 async function projectIdForReference(reference: string): Promise<string> {
   let decoded: string
   try { decoded = decodeURIComponent(reference) } catch { throw new ApiError(404, 'project_not_found', '项目不存在。') }
-  const parsed = uuid.safeParse(decoded)
-  if (parsed.success) return parsed.data
+  if (isCurrentProjectSlug(decoded)) return decoded
   const project = await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [decoded])
   if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')
   return project.id
@@ -277,56 +277,56 @@ app.put('/api/settings/voice', async context => {
   return context.json(saveVoiceSettings(body))
 })
 app.get('/api/projects/:projectId/settings/models', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json(publicProjectModelSettings(projectId))
 })
 app.put('/api/projects/:projectId/settings/models', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, projectModelSettingsRequest)
   return context.json(saveProjectModelSettings(projectId, body))
 })
 app.get('/api/projects/:projectId/settings/document', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json(publicProjectDocumentSettings(projectId))
 })
 app.put('/api/projects/:projectId/settings/document', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, documentModelSettingsRequest)
   return context.json(saveProjectDocumentSettings(projectId, body))
 })
 app.get('/api/projects/:projectId/settings/vision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json(publicProjectVisionSettings(projectId))
 })
 app.put('/api/projects/:projectId/settings/vision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, visionModelSettingsRequest)
   return context.json(saveProjectVisionSettings(projectId, body))
 })
 app.get('/api/projects/:projectId/settings/image-generation', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json(publicProjectImageGenerationSettings(projectId))
 })
 app.put('/api/projects/:projectId/settings/image-generation', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, imageGenerationSettingsRequest)
   return context.json(saveProjectImageGenerationSettings(projectId, body))
 })
 app.get('/api/projects/:projectId/settings/voice', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json(publicProjectVoiceSettings(projectId))
 })
 app.put('/api/projects/:projectId/settings/voice', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, voiceSettingsRequest)
   return context.json(saveProjectVoiceSettings(projectId, body))
@@ -338,7 +338,7 @@ app.post('/api/voice/transcribe', async context => {
   if (file.size === 0) throw new ApiError(400, 'voice_file_empty', '录音文件为空。')
   const language = form.get('language')
   const projectIdValue = form.get('projectId')
-  const projectId = typeof projectIdValue === 'string' && projectIdValue ? uuid.parse(projectIdValue) : null
+  const projectId = typeof projectIdValue === 'string' && projectIdValue ? await projectIdForReference(projectIdValue) : null
   if (projectId) await requireProject(projectId)
   const text = await transcribeVoice(file, typeof language === 'string' && language ? language : undefined, projectId ?? undefined)
   return context.json({ text })
@@ -346,18 +346,18 @@ app.post('/api/voice/transcribe', async context => {
 app.get('/api/mastra/open', context => context.redirect(process.env.MASTRA_STUDIO_URL || 'http://127.0.0.1:4111'))
 
 app.get('/api/projects/:projectId/memory/status', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json(await memoryStatus(projectId))
 })
 app.get('/api/projects/:projectId/embedding-settings', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const instance = await projectInstanceStatus(projectId)
   return context.json({ ...publicProjectEmbeddingSettings(projectId), instance })
 })
 app.put('/api/projects/:projectId/embedding-settings', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, projectEmbeddingSettingsRequest)
   const previous = projectEmbeddingSettings(projectId)
@@ -378,12 +378,12 @@ app.put('/api/projects/:projectId/embedding-settings', async context => {
   return context.json({ ...publicProjectEmbeddingSettings(projectId), instance })
 })
 app.get('/api/projects/:projectId/memory/links', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json({ project_id: projectId, links: await listProjectMemoryLinks(projectId) })
 })
 app.post('/api/projects/:projectId/memory/ingest', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId, true)
   const body = await jsonBody(context, memoryIngestRequest)
   try { return context.json(await ingestProjectMemory(projectId, body), 201) }
@@ -393,14 +393,14 @@ app.post('/api/projects/:projectId/memory/ingest', async context => {
   }
 })
 app.post('/api/projects/:projectId/memory/search', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, memorySearchRequest)
   try { return context.json(await searchProjectMemory(projectId, body.query, body.limit, body.search_mode)) }
   catch (error) { if (error instanceof SupermemoryConfigurationError) throw new ApiError(error.status, error.code, error.message); throw error }
 })
 app.post('/api/projects/:projectId/memory/links/:linkId/revoke', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const linkId = uuid.parse(context.req.param('linkId'))
   await requireProject(projectId, true)
   const body = await jsonBody(context, memoryRevokeRequest)
@@ -413,7 +413,7 @@ app.post('/api/projects/:projectId/memory/links/:linkId/revoke', async context =
   return context.json({ proposal_id: proposalId, status: 'pending' }, 201)
 })
 app.post('/api/projects/:projectId/memory/graph', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, z.object({ query: z.string().min(1).max(2000), limit: z.number().int().min(1).max(20) }).strict())
   try { return context.json(await memoryGraph(projectId, body.query, body.limit)) }
@@ -443,24 +443,24 @@ app.post('/api/chat/stream', async context => {
 app.post('/internal/chat', async context => context.json(await chatTurn(await jsonBody(context, chatRequest))))
 app.post('/internal/projects/:projectId/paper-translate', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
-  return context.json(await translatePaperSection(uuid.parse(context.req.param('projectId')), body.section_id))
+  return context.json(await translatePaperSection(await projectIdForReference(context.req.param('projectId')), body.section_id))
 })
 app.post('/internal/projects/:projectId/paper-revise', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
-  return context.json(await revisePaperSection(uuid.parse(context.req.param('projectId')), body.section_id), 201)
+  return context.json(await revisePaperSection(await projectIdForReference(context.req.param('projectId')), body.section_id), 201)
 })
 app.post('/internal/projects/:projectId/experiment-plan', async context => {
-  return context.json(await createExperimentPlan(uuid.parse(context.req.param('projectId'))), 201)
+  return context.json(await createExperimentPlan(await projectIdForReference(context.req.param('projectId'))), 201)
 })
 
 app.post('/api/projects', async context => {
   const body = await jsonBody(context, projectCreateRequest)
-  const id = crypto.randomUUID()
   const title = body.title
   let slug: string
   try { slug = normalizeProjectSlug(body.slug) }
   catch { throw new ApiError(422, 'project_slug_invalid', '项目地址标识必须由两个英文小写单词和四位小写字母或数字组成，并用连字符连接。') }
   if (await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [slug])) throw new ApiError(409, 'project_slug_conflict', '这个项目地址标识已经被使用，请换两个词和四位后缀。')
+  const id = slug
   const spec = { schema_version: '1.0', idea: { title } }
   await database.transaction(async transaction => {
     const nextOrder = (await transaction.query<{ next_order: number }>('SELECT COALESCE(MAX(sidebar_order),-1)+1 AS next_order FROM projects WHERE pinned=FALSE')).rows[0]?.next_order || 0
@@ -494,7 +494,7 @@ app.patch('/api/projects/order', async context => {
 })
 app.get('/api/projects/:projectRef', async context => context.json(await projectDetail(await projectIdForReference(context.req.param('projectRef')))))
 app.patch('/api/projects/:projectId/pin', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, projectPinRequest)
   await requireProject(projectId)
   const project = await database.transaction(async transaction => {
@@ -509,7 +509,7 @@ app.patch('/api/projects/:projectId/pin', async context => {
   return context.json(project)
 })
 app.delete('/api/projects/:projectId', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, projectDeleteRequest)
   return context.json(await deleteProject(projectId, body.project_title, body.confirmation))
 })
@@ -521,36 +521,36 @@ app.get('/api/projects/:projectId/workspace', async context => {
   const options: { scope?: 'method' | 'reproduction'; reproductionId?: string } = {}
   if (scope) options.scope = scope as 'method' | 'reproduction'
   if (scope === 'reproduction' && reproductionId) options.reproductionId = uuid.parse(reproductionId)
-  return context.json(await projectWorkspaceDetail(uuid.parse(context.req.param('projectId')), options))
+  return context.json(await projectWorkspaceDetail(await projectIdForReference(context.req.param('projectId')), options))
 })
 
 app.get('/api/projects/:projectId/paper-workspace', async context => context.json(await paperWorkspaceDetail(await projectIdForReference(context.req.param('projectId')))))
 
 app.post('/api/projects/:projectId/related-work/seeds', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, relatedWorkSeedRequest)
   return context.json(await createRelatedWorkSeed(projectId, body), 201)
 })
 app.post('/api/projects/:projectId/related-work/candidates/:candidateId/decision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const candidateId = uuid.parse(context.req.param('candidateId'))
   const body = await jsonBody(context, relatedWorkCandidateDecisionRequest)
   return context.json(await decideRelatedWorkCandidate(projectId, candidateId, body))
 })
 app.post('/api/projects/:projectId/related-work/candidates/:candidateId/fields/:fieldName/select', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const candidateId = uuid.parse(context.req.param('candidateId'))
   const fieldName = relatedWorkFieldName.parse(context.req.param('fieldName'))
   const body = await jsonBody(context, relatedWorkFieldSelectionRequest)
   return context.json(await selectRelatedWorkField(projectId, candidateId, fieldName, body))
 })
 app.post('/api/projects/:projectId/related-work/candidate-enrichment', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, relatedWorkEnrichmentRequest)
   return context.json(await createRelatedWorkEnrichmentProposal(projectId, body), 201)
 })
 app.post('/api/projects/:projectId/related-work/recursive-plan', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, relatedWorkRecursivePlanRequest)
   await requireProject(projectId, true)
   const recursiveDetail = await projectDetail(projectId)
@@ -558,12 +558,12 @@ app.post('/api/projects/:projectId/related-work/recursive-plan', async context =
   return context.json(await createRelatedWorkRecursiveProposal(projectId, body), 201)
 })
 app.get('/api/projects/:projectId/related-work/runs/:runId', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const runId = uuid.parse(context.req.param('runId'))
   return context.json(await relatedWorkRunDetail(projectId, runId))
 })
 app.post('/api/projects/:projectId/related-work/runs/:runId/execute', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const runId = uuid.parse(context.req.param('runId'))
   const body = await jsonBody(context, relatedWorkRunExecuteRequest)
   const run = await one<{ id: string; proposal_id: string }>('SELECT id,proposal_id FROM related_work_recursive_runs WHERE id=$1 AND project_id=$2', [runId, projectId])
@@ -571,21 +571,21 @@ app.post('/api/projects/:projectId/related-work/runs/:runId/execute', async cont
   return context.json(await startRelatedWorkRun(projectId, run.proposal_id, body.actor))
 })
 app.post('/api/projects/:projectId/related-work/runs/:runId/cancel', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const runId = uuid.parse(context.req.param('runId'))
   const body = await jsonBody(context, relatedWorkRunCancelRequest)
   return context.json(await cancelRelatedWorkRun(projectId, runId, body.reason, body.actor))
 })
 
 app.post('/api/search', async context => {
-  const body = await jsonBody(context, z.object({ project_id: uuid, query: z.string().max(500).nullable().optional(), limit: z.number().int().min(1).max(30).default(8) }).strict())
+  const body = await jsonBody(context, z.object({ project_id: projectSlug, query: z.string().max(500).nullable().optional(), limit: z.number().int().min(1).max(30).default(8) }).strict())
   const project = await requireProject(body.project_id, true)
   const searchDetail = await projectDetail(body.project_id)
   requireConfirmedSpecFields(body.project_id, searchDetail.spec, searchDetail.idea_versions || [])
   return context.json(await searchLiterature(body.project_id, body.query || project.title, body.limit))
 })
 app.get('/api/projects/:projectId/research-status', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const filter = researchStatusFilterRequest.parse({
     matrix_id: context.req.query('matrix_id') || undefined,
     theme: context.req.query('theme') || undefined,
@@ -595,12 +595,12 @@ app.get('/api/projects/:projectId/research-status', async context => {
   return context.json(await getResearchStatus(projectId, filter))
 })
 app.post('/api/projects/:projectId/research-status/matrices', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, researchStatusMatrixCreateRequest)
   return context.json(await createResearchStatusMatrix(projectId, body), 201)
 })
 app.get('/api/projects/:projectId/research-status/export', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const format = researchStatusExportFormat.parse(context.req.query('format') || 'json')
   const matrixId = context.req.query('matrix_id') || null
   const filter = researchStatusFilterRequest.parse({ matrix_id: matrixId || undefined })
@@ -608,18 +608,18 @@ app.get('/api/projects/:projectId/research-status/export', async context => {
   return new Response(exported.content, { status: 200, headers: { 'content-type': exported.contentType, 'content-disposition': `attachment; filename="${exported.filename}"` } })
 })
 app.post('/api/projects/:projectId/research-status/gap-candidates', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, researchStatusGapCandidateRequest)
   return context.json(await createResearchStatusGapCandidate(projectId, body), 201)
 })
 app.post('/api/projects/:projectId/research-status/gap-candidates/:candidateId/decision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const candidateId = uuid.parse(context.req.param('candidateId'))
   const body = await jsonBody(context, researchStatusGapDecisionRequest)
   return context.json(await decideResearchStatusGapCandidate(projectId, candidateId, body))
 })
 app.post('/api/projects/:projectId/evidence/ingest', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, z.object({ limit: z.number().int().min(1).max(10).default(3) }).strict())
   return context.json(await ingestEvidence(projectId, body.limit))
 })
@@ -638,7 +638,7 @@ async function refreshRepositoryVerification(repository: RepositoryRow, paper: P
 }
 
 app.get('/api/projects/:projectId/papers/:paperId/repositories/discover', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const paperId = uuid.parse(context.req.param('paperId'))
   await requireProject(projectId)
   const paper = await one<{ id: string; source_url: string; metadata: unknown }>('SELECT id,source_url,metadata FROM papers WHERE id=$1 AND project_id=$2', [paperId, projectId])
@@ -653,7 +653,7 @@ app.get('/api/projects/:projectId/papers/:paperId/repositories/discover', async 
 })
 
 app.post('/api/projects/:projectId/repositories', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, repositoryCandidateRequest)
   await requireProject(projectId, true)
   const paper = await one<PaperIdentity>('SELECT id,title,doi FROM papers WHERE id=$1 AND project_id=$2', [body.paper_id, projectId])
@@ -668,7 +668,7 @@ app.post('/api/projects/:projectId/repositories', async context => {
 })
 
 app.post('/api/projects/:projectId/repositories/:repositoryId/verify', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const repositoryId = uuid.parse(context.req.param('repositoryId'))
   await requireProject(projectId, true)
   const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, projectId])
@@ -682,7 +682,7 @@ app.post('/api/projects/:projectId/repositories/:repositoryId/verify', async con
 })
 
 app.post('/api/projects/:projectId/repositories/:repositoryId/download', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const repositoryId = uuid.parse(context.req.param('repositoryId'))
   await requireProject(projectId, true)
   const repository = await one<RepositoryRow>('SELECT * FROM repositories WHERE id=$1 AND project_id=$2', [repositoryId, projectId])
@@ -697,7 +697,7 @@ app.post('/api/projects/:projectId/repositories/:repositoryId/download', async c
 })
 
 app.post('/api/projects/:projectId/reproductions/:reproductionId/dependency-plan', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const reproductionId = uuid.parse(context.req.param('reproductionId'))
   const body = await jsonBody(context, repositoryDependencyPlanRequest)
   await requireProject(projectId, true)
@@ -705,7 +705,7 @@ app.post('/api/projects/:projectId/reproductions/:reproductionId/dependency-plan
 })
 
 app.get('/api/projects/:projectId/reproductions', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const reproductions = await rows('SELECT * FROM reproductions WHERE project_id=$1 ORDER BY created_at DESC', [projectId])
   const runs = await rows('SELECT * FROM reproduction_runs WHERE project_id=$1 ORDER BY created_at DESC', [projectId])
@@ -713,34 +713,34 @@ app.get('/api/projects/:projectId/reproductions', async context => {
 })
 
 app.post('/api/projects/:projectId/reproductions/:reproductionId/run-plan', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const reproductionId = uuid.parse(context.req.param('reproductionId'))
   const body = await jsonBody(context, repositoryReproductionRunRequest)
   await requireProject(projectId, true)
   return context.json(await createRunProposal(projectId, reproductionId, body), 201)
 })
 app.post('/api/projects/:projectId/research-comparisons', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, researchComparisonRequest)
   return context.json(await createResearchComparison(projectId, body), 201)
 })
 app.get('/api/projects/:projectId/research-comparisons', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   return context.json(await listResearchComparisons(projectId))
 })
 app.get('/api/projects/:projectId/research-comparisons/:comparisonId', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const comparisonId = uuid.parse(context.req.param('comparisonId'))
   return context.json(await getResearchComparison(projectId, comparisonId))
 })
 app.post('/api/projects/:projectId/research-comparisons/:comparisonId/candidates', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const comparisonId = uuid.parse(context.req.param('comparisonId'))
   const body = await jsonBody(context, comparisonCandidateCreateRequest)
   return context.json(await createResearchComparisonCandidate(projectId, comparisonId, body), 201)
 })
 app.post('/api/projects/:projectId/research-comparisons/:comparisonId/candidates/:candidateId/decision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const comparisonId = uuid.parse(context.req.param('comparisonId'))
   const candidateId = uuid.parse(context.req.param('candidateId'))
   const body = await jsonBody(context, comparisonCandidateDecisionRequest)
@@ -758,7 +758,7 @@ app.post('/api/proposals', async context => {
 })
 
 app.post('/api/projects/:projectId/experiment-plan', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const project = await projectDetail(projectId)
   const idea = project.idea_versions[0] as Record<string, unknown> | undefined
   const workflowResult = await runProjectWorkflow(projectId, {
@@ -771,7 +771,7 @@ app.post('/api/projects/:projectId/experiment-plan', async context => {
 })
 
 app.post('/api/projects/:projectId/workflow-edit-proposal', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, workflowEditProposalRequest)
   return context.json(await createWorkflowEditProposal(projectId, body.instruction, body.project_context), 201)
 })
@@ -893,18 +893,18 @@ app.post('/api/proposals/:proposalId/decision', async context => {
 })
 
 app.post('/api/projects/:projectId/paper-draft', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const paperDetail = await projectDetail(projectId)
   requireConfirmedSpecFields(projectId, paperDetail.spec, paperDetail.idea_versions || [])
   return context.json(await createPaperDraftProposal(projectId), 201)
 })
 app.post('/api/projects/:projectId/paper-section', async context => {
   const body = await jsonBody(context, paperSectionEditRequest)
-  return context.json(await createPaperSectionProposal(uuid.parse(context.req.param('projectId')), body.section_id, body.content), 201)
+  return context.json(await createPaperSectionProposal(await projectIdForReference(context.req.param('projectId')), body.section_id, body.content), 201)
 })
 app.post('/api/projects/:projectId/paper-translate', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const workflowResult = await runProjectWorkflow(projectId, {
     action: 'paper_translate',
     project_id: projectId,
@@ -916,7 +916,7 @@ app.post('/api/projects/:projectId/paper-translate', async context => {
 })
 app.post('/api/projects/:projectId/paper-revise', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const workflowResult = await runProjectWorkflow(projectId, {
     action: 'paper_revise',
     project_id: projectId,
@@ -927,13 +927,13 @@ app.post('/api/projects/:projectId/paper-revise', async context => {
   return context.json(projectWorkflowSuccess(workflowResult), 201)
 })
 app.post('/api/projects/:projectId/compile-plan', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const compileDetail = await projectDetail(projectId)
   requireConfirmedSpecFields(projectId, compileDetail.spec, compileDetail.idea_versions || [])
   return context.json(await createCompileProposal(projectId), 201)
 })
 app.post('/api/projects/:projectId/checkpoints/:checkpointId/rerun', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const checkpointId = uuid.parse(context.req.param('checkpointId'))
   const body = await jsonBody(context, z.object({ reason: z.string().min(5).max(2000) }).strict())
   const project = await requireProject(projectId, true)
@@ -976,7 +976,7 @@ app.post('/api/experiments/:runId/cancel', async context => {
   return context.json({ run_id: runId, status: 'cancelled' })
 })
 
-app.post('/api/projects/:projectId/diagnostics', async context => context.json(await diagnostics(uuid.parse(context.req.param('projectId')))))
+app.post('/api/projects/:projectId/diagnostics', async context => context.json(await diagnostics(await projectIdForReference(context.req.param('projectId')))))
 app.post('/api/policies', async context => {
   const body = await jsonBody(context, policyRequest)
   await requireProject(body.project_id, true)
@@ -990,7 +990,7 @@ app.post('/api/reports', async context => {
   return context.json(await createOperationalReport(body.project_id, body.period))
 })
 app.post('/api/projects/:projectId/feedback', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId, true)
   const body = await jsonBody(context, humanFeedbackRequest)
   if (body.session_id) {
@@ -1014,12 +1014,12 @@ app.post('/api/projects/:projectId/feedback', async context => {
   return context.json({ id: feedbackId, project_id: projectId, status: 'recorded', semantic_memory: supermemoryEnabled() ? 'active' : 'disabled' }, 201)
 })
 app.get('/api/projects/:projectId/feedback', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json({ project_id: projectId, feedback: await rows('SELECT * FROM human_feedback WHERE project_id=$1 ORDER BY created_at DESC', [projectId]) })
 })
 app.post('/api/projects/:projectId/feedback/:feedbackId/decision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const feedbackId = uuid.parse(context.req.param('feedbackId'))
   await requireProject(projectId)
   const body = await jsonBody(context, humanFeedbackDecisionRequest)
@@ -1031,7 +1031,7 @@ app.post('/api/projects/:projectId/feedback/:feedbackId/decision', async context
   return context.json({ id: feedbackId, project_id: projectId, status: body.decision })
 })
 app.post('/api/projects/:projectId/feedback/:feedbackId/proposal', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const feedbackId = uuid.parse(context.req.param('feedbackId'))
   await requireProject(projectId, true)
   const body = await jsonBody(context, feedbackProposalRequest)
@@ -1046,12 +1046,12 @@ app.post('/api/projects/:projectId/feedback/:feedbackId/proposal', async context
   return context.json({ proposal_id: proposalId, feedback_id: feedbackId, status: 'pending' }, 201)
 })
 app.get('/api/projects/:projectId/claim-reviews', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   return context.json({ project_id: projectId, reviews: await rows('SELECT * FROM claim_reviews WHERE project_id=$1 ORDER BY created_at DESC', [projectId]) })
 })
 app.post('/api/projects/:projectId/claim-reviews', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, claimReviewRequest)
   const evidence = await rows<{ id: string }>('SELECT id FROM evidence WHERE project_id=$1 AND id = ANY($2::uuid[])', [projectId, body.evidence_ids])
@@ -1062,7 +1062,7 @@ app.post('/api/projects/:projectId/claim-reviews', async context => {
   return context.json({ id, project_id: projectId, status: 'pending', evidence_status: 'page_quote_requires_claim_review' }, 201)
 })
 app.post('/api/projects/:projectId/claim-reviews/:reviewId/decision', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const reviewId = uuid.parse(context.req.param('reviewId'))
   await requireProject(projectId)
   const body = await jsonBody(context, claimReviewDecisionRequest)
@@ -1083,7 +1083,7 @@ app.get('/api/projects/:projectId/workflow-runs', async context => {
   return context.json(await mastraGet(`/internal/workflows/project/${projectId}/runs`))
 })
 app.post('/api/projects/:projectId/state', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, projectStateRequest)
   const project = await requireProject(projectId)
   if (project.status === 'cancelled') throw new ApiError(409, 'project_cancelled', '已取消项目不能恢复。')
@@ -1100,7 +1100,7 @@ app.post('/api/projects/:projectId/state', async context => {
 })
 
 app.get('/api/projects/:projectId/materials/search', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const query = (context.req.query('q') || '').trim().toLowerCase()
   const limit = Math.min(50, Math.max(1, Number(context.req.query('limit') || 20)))
@@ -1161,7 +1161,7 @@ app.post('/api/uploads', async context => {
 })
 
 app.get('/api/projects/:projectId/artifacts/:artifactId/preview', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const artifactId = uuid.parse(context.req.param('artifactId'))
   await requireProject(projectId)
   const artifact = await one<{ relative_path: string; mime_type: string; name: string; sha256: string; valid: boolean }>('SELECT relative_path,mime_type,name,sha256,valid FROM artifacts WHERE id=$1 AND project_id=$2', [artifactId, projectId])
@@ -1178,7 +1178,7 @@ app.get('/api/projects/:projectId/artifacts/:artifactId/preview', async context 
   }
 })
 app.get('/api/projects/:projectId/artifacts/:artifactId/download', async context => {
-  const projectId = uuid.parse(context.req.param('projectId'))
+  const projectId = await projectIdForReference(context.req.param('projectId'))
   const artifactId = uuid.parse(context.req.param('artifactId'))
   await requireProject(projectId)
   const artifact = await one<{ relative_path: string; mime_type: string; name: string; sha256: string; valid: boolean }>('SELECT relative_path,mime_type,name,sha256,valid FROM artifacts WHERE id=$1 AND project_id=$2', [artifactId, projectId])
@@ -1226,6 +1226,8 @@ const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 
 if (!isTestRuntime) {
   await migrate()
   await migrateProjectSlugs()
+  await migrateProjectPrimaryKeyToSlug()
+  await migrateProjectIdentifierStorage()
   await migrateProjectArtifactFiles()
   await recoverInterruptedWork()
   await resumeQueuedRelatedWorkRuns()

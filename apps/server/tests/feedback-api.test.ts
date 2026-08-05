@@ -1,9 +1,10 @@
+import { testProjectSlug } from './test-project.js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate, rows } from '../src/database.js'
 
-const projectId = crypto.randomUUID()
-const otherProjectId = crypto.randomUUID()
+const projectId = testProjectSlug()
+const otherProjectId = testProjectSlug()
 
 async function requestJson(path: string, init: RequestInit = {}) {
   const response = await app.request(`http://research-os.test${path}`, {

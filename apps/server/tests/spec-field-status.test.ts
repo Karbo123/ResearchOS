@@ -2,9 +2,10 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
 import { specFieldStatus, unconfirmedCoreFields } from '../src/spec-field-status.js'
+import { testProjectSlug } from './test-project.js'
 
-const confirmedProjectId = crypto.randomUUID()
-const blockedProjectId = crypto.randomUUID()
+const confirmedProjectId = testProjectSlug('spec-confirmed')
+const blockedProjectId = testProjectSlug('spec-blocked')
 
 async function requestJson(path: string, init: RequestInit = {}) {
   const response = await app.request(`http://research-os.test${path}`, {
@@ -20,8 +21,8 @@ describe('specification field status and downstream gating', () => {
   beforeAll(async () => {
     await migrate()
     await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3),($4,$5,$6)', [
-      confirmedProjectId, `spec-confirmed-${confirmedProjectId.slice(0, 8)}`, 'Confirmed Spec Project',
-      blockedProjectId, `spec-blocked-${blockedProjectId.slice(0, 8)}`, 'Blocked Spec Project',
+      confirmedProjectId, confirmedProjectId, 'Confirmed Spec Project',
+      blockedProjectId, blockedProjectId, 'Blocked Spec Project',
     ])
     const fullSpec = {
       schema_version: '1.0',

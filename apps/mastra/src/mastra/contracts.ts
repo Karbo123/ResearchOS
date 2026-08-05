@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const modelTierSchema = z.enum(['simple', 'medium', 'complex', 'document', 'vision'])
 export type ModelTier = z.infer<typeof modelTierSchema>
 export const reasoningEffortSchema = z.enum(['low', 'medium', 'high'])
+const projectSlugSchema = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/)
 
 export const modelConfigSchema = z.object({
   model: z.string().min(1).max(200),
@@ -16,7 +17,7 @@ export const agentRequestContextSchema = z.object({
   tier: modelTierSchema,
   modelConfig: modelConfigSchema,
   clarificationMode: z.enum(['automatic', 'detailed']).optional(),
-  supermemoryProjectId: z.string().uuid().optional(),
+  supermemoryProjectId: projectSlugSchema.optional(),
   supermemoryConversationId: z.string().min(1).max(200).optional(),
 }).strict()
 
@@ -78,7 +79,7 @@ export const supervisionIntentSchema = z.object({
 }).strict()
 
 export const workflowEditRequestSchema = z.object({
-  project_id: z.string().uuid(),
+  project_id: projectSlugSchema,
   instruction: z.string().trim().min(5).max(12_000),
   current_source: z.string().min(1).max(300_000),
   project_context: z.record(z.string(), z.unknown()).default({}),
@@ -97,7 +98,7 @@ export const documentReplyRequestSchema = z.object({
   context: z.string().max(12_000).default(''),
   draft_reply: z.string().max(6000).default(''),
   purpose: z.enum(['clarify', 'supervise']).default('supervise'),
-  project_id: z.string().uuid().optional(),
+  project_id: projectSlugSchema.optional(),
 }).strict()
 export const documentReplyResultSchema = z.object({
   reply: z.string().trim().min(1).max(6000),
@@ -108,7 +109,7 @@ export const paperSectionTranslateRequestSchema = z.object({
   section_id: paperSectionIdSchema,
   heading: z.string().max(120),
   source: z.string().max(20_000),
-  project_id: z.string().uuid().optional(),
+  project_id: projectSlugSchema.optional(),
 }).strict()
 export const paperTranslationSentenceSchema = z.object({
   en: z.string().min(1).max(4000),
@@ -122,7 +123,7 @@ export const paperSectionReviseRequestSchema = z.object({
   heading: z.string().max(120),
   source: z.string().max(20_000),
   project_context: z.string().max(12_000).default(''),
-  project_id: z.string().uuid().optional(),
+  project_id: projectSlugSchema.optional(),
 }).strict()
 export const paperSectionReviseResultSchema = z.object({
   revised_source: z.string().min(1).max(20_000),
@@ -186,7 +187,7 @@ const successCriterionSchema = evidenceIds.extend({
 export const experimentPlanSchema = z.object({
   schema_version: z.literal('1.0'),
   plan_type: z.literal('topic_specific'),
-  project_id: z.string().uuid(),
+  project_id: projectSlugSchema,
   idea_version: z.number().int().min(1),
   research_question: z.string().min(10).max(4000),
   objective: z.string().min(10).max(4000),
@@ -226,13 +227,13 @@ export const supervisionRequestSchema = z.object({
 }).strict()
 
 export const experimentPlanRequestSchema = z.object({
-  project_id: z.string().uuid(),
+  project_id: projectSlugSchema,
   idea_version: z.number().int().min(1),
   planning_context: z.record(z.string(), z.unknown()),
 }).strict()
 
 export const coordinatorRequestSchema = z.object({
-  project_id: z.string().uuid(),
+  project_id: projectSlugSchema,
   task: z.string().trim().min(10).max(12000),
   planning_context: z.record(z.string(), z.unknown()),
   tier: modelTierSchema.default('complex'),

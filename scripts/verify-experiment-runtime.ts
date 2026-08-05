@@ -14,7 +14,10 @@ const { buildArtifactPreview } = await import('../apps/server/src/artifact-previ
 const { projectsRoot } = await import('../apps/server/src/paths.js')
 const { projectArtifactPath } = await import('../apps/server/src/project-storage.js')
 
-const projectIds = [crypto.randomUUID(), crypto.randomUUID()]
+const projectIds = [
+  `runtime-check-${crypto.randomUUID().replaceAll('-', '').slice(0, 4)}`,
+  `runtime-check-${crypto.randomUUID().replaceAll('-', '').slice(0, 4)}`,
+]
 const runIds = [crypto.randomUUID(), crypto.randomUUID()]
 const proposalIds = [crypto.randomUUID(), crypto.randomUUID()]
 const projectDirectories = projectIds.map(id => resolve(projectsRoot, id))
@@ -51,7 +54,7 @@ try {
   for (let index = 0; index < projectIds.length; index += 1) {
     const projectId = projectIds[index]!
     const proposalId = proposalIds[index]!
-    await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [projectId, `runtime-check-${index}-${checkId.slice(0, 8)}`, `Runtime check ${index}`])
+    await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [projectId, projectId, `Runtime check ${index}`])
     await database.query('INSERT INTO idea_versions(id,project_id,version,spec,change_reason) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), projectId, 1, { schema_version: '1.0', idea: { title: `Runtime check ${index}`, research_question: 'Verify the native experiment contract and artifact lineage.' } }, 'test fixture'])
     await database.query("INSERT INTO proposals(id,project_id,kind,status,reason,summary,payload) VALUES ($1,$2,'experiment_plan','approved',$3,$4,$5)", [proposalId, projectId, 'Native experiment integration check', 'Approved test-only scientific experiment', {}])
     mkdirSync(resolve(projectDirectories[index]!, 'experiment'), { recursive: true })

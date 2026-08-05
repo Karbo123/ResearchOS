@@ -1,8 +1,9 @@
+import { testProjectSlug } from './test-project.js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { database, migrate, rows } from '../src/database.js'
 import { recoverInterruptedWork } from '../src/task-worker.js'
 
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 const proposalIds = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()]
 
 describe('related-work restart recovery', () => {

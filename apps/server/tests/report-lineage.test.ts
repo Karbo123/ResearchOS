@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { database, migrate } from '../src/database.js'
 import { projectDetail } from '../src/project-service.js'
@@ -24,7 +25,7 @@ describe('report source lineage validation', () => {
   }, 60_000)
 
   it('marks reports without a source snapshot as legacy_unverified', async () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     try {
       await insertProject(projectId, `report-legacy-${projectId.slice(0, 8)}`)
       const reportId = crypto.randomUUID()
@@ -39,7 +40,7 @@ describe('report source lineage validation', () => {
   })
 
   it('keeps a report valid when every declared source belongs to the project', async () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const paperId = crypto.randomUUID()
     const evidenceId = crypto.randomUUID()
     const proposalId = crypto.randomUUID()
@@ -70,7 +71,7 @@ describe('report source lineage validation', () => {
   })
 
   it('blocks a report when an upstream artifact is invalid', async () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const artifactId = crypto.randomUUID()
     try {
       await insertProject(projectId, `report-invalid-artifact-${projectId.slice(0, 8)}`)
@@ -94,8 +95,8 @@ describe('report source lineage validation', () => {
   })
 
   it('blocks cross-project source IDs and mismatched snapshot scopes', async () => {
-    const projectId = crypto.randomUUID()
-    const otherProjectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
+    const otherProjectId = testProjectSlug()
     const otherPaperId = crypto.randomUUID()
     try {
       await insertProject(projectId, `report-scope-${projectId.slice(0, 8)}`)

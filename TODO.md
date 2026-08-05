@@ -185,7 +185,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 所有反馈已按主题归集如下，修复状态由 `P0-VISUAL-116` 至 `P0-VISUAL-122` 跟踪；同一问题反复出现在多张截图时不再逐张重复。第三轮后仍被 AI 评审提及的剩余意见主要是：状态标签饱和度高/低对比度的主观建议（计算值已满足 WCAG AA）、图标线条风格统一性、玻璃模糊强度的感知差异；这些不影响功能与可读性，已作为后续打磨候选，不阻塞本轮验收。
 
-- 文本截断与信息完整性：首页项目表、左侧项目列表、顶部项目标题、长 scope ID、仓库 URL、论文标题/按钮、`Innovation candidates` 卡片、删除弹窗项目标题、文献作者列表和 UUID 等，必须至少提供 `title`/`aria-label` 或可读换行。首页/侧栏项目名使用省略号加 `title` 是刻意行为，避免长标题挤坏行高；其余正文不允许生硬裁剪。
+- 文本截断与信息完整性：首页项目表、左侧项目列表、顶部项目标题、长 scope ID、仓库 URL、论文标题/按钮、`Innovation candidates` 卡片、删除弹窗项目标题、文献作者列表和非项目 UUID 等，必须至少提供 `title`/`aria-label` 或可读换行。首页/侧栏项目名使用省略号加 `title` 是刻意行为，避免长标题挤坏行高；其余正文不允许生硬裁剪。
 - 对比度与可读性：状态徽章（Active/Cancelled/Pending、succeeded/failed 等）、灰色辅助文字、聊天输入框占位符、404 当前地址、`Processing` 状态、报告状态标签、文献次要信息在浅/暗主题下都要达到 Apple 风格的 4.5:1 对比度；占位符不得使用接近背景的浅灰。
 - 间距、对齐与密度：首页统计卡、表格列宽、顶部状态栏、标签栏、卡片内边距、聊天输入区、设置弹窗在桌面/窄桌面/移动端保持稳定留白；长内容底部不裁切，浮动聊天按钮不遮挡内容，状态徽章不重叠、不挤占触控目标。
 - 交互反馈与焦点：所有可点击行、按钮、图标必须有 hover、active、focus-visible；设置 Segmented Control 与标签页的选中态必须比未选中态更明确（蓝色文字/加粗/描边/滑动指示器）。
@@ -197,6 +197,9 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 ### 4.0.2 下一阶段规划：项目级单一 Workflow 与热加载（2026-08-05）
 
 - [x] `P0-WORKFLOW-127` 让 Mastra Studio 的 workflow 使用项目语义 slug（如 `native-acceptance-a8b9`）作为名称，并使用项目完整标题作为 description；新增轻量项目元数据接口 `/api/projects/:projectRef/meta` 供 workflow runtime 获取 `slug/title`。 [Apple 设计验收]
+- [x] `P0-PROJECT-SLUG-128` 把语义 slug 提升为项目唯一标识：数据库 `projects.id`、全部 `project_id` 外键、项目目录、Mastra workflow id/缓存、Supermemory container tag、runtime 项目设置与 embedding 设置全部改用 slug；旧 UUID/旧语义地址只保留为兼容别名，禁止再出现在项目主键、路径、workflow、container tag、设置键或新日志中。 [Apple 设计验收]
+
+> 验收记录（2026-08-05）：迁移链路已落地为 `projects.id VARCHAR(120) PRIMARY KEY` 与全业务表 slug 外键，旧 UUID/旧语义地址写入 `project_slug_aliases`；项目目录、`project-settings.json`、`project-embedding-settings.json`、workflow 缓存/运行/审计文件和 Mastra workflow id 均使用 slug。临时副本烟测确认旧 UUID 库迁移后项目主键变为 `uncertainty-based-0053`、report `source_snapshot.project_id` 同步更新；服务端 192 项测试、typecheck、server/mastra build、docs 检查通过。
 - [x] `P0-WORKFLOW-126` 增加 Mastra Studio 桥接：把每个项目当前激活的 workflow 暴露到 Mastra `/workflows` 列表与详情接口，热加载后只展示最新版本；因 `@mastra/core@1.55.0` 无 `removeWorkflow`，采用应用层注册表 + 实例方法桥接，而不是修改 Mastra 源码。真实 API 验证：临时 Mastra 实例 `/api/workflows` 返回 75 个项目 workflow，详情含 `stepGraph`。 [Apple 设计验收]
 - [~] `P0-WORKFLOW-125` 按 `TODO-workflow.md` 实施项目级单一 Mastra Workflow：每个项目一个 `projects/<project-id>/workflow.ts`，默认模板初始化，运行期热加载，自然语言经审批修改工作流，并使用 Mastra Studio/序列化图实现可视化。Phase 0-5 主体已完成并通过核心检查（见 `TODO-workflow.md`）；Phase 6 收尾中：真实浏览器截图验收、部分 API 动作直接调用 Agent 的迁移、全量文档同步与提交推送。 [Apple 设计验收]
 
@@ -371,7 +374,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 > 验收记录（2026-08-04）：`scripts/browser-acceptance.mjs` 已遍历项目工作区全部 14 个二级页（项目总览/Idea/审批/汇报、文献/可视化/种子扩展、本方法/相关工作实现、论文五节），在桌面 1440 与移动 390 分别捕获截图并检查 `scrollWidth === innerWidth`，全部无横向溢出；原有 1024 窄桌面首页/项目页、长内容滚动与配置/404/删除弹窗截图继续纳入常驻验收。滚动条统一使用细滚动条规则，长内容区 `overflow-y:auto` + `scrollbar-width:thin`。
 - [x] `070-A5` 每个页面顶部统一显示项目范围、更新时间、权限、最近失败和待审批动作；切换项目后不能残留上一个项目的候选、图表、报告、反馈或记忆。 [Apple 设计验收]
 
-> 验收记录（2026-08-04）：项目工作区顶部统一渲染 `.workspace-context`，固定显示当前项目 UUID/范围、更新时间、项目范围内权限、Idea 版本、待审批数量和最近失败（无失败时显示“最近失败：无”）；真实浏览器从 `uncertainty-based-d9a5` 切换到另一项目后，范围 ID 与顶栏标题均变化，待审批/失败状态随项目数据更新，无上一个项目的上下文残留，并捕获 `108h-context-switch.png`。已在 `scripts/browser-acceptance.mjs` 纳入常驻验收。
+> 验收记录（2026-08-04）：项目工作区顶部统一渲染 `.workspace-context`，固定显示当前项目语义 slug/范围、更新时间、项目范围内权限、Idea 版本、待审批数量和最近失败（无失败时显示“最近失败：无”）；真实浏览器从 `uncertainty-based-d9a5` 切换到另一项目后，范围 ID 与顶栏标题均变化，待审批/失败状态随项目数据更新，无上一个项目的上下文残留，并捕获 `108h-context-switch.png`。已在 `scripts/browser-acceptance.mjs` 纳入常驻验收。
 - [x] `085d` 统一桌面端的紧凑间距、标题、按钮和面板尺寸，减少内容被截断的情况；完成桌面/窄屏/移动端真实浏览器验收后再关闭。 [Apple 设计验收]
 
 > 验收记录（2026-08-04）：`scripts/browser-acceptance.mjs` 已在 1440 桌面、1024 窄桌面和 390 移动宽度分别打开首页与项目页，`scrollWidth === innerWidth`，无横向溢出；紧凑样式由 `apple-glass.css` 的响应式密度规则统一驱动，按钮、面板和标题尺寸均通过真实浏览器截图确认。

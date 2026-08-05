@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { describe, expect, it, beforeAll, afterAll } from 'vitest'
@@ -5,7 +6,7 @@ import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
 import { projectArtifactPath, projectRoot } from '../src/project-storage.js'
 
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 const sessionId = crypto.randomUUID()
 const artifactId = crypto.randomUUID()
 const uploadId = crypto.randomUUID()

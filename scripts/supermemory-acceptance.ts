@@ -86,8 +86,8 @@ async function waitForTerminalStatus(smClient: Supermemory, remoteId: string, ti
 }
 
 const runToken = `${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`
-const projectA = crypto.randomUUID()
-const projectB = crypto.randomUUID()
+const projectA = `acceptance-alpha-${crypto.randomUUID().replaceAll('-', '').slice(0, 4)}`
+const projectB = `acceptance-beta-${crypto.randomUUID().replaceAll('-', '').slice(0, 4)}`
 const textA = `plasma surface reconstruction alpha channel ${runToken}`
 const textB = `graphene bandgap beta channel ${runToken}`
 const markerA = 'plasma surface reconstruction alpha channel'
@@ -140,8 +140,8 @@ try {
   result.steps['preflight_cleanup'] = { containers: preflightDeletes }
 
   await migrate()
-  await insertProject(projectA, `sm-acceptance-a-${runToken.slice(0, 16)}`, 'Supermemory acceptance A')
-  await insertProject(projectB, `sm-acceptance-b-${runToken.slice(0, 16)}`, 'Supermemory acceptance B')
+  await insertProject(projectA, projectA, 'Supermemory acceptance A')
+  await insertProject(projectB, projectB, 'Supermemory acceptance B')
 
   type IngestInput = Parameters<typeof ingestProjectMemory>[1]
   const inputA: IngestInput = {

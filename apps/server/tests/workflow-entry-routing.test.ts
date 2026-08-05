@@ -1,9 +1,10 @@
+import { testProjectSlug } from './test-project.js'
 import crypto from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
 
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 const workflowCalls: Array<{ url: string; body?: Record<string, unknown> }> = []
 
 async function requestJson(path: string, init: RequestInit = {}) {

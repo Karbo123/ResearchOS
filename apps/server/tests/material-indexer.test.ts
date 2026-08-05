@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { createHash } from 'node:crypto'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -8,7 +9,7 @@ import { MATERIAL_CHUNK_OVERLAP_CHARS, MAX_MATERIAL_CHUNK_CHARS, extractMaterial
 describe('bounded material indexing', () => {
   it('splits text into bounded deterministic chunks with overlap', async () => {
     const content = 'research '.repeat(2_000)
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const relativePath = join('test-materials', `${crypto.randomUUID()}.txt`)
     const absolutePath = projectArtifactPath(projectId, relativePath)
     mkdirSync(dirname(absolutePath), { recursive: true })

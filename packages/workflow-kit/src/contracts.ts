@@ -12,7 +12,7 @@ export const projectWorkflowActionSchema = z.enum([
 ])
 export type ProjectWorkflowAction = z.infer<typeof projectWorkflowActionSchema>
 
-const projectIdSchema = z.string().uuid()
+const projectIdSchema = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/)
 
 const projectChatSchema = z.object({
   action: z.literal('project_chat'),

@@ -124,7 +124,7 @@ export function createApprovalGateStep(ctx: ProjectWorkflowContext) {
     action: 'approval_gate',
     suspendSchema: z.object({
       reason: z.string(),
-      project_id: z.string().uuid(),
+      project_id: z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/),
       proposal_id: z.string().uuid(),
       tool_name: z.string(),
       args_fingerprint: z.string(),

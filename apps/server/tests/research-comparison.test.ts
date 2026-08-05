@@ -1,9 +1,10 @@
+import { testProjectSlug } from './test-project.js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate, rows } from '../src/database.js'
 
-const projectId = crypto.randomUUID()
-const otherProjectId = crypto.randomUUID()
+const projectId = testProjectSlug()
+const otherProjectId = testProjectSlug()
 const paperId = crypto.randomUUID()
 const otherPaperId = crypto.randomUUID()
 const evidenceId = crypto.randomUUID()

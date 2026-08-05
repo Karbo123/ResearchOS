@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { existsSync, rmSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
@@ -46,7 +47,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('falls back to the global .env defaults when a project has no override', () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     expect(hasProjectEmbeddingOverride(projectId)).toBe(false)
     expect(projectEmbeddingSettings(projectId)).toMatchObject({
       provider: 'local',
@@ -66,7 +67,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('stores a custom configuration in a registered pool and never exposes the key', () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const { released_pool_keys } = saveProjectEmbeddingSettings(projectId, localCustom)
     expect(released_pool_keys).toEqual([])
     const saved = projectEmbeddingSettings(projectId)
@@ -81,8 +82,8 @@ describe('project-level embedding settings', () => {
   })
 
   it('reuses one pool for projects with identical configuration', () => {
-    const first = crypto.randomUUID()
-    const second = crypto.randomUUID()
+    const first = testProjectSlug('pool-alpha')
+    const second = testProjectSlug('pool-beta')
     saveProjectEmbeddingSettings(first, localCustom)
     saveProjectEmbeddingSettings(second, localCustom)
     const firstKey = projectEmbeddingSettings(first).pool_key
@@ -95,8 +96,8 @@ describe('project-level embedding settings', () => {
   })
 
   it('releases a pool when the last project leaves it', () => {
-    const first = crypto.randomUUID()
-    const second = crypto.randomUUID()
+    const first = testProjectSlug('release-alpha')
+    const second = testProjectSlug('release-beta')
     saveProjectEmbeddingSettings(first, localCustom)
     saveProjectEmbeddingSettings(second, localCustom)
     const poolKey = projectEmbeddingSettings(first).pool_key
@@ -110,7 +111,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('persists an existing key when an update leaves the key blank', () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const remote = {
       mode: 'custom' as const,
       provider: 'openai' as const,
@@ -127,7 +128,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('requires a base URL and key for remote providers', () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     expect(() => saveProjectEmbeddingSettings(projectId, {
       ...localCustom,
       provider: 'openai',
@@ -145,7 +146,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('marks a model or dimension change as requiring re-ingestion but not base-url-only changes', () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     const remote = {
       mode: 'custom' as const,
       provider: 'openai' as const,
@@ -171,7 +172,7 @@ describe('project-level embedding settings', () => {
   })
 
   it('removes the override when switching back to the global mode', () => {
-    const projectId = crypto.randomUUID()
+    const projectId = testProjectSlug()
     saveProjectEmbeddingSettings(projectId, localCustom)
     expect(hasProjectEmbeddingOverride(projectId)).toBe(true)
     saveProjectEmbeddingSettings(projectId, { mode: 'global', provider: 'local', model: '', dimensions: 1024, base_url: '', key: '', reset_data: false })

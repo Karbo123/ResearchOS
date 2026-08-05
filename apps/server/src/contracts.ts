@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
 
 export const uuid = z.string().uuid()
+export const projectSlug = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/)
 export const clarificationMode = z.enum(['automatic', 'detailed'])
 export const modelTier = z.enum(['simple', 'medium', 'complex'])
 export type ModelTier = z.infer<typeof modelTier>
@@ -31,7 +32,7 @@ export const ideaDraft = z.object({
 
 export const chatRequest = z.object({
   session_id: uuid.nullable().optional(),
-  project_id: uuid.nullable().optional(),
+  project_id: projectSlug.nullable().optional(),
   message: z.string().trim().min(1).max(20_000),
   attachments: z.array(z.object({ name: z.string(), artifact_id: uuid.nullable().optional() }).strict()).max(50).default([]),
   clarification_mode: clarificationMode.default('automatic'),
@@ -61,7 +62,7 @@ export const paperSectionModelRequest = z.object({
   section_id: z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion']),
 }).strict()
 export const projectOrderRequest = z.object({
-  project_ids: z.array(uuid).min(1).max(500),
+  project_ids: z.array(projectSlug).min(1).max(500),
 }).strict().superRefine((value, context) => {
   if (new Set(value.project_ids).size !== value.project_ids.length) {
     context.addIssue({ code: 'custom', path: ['project_ids'], message: 'project_ids cannot contain duplicates' })
@@ -121,7 +122,7 @@ export const modelTestRequest = z.object({
   model: z.string().trim().max(200).default(''),
   url: z.string().trim().max(500).default(''),
   key: z.string().max(1000).default(''),
-  project_id: z.string().uuid().optional(),
+  project_id: projectSlug.optional(),
 }).strict()
 
 export const voiceProvider = z.enum(['browser', 'api', 'groq'])
@@ -151,7 +152,7 @@ export const projectEmbeddingSettingsRequest = z.object({
 export type ProjectEmbeddingSettingsRequest = z.infer<typeof projectEmbeddingSettingsRequest>
 
 export const proposalCreateRequest = z.object({
-  project_id: uuid,
+  project_id: projectSlug,
   kind: z.enum(['experiment_plan', 'experiment_rerun', 'code_patch', 'config_change', 'idea_revision', 'data_change', 'dependency_install', 'delete_artifact', 'memory_revoke', 'external_publish', 'diagnostic_suggestion', 'related_work_recursive', 'related_work_field_enrichment', 'repository_download', 'repository_dependency_install', 'repository_reproduction_run', 'repository_artifact_write']),
   reason: z.string().min(5),
   summary: z.string().min(5),
@@ -167,7 +168,7 @@ export const proposalCreateRequest = z.object({
 
 const experimentTypes = z.enum(['topic_specific', 'compile_latex', 'python_analysis', 'cpp_cmake', 'gpu_python'])
 export const experimentRequest = z.object({
-  project_id: uuid,
+  project_id: projectSlug,
   proposal_id: uuid,
   experiment_type: experimentTypes,
   execution_backend: z.literal('linux').default('linux'),
@@ -191,8 +192,8 @@ export const approvalDecision = z.object({
   policy_version: z.string().trim().min(1).max(120).nullable().optional(),
 }).strict()
 export const projectStateRequest = z.object({ action: z.enum(['pause', 'resume', 'cancel']), reason: z.string().min(3).max(2000) }).strict()
-export const policyRequest = z.object({ project_id: uuid, rule: z.string().min(5).max(2000), rationale: z.string().max(2000).nullable().optional() }).strict()
-export const reportRequest = z.object({ project_id: uuid, period: z.enum(['daily', 'weekly', 'manual']).default('manual'), notify: z.boolean().default(false) }).strict()
+export const policyRequest = z.object({ project_id: projectSlug, rule: z.string().min(5).max(2000), rationale: z.string().max(2000).nullable().optional() }).strict()
+export const reportRequest = z.object({ project_id: projectSlug, period: z.enum(['daily', 'weekly', 'manual']).default('manual'), notify: z.boolean().default(false) }).strict()
 export const humanFeedbackRequest = z.object({
   session_id: uuid.nullable().optional(),
   category: z.enum(['idea', 'report', 'experiment', 'memory', 'general']),

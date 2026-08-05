@@ -1,10 +1,11 @@
+import { testProjectSlug } from './test-project.js'
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
 import { pathInside, projectsRoot } from '../src/paths.js'
 
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 const proposalId = crypto.randomUUID()
 const experimentId = crypto.randomUUID()
 

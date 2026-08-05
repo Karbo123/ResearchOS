@@ -12,12 +12,24 @@ function legacyPath(relativePath: string): string {
 async function migrateRows(table: 'artifacts' | 'uploaded_files'): Promise<{ migrated: number; cleanupPending: number }> {
   const sessionColumn = table === 'uploaded_files' ? ',session_id' : ''
   const files = await rows<FileRow>(`SELECT id,project_id,relative_path${sessionColumn} FROM ${table} WHERE project_id IS NOT NULL`)
+  const aliases = await rows<{ slug: string; project_id: string }>('SELECT slug,project_id FROM project_slug_aliases')
+  const aliasByProject = new Map<string, string[]>()
+  for (const alias of aliases) {
+    const current = aliasByProject.get(alias.project_id) || []
+    current.push(alias.slug)
+    aliasByProject.set(alias.project_id, current)
+  }
   let migrated = 0
   let cleanupPending = 0
   for (const file of files) {
     const current = file.relative_path.replaceAll('\\', '/').replace(/^\/+/, '')
     const legacyRelative = current.startsWith('artifacts/') ? current.slice('artifacts/'.length) : current
-    const withoutProjectPrefix = legacyRelative.startsWith(`${file.project_id}/`) ? legacyRelative.slice(file.project_id.length + 1) : legacyRelative
+    const legacyPrefix = (aliasByProject.get(file.project_id) || []).find(alias => legacyRelative.startsWith(`${alias}/`))
+    const withoutProjectPrefix = legacyPrefix
+      ? legacyRelative.slice(legacyPrefix.length + 1)
+      : legacyRelative.startsWith(`${file.project_id}/`)
+        ? legacyRelative.slice(file.project_id.length + 1)
+        : legacyRelative
     const targetRelative = projectArtifactRelativePath(withoutProjectPrefix)
     const target = projectArtifactPath(file.project_id, targetRelative)
     const source = current.startsWith('staging/') && file.session_id

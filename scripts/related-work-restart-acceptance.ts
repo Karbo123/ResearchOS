@@ -13,10 +13,11 @@ const tempRuntime = resolve(repositoryRoot, `runtime/related-work-restart-${Date
 process.env.RESEARCH_RUNTIME_DIR = tempRuntime
 mkdirSync(tempRuntime, { recursive: true })
 
-const projectId = randomUUID()
+const projectSuffix = randomUUID().replaceAll('-', '').slice(0, 4)
+const slug = `restart-acceptance-${projectSuffix}`
+const projectId = slug
 const proposalId = randomUUID()
 const runId = randomUUID()
-const slug = `restart-${randomUUID().slice(0, 8)}`
 let firstServer: ChildProcess | null = null
 let secondServer: ChildProcess | null = null
 

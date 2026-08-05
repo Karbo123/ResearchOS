@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -5,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 const repositoryRoot = resolve(import.meta.dirname, '../../..')
 const templatePath = resolve(repositoryRoot, 'apps/mastra/src/mastra/workflows/templates/default-project-workflow.ts')
 const template = readFileSync(templatePath, 'utf8')
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 
 let root: string
 let projectsRoot: string
@@ -37,7 +38,7 @@ describe('project workflow runtime', () => {
     vi.stubGlobal('fetch', vi.fn(async (input: string | URL | Request) => {
       const url = String(input)
       if (url.includes('/meta')) {
-        return new Response(JSON.stringify({ id: projectId, slug: 'mnist-cnn-example', title: 'Point cloud acceptance title' }), {
+        return new Response(JSON.stringify({ id: projectId, slug: projectId, title: 'Point cloud acceptance title' }), {
           status: 200,
           headers: { 'content-type': 'application/json' },
         })
@@ -56,7 +57,7 @@ describe('project workflow runtime', () => {
       getWorkflowById: () => { throw new Error('workflow not found') },
     }
     runtime = new ProjectWorkflowRuntime(mastra)
-  })
+  }, 60_000)
 
   afterAll(() => {
     runtime?.dispose(projectId)
@@ -79,10 +80,10 @@ describe('project workflow runtime', () => {
   it('exposes only the latest workflow version to Mastra Studio', async () => {
     await runtime.scanProject(projectId)
     const listed = mastra.listWorkflows()
-    const workflowKey = 'mnist-cnn-example'
+    const workflowKey = projectId
     const before = listed[workflowKey] as { name: string; description: string; id: string }
     expect(before).toBeDefined()
-    expect(before.name).toBe('mnist-cnn-example')
+    expect(before.name).toBe(projectId)
     expect(before.description).toBe('Point cloud acceptance title')
     expect(mastra.getWorkflowById(workflowKey)).toBe(before)
 
@@ -93,9 +94,9 @@ describe('project workflow runtime', () => {
     const afterList = mastra.listWorkflows()
     const after = afterList[workflowKey] as { name: string; description: string; id: string }
     expect(after).toBeDefined()
-    expect(after.name).toBe('mnist-cnn-example')
+    expect(after.name).toBe(projectId)
     expect(after).not.toBe(before)
-    expect(Object.keys(afterList).filter(key => key.startsWith('mnist-cnn-example'))).toHaveLength(1)
+    expect(Object.keys(afterList).filter(key => key.startsWith(projectId))).toHaveLength(1)
     expect(mastra.getWorkflowById(workflowKey)).toBe(after)
   })
 

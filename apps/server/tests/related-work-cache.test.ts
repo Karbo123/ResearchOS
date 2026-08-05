@@ -1,10 +1,11 @@
+import { testProjectSlug } from './test-project.js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { database, migrate, rows } from '../src/database.js'
 import { readRelatedWorkCache, relatedWorkRequestHash, writeRelatedWorkCache } from '../src/related-work/cache.js'
 import { paperCandidate, sourceAttempt, sourceSearchResult, type SourceAttempt, type SourceSearchResult } from '../src/related-work/contracts.js'
 
-const projectId = crypto.randomUUID()
-const otherProjectId = crypto.randomUUID()
+const projectId = testProjectSlug()
+const otherProjectId = testProjectSlug()
 
 function descriptor(scope: string, query = 'cache fixture') {
   return {

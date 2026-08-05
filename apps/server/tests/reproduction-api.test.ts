@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { createHash } from 'node:crypto'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { describe, expect, it, beforeAll, afterAll } from 'vitest'
@@ -6,8 +7,8 @@ import { database, migrate, rows } from '../src/database.js'
 import { fingerprintReproductionSource } from '../src/reproduction-service.js'
 import { pathInside, projectsRoot } from '../src/paths.js'
 
-const projectId = crypto.randomUUID()
-const otherProjectId = crypto.randomUUID()
+const projectId = testProjectSlug()
+const otherProjectId = testProjectSlug()
 const paperId = crypto.randomUUID()
 const repositoryId = crypto.randomUUID()
 const reproductionId = crypto.randomUUID()

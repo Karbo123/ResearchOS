@@ -1,3 +1,4 @@
+import { testProjectSlug } from './test-project.js'
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -17,7 +18,7 @@ vi.mock('../src/database.js', () => ({ audit: vi.fn(), database: { query: vi.fn(
 vi.mock('../src/project-service.js', () => ({ requireProject: vi.fn() }))
 vi.mock('../src/patch-service.js', () => ({ gitCommit: vi.fn() }))
 
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 const projectDirectory = projectRoot(projectId)
 const templatePath = resolve(import.meta.dirname, '../../../apps/mastra/src/mastra/workflows/templates/default-project-workflow.ts')
 

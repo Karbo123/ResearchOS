@@ -34,6 +34,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - Idea 澄清、项目监督和实验规划使用 Mastra Agent；不得手写 Agent 循环或复制提示词。
 - Idea Agent 使用 Mastra Agent、Skills 和 Tools；语义 Agent Memory 统一由 Supermemory 管理，并通过 Supermemory 官方 Mastra 集成接入。Mastra 自带 Memory 不能作为 Research OS 的唯一或默认语义事实源。Agent 不得获得任意 Shell、SQL、文件路径、可执行程序或网络工具。
 - React 工作区导航固定为科研流程：首页是“全部项目”控制台，不承载 Idea 对话；进入项目后左侧项目列表默认收起，通过边缘箭头滑入/滑出，右侧始终保留唯一一个跨页面持续存在的项目级多轮对话。第一栏只能按 `项目概述 -> 相关工作调研 -> 实验实现 -> 学术论文撰写` 排列；项目概述二级固定为 `项目总览 -> Idea 讨论 -> 待审批与决策 -> 定期汇报与反馈`；相关工作调研二级固定为 `文献列表 -> 研究可视化 -> 种子文献扩展`；实验实现只保留 `本方法实现`、`相关工作实现` 两个二级标签，不使用第三级标签栏，两个页面共用“左侧实验列表 + 右侧实验详情”布局，实验相关部分（复现、比较、计划、队列、指标、产物可视化、谱系）只能位于 `实验实现`；`学术论文撰写` 二级固定为 `引言 -> 相关工作 -> 方法介绍 -> 实验 -> 结论`，引用、BibTeX、图表与实验数据选择、LaTeX 编译、PDF 呈现是章节工作区内的能力，不得作为顶层标签，也不承载实验管理/可视化。前端不得使用“导师/老师”等角色文案。项目工作区正常使用无井号的 `/project/<semantic-slug>/<area>/<tab>` History API 地址，URL 中的 `idea` 映射到内部 Idea Tab；旧 hash 和旧 UUID 地址只能兼容映射到对应内部页面，不能恢复被淘汰的长导航结构。导航重构按 `TODO.md` 的 `P0-WORKSPACE-108A` 推进，完成前不得把旧标签结构重新写回 README 或 AGENTS。
+- 项目的唯一标识是语义 slug（如 `native-acceptance-a8b9`），它同时是数据库 `projects.id`、全部项目级 `project_id` 外键、项目目录、Mastra workflow id/缓存、Supermemory container tag 和项目设置键的唯一形式。禁止用 UUID 作为任何项目的内部标识，也不得生成 UUID 作为新项目 ID；旧 UUID 和旧语义地址只在 `project_slug_aliases` 中保留为兼容别名。非项目实体（paper、proposal、experiment、evidence 等）继续使用 UUID。
 - 论文工作区默认生成自包含 CVPR 风格模板（`paper/cvpr.sty`），论文源码、引用和图表位于项目内 Git；批准 `patch_kind=latex` 的 `code_patch` 后自动排队 `compile_latex`，成功才展示 PDF，失败保留结构化错误；逐句中译只原子写回 `paper/translations.json` 供界面参考，不进入 PDF。
 - 语言与主题控件位于左下角设置面板，不出现在网页右上角：语言支持 `zh-CN`（默认）、`zh-TW`、`en`、`es`；主题提供浅色（默认）、暗色两档，使用语义 CSS 变量并按 Apple 配色规范实现。UI 文案必须走 i18n key 与统一术语表，禁止在 TSX 中硬编码中文；模型/数据动态内容（聊天回复、报告/论文正文、实验日志）保持原文，不自动翻译。语言/主题功能完成并通过四语言、两主题真实浏览器验收前，不得在 README 中写成已实现。
 - 相关工作调研允许阅读并复用用户自有项目 `/mnt/d/auto-related-work`（即 Windows `D:\auto-related-work`）中的算法、字段 schema、缓存策略、测试思路和数据处理设计；“复用”指把可用逻辑翻译成 TypeScript 后纳入 Research OS，不得把该项目的 Python 文件、Python 运行时、旧缓存或 Python 业务模块直接作为 Research OS 依赖。旧项目中的硬编码代理、外部密钥和 Google Scholar 隧道不能直接带入，必须改成当前项目的显式配置、合法来源适配器和结构化失败。
@@ -72,7 +73,7 @@ Research OS 是本地、可审计的科研自动化 MVP，不是生产系统。�
 - 所有 API 输入使用严格 Zod schema；新增字段同步更新 JSON Schema、前端和测试。
 - 禁止把模型输出传给任意命令、SQL、路径、依赖安装或网络目标。
 - 高成本实验、代码/配置/LaTeX 修改、依赖安装、删除和发布必须经过 Proposal、明确审批、复核和审计；凡是修改本项目代码还必须有受限 diff 与 Git commit。外部复现源码不写入本项目方法 Git，复现下载、依赖安装、运行和产物登记分别使用各自的 Proposal。
-- 原生实验监督器只接受固定实验类型、项目 UUID、固定入口和结构化计划，执行后端固定为 `linux`（`python3 -m venv` + `.venv/bin/python` + `latexmk` + SIGKILL 进程树取消）；旧的 `windows`/`wsl2` 后端已随原生 Windows 支持一并移除。
+- 原生实验监督器只接受固定实验类型、项目语义 slug、固定入口和结构化计划，执行后端固定为 `linux`（`python3 -m venv` + `.venv/bin/python` + `latexmk` + SIGKILL 进程树取消）；旧的 `windows`/`wsl2` 后端已随原生 Windows 支持一并移除。
 - 每个科研 Python 项目使用独立 `.venv`。监督器保留固定工作根、超时、进程树取消、有界日志、产物大小/格式校验和 SHA-256。
 - 代码复现固定使用 `repository_download`、`repository_dependency_install`、`repository_reproduction_run`、`repository_artifact_write` 四种受控 Proposal：源码位于 `projects/<project-id>/experiment/reproductions/<reproduction-id>/source`，依赖安装只允许受控 `requirements*.txt`，运行只接受相对 Python 入口和结构化 seed/config，成功运行必须先等待产物 Proposal 批准。旧的仓库 `dependency_install` 只能失败关闭，不能再次触发下载或自动 Git commit。
 - 本机进程控制不能被表述为虚拟机级隔离。高风险不可信代码应使用用户明确配置的专用虚拟机。

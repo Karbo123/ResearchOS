@@ -1,9 +1,10 @@
+import { testProjectSlug } from './test-project.js'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { Supermemory } from 'supermemory'
 import { database, migrate, one } from '../src/database.js'
 import { applyMemoryRevocation, ingestConversationMemory, ingestProjectMemory, memoryStatus, projectContainerTag, searchProjectMemory } from '../src/supermemory-service.js'
 
-const projectId = crypto.randomUUID()
+const projectId = testProjectSlug()
 const embeddingEnvKeys = [
   'SUPERMEMORY_EMBEDDING_PROVIDER',
   'SUPERMEMORY_EMBEDDING_MODEL',
@@ -68,7 +69,7 @@ describe('project-scoped Supermemory contract', () => {
   })
 
   it('accepts remote embedding configuration when the installed build implements it', async () => {
-    const searchProjectId = crypto.randomUUID()
+    const searchProjectId = testProjectSlug('embedding-search')
     const previousApiKey = process.env.SUPERMEMORY_API_KEY
     const previousEnabled = process.env.SUPERMEMORY_ENABLED
     const previousBaseUrl = process.env.SUPERMEMORY_BASE_URL
@@ -115,7 +116,7 @@ describe('project-scoped Supermemory contract', () => {
     delete process.env.SUPERMEMORY_API_KEY
     process.env.SUPERMEMORY_BASE_URL = 'https://api.supermemory.ai'
     try {
-      await expect(searchProjectMemory(crypto.randomUUID(), 'test query', 5)).rejects.toMatchObject({ code: 'supermemory_not_configured', status: 503 })
+      await expect(searchProjectMemory(testProjectSlug('embedding-blocked'), 'test query', 5)).rejects.toMatchObject({ code: 'supermemory_not_configured', status: 503 })
     } finally {
       if (previousKey === undefined) delete process.env.SUPERMEMORY_API_KEY
       else process.env.SUPERMEMORY_API_KEY = previousKey
@@ -147,7 +148,7 @@ describe('project-scoped Supermemory contract', () => {
   })
 
   it('uses separate remote containers when replaying project conversations', async () => {
-    const secondProjectId = crypto.randomUUID()
+    const secondProjectId = testProjectSlug('supermemory-isolated')
     const sessionId = crypto.randomUUID()
     const previousKey = process.env.SUPERMEMORY_API_KEY
     const previousEnabled = process.env.SUPERMEMORY_ENABLED

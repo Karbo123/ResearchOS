@@ -1,4 +1,3 @@
-import crypto from 'node:crypto'
 import { rmSync } from 'node:fs'
 import { describe, expect, it, afterAll, beforeAll } from 'vitest'
 import { database, migrate } from '../src/database.js'
@@ -7,10 +6,10 @@ import { migrateProjectSlugs } from '../src/project-slug-migration.js'
 import { app } from '../src/index.js'
 import { projectRoot } from '../src/project-storage.js'
 
-const projectId = crypto.randomUUID()
-const newProjectId = crypto.randomUUID()
-const collisionProjectId = crypto.randomUUID()
-const migrationProjectId = crypto.randomUUID()
+const projectId = 'mnist-cnn-example'
+const newProjectId = 'cnn-minimal-2q95'
+const collisionProjectId = 'vit-satellite-2q95'
+const migrationProjectId = 'research-60145276'
 
 describe('project URL slugs', () => {
   beforeAll(async () => {
@@ -24,8 +23,8 @@ describe('project URL slugs', () => {
   })
 
   afterAll(async () => {
-    await database.query('DELETE FROM idea_versions WHERE project_id=ANY($1::uuid[])', [[projectId, newProjectId, collisionProjectId, migrationProjectId]])
-    await database.query('DELETE FROM projects WHERE id=ANY($1::uuid[])', [[projectId, newProjectId, collisionProjectId, migrationProjectId]])
+    await database.query('DELETE FROM idea_versions WHERE project_id=ANY($1::varchar[])', [[projectId, newProjectId, collisionProjectId, migrationProjectId]])
+    await database.query('DELETE FROM projects WHERE id=ANY($1::varchar[])', [[projectId, newProjectId, collisionProjectId, migrationProjectId]])
   })
 
   it('normalizes exactly two English words and a four-character suffix', () => {

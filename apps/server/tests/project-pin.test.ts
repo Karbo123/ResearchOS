@@ -1,11 +1,12 @@
+import { testProjectSlug } from './test-project.js'
 import crypto from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
 
-const firstProjectId = crypto.randomUUID()
-const secondProjectId = crypto.randomUUID()
-const thirdProjectId = crypto.randomUUID()
+const firstProjectId = testProjectSlug()
+const secondProjectId = testProjectSlug()
+const thirdProjectId = testProjectSlug()
 
 async function requestJson(path: string, init: RequestInit = {}) {
   const response = await app.request(`http://research-os.test${path}`, {

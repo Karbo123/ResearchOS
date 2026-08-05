@@ -62,7 +62,7 @@ export async function listProjectSummaries(status?: string): Promise<ProjectSumm
 
 export async function reorderProjectGroup(projectIds: string[]): Promise<ProjectRow[]> {
   return database.transaction(async transaction => {
-    const found = (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE id=ANY($1::uuid[])', [projectIds])).rows
+    const found = (await transaction.query<ProjectRow>('SELECT * FROM projects WHERE id=ANY($1::varchar[])', [projectIds])).rows
     if (found.length !== projectIds.length) throw new ApiError(422, 'project_order_scope_invalid', '项目排序列表必须只包含现有项目，且不能重复。')
     const pinnedGroups = new Set(found.map(project => project.pinned))
     if (pinnedGroups.size !== 1) throw new ApiError(422, 'project_order_group_mismatch', '项目排序只能调整同一置顶分组内的项目。')

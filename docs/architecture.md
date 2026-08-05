@@ -58,7 +58,7 @@ The paper workspace reads and edits `projects/<id>/paper/main.tex` and `referenc
 - `projects/<id>`: project Git repository, Idea, paper (`paper/main.tex`, `references.bib`, `translations.json`, `cvpr.sty`), experiment source, per-project `.venv`, and project-owned files under `projects/<id>/artifacts/`.
 - `artifacts`: shared immutable or append-only acceptance files, test/operations material, backups, and legacy migration sources; it is not the live home of new project files.
 
-Project URLs use two lowercase English words and a four-character lowercase alphanumeric suffix. `project_slug_aliases` keeps pre-migration slugs resolvable while the canonical `projects.slug` value is normalized, so URL cleanup does not break historical links.
+Project URLs use two lowercase English words and a four-character lowercase alphanumeric suffix. The same semantic slug is the canonical `projects.id` primary key and is used for project directories, workflow IDs, Supermemory container tags, and project settings. `project_slug_aliases` keeps pre-migration slugs and legacy UUIDs resolvable as compatibility aliases, so URL cleanup does not break historical links.
 
 The database is the business state source. Supermemory is the project-scoped semantic memory and RAG provider; its `memory_links` ledger keeps source IDs, upload/Artifact IDs, SHA-256 values, locators, evidence status, remote IDs, and revoke/delete state. Mastra Memory is used only where the official Mastra Agent runtime needs conversation continuity and cannot approve actions or replace project state.
 
@@ -72,7 +72,7 @@ After Defender-scanned upload, the durable queue dispatches a fixed `material_in
 
 ## Experiment Boundary
 
-An approved request selects an allowlisted type and project UUID. The supervisor derives all paths. Scientific Python executes with the project `.venv` on the fixed Linux backend (`python3 -m venv` + `.venv/bin/python`). Native Windows hosting is not supported; the legacy `windows`/`wsl2` launchers were removed. The child receives a minimal environment without application model keys.
+An approved request selects an allowlisted type and project semantic slug. The supervisor derives all paths. Scientific Python executes with the project `.venv` on the fixed Linux backend (`python3 -m venv` + `.venv/bin/python`). Native Windows hosting is not supported; the legacy `windows`/`wsl2` launchers were removed. The child receives a minimal environment without application model keys.
 
 The supervisor enforces timeout, process-tree cancellation, bounded logs, required finite `metrics.json`, structured `checkpoint.json`, path containment, SHA-256 artifact registration, and terminal audit state. This is native process control, not a virtual-machine security boundary.
 
