@@ -392,21 +392,9 @@ export async function migrate(): Promise<void> {
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0015-research-status-source-binding') ON CONFLICT DO NOTHING")
 }
 
-type ProjectForeignKeyRow = {
-  constraint_name: string
-  table_name: string
-  delete_rule: string
-}
-
-type ProjectIdColumnRow = {
-  table_name: string
-}
-
 /**
- * Promotes the semantic slug to the project primary key. This runs after
- * migrateProjectSlugs() has finalized every project slug, so the migrated id
- * is always the canonical slug. Old UUIDs and old semantic slugs remain in
- * project_slug_aliases only for backwards-compatible URL resolution.
+ * Confirms that project identities are semantic slugs. Legacy UUID project
+ * schemas are intentionally unsupported and fail closed instead of migrating.
  */
 export async function migrateProjectPrimaryKeyToSlug(): Promise<void> {
   const already = await one<{ version: string }>('SELECT version FROM schema_migrations WHERE version=$1', ['0016-project-id-slug-primary-key'])
@@ -414,90 +402,8 @@ export async function migrateProjectPrimaryKeyToSlug(): Promise<void> {
   const idColumn = await one<{ data_type: string }>(
     "SELECT data_type FROM information_schema.columns WHERE table_name='projects' AND column_name='id'",
   )
-  if (idColumn?.data_type !== 'uuid') {
-    await database.query("INSERT INTO schema_migrations(version) VALUES ('0016-project-id-slug-primary-key') ON CONFLICT DO NOTHING")
-    return
-  }
-
-  await database.transaction(async transaction => {
-    const foreignKeys = (await transaction.query<ProjectForeignKeyRow>(`
-      SELECT tc.constraint_name, tc.table_name, rc.delete_rule
-      FROM information_schema.table_constraints tc
-      JOIN information_schema.referential_constraints rc
-        ON rc.constraint_name=tc.constraint_name AND rc.constraint_schema=tc.constraint_schema
-      JOIN information_schema.constraint_column_usage ccu
-        ON ccu.constraint_name=tc.constraint_name AND ccu.constraint_schema=tc.constraint_schema
-      WHERE tc.constraint_type='FOREIGN KEY' AND ccu.table_name='projects'
-    `)).rows
-    for (const foreignKey of foreignKeys) {
-      await transaction.query(`ALTER TABLE "${foreignKey.table_name}" DROP CONSTRAINT IF EXISTS "${foreignKey.constraint_name}"`)
-    }
-
-    await transaction.query('ALTER TABLE projects ADD COLUMN IF NOT EXISTS legacy_project_id UUID')
-    await transaction.query('UPDATE projects SET legacy_project_id=id WHERE legacy_project_id IS NULL')
-    await transaction.query(`
-      INSERT INTO project_slug_aliases(slug,project_id)
-      SELECT id::text,id FROM projects
-      ON CONFLICT (slug) DO NOTHING
-    `)
-
-    await transaction.query('ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_pkey')
-    await transaction.query('ALTER TABLE projects ALTER COLUMN id TYPE VARCHAR(120) USING slug')
-    await transaction.query('ALTER TABLE projects ADD CONSTRAINT projects_pkey PRIMARY KEY (id)')
-
-    const projectIdColumns = (await transaction.query<ProjectIdColumnRow>(`
-      SELECT table_name FROM information_schema.columns
-      WHERE column_name='project_id' AND data_type='uuid' AND table_name <> 'projects'
-    `)).rows
-    for (const column of projectIdColumns) {
-      const table = column.table_name
-      await transaction.query(`ALTER TABLE "${table}" ALTER COLUMN project_id TYPE VARCHAR(120) USING project_id::text`)
-      await transaction.query(`
-        UPDATE "${table}" AS child
-        SET project_id=parent.slug
-        FROM projects parent
-        WHERE parent.legacy_project_id::text=child.project_id::text
-      `)
-    }
-
-    await transaction.query(`
-      UPDATE memory_links
-      SET container_tag='research-os-project-'||project_id,
-          metadata=jsonb_set(metadata,'{project_id}',to_jsonb(project_id)),
-          custom_id=left('research-os-memory-'||replace(project_id,'-','')||'-'||content_sha256,100)
-    `)
-    await transaction.query(`
-      UPDATE artifacts AS artifact
-      SET relative_path=replace(artifact.relative_path,'artifacts/'||alias.slug||'/','artifacts/')
-      FROM project_slug_aliases alias
-      WHERE artifact.project_id=alias.project_id AND artifact.relative_path LIKE 'artifacts/'||alias.slug||'/%'
-    `)
-    await transaction.query(`
-      UPDATE uploaded_files AS uploaded
-      SET relative_path=replace(uploaded.relative_path,'artifacts/'||alias.slug||'/','artifacts/')
-      FROM project_slug_aliases alias
-      WHERE uploaded.project_id=alias.project_id AND uploaded.relative_path LIKE 'artifacts/'||alias.slug||'/%'
-    `)
-    await transaction.query(`
-      UPDATE reports AS report
-      SET source_snapshot=jsonb_set(report.source_snapshot,'{project_id}',to_jsonb(project.id))
-      FROM projects project
-      WHERE report.source_snapshot->>'project_id'=project.legacy_project_id::text
-    `)
-
-    await transaction.query('ALTER TABLE projects DROP COLUMN IF EXISTS legacy_project_id')
-    for (const foreignKey of foreignKeys) {
-      const deleteRule = foreignKey.delete_rule === 'CASCADE'
-        ? 'ON DELETE CASCADE'
-        : foreignKey.delete_rule === 'SET NULL'
-          ? 'ON DELETE SET NULL'
-          : ''
-      await transaction.query(
-        `ALTER TABLE "${foreignKey.table_name}" ADD CONSTRAINT "${foreignKey.constraint_name}" FOREIGN KEY (project_id) REFERENCES projects(id) ${deleteRule}`,
-      )
-    }
-  })
-
+  if (idColumn?.data_type === 'uuid') throw new Error('legacy_uuid_project_schema_unsupported')
+  if (idColumn?.data_type !== 'character varying') throw new Error('unexpected_project_id_type')
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0016-project-id-slug-primary-key') ON CONFLICT DO NOTHING")
 }
 

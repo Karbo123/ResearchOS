@@ -2,6 +2,7 @@ import { audit, database, rows } from './database.js'
 import {
   deterministicProjectSlugSuffix,
   isCurrentProjectSlug,
+  isProjectUuidReference,
   legacyProjectSlugBase,
 } from './project-slug.js'
 
@@ -17,6 +18,7 @@ export async function migrateProjectSlugs(): Promise<void> {
   let aliasConflicts = 0
 
   for (const project of projects) {
+    if (isProjectUuidReference(project.id)) throw new Error('legacy_uuid_project_schema_unsupported')
     if (isCurrentProjectSlug(project.slug)) continue
     const legacySlug = project.slug
     const base = legacyProjectSlugBase(project.title, legacySlug)

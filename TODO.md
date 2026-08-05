@@ -197,9 +197,10 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 ### 4.0.2 下一阶段规划：项目级单一 Workflow 与热加载（2026-08-05）
 
 - [x] `P0-WORKFLOW-127` 让 Mastra Studio 的 workflow 使用项目语义 slug（如 `native-acceptance-a8b9`）作为名称，并使用项目完整标题作为 description；新增轻量项目元数据接口 `/api/projects/:projectRef/meta` 供 workflow runtime 获取 `slug/title`。 [Apple 设计验收]
-- [x] `P0-PROJECT-SLUG-128` 把语义 slug 提升为项目唯一标识：数据库 `projects.id`、全部 `project_id` 外键、项目目录、Mastra workflow id/缓存、Supermemory container tag、runtime 项目设置与 embedding 设置全部改用 slug；旧 UUID/旧语义地址只保留为兼容别名，禁止再出现在项目主键、路径、workflow、container tag、设置键或新日志中。 [Apple 设计验收]
+- [x] `P0-PROJECT-SLUG-128` 把语义 slug 提升为项目唯一标识：数据库 `projects.id`、全部 `project_id` 外键、项目目录、Mastra workflow id/缓存、Supermemory container tag、runtime 项目设置与 embedding 设置全部改用 slug；旧语义地址只保留为兼容别名，禁止 UUID 出现在项目主键、路径、workflow、container tag、设置键或新日志中。 [Apple 设计验收]
+- [x] `P0-PROJECT-SLUG-129` 彻底移除旧项目 UUID 兼容：API 项目引用、前端 URL、别名表解析、迁移逻辑、测试与文档均不再接受、迁移或展示旧 UUID 项目标识；遇到旧 UUID 直接 404。旧语义 slug 的别名兼容保留。
 
-> 验收记录（2026-08-05）：迁移链路已落地为 `projects.id VARCHAR(120) PRIMARY KEY` 与全业务表 slug 外键，旧 UUID/旧语义地址写入 `project_slug_aliases`；项目目录、`project-settings.json`、`project-embedding-settings.json`、workflow 缓存/运行/审计文件和 Mastra workflow id 均使用 slug。临时副本烟测确认旧 UUID 库迁移后项目主键变为 `uncertainty-based-0053`、report `source_snapshot.project_id` 同步更新；服务端 192 项测试、typecheck、server/mastra build、docs 检查通过。
+> 验收记录（2026-08-05）：迁移链路已落地为 `projects.id VARCHAR(120) PRIMARY KEY` 与全业务表 slug 外键，旧语义地址写入 `project_slug_aliases`；项目目录、`project-settings.json`、`project-embedding-settings.json`、workflow 缓存/运行/审计文件和 Mastra workflow id 均使用 slug。旧 UUID 项目标识不再兼容：API 直接 404，旧 UUID 库启动失败关闭，别名与文件迁移只处理语义 slug。
 - [x] `P0-WORKFLOW-126` 增加 Mastra Studio 桥接：把每个项目当前激活的 workflow 暴露到 Mastra `/workflows` 列表与详情接口，热加载后只展示最新版本；因 `@mastra/core@1.55.0` 无 `removeWorkflow`，采用应用层注册表 + 实例方法桥接，而不是修改 Mastra 源码。真实 API 验证：临时 Mastra 实例 `/api/workflows` 返回 75 个项目 workflow，详情含 `stepGraph`。 [Apple 设计验收]
 - [~] `P0-WORKFLOW-125` 按 `TODO-workflow.md` 实施项目级单一 Mastra Workflow：每个项目一个 `projects/<project-id>/workflow.ts`，默认模板初始化，运行期热加载，自然语言经审批修改工作流，并使用 Mastra Studio/序列化图实现可视化。Phase 0-5 主体已完成并通过核心检查（见 `TODO-workflow.md`）；Phase 6 收尾中：真实浏览器截图验收、部分 API 动作直接调用 Agent 的迁移、全量文档同步与提交推送。 [Apple 设计验收]
 

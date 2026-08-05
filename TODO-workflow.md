@@ -369,7 +369,7 @@ POC 结论决定最终方案：
 
 验收：创建新项目后能看到 `workflow.ts`；模板可以通过校验；已有项目迁移后不改变现有业务状态。
 
-实施记录：`packages/workflow-kit/` 提供 `contracts.ts`、`api.ts`、`steps.ts`；`apps/server/src/project-service.ts` 在创建项目时复制模板并随项目 Git 初始提交；`scripts/init-project-workflows.ts` 只补缺失文件，`scripts/sync-project-workflows.ts` 不覆盖已定制 workflow。当前 `projects/` 下 75 个 UUID 项目目录均有一份 `workflow.ts`，3 个历史语义名目录已迁到 UUID 目录。
+实施记录：`packages/workflow-kit/` 提供 `contracts.ts`、`api.ts`、`steps.ts`；`apps/server/src/project-service.ts` 在创建项目时复制模板并随项目 Git 初始提交；`scripts/init-project-workflows.ts` 只补缺失文件，`scripts/sync-project-workflows.ts` 不覆盖已定制 workflow。所有项目目录均使用语义 slug，`workflow.ts` 由模板初始化，不再存在或迁移 UUID 项目目录。
 
 ### Phase 2：loader、注册表与热加载
 

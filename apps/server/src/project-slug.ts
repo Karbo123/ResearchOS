@@ -51,6 +51,12 @@ export function isCurrentProjectSlug(value: string): boolean {
   return PROJECT_SLUG_PATTERN.test(value)
 }
 
+const PROJECT_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export function isProjectUuidReference(value: string): boolean {
+  return PROJECT_UUID_PATTERN.test(value)
+}
+
 /** Returns the two-word semantic base; the server adds the random suffix. */
 export function normalizeProjectSlugKeywords(keywords: string[]): string {
   return normalizeBaseWords(keywords)

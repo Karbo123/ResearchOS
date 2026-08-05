@@ -26,7 +26,7 @@ import { transcribeVoice } from './voice-transcription.js'
 import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, enqueue, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
-import { isCurrentProjectSlug, normalizeProjectSlug } from './project-slug.js'
+import { isCurrentProjectSlug, isProjectUuidReference, normalizeProjectSlug } from './project-slug.js'
 import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal, createPaperSectionProposal, revisePaperSection, translatePaperSection } from './paper-service.js'
@@ -68,6 +68,7 @@ type PaperIdentity = { id: string; title: string; doi: string | null }
 async function projectIdForReference(reference: string): Promise<string> {
   let decoded: string
   try { decoded = decodeURIComponent(reference) } catch { throw new ApiError(404, 'project_not_found', '项目不存在。') }
+  if (isProjectUuidReference(decoded)) throw new ApiError(404, 'project_not_found', '项目不存在。')
   if (isCurrentProjectSlug(decoded)) return decoded
   const project = await one<{ id: string }>('SELECT id FROM projects WHERE slug=$1 UNION ALL SELECT project_id AS id FROM project_slug_aliases WHERE slug=$1 LIMIT 1', [decoded])
   if (!project) throw new ApiError(404, 'project_not_found', '项目不存在。')

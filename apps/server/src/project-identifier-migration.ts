@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, w
 import { resolve } from 'node:path'
 import { audit, rows } from './database.js'
 import { pathInside, projectsRoot, runtimeRoot } from './paths.js'
+import { isProjectUuidReference } from './project-slug.js'
 
 type AliasRow = { slug: string; project_id: string }
 
@@ -137,7 +138,7 @@ function migrateProjectDirectories(aliases: Map<string, string>): boolean {
 
 export async function migrateProjectIdentifierStorage(): Promise<void> {
   const aliasRows = await rows<AliasRow>('SELECT slug,project_id FROM project_slug_aliases')
-  const aliases = new Map(aliasRows.map(row => [row.slug, row.project_id]))
+  const aliases = new Map(aliasRows.filter(row => !isProjectUuidReference(row.slug)).map(row => [row.slug, row.project_id]))
   const migratedDirectories = migrateProjectDirectories(aliases)
   const migratedProjectSettings = migrateKeyedJson(resolve(runtimeRoot, 'project-settings.json'), aliases)
   const migratedEmbeddingSettings = migrateKeyedJson(resolve(runtimeRoot, 'project-embedding-settings.json'), aliases)

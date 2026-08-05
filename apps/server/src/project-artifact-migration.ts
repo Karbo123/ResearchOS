@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import { audit, database, rows } from './database.js'
 import { pathInside, artifactsRoot, runtimeRoot } from './paths.js'
+import { isProjectUuidReference } from './project-slug.js'
 import { moveIntoProject, projectArtifactPath, projectArtifactRelativePath } from './project-storage.js'
 
 type FileRow = { id: string; project_id: string; relative_path: string; session_id?: string | null }
@@ -15,6 +16,7 @@ async function migrateRows(table: 'artifacts' | 'uploaded_files'): Promise<{ mig
   const aliases = await rows<{ slug: string; project_id: string }>('SELECT slug,project_id FROM project_slug_aliases')
   const aliasByProject = new Map<string, string[]>()
   for (const alias of aliases) {
+    if (isProjectUuidReference(alias.slug)) continue
     const current = aliasByProject.get(alias.project_id) || []
     current.push(alias.slug)
     aliasByProject.set(alias.project_id, current)

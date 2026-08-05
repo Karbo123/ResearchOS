@@ -31,7 +31,7 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 
 导航分组不能绕过工作流门禁：论文不能消费未复核证据或未验证实验结果，实验不能消费未经审批的方法变更。每个页面都绑定当前项目，深链接能恢复项目/区域/页面，结构化显示失败和审批状态，绝不会把外部或模型失败改成 fallback 结果。旧 hash 和旧深链接只作为兼容入口，统一映射到上述新合同中的唯一页面，不能恢复已删除的长导航结构：`method/*` 重定向到实验实现对应标签，旧论文页下的实验 hash 重定向到 `实验实现`，旧论文页下的日报/周报/反馈 hash 重定向到 `项目概述`。相关工作引擎也遵守同一边界：用户的 `D:\auto-related-work` 只作为算法、字段语义、边界案例和测试意图的只读参考，应用行为全部重写为 TypeScript，不导入或执行旧 Python 运行时。
 
-项目工作区使用可读的无井号地址，例如 `/project/cnn-minimal-2q95/overview/overview`。语义 slug（例如 `native-acceptance-a8b9`）现在是项目在数据库、项目目录、workflow、Supermemory container tag 和项目设置中的不可变唯一标识；新代码禁止再为项目生成 UUID。创建项目时，缩写使用两个语义英文小写单词加四位小写字母/数字随机后缀，服务器检查完整标识是否唯一。用户手动填写时也必须遵守 `word-word-xxxx` 格式。历史三词地址、UUID 地址和旧 hash 地址只作为兼容别名保留可访问，不会把数据库中的历史 slug 强行改名。
+项目工作区使用可读的无井号地址，例如 `/project/cnn-minimal-2q95/overview/overview`。语义 slug（例如 `native-acceptance-a8b9`）现在是项目在数据库、项目目录、workflow、Supermemory container tag 和项目设置中的不可变唯一标识；新代码禁止再为项目生成 UUID。创建项目时，缩写使用两个语义英文小写单词加四位小写字母/数字随机后缀，服务器检查完整标识是否唯一。用户手动填写时也必须遵守 `word-word-xxxx` 格式。历史三词地址和旧 hash 地址只作为兼容别名保留可访问；旧 UUID 项目地址不再兼容，会直接返回 404。
 
 ### 学术论文工作区
 
@@ -41,7 +41,7 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 
 项目自己的文件按项目目录隔离：上传材料、证据 PDF、实验运行目录、复现归档、论文输出和受控 Artifact 都解析到 `projects/<project-id>/artifacts/` 或该项目工作区下的其他明确子目录。PGlite 只保存共享索引、ID、哈希、状态、权限和审计记录，不会把项目文件变成全局文件。删除项目时，会同时删除数据库记录、语义记忆、项目配置以及完整的 `projects/<project-id>/` 目录。
 
-根目录 `artifacts/` 不是第二个仍在使用的项目文件仓库。`artifacts/backups/`、`artifacts/acceptance/`、`artifacts/acceptance-supermemory/`、`artifacts/ops/`、`artifacts/idea-tests/` 和 `artifacts/test-materials/` 保存全局运维、验收或测试材料。按 UUID 命名的目录和旧项目路径可能作为历史迁移来源继续存在；服务启动时会把有数据库索引的项目文件复制到所属项目目录，读取侧暂时保留只读兼容回退，直到迁移或明确清理。新的应用写入不会再指向这些旧路径。
+根目录 `artifacts/` 不是第二个仍在使用的项目文件仓库。`artifacts/backups/`、`artifacts/acceptance/`、`artifacts/acceptance-supermemory/`、`artifacts/ops/`、`artifacts/idea-tests/` 和 `artifacts/test-materials/` 保存全局运维、验收或测试材料。旧项目路径可能作为历史迁移来源继续存在；服务启动时会把有数据库索引的项目文件复制到所属项目目录，读取侧暂时保留只读兼容回退，直到迁移或明确清理。新的应用写入不会再指向这些旧路径。
 
 ## 界面语言与主题
 

@@ -58,7 +58,7 @@ The paper workspace reads and edits `projects/<id>/paper/main.tex` and `referenc
 - `projects/<id>`: project Git repository, Idea, paper (`paper/main.tex`, `references.bib`, `translations.json`, `cvpr.sty`), experiment source, per-project `.venv`, and project-owned files under `projects/<id>/artifacts/`.
 - `artifacts`: shared immutable or append-only acceptance files, test/operations material, backups, and legacy migration sources; it is not the live home of new project files.
 
-Project URLs use two lowercase English words and a four-character lowercase alphanumeric suffix. The same semantic slug is the canonical `projects.id` primary key and is used for project directories, workflow IDs, Supermemory container tags, and project settings. `project_slug_aliases` keeps pre-migration slugs and legacy UUIDs resolvable as compatibility aliases, so URL cleanup does not break historical links.
+Project URLs use two lowercase English words and a four-character lowercase alphanumeric suffix. The same semantic slug is the canonical `projects.id` primary key and is used for project directories, workflow IDs, Supermemory container tags, and project settings. `project_slug_aliases` keeps pre-migration semantic slugs resolvable as compatibility aliases; legacy UUID project IDs are intentionally not accepted, migrated, or rewritten.
 
 The database is the business state source. Supermemory is the project-scoped semantic memory and RAG provider; its `memory_links` ledger keeps source IDs, upload/Artifact IDs, SHA-256 values, locators, evidence status, remote IDs, and revoke/delete state. Mastra Memory is used only where the official Mastra Agent runtime needs conversation continuity and cannot approve actions or replace project state.
 
