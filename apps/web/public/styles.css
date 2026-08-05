@@ -548,6 +548,138 @@ h1 { font-size: 20px; line-height: 1.25; }
 .claim-review-evidence > span { display: grid; gap: 4px; min-width: 0; }
 .claim-review-evidence > span span { color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
 .claim-review-list { margin-top: 16px; }
+.workflow-graph-section { min-width: 0; }
+.workflow-graph-loading,
+.workflow-graph-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.workflow-graph-error { color: var(--red); }
+.workflow-graph-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 0 2px 12px;
+}
+.workflow-graph-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--green);
+  font-weight: 600;
+}
+.workflow-graph-error-text { color: var(--red); }
+.workflow-graph-canvas {
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 12% 18%, var(--blue-soft, rgba(0, 122, 255, .12)), transparent 34%),
+    var(--surface);
+  padding: 22px 18px;
+}
+.workflow-graph-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  min-width: min(760px, 100%);
+}
+.workflow-graph-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-elevated, var(--surface));
+  box-shadow: 0 8px 24px rgba(20, 20, 40, .08);
+}
+.workflow-graph-node::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 9px;
+  height: 2px;
+  background: var(--line-strong, var(--line));
+}
+.workflow-graph-node:first-child::before,
+.workflow-graph-branch .workflow-graph-node::before { display: none; }
+.workflow-graph-node.is-entry,
+.workflow-graph-node.is-exit {
+  border-color: var(--blue);
+  background: var(--blue-soft, rgba(0, 122, 255, .12));
+}
+.workflow-graph-node-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: var(--blue);
+  background: var(--blue-soft, rgba(0, 122, 255, .12));
+}
+.workflow-graph-node-copy { display: grid; gap: 2px; min-width: 0; }
+.workflow-graph-node-copy strong { font-size: 13px; color: var(--ink); }
+.workflow-graph-node-copy code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 11px;
+}
+.workflow-graph-node-meta { display: flex; gap: 5px; }
+.workflow-graph-tag {
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  color: var(--blue);
+  background: var(--blue-soft, rgba(0, 122, 255, .12));
+}
+.workflow-graph-tag.suspend { color: var(--amber); background: var(--amber-soft); }
+.workflow-graph-branch {
+  position: relative;
+  border: 1px dashed var(--line-strong, var(--line));
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(127, 127, 140, .04);
+}
+.workflow-graph-branch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.workflow-graph-branch-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+.workflow-graph-runs { margin-top: 16px; }
+.workflow-graph-runs h3 { margin: 0 0 8px; font-size: 14px; }
+.workflow-graph-studio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 @media (pointer: coarse) {
   .seed-toggle { min-height: 44px; padding: 8px 10px; }
 }
@@ -563,4 +695,7 @@ h1 { font-size: 20px; line-height: 1.25; }
   .timeseries-toolbar { align-items: flex-start; flex-direction: column; }
   .timeseries-count { margin-left: 0; }
   .timeseries-tooltip { font-size: 10px; }
+  .workflow-graph-canvas { padding: 14px 10px; }
+  .workflow-graph-node { grid-template-columns: auto 1fr; }
+  .workflow-graph-node-meta { grid-column: 2; }
 }

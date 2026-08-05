@@ -37,6 +37,11 @@ export const chatRequest = z.object({
   clarification_mode: clarificationMode.default('automatic'),
 }).strict()
 
+export const workflowEditProposalRequest = z.object({
+  instruction: z.string().trim().min(5).max(12_000),
+  project_context: z.record(z.string(), z.unknown()).default({}),
+}).strict()
+
 export const projectCreateRequest = z.object({
   slug: z.string().trim().min(1).max(120),
   title: z.string().trim().min(1).max(240),

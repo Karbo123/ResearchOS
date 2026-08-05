@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-05 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-05-01 -->
 
 # Research OS
 
@@ -114,6 +114,14 @@ npm test
 系统接受 HTTPS 端点；HTTP 只允许回环地址和 RFC1918 私有地址，包括本地 OpenAI-compatible 服务。
 
 所有生产 Mastra Agent、子 Agent 委派、提示注入检测器和实验计划请求都使用 OpenAI Responses provider。结构化输出统一使用严格的 `text.format.type=json_schema` 业务 schema，不发送旧的 `response_format` 字段，也不发送会触发当前错误的 `json_object`。provider HTTP 错误、超时、鉴权失败、非法响应和 schema 错误都会返回结构化错误；系统不会生成默认助手回复、空成功结果、隐式切换 provider 或无关实验 fallback。当前 Supermemory 二进制的内部模型路径仍可能使用 Chat 兼容协议，因此 `npm run supermemory:start` 会把它指向只监听回环地址的 TypeScript bridge。bridge 只向固定网关发送 `/responses` 请求，加入必要的 JSON 指令，把有效响应转换回二进制需要的格式，并在每个错误处失败关闭。
+
+## 项目科研工作流
+
+每个科研项目在 `projects/<project-id>/workflow.ts` 拥有自己独立的 Mastra workflow，并纳入项目内 Git。新项目从默认模板复制；已有项目通过幂等脚本补齐，不覆盖已定制文件。Mastra 默认每 500ms 扫描一次项目文件（`RESEARCH_WORKFLOW_POLL_INTERVAL_MS` 可调），把变更源码编译到 `runtime/workflow-cache/<project-id>/`，校验 manifest、图结构、导入白名单与 dry-run 后原子替换为新版本，无需重启服务。非法文件保留上一有效版本并返回结构化错误；挂起运行固定使用创建时的旧版本，通过 `runtime/workflow-runs.json` 恢复。
+
+在项目对话中可以直接提出工作流修改需求。工作流编辑 Agent 只生成可审阅 diff，API 先在临时工作区校验，审批通过后写回项目 `workflow.ts` 并提交项目 Git，再由 loader 热加载。项目页会展示当前工作流图、版本、源码哈希与最近运行（数据源为 Mastra `serializedStepGraph`）；Mastra Studio 保留为开发辅助视图。
+
+汇报调度由 API 的确定性调度器逐项目分发（`RESEARCH_REPORT_POLL_SECONDS`、`RESEARCH_REPORT_DAILY_TIME`、`RESEARCH_REPORT_WEEKLY_TIME`、`RESEARCH_REPORT_WEEKDAY`、`RESEARCH_REPORT_TIMEOUT_SECONDS`）。删除项目时会同步清理该项目的 workflow 注册表、编译缓存、运行记录与项目目录。
 
 ## Claim 与证据复核
 

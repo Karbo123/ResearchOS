@@ -1,7 +1,8 @@
 import { rmSync } from 'node:fs'
 import { applyMemoryRevocation, supermemoryEnabled } from './supermemory-service.js'
-import { database, one, rows } from './database.js'
+import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
+import { mastraDelete } from './mastra-client.js'
 import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
 import { removeProjectEmbeddingSettings } from './project-embedding-settings.js'
 import { removeProjectSettings } from './project-settings.js'
@@ -86,6 +87,13 @@ export async function deleteProject(projectId: string, projectTitle: string, con
   const settings = removeProjectEmbeddingSettings(projectId)
   removeProjectSettings(projectId)
   await removeProjectRows(projectId)
+  if (process.env.NODE_ENV !== 'test' && process.env.VITEST !== 'true') {
+    try {
+      await mastraDelete<{ disposed: boolean }>(`/internal/workflows/project/${projectId}`)
+    } catch (error) {
+      await audit('workflow.dispose_failed', projectId, { error: error instanceof Error ? error.message : String(error) })
+    }
+  }
   try {
     removeFiles([...artifactFiles, ...uploadedFiles], projectId)
   } catch (error) {

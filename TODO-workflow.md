@@ -1,6 +1,6 @@
 # Research OS 项目级单一 Workflow 与热加载实施计划书
 
-> 文档状态：规划中  
+> 文档状态：Phase 0-5 主体完成，Phase 6 收尾中
 > 对应 TODO：`P0-WORKFLOW-125`  
 > 创建日期：2026-08-05（Asia/Shanghai）  
 > 适用代码副本：`/mnt/d/ResearchOS`（WSL2 内开发，Windows 侧为 `D:\ResearchOS`）
@@ -46,6 +46,8 @@
 | `approvalGateWorkflow` | Proposal 人工审批 suspend/resume | `/internal/workflows/approval-gate`、`/approval-gate/resume` |
 
 它们通过 `apps/mastra/src/mastra/index.ts` 中的 `workflows: { ... }` 注册，并通过 `mastra.getWorkflow('...')` 调用。
+
+**2026-08-05 实施结果**：旧的 4 个 workflow 注册与 `research-workflows.ts` 已删除。`apps/mastra/src/mastra/index.ts` 不再注册项目 workflow；`ProjectWorkflowRuntime` 在启动后扫描 `projects/*/workflow.ts`，为每个项目构建唯一的 `project-<projectId>-research` workflow，并通过项目级注册表调度。Idea/项目对话/实验规划等模型能力仍由 Mastra Agent 提供，项目 workflow 通过受限内部 API 编排这些能力；初始 Idea 讨论在项目创建前发生，因此仍由 Idea Agent 处理，不属于某个项目 workflow。
 
 ### 3.3 Mastra 动态注册能力
 
@@ -128,9 +130,10 @@ type ProjectWorkflowContext = {
   sourceHash: string
   apiBase: string
   dryRun: boolean
-  settings: ProjectSettingsSnapshot
 }
 ```
+
+实际实现与上述结构一致，但 `settings` 不注入 workflow 上下文；项目设置由 API 侧读取并通过内部 API 传入具体步骤。
 
 ### 4.3 统一输入/输出契约
 
@@ -246,20 +249,21 @@ runtime/workflow-cache/<project-id>/workflow-<sha256>.mjs
 为每个 Mastra run 记录 `run_id -> project_id -> version`：
 
 ```text
-PGlite: workflow_runs
+当前实现：runtime/workflow-runs.json
 - mastra_run_id
 - project_id
 - workflow_version
 - source_hash
 - status
 - created_at
-- resumed_at
 ```
 
 - 新请求：始终使用最新 active 版本。
 - suspend/resume：通过 `mastra_run_id` 找到创建该运行时的版本，继续使用旧版本实例，避免“审批后工作流突然变成另一张图”。
-- 服务器重启：从 PGlite 读取活动/挂起运行对应的版本和哈希，再从编译缓存恢复该版本。
+- 服务器重启：从 `runtime/workflow-runs.json` 恢复活动/挂起运行对应的版本和哈希，再从编译缓存恢复该版本。
 - 版本实例在没有活动运行且已被替换后，从内存释放；缓存文件按需保留一段时间，便于审计和调试。
+
+> 已知偏差：运行记录暂存于 `runtime/workflow-runs.json` 而不是 PGlite `workflow_runs` 表。重启后 `ProjectWorkflowRuntime` 会从 JSON 恢复 run -> version 映射，并从 `runtime/workflow-cache/<project-id>/` 恢复旧版本；后续迁移到 PGlite 时保持同一字段契约。
 
 ### 5.5 项目创建、删除与迁移
 
@@ -343,13 +347,15 @@ POC 结论决定最终方案：
 
 > 用户长期要求“先做网页上可见的功能”，因此可视化相关 POC 与后端 loader POC 并行推进；验收顺序仍按依赖关系：先有可加载的 workflow，才有可展示的图。
 
-### Phase 0：POC（阻塞后续设计）
+### Phase 0：POC（已完成）
 
 - 验证 Node 26 / esbuild 能否在 Mastra 构建产物中动态 `import()` 项目 TS 文件。
 - 验证 `mastra.addWorkflow` 唯一 key、Studio 图刷新、旧版本残留行为。
 - 验证 workflow 实例在不经过 `addWorkflow` 时的 storage/logger/mastra 注入方式。
 - 验证 `serializedStepGraph` 的内容完整度。
 - 输出 POC 报告，固化方案 A/B 和热加载模块边界。
+
+验收记录：`docs/workflow-poc.md` 已写入。Node 26 可直接动态加载 esbuild 编译产物；`serializedStepGraph` 可提供结构化图；workflow 可通过 `__registerMastra`/`__registerPrimitives` 不注册到 Mastra 直接运行；`addWorkflow` 同 key 不会替换，因此热加载采用项目注册表 + 原子实例替换，前端图面板以 `serializedStepGraph` 为数据源，Studio 保留为开发辅助工具。
 
 ### Phase 1：契约、模板与 workflow-kit
 
@@ -361,6 +367,8 @@ POC 结论决定最终方案：
 
 验收：创建新项目后能看到 `workflow.ts`；模板可以通过校验；已有项目迁移后不改变现有业务状态。
 
+实施记录：`packages/workflow-kit/` 提供 `contracts.ts`、`api.ts`、`steps.ts`；`apps/server/src/project-service.ts` 在创建项目时复制模板并随项目 Git 初始提交；`scripts/init-project-workflows.ts` 只补缺失文件，`scripts/sync-project-workflows.ts` 不覆盖已定制 workflow。当前 `projects/` 下 75 个 UUID 项目目录均有一份 `workflow.ts`，3 个历史语义名目录已迁到 UUID 目录。
+
 ### Phase 2：loader、注册表与热加载
 
 - 实现扫描、哈希、编译、校验、dry-run、原子替换。
@@ -369,6 +377,8 @@ POC 结论决定最终方案：
 - 新增单元/集成测试，覆盖：文件修改立即生效、非法文件不生效、挂起运行跨版本恢复、项目隔离、删除清理。
 
 验收：修改 `workflow.ts` 后无需重启，新运行使用新图；旧挂起运行 resume 后仍按旧图执行；非法文件返回结构化错误。
+
+实施记录：`apps/mastra/src/mastra/workflow-runtime/loader.ts` 默认每 500ms 扫描 `projects/*/workflow.ts`（可用 `RESEARCH_WORKFLOW_POLL_INTERVAL_MS` 调整），按 `workflow.ts + workflow-kit 源码哈希` 判定变更；编译缓存 `runtime/workflow-cache/<project-id>/workflow-<sha256>.mjs`；加载时校验 manifest、workflow id、图结构、安全 import 白名单和 dry-run；旧版本保留用于挂起运行恢复。非法或缺失源码会把 `lastError` 记录下来并让新请求失败关闭，不再静默使用旧版本；修复后重新激活。删除项目时 `project-delete-service.ts` 调用 Mastra `DELETE /internal/workflows/project/:id` 清理注册表、缓存与 `runtime/workflow-runs.json` 记录。新增 `apps/server/tests/project-workflow-runtime.test.ts`（4 个用例）覆盖编译激活、热加载、非法文件失败关闭、修复恢复与删除清理；挂起恢复通过 `scripts/verify-mastra-hitl.ts` 真实验证。已知偏差：运行记录暂存 JSON 而非 PGlite，见 5.4。
 
 ### Phase 3：API 路由迁移
 
@@ -379,6 +389,8 @@ POC 结论决定最终方案：
 
 验收：现有聊天、Idea、审批、汇报、论文、实验入口全部通过项目级 workflow 工作，旧路由兼容期间不破坏前端。
 
+实施记录：`apps/mastra/src/mastra/index.ts` 新增 `/internal/workflows/project/:projectId/{run,resume,graph,preview,runs}` 与 DELETE；旧 `research-bootstrap`、`approval-gate`、`supervisionReports` 路由已删除；`apps/server/src/task-worker.ts` 和 `apps/server/src/report-scheduler.ts` 逐项目分发 workflow；API 暴露 `/api/projects/:projectId/workflow-graph|runs` 与 workflow 编辑闭环。已知偏差：项目创建前的 Idea 讨论没有项目 workflow，仍由 Idea Agent 直接处理；项目对话、论文翻译/修订、实验规划的 API 层仍直接调用 Mastra Agent（这些动作的 workflow 分支已经存在并通过同一契约运行），完整“一切 API 动作都经 workflow”的迁移列入 Phase 6。
+
 ### Phase 4：自然语言编辑工作流
 
 - 实现 `workflowEditAgent`、结构化 `WorkflowEditProposal`、临时校验、审批、写入、提交、热加载闭环。
@@ -386,6 +398,8 @@ POC 结论决定最终方案：
 - 补充安全扫描与 diff 白名单测试。
 
 验收：用户用一句自然语言要求调整步骤顺序后，能看到 diff 预览和校验结果；批准后图立即变化，新运行按新顺序执行。
+
+实施记录：`apps/server/src/workflow-edit-service.ts` 生成 diff Proposal，先临时应用、校验、预览，审批时再次校验后写入项目 `workflow.ts` 并提交项目 Git；`apps/mastra/src/mastra/skills/research-skills.ts` 为 Agent 提供 diff 生成约束；`apps/server/tests/workflow-edit.test.ts` 覆盖路径白名单、不落盘预览、失败不建 Proposal 等 5 个用例。
 
 ### Phase 5：可视化
 
@@ -395,12 +409,16 @@ POC 结论决定最终方案：
 
 验收：每个项目只能看到自己的 workflow 图；运行中节点状态实时更新；空、失败、加载状态完整；无横向溢出，交互符合 Apple 设计契约。
 
+实施记录：`apps/web/src/components/WorkflowGraphCard.tsx` 展示当前项目 `serializedStepGraph`、版本、源码哈希、最近运行，并提供打开 Mastra Studio 的链接；四语言文案已补齐，浅/暗主题使用语义 CSS 变量；真实浏览器四语言/双主题截图验收仍在 Phase 6 收尾。
+
 ### Phase 6：全量验证与文档
 
 - 运行 `npm run typecheck`、`npm test`、`npm run build`、`npm run check`、`npm run mastra:hitl:check`、适用 acceptance。
 - 同步 `README.md`、`README.zh-CN.md`、`AGENTS.md`、架构/运维/安全文档与 `DOCS_SYNC_VERSION`。
 - 更新 `.env.example` 中的 workflow 相关配置。
 - 真实浏览器验收所有可见功能。
+
+当前状态（2026-08-05 收尾）：`npm run check` 全部通过（42 个测试文件 / 187 个测试），`npm run build`、`npm run mastra:hitl:check` 均通过；使用最终构建重启后，11 个 active 项目的 workflow 图全部 `active` 且 `last_error` 为空。README/AGENTS/架构/运维/安全/.env.example 已同步；仍待真实浏览器四语言/双主题截图验收与部分 API 动作迁移到 workflow 入口的后续工作。
 
 ## 10. 关键决策与风险
 
@@ -417,18 +435,18 @@ POC 结论决定最终方案：
 
 ## 11. 验收总清单
 
-- [ ] POC 报告完成，热加载与可视化方案已定。
-- [ ] 新项目创建即生成 `projects/<project-id>/workflow.ts` 并进入项目 Git。
-- [ ] 已有项目迁移脚本幂等，不覆盖用户已修改的 workflow。
-- [ ] 修改 `workflow.ts` 后新运行立即使用新版本，无需重启服务。
-- [ ] 非法文件不会替换 active 版本，并返回结构化错误。
-- [ ] suspend/resume、服务重启后能按 `mastra_run_id` 恢复对应版本。
-- [ ] 删除项目后注册表、缓存、运行记录与项目目录全部清理。
-- [ ] 项目 chat、Idea、相关工作、实验、审批、论文、汇报都只通过项目级单一 workflow 入口。
-- [ ] 自然语言 workflow 修改必须经过 Proposal、校验、审批、Git commit 和热加载。
-- [ ] Mastra Studio 或前端图面板展示当前项目的完整 workflow 图、版本和实时状态。
-- [ ] UI 通过四语言、浅/暗主题、桌面/移动端真实浏览器截图验收，符合 Apple 设计契约。
-- [ ] 全量检查、Mastra HITL、适用 acceptance 与文档同步通过。
+- [x] POC 报告完成，热加载与可视化方案已定。
+- [x] 新项目创建即生成 `projects/<project-id>/workflow.ts` 并进入项目 Git。
+- [x] 已有项目迁移脚本幂等，不覆盖用户已修改的 workflow。
+- [x] 修改 `workflow.ts` 后新运行立即使用新版本，无需重启服务。
+- [x] 非法文件不会替换 active 版本，并返回结构化错误。
+- [x] suspend/resume、服务重启后能按 `mastra_run_id` 恢复对应版本（运行记录暂存 JSON，见 5.4 已知偏差）。
+- [x] 删除项目后注册表、缓存、运行记录与项目目录全部清理。
+- [~] 项目 chat、Idea、相关工作、实验、审批、论文、汇报都只通过项目级单一 workflow 入口（workflow 分支已覆盖，API 层部分动作仍直接调用 Agent，见 Phase 3 已知偏差）。
+- [x] 自然语言 workflow 修改必须经过 Proposal、校验、审批、Git commit 和热加载。
+- [x] Mastra Studio 或前端图面板展示当前项目的完整 workflow 图、版本和实时状态。
+- [~] UI 通过四语言、浅/暗主题、桌面/移动端真实浏览器截图验收，符合 Apple 设计契约。
+- [~] 全量检查、Mastra HITL、适用 acceptance 与文档同步通过（核心检查已通过，Phase 6 收尾中）。
 
 ## 12. 参考资料
 

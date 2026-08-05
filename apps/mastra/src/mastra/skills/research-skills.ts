@@ -33,6 +33,8 @@ export const supervisionIntentSkill = createSkill({
   instructions: `
 Choose exactly one supported intent. Do not execute, approve, change state, or invent missing details.
 A change request needs a concrete allowlisted Idea field and value. A policy change needs a concrete policy rule.
+Use workflow_change_request when the user asks to reorder, add, remove, or otherwise change the project
+workflow itself (for example moving related-work before experiments or adding a step before paper writing).
 Use ambiguous with a clarification question when the target or value is unclear. Explanation and advice are never execution.
 Write assistant_reply as a concise, useful response in the user's language. Clearly state when an action needs a Proposal,
 approval, or a separate state-control request; never claim that the action has already happened.
@@ -88,6 +90,47 @@ Never invent datasets, repository code, licenses, citations, compute availabilit
 Never substitute a generic demo, synthetic benchmark, or unrelated baseline for the requested topic.
 Include topic-specific data, baselines, metrics, ablations, statistics, seeds, resources, risks, and decision criteria.
 The output is a proposal only. Do not include shell commands, paths, dependency instructions, or Runner arguments.
+Return only the requested strict JSON object.
+`,
+})
+
+export const workflowEditSkill = createSkill({
+  name: 'project-workflow-edit',
+  description: 'Generate a reviewable unified diff that changes one project workflow.ts without writing files or executing commands.',
+  instructions: `
+You are editing a single project workflow file. The current source is supplied as current_source.
+Generate only a structured proposal: a concise summary, a unified diff against current_source,
+the affected workflow step IDs, and the validation commands you plan to run. Never write files,
+run commands, call tools, or change project state.
+
+Diff rules:
+- The diff must reference only workflow.ts. Use headers "--- workflow.ts" and "+++ workflow.ts"
+  (a/ or b/ prefixes are accepted). Do not touch any other path.
+- The diff must apply cleanly to the supplied current_source. Include every changed hunk and enough
+  context lines; do not describe changes instead of encoding them.
+- Preserve the workflowManifest export, the default factory signature, ctx.workflowId, and the exact
+  step IDs workflow-entry and workflow-exit. The graph must stay a committed Mastra Workflow with
+  unique step IDs and no duplicate steps.
+
+Allowed building blocks:
+- Mastra createWorkflow, then, branch, map, parallel, loop, suspend, and commit primitives.
+- workflow-kit helpers imported from @research-os/workflow-kit: projectWorkflowInputSchema,
+  projectWorkflowOutputSchema, createProjectContextStep, createProjectActionStep,
+  createChatStep, createResearchBootstrapStep, createApprovalGateStep, createReportsStep,
+  createPaperTranslateStep, createPaperReviseStep, createExperimentPlanStep,
+  createWorkflowEditProposalStep, createFinalizeStep, extractBranchOutput, and ProjectWorkflowContext.
+- Only call Research OS APIs through the supplied workflow-kit api helper; do not construct new
+  fetch, network, filesystem, shell, SQL, or process access.
+
+Forbidden:
+- No node:fs, node:child_process, node:net, node:vm, require of those modules, process.env access,
+  API keys, tokens, cookies, absolute host paths, or arbitrary URLs.
+- Do not invent step IDs that do not exist in the graph, and do not rename workflow-entry or
+  workflow-exit.
+
+Interpret the user instruction in the context of the current graph and the project_context. If the
+request is to reorder, add, remove, or modify workflow behavior, encode exactly that change. Keep the
+workflow source coherent and readable. Match the user's language in the summary.
 Return only the requested strict JSON object.
 `,
 })

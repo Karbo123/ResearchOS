@@ -17,6 +17,7 @@ import type {
 import { Badge, ButtonRow, SectionHeading } from '../ui'
 import { formatDateTime, useTranslation, type TranslationKey } from '../../i18n'
 import { NoveltyExplorer } from '../NoveltyExplorer'
+import { WorkflowGraphCard } from '../WorkflowGraphCard'
 
 const CORE_FIELDS = ['research_question', 'domain', 'available_data', 'ethics_and_compliance']
 const FIELD_LABEL_KEYS: Record<string, TranslationKey> = {
@@ -468,6 +469,8 @@ export function OverviewTab({
         <div className="metric"><span>{t('overview.artifacts')}</span><strong>{counts.artifacts ?? 0}</strong></div>
         <div className="metric"><span>{t('common.pendingApproval')}</span><strong>{pendingCount}</strong></div>
       </div>
+
+      <WorkflowGraphCard projectId={project.id} />
 
       <div className="section">
         <SectionHeading

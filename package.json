@@ -9,11 +9,12 @@
   "workspaces": [
     "apps/server",
     "apps/mastra",
-    "apps/web"
+    "apps/web",
+    "packages/workflow-kit"
   ],
   "scripts": {
     "build": "npm run build --workspace @research-os/web && npm run build --workspace @research-os/server && npm run build --workspace research-os-mastra",
-    "typecheck": "tsc -p tsconfig.scripts.json --noEmit && npm run typecheck --workspace @research-os/web && npm run typecheck --workspace @research-os/server && npm run typecheck --workspace research-os-mastra",
+    "typecheck": "tsc -p tsconfig.scripts.json --noEmit && npm run typecheck --workspace @research-os/web && npm run typecheck --workspace @research-os/server && npm run typecheck --workspace @research-os/workflow-kit && npm run typecheck --workspace research-os-mastra",
     "test": "npm run test --workspace @research-os/server",
     "dev": "concurrently -k -n server,mastra \"npm run dev --workspace @research-os/server\" \"npm run dev --workspace research-os-mastra\"",
     "start": "concurrently -k -n server,mastra \"npm run start --workspace @research-os/server\" \"npm run start --workspace research-os-mastra\"",

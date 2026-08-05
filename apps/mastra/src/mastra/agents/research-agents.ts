@@ -4,7 +4,7 @@ import { Memory } from '@mastra/memory'
 import { agentRequestContextSchema, type ModelTier } from '../contracts.js'
 import { loadModelConfig, ModelConfigurationError } from '../model-config.js'
 import { proxyFetch } from '../proxy-fetch.js'
-import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, paperRevisionSkill, paperTranslationSkill, projectSlugSkill, supervisionIntentSkill } from '../skills/research-skills.js'
+import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, paperRevisionSkill, paperTranslationSkill, projectSlugSkill, supervisionIntentSkill, workflowEditSkill } from '../skills/research-skills.js'
 import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
 const ideaMemory = new Memory({ options: { lastMessages: 12 } })
@@ -102,6 +102,16 @@ export const experimentPlanningAgent = new Agent({
   instructions: experimentPlanningSkill.instructions,
   model: () => configuredModel('complex'),
   skills: [experimentPlanningSkill],
+})
+
+export const workflowEditAgent = new Agent({
+  id: 'workflow-edit-agent',
+  name: 'Project Workflow Edit Agent',
+  requestContextSchema: agentRequestContextSchema,
+  maxRetries: 0,
+  instructions: workflowEditSkill.instructions,
+  model: () => configuredModel('complex'),
+  skills: [workflowEditSkill],
 })
 
 export const researchCoordinatorAgent = new Agent({

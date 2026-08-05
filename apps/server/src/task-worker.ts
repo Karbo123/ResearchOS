@@ -50,8 +50,8 @@ async function runTask(task: Task): Promise<void> {
     return
   }
   if (task.kind !== 'research_bootstrap') throw new Error('task_kind_not_allowlisted')
-  const response = await fetch(`${(process.env.MASTRA_BASE_URL || 'http://127.0.0.1:4111').replace(/\/$/, '')}/internal/workflows/research-bootstrap`, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ project_id: task.project_id, task_id: task.id, idempotency_key: task.idempotency_key }), signal: AbortSignal.timeout(120_000),
+  const response = await fetch(`${(process.env.MASTRA_BASE_URL || 'http://127.0.0.1:4111').replace(/\/$/, '')}/internal/workflows/project/${task.project_id}/run`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'research_bootstrap', project_id: task.project_id, task_id: task.id, idempotency_key: task.idempotency_key }), signal: AbortSignal.timeout(120_000),
   })
   if (!response.ok) throw new Error(`workflow_http_${response.status}`)
 }

@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { basename, resolve } from 'node:path'
-import { gitBinary, pathInside, projectsRoot } from './paths.js'
+import { gitBinary, pathInside, projectsRoot, repositoryRoot } from './paths.js'
 import { audit, database, one, rows } from './database.js'
 import { ApiError } from './http.js'
 import { reconcileProjectLineage } from './impact-service.js'
@@ -18,6 +18,7 @@ source-bundles/
 *.bak
 *.log
 `
+const defaultWorkflowTemplatePath = resolve(repositoryRoot, 'apps/mastra/src/mastra/workflows/templates/default-project-workflow.ts')
 
 export async function moveSessionUploadsIntoProject(projectId: string, sessionId: string): Promise<void> {
   const files = await rows<{ id: string; relative_path: string }>('SELECT id,relative_path FROM uploaded_files WHERE session_id=$1 AND project_id=$2', [sessionId, projectId])
@@ -150,8 +151,9 @@ export async function createProjectWorkspace(projectId: string, slug: string, sp
   writeFileSync(pathInside(root, 'idea.json'), `${JSON.stringify(spec, null, 2)}\n`, 'utf8')
   writeFileSync(pathInside(root, 'README.md'), `# ${slug}\n\nResearch OS project workspace.\n`, 'utf8')
   writeFileSync(pathInside(root, '.gitignore'), PROJECT_GITIGNORE, 'utf8')
+  writeFileSync(pathInside(root, 'workflow.ts'), readFileSync(defaultWorkflowTemplatePath, 'utf8'), 'utf8')
   execFileSync(gitBinary(), ['init', '--initial-branch=main'], { cwd: root, stdio: 'ignore' })
-  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md', '.gitignore'], { cwd: root, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md', '.gitignore', 'workflow.ts'], { cwd: root, stdio: 'ignore' })
   execFileSync(gitBinary(), ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: initialize research project'], { cwd: root, stdio: 'ignore' })
   await audit('project.workspace_created', projectId, { slug })
   return root

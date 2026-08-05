@@ -230,6 +230,38 @@ export interface ProjectDetail {
   }
 }
 
+export interface WorkflowGraphStep {
+  id: string
+  canSuspend?: boolean
+  mapConfig?: string
+}
+
+export interface WorkflowGraphEntry {
+  type: 'step' | 'conditional' | 'parallel' | 'map'
+  step?: WorkflowGraphStep
+  steps?: WorkflowGraphEntry[]
+  serializedConditions?: Array<{ id: string; fn?: string }>
+}
+
+export interface WorkflowGraphResponse {
+  project_id: string
+  version: number
+  source_hash: string
+  status: 'active' | 'missing' | 'error'
+  last_error: string | null
+  graph: WorkflowGraphEntry[]
+  step_ids: string[]
+}
+
+export interface WorkflowRunRecord {
+  mastra_run_id: string
+  project_id: string
+  workflow_version: number
+  source_hash: string
+  status: 'running' | 'suspended' | 'success' | 'failed'
+  created_at: string
+}
+
 export interface IdeaVersion {
   id: string
   project_id: string

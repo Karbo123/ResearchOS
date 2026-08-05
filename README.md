@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-04-05 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-05-01 -->
 
 # Research OS
 
@@ -114,6 +114,14 @@ The `System` tab provides the global proxy switch. When enabled, its URL input a
 HTTPS endpoints are accepted. Plain HTTP is accepted only for loopback and RFC1918 private addresses, including local OpenAI-compatible services.
 
 Every production Mastra Agent, delegated sub-Agent, guardrail detector, and experiment-planning request uses the OpenAI Responses provider. Structured outputs use a strict `text.format.type=json_schema` schema and never send the legacy `response_format` field or `json_object`. Provider HTTP errors, timeouts, authentication failures, invalid responses, and schema failures are returned as structured errors; no default assistant reply, empty success, provider switch, or unrelated experiment fallback is generated. The current Supermemory binary may still emit its internal model request through the Chat-compatible protocol, so `npm run supermemory:start` routes it to a loopback-only TypeScript bridge. The bridge sends the fixed gateway only `/responses` requests, adds the required JSON instruction, converts valid results back to the binary's expected shape, and fails closed on every error.
+
+## Project Workflows
+
+Every research project owns one Mastra workflow at `projects/<project-id>/workflow.ts`, committed in the project-local Git. New projects copy the default template; existing projects were migrated idempotently without overwriting customized files. The Mastra process scans all project files every 500 ms by default (`RESEARCH_WORKFLOW_POLL_INTERVAL_MS`), compiles changed sources into `runtime/workflow-cache/<project-id>/`, validates the manifest, graph, imports, and a dry run, then atomically activates the new version without restarting services. Invalid files keep the previous active version and return a structured error; suspended runs are pinned to their original version and resumed from `runtime/workflow-runs.json`.
+
+Workflow changes can be requested in the project conversation. The workflow edit Agent produces a reviewable diff, the API validates it in a temporary workspace, and approval writes `workflow.ts` back to the project Git before hot loading. The project page renders the current workflow graph, version, source hash, and recent runs from `serializedStepGraph`; Mastra Studio remains available as a development view.
+
+The API report scheduler dispatches one project workflow per active project (`RESEARCH_REPORT_POLL_SECONDS`, `RESEARCH_REPORT_DAILY_TIME`, `RESEARCH_REPORT_WEEKLY_TIME`, `RESEARCH_REPORT_WEEKDAY`, `RESEARCH_REPORT_TIMEOUT_SECONDS`). Deleting a project removes its workflow registry entry, compile cache, and run records together with the project directory.
 
 ## Claim Review and Evidence
 

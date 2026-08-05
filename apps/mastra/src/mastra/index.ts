@@ -8,21 +8,25 @@ import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mas
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, configuredVisionModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent, visionModelName,
+  configuredModel, configuredVisionModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent, visionModelName, workflowEditAgent,
 } from './agents/research-agents.js'
 import {
   adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, paperSectionReviseRequestSchema, paperSectionReviseResultSchema, paperSectionTranslateRequestSchema, paperSectionTranslateResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
-  approvalGateRequestSchema, approvalGateResumeRequestSchema, coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema, researchWorkflowInputSchema,
-  supervisionIntentSchema, supervisionRequestSchema, type ModelTier,
+  coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema,
+  supervisionIntentSchema, supervisionRequestSchema, workflowEditRequestSchema, workflowEditResultSchema, type ModelTier,
 } from './contracts.js'
+import {
+  projectWorkflowInputSchema,
+  projectWorkflowResumeSchema,
+} from '@research-os/workflow-kit'
 import { loadModelConfig, ModelConfigurationError } from './model-config.js'
 import { strictSupermemoryProcessors, SupermemoryConfigurationError } from './supermemory.js'
 import { strictResearchProcessors } from './guardrails.js'
 import { ensureIdeaDataset, ideaClarificationContractScorer, MastraEvalContractError } from './evals.js'
 import { inspectIdeaDraft, inspectIdeaDraftTool } from './tools/inspect-idea-draft.js'
-import { approvalGateWorkflow, projectChatWorkflow, researchBootstrapWorkflow, supervisionReportsWorkflow } from './workflows/research-workflows.js'
 import { researchRoot } from './env.js'
 import { structuredJsonValue } from './structured-json-input.js'
+import { ProjectWorkflowRuntime } from './workflow-runtime/loader.js'
 
 const storage = new LibSQLStore({
   id: 'research-os-mastra-storage', url: `file:${resolve(researchRoot, 'runtime', 'mastra.db')}`,
@@ -314,6 +318,30 @@ const apiRoutes = [
       }
     },
   }),
+  registerApiRoute('/internal/agents/workflow-edit', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, workflowEditRequestSchema)
+        const context = requestContext(body.tier, undefined, body.project_id, `workflow-edit-${body.project_id}`)
+        const response = await workflowEditAgent.generate(structuredJsonValue({
+          project_id: body.project_id,
+          instruction: body.instruction,
+          current_source: body.current_source,
+          project_context: body.project_context,
+        }), {
+          ...generationOptions(context),
+          structuredOutput: { schema: workflowEditResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
+        })
+        const result = workflowEditResultSchema.parse(response.object)
+        const config = context.get('modelConfig')
+        return c.json({ result, route: { tier: body.tier, model: config.model, reasoning_effort: config.reasoningEffort } })
+      } catch (error) {
+        const failure = routeError(error, '项目工作流编辑模型调用')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
   registerApiRoute('/internal/evals/idea-dataset', {
     method: 'GET',
     handler: async c => {
@@ -342,75 +370,98 @@ const apiRoutes = [
       }
     },
   }),
-  registerApiRoute('/internal/workflows/research-bootstrap', {
+  registerApiRoute('/internal/workflows/project/:projectId/run', {
     method: 'POST',
     handler: async c => {
       try {
-        const body = await parsedBody(c, researchWorkflowInputSchema)
-        const run = await c.get('mastra').getWorkflow('researchBootstrapWorkflow').createRun()
-        const result = await run.start({ inputData: body })
-        if (result.status !== 'success') {
-          return c.json({ code: 'workflow_failed', message: '研究启动工作流执行失败。' }, 502)
-        }
-        return c.json(result.result)
+        const body = await parsedBody(c, projectWorkflowInputSchema)
+        const result = await workflowRuntime!.run(body.project_id, body)
+        return c.json(result)
       } catch (error) {
-        const failure = routeError(error, '研究启动工作流')
+        const failure = routeError(error, '项目级 workflow')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },
   }),
-  registerApiRoute('/internal/workflows/approval-gate', {
+  registerApiRoute('/internal/workflows/project/:projectId/resume', {
     method: 'POST',
     handler: async c => {
       try {
-        const body = await parsedBody(c, approvalGateRequestSchema)
-        const workflow = c.get('mastra').getWorkflow('approvalGateWorkflow')
-        const run = await workflow.createRun(body.run_id ? { runId: body.run_id, resourceId: body.project_id } : { resourceId: body.project_id })
-        const { run_id: _runId, ...input } = body
-        const result = await run.start({ inputData: { ...input, mastra_run_id: run.runId } })
-        if (result.status === 'suspended') {
-          const stepId = result.suspended[0]
-          const stepKey = stepId.at(-1) || ''
-          const step = (result.steps as Record<string, { suspendPayload?: unknown }>)[stepKey]
-          return c.json({ status: 'suspended', run_id: run.runId, suspended: result.suspended, suspend_payload: step?.suspendPayload ?? null })
-        }
-        if (result.status !== 'success') return c.json({ code: 'approval_workflow_failed', message: '审批工作流执行失败。' }, 502)
-        return c.json({ status: result.result.status, run_id: run.runId, result: result.result })
+        const body = await parsedBody(c, z.object({
+          run_id: z.string().min(1).max(200),
+          resume: projectWorkflowResumeSchema,
+        }).strict())
+        const result = await workflowRuntime!.resume(c.req.param('projectId'), body.run_id, body.resume)
+        return c.json(result)
       } catch (error) {
-        const failure = routeError(error, 'Proposal 审批工作流')
+        const failure = routeError(error, '项目级 workflow 恢复')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },
   }),
-  registerApiRoute('/internal/workflows/approval-gate/resume', {
+  registerApiRoute('/internal/workflows/project/:projectId/graph', {
+    method: 'GET',
+    handler: async c => {
+      try {
+        return c.json(workflowRuntime!.graph(c.req.param('projectId')))
+      } catch (error) {
+        const failure = routeError(error, '项目级 workflow 图')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/workflows/project/:projectId/preview', {
     method: 'POST',
     handler: async c => {
       try {
-        const body = await parsedBody(c, approvalGateResumeRequestSchema)
-        const workflow = c.get('mastra').getWorkflow('approvalGateWorkflow')
-        const run = await workflow.createRun({ runId: body.run_id })
-        const result = await run.resume({ step: 'human-approval', resumeData: { approved: body.approved, actor: body.actor, comment: body.comment ?? null } })
-        if (result.status === 'suspended') return c.json({ status: 'suspended', run_id: run.runId, suspended: result.suspended })
-        if (result.status !== 'success') return c.json({ code: 'approval_workflow_failed', message: '审批工作流恢复失败。' }, 502)
-        return c.json({ status: result.result.status, run_id: run.runId, result: result.result })
+        const body = await parsedBody(c, z.object({ source: z.string().min(1).max(300_000) }).strict())
+        const result = await workflowRuntime!.validatePreview(c.req.param('projectId'), body.source)
+        return c.json(result)
       } catch (error) {
-        const failure = routeError(error, 'Proposal 审批工作流恢复')
+        const failure = routeError(error, '项目级 workflow 预览校验')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/workflows/project/:projectId/runs', {
+    method: 'GET',
+    handler: async c => {
+      try {
+        return c.json({ runs: workflowRuntime!.listRuns(c.req.param('projectId')) })
+      } catch (error) {
+        const failure = routeError(error, '项目级 workflow 运行记录')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/workflows/project/:projectId', {
+    method: 'DELETE',
+    handler: async c => {
+      try {
+        workflowRuntime!.dispose(c.req.param('projectId'))
+        return c.json({ project_id: c.req.param('projectId'), disposed: true })
+      } catch (error) {
+        const failure = routeError(error, '项目级 workflow 清理')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },
   }),
 ]
 
+let workflowRuntime: ProjectWorkflowRuntime | null = null
+
 export const mastra = new Mastra({
   storage,
   observability,
   logger: false,
-  agents: { ideaClarificationAgent, projectSlugAgent, supervisionIntentAgent, experimentPlanningAgent, researchCoordinatorAgent },
+  agents: { ideaClarificationAgent, projectSlugAgent, supervisionIntentAgent, experimentPlanningAgent, researchCoordinatorAgent, workflowEditAgent },
   scorers: { ideaClarificationContractScorer },
   tools: { inspectIdeaDraftTool },
-  workflows: { researchBootstrapWorkflow, projectChatWorkflow, supervisionReportsWorkflow, approvalGateWorkflow },
   server: {
     host: '127.0.0.1', port: 4111, studioHost: '127.0.0.1', studioPort: 4111,
     build: { swaggerUI: true, openAPIDocs: true }, apiRoutes,
   },
 })
+
+workflowRuntime = new ProjectWorkflowRuntime(mastra)
+void workflowRuntime.start()

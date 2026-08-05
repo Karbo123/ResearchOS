@@ -12,11 +12,12 @@ import {
   approvalDecision, chatRequest, documentModelSettingsRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
+  workflowEditProposalRequest,
 } from './contracts.js'
 import { audit, database, migrate, one, rows } from './database.js'
 import { cancelRun, submitRun } from './experiment-runner.js'
 import { ApiError, errorResponse, jsonBody } from './http.js'
-import { mastraJson } from './mastra-client.js'
+import { mastraGet, mastraJson } from './mastra-client.js'
 import { privateModelSettings, publicDocumentSettings, publicImageGenerationSettings, publicModelSettings, publicProxySettings, publicVisionSettings, saveDocumentSettings, saveImageGenerationSettings, saveModelSettings, saveProxySettings, saveVisionSettings } from './model-settings.js'
 import { publicProjectDocumentSettings, publicProjectImageGenerationSettings, publicProjectModelSettings, publicProjectVisionSettings, publicProjectVoiceSettings, saveProjectDocumentSettings, saveProjectImageGenerationSettings, saveProjectModelSettings, saveProjectVisionSettings, saveProjectVoiceSettings } from './project-settings.js'
 import { testModelConnection } from './model-test.js'
@@ -31,7 +32,9 @@ import { ingestEvidence } from './evidence-service.js'
 import { createCompileProposal, createPaperDraftProposal, createPaperSectionProposal, revisePaperSection, translatePaperSection } from './paper-service.js'
 import { paperWorkspaceDetail } from './paper-workspace-service.js'
 import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.js'
+import { assertWorkflowPatchValid, createWorkflowEditProposal } from './workflow-edit-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
+import { startReportScheduler } from './report-scheduler.js'
 import { scanFile } from './malware-scanner.js'
 import { canonicalRepositoryUrl, discoverRepositoryCandidates, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
@@ -157,6 +160,9 @@ async function chatTurn(input: z.infer<typeof chatRequest>) {
       const proposalId = crypto.randomUUID()
       await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'config_change', input.message, 'Add project policy', { rule: modelResult.result.policy_rule }])
       actionRequired = proposalId
+    } else if (modelResult.result.intent === 'workflow_change_request') {
+      const workflowProposal = await createWorkflowEditProposal(projectId, input.message, project as Record<string, unknown>)
+      actionRequired = workflowProposal.proposal_id
     }
     await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [assistantMessageId, session.id, 'assistant', reply, { model_tier: tier, intent: modelResult.result.intent }])
     return { session_id: session.id, project_id: projectId, phase: 'supervising', reply, spec: null, missing_fields: [], action_required: actionRequired, model_tier: 'document', model: documentResult.route.model, reasoning_effort: documentResult.route.reasoning_effort, clarification_mode: input.clarification_mode }
@@ -415,6 +421,7 @@ app.get('/api/projects', async context => {
   if (status && !['active', 'paused', 'cancelled'].includes(status)) throw new ApiError(422, 'invalid_project_status', '项目状态筛选无效。')
   return context.json(await listProjectSummaries(status || undefined))
 })
+app.get('/api/projects/:projectRef/id', async context => context.json({ id: await projectIdForReference(context.req.param('projectRef')) }))
 app.patch('/api/projects/order', async context => {
   const body = await jsonBody(context, projectOrderRequest)
   const ordered = await reorderProjectGroup(body.project_ids)
@@ -698,6 +705,12 @@ app.post('/api/projects/:projectId/experiment-plan', async context => {
   return context.json({ proposal_id: proposalId, status: 'pending' }, 201)
 })
 
+app.post('/api/projects/:projectId/workflow-edit-proposal', async context => {
+  const projectId = uuid.parse(context.req.param('projectId'))
+  const body = await jsonBody(context, workflowEditProposalRequest)
+  return context.json(await createWorkflowEditProposal(projectId, body.instruction, body.project_context), 201)
+})
+
 app.post('/api/proposals/:proposalId/decision', async context => {
   const proposalId = uuid.parse(context.req.param('proposalId'))
   const body = await jsonBody(context, approvalDecision)
@@ -712,6 +725,7 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   let gitCommit: string | null = null
   let lineageInvalidation: unknown = null
   if (body.decision === 'approved' && proposal.kind === 'code_patch') {
+    if (proposal.payload.patch_kind === 'workflow') await assertWorkflowPatchValid(proposal.project_id, proposal.payload)
     const previousGitCommit = typeof proposal.payload.base_git_commit === 'string' ? proposal.payload.base_git_commit : null
     gitCommit = applyApprovedPatch(proposal.project_id, proposal.payload, body.actor)
     if (previousGitCommit) lineageInvalidation = await invalidateFromNodes(proposal.project_id, [{ type: 'git_commit', id: previousGitCommit }], 'approved_code_change', body.actor)
@@ -979,6 +993,14 @@ app.post('/api/projects/:projectId/claim-reviews/:reviewId/decision', async cont
   return context.json({ id: reviewId, project_id: projectId, status: body.decision, evidence_status: 'page_quote_requires_claim_review' })
 })
 app.get('/api/projects/:projectId/audit', async context => context.json(await rows('SELECT * FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC', [await projectIdForReference(context.req.param('projectId'))])))
+app.get('/api/projects/:projectId/workflow-graph', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json(await mastraGet(`/internal/workflows/project/${projectId}/graph`))
+})
+app.get('/api/projects/:projectId/workflow-runs', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json(await mastraGet(`/internal/workflows/project/${projectId}/runs`))
+})
 app.post('/api/projects/:projectId/state', async context => {
   const projectId = uuid.parse(context.req.param('projectId'))
   const body = await jsonBody(context, projectStateRequest)
@@ -1129,4 +1151,5 @@ if (!isTestRuntime) {
   const port = Number(process.env.RESEARCH_API_PORT || 8080)
   serve({ fetch: app.fetch, hostname: '127.0.0.1', port }, info => console.log(`Research OS native TypeScript server: http://127.0.0.1:${info.port}`))
   startTaskWorker()
+  startReportScheduler()
 }

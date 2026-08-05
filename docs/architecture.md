@@ -24,6 +24,10 @@ flowchart LR
 
 Mastra can call only fixed high-level loopback endpoints. Agents do not receive arbitrary file, process, SQL, or network tools. A model response cannot become an execution command.
 
+## Project Workflow Boundary
+
+Each project owns exactly one workflow source at `projects/<id>/workflow.ts`, committed in the project-local Git and initialized from the default template. The Mastra process runs a project workflow loader that polls these files, compiles changed sources into `runtime/workflow-cache/<id>/`, validates the manifest, strict input/output schema, unique graph IDs, import allowlist, and a dry run, then atomically replaces the active version. Suspended runs stay pinned to the version that created them. `workflow.ts` may import only `@research-os/workflow-kit`, `zod`, and the Mastra workflow API; filesystem, network, process, dynamic import, and credential patterns are rejected. Workflow edits are generated as reviewable diffs, validated in a temporary workspace, approved, written, and committed to the project Git before hot loading. Run records are currently persisted in `runtime/workflow-runs.json`.
+
 ## Related Work Boundary
 
 `apps/server/src/related-work/` owns the TypeScript source-adapter boundary and project-scoped related-work service. Crossref, OpenAlex, Semantic Scholar, DBLP, and arXiv search adapters return strict paper candidates and source-attempt records; Crossref, OpenAlex, and Semantic Scholar also return reference batches with ranking signals. `related_work_seeds`, `related_work_candidates`, `related_work_candidate_sources`, `related_work_source_attempts`, `related_work_recursive_runs`, `related_work_run_events`, and `related_work_citation_edges` keep seed inputs, provider evidence, approvals, progress, failures, and graph edges inside one project scope. A failed provider remains a structured failure. The user's `D:\auto-related-work` is an algorithm and test reference only; its Python files, runtime, proxy tunnel, keys, and business modules are not dependencies.

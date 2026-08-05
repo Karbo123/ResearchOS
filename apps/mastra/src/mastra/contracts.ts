@@ -66,7 +66,7 @@ export const supervisionIntentSchema = z.object({
   intent: z.enum([
     'explanation', 'advice', 'change_request', 'policy_change',
     'pause_request', 'resume_request', 'cancel_request',
-    'approval_request', 'rejection_request', 'ambiguous',
+    'approval_request', 'rejection_request', 'workflow_change_request', 'ambiguous',
   ]),
   target_field: z.enum([
     'title', 'research_question', 'domain', 'available_data', 'ethics_and_compliance',
@@ -75,6 +75,21 @@ export const supervisionIntentSchema = z.object({
   policy_rule: z.string().max(2000).nullable(),
   clarification_question: z.string().max(2000).nullable(),
   assistant_reply: z.string().min(1).max(6000),
+}).strict()
+
+export const workflowEditRequestSchema = z.object({
+  project_id: z.string().uuid(),
+  instruction: z.string().trim().min(5).max(12_000),
+  current_source: z.string().min(1).max(300_000),
+  project_context: z.record(z.string(), z.unknown()).default({}),
+  tier: modelTierSchema.default('complex'),
+}).strict()
+
+export const workflowEditResultSchema = z.object({
+  summary: z.string().min(1).max(2000),
+  diff: z.string().min(1).max(120_000),
+  affected_step_ids: z.array(z.string()).max(200),
+  planned_validation: z.array(z.string()).max(20),
 }).strict()
 
 export const documentReplyRequestSchema = z.object({
@@ -234,55 +249,4 @@ export const coordinatorResultSchema = z.object({
   }).strict()).max(3),
   blocked_questions: z.array(z.string()).max(12),
   next_action: z.enum(['clarify', 'review_evidence', 'draft_plan', 'await_approval']),
-}).strict()
-
-export const researchWorkflowInputSchema = z.object({
-  project_id: z.string().uuid(),
-  task_id: z.string().uuid(),
-  idempotency_key: z.string().min(1).max(500),
-}).strict()
-
-export const chatWorkflowInputSchema = z.object({
-  session_id: z.string().uuid().nullable().optional(),
-  project_id: z.string().uuid().nullable().optional(),
-  message: z.string().min(1).max(20000),
-  attachments: z.array(z.object({
-    name: z.string(),
-    artifact_id: z.string().uuid().nullable().optional(),
-  }).strict()).max(50),
-  clarification_mode: z.enum(['automatic', 'detailed']).default('automatic'),
-}).strict()
-
-export const reportWorkflowInputSchema = z.object({
-  period: z.enum(['daily', 'weekly']),
-}).strict()
-
-export const approvalGateInputSchema = z.object({
-  project_id: z.string().uuid(),
-  proposal_id: z.string().uuid(),
-  tool_name: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9_.:-]+$/),
-  args_fingerprint: z.string().regex(/^[0-9a-f]{64}$/),
-  policy_version: z.string().trim().min(1).max(120),
-  actor: z.string().trim().min(1).max(200),
-  reason: z.string().trim().min(3).max(2000),
-  mastra_run_id: z.string().min(1).max(200).optional(),
-}).strict()
-
-export const approvalGateResumeSchema = z.object({
-  approved: z.boolean(),
-  actor: z.string().trim().min(1).max(200),
-  comment: z.string().max(4000).nullable().optional(),
-}).strict()
-
-export const approvalGateRequestSchema = approvalGateInputSchema.extend({ run_id: z.string().min(1).max(200).optional() }).strict()
-export const approvalGateResumeRequestSchema = approvalGateResumeSchema.extend({ run_id: z.string().min(1).max(200) }).strict()
-
-export const approvalGateOutputSchema = z.object({
-  status: z.enum(['approved', 'rejected']),
-  project_id: z.string().uuid(),
-  proposal_id: z.string().uuid(),
-  tool_name: z.string(),
-  args_fingerprint: z.string(),
-  policy_version: z.string(),
-  decision: z.unknown(),
 }).strict()

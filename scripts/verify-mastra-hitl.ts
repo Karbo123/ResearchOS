@@ -37,7 +37,8 @@ const proposal = await request<{ proposal_id: string }>(apiBase, '/api/proposals
   payload: { check: 'mastra-hitl', test_only: true },
 })
 
-const started = await request<{ status: string; run_id: string; suspended: string[]; suspend_payload: Record<string, unknown> }>(mastraBase, '/internal/workflows/approval-gate', {
+const started = await request<{ status: string; run_id: string; suspended: string[][]; suspend_payload: Record<string, unknown> }>(mastraBase, `/internal/workflows/project/${project.id}/run`, {
+  action: 'approval_gate',
   project_id: project.id,
   proposal_id: proposal.proposal_id,
   tool_name: 'acceptance.mastra_hitl_check',
@@ -52,14 +53,21 @@ for (const [key, value] of Object.entries({ project_id: project.id, proposal_id:
   if (payload[key] !== value) throw new Error(`Mastra suspend payload lost ${key}`)
 }
 
-const resumed = await request<{ status: string; run_id: string; result: { status: string; project_id: string; proposal_id: string; tool_name: string; args_fingerprint: string; policy_version: string } }>(mastraBase, '/internal/workflows/approval-gate/resume', {
+const resumed = await request<{ status: string; run_id: string; result: {
+  status: string
+  project_id: string
+  action: string
+  result: { decision: string; proposal_id: string; tool_name: string; args_fingerprint: string; policy_version: string }
+} }>(mastraBase, `/internal/workflows/project/${project.id}/resume`, {
   run_id: started.run_id,
-  approved: false,
-  actor: 'acceptance-test',
-  comment: 'Reject the test-only proposal after verifying the resume path.',
+  resume: {
+    approved: false,
+    actor: 'acceptance-test',
+    comment: 'Reject the test-only proposal after verifying the resume path.',
+  },
 })
-if (resumed.status !== 'rejected' || resumed.run_id !== started.run_id || resumed.result.status !== 'rejected') throw new Error('Mastra approval workflow did not resume as a rejection')
-if (resumed.result.project_id !== project.id || resumed.result.proposal_id !== proposal.proposal_id || resumed.result.tool_name !== 'acceptance.mastra_hitl_check' || resumed.result.args_fingerprint !== argsFingerprint || resumed.result.policy_version !== 'acceptance-v1') throw new Error('Mastra approval result lost its audit binding')
+if (resumed.status !== 'success' || resumed.run_id !== started.run_id || resumed.result.status !== 'success') throw new Error('Mastra approval workflow did not resume as a success wrapper')
+if (resumed.result.result.decision !== 'rejected' || resumed.result.result.proposal_id !== proposal.proposal_id || resumed.result.result.tool_name !== 'acceptance.mastra_hitl_check' || resumed.result.result.args_fingerprint !== argsFingerprint || resumed.result.result.policy_version !== 'acceptance-v1') throw new Error('Mastra approval result lost its audit binding')
 
 const detail = await request<{ proposals: Array<{ id: string; status: string }> }>(apiBase, `/api/projects/${project.id}`)
 const stored = detail.proposals.find(item => item.id === proposal.proposal_id)
