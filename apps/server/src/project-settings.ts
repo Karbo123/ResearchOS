@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import {
   documentModelSettingsRequest,
@@ -12,7 +12,7 @@ import {
   type VoiceProvider,
 } from './contracts.js'
 import { privateModelSettings } from './model-settings.js'
-import { runtimeRoot } from './paths.js'
+import { pathInside, projectsRoot, runtimeRoot } from './paths.js'
 import { envDefaults as envVoiceDefaults } from './voice-settings.js'
 
 interface TierSettings {
@@ -63,7 +63,7 @@ interface ProjectSettings {
   voice?: Partial<ProjectVoiceSettings>
 }
 
-const projectSettingsPath = resolve(runtimeRoot, 'project-settings.json')
+const legacyProjectSettingsPath = resolve(runtimeRoot, 'project-settings.json')
 
 function atomicWrite(path: string, value: unknown): void {
   mkdirSync(dirname(path), { recursive: true })
@@ -72,26 +72,52 @@ function atomicWrite(path: string, value: unknown): void {
   renameSync(temporary, path)
 }
 
-function readProjectOverrides(): Record<string, ProjectSettings> {
-  if (!existsSync(projectSettingsPath)) return {}
+function projectSettingsPath(projectId: string): string {
+  return pathInside(projectsRoot, projectId, '.researchos', 'model-settings.json')
+}
+
+function normalizeProjectSettings(value: unknown): ProjectSettings {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const source = value as Partial<ProjectSettings>
+  const result: ProjectSettings = {}
+  if (source.model && typeof source.model === 'object') result.model = source.model
+  if (source.voice && typeof source.voice === 'object') result.voice = source.voice
+  return result
+}
+
+function legacyProjectSettings(projectId: string): ProjectSettings {
+  if (!existsSync(legacyProjectSettingsPath)) return {}
   try {
-    const parsed = JSON.parse(readFileSync(projectSettingsPath, 'utf8')) as Record<string, Partial<ProjectSettings>>
-    const result: Record<string, ProjectSettings> = {}
-    for (const [projectId, value] of Object.entries(parsed)) {
-      if (!value || typeof value !== 'object') continue
-      const entry: ProjectSettings = {}
-      if (value.model && typeof value.model === 'object') entry.model = value.model
-      if (value.voice && typeof value.voice === 'object') entry.voice = value.voice
-      result[projectId] = entry
-    }
-    return result
+    const parsed = JSON.parse(readFileSync(legacyProjectSettingsPath, 'utf8')) as Record<string, Partial<ProjectSettings>>
+    return normalizeProjectSettings(parsed[projectId])
   } catch {
     return {}
   }
 }
 
-function writeProjectOverrides(all: Record<string, ProjectSettings>): void {
-  atomicWrite(projectSettingsPath, all)
+function readProjectOverrides(projectId: string): ProjectSettings {
+  const path = projectSettingsPath(projectId)
+  if (existsSync(path)) {
+    try {
+      return normalizeProjectSettings(JSON.parse(readFileSync(path, 'utf8')))
+    } catch {
+      return {}
+    }
+  }
+  return legacyProjectSettings(projectId)
+}
+
+function writeProjectOverrides(projectId: string, value: ProjectSettings): void {
+  atomicWrite(projectSettingsPath(projectId), value)
+  try {
+    if (!existsSync(legacyProjectSettingsPath)) return
+    const parsed = JSON.parse(readFileSync(legacyProjectSettingsPath, 'utf8')) as Record<string, unknown>
+    if (!parsed[projectId]) return
+    delete parsed[projectId]
+    atomicWrite(legacyProjectSettingsPath, parsed)
+  } catch {
+    // Legacy cleanup is best-effort; the canonical project file is authoritative.
+  }
 }
 
 function normalizeProvider(value: string | undefined | null): VoiceProvider {
@@ -141,11 +167,11 @@ function mergeImage(base: ImageGenerationSettings, saved: Partial<ImageGeneratio
 }
 
 function savedModel(projectId: string): Partial<ProjectModelSettings> | undefined {
-  return readProjectOverrides()[projectId]?.model
+  return readProjectOverrides(projectId).model
 }
 
 function savedVoice(projectId: string): Partial<ProjectVoiceSettings> | undefined {
-  return readProjectOverrides()[projectId]?.voice
+  return readProjectOverrides(projectId).voice
 }
 
 export function privateProjectModelSettings(projectId: string): ProjectModelSettings {
@@ -176,8 +202,8 @@ export function privateProjectVoiceSettings(projectId: string): ProjectVoiceSett
 }
 
 function sourceOf(projectId: string, category: 'model' | 'voice'): 'project_override' | 'env_default' {
-  const overrides = readProjectOverrides()[projectId]
-  const item = overrides?.[category]
+  const overrides = readProjectOverrides(projectId)
+  const item = category === 'model' ? overrides.model : overrides.voice
   return item && typeof item === 'object' && Object.keys(item).length > 0 ? 'project_override' : 'env_default'
 }
 
@@ -266,7 +292,7 @@ export function publicProjectVoiceSettings(projectId: string) {
 
 export function saveProjectModelSettings(projectId: string, input: unknown) {
   const parsed = projectModelSettingsRequest.parse(input)
-  const overrides = readProjectOverrides()
+  const overrides = readProjectOverrides(projectId)
   const previous = savedModel(projectId) || {}
   const current = privateProjectModelSettings(projectId)
   const next: Partial<ProjectModelSettings> = {
@@ -277,14 +303,14 @@ export function saveProjectModelSettings(projectId: string, input: unknown) {
   if (previous.document) next.document = previous.document
   if (previous.vision) next.vision = previous.vision
   if (previous.image_generation) next.image_generation = previous.image_generation
-  overrides[projectId] = { ...overrides[projectId], model: next }
-  writeProjectOverrides(overrides)
+  overrides.model = next
+  writeProjectOverrides(projectId, overrides)
   return publicProjectModelSettings(projectId)
 }
 
 export function saveProjectDocumentSettings(projectId: string, input: unknown) {
   const parsed = documentModelSettingsRequest.parse(input)
-  const overrides = readProjectOverrides()
+  const overrides = readProjectOverrides(projectId)
   const current = privateProjectModelSettings(projectId)
   const previous = savedModel(projectId) || {}
   const model: Partial<ProjectModelSettings> = {
@@ -295,14 +321,14 @@ export function saveProjectDocumentSettings(projectId: string, input: unknown) {
       key: parsed.key.trim() || current.document.key,
     },
   }
-  overrides[projectId] = { ...overrides[projectId], model }
-  writeProjectOverrides(overrides)
+  overrides.model = model
+  writeProjectOverrides(projectId, overrides)
   return publicProjectDocumentSettings(projectId)
 }
 
 export function saveProjectVisionSettings(projectId: string, input: unknown) {
   const parsed = visionModelSettingsRequest.parse(input)
-  const overrides = readProjectOverrides()
+  const overrides = readProjectOverrides(projectId)
   const current = privateProjectModelSettings(projectId)
   const previous = savedModel(projectId) || {}
   const model: Partial<ProjectModelSettings> = {
@@ -313,14 +339,14 @@ export function saveProjectVisionSettings(projectId: string, input: unknown) {
       key: parsed.key.trim() || current.vision.key,
     },
   }
-  overrides[projectId] = { ...overrides[projectId], model }
-  writeProjectOverrides(overrides)
+  overrides.model = model
+  writeProjectOverrides(projectId, overrides)
   return publicProjectVisionSettings(projectId)
 }
 
 export function saveProjectImageGenerationSettings(projectId: string, input: unknown) {
   const parsed = imageGenerationSettingsRequest.parse(input)
-  const overrides = readProjectOverrides()
+  const overrides = readProjectOverrides(projectId)
   const current = privateProjectModelSettings(projectId)
   const previous = savedModel(projectId) || {}
   const model: Partial<ProjectModelSettings> = {
@@ -333,14 +359,14 @@ export function saveProjectImageGenerationSettings(projectId: string, input: unk
       quality: parsed.quality,
     },
   }
-  overrides[projectId] = { ...overrides[projectId], model }
-  writeProjectOverrides(overrides)
+  overrides.model = model
+  writeProjectOverrides(projectId, overrides)
   return publicProjectImageGenerationSettings(projectId)
 }
 
 export function saveProjectVoiceSettings(projectId: string, input: unknown) {
   const parsed = voiceSettingsRequest.parse(input)
-  const overrides = readProjectOverrides()
+  const overrides = readProjectOverrides(projectId)
   const current = privateProjectVoiceSettings(projectId)
   const next: ProjectVoiceSettings = {
     provider: normalizeProvider(parsed.provider),
@@ -348,14 +374,21 @@ export function saveProjectVoiceSettings(projectId: string, input: unknown) {
     url: parsed.url.trim() || current.url,
     key: parsed.key.trim() || current.key,
   }
-  overrides[projectId] = { ...overrides[projectId], voice: next }
-  writeProjectOverrides(overrides)
+  overrides.voice = next
+  writeProjectOverrides(projectId, overrides)
   return publicProjectVoiceSettings(projectId)
 }
 
 export function removeProjectSettings(projectId: string): void {
-  const overrides = readProjectOverrides()
-  if (!overrides[projectId]) return
-  delete overrides[projectId]
-  writeProjectOverrides(overrides)
+  const path = projectSettingsPath(projectId)
+  if (existsSync(path)) rmSync(path, { force: true })
+  try {
+    if (!existsSync(legacyProjectSettingsPath)) return
+    const parsed = JSON.parse(readFileSync(legacyProjectSettingsPath, 'utf8')) as Record<string, unknown>
+    if (!parsed[projectId]) return
+    delete parsed[projectId]
+    atomicWrite(legacyProjectSettingsPath, parsed)
+  } catch {
+    // Removal is best-effort for the legacy runtime file.
+  }
 }

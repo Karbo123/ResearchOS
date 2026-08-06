@@ -15,7 +15,7 @@ import { Topbar } from './components/Topbar'
 import { HomeDashboard } from './components/HomeDashboard'
 import { ProjectView } from './components/ProjectView'
 import { ProjectDrawer } from './components/ProjectDrawer'
-import { AREA_DEFAULT_TAB, normalizeTab, resolveWorkspaceLocation, TAB_AREA, workspacePath } from './navigation'
+import { AREA_DEFAULT_TAB, AREA_LABEL_KEYS, normalizeTab, resolveWorkspaceLocation, TAB_AREA, TAB_LABEL_KEYS, WORKSPACE_TAB_META, workspacePath, workspaceScopeKey } from './navigation'
 import { ModelSettingsModal } from './components/ModelSettingsModal'
 import { MemoryGraphModal } from './components/MemoryGraphModal'
 import { NotFoundView } from './components/NotFoundView'
@@ -68,13 +68,14 @@ export function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const [health, setHealth] = useState<'connecting' | 'online' | 'offline'>('connecting')
   const [toast, setToast] = useState<string | null>(null)
-  const [projectMessages, setProjectMessages] = useState<ChatMessage[]>([])
+  const [projectMessages, setProjectMessages] = useState<Record<string, ChatMessage[]>>({})
   const [projectChatBusy, setProjectChatBusy] = useState(false)
-  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [sessionIdsByScope, setSessionIdsByScope] = useState<Record<string, string | null>>({})
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [memoryOpen, setMemoryOpen] = useState(false)
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null)
   const [mobileChatOpen, setMobileChatOpen] = useState(false)
+  const [contentFullscreen, setContentFullscreen] = useState(false)
   const [notFoundPath, setNotFoundPath] = useState<string | null>(null)
   const [homeLoading, setHomeLoading] = useState(true)
   const [homeError, setHomeError] = useState<string | null>(null)
@@ -90,7 +91,7 @@ export function App() {
   })
 
   const projectChatBusyRef = useRef(false)
-  const sessionIdRef = useRef<string | null>(null)
+  const loadedChatScopesRef = useRef<Set<string>>(new Set())
   const activeProjectIdRef = useRef<string | null>(null)
   const toastTimerRef = useRef<number | null>(null)
   const pinningProjectIdsRef = useRef<Set<string>>(new Set())
@@ -134,11 +135,6 @@ export function App() {
     }
   }
 
-  const setActiveSession = (id: string | null) => {
-    sessionIdRef.current = id
-    setSessionId(id)
-  }
-
   const recordLeaveCurrentProject = () => {
     const currentId = activeProjectIdRef.current
     if (!currentId) return
@@ -149,12 +145,14 @@ export function App() {
     recordLeaveCurrentProject()
     setProjectId(null)
     setProject(null)
-    setActiveSession(null)
     activeProjectIdRef.current = null
     setView('home')
     setActiveArea('overview')
     setActiveTab('overview')
-    setProjectMessages([])
+    setContentFullscreen(false)
+    setProjectMessages({})
+    setSessionIdsByScope({})
+    loadedChatScopesRef.current.clear()
     setMobileChatOpen(false)
     setProjectDrawerOpen(false)
     setHomeDrawerOpen(false)
@@ -171,14 +169,16 @@ export function App() {
         recordLeaveCurrentProject()
       }
       if (projectId !== detail.id) {
-        setProjectMessages([])
+        setProjectMessages({})
+        setSessionIdsByScope({})
+        loadedChatScopesRef.current.clear()
         setMobileChatOpen(false)
       }
       setProjectId(detail.id)
       activeProjectIdRef.current = detail.id
       setProject(detail)
-      setActiveSession(detail.session_id || sessionIdRef.current)
       setView('project')
+      setContentFullscreen(false)
       setProjectDrawerOpen(false)
       setHomeDrawerOpen(false)
       if (!options?.preserveTab) {
@@ -268,6 +268,23 @@ export function App() {
     }
   }
 
+  const renameProject = async (nextTitle: string) => {
+    if (!project) return
+    const title = nextTitle.trim()
+    if (!title) return
+    try {
+      const result = await api<{ id: string; slug: string; title: string }>(`/api/projects/${encodeURIComponent(project.id)}/title`, {
+        method: 'PATCH',
+        body: JSON.stringify({ title }),
+      })
+      setProject(current => current && current.id === result.id ? { ...current, title: result.title } : current)
+      setProjects(current => current.map(item => item.id === result.id ? { ...item, title: result.title } : item))
+      showToast(t('app.projectRenamed'))
+    } catch (error) {
+      showToast(errorMessage(error))
+    }
+  }
+
   const requestDeleteProject = (target: ProjectSummary) => {
     setDeleteProjectTarget(projects.find(project => project.id === target.id) || target)
   }
@@ -301,31 +318,43 @@ export function App() {
 
   const sendProjectChat = async (message: string) => {
     if (projectChatBusyRef.current || !project) return
+    const scope = workspaceScopeKey(activeArea, activeTab)
     projectChatBusyRef.current = true
     setProjectChatBusy(true)
-    setProjectMessages(previous => [
+    setProjectMessages(previous => ({
       ...previous,
-      { id: nextMessageId(), role: 'user', text: message },
-    ])
+      [scope]: [...(previous[scope] || []), { id: nextMessageId(), role: 'user', text: message }],
+    }))
     try {
       const result = await api<Record<string, any>>('/api/chat', {
         method: 'POST',
-        body: JSON.stringify({ session_id: sessionIdRef.current, project_id: project.id, message }),
+        body: JSON.stringify({
+          session_id: sessionIdsByScope[scope] ?? null,
+          project_id: project.id,
+          message,
+          workspace_area: activeArea,
+          workspace_tab: activeTab,
+          workspace_label: t(TAB_LABEL_KEYS[activeTab]),
+        }),
       })
       const routeMeta = result.model
         ? `${result.model_tier || 'adaptive'} · ${result.model} · reasoning ${result.reasoning_effort || 'default'}`
         : ''
-      setProjectMessages(previous => [
+      setSessionIdsByScope(previous => ({ ...previous, [scope]: result.session_id || previous[scope] || null }))
+      setProjectMessages(previous => ({
         ...previous,
-        { id: nextMessageId(), role: 'assistant', text: result.reply || '', meta: routeMeta || undefined },
-      ])
+        [scope]: [...(previous[scope] || []), { id: nextMessageId(), role: 'assistant', text: result.reply || '', meta: routeMeta || undefined }],
+      }))
       if (result.action_required) {
         await refreshProject()
         setActiveTab('approvals')
       }
     } catch (error) {
       const message = errorMessage(error)
-      setProjectMessages(previous => [...previous, { id: nextMessageId(), role: 'error', text: message }])
+      setProjectMessages(previous => ({
+        ...previous,
+        [scope]: [...(previous[scope] || []), { id: nextMessageId(), role: 'error', text: message }],
+      }))
       showToast(message)
     } finally {
       projectChatBusyRef.current = false
@@ -397,6 +426,30 @@ export function App() {
   }, [])
 
   useEffect(() => {
+    if (!projectId) return
+    const scope = workspaceScopeKey(activeArea, activeTab)
+    if (loadedChatScopesRef.current.has(scope)) return
+    loadedChatScopesRef.current.add(scope)
+    let cancelled = false
+    api<{ session_id: string | null; messages: ChatMessage[] }>(
+      `/api/projects/${encodeURIComponent(projectId)}/chat-session?area=${encodeURIComponent(activeArea)}&tab=${encodeURIComponent(activeTab)}`,
+    )
+      .then(result => {
+        if (cancelled) return
+        setSessionIdsByScope(previous => (
+          previous[scope] ? previous : { ...previous, [scope]: result.session_id }
+        ))
+        setProjectMessages(previous => (
+          previous[scope]?.length ? previous : { ...previous, [scope]: result.messages }
+        ))
+      })
+      .catch(() => {
+        if (!cancelled) loadedChatScopesRef.current.delete(scope)
+      })
+    return () => { cancelled = true }
+  }, [projectId, activeArea, activeTab])
+
+  useEffect(() => {
     if (!projectDrawerOpen || view !== 'project') return
     const closeDrawer = (event: PointerEvent) => {
       const target = event.target
@@ -432,7 +485,7 @@ export function App() {
   }
 
   return (
-    <div className={`app-shell${view === 'project' ? ' project-mode' : ''}`} style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}>
+    <div className={`app-shell${view === 'project' ? ' project-mode' : ''}${contentFullscreen ? ' content-fullscreen' : ''}`} style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}>
       {view === 'project' ? (
         <ProjectDrawer
           open={projectDrawerOpen}
@@ -505,6 +558,18 @@ export function App() {
             refreshing={projectRefreshing}
             onRefresh={() => void refreshProject()}
             project={project}
+            fullscreen={contentFullscreen}
+            onRenameTitle={renameProject}
+            contextTitle={(
+              <span className="topbar-context-breadcrumb">
+                <span className="topbar-context-area">{t(AREA_LABEL_KEYS[activeArea])}</span>
+                <span className="topbar-context-separator" aria-hidden="true">/</span>
+                <span className="topbar-context-tab">
+                  {WORKSPACE_TAB_META[activeTab].icon}
+                  {t(WORKSPACE_TAB_META[activeTab].labelKey)}
+                </span>
+              </span>
+            )}
           />
         ) : null}
         {view === 'project' ? (
@@ -513,13 +578,20 @@ export function App() {
               project={project}
               activeArea={activeArea}
               activeTab={activeTab}
+              fullscreen={contentFullscreen}
+              onToggleFullscreen={() => {
+                setContentFullscreen(previous => !previous)
+                setMobileChatOpen(false)
+                setProjectDrawerOpen(false)
+              }}
               onAreaChange={navigateArea}
               onTabChange={navigateTab}
               onRefresh={refreshProject}
               showToast={showToast}
               onRequestConfirm={requestConfirm}
               searchCandidates={[]}
-              chatMessages={projectMessages}
+              chatMessages={projectMessages[workspaceScopeKey(activeArea, activeTab)] || []}
+              chatContextLabel={t(TAB_LABEL_KEYS[activeTab])}
               chatBusy={projectChatBusy}
               onSendProjectChat={sendProjectChat}
               mobileChatOpen={mobileChatOpen}

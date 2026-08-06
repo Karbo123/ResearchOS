@@ -452,6 +452,9 @@ export function createProjectConversationStep(ctx: ProjectWorkflowContext) {
           message: input.message,
           attachments: input.attachments ?? [],
           clarification_mode: input.clarification_mode ?? 'automatic',
+          workspace_area: input.workspace_area,
+          workspace_tab: input.workspace_tab,
+          workspace_label: input.workspace_label,
         }),
       }, ctx)
     },
@@ -530,6 +533,9 @@ export function createChatStep(ctx: ProjectWorkflowContext) {
           message: input.message,
           attachments: input.attachments ?? [],
           clarification_mode: input.clarification_mode ?? 'automatic',
+          workspace_area: input.workspace_area,
+          workspace_tab: input.workspace_tab,
+          workspace_label: input.workspace_label,
         }),
       }, ctx)
     },

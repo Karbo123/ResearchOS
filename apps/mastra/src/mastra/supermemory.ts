@@ -147,7 +147,7 @@ function unauthenticatedLocalFetch(input: RequestInfo | URL, init?: RequestInit)
   return fetch(input, { ...init, headers })
 }
 
-function options(projectId: string, conversationId: string): SupermemoryMastraOptions {
+function options(projectId: string, conversationId: string, workspaceScope?: string): SupermemoryMastraOptions {
   requireSupportedEmbedding(projectId)
   const override = mastraProjectEmbeddingSettings()[projectId]
   const poolPort = override?.pool_key ? mastraEmbeddingPools()[override.pool_key]?.port : null
@@ -160,7 +160,9 @@ function options(projectId: string, conversationId: string): SupermemoryMastraOp
     apiKey,
     baseUrl,
     containerTag: `${PROJECT_TAG_PREFIX}${projectId}`,
-    customId: `research-os-session-${conversationId}`,
+    customId: workspaceScope
+      ? `research-os-session-${conversationId}-${workspaceScope.replace('/', '-')}`
+      : `research-os-session-${conversationId}`,
     mode: 'full',
     addMemory: 'always',
   }
@@ -216,10 +218,12 @@ class StrictSupermemoryInputProcessor implements Processor {
   readonly name = 'Research OS Supermemory Input'
   private readonly config: SupermemoryMastraOptions
   private readonly api: Supermemory
+  private readonly workspaceScope?: string
 
-  constructor(projectId: string, conversationId: string) {
-    this.config = options(projectId, conversationId)
+  constructor(projectId: string, conversationId: string, workspaceScope?: string) {
+    this.config = options(projectId, conversationId, workspaceScope)
     this.api = client(this.config)
+    this.workspaceScope = workspaceScope
   }
 
   async processInput(args: ProcessInputArgs) {
@@ -230,6 +234,9 @@ class StrictSupermemoryInputProcessor implements Processor {
       containerTag: this.config.containerTag,
       searchMode: 'hybrid',
       include: { relatedMemories: true, documents: true, summaries: true },
+      ...(this.workspaceScope ? {
+        filters: { AND: [{ key: 'workspace_scope', value: this.workspaceScope, filterType: 'metadata' as const }] },
+      } : {}),
       limit: 8,
     })
     const data: MemoryPromptData = {
@@ -248,10 +255,12 @@ class StrictSupermemoryOutputProcessor implements Processor {
   readonly name = 'Research OS Supermemory Output'
   private readonly config: SupermemoryMastraOptions
   private readonly api: Supermemory
+  private readonly workspaceScope?: string
 
-  constructor(projectId: string, conversationId: string) {
-    this.config = options(projectId, conversationId)
+  constructor(projectId: string, conversationId: string, workspaceScope?: string) {
+    this.config = options(projectId, conversationId, workspaceScope)
     this.api = client(this.config)
+    this.workspaceScope = workspaceScope
   }
 
   async processOutputResult(args: ProcessOutputResultArgs) {
@@ -262,17 +271,21 @@ class StrictSupermemoryOutputProcessor implements Processor {
         conversationId: this.config.customId,
         messages,
         containerTags: [this.config.containerTag],
-        metadata: { source: 'research-os', project_id: this.config.containerTag.slice(PROJECT_TAG_PREFIX.length) },
+        metadata: {
+          source: 'research-os',
+          project_id: this.config.containerTag.slice(PROJECT_TAG_PREFIX.length),
+          ...(this.workspaceScope ? { workspace_scope: this.workspaceScope } : {}),
+        },
       },
     })
     return args.messageList
   }
 }
 
-export function strictSupermemoryProcessors(projectId: string, conversationId: string): { inputProcessors?: InputProcessor[]; outputProcessors?: OutputProcessor[] } {
+export function strictSupermemoryProcessors(projectId: string, conversationId: string, workspaceScope?: string): { inputProcessors?: InputProcessor[]; outputProcessors?: OutputProcessor[] } {
   if (!enabled()) return {}
   return {
-    inputProcessors: [new StrictSupermemoryInputProcessor(projectId, conversationId)],
-    outputProcessors: [new StrictSupermemoryOutputProcessor(projectId, conversationId)],
+    inputProcessors: [new StrictSupermemoryInputProcessor(projectId, conversationId, workspaceScope)],
+    outputProcessors: [new StrictSupermemoryOutputProcessor(projectId, conversationId, workspaceScope)],
   }
 }

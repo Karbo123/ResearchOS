@@ -13,6 +13,7 @@ artifacts/
 experiments/runs/
 logs/
 source-bundles/
+.researchos/
 *.db
 *.sqlite
 *.bak
@@ -164,7 +165,14 @@ export function ensureProjectGit(projectId: string): string {
   if (!existsSync(root)) throw new ApiError(404, 'project_workspace_not_found', '项目代码工作区不存在。')
   const expectedGitDir = resolve(root, '.git')
   const gitignorePath = pathInside(root, '.gitignore')
-  if (!existsSync(gitignorePath)) writeFileSync(gitignorePath, PROJECT_GITIGNORE, 'utf8')
+  if (!existsSync(gitignorePath)) {
+    writeFileSync(gitignorePath, PROJECT_GITIGNORE, 'utf8')
+  } else {
+    const current = readFileSync(gitignorePath, 'utf8')
+    if (!current.includes('.researchos/')) {
+      writeFileSync(gitignorePath, `${current.replace(/\s*$/, '')}\n.researchos/\n`, 'utf8')
+    }
+  }
   if (existsSync(expectedGitDir)) {
     try {
       const actual = execFileSync(gitBinary(), ['rev-parse', '--absolute-git-dir'], { cwd: root, encoding: 'utf8' }).trim()
@@ -229,7 +237,7 @@ export async function projectDetail(projectId: string) {
     rows('SELECT * FROM research_comparison_candidates WHERE project_id=$1 ORDER BY created_at DESC', [projectId]),
     rows('SELECT id,project_id,actor,action,details,created_at FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC LIMIT 300', [projectId]),
   ])
-  const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 ORDER BY updated_at DESC LIMIT 1', [projectId])
+  const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 AND scope=$2 ORDER BY updated_at DESC LIMIT 1', [projectId, 'project'])
   const currentSpec = (ideas[0] as Record<string, unknown> | undefined)?.spec as Record<string, unknown> | null | undefined
   const repositoryRows = repositories as Array<Record<string, unknown>>
   const evidenceRows = evidence as Array<Record<string, unknown>>

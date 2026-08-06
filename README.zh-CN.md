@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-06-01 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-06-04 -->
 
 # Research OS
 
@@ -91,7 +91,9 @@ npm test
 
 左下角设置面板有三个一级标签：`通用`（只放外观，即界面语言与浅色/暗色主题，两者是全局设置）、`模型`（所有模型设置，按项目独立保存并随项目切换）、`系统`（全局代理）。语言与主题先进入草稿状态，只有点击“保存配置”才会真正应用；未保存就关闭会保留原值。没有打开项目时，模型页会提示先打开项目，因为代码三档、文档文本、图片识别、图片生成、Embedding 与语音识别全部都是项目级配置。
 
-代码模型内部使用 `simple` / `medium` / `complex` 三档。界面只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`，但 UI 永远不会显示这些名字。项目级运行时覆盖保存在 `runtime/project-settings.json`（0600 权限、原子写入，删除项目时一并清理）；没有覆盖时回退到项目 `.env` 默认。全局代理仍保存在 `runtime/model-settings.json`。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`runtime/project-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
+代码三档、文档文本与图片识别模型名称在填写 URL 与 API key 后会通过项目级 `model-catalog` 接口自动拉取可用模型列表，模型名使用下拉选择而不是手工输入；推理强度同样使用下拉，并优先采用网关返回的档位。列表拉取失败时保留当前值并显示结构化错误，不会静默替换模型。
+
+代码模型内部使用 `simple` / `medium` / `complex` 三档。界面档位只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档；模型名称字段会从网关自动加载为下拉列表并显示具体模型 ID。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`。项目级运行时覆盖保存在 `projects/<project-id>/.researchos/model-settings.json`（0600 权限、原子写入，删除项目时一并清理，且被项目 Git 工作区忽略）；没有覆盖时回退到项目 `.env` 默认。全局代理仍保存在 `runtime/model-settings.json`。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`projects/<project-id>/.researchos/model-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
 项目 `.env` 当前将代码模型默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
 
@@ -105,7 +107,7 @@ npm test
 
 `document` 模型用于生成可读的聊天解释和文档式文本。默认 `deepseek-v4-flash` 在当前固定网关会返回 403（`The latest version of this model is only available hosted in China and requires explicit opt in`）。这是上游模型/网关可用性错误，不是请求格式问题；在设置面板配置可用文档模型前，聊天保持失败关闭。该阻塞已登记为 TODO 的 `[!] DOC-MODEL-107`。
 
-`vision` 模型在聊天或 Idea 讨论包含图片附件时负责理解图片内容；它与其他代码档一样使用 Responses API base URL，且失败关闭，不静默换模型。`image_generation` 通过 `/images/generations` 兼容接口生成图片，界面可选择 1k/2k/4k 与 low/medium/high，默认使用最省钱的 `1:1`、`1k`、`low`、`n=1`。两类密钥都是项目级配置，只写入被忽略的 `runtime/project-settings.json`，读取接口只返回 `key_configured`。
+`vision` 模型在聊天或 Idea 讨论包含图片附件时负责理解图片内容；它与其他代码档一样使用 Responses API base URL，且失败关闭，不静默换模型。`image_generation` 通过 `/images/generations` 兼容接口生成图片，界面可选择 1k/2k/4k 与 low/medium/high，默认使用最省钱的 `1:1`、`1k`、`low`、`n=1`。两类密钥都是项目级配置，只写入被忽略的 `projects/<project-id>/.researchos/model-settings.json`，读取接口只返回 `key_configured`。
 
 每个已配置模型（代码三档、文档文本、图片识别、图片生成、语音识别）都提供“测试连接”按钮，使用最小请求体验证 URL、key 与模型是否可用；图片生成测试会提交一个最省钱的真实任务，不会下载或展示生成图片。
 

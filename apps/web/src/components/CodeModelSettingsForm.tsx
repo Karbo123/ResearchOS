@@ -4,6 +4,8 @@ import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
 import { ModelTestButton, StatusDot } from './ui'
 import { useTranslation, type TranslationKey } from '../i18n'
+import { useModelCatalog } from '../hooks/useModelCatalog'
+import { ModelSelect, ReasoningEffortSelect } from './ModelCatalogFields'
 
 const TIERS: Array<{ id: TierId; labelKey: TranslationKey; descriptionKey: TranslationKey; defaultEffort: ReasoningEffort }> = [
   { id: 'simple', labelKey: 'settings.tierLight', descriptionKey: 'settings.tierLightDescription', defaultEffort: 'low' },
@@ -37,6 +39,10 @@ export function CodeModelSettingsForm({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [dirty, setDirty] = useState(false)
+  const simpleCatalog = useModelCatalog(projectId, values?.simple?.url || '', values?.simple?.key || '')
+  const mediumCatalog = useModelCatalog(projectId, values?.medium?.url || '', values?.medium?.key || '')
+  const complexCatalog = useModelCatalog(projectId, values?.complex?.url || '', values?.complex?.key || '')
+  const catalogs = { simple: simpleCatalog, medium: mediumCatalog, complex: complexCatalog }
 
   useEffect(() => {
     setLoading(true)
@@ -145,11 +151,10 @@ export function CodeModelSettingsForm({
             <div className="model-tier-grid">
               <label>
                 {t('settings.modelName')}
-                <input
+                <ModelSelect
+                  catalog={catalogs[tier.id]}
                   value={item.model}
-                  required
-                  maxLength={200}
-                  onChange={event => update(tier.id, 'model', event.target.value)}
+                  onChange={value => update(tier.id, 'model', value)}
                 />
               </label>
               <label>
@@ -157,14 +162,11 @@ export function CodeModelSettingsForm({
                   <span>{t('settings.reasoningEffort')}</span>
                   <span className="tier-default">{t('settings.default')} {t(tier.defaultEffort === 'low' ? 'settings.low' : tier.defaultEffort === 'medium' ? 'settings.medium' : 'settings.high')}</span>
                 </span>
-                <select
+                <ReasoningEffortSelect
+                  efforts={catalogs[tier.id].reasoning_efforts}
                   value={item.reasoning_effort}
-                  onChange={event => update(tier.id, 'reasoning_effort', event.target.value as ReasoningEffort)}
-                >
-                  <option value="low">{t('settings.low')}</option>
-                  <option value="medium">{t('settings.medium')}</option>
-                  <option value="high">{t('settings.high')}</option>
-                </select>
+                  onChange={value => update(tier.id, 'reasoning_effort', value)}
+                />
               </label>
               <label>
                 {t('settings.modelUrl')}

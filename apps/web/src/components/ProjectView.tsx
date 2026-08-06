@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { BarChart3, BookOpen, CalendarDays, CheckSquare, FilePenLine, FileText, FlaskConical, GitBranch, LayoutDashboard, Library, MessageCircle, Network, Quote, Search, Waypoints } from 'lucide-react'
+import { FilePenLine, FlaskConical, LayoutDashboard, Library, Maximize2, MessageCircle, Minimize2 } from 'lucide-react'
 import type { ChatMessage, ConfirmRequest, ProjectDetail, ResearchArea, TabId } from '../types'
 import { ProjectChat } from './ProjectChat'
 import { OverviewTab } from './tabs/OverviewTab'
@@ -11,8 +11,9 @@ import { WorkflowStageTab } from './tabs/WorkflowStageTab'
 import { ExperimentWorkspace } from './tabs/ExperimentWorkspace'
 import { ResizableDivider } from './ResizableDivider'
 import { useTranslation, type TranslationKey } from '../i18n'
+import { WORKSPACE_TAB_META } from '../navigation'
 
-type ProjectTab = { id: TabId; labelKey: TranslationKey; icon: React.ReactNode }
+type ProjectTab = { id: TabId }
 type ProjectArea = { id: ResearchArea; labelKey: TranslationKey; icon: React.ReactNode; tabs: ProjectTab[] }
 
 function SlidingNav({
@@ -72,43 +73,25 @@ const PROJECT_AREAS: ProjectArea[] = [
     id: 'overview',
     labelKey: 'nav.overview',
     icon: <LayoutDashboard size={16} />,
-    tabs: [
-      { id: 'overview', labelKey: 'tab.overview', icon: <LayoutDashboard size={15} /> },
-      { id: 'idea', labelKey: 'tab.idea', icon: <MessageCircle size={15} /> },
-      { id: 'approvals', labelKey: 'tab.approvals', icon: <CheckSquare size={15} /> },
-      { id: 'reports', labelKey: 'tab.reports', icon: <CalendarDays size={15} /> },
-    ],
+    tabs: [{ id: 'overview' }, { id: 'idea' }, { id: 'approvals' }, { id: 'reports' }],
   },
   {
     id: 'related_work',
     labelKey: 'nav.relatedWork',
     icon: <Library size={16} />,
-    tabs: [
-      { id: 'literature', labelKey: 'tab.literature', icon: <BookOpen size={15} /> },
-      { id: 'visualization', labelKey: 'tab.visualization', icon: <Network size={15} /> },
-      { id: 'seed_expansion', labelKey: 'tab.seedExpansion', icon: <Search size={15} /> },
-    ],
+    tabs: [{ id: 'literature' }, { id: 'visualization' }, { id: 'seed_expansion' }],
   },
   {
     id: 'implementation',
     labelKey: 'nav.implementation',
     icon: <FlaskConical size={16} />,
-    tabs: [
-      { id: 'method', labelKey: 'tab.method', icon: <Waypoints size={15} /> },
-      { id: 'reproduction', labelKey: 'tab.reproduction', icon: <GitBranch size={15} /> },
-    ],
+    tabs: [{ id: 'method' }, { id: 'reproduction' }],
   },
   {
     id: 'paper',
     labelKey: 'nav.paper',
     icon: <FilePenLine size={16} />,
-    tabs: [
-      { id: 'introduction', labelKey: 'tab.introduction', icon: <FilePenLine size={15} /> },
-      { id: 'paper_related_work', labelKey: 'tab.paperRelatedWork', icon: <Quote size={15} /> },
-      { id: 'paper_method', labelKey: 'tab.paperMethod', icon: <FlaskConical size={15} /> },
-      { id: 'paper_experiments', labelKey: 'tab.paperExperiments', icon: <BarChart3 size={15} /> },
-      { id: 'conclusion', labelKey: 'tab.conclusion', icon: <FileText size={15} /> },
-    ],
+    tabs: [{ id: 'introduction' }, { id: 'paper_related_work' }, { id: 'paper_method' }, { id: 'paper_experiments' }, { id: 'conclusion' }],
   },
 ]
 
@@ -116,6 +99,8 @@ export function ProjectView({
   project,
   activeArea,
   activeTab,
+  fullscreen,
+  onToggleFullscreen,
   onAreaChange,
   onTabChange,
   onRefresh,
@@ -123,6 +108,7 @@ export function ProjectView({
   onRequestConfirm,
   searchCandidates,
   chatMessages,
+  chatContextLabel,
   chatBusy,
   onSendProjectChat,
   mobileChatOpen,
@@ -131,6 +117,8 @@ export function ProjectView({
   project: ProjectDetail
   activeArea: ResearchArea
   activeTab: TabId
+  fullscreen: boolean
+  onToggleFullscreen: () => void
   onAreaChange: (area: ResearchArea) => void
   onTabChange: (tab: TabId) => void
   onRefresh: () => Promise<void>
@@ -138,6 +126,7 @@ export function ProjectView({
   onRequestConfirm: (request: ConfirmRequest) => void
   searchCandidates: Array<Record<string, any>>
   chatMessages: ChatMessage[]
+  chatContextLabel: string
   chatBusy: boolean
   onSendProjectChat: (message: string) => Promise<void>
   mobileChatOpen: boolean
@@ -188,8 +177,8 @@ export function ProjectView({
             aria-current={activeTab === tab.id ? 'page' : undefined}
             onClick={() => onTabChange(tab.id)}
           >
-            {tab.icon}
-            {t(tab.labelKey)}
+            {WORKSPACE_TAB_META[tab.id].icon}
+            {t(WORKSPACE_TAB_META[tab.id].labelKey)}
           </button>
         ))}
       </SlidingNav>
@@ -199,6 +188,16 @@ export function ProjectView({
         style={{ '--project-chat-width': `${projectChatWidth}px` } as React.CSSProperties}
       >
         <div className="tab-content">
+          <button
+            className={`icon-btn tab-fullscreen-toggle${fullscreen ? ' is-active' : ''}`}
+            type="button"
+            onClick={onToggleFullscreen}
+            title={t(fullscreen ? 'layout.fullscreenExit' : 'layout.fullscreenEnter')}
+            aria-label={t(fullscreen ? 'layout.fullscreenExit' : 'layout.fullscreenEnter')}
+            aria-pressed={fullscreen}
+          >
+            {fullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          </button>
           {activeTab === 'overview' || activeTab === 'idea' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
           {activeTab === 'approvals' ? <ApprovalsTab {...tabProps} /> : null}
           {activeTab === 'reports' ? <ReportsTab {...tabProps} /> : null}
@@ -230,6 +229,7 @@ export function ProjectView({
         />
         <ProjectChat
           messages={chatMessages}
+          contextLabel={chatContextLabel}
           busy={chatBusy}
           projectId={project.id}
           onSend={onSendProjectChat}

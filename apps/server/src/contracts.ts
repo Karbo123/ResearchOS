@@ -6,6 +6,15 @@ export const projectSlug = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4
 export const clarificationMode = z.enum(['automatic', 'detailed'])
 export const modelTier = z.enum(['simple', 'medium', 'complex'])
 export type ModelTier = z.infer<typeof modelTier>
+export const workspaceArea = z.enum(['overview', 'related_work', 'implementation', 'paper'])
+export const workspaceTab = z.enum([
+  'overview', 'idea', 'approvals', 'reports',
+  'literature', 'visualization', 'seed_expansion',
+  'method', 'reproduction',
+  'introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion',
+])
+export type WorkspaceArea = z.infer<typeof workspaceArea>
+export type WorkspaceTab = z.infer<typeof workspaceTab>
 
 export const resourceConstraints = z.object({
   compute: z.string().nullable().default(null),
@@ -36,6 +45,9 @@ export const chatRequest = z.object({
   message: z.string().trim().min(1).max(20_000),
   attachments: z.array(z.object({ name: z.string(), artifact_id: uuid.nullable().optional() }).strict()).max(50).default([]),
   clarification_mode: clarificationMode.default('automatic'),
+  workspace_area: workspaceArea.optional(),
+  workspace_tab: workspaceTab.optional(),
+  workspace_label: z.string().trim().min(1).max(120).optional(),
 }).strict()
 
 export const workflowEditProposalRequest = z.object({
@@ -53,6 +65,9 @@ export const projectDeleteRequest = z.object({
 }).strict()
 export const projectPinRequest = z.object({
   pinned: z.boolean(),
+}).strict()
+export const projectRenameRequest = z.object({
+  title: z.string().trim().min(1).max(240),
 }).strict()
 export const paperSectionEditRequest = z.object({
   section_id: z.enum(['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion']),
@@ -115,6 +130,13 @@ export const modelSettingsRequest = z.object({
   proxy: proxySettings.optional(),
 }).strict()
 export const projectModelSettingsRequest = modelSettingsRequest.omit({ proxy: true })
+export const modelCatalogRequest = z.object({
+  url: z.string().url().max(500)
+    .refine(isAllowedModelUrl, 'model URL must use HTTPS or loopback/private HTTP')
+    .refine(isResponsesBaseUrl, 'model URL must be a Responses API base URL, not an operation endpoint'),
+  key: z.string().max(1000).default(''),
+}).strict()
+export type ModelCatalogRequest = z.infer<typeof modelCatalogRequest>
 export const modelTestKind = z.enum(['simple', 'medium', 'complex', 'document', 'vision', 'image', 'voice'])
 export type ModelTestKind = z.infer<typeof modelTestKind>
 export const modelTestRequest = z.object({

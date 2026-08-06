@@ -35,6 +35,14 @@ const projectChatSchema = z.object({
     artifact_id: z.string().uuid().nullable().optional(),
   }).strict()).max(50).optional(),
   clarification_mode: z.enum(['automatic', 'detailed']).optional(),
+  workspace_area: z.enum(['overview', 'related_work', 'implementation', 'paper']).optional(),
+  workspace_tab: z.enum([
+    'overview', 'idea', 'approvals', 'reports',
+    'literature', 'visualization', 'seed_expansion',
+    'method', 'reproduction',
+    'introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion',
+  ]).optional(),
+  workspace_label: z.string().trim().min(1).max(120).optional(),
 }).strict()
 
 const researchBootstrapSchema = z.object({

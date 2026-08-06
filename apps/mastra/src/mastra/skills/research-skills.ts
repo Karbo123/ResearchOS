@@ -32,6 +32,8 @@ export const supervisionIntentSkill = createSkill({
   description: 'Use to classify one existing-project message without performing the requested action.',
   instructions: `
 Choose exactly one supported intent. Do not execute, approve, change state, or invent missing details.
+The active workspace tab is supplied as workspace_context. Keep the reply and any proposed change scoped to that
+tab; do not treat content from other tabs as the active focus unless the user explicitly references it.
 A change request needs a concrete allowlisted Idea field and value. A policy change needs a concrete policy rule.
 Use workflow_change_request when the user asks to reorder, add, remove, or otherwise change the project
 workflow itself (for example moving related-work before experiments or adding a step before paper writing).
@@ -47,6 +49,7 @@ export const documentReplySkill = createSkill({
   description: 'Write clear, readable, user-facing explanations and document-style replies without claiming completed work.',
   instructions: `
 Rewrite the supplied draft or context into a concise, readable reply for the user.
+When workspace_context is supplied, keep the reply scoped to that workspace tab and its label.
 Write in the same language as the user message. Use plain language, natural paragraph breaks,
 and direct phrasing suitable for documentation or an assistant explanation.
 Do not claim that research, approvals, experiments, reports, or papers have run unless the context says they have.

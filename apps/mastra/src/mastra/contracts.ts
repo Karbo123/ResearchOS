@@ -4,6 +4,19 @@ export const modelTierSchema = z.enum(['simple', 'medium', 'complex', 'document'
 export type ModelTier = z.infer<typeof modelTierSchema>
 export const reasoningEffortSchema = z.enum(['low', 'medium', 'high'])
 const projectSlugSchema = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/)
+export const workspaceAreaSchema = z.enum(['overview', 'related_work', 'implementation', 'paper'])
+export const workspaceTabSchema = z.enum([
+  'overview', 'idea', 'approvals', 'reports',
+  'literature', 'visualization', 'seed_expansion',
+  'method', 'reproduction',
+  'introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion',
+])
+export const workspaceContextSchema = z.object({
+  area: workspaceAreaSchema,
+  tab: workspaceTabSchema,
+  label: z.string().trim().min(1).max(120),
+  scope: z.string().trim().min(1).max(120),
+}).strict()
 
 export const modelConfigSchema = z.object({
   model: z.string().min(1).max(200),
@@ -19,6 +32,7 @@ export const agentRequestContextSchema = z.object({
   clarificationMode: z.enum(['automatic', 'detailed']).optional(),
   supermemoryProjectId: projectSlugSchema.optional(),
   supermemoryConversationId: z.string().min(1).max(200).optional(),
+  supermemoryWorkspaceScope: z.string().min(1).max(120).optional(),
 }).strict()
 
 export const resourceConstraintsSchema = z.object({
@@ -99,6 +113,7 @@ export const documentReplyRequestSchema = z.object({
   draft_reply: z.string().max(6000).default(''),
   purpose: z.enum(['clarify', 'supervise']).default('supervise'),
   project_id: projectSlugSchema.optional(),
+  workspace_context: workspaceContextSchema.nullable().optional(),
 }).strict()
 export const documentReplyResultSchema = z.object({
   reply: z.string().trim().min(1).max(6000),
@@ -224,6 +239,7 @@ export const supervisionRequestSchema = z.object({
   tier: modelTierSchema,
   memory_resource: z.string().min(1).max(200).optional(),
   memory_thread: z.string().min(1).max(200).optional(),
+  workspace_context: workspaceContextSchema.nullable().optional(),
 }).strict()
 
 export const experimentPlanRequestSchema = z.object({

@@ -181,6 +181,11 @@ export interface ModelSettingsFormValues {
   reasoning_effort: ReasoningEffort
 }
 
+export interface ModelCatalogResponse {
+  models: string[]
+  reasoning_efforts: string[]
+}
+
 export interface ProjectDetail {
   id: string
   slug?: string

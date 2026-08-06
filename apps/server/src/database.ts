@@ -12,6 +12,8 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS sidebar_order INTEGER NOT NULL DEF
 CREATE TABLE IF NOT EXISTS project_slug_aliases (slug VARCHAR(120) PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE INDEX IF NOT EXISTS ix_project_slug_aliases_project ON project_slug_aliases(project_id);
 CREATE TABLE IF NOT EXISTS conversation_sessions (id UUID PRIMARY KEY, project_id VARCHAR(120) REFERENCES projects(id), phase VARCHAR(40) NOT NULL DEFAULT 'clarifying', draft JSONB NOT NULL DEFAULT '{}', pending_field VARCHAR(80), created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+ALTER TABLE conversation_sessions ADD COLUMN IF NOT EXISTS scope VARCHAR(120) NOT NULL DEFAULT 'project';
+CREATE INDEX IF NOT EXISTS ix_conversation_sessions_project_scope ON conversation_sessions(project_id, scope);
 CREATE TABLE IF NOT EXISTS messages (id UUID PRIMARY KEY, session_id UUID NOT NULL REFERENCES conversation_sessions(id), role VARCHAR(20) NOT NULL, content TEXT NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS uploaded_files (id UUID PRIMARY KEY, session_id UUID NOT NULL REFERENCES conversation_sessions(id), project_id VARCHAR(120) REFERENCES projects(id), name VARCHAR(255) NOT NULL, relative_path TEXT NOT NULL, mime_type VARCHAR(120) NOT NULL, size_bytes INTEGER NOT NULL, sha256 VARCHAR(64) NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS idea_versions (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), version INTEGER NOT NULL, spec JSONB NOT NULL, change_reason TEXT, supersedes_id UUID, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(project_id, version));
@@ -390,6 +392,7 @@ export async function migrate(): Promise<void> {
   }
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0014-project-slug-aliases') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0015-research-status-source-binding') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0017-chat-workspace-scope') ON CONFLICT DO NOTHING")
 }
 
 /**

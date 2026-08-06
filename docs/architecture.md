@@ -55,6 +55,7 @@ The paper workspace reads and edits `projects/<id>/paper/main.tex` and `referenc
 - `runtime/research-os.pglite`: embedded PostgreSQL-compatible business database.
 - `runtime/mastra.db`: Mastra workflow and memory state.
 - `runtime/model-settings.json`: ignored runtime overrides; keys are never returned by the API.
+- `projects/<id>/.researchos/model-settings.json`: ignored project-scoped model/voice overrides; keys are never returned by the API.
 - `projects/<id>`: project Git repository, Idea, paper (`paper/main.tex`, `references.bib`, `translations.json`, `cvpr.sty`), experiment source, per-project `.venv`, and project-owned files under `projects/<id>/artifacts/`.
 - `artifacts`: shared immutable or append-only acceptance files, test/operations material, backups, and legacy migration sources; it is not the live home of new project files.
 

@@ -4,6 +4,8 @@ import { api, errorMessage } from '../api'
 import type { DocumentModelSettings } from '../types'
 import { ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
+import { useModelCatalog } from '../hooks/useModelCatalog'
+import { ModelSelect } from './ModelCatalogFields'
 
 interface FormValues extends DocumentModelSettings {
   key: string
@@ -24,6 +26,7 @@ export function DocumentModelSettingsForm({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [dirty, setDirty] = useState(false)
+  const catalog = useModelCatalog(projectId, values?.url || '', values?.key || '')
 
   const load = async () => {
     setLoading(true)
@@ -106,11 +109,10 @@ export function DocumentModelSettingsForm({
               <span>{t('settings.modelName')}</span>
               <span className="tier-default">{t('documentModel.defaultModel')}</span>
             </span>
-            <input
+            <ModelSelect
+              catalog={catalog}
               value={values.model}
-              required
-              maxLength={200}
-              onChange={event => update('model', event.target.value)}
+              onChange={value => update('model', value)}
             />
           </label>
           <label>

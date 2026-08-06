@@ -1,7 +1,7 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import type { ModelConfig, ModelTier } from './contracts.js'
 import { modelConfigSchema } from './contracts.js'
-import { modelSettingsPath, projectSettingsPath } from './env.js'
+import { legacyProjectSettingsPath, modelSettingsPath, projectSettingsPath } from './env.js'
 
 const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'medium' | 'high' }> = {
   simple: { model: 'gpt-5.6-luna', reasoningEffort: 'low' },
@@ -117,10 +117,17 @@ export function loadModelConfig(tier: ModelTier, projectId?: string): ModelConfi
 
 function loadProjectModelConfig(tier: ModelTier, projectId: string): ModelConfig {
   const merged = applyGlobalModelSettings(tier, environmentSettings(tier))
+  let item: Record<string, unknown> | undefined
   try {
-    const parsed = JSON.parse(readFileSync(projectSettingsPath, 'utf8')) as Record<string, { model?: Record<string, Record<string, unknown>> }>
-    const item = parsed[projectId]?.model?.[tier]
-    if (!item || typeof item !== 'object') throw new ModelConfigurationError('invalid project settings tier')
+    const canonicalPath = projectSettingsPath(projectId)
+    if (existsSync(canonicalPath)) {
+      const parsed = JSON.parse(readFileSync(canonicalPath, 'utf8')) as { model?: Record<string, Record<string, unknown>> }
+      item = parsed.model?.[tier]
+    } else if (existsSync(legacyProjectSettingsPath)) {
+      const parsed = JSON.parse(readFileSync(legacyProjectSettingsPath, 'utf8')) as Record<string, { model?: Record<string, Record<string, unknown>> }>
+      item = parsed[projectId]?.model?.[tier]
+    }
+    if (!item || typeof item !== 'object') return validateConfig(tier, merged)
     for (const field of ['model', 'url', 'key'] as const) {
       const value = typeof item[field] === 'string' ? item[field].trim() : ''
       if (value) merged[field] = value

@@ -49,21 +49,23 @@ function containsToolInvocation(content: unknown): boolean {
   return Array.isArray(content) && content.some(part => typeof part === 'object' && part !== null && 'type' in part && (part as { type?: unknown }).type === 'tool-invocation')
 }
 
-function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'detailed', projectId?: string | null, conversationId?: string | null) {
+function requestContext(tier: ModelTier, clarificationMode?: 'automatic' | 'detailed', projectId?: string | null, conversationId?: string | null, workspaceScope?: string | null) {
   const context = new RequestContext<z.infer<typeof agentRequestContextSchema>>()
   context.set('tier', tier)
   context.set('modelConfig', loadModelConfig(tier, projectId ?? undefined))
   if (clarificationMode) context.set('clarificationMode', clarificationMode)
   if (projectId) context.set('supermemoryProjectId', projectId)
   if (conversationId) context.set('supermemoryConversationId', conversationId)
+  if (workspaceScope) context.set('supermemoryWorkspaceScope', workspaceScope)
   return context
 }
 function generationOptions(context: RequestContext<z.infer<typeof agentRequestContextSchema>>, vision = false) {
   const config = context.get('modelConfig')
   const projectId = context.get('supermemoryProjectId')
   const conversationId = context.get('supermemoryConversationId')
+  const workspaceScope = context.get('supermemoryWorkspaceScope')
   const guardrails = strictResearchProcessors(context.get('tier'))
-  const memory = projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId) : {}
+  const memory = projectId && conversationId ? strictSupermemoryProcessors(projectId, conversationId, workspaceScope) : {}
   return {
     requestContext: context,
     model: vision ? configuredVisionModel(projectId) : configuredModel(context.get('tier'), projectId),
@@ -174,11 +176,18 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, supervisionRequestSchema)
-        const context = requestContext(body.tier, undefined, body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null, body.memory_thread?.startsWith('session:') ? body.memory_thread.slice('session:'.length) : null)
+        const context = requestContext(
+          body.tier,
+          undefined,
+          body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null,
+          body.memory_thread?.startsWith('session:') ? body.memory_thread.slice('session:'.length) : null,
+          body.workspace_context ? `${body.workspace_context.area}/${body.workspace_context.tab}` : null,
+        )
         const response = await supervisionIntentAgent.generate(structuredJsonValue({
           latest_user_message: body.message,
           project_context: body.project_context,
           recent_conversation: body.transcript,
+          workspace_context: body.workspace_context,
         }), {
           ...generationOptions(context),
           ...(body.memory_resource && body.memory_thread ? {
@@ -200,12 +209,19 @@ const apiRoutes = [
     handler: async c => {
       try {
         const body = await parsedBody(c, documentReplyRequestSchema)
-        const context = requestContext('document', undefined, body.project_id)
+        const context = requestContext(
+          'document',
+          undefined,
+          body.project_id,
+          undefined,
+          body.workspace_context ? `${body.workspace_context.area}/${body.workspace_context.tab}` : null,
+        )
         const response = await documentReplyAgent.generate(structuredJsonValue({
           user_message: body.user_message,
           context: body.context,
           draft_reply: body.draft_reply,
           purpose: body.purpose,
+          workspace_context: body.workspace_context,
         }), {
           ...generationOptions(context),
           structuredOutput: { schema: documentReplyResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },

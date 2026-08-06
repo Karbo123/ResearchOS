@@ -1,4 +1,7 @@
 import type { ResearchArea, TabId } from './types.js'
+import type { TranslationKey } from './i18n.js'
+import { createElement } from 'react'
+import { BarChart3, BookOpen, CalendarDays, CheckSquare, FilePenLine, FileText, FlaskConical, GitBranch, LayoutDashboard, MessageCircle, Network, Quote, Search, Waypoints } from 'lucide-react'
 
 export const TAB_AREA: Record<TabId, ResearchArea> = {
   overview: 'overview',
@@ -29,6 +32,56 @@ export const AREA_TABS: Record<ResearchArea, TabId[]> = {
   related_work: ['literature', 'visualization', 'seed_expansion'],
   implementation: ['method', 'reproduction'],
   paper: ['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'],
+}
+
+export const TAB_LABEL_KEYS: Record<TabId, TranslationKey> = {
+  overview: 'tab.overview',
+  idea: 'tab.idea',
+  approvals: 'tab.approvals',
+  reports: 'tab.reports',
+  literature: 'tab.literature',
+  visualization: 'tab.visualization',
+  seed_expansion: 'tab.seedExpansion',
+  method: 'tab.method',
+  reproduction: 'tab.reproduction',
+  introduction: 'tab.introduction',
+  paper_related_work: 'tab.paperRelatedWork',
+  paper_method: 'tab.paperMethod',
+  paper_experiments: 'tab.paperExperiments',
+  conclusion: 'tab.conclusion',
+}
+
+export const AREA_LABEL_KEYS: Record<ResearchArea, TranslationKey> = {
+  overview: 'nav.overview',
+  related_work: 'nav.relatedWork',
+  implementation: 'nav.implementation',
+  paper: 'nav.paper',
+}
+
+export interface WorkspaceTabMeta {
+  icon: React.ReactNode
+  labelKey: TranslationKey
+}
+
+export const WORKSPACE_TAB_META: Record<TabId, WorkspaceTabMeta> = {
+  overview: { icon: createElement(LayoutDashboard, { size: 15 }), labelKey: 'tab.overview' },
+  idea: { icon: createElement(MessageCircle, { size: 15 }), labelKey: 'tab.idea' },
+  approvals: { icon: createElement(CheckSquare, { size: 15 }), labelKey: 'tab.approvals' },
+  reports: { icon: createElement(CalendarDays, { size: 15 }), labelKey: 'tab.reports' },
+  literature: { icon: createElement(BookOpen, { size: 15 }), labelKey: 'tab.literature' },
+  visualization: { icon: createElement(Network, { size: 15 }), labelKey: 'tab.visualization' },
+  seed_expansion: { icon: createElement(Search, { size: 15 }), labelKey: 'tab.seedExpansion' },
+  method: { icon: createElement(Waypoints, { size: 15 }), labelKey: 'tab.method' },
+  reproduction: { icon: createElement(GitBranch, { size: 15 }), labelKey: 'tab.reproduction' },
+  introduction: { icon: createElement(FilePenLine, { size: 15 }), labelKey: 'tab.introduction' },
+  paper_related_work: { icon: createElement(Quote, { size: 15 }), labelKey: 'tab.paperRelatedWork' },
+  paper_method: { icon: createElement(FlaskConical, { size: 15 }), labelKey: 'tab.paperMethod' },
+  paper_experiments: { icon: createElement(BarChart3, { size: 15 }), labelKey: 'tab.paperExperiments' },
+  conclusion: { icon: createElement(FileText, { size: 15 }), labelKey: 'tab.conclusion' },
+}
+
+export function workspaceScopeKey(area: ResearchArea, tab: TabId): string {
+  return `${area}/${tab}`
 }
 
 const LEGACY_AREA_REDIRECT: Record<string, ResearchArea> = {

@@ -36,6 +36,7 @@ function ProjectProgress() {
 
 export function ProjectChat({
   messages,
+  contextLabel,
   busy,
   projectId,
   onSend,
@@ -43,6 +44,7 @@ export function ProjectChat({
   mobileOpen,
 }: {
   messages: ChatMessage[]
+  contextLabel: string
   busy: boolean
   projectId?: string
   onSend: (message: string) => Promise<void>
@@ -70,7 +72,7 @@ export function ProjectChat({
   return (
     <aside className={`project-chat ${mobileOpen ? 'mobile-open' : ''}`}>
       <div className="pane-heading">
-        <h2>{t('chat.title')}</h2>
+        <h2>{t('chat.titleWithContext', { tab: contextLabel })}</h2>
         <div className="chat-heading-actions">
           <span className="badge live">{t('chat.monitoring')}</span>
           <button className="icon-btn mobile-chat-close" type="button" onClick={onClose} title={t('chat.closeTitle')} aria-label={t('chat.closeTitle')}>
