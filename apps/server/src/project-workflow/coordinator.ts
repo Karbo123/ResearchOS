@@ -113,11 +113,17 @@ async function queueNodeTask(
   const retry = node.retry === 'explicit' ? { max_attempts: 3, backoff_seconds: 5 } : node.retry
   const taskId = crypto.randomUUID()
   const taskIdempotencyKey = `workflow-node:${projectId}:${event.correlation_id}:${node.id}:${event.definition_version}`
+  const threadKey = node.concurrency === 'thread-serial'
+    ? typeof inputPayload.session_id === 'string' && inputPayload.session_id
+      ? inputPayload.session_id
+      : event.correlation_id
+    : null
   await transaction.query(
     `INSERT INTO tasks(
       id,project_id,kind,status,payload,idempotency_key,max_attempts,workflow_definition_version,
-      workflow_node_id,workflow_node_run_id,workflow_trigger_event_id,workflow_correlation_id,created_at,updated_at
-     ) VALUES ($1,$2,'workflow_node_task','queued',$3::jsonb,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
+      workflow_node_id,workflow_node_run_id,workflow_trigger_event_id,workflow_correlation_id,
+      workflow_concurrency,workflow_thread_key,created_at,updated_at
+     ) VALUES ($1,$2,'workflow_node_task','queued',$3::jsonb,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW(),NOW())
      ON CONFLICT (idempotency_key) WHERE idempotency_key IS NOT NULL DO NOTHING`,
     [
       taskId,
@@ -141,6 +147,8 @@ async function queueNodeTask(
       nodeRunId,
       event.id,
       event.correlation_id,
+      node.concurrency,
+      threadKey,
     ],
   )
   await transaction.query('UPDATE workflow_node_runs SET task_id=$2,updated_at=NOW() WHERE id=$1', [nodeRunId, taskId])

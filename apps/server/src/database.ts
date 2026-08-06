@@ -39,6 +39,8 @@ ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_trigger_event_id UUID;
 ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_correlation_id VARCHAR(255);
 ALTER TABLE tasks ADD COLUMN IF NOT EXISTS worker_id VARCHAR(64);
 ALTER TABLE tasks ADD COLUMN IF NOT EXISTS heartbeat_until TIMESTAMPTZ;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_concurrency VARCHAR(30);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_thread_key VARCHAR(255);
 CREATE INDEX IF NOT EXISTS ix_tasks_workflow_node_run ON tasks(workflow_node_run_id) WHERE workflow_node_run_id IS NOT NULL;
 CREATE TABLE IF NOT EXISTS workflow_definitions (
   project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,

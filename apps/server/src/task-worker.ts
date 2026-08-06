@@ -20,6 +20,8 @@ type Task = {
   workflow_node_run_id: string | null
   workflow_trigger_event_id: string | null
   workflow_correlation_id: string | null
+  workflow_concurrency: string | null
+  workflow_thread_key: string | null
   worker_id: string | null
 }
 
@@ -34,7 +36,26 @@ type NodeRunUpdate = {
 async function claim(workerId: string): Promise<Task | null> {
   const token = crypto.randomUUID().replaceAll('-', '')
   return one<Task>(`UPDATE tasks SET status='running',attempts=attempts+1,lease_token=$1,leased_until=NOW()+INTERVAL '2 minutes',worker_id=$2,heartbeat_until=NOW()+INTERVAL '1 minute',updated_at=NOW()
-    WHERE id=(SELECT id FROM tasks WHERE status IN ('queued','retrying') AND next_attempt_at<=NOW() AND (leased_until IS NULL OR leased_until<NOW()) ORDER BY created_at LIMIT 1)
+    WHERE id=(
+      SELECT candidate.id FROM tasks candidate
+      WHERE candidate.status IN ('queued','retrying')
+        AND candidate.next_attempt_at<=NOW()
+        AND (candidate.leased_until IS NULL OR candidate.leased_until<NOW())
+        AND NOT EXISTS (
+          SELECT 1 FROM tasks running
+          WHERE running.status='running'
+            AND running.workflow_node_run_id IS NOT NULL
+            AND running.project_id=candidate.project_id
+            AND (
+              candidate.workflow_concurrency='project-serial'
+              OR (candidate.workflow_concurrency='thread-serial'
+                  AND (running.workflow_concurrency='project-serial'
+                       OR (running.workflow_concurrency='thread-serial'
+                           AND running.workflow_thread_key=candidate.workflow_thread_key)))
+            )
+        )
+      ORDER BY candidate.created_at LIMIT 1
+    )
     RETURNING *`, [token, workerId])
 }
 

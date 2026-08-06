@@ -76,12 +76,52 @@ function testDefinition() {
         timeout_seconds: 10,
         concurrency: 'thread-serial',
       },
+      {
+        id: 'thread_serial_a',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'thread_serial_a',
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'thread-serial',
+      },
+      {
+        id: 'thread_serial_b',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'thread_serial_b',
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'thread-serial',
+      },
+      {
+        id: 'project_serial_a',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'project_serial_a',
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'project-serial',
+      },
+      {
+        id: 'project_serial_b',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'project_serial_b',
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'project-serial',
+      },
     ],
     edges: [{ from: 'a', to: 'b' }],
     triggers: [
       { event_type: 'test.start', node_id: 'a', mode: 'root' },
       { event_type: 'test.parallel', node_id: 'left', mode: 'root' },
       { event_type: 'test.parallel', node_id: 'right', mode: 'root' },
+      { event_type: 'test.thread', node_id: 'thread_serial_a', mode: 'root' },
+      { event_type: 'test.thread', node_id: 'thread_serial_b', mode: 'root' },
+      { event_type: 'test.project_serial', node_id: 'project_serial_a', mode: 'root' },
+      { event_type: 'test.project_serial', node_id: 'project_serial_b', mode: 'root' },
     ],
   }
 }
@@ -174,6 +214,47 @@ describe('workflow v2 runtime', () => {
     expect(rightTask.rows[0]?.worker_id).toBeTruthy()
     expect(leftTask.rows[0]?.worker_id).not.toBe(rightTask.rows[0]?.worker_id)
   })
+
+  it('serializes thread and project constrained nodes on the worker pool', async () => {
+    const runningCount = async (nodeIds: string[]) => {
+      const result = await database.query<{ count: string }>(
+        `SELECT COUNT(*)::text AS count
+         FROM tasks t
+         JOIN workflow_node_runs r ON r.id=t.workflow_node_run_id
+         WHERE t.status='running' AND r.node_id = ANY($1)`,
+        [nodeIds],
+      )
+      return Number(result.rows[0]?.count || 0)
+    }
+
+    await appendWorkflowEvent(projectId, 'test.thread', {
+      payload: { sleep_ms: 1200, session_id: 'thread-one' },
+      source: 'test',
+      correlation_id: 'thread-concurrency',
+      idempotency_key: 'thread-concurrency',
+    })
+    const threadDeadline = Date.now() + 8_000
+    while (Date.now() < threadDeadline && await runningCount(['thread_serial_a', 'thread_serial_b']) === 0) {
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    expect(await runningCount(['thread_serial_a', 'thread_serial_b'])).toBe(1)
+    await waitForNodeRun('thread_serial_a', 'succeeded')
+    await waitForNodeRun('thread_serial_b', 'succeeded')
+
+    await appendWorkflowEvent(projectId, 'test.project_serial', {
+      payload: { sleep_ms: 1200 },
+      source: 'test',
+      correlation_id: 'project-concurrency',
+      idempotency_key: 'project-concurrency',
+    })
+    const projectDeadline = Date.now() + 8_000
+    while (Date.now() < projectDeadline && await runningCount(['project_serial_a', 'project_serial_b']) === 0) {
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    expect(await runningCount(['project_serial_a', 'project_serial_b'])).toBe(1)
+    await waitForNodeRun('project_serial_a', 'succeeded')
+    await waitForNodeRun('project_serial_b', 'succeeded')
+  }, 20_000)
 
   it('rejects an invalid hot reload and keeps the active version', async () => {
     const workflowPath = pathInside(projectsRoot, projectId, 'workflow.ts')
