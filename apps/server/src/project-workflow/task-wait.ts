@@ -26,16 +26,15 @@ export async function appendWorkflowEventAndWait(
   options: AppendEventOptions & { target_node_id: string; timeout_ms?: number },
 ): Promise<unknown> {
   const correlationId = options.correlation_id || `${eventType}:${crypto.randomUUID()}`
-  await appendWorkflowEvent(projectId, eventType, { ...options, correlation_id: correlationId })
+  const event = await appendWorkflowEvent(projectId, eventType, { ...options, correlation_id: correlationId })
   const deadline = Date.now() + (options.timeout_ms || 240_000)
   let last: NodeRunResult | null = null
   while (Date.now() < deadline) {
-    const runtime = await one<{ active_definition_version: number }>('SELECT active_definition_version FROM project_workflow_runtime WHERE project_id=$1', [projectId])
     last = await one<NodeRunResult>(
       `SELECT id,node_id,status,output_ref,error_code,blocked_reason,correlation_id
        FROM workflow_node_runs
        WHERE project_id=$1 AND correlation_id=$2 AND node_id=$3 AND definition_version=$4`,
-      [projectId, correlationId, options.target_node_id, runtime?.active_definition_version || 0],
+      [projectId, correlationId, options.target_node_id, event.definition_version],
     )
     if (!last) {
       await new Promise(resolve => setTimeout(resolve, 200))

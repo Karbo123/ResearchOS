@@ -304,9 +304,9 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
                     {group.description_key ? <small>{labelFromKey(group.description_key, '', t)}</small> : null}
                   </span>
                   <span className="workflow-graph-group-counts">
-                    <span className="live">{summaryCounts.running}</span>
-                    <span className="ok">{summaryCounts.succeeded}</span>
-                    <span className="failed">{summaryCounts.failed}</span>
+                    <span className="live" title={t('workflowGraph.runningCount', { count: summaryCounts.running })} aria-label={t('workflowGraph.runningCount', { count: summaryCounts.running })}>{summaryCounts.running}</span>
+                    <span className="ok" title={t('workflowGraph.succeededCount', { count: summaryCounts.succeeded })} aria-label={t('workflowGraph.succeededCount', { count: summaryCounts.succeeded })}>{summaryCounts.succeeded}</span>
+                    <span className="failed" title={t('workflowGraph.failedCount', { count: summaryCounts.failed })} aria-label={t('workflowGraph.failedCount', { count: summaryCounts.failed })}>{summaryCounts.failed}</span>
                   </span>
                 </button>
                 {!collapsed ? (
@@ -332,7 +332,7 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
                             <span className="workflow-graph-node-meta">
                               {run ? <span className={`badge ${badgeKindClass(run.status)}`}>{statusLabel(run.status, t)}</span> : <span className="badge neutral">{t('workflowGraph.notRun')}</span>}
                               {run?.attempt ? <span className="workflow-graph-tag">{t('workflowGraph.attempt', { attempt: run.attempt })}</span> : null}
-                              {run?.blocked_reason ? <span className="workflow-graph-tag failed">{t('workflowGraph.blocked')}</span> : null}
+                              {run?.blocked_reason && run.status !== 'blocked' ? <span className="workflow-graph-tag failed">{t('workflowGraph.blocked')}</span> : null}
                             </span>
                           </button>
                           {selected ? (

@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 
 const root = resolve(import.meta.dirname, '..')
 const readmes = ['README.md', 'README.zh-CN.md']
-const requiredFacts = ['gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol', 'Mastra', 'TypeScript', 'Node.js', '26.5.1', '>=22.13', 'http://127.0.0.1:8080', 'http://127.0.0.1:4111', 'npm run typecheck', 'npm test', 'npm run mastra:hitl:check']
+const requiredFacts = ['gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol', 'Mastra', 'TypeScript', 'Node.js', '26.5.1', '>=22.13', 'http://127.0.0.1:8080', 'http://127.0.0.1:4111', 'npm run typecheck', 'npm test', 'npm run workflow:v2:check']
 const requiredEnv = ['RESEARCH_MODEL_SIMPLE', 'RESEARCH_MODEL_URL_SIMPLE', 'RESEARCH_MODEL_KEY_SIMPLE', 'RESEARCH_REASONING_SIMPLE', 'RESEARCH_MODEL_MEDIUM', 'RESEARCH_MODEL_URL_MEDIUM', 'RESEARCH_MODEL_KEY_MEDIUM', 'RESEARCH_REASONING_MEDIUM', 'RESEARCH_MODEL_COMPLEX', 'RESEARCH_MODEL_URL_COMPLEX', 'RESEARCH_MODEL_KEY_COMPLEX', 'RESEARCH_REASONING_COMPLEX', 'MODEL_REQUEST_TIMEOUT_SECONDS']
 const versions = new Set<string>()
 const errors: string[] = []

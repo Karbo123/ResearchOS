@@ -3,6 +3,7 @@
 > 文档状态：Phase 0-5 主体完成，Phase 6 收尾中
 > 对应 TODO：`P0-WORKFLOW-125`  
 > 创建日期：2026-08-05（Asia/Shanghai）  
+> **2026-08-06 更新：本文档是 v1 实施历史；`P0-WORKFLOW-125` 的 Mastra Workflow 总编排目标已被 `P0-WORKFLOW-V2-001`（见 `TODO-workflow-v2.md`）取代。v2 仍保留每个项目一份 `projects/<project-id>/workflow.ts` 科研语义图，但执行模型改为 PGlite 事件/协调器 + 有限任务 + 并行 worker + 版本化热加载 + Research OS 自绘图；本文档中的 Mastra loader、`runtime/workflow-runs.json`、`/internal/workflows/project/:id/*` 与 `serializedStepGraph` 描述只解释 v1 历史，不再代表当前实现。**
 > 2026-08-06 修订：默认 workflow 从动作 if/else 路由改为科研语义有向图。顶层是科研生命周期入口，按语义阶段进入文献、方法与实验、论文五章、汇报、审批、工作流编辑、项目对话等嵌套阶段子图；阶段子图内部允许真实顺序依赖和并行，不是串行流水线，也不是单纯的多分支并行图。
 > 适用代码副本：`/mnt/d/ResearchOS`（WSL2 内开发，Windows 侧为 `D:\ResearchOS`）
 

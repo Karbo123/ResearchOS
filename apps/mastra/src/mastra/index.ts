@@ -15,10 +15,6 @@ import {
   coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema,
   supervisionIntentSchema, supervisionRequestSchema, workflowEditRequestSchema, workflowEditResultSchema, type ModelTier,
 } from './contracts.js'
-import {
-  projectWorkflowInputSchema,
-  projectWorkflowResumeSchema,
-} from '@research-os/workflow-kit'
 import { loadModelConfig, ModelConfigurationError } from './model-config.js'
 import { strictSupermemoryProcessors, SupermemoryConfigurationError } from './supermemory.js'
 import { strictResearchProcessors } from './guardrails.js'
@@ -26,7 +22,6 @@ import { ensureIdeaDataset, ideaClarificationContractScorer, MastraEvalContractE
 import { inspectIdeaDraft, inspectIdeaDraftTool } from './tools/inspect-idea-draft.js'
 import { researchRoot } from './env.js'
 import { structuredJsonValue } from './structured-json-input.js'
-import { ProjectWorkflowRuntime } from './workflow-runtime/loader.js'
 
 const storage = new LibSQLStore({
   id: 'research-os-mastra-storage', url: `file:${resolve(researchRoot, 'runtime', 'mastra.db')}`,
@@ -386,85 +381,7 @@ const apiRoutes = [
       }
     },
   }),
-  registerApiRoute('/internal/workflows/project/:projectId/run', {
-    method: 'POST',
-    handler: async c => {
-      try {
-        const body = await parsedBody(c, projectWorkflowInputSchema)
-        const result = await workflowRuntime!.run(body.project_id, body)
-        return c.json(result)
-      } catch (error) {
-        const failure = routeError(error, '项目级 workflow')
-        return c.json(failure.body, safeStatus(failure.status))
-      }
-    },
-  }),
-  registerApiRoute('/internal/workflows/project/:projectId/resume', {
-    method: 'POST',
-    handler: async c => {
-      try {
-        const body = await parsedBody(c, z.object({
-          run_id: z.string().min(1).max(200),
-          resume: projectWorkflowResumeSchema,
-        }).strict())
-        const result = await workflowRuntime!.resume(c.req.param('projectId'), body.run_id, body.resume)
-        return c.json(result)
-      } catch (error) {
-        const failure = routeError(error, '项目级 workflow 恢复')
-        return c.json(failure.body, safeStatus(failure.status))
-      }
-    },
-  }),
-  registerApiRoute('/internal/workflows/project/:projectId/graph', {
-    method: 'GET',
-    handler: async c => {
-      try {
-        return c.json(workflowRuntime!.graph(c.req.param('projectId')))
-      } catch (error) {
-        const failure = routeError(error, '项目级 workflow 图')
-        return c.json(failure.body, safeStatus(failure.status))
-      }
-    },
-  }),
-  registerApiRoute('/internal/workflows/project/:projectId/preview', {
-    method: 'POST',
-    handler: async c => {
-      try {
-        const body = await parsedBody(c, z.object({ source: z.string().min(1).max(300_000) }).strict())
-        const result = await workflowRuntime!.validatePreview(c.req.param('projectId'), body.source)
-        return c.json(result)
-      } catch (error) {
-        const failure = routeError(error, '项目级 workflow 预览校验')
-        return c.json(failure.body, safeStatus(failure.status))
-      }
-    },
-  }),
-  registerApiRoute('/internal/workflows/project/:projectId/runs', {
-    method: 'GET',
-    handler: async c => {
-      try {
-        return c.json({ runs: workflowRuntime!.listRuns(c.req.param('projectId')) })
-      } catch (error) {
-        const failure = routeError(error, '项目级 workflow 运行记录')
-        return c.json(failure.body, safeStatus(failure.status))
-      }
-    },
-  }),
-  registerApiRoute('/internal/workflows/project/:projectId', {
-    method: 'DELETE',
-    handler: async c => {
-      try {
-        workflowRuntime!.dispose(c.req.param('projectId'))
-        return c.json({ project_id: c.req.param('projectId'), disposed: true })
-      } catch (error) {
-        const failure = routeError(error, '项目级 workflow 清理')
-        return c.json(failure.body, safeStatus(failure.status))
-      }
-    },
-  }),
 ]
-
-let workflowRuntime: ProjectWorkflowRuntime | null = null
 
 export const mastra = new Mastra({
   storage,
@@ -478,6 +395,3 @@ export const mastra = new Mastra({
     build: { swaggerUI: true, openAPIDocs: true }, apiRoutes,
   },
 })
-
-workflowRuntime = new ProjectWorkflowRuntime(mastra)
-void workflowRuntime.start()

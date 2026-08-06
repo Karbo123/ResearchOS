@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-06-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-06-05 -->
 
 # Research OS
 
@@ -119,13 +119,15 @@ npm test
 
 ## 项目科研工作流
 
-每个科研项目在 `projects/<project-id>/workflow.ts` 拥有自己独立的 Mastra workflow，并纳入项目内 Git。新项目从默认模板复制；已有项目通过幂等脚本补齐，不覆盖已定制文件。Mastra 默认每 500ms 扫描一次项目文件（`RESEARCH_WORKFLOW_POLL_INTERVAL_MS` 可调），把变更源码编译到 `runtime/workflow-cache/<project-id>/`，校验 manifest、图结构、导入白名单与 dry-run 后原子替换为新版本，无需重启服务。非法文件保留上一有效版本并返回结构化错误；挂起运行固定使用创建时的旧版本，通过 `runtime/workflow-runs.json` 恢复。
+每个科研项目在 `projects/<project-id>/workflow.ts` 拥有自己独立的 v2 声明式 workflow，并纳入项目内 Git。新项目从默认模板复制；已有项目通过幂等脚本补齐，不覆盖已定制文件。原生 API loader 轮询项目文件（`RESEARCH_WORKFLOW_POLL_INTERVAL_MS`，默认 2000ms），把变更源码编译到 `runtime/workflow-v2-cache/<project-id>/`，校验 Zod 契约、图闭合、capability 白名单、静态安全与循环依赖后原子替换为新版本，无需重启服务。非法文件保留上一有效版本并返回结构化错误；已启动的节点任务固定使用创建它的 definition 版本。`/mnt/d` 没有可靠 inotify，因此 definition 热加载使用轮询，loader/运行时源码变化仍需重启。
 
-在项目对话中可以直接提出工作流修改需求。工作流编辑 Agent 只生成可审阅 diff，API 先在临时工作区校验，审批通过后写回项目 `workflow.ts` 并提交项目 Git，再由 loader 热加载。项目页会展示当前工作流图、版本、源码哈希与最近运行（数据源为 Mastra `serializedStepGraph`）；Mastra Studio 保留为开发辅助视图。
+PGlite 是 workflow 运行时事实源：`project_workflow_runtime`、`workflow_definitions`、`workflow_events` 和 `workflow_node_runs` 复用现有任务队列。项目协调器追加有限节点任务，原生 worker 池以租约、有限重试、线程/项目串行约束、心跳和重启恢复执行这些任务。项目对话、论文翻译/修订、实验规划、相关工作、报告窗口和工作流编辑都改为追加事件并等待有限节点运行，不再启动一个永不结束的 Mastra workflow run。
 
-项目对话、论文翻译/修订和实验规划请求都会先经过项目级 workflow 入口；workflow 阶段子图再通过受限内部 API 端点执行真实的模型与状态写入。默认模板是科研语义有向图，而不是串行流水线或动作 if-else 分发：科研生命周期入口按语义阶段进入嵌套子图，包括文献调研（检索 -> 新颖性复核）、方法设计与实验规划、论文五章（并行）、汇报与反馈、审批/工作流编辑、项目对话。项目创建前的 Idea 澄清按设计仍不归属任何项目 workflow。
+在项目对话中可以直接提出工作流修改需求。工作流编辑 Agent 只生成可审阅 diff，API 先在临时工作区校验，审批通过后写回项目 `workflow.ts` 并提交项目 Git，再由 loader 热加载。项目页渲染 `WorkflowGraphSnapshot`（语义分组、节点详情、运行/任务/事件时间线和状态筛选），并订阅 `/api/projects/:projectId/workflow/stream`；Mastra Studio 仅作为 Agent 与本地调试的开发辅助视图。
 
-汇报调度由 API 的确定性调度器逐项目分发（`RESEARCH_REPORT_POLL_SECONDS`、`RESEARCH_REPORT_DAILY_TIME`、`RESEARCH_REPORT_WEEKLY_TIME`、`RESEARCH_REPORT_WEEKDAY`、`RESEARCH_REPORT_TIMEOUT_SECONDS`）。删除项目时会同步清理该项目的 workflow 注册表、编译缓存、运行记录与项目目录。
+默认模板是科研语义有向图，而不是串行流水线或动作 if-else 分发：项目上下文、对话、文献、方法与实验、论文五章、汇报、治理和工作流编辑分别成组，并带有真实依赖与并发（例如论文五章并行）。项目创建前的 Idea 澄清按设计仍不归属任何项目 workflow。
+
+汇报调度由 API 的确定性调度器追加 `report.window.reached` 事件（`RESEARCH_REPORT_POLL_SECONDS`、`RESEARCH_REPORT_DAILY_TIME`、`RESEARCH_REPORT_WEEKLY_TIME`、`RESEARCH_REPORT_WEEKDAY`、`RESEARCH_REPORT_TIMEOUT_SECONDS`）。删除项目时会同步清理该项目的 workflow runtime、事件、节点运行、任务、definition 缓存、设置与项目目录。
 
 ## Claim 与证据复核
 
@@ -155,7 +157,7 @@ Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含
 
 ![独立模型设置](docs/assets/research-os-model-settings.jpg)
 
-![Mastra 工作流图](docs/assets/research-os-mastra-workflow.jpg)
+![Mastra Studio 开发辅助视图](docs/assets/research-os-mastra-workflow.jpg)
 
 ## 项目语义记忆
 
@@ -197,7 +199,7 @@ npm run idea-cases:check
 npm run docs:check
 npm run language-boundary:check
 npm run ops:status
-npm run mastra:hitl:check
+npm run workflow:v2:check
 npm run acceptance
 ```
 

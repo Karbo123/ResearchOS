@@ -13999,6 +13999,9 @@
     "workflowGraph.filterRunning": "\u8FD0\u884C\u4E2D",
     "workflowGraph.filterFailed": "\u5931\u8D25",
     "workflowGraph.filterBlocked": "\u963B\u585E",
+    "workflowGraph.runningCount": "\u8FD0\u884C\u4E2D {count}",
+    "workflowGraph.succeededCount": "\u6210\u529F {count}",
+    "workflowGraph.failedCount": "\u5931\u8D25 {count}",
     "workflowGraph.filterLabel": "\u7B5B\u9009\u8282\u70B9\u72B6\u6001",
     "workflowGraph.expandAll": "\u5C55\u5F00\u5168\u90E8",
     "workflowGraph.collapseAll": "\u6298\u53E0\u5168\u90E8",
@@ -15699,6 +15702,9 @@
     "workflowGraph.filterRunning": "\u57F7\u884C\u4E2D",
     "workflowGraph.filterFailed": "\u5931\u6557",
     "workflowGraph.filterBlocked": "\u963B\u585E",
+    "workflowGraph.runningCount": "\u57F7\u884C\u4E2D {count}",
+    "workflowGraph.succeededCount": "\u6210\u529F {count}",
+    "workflowGraph.failedCount": "\u5931\u6557 {count}",
     "workflowGraph.filterLabel": "\u7BE9\u9078\u7BC0\u9EDE\u72C0\u614B",
     "workflowGraph.expandAll": "\u5C55\u958B\u5168\u90E8",
     "workflowGraph.collapseAll": "\u647A\u758A\u5168\u90E8",
@@ -17399,6 +17405,9 @@
     "workflowGraph.filterRunning": "Running",
     "workflowGraph.filterFailed": "Failed",
     "workflowGraph.filterBlocked": "Blocked",
+    "workflowGraph.runningCount": "Running {count}",
+    "workflowGraph.succeededCount": "Succeeded {count}",
+    "workflowGraph.failedCount": "Failed {count}",
     "workflowGraph.filterLabel": "Filter node status",
     "workflowGraph.expandAll": "Expand all",
     "workflowGraph.collapseAll": "Collapse all",
@@ -19099,6 +19108,9 @@
     "workflowGraph.filterRunning": "En ejecuci\xF3n",
     "workflowGraph.filterFailed": "Fallidos",
     "workflowGraph.filterBlocked": "Bloqueados",
+    "workflowGraph.runningCount": "En ejecuci\xF3n {count}",
+    "workflowGraph.succeededCount": "Correctos {count}",
+    "workflowGraph.failedCount": "Fallidos {count}",
     "workflowGraph.filterLabel": "Filtrar estado de nodos",
     "workflowGraph.expandAll": "Expandir todo",
     "workflowGraph.collapseAll": "Plegar todo",
@@ -23362,9 +23374,9 @@
                     group.description_key ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("small", { children: labelFromKey(group.description_key, "", t) }) : null
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "workflow-graph-group-counts", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "live", children: summaryCounts.running }),
-                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "ok", children: summaryCounts.succeeded }),
-                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "failed", children: summaryCounts.failed })
+                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "live", title: t("workflowGraph.runningCount", { count: summaryCounts.running }), "aria-label": t("workflowGraph.runningCount", { count: summaryCounts.running }), children: summaryCounts.running }),
+                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "ok", title: t("workflowGraph.succeededCount", { count: summaryCounts.succeeded }), "aria-label": t("workflowGraph.succeededCount", { count: summaryCounts.succeeded }), children: summaryCounts.succeeded }),
+                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "failed", title: t("workflowGraph.failedCount", { count: summaryCounts.failed }), "aria-label": t("workflowGraph.failedCount", { count: summaryCounts.failed }), children: summaryCounts.failed })
                   ] })
                 ]
               }
@@ -23389,7 +23401,7 @@
                       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "workflow-graph-node-meta", children: [
                         run ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: `badge ${badgeKindClass(run.status)}`, children: statusLabel(run.status, t) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "badge neutral", children: t("workflowGraph.notRun") }),
                         run?.attempt ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "workflow-graph-tag", children: t("workflowGraph.attempt", { attempt: run.attempt }) }) : null,
-                        run?.blocked_reason ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "workflow-graph-tag failed", children: t("workflowGraph.blocked") }) : null
+                        run?.blocked_reason && run.status !== "blocked" ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "workflow-graph-tag failed", children: t("workflowGraph.blocked") }) : null
                       ] })
                     ]
                   }

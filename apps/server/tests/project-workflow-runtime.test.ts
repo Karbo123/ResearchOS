@@ -7,6 +7,7 @@ import { projectsRoot } from '../src/paths.js'
 import { pathInside } from '../src/paths.js'
 import { WorkflowDefinitionLoader } from '../src/project-workflow/definition-loader.js'
 import { appendWorkflowEvent } from '../src/project-workflow/event-store.js'
+import { appendWorkflowEventAndWait } from '../src/project-workflow/task-wait.js'
 import { startTaskWorker, recoverInterruptedWork } from '../src/task-worker.js'
 import { workflowGraphSnapshot } from '../src/project-workflow/graph-service.js'
 
@@ -112,8 +113,30 @@ function testDefinition() {
         timeout_seconds: 10,
         concurrency: 'project-serial',
       },
+      {
+        id: 'version_chain_a',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'version_chain_a',
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'parallel',
+      },
+      {
+        id: 'version_chain_b',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'version_chain_b',
+        requires: ['version_chain_a'],
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'thread-serial',
+      },
     ],
-    edges: [{ from: 'a', to: 'b' }],
+    edges: [
+      { from: 'a', to: 'b' },
+      { from: 'version_chain_a', to: 'version_chain_b', condition: 'success' },
+    ],
     triggers: [
       { event_type: 'test.start', node_id: 'a', mode: 'root' },
       { event_type: 'test.parallel', node_id: 'left', mode: 'root' },
@@ -122,6 +145,7 @@ function testDefinition() {
       { event_type: 'test.thread', node_id: 'thread_serial_b', mode: 'root' },
       { event_type: 'test.project_serial', node_id: 'project_serial_a', mode: 'root' },
       { event_type: 'test.project_serial', node_id: 'project_serial_b', mode: 'root' },
+      { event_type: 'test.version_pin', node_id: 'version_chain_a', mode: 'root' },
     ],
   }
 }
@@ -199,6 +223,30 @@ describe('workflow v2 runtime', () => {
     expect(second.id).toBe(first.id)
   })
 
+  it('deduplicates repeated idempotent events into one node task', async () => {
+    const correlationId = 'idempotent-task'
+    const options = {
+      payload: { sleep_ms: 10 },
+      source: 'test',
+      correlation_id: correlationId,
+      idempotency_key: correlationId,
+    }
+    const first = await appendWorkflowEvent(projectId, 'test.start', options)
+    const second = await appendWorkflowEvent(projectId, 'test.start', options)
+    expect(second.id).toBe(first.id)
+    await waitForNodeRun('a', 'succeeded')
+    const runs = await database.query(
+      'SELECT id FROM workflow_node_runs WHERE project_id=$1 AND correlation_id=$2 AND node_id=$3',
+      [projectId, correlationId, 'a'],
+    )
+    const tasks = await database.query(
+      'SELECT id FROM tasks WHERE project_id=$1 AND workflow_correlation_id=$2 AND workflow_node_id=$3',
+      [projectId, correlationId, 'a'],
+    )
+    expect(runs.rows).toHaveLength(1)
+    expect(tasks.rows).toHaveLength(1)
+  })
+
   it('runs independent nodes on multiple workers', async () => {
     await appendWorkflowEvent(projectId, 'test.parallel', {
       payload: { sleep_ms: 500 },
@@ -256,13 +304,64 @@ describe('workflow v2 runtime', () => {
     await waitForNodeRun('project_serial_b', 'succeeded')
   }, 20_000)
 
+  it('pins running node runs to their definition version across hot reload', async () => {
+    const waitForOldChain = appendWorkflowEventAndWait(projectId, 'test.version_pin', {
+      payload: { sleep_ms: 1500 },
+      source: 'test',
+      correlation_id: 'version-pin-wait',
+      idempotency_key: 'version-pin-wait',
+      target_node_id: 'version_chain_b',
+      timeout_ms: 20_000,
+    })
+    const runningDeadline = Date.now() + 8_000
+    while (Date.now() < runningDeadline) {
+      const snapshot = await workflowGraphSnapshot(projectId)
+      if (snapshot.node_runs.some(run => run.node_id === 'version_chain_a' && run.status === 'running')) break
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+
+    const workflowPath = pathInside(projectsRoot, projectId, 'workflow.ts')
+    const next = testDefinition()
+    next.templateVersion = 'v2-runtime-test@2'
+    next.nodes.push({
+      id: 'new_only',
+      group: 'test',
+      capability: 'noop',
+      label_key: 'new_only',
+      retry: { max_attempts: 1, backoff_seconds: 1 },
+      timeout_seconds: 10,
+      concurrency: 'parallel',
+    })
+    next.triggers.push({ event_type: 'test.new_version', node_id: 'new_only', mode: 'root' })
+    writeFileSync(workflowPath, `const workflow = ${JSON.stringify(next, null, 2)}\nexport default workflow\n`, 'utf8')
+    await new WorkflowDefinitionLoader().scanProject(projectId)
+
+    await waitForOldChain
+    let oldChain = await workflowGraphSnapshot(projectId)
+    const oldB = oldChain.node_runs.find(run => run.node_id === 'version_chain_b' && run.status === 'succeeded')
+    expect(oldB?.definition_version).toBe(1)
+
+    await appendWorkflowEventAndWait(projectId, 'test.new_version', {
+      payload: { sleep_ms: 10 },
+      source: 'test',
+      correlation_id: 'version-new',
+      idempotency_key: 'version-new',
+      target_node_id: 'new_only',
+      timeout_ms: 15_000,
+    })
+    oldChain = await workflowGraphSnapshot(projectId)
+    const newOnly = oldChain.node_runs.find(run => run.node_id === 'new_only' && run.status === 'succeeded')
+    expect(newOnly?.definition_version).toBe(2)
+  }, 30_000)
+
   it('rejects an invalid hot reload and keeps the active version', async () => {
     const workflowPath = pathInside(projectsRoot, projectId, 'workflow.ts')
+    const before = await workflowGraphSnapshot(projectId)
     writeFileSync(workflowPath, `export default ${JSON.stringify({ schemaVersion: 2, templateVersion: 'broken', groups: [], nodes: [], edges: [], triggers: [] })}`, 'utf8')
     const loader = new WorkflowDefinitionLoader()
     await expect(loader.scanProject(projectId)).rejects.toThrow()
     const snapshot = await workflowGraphSnapshot(projectId)
-    expect(snapshot.definition_version).toBe(1)
+    expect(snapshot.definition_version).toBe(before.definition_version)
     expect(snapshot.source_hash).toBeTruthy()
 
     writeFileSync(workflowPath, `const workflow = ${JSON.stringify(testDefinition(), null, 2)}\nexport default workflow\n`, 'utf8')

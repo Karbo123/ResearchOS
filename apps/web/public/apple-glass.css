@@ -4237,3 +4237,78 @@ code {
   .home-project-stat { padding: 12px; }
   .home-project-stats { gap: 7px; }
 }
+
+/* Workflow graph dark-theme polish: the semantic cards, badges, code blocks,
+   and details use the same glass variables as the rest of the workspace. */
+:root[data-theme='dark'] .workflow-graph-group {
+  background: var(--surface);
+  border-color: var(--line);
+}
+:root[data-theme='dark'] .workflow-graph-group-head {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+:root[data-theme='dark'] .workflow-graph-group-head:hover {
+  background: var(--surface-elevated);
+}
+:root[data-theme='dark'] .workflow-graph-filter {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--muted);
+}
+:root[data-theme='dark'] .workflow-graph-filter:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+:root[data-theme='dark'] .workflow-graph-filter.active {
+  color: var(--success-ink);
+  background: var(--green-soft);
+  border-color: rgba(48, 209, 88, .34);
+}
+:root[data-theme='dark'] .workflow-graph-group-counts span.ok {
+  color: var(--success-ink);
+  background: var(--green-soft);
+}
+:root[data-theme='dark'] .workflow-graph-group-counts span.failed {
+  color: var(--danger-ink);
+  background: var(--red-soft);
+}
+:root[data-theme='dark'] .workflow-graph-tag.failed {
+  color: var(--danger-ink);
+  background: var(--red-soft);
+}
+:root[data-theme='dark'] .workflow-graph-node-detail,
+:root[data-theme='dark'] .workflow-graph-edge-list,
+:root[data-theme='dark'] .workflow-graph-list {
+  background: var(--surface);
+  border-color: var(--line);
+}
+:root[data-theme='dark'] .workflow-graph-node.status-succeeded {
+  border-color: rgba(48, 209, 88, .42);
+}
+:root[data-theme='dark'] .workflow-graph-node.status-failed,
+:root[data-theme='dark'] .workflow-graph-node.status-blocked {
+  border-color: rgba(255, 69, 58, .42);
+}
+:root[data-theme='dark'] .workflow-graph-node.status-succeeded .workflow-graph-node-icon {
+  color: var(--success-ink);
+  background: var(--green-soft);
+}
+:root[data-theme='dark'] .workflow-graph-node.status-failed .workflow-graph-node-icon,
+:root[data-theme='dark'] .workflow-graph-node.status-blocked .workflow-graph-node-icon {
+  color: var(--danger-ink);
+  background: var(--red-soft);
+}
+:root[data-theme='dark'] .workflow-graph-node:hover,
+:root[data-theme='dark'] .workflow-graph-node.is-selected {
+  border-color: rgba(10, 132, 255, .52);
+}
+:root[data-theme='dark'] .workflow-graph-detail-status.failed {
+  background: var(--red-soft);
+  color: var(--danger-ink);
+}
+:root[data-theme='dark'] .workflow-graph-json pre {
+  background: rgba(44, 44, 46, .92);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}

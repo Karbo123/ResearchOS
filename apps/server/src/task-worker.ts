@@ -88,6 +88,7 @@ async function markNodeRunSucceeded(task: Task, output: unknown): Promise<void> 
     correlation_id: run.correlation_id,
     idempotency_key: `workflow-task-completed:${task.id}`,
     causation_id: task.workflow_trigger_event_id,
+    definition_version: run.definition_version,
   })
 }
 
@@ -117,6 +118,7 @@ async function markNodeRunFailed(task: Task, code: string, reason: string, termi
       correlation_id: run.correlation_id,
       idempotency_key: `workflow-task-failed:${task.id}`,
       causation_id: task.workflow_trigger_event_id,
+      definition_version: run.definition_version,
     })
   }
 }

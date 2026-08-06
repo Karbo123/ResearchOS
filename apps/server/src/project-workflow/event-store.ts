@@ -8,6 +8,7 @@ export type AppendEventOptions = {
   correlation_id?: string
   idempotency_key?: string
   causation_id?: string | null
+  definition_version?: number
 }
 
 export async function appendWorkflowEvent(
@@ -40,7 +41,7 @@ export async function appendWorkflowEvent(
         eventType,
         JSON.stringify(options.payload || {}),
         options.source || 'api',
-        runtime.active_definition_version,
+        options.definition_version ?? runtime.active_definition_version,
         options.causation_id ?? null,
         correlationId,
         idempotencyKey,

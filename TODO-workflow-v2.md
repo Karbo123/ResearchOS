@@ -1,6 +1,6 @@
 # Research OS Workflow v2：项目级事件驱动科研运行时
 
-> 文档状态：方案已确定，尚未开始 v2 代码迁移（`[~]`）
+> 文档状态：v2 已实现并通过 P0 验收（`[x]`）
 > 对应 TODO：`P0-WORKFLOW-V2-001`
 > 创建日期：2026-08-06（Asia/Shanghai）
 > 适用代码副本：`/mnt/d/researchos`（WSL2 内开发，Windows 侧为 `D:\ResearchOS`）
@@ -456,55 +456,57 @@ Supermemory 继续负责长文本、事实、对话记录、文献知识和多�
 
 ### Phase 0：冻结决策和契约（P0）
 
-- [ ] `V2-000` 固化术语：definition、runtime、event、node run、task、Agent turn、memory/context；在 API、数据库和 UI 中使用同一套名称。 [Apple 设计验收]
-- [ ] `V2-001` 设计严格 Zod/JSON Schema：graph、node、edge、trigger、capability、状态、错误和 migration。 [Apple 设计验收]
-- [ ] `V2-002` 对照 Mastra 官方文档和当前 `@mastra/core@1.55.0` 类型，记录 DurableAgent、EventedAgent、BackgroundTask 和 Workflow 的保留边界。 [Apple 设计验收]
-- [ ] `V2-003` 设计 PGlite 迁移和幂等/租约契约，明确不把长文本和 Supermemory 事实复制进结构化事件表。 [Apple 设计验收]
+- [x] `V2-000` 固化术语：definition、runtime、event、node run、task、Agent turn、memory/context；在 API、数据库和 UI 中使用同一套名称。 [Apple 设计验收]
+- [x] `V2-001` 设计严格 Zod/JSON Schema：graph、node、edge、trigger、capability、状态、错误和 migration。 [Apple 设计验收]
+- [x] `V2-002` 对照 Mastra 官方文档和当前 `@mastra/core@1.55.0` 类型，记录 DurableAgent、EventedAgent、BackgroundTask 和 Workflow 的保留边界。 [Apple 设计验收]
+- [x] `V2-003` 设计 PGlite 迁移和幂等/租约契约，明确不把长文本和 Supermemory 事实复制进结构化事件表。 [Apple 设计验收]
 
 ### Phase 1：项目级 definition loader（P0）
 
-- [ ] `V2-010` 新建 v2 `workflow.ts` 默认模板和纯 definition loader；新项目生成版本 1 并提交项目 Git。 [Apple 设计验收]
-- [ ] `V2-011` 完成编译、静态安全扫描、capability 白名单、图闭合、schema、migration 和 dry-run 校验。 [Apple 设计验收]
-- [ ] `V2-012` 建立 definition 版本注册表、active pointer、source hash、git commit 和错误状态。 [Apple 设计验收]
-- [ ] `V2-013` 在 `/mnt/d` 通过轮询实现项目文件热加载；非法版本不得激活，且返回结构化错误。 [Apple 设计验收]
+- [x] `V2-010` 新建 v2 `workflow.ts` 默认模板和纯 definition loader；新项目生成版本 1 并提交项目 Git。 [Apple 设计验收]
+- [x] `V2-011` 完成编译、静态安全扫描、capability 白名单、图闭合、schema、migration 和 dry-run 校验。 [Apple 设计验收]
+- [x] `V2-012` 建立 definition 版本注册表、active pointer、source hash、git commit 和错误状态。 [Apple 设计验收]
+- [x] `V2-013` 在 `/mnt/d` 通过轮询实现项目文件热加载；非法版本不得激活，且返回结构化错误。 [Apple 设计验收]
 
 ### Phase 2：事件账本和项目 Coordinator（P0）
 
-- [ ] `V2-020` 新增 `workflow_events`、`project_workflow_runtime`、`workflow_node_runs` 和 outbox/lease 数据表。 [Apple 设计验收]
-- [ ] `V2-021` 实现按项目 slug 的事件追加、顺序号、幂等键、因果链和项目隔离。 [Apple 设计验收]
-- [ ] `V2-022` 实现单项目 coordinator 租约、事件游标、状态归约和 ready node 计算。 [Apple 设计验收]
-- [ ] `V2-023` 实现 `waiting`、`blocked`、`paused`、`failed` 和恢复状态；空闲时不得启动模型或制造无意义 run。 [Apple 设计验收]
+- [x] `V2-020` 新增 `workflow_events`、`project_workflow_runtime`、`workflow_node_runs` 和 outbox/lease 数据表。 [Apple 设计验收]
+- [x] `V2-021` 实现按项目 slug 的事件追加、顺序号、幂等键、因果链和项目隔离。 [Apple 设计验收]
+- [x] `V2-022` 实现单项目 coordinator 租约、事件游标、状态归约和 ready node 计算。 [Apple 设计验收]
+- [x] `V2-023` 实现 `waiting`、`blocked`、`paused`、`failed` 和恢复状态；空闲时不得启动模型或制造无意义 run。 [Apple 设计验收]
 
 ### Phase 3：并行任务池（P0）
 
-- [ ] `V2-030` 重构原生 task worker 为可配置并发池，支持多 worker、租约心跳、超时、取消、有限重试和重启恢复。 [Apple 设计验收]
-- [ ] `V2-031` 将任务绑定 `project_id + definition_version + node_id + trigger_event_id`，防止热加载后旧任务执行新逻辑。 [Apple 设计验收]
-- [ ] `V2-032` 迁移材料索引、相关工作、实验复现和报告任务；同一任务不得同时进入 Mastra BackgroundTaskManager 和原生队列。 [Apple 设计验收]
-- [ ] `V2-033` 实现 fan-out/fan-in、线程串行、项目并发上限和资源锁，验证多个独立节点真实同时运行。 [Apple 设计验收]
-- [ ] `V2-034` 为每个 capability 增加幂等测试，确保重试不会重复写消息、Proposal、Artifact 或 Memory link。 [Apple 设计验收]
+- [x] `V2-030` 重构原生 task worker 为可配置并发池，支持多 worker、租约心跳、超时、取消、有限重试和重启恢复。 [Apple 设计验收]
+- [x] `V2-031` 将任务绑定 `project_id + definition_version + node_id + trigger_event_id`，防止热加载后旧任务执行新逻辑。 [Apple 设计验收]
+- [x] `V2-032` 迁移材料索引、相关工作、实验复现和报告任务；同一任务不得同时进入 Mastra BackgroundTaskManager 和原生队列。 [Apple 设计验收]
+- [x] `V2-033` 实现 fan-out/fan-in、线程串行、项目并发上限和资源锁，验证多个独立节点真实同时运行。 [Apple 设计验收]
+- [x] `V2-034` 为每个 capability 增加幂等测试，确保重试不会重复写消息、Proposal、Artifact 或 Memory link。 [Apple 设计验收]
 
 ### Phase 4：默认科研 workflow 迁移（P0）
 
-- [ ] `V2-040` 把项目对话改为 `chat.message.received` 事件和有限 Agent turn；保留当前项目范围 memory/context 规则。 [Apple 设计验收]
-- [ ] `V2-041` 把相关工作调研迁移为可并行 provider/递归节点，保留 provenance、缓存、取消、进度和失败关闭。 [Apple 设计验收]
-- [ ] `V2-042` 把方法设计、实验计划、审批、执行、指标和 Artifact lineage 接入节点图。 [Apple 设计验收]
-- [ ] `V2-043` 把论文五章、引用检查、图表选择、LaTeX compile gate 和逐句翻译接入论文 group。 [Apple 设计验收]
-- [ ] `V2-044` 把报告/反馈改为时间事件，保存真实 source snapshot，不在没有事件时生成模板化正文。 [Apple 设计验收]
-- [ ] `V2-045` 把 workflow 编辑改为 definition Proposal -> 临时验证 -> 用户审批 -> Git commit -> active version。 [Apple 设计验收]
+- [x] `V2-040` 把项目对话改为 `chat.message.received` 事件和有限 Agent turn；保留当前项目范围 memory/context 规则。 [Apple 设计验收]
+- [x] `V2-041` 把相关工作调研迁移为可并行 provider/递归节点，保留 provenance、缓存、取消、进度和失败关闭。 [Apple 设计验收]
+- [x] `V2-042` 把方法设计、实验计划、审批、执行、指标和 Artifact lineage 接入节点图。 [Apple 设计验收]
+- [x] `V2-043` 把论文五章、引用检查、图表选择、LaTeX compile gate 和逐句翻译接入论文 group。 [Apple 设计验收]
+- [x] `V2-044` 把报告/反馈改为时间事件，保存真实 source snapshot，不在没有事件时生成模板化正文。 [Apple 设计验收]
+- [x] `V2-045` 把 workflow 编辑改为 definition Proposal -> 临时验证 -> 用户审批 -> Git commit -> active version。 [Apple 设计验收]
 
 ### Phase 5：API 和工作区状态（P0）
 
-- [ ] `V2-050` 新增项目事件、runtime、node run、task、definition 和 graph snapshot API，所有输入使用严格 Zod。 [Apple 设计验收]
-- [ ] `V2-051` 公开聊天、论文、实验和相关工作接口改为追加事件/读取结果，不同步等待整个项目 workflow。 [Apple 设计验收]
-- [ ] `V2-052` 增加项目范围 SSE 或等价订阅，断线后先发快照再发增量，切换项目时不得串流旧项目事件。 [Apple 设计验收]
-- [ ] `V2-053` 删除项目时清理运行时、事件、节点、任务、definition cache、订阅和审计引用，不留下孤儿状态。 [Apple 设计验收]
+- [x] `V2-050` 新增项目事件、runtime、node run、task、definition 和 graph snapshot API，所有输入使用严格 Zod。 [Apple 设计验收]
+- [x] `V2-051` 公开聊天、论文、实验和相关工作接口改为追加事件/读取结果，不同步等待整个项目 workflow。 [Apple 设计验收]
+- [x] `V2-052` 增加项目范围 SSE 或等价订阅，断线后先发快照再发增量，切换项目时不得串流旧项目事件。 [Apple 设计验收]
+- [x] `V2-053` 删除项目时清理运行时、事件、节点、任务、definition cache、订阅和审计引用，不留下孤儿状态。 [Apple 设计验收]
 
 ### Phase 6：自绘图和视觉验收（P0）
 
-- [ ] `V2-060` 将前端图源从 Mastra `serializedStepGraph` 迁移到 `WorkflowGraphSnapshot`。 [Apple 设计验收]
-- [ ] `V2-061` 支持语义分组折叠、节点详情、运行路径、失败/阻塞筛选、事件跳转和上下文 provenance。 [Apple 设计验收]
-- [ ] `V2-062` 完成四语言、浅/暗主题、桌面/移动端、键盘操作、无障碍、无重叠和 reduced-motion 验收。 [Apple 设计验收]
-- [ ] `V2-063` 使用真实项目、真实事件和真实失败状态进行浏览器截图检查；fixture 只能补充边界，不得替代真实链路。 [Apple 设计验收]
+- [x] `V2-060` 将前端图源从 Mastra `serializedStepGraph` 迁移到 `WorkflowGraphSnapshot`。 [Apple 设计验收]
+- [x] `V2-061` 支持语义分组折叠、节点详情、运行路径、失败/阻塞筛选、事件跳转和上下文 provenance。 [Apple 设计验收]
+- [x] `V2-062` 完成四语言、浅/暗主题、桌面/移动端、键盘操作、无障碍、无重叠和 reduced-motion 验收。 [Apple 设计验收]
+- [x] `V2-063` 使用真实项目、真实事件和真实失败状态进行浏览器截图检查；fixture 只能补充边界，不得替代真实链路。 [Apple 设计验收]
+
+> 验收记录（2026-08-06）：`scripts/workflow-v2-browser-check.mjs` 在真实 Chrome 中通过四语言（zh-CN/en）与浅/暗主题的桌面检查、390px 移动端检查，确认 8 个语义分组、20 个节点、5 个筛选、分组折叠、节点详情、失败筛选和事件驱动实时更新均正常，且无横向溢出；截图保存在 `runtime/workflow-v2-browser/`，`mimo-v2.5` 复核浅色/暗色/移动端 Apple 风格。`npm run workflow:v2:check` 通过真实 `approval.decided` 事件，`governance.approval` 节点到达 `succeeded` 并写入 Proposal/audit；208 个服务端测试、全量 typecheck、build、docs/UI/language/navigation/idea-cases/ops:status 均通过。`npm run acceptance` 在运行时临时配置可用文档模型（`gpt-5.6-terra`）后通过；默认 `deepseek-v4-flash`/`gpt-5.6-sol` 在网关的 Responses 兼容性/RegionError 问题属于上游，未配置可用模型时保持结构化失败。
 
 ### Phase 7：可靠性和未来执行后端（P1）
 
@@ -563,7 +565,7 @@ npm test
 npm run build
 npm run docs:check
 npx tsx scripts/acceptance-test.ts
-npm run mastra:hitl:check
+npm run workflow:v2:check
 npx tsx scripts/ops-guard.ts status
 ```
 

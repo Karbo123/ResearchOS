@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-06-04 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-06-05 -->
 
 # Research OS
 
@@ -119,13 +119,15 @@ Every production Mastra Agent, delegated sub-Agent, guardrail detector, and expe
 
 ## Project Workflows
 
-Every research project owns one Mastra workflow at `projects/<project-id>/workflow.ts`, committed in the project-local Git. New projects copy the default template; existing projects were migrated idempotently without overwriting customized files. The Mastra process scans all project files every 500 ms by default (`RESEARCH_WORKFLOW_POLL_INTERVAL_MS`), compiles changed sources into `runtime/workflow-cache/<project-id>/`, validates the manifest, graph, imports, and a dry run, then atomically activates the new version without restarting services. Invalid files keep the previous active version and return a structured error; suspended runs are pinned to their original version and resumed from `runtime/workflow-runs.json`.
+Every research project owns one declarative v2 workflow at `projects/<project-id>/workflow.ts`, committed in the project-local Git. New projects copy the default template; existing projects were migrated idempotently without overwriting customized files. The native API loader polls project files (`RESEARCH_WORKFLOW_POLL_INTERVAL_MS`, default 2000 ms), compiles changed sources into `runtime/workflow-v2-cache/<project-id>/`, validates Zod contracts, graph closure, capability allowlist, static safety, and cycles, then atomically activates the next definition version without restarting services. Invalid files keep the previous active version and return a structured error; running node tasks stay pinned to the definition version that created them. `/mnt/d` has no inotify support, so definition hot loading uses polling and loader/runtime source changes still require a restart.
 
-Workflow changes can be requested in the project conversation. The workflow edit Agent produces a reviewable diff, the API validates it in a temporary workspace, and approval writes `workflow.ts` back to the project Git before hot loading. The project page renders the current workflow graph, version, source hash, and recent runs from `serializedStepGraph`; Mastra Studio remains available as a development view.
+PGlite is the workflow runtime source of truth: `project_workflow_runtime`, `workflow_definitions`, `workflow_events`, and `workflow_node_runs` are backed by the existing task queue. A per-project coordinator appends finite node tasks and the native worker pool executes them with leases, retries, thread/project serial constraints, heartbeat, and restart recovery. Project chat, paper translation/revision, experiment planning, related-work operations, report windows, and workflow edits append events and wait on finite node runs instead of starting a long-lived Mastra workflow run.
 
-Project chat, paper translation/revision, and experiment planning requests are dispatched through the project workflow entry; workflow phase subgraphs call restricted internal API endpoints for the actual model and state work. The default template is a semantic research-directed graph, not a serial pipeline or an action if/else router: a research lifecycle dispatches into nested phase subgraphs for literature review (search -> novelty review), method design and experiment planning, the five paper sections (parallel), reporting, approval/workflow editing, and project conversation. Idea clarification before project creation remains outside a project workflow by design.
+Workflow changes can be requested in the project conversation. The workflow edit Agent produces a reviewable diff, the API validates it in a temporary workspace, and approval writes `workflow.ts` back to the project Git before hot loading. The project page renders a `WorkflowGraphSnapshot` (semantic groups, node detail, run/task/event timelines, status filters) and subscribes to `/api/projects/:projectId/workflow/stream`; Mastra Studio remains available as a development view for Agents and local debugging.
 
-The API report scheduler dispatches one project workflow per active project (`RESEARCH_REPORT_POLL_SECONDS`, `RESEARCH_REPORT_DAILY_TIME`, `RESEARCH_REPORT_WEEKLY_TIME`, `RESEARCH_REPORT_WEEKDAY`, `RESEARCH_REPORT_TIMEOUT_SECONDS`). Deleting a project removes its workflow registry entry, compile cache, and run records together with the project directory.
+The default template is a semantic research-directed graph, not a serial pipeline or an action if/else router: project context, conversation, literature, method and experiment, the five paper sections, reporting, governance, and workflow editing are separate groups with real dependencies and concurrency (for example, the paper sections run in parallel). Idea clarification before project creation remains outside a project workflow by design.
+
+The API report scheduler appends `report.window.reached` events (`RESEARCH_REPORT_POLL_SECONDS`, `RESEARCH_REPORT_DAILY_TIME`, `RESEARCH_REPORT_WEEKLY_TIME`, `RESEARCH_REPORT_WEEKDAY`, `RESEARCH_REPORT_TIMEOUT_SECONDS`). Deleting a project removes its workflow runtime, events, node runs, tasks, definition cache, settings, and project directory.
 
 ## Claim Review and Evidence
 
@@ -155,7 +157,7 @@ The current local UI is a React + TypeScript component application with no nativ
 
 ![Independent model settings](docs/assets/research-os-model-settings.jpg)
 
-![Mastra workflow graph](docs/assets/research-os-mastra-workflow.jpg)
+![Mastra Studio development view](docs/assets/research-os-mastra-workflow.jpg)
 
 ## Project Semantic Memory
 
@@ -197,7 +199,7 @@ npm run idea-cases:check
 npm run docs:check
 npm run language-boundary:check
 npm run ops:status
-npm run mastra:hitl:check
+npm run workflow:v2:check
 npm run acceptance
 ```
 

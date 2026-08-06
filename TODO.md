@@ -222,7 +222,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 > 验收记录（2026-08-06）：`mimo-v2.5` 视觉模型复核真实浏览器截图：重命名铅笔图标紧贴项目名称右侧，间距约 8-12px，垂直居中，样式符合 Apple 设计；弹层截图确认毛玻璃浮层正常。项目级设置路径已改为 `projects/<project-id>/.researchos/model-settings.json`，API 实测保存到 `projects/pointcloud-classification-0000/.researchos/model-settings.json`，项目 Git `check-ignore` 确认该文件被忽略；服务端设置测试、全量类型检查、构建、docs/UI/i18n/language/navigation 检查通过。
 - [~] `P0-WORKFLOW-125` 按 `TODO-workflow.md` 实施项目级单一 Mastra Workflow：每个项目一个 `projects/<project-id>/workflow.ts`，默认模板初始化，运行期热加载，自然语言经审批修改工作流，并使用 Mastra Studio/序列化图实现可视化。Phase 0-5 主体已完成并通过核心检查（见 `TODO-workflow.md`）；Phase 6 收尾中：真实浏览器截图验收、部分 API 动作直接调用 Agent 的迁移、全量文档同步与提交推送。 [Apple 设计验收]
-- [~] `P0-WORKFLOW-V2-001` 根据 `TODO-workflow-v2.md` 重新设计项目 workflow 执行模型：保留每个项目独立的 `workflow.ts` 科研语义图，但不再把整个项目绑定为一个永不结束的 Mastra Workflow Run；改为持久化项目事件/协调器、可恢复的有限节点任务、真正可并行的 worker 池、版本化热加载和 Research OS 自绘运行图。旧 `P0-WORKFLOW-125` 的 Mastra Workflow 总编排目标转为历史基线，迁移前不得把旧实现描述为 v2 已完成。当前进度：后端事件账本、协调器、有限节点任务、可并行 worker、版本化热加载、workflow API 与核心测试已完成；前端自绘图与完整语义迁移尚未完成。 [Apple 设计验收]
+- [x] `P0-WORKFLOW-V2-001` 根据 `TODO-workflow-v2.md` 重新设计项目 workflow 执行模型：保留每个项目独立的 `workflow.ts` 科研语义图，但不再把整个项目绑定为一个永不结束的 Mastra Workflow Run；改为持久化项目事件/协调器、可恢复的有限节点任务、真正可并行的 worker 池、版本化热加载和 Research OS 自绘运行图。旧 `P0-WORKFLOW-125` 的 Mastra Workflow 总编排目标转为历史基线。v2 后端事件账本、协调器、有限节点任务、可并行 worker、版本化热加载、workflow API、默认科研语义模板、前端自绘图和浏览器验收均已完成；`TODO-workflow-v2.md` 记录 Phase 0-6 与验收证据。 [Apple 设计验收]
 
 ### 4.0 当前唯一优先：项目工作台重构（2026-08-03，必须严格按顺序）
 
@@ -609,7 +609,7 @@ npm run language-boundary:check
 npm run supermemory:acceptance
 npx tsx scripts/acceptance-test.ts
 npx tsx scripts/ops-guard.ts status
-npm run mastra:hitl:check
+npm run workflow:v2:check
 npm run mastra:evals:check
 npm run model-failure:check
 npm run experiment:check

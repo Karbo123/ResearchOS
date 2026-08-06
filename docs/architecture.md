@@ -6,9 +6,9 @@ Research OS runs inside WSL2 (Ubuntu 22.04) as Linux processes and keeps every e
 flowchart LR
   Browser["TypeScript Web UI"] --> API["Hono API"]
   API --> State["PGlite business state"]
-  API --> Mastra["Mastra Agents and Workflows"]
+  API --> Mastra["Mastra Agents / Skills / Tools"]
   Mastra --> Models["Three independent model endpoints"]
-  API --> Queue["Durable workflow queue"]
+  API --> Queue["Workflow coordinator + task worker pool"]
   Queue --> Mastra
   API --> Runner["Native experiment supervisor"]
   Runner --> Project["Project Git workspace and .venv"]
@@ -26,9 +26,9 @@ Mastra can call only fixed high-level loopback endpoints. Agents do not receive 
 
 ## Project Workflow Boundary
 
-Each project owns exactly one workflow source at `projects/<id>/workflow.ts`, committed in the project-local Git and initialized from the default template. The Mastra process runs a project workflow loader that polls these files, compiles changed sources into `runtime/workflow-cache/<id>/`, validates the manifest, strict input/output schema, unique graph IDs, import allowlist, and a dry run, then atomically replaces the active version. Suspended runs stay pinned to the version that created them. `workflow.ts` may import only `@research-os/workflow-kit`, `zod`, and the Mastra workflow API; filesystem, network, process, dynamic import, and credential patterns are rejected. Workflow edits are generated as reviewable diffs, validated in a temporary workspace, approved, written, and committed to the project Git before hot loading. Run records are currently persisted in `runtime/workflow-runs.json`.
+Each project owns exactly one declarative v2 workflow source at `projects/<id>/workflow.ts`, committed in the project-local Git and initialized from the default template. The native API loader polls these files, compiles changed sources into `runtime/workflow-v2-cache/<id>/`, validates the Zod definition, graph closure, unique IDs, capability allowlist, static safety, and cycles, then atomically activates the next version in PGlite. Running node tasks stay pinned to the version that created them. `workflow.ts` may import only `@research-os/workflow-kit` and `zod`; filesystem, network, process, dynamic import, eval, and credential patterns are rejected. Workflow edits are generated as reviewable diffs, validated in a temporary workspace, approved, written, and committed to the project Git before hot loading.
 
-Project chat, paper translation/revision, and experiment planning requests are dispatched through the project workflow entry; the workflow branches call restricted internal API endpoints for the actual model and state work. Idea clarification before project creation remains outside a project workflow by design.
+PGlite stores `project_workflow_runtime`, `workflow_definitions`, `workflow_events`, and `workflow_node_runs`; the existing task queue holds finite node tasks. A per-project coordinator appends ready node tasks and the native worker pool executes them with leases, retries, thread/project serial constraints, heartbeat, and restart recovery. Project chat, paper translation/revision, experiment planning, related-work operations, report windows, and workflow edits append events and wait on finite node runs instead of starting a long-lived Mastra workflow run. The project page renders `WorkflowGraphSnapshot` and subscribes to the SSE stream. Mastra still owns Agents, Skills, Tools, model calls, and Studio as a development view; it no longer owns the project-level workflow runtime. Idea clarification before project creation remains outside a project workflow by design.
 
 ## Related Work Boundary
 

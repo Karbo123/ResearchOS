@@ -214,13 +214,24 @@ async function dispatchDownstream(
   for (const node of definition.nodes) {
     if (node.requires.includes(completedNodeId)) downstreamIds.add(node.id)
   }
-  const completedRun = await nodeRun(transaction, event.project_id, event.correlation_id, completedNodeId, event.definition_version)
+  let completedVersion = event.definition_version
+  if (typeof event.payload.node_run_id === 'string' && event.payload.node_run_id) {
+    const runRow = (await transaction.query<{ definition_version: number }>(
+      'SELECT definition_version FROM workflow_node_runs WHERE id=$1 AND project_id=$2',
+      [event.payload.node_run_id, event.project_id],
+    )).rows[0]
+    if (runRow) completedVersion = runRow.definition_version
+  }
+  const completedRun = await nodeRun(transaction, event.project_id, event.correlation_id, completedNodeId, completedVersion)
   const completedInput = completedRun?.input_ref as { payload?: Record<string, unknown> } | null
   const inputPayload = completedInput?.payload && typeof completedInput.payload === 'object' && !Array.isArray(completedInput.payload)
     ? completedInput.payload
     : event.payload
   for (const nodeId of downstreamIds) {
-    await ensureNodeReady(transaction, event, definition, nodeId, new Set(), inputPayload)
+    const versionedEvent = completedVersion === event.definition_version
+      ? event
+      : { ...event, definition_version: completedVersion }
+    await ensureNodeReady(transaction, versionedEvent, definition, nodeId, new Set(), inputPayload)
   }
 }
 

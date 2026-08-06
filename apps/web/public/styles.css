@@ -1090,5 +1090,5 @@ h1 { font-size: 20px; line-height: 1.25; }
   .workflow-graph-node-meta { justify-content: flex-start; }
   .workflow-graph-lists { grid-template-columns: 1fr; }
   .workflow-graph-toolbar { gap: 6px; }
-  .workflow-graph-filter { min-height: 34px; padding: 5px 9px; }
+  .workflow-graph-filter { min-height: 40px; padding: 6px 11px; }
 }
