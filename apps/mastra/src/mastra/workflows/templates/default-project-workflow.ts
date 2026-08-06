@@ -187,7 +187,7 @@ const workflow = {
       capability: 'report.generate',
       label_key: 'workflow.node.reportGenerate',
       description_key: 'workflow.node.reportGenerateDescription',
-      retry: { max_attempts: 2, backoff_seconds: 5 },
+      retry: { max_attempts: 1, backoff_seconds: 5 },
       timeout_seconds: 300,
       concurrency: 'project-serial',
     },

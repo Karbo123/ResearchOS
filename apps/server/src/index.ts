@@ -27,12 +27,12 @@ import { transcribeVoice } from './voice-transcription.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
 import { isCurrentProjectSlug, isProjectUuidReference, normalizeProjectSlug } from './project-slug.js'
-import { createOperationalReport, diagnostics } from './research-services.js'
+import { diagnostics } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
 import { createPaperDraftProposal, createPaperSectionProposal, revisePaperSection, translatePaperSection } from './paper-service.js'
 import { paperWorkspaceDetail } from './paper-workspace-service.js'
 import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.js'
-import { assertWorkflowPatchValid, createWorkflowEditProposal } from './workflow-edit-service.js'
+import { assertWorkflowPatchValid } from './workflow-edit-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { startReportScheduler } from './report-scheduler.js'
 import { scanFile } from './malware-scanner.js'
@@ -62,7 +62,7 @@ import { createExperimentPlan as createProjectExperimentPlan } from './experimen
 import { appendWorkflowEvent, appendWorkflowEventFromInput, listWorkflowEvents } from './project-workflow/event-store.js'
 import { appendWorkflowEventAndWait } from './project-workflow/task-wait.js'
 import { workflowGraphSnapshot } from './project-workflow/graph-service.js'
-import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks } from './project-workflow/runtime-service.js'
+import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks, recoverProjectWorkflowRuntimes } from './project-workflow/runtime-service.js'
 import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
 import { workflowEventAppendInputSchema } from './project-workflow/contracts.js'
 
@@ -738,7 +738,19 @@ app.post('/api/projects/:projectId/experiment-plan', async context => {
 app.post('/api/projects/:projectId/workflow-edit-proposal', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
   const body = await jsonBody(context, workflowEditProposalRequest)
-  return context.json(await createWorkflowEditProposal(projectId, body.instruction, body.project_context), 201)
+  return context.json(await appendWorkflowEventAndWait(projectId, 'workflow.edit.requested', {
+    payload: { instruction: body.instruction, project_context: body.project_context },
+    source: 'api',
+    correlation_id: `workflow-edit:${Date.now()}`,
+    idempotency_key: `workflow-edit:${projectId}:${Date.now()}`,
+    target_node_id: 'workflow.edit',
+  }), 201)
+})
+
+app.post('/api/projects/:projectId/workflow/definition/preview', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  const body = await jsonBody(context, z.object({ source: z.string().min(1).max(300_000) }).strict())
+  return context.json(await new WorkflowDefinitionLoader().validateSource(projectId, body.source))
 })
 
 app.post('/api/proposals/:proposalId/decision', async context => {
@@ -985,7 +997,13 @@ app.post('/api/policies', async context => {
 app.post('/api/reports', async context => {
   const body = await jsonBody(context, reportRequest)
   if (body.notify) throw new ApiError(501, 'notifications_not_implemented', '原生通知适配器尚未实现。')
-  return context.json(await createOperationalReport(body.project_id, body.period))
+  return context.json(await appendWorkflowEventAndWait(body.project_id, 'report.window.reached', {
+    payload: { period: body.period },
+    source: 'api',
+    correlation_id: `report-manual:${Date.now()}`,
+    idempotency_key: `report-manual:${body.project_id}:${Date.now()}`,
+    target_node_id: 'report.generate',
+  }))
 })
 app.post('/api/projects/:projectId/feedback', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -1299,6 +1317,7 @@ if (!isTestRuntime) {
   await migrateProjectIdentifierStorage()
   await migrateProjectArtifactFiles()
   await recoverInterruptedWork()
+  await recoverProjectWorkflowRuntimes()
   await resumeQueuedRelatedWorkRuns()
   const workflowLoader = new WorkflowDefinitionLoader()
   await workflowLoader.scanAll()

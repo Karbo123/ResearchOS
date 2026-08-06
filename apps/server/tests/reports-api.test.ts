@@ -2,9 +2,15 @@ import { testProjectSlug } from './test-project.js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '../src/index.js'
 import { database, migrate, rows } from '../src/database.js'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { projectsRoot, repositoryRoot, pathInside } from '../src/paths.js'
+import { WorkflowDefinitionLoader } from '../src/project-workflow/definition-loader.js'
+import { startTaskWorker } from '../src/task-worker.js'
 
 const projectId = testProjectSlug()
 const sessionId = crypto.randomUUID()
+const templatePath = resolve(repositoryRoot, 'apps/mastra/src/mastra/workflows/templates/default-project-workflow.ts')
 
 async function requestJson(path: string, init: RequestInit = {}) {
   const response = await app.request(`http://research-os.test${path}`, {
@@ -15,17 +21,31 @@ async function requestJson(path: string, init: RequestInit = {}) {
 }
 
 describe('operational report API', () => {
+  let worker: ReturnType<typeof startTaskWorker>
+
   beforeAll(async () => {
     await migrate()
     await database.query('INSERT INTO projects(id,slug,title) VALUES ($1,$2,$3)', [projectId, `report-api-${projectId.slice(0, 8)}`, 'Report API Test'])
+    mkdirSync(pathInside(projectsRoot, projectId), { recursive: true })
+    writeFileSync(pathInside(projectsRoot, projectId, 'workflow.ts'), readFileSync(templatePath, 'utf8'), 'utf8')
+    await new WorkflowDefinitionLoader().initializeProject(projectId)
+    await database.query('DELETE FROM audit_events WHERE project_id=$1', [projectId])
+    worker = startTaskWorker()
   })
 
   afterAll(async () => {
+    worker?.stop()
     await database.query('DELETE FROM reports WHERE project_id=$1', [projectId])
     await database.query('DELETE FROM messages WHERE session_id=$1', [sessionId])
     await database.query('DELETE FROM conversation_sessions WHERE id=$1', [sessionId])
     await database.query('DELETE FROM audit_events WHERE project_id=$1', [projectId])
+    await database.query('DELETE FROM workflow_events WHERE project_id=$1', [projectId])
+    await database.query('DELETE FROM workflow_node_runs WHERE project_id=$1', [projectId])
+    await database.query('DELETE FROM tasks WHERE project_id=$1', [projectId])
+    await database.query('DELETE FROM workflow_definitions WHERE project_id=$1', [projectId])
+    await database.query('DELETE FROM project_workflow_runtime WHERE project_id=$1', [projectId])
     await database.query('DELETE FROM projects WHERE id=$1', [projectId])
+    rmSync(pathInside(projectsRoot, projectId), { recursive: true, force: true })
   })
 
   it('returns a structured empty-window failure instead of writing a template report', async () => {
@@ -39,6 +59,7 @@ describe('operational report API', () => {
   })
 
   it('includes real events and source identifiers in the generated report', async () => {
+    await database.query('DELETE FROM tasks WHERE project_id=$1', [projectId])
     await database.query('INSERT INTO conversation_sessions(id,project_id,phase) VALUES ($1,$2,$3)', [sessionId, projectId, 'clarifying'])
     const messageId = crypto.randomUUID()
     await database.query('INSERT INTO messages(id,session_id,role,content) VALUES ($1,$2,$3,$4)', [messageId, sessionId, 'user', '明确比较两个方法在当前 topic 上的实验差异。'])
@@ -57,7 +78,13 @@ describe('operational report API', () => {
     expect(String(result.body.content)).toContain('Waiting for decision')
 
     const stored = await rows<{ source_snapshot: Record<string, unknown> }>('SELECT source_snapshot FROM reports WHERE id=$1', [result.body.id])
-    expect(stored[0]?.source_snapshot).toMatchObject({ project_id: projectId, event_count: 2, audit_event_ids: [auditId], message_ids: [messageId] })
+    expect(stored[0]?.source_snapshot).toMatchObject({
+      project_id: projectId,
+      event_count: expect.any(Number),
+      audit_event_ids: expect.arrayContaining([auditId]),
+      message_ids: [messageId],
+    })
+    expect(Number(stored[0]?.source_snapshot.event_count)).toBeGreaterThanOrEqual(2)
     expect(stored[0]?.source_snapshot.paragraph_sources).toEqual(expect.arrayContaining([
       expect.objectContaining({ heading: 'Observed activity', source_ids: [auditId, messageId] }),
       expect.objectContaining({ heading: 'Waiting for decision', source_ids: [] }),

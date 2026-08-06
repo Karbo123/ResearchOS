@@ -14,6 +14,12 @@ type NodeRunResult = {
   correlation_id: string
 }
 
+const NODE_ERROR_STATUS: Record<string, 409 | 422 | 502> = {
+  report_no_events: 409,
+  spec_field_unconfirmed: 409,
+  paper_experiments_valid_artifacts_required: 422,
+}
+
 export async function appendWorkflowEventAndWait(
   projectId: string,
   eventType: WorkflowEventType,
@@ -37,7 +43,8 @@ export async function appendWorkflowEventAndWait(
     }
     if (last.status === 'succeeded') return last.output_ref ?? { ok: true }
     if (last.status === 'failed' || last.status === 'blocked') {
-      throw new ApiError(502, last.error_code || 'workflow_node_failed', last.blocked_reason || `节点 ${last.node_id} 执行失败。`)
+      const status = NODE_ERROR_STATUS[last.error_code || ''] || 502
+      throw new ApiError(status, last.error_code || 'workflow_node_failed', last.blocked_reason || `节点 ${last.node_id} 执行失败。`)
     }
     await new Promise(resolve => setTimeout(resolve, 200))
   }

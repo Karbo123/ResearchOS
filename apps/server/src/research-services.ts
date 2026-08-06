@@ -75,7 +75,7 @@ export async function diagnostics(projectId: string) {
   return { project_id: projectId, metrics, failed_runs: experiments.filter(item => item.status === 'failed').map(item => ({ run_id: item.id, error: item.error })), calculation: 'deterministic_typescript' }
 }
 
-export async function createOperationalReport(projectId: string, period: string) {
+export async function createOperationalReport(projectId: string, period: string, excludeTaskId?: string) {
   const project = await requireProject(projectId)
   const generatedAt = new Date()
   const windowStart = new Date(generatedAt)
@@ -111,8 +111,10 @@ export async function createOperationalReport(projectId: string, period: string)
       [projectId, windowStartIso, generatedAtIso],
     ),
     rows<{ id: string; kind: string; status: string; error: string | null; updated_at: string }>(
-      'SELECT id,kind,status,error,updated_at FROM tasks WHERE project_id=$1 AND updated_at >= $2 AND updated_at <= $3 ORDER BY updated_at,id',
-      [projectId, windowStartIso, generatedAtIso],
+      `SELECT id,kind,status,error,updated_at FROM tasks
+       WHERE project_id=$1 AND updated_at >= $2 AND updated_at <= $3${excludeTaskId ? ' AND id<>$4' : ''}
+       ORDER BY updated_at,id`,
+      excludeTaskId ? [projectId, windowStartIso, generatedAtIso, excludeTaskId] : [projectId, windowStartIso, generatedAtIso],
     ),
     rows<{ id: string; experiment_type: string; status: string; run_id: string | null; error: string | null; created_at: string }>(
       'SELECT id,experiment_type,status,run_id,error,created_at FROM experiments WHERE project_id=$1 AND created_at >= $2 AND created_at <= $3 ORDER BY created_at,id',

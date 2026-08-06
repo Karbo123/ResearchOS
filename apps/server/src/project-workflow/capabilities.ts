@@ -121,8 +121,16 @@ export async function executeWorkflowCapability(capability: WorkflowCapability, 
       }
     }
     case 'paper.translate':
-    case 'paper.revise':
+    case 'paper.revise': {
+      if (capability === 'paper.revise' && payload.section_id === 'paper_experiments') {
+        const artifacts = await database.query<{ id: string }>(
+          'SELECT id FROM artifacts WHERE project_id=$1 AND valid=TRUE LIMIT 1',
+          [projectId],
+        )
+        if (!artifacts.rows.length) throw new Error('paper_experiments_valid_artifacts_required')
+      }
       return await paperServiceCapability(capability, projectId, payload)
+    }
     case 'paper.compile':
       return await createCompileProposal(projectId)
     case 'memory.write': {
@@ -153,7 +161,7 @@ export async function executeWorkflowCapability(capability: WorkflowCapability, 
     }
     case 'report.generate': {
       const period = payload.period === 'weekly' ? 'weekly' : payload.period === 'manual' ? 'manual' : 'daily'
-      return await createOperationalReport(projectId, period)
+      return await createOperationalReport(projectId, period, taskId)
     }
     case 'governance.approval':
       return { status: 'waiting_approval' }

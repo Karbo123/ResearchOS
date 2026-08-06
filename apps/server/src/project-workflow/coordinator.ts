@@ -211,7 +211,6 @@ async function dispatchDownstream(
   const inputPayload = completedInput?.payload && typeof completedInput.payload === 'object' && !Array.isArray(completedInput.payload)
     ? completedInput.payload
     : event.payload
-  console.error('[workflow-v2-debug] completed=', completedNodeId, 'downstream=', [...downstreamIds])
   for (const nodeId of downstreamIds) {
     await ensureNodeReady(transaction, event, definition, nodeId, new Set(), inputPayload)
   }

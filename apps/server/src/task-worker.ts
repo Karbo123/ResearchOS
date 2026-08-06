@@ -5,6 +5,7 @@ import { executeQueuedReproductionRun } from './reproduction-service.js'
 import { executeWorkflowCapability } from './project-workflow/capabilities.js'
 import { appendWorkflowEvent } from './project-workflow/event-store.js'
 import type { WorkflowTaskInput } from './project-workflow/capabilities.js'
+import { ApiError } from './http.js'
 
 type Task = {
   id: string
@@ -69,7 +70,7 @@ async function markNodeRunSucceeded(task: Task, output: unknown): Promise<void> 
   })
 }
 
-async function markNodeRunFailed(task: Task, message: string, terminal: boolean): Promise<void> {
+async function markNodeRunFailed(task: Task, code: string, reason: string, terminal: boolean): Promise<void> {
   if (!task.workflow_node_run_id) return
   const run = await one<NodeRunUpdate>(
     `SELECT id,project_id,correlation_id,node_id,definition_version FROM workflow_node_runs
@@ -79,9 +80,9 @@ async function markNodeRunFailed(task: Task, message: string, terminal: boolean)
   if (!run) return
   await database.query(
     `UPDATE workflow_node_runs
-     SET status=$2,error_code=$3,worker_id=NULL,started_at=COALESCE(started_at,NOW()),finished_at=CASE WHEN $4 THEN NOW() ELSE finished_at END,updated_at=NOW()
+     SET status=$2,error_code=$3,blocked_reason=$4,worker_id=NULL,started_at=COALESCE(started_at,NOW()),finished_at=CASE WHEN $5 THEN NOW() ELSE finished_at END,updated_at=NOW()
      WHERE id=$1`,
-    [run.id, terminal ? 'failed' : 'running', message, terminal],
+    [run.id, terminal ? 'failed' : 'running', code, reason, terminal],
   )
   if (terminal) {
     await appendWorkflowEvent(run.project_id, 'workflow.task.failed', {
@@ -89,7 +90,7 @@ async function markNodeRunFailed(task: Task, message: string, terminal: boolean)
         task_id: task.id,
         node_run_id: run.id,
         node_id: run.node_id,
-        error_code: message,
+        error_code: code,
       },
       source: 'task-worker',
       correlation_id: run.correlation_id,
@@ -170,7 +171,11 @@ async function tick(workerId: string): Promise<void> {
       if (file) await database.query('UPDATE uploaded_files SET metadata=$2 WHERE id=$1 AND project_id=$3', [uploadedFileId, { ...((file.metadata || {}) as Record<string, unknown>), semantic_index_status: 'failed', semantic_index_error: message, semantic_index_task_id: task.id }, task.project_id])
     }
     const terminal = task.attempts >= task.max_attempts
-    if (task.kind === 'workflow_node_task') await markNodeRunFailed(task, message, terminal)
+    if (task.kind === 'workflow_node_task') {
+      const code = error instanceof ApiError ? error.code : message
+      const reason = error instanceof ApiError ? error.message : message
+      await markNodeRunFailed(task, code, reason, terminal)
+    }
     const delay = Math.min(300, 5 * 2 ** Math.max(0, task.attempts - 1))
     await database.query(`UPDATE tasks SET status=$2,error=$3,lease_token=NULL,leased_until=NULL,worker_id=NULL,heartbeat_until=NULL,next_attempt_at=NOW()+($4::text||' seconds')::interval,updated_at=NOW() WHERE id=$1`, [task.id, terminal ? 'failed' : 'retrying', message, String(delay)])
   }
