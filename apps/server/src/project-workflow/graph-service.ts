@@ -121,6 +121,8 @@ export async function workflowGraphSnapshot(projectId: string): Promise<Workflow
       blocked_reason: run.blocked_reason,
       started_at: toIsoOrNull(run.started_at),
       finished_at: toIsoOrNull(run.finished_at),
+      created_at: toIso(run.created_at),
+      updated_at: toIso(run.updated_at),
       input_ref: (run.input_ref as Record<string, unknown> | null) ?? null,
       output_ref: (run.output_ref as Record<string, unknown> | null) ?? null,
       task_id: run.task_id,

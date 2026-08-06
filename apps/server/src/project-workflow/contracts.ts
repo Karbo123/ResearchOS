@@ -179,6 +179,8 @@ export const workflowGraphSnapshotSchema = z.object({
     blocked_reason: z.string().nullable(),
     started_at: z.string().nullable(),
     finished_at: z.string().nullable(),
+    created_at: z.string(),
+    updated_at: z.string(),
     input_ref: z.record(z.string(), z.unknown()).nullable(),
     output_ref: z.record(z.string(), z.unknown()).nullable(),
     task_id: z.string().nullable(),

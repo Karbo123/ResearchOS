@@ -270,6 +270,106 @@ export interface WorkflowRunRecord {
   created_at: string
 }
 
+export type WorkflowRuntimeStatus = 'waiting' | 'dispatching' | 'blocked' | 'failed' | 'paused'
+export type WorkflowNodeRunStatus = 'queued' | 'running' | 'waiting_approval' | 'succeeded' | 'failed' | 'blocked' | 'cancelled'
+export type WorkflowTaskStatus = 'queued' | 'retrying' | 'running' | 'succeeded' | 'failed' | 'cancelled'
+export type WorkflowConcurrency = 'thread-serial' | 'project-serial' | 'parallel'
+export type WorkflowEdgeCondition = 'always' | 'success'
+export type WorkflowTriggerMode = 'root' | 'follow'
+
+export interface WorkflowGraphGroup {
+  id: string
+  label_key: string
+  description_key?: string
+}
+
+export interface WorkflowGraphNode {
+  id: string
+  group: string
+  capability: string
+  label_key: string
+  description_key?: string
+  requires: string[]
+  retry: { max_attempts: number; backoff_seconds: number } | 'explicit'
+  timeout_seconds: number
+  concurrency: WorkflowConcurrency
+}
+
+export interface WorkflowGraphEdge {
+  from: string
+  to: string
+  condition: WorkflowEdgeCondition
+}
+
+export interface WorkflowGraphTrigger {
+  event_type: string
+  node_id: string
+  mode: WorkflowTriggerMode
+}
+
+export interface WorkflowRuntimeSnapshot {
+  status: WorkflowRuntimeStatus
+  state_version: number
+  event_cursor: number
+  coordinator_lease_token: string | null
+  lease_until: string | null
+  updated_at: string
+}
+
+export interface WorkflowNodeRun {
+  id: string
+  node_id: string
+  status: WorkflowNodeRunStatus
+  attempt: number
+  error_code: string | null
+  blocked_reason: string | null
+  started_at: string | null
+  finished_at: string | null
+  created_at: string
+  updated_at: string
+  input_ref: Record<string, unknown> | null
+  output_ref: Record<string, unknown> | null
+  task_id: string | null
+  definition_version: number
+}
+
+export interface WorkflowTaskRun {
+  id: string
+  node_id: string | null
+  status: WorkflowTaskStatus
+  attempts: number
+  error: string | null
+  worker_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface WorkflowEventRun {
+  sequence: number
+  event_type: string
+  correlation_id: string
+  source: string
+  definition_version: number
+  created_at: string
+}
+
+export interface WorkflowGraphSnapshot {
+  project_id: string
+  definition_version: number
+  source_hash: string
+  git_commit: string | null
+  status: WorkflowRuntimeStatus
+  last_error: string | null
+  groups: WorkflowGraphGroup[]
+  nodes: WorkflowGraphNode[]
+  edges: WorkflowGraphEdge[]
+  triggers: WorkflowGraphTrigger[]
+  runtime: WorkflowRuntimeSnapshot
+  node_runs: WorkflowNodeRun[]
+  tasks: WorkflowTaskRun[]
+  events: WorkflowEventRun[]
+}
+
 export interface IdeaVersion {
   id: string
   project_id: string
