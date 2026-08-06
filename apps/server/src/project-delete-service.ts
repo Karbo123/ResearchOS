@@ -7,6 +7,7 @@ import { artifactsRoot, pathInside, projectsRoot } from './paths.js'
 import { removeProjectEmbeddingSettings } from './project-embedding-settings.js'
 import { removeProjectSettings } from './project-settings.js'
 import { stopPoolInstance } from './supermemory-instance.js'
+import { deleteProjectWorkflow } from './project-workflow/runtime-service.js'
 
 type ProjectFile = { relative_path: string }
 
@@ -87,6 +88,7 @@ export async function deleteProject(projectId: string, projectTitle: string, con
   const settings = removeProjectEmbeddingSettings(projectId)
   removeProjectSettings(projectId)
   await removeProjectRows(projectId)
+  await deleteProjectWorkflow(projectId)
   if (process.env.NODE_ENV !== 'test' && process.env.VITEST !== 'true') {
     try {
       await mastraDelete<{ disposed: boolean }>(`/internal/workflows/project/${projectId}`)

@@ -9,7 +9,7 @@ import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, documentModelSettingsRequest, embeddingTestRequest, emptyIdeaDraft, experimentRequest, imageGenerationSettingsRequest, modelCatalogRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest, workspaceArea, workspaceTab,
+  approvalDecision, chatRequest, documentModelSettingsRequest, embeddingTestRequest, experimentRequest, imageGenerationSettingsRequest, modelCatalogRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest, workspaceArea, workspaceTab,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectRenameRequest, projectSlug, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
   workflowEditProposalRequest,
@@ -24,9 +24,8 @@ import { testModelConnection } from './model-test.js'
 import { fetchModelCatalog } from './model-catalog.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeVoice } from './voice-transcription.js'
-import { tierFor } from './model-routing.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
-import { createProjectWorkspace, enqueue, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
+import { createProjectWorkspace, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
 import { isCurrentProjectSlug, isProjectUuidReference, normalizeProjectSlug } from './project-slug.js'
 import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
@@ -58,9 +57,16 @@ import { migrateProjectArtifactFiles } from './project-artifact-migration.js'
 import { migrateProjectSlugs } from './project-slug-migration.js'
 import { migrateProjectIdentifierStorage } from './project-identifier-migration.js'
 import { projectArtifactPath, projectArtifactRelativePath, projectFilePath } from './project-storage.js'
+import { projectChatTurn, clarifyChatTurn } from './chat-service.js'
+import { createExperimentPlan as createProjectExperimentPlan } from './experiment-plan-service.js'
+import { appendWorkflowEvent, appendWorkflowEventFromInput, listWorkflowEvents } from './project-workflow/event-store.js'
+import { appendWorkflowEventAndWait } from './project-workflow/task-wait.js'
+import { workflowGraphSnapshot } from './project-workflow/graph-service.js'
+import { deleteProjectWorkflow, initializeProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks } from './project-workflow/runtime-service.js'
+import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
+import { workflowEventAppendInputSchema } from './project-workflow/contracts.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown>; scope: string }
-type MessageRow = { role: string; content: string }
 type ProposalRow = { id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown>; impact: Record<string, unknown> }
 type ExperimentRow = { id: string; project_id: string; status: string; metrics: Record<string, number>; error: string | null }
 type RepositoryRow = { id: string; project_id: string; paper_id: string | null; source_url: string; license_spdx: string | null; commit_or_tag: string | null; verified_official: boolean; metadata: Record<string, unknown>; retrieved_at: string }
@@ -86,134 +92,6 @@ app.onError((error, context) => {
 app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
 app.use('/api/voice', bodyLimit({ maxSize: 25 * 1024 * 1024, onError: context => context.json({ code: 'voice_upload_too_large', message: '录音文件超过 25 MB 限制。' }, 413) }))
 
-async function sessionFor(input: z.infer<typeof chatRequest>): Promise<SessionRow> {
-  const scope = input.workspace_area && input.workspace_tab ? `${input.workspace_area}/${input.workspace_tab}` : 'project'
-  if (input.project_id && input.workspace_area && input.workspace_tab) {
-    if (input.session_id) {
-      const supplied = await one<SessionRow>('SELECT * FROM conversation_sessions WHERE id=$1', [input.session_id])
-      if (supplied?.project_id === input.project_id && supplied.scope === scope) return supplied
-    }
-    const existing = await one<SessionRow>('SELECT * FROM conversation_sessions WHERE project_id=$1 AND scope=$2 ORDER BY updated_at DESC LIMIT 1', [input.project_id, scope])
-    if (existing) return existing
-    const session: SessionRow = { id: crypto.randomUUID(), project_id: input.project_id, phase: 'supervising', draft: emptyIdeaDraft(), scope }
-    await database.query('INSERT INTO conversation_sessions(id,project_id,phase,draft,scope) VALUES ($1,$2,$3,$4,$5)', [session.id, session.project_id, session.phase, session.draft, session.scope])
-    return session
-  }
-  if (input.session_id) {
-    const session = await one<SessionRow>('SELECT * FROM conversation_sessions WHERE id=$1', [input.session_id])
-    if (!session) throw new ApiError(404, 'session_not_found', '对话会话不存在。')
-    if (input.project_id && session.project_id && input.project_id !== session.project_id) throw new ApiError(409, 'session_project_mismatch', '会话不属于该项目。')
-    return session
-  }
-  const session: SessionRow = { id: crypto.randomUUID(), project_id: input.project_id ?? null, phase: input.project_id ? 'supervising' : 'clarifying', draft: emptyIdeaDraft(), scope }
-  await database.query('INSERT INTO conversation_sessions(id,project_id,phase,draft,scope) VALUES ($1,$2,$3,$4,$5)', [session.id, session.project_id, session.phase, session.draft, session.scope])
-  return session
-}
-
-async function readableDocumentReply(input: {
-  purpose: 'clarify' | 'supervise'
-  user_message: string
-  context: string
-  draft_reply: string
-  project_id?: string
-  workspace_context?: Record<string, string> | null
-}) {
-  return mastraJson<{ result: { reply: string }; route: { model: string; reasoning_effort: string } }>('/internal/agents/document-reply', {
-    ...input,
-    project_id: input.project_id || undefined,
-  })
-}
-
-async function chatTurn(input: z.infer<typeof chatRequest>) {
-  const session = await sessionFor(input)
-  const scope = input.workspace_area && input.workspace_tab ? `${input.workspace_area}/${input.workspace_tab}` : session.scope
-  const workspaceContext = input.workspace_area && input.workspace_tab
-    ? { area: input.workspace_area, tab: input.workspace_tab, label: input.workspace_label || input.workspace_tab, scope }
-    : null
-  const transcript = await rows<MessageRow>('SELECT role,content FROM messages WHERE session_id=$1 ORDER BY created_at DESC LIMIT 12', [session.id])
-  const recentTranscript = [...transcript].reverse()
-  const tier = tierFor(input.message, input.clarification_mode, input.attachments.length)
-  const userMessageId = crypto.randomUUID()
-  await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [userMessageId, session.id, 'user', input.message, { clarification_mode: input.clarification_mode, workspace_scope: scope }])
-  let reply: string
-  let phase = session.phase
-  let draft = session.draft
-  let actionRequired: string | null = null
-  if (session.project_id || input.project_id) {
-    const projectId = session.project_id || input.project_id!
-    if (supermemoryEnabled()) await ingestProjectMemory(projectId, {
-      source_type: 'project_chat_message', source_id: userMessageId, artifact_id: null, uploaded_file_id: null,
-      content: `user: ${input.message}`, source_url: null, quote: null, locator: null,
-      metadata: { session_id: session.id, role: 'user', clarification_mode: input.clarification_mode, workspace_scope: scope, evidence_status: 'semantic_candidate' },
-      task_type: 'memory', idempotency_key: `project-chat-user:${userMessageId}`,
-    })
-    const project = await projectDetail(projectId)
-    const modelResult = await mastraJson<{ result: { intent: string; target_field: string | null; proposed_value: string | null; policy_rule: string | null; clarification_question: string | null; assistant_reply: string }; route: { tier: string; model: string; reasoning_effort: string } }>('/internal/agents/supervision-intent', {
-      message: input.message,
-      project_context: project,
-      transcript: recentTranscript,
-      tier,
-      memory_resource: `project:${projectId}`,
-      memory_thread: `session:${session.id}`,
-      workspace_context: workspaceContext,
-    })
-    const documentResult = await readableDocumentReply({
-      purpose: 'supervise',
-      user_message: input.message,
-      context: JSON.stringify({ project_context: project, recent_conversation: recentTranscript, workspace_context: workspaceContext }).slice(0, 12_000),
-      draft_reply: modelResult.result.assistant_reply,
-      project_id: projectId,
-      workspace_context: workspaceContext,
-    })
-    reply = documentResult.result.reply
-    const assistantMessageId = crypto.randomUUID()
-    if (supermemoryEnabled()) await ingestProjectMemory(projectId, {
-      source_type: 'project_chat_message', source_id: assistantMessageId, artifact_id: null, uploaded_file_id: null,
-      content: `assistant: ${reply}`, source_url: null, quote: null, locator: null,
-      metadata: { session_id: session.id, role: 'assistant', model_tier: tier, intent: modelResult.result.intent, workspace_scope: scope, evidence_status: 'semantic_candidate' },
-      task_type: 'memory', idempotency_key: `project-chat-assistant:${assistantMessageId}`,
-    })
-    if (modelResult.result.intent === 'change_request' && modelResult.result.target_field && modelResult.result.proposed_value) {
-      const proposalId = crypto.randomUUID()
-      await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'idea_revision', input.message, `Revise ${modelResult.result.target_field}`, { field: modelResult.result.target_field, value: modelResult.result.proposed_value }])
-      actionRequired = proposalId
-    } else if (modelResult.result.intent === 'policy_change' && modelResult.result.policy_rule) {
-      const proposalId = crypto.randomUUID()
-      await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'config_change', input.message, 'Add project policy', { rule: modelResult.result.policy_rule }])
-      actionRequired = proposalId
-    } else if (modelResult.result.intent === 'workflow_change_request') {
-      const workflowProposal = await createWorkflowEditProposal(projectId, input.message, project as Record<string, unknown>)
-      actionRequired = workflowProposal.proposal_id
-    }
-    await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [assistantMessageId, session.id, 'assistant', reply, { model_tier: tier, intent: modelResult.result.intent, workspace_scope: scope }])
-    return { session_id: session.id, project_id: projectId, phase: 'supervising', reply, spec: null, missing_fields: [], action_required: actionRequired, model_tier: 'document', model: documentResult.route.model, reasoning_effort: documentResult.route.reasoning_effort, clarification_mode: input.clarification_mode, workspace_scope: scope }
-  }
-  const modelResult = await mastraJson<{ result: { draft: Record<string, unknown>; assistant_reply: string; ready_for_confirmation: boolean; unresolved_items: string[] }; route: { tier: string; model: string; reasoning_effort: string } }>('/internal/agents/clarify', {
-    message: input.message,
-    current_draft: session.draft,
-    transcript: recentTranscript,
-    attachment_count: input.attachments.length,
-    clarification_mode: input.clarification_mode,
-    attachment_context: [],
-    attachment_images: [],
-    tier,
-    memory_resource: `idea:${session.id}`,
-    memory_thread: `session:${session.id}`,
-  })
-  const documentResult = await readableDocumentReply({
-    purpose: 'clarify',
-    user_message: input.message,
-    context: JSON.stringify({ current_draft: session.draft, recent_conversation: recentTranscript }).slice(0, 12_000),
-    draft_reply: modelResult.result.assistant_reply,
-  })
-  reply = documentResult.result.reply
-  draft = modelResult.result.draft
-  phase = modelResult.result.ready_for_confirmation ? 'ready_for_confirmation' : 'clarifying'
-  await database.query('UPDATE conversation_sessions SET draft=$2,phase=$3,updated_at=NOW() WHERE id=$1', [session.id, draft, phase])
-  await database.query('INSERT INTO messages(id,session_id,role,content,metadata) VALUES ($1,$2,$3,$4,$5)', [crypto.randomUUID(), session.id, 'assistant', reply, { model_tier: tier, clarification_mode: input.clarification_mode, workspace_scope: scope }])
-  return { session_id: session.id, project_id: null, phase, reply, spec: phase === 'ready_for_confirmation' ? { schema_version: '1.0', idea: draft, feasibility: 'medium', feasibility_notes: [], required_approvals: [], candidate_modifications: [], policies: [] } : null, missing_fields: modelResult.result.unresolved_items, action_required: null, model_tier: 'document', model: documentResult.route.model, reasoning_effort: documentResult.route.reasoning_effort, clarification_mode: input.clarification_mode, workspace_scope: scope }
-}
-
 async function projectIdForChat(input: z.infer<typeof chatRequest>): Promise<string | null> {
   if (input.project_id) return input.project_id
   if (!input.session_id) return null
@@ -221,47 +99,27 @@ async function projectIdForChat(input: z.infer<typeof chatRequest>): Promise<str
   return session?.project_id ?? null
 }
 
-async function runProjectWorkflow(projectId: string, input: Record<string, unknown>): Promise<{ status: string; result: unknown; run_id: string; suspended: string[][] | null; suspend_payload: unknown }> {
-  return mastraJson<{ status: string; result: unknown; run_id: string; suspended: string[][] | null; suspend_payload: unknown }>(`/internal/workflows/project/${encodeURIComponent(projectId)}/run`, input)
-}
-
-function projectWorkflowSuccess(result: { status: string; result: unknown }): unknown {
-  if (result.status !== 'success') throw new ApiError(502, 'workflow_failed', '项目工作流执行失败。')
-  return result.result
-}
-
 async function chatDispatch(input: z.infer<typeof chatRequest>): Promise<Record<string, unknown>> {
   const projectId = await projectIdForChat(input)
-  if (!projectId) return chatTurn(input)
-  const result = await runProjectWorkflow(projectId, {
-    action: 'project_chat',
-    project_id: projectId,
-    session_id: input.session_id ?? null,
-    message: input.message,
-    attachments: input.attachments,
-    clarification_mode: input.clarification_mode,
-    workspace_area: input.workspace_area,
-    workspace_tab: input.workspace_tab,
-    workspace_label: input.workspace_label,
+  if (!projectId) return await clarifyChatTurn(input) as unknown as Record<string, unknown>
+  const inner = await appendWorkflowEventAndWait(projectId, 'chat.message.received', {
+    payload: {
+      session_id: input.session_id ?? null,
+      message: input.message,
+      attachments: input.attachments,
+      clarification_mode: input.clarification_mode,
+      workspace_area: input.workspace_area,
+      workspace_tab: input.workspace_tab,
+      workspace_label: input.workspace_label,
+    },
+    source: 'api',
+    correlation_id: `chat:${input.session_id || 'new'}:${Date.now()}`,
+    idempotency_key: `chat:${input.message}:${Date.now()}`,
+    target_node_id: 'conversation.agent_turn',
+    timeout_ms: Number(process.env.MODEL_REQUEST_TIMEOUT_SECONDS || 240) * 1000,
   })
-  const inner = projectWorkflowSuccess(result)
   if (!inner || typeof inner !== 'object' || Array.isArray(inner)) throw new ApiError(502, 'workflow_invalid_result', '项目工作流返回了无效的对话结果。')
   return inner as Record<string, unknown>
-}
-
-async function createExperimentPlan(projectId: string): Promise<{ proposal_id: string; status: 'pending' }> {
-  const project = await projectDetail(projectId)
-  if (project.status !== 'active') throw new ApiError(409, 'project_not_active', '项目当前不可执行实验规划。')
-  requireConfirmedSpecFields(projectId, project.spec, project.idea_versions || [])
-  const idea = project.idea_versions[0] as Record<string, unknown> | undefined
-  const result = await mastraJson<{ result: Record<string, unknown> }>('/internal/agents/experiment-plan', {
-    project_id: projectId,
-    idea_version: project.current_idea_version,
-    planning_context: { idea: idea?.spec, evidence: project.evidence, policies: project.policies },
-  })
-  const proposalId = crypto.randomUUID()
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,payload) VALUES ($1,$2,$3,$4,$5,$6)', [proposalId, projectId, 'experiment_plan', 'Mastra topic-specific plan', 'Topic-specific experiment plan requiring approval', { experiment_type: 'topic_specific', config: {}, random_seeds: result.result.random_seeds, topic_plan: result.result }])
-  return { proposal_id: proposalId, status: 'pending' }
 }
 
 app.get('/api/health', async context => context.json({ status: 'ok', runtime: 'native-typescript', database: 'pglite', container_runtime_required: false, secrets_exposed: false }))
@@ -493,7 +351,10 @@ app.post('/api/chat/stream', async context => {
     }
   })
 })
-app.post('/internal/chat', async context => context.json(await chatTurn(await jsonBody(context, chatRequest))))
+app.post('/internal/chat', async context => {
+  const body = await jsonBody(context, chatRequest)
+  return context.json(body.project_id ? await projectChatTurn(body) : await clarifyChatTurn(body))
+})
 app.post('/internal/projects/:projectId/paper-translate', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
   return context.json(await translatePaperSection(await projectIdForReference(context.req.param('projectId')), body.section_id))
@@ -503,7 +364,7 @@ app.post('/internal/projects/:projectId/paper-revise', async context => {
   return context.json(await revisePaperSection(await projectIdForReference(context.req.param('projectId')), body.section_id), 201)
 })
 app.post('/internal/projects/:projectId/experiment-plan', async context => {
-  return context.json(await createExperimentPlan(await projectIdForReference(context.req.param('projectId'))), 201)
+  return context.json(await createProjectExperimentPlan(await projectIdForReference(context.req.param('projectId'))), 201)
 })
 
 app.post('/api/projects', async context => {
@@ -522,6 +383,11 @@ app.post('/api/projects', async context => {
   })
   await audit('project.created', id, { slug, title })
   try { await createProjectWorkspace(id, slug, spec) }
+  catch (error) {
+    await database.query('DELETE FROM projects WHERE id=$1', [id])
+    throw error
+  }
+  try { await initializeProjectWorkflow(id) }
   catch (error) {
     await database.query('DELETE FROM projects WHERE id=$1', [id])
     throw error
@@ -833,15 +699,14 @@ app.post('/api/proposals', async context => {
 
 app.post('/api/projects/:projectId/experiment-plan', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  const project = await projectDetail(projectId)
-  const idea = project.idea_versions[0] as Record<string, unknown> | undefined
-  const workflowResult = await runProjectWorkflow(projectId, {
-    action: 'experiment_plan',
-    project_id: projectId,
-    idea_version: project.current_idea_version,
-    planning_context: { idea: idea?.spec, evidence: project.evidence, policies: project.policies },
+  const result = await appendWorkflowEventAndWait(projectId, 'experiment.plan.requested', {
+    payload: { project_id: projectId },
+    source: 'api',
+    correlation_id: `experiment-plan:${Date.now()}`,
+    idempotency_key: `experiment-plan:${Date.now()}`,
+    target_node_id: 'experiment.plan',
   })
-  return context.json(projectWorkflowSuccess(workflowResult), 201)
+  return context.json(result, 201)
 })
 
 app.post('/api/projects/:projectId/workflow-edit-proposal', async context => {
@@ -979,26 +844,30 @@ app.post('/api/projects/:projectId/paper-section', async context => {
 app.post('/api/projects/:projectId/paper-translate', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  const workflowResult = await runProjectWorkflow(projectId, {
-    action: 'paper_translate',
-    project_id: projectId,
+  const result = await appendWorkflowEventAndWait(projectId, 'paper.translate.requested', {
+    payload: {
     section_id: body.section_id,
-    heading: '',
-    source: '',
+    },
+    source: 'api',
+    correlation_id: `paper-translate:${Date.now()}`,
+    idempotency_key: `paper-translate:${Date.now()}`,
+    target_node_id: 'paper.translate',
   })
-  return context.json(projectWorkflowSuccess(workflowResult))
+  return context.json(result)
 })
 app.post('/api/projects/:projectId/paper-revise', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  const workflowResult = await runProjectWorkflow(projectId, {
-    action: 'paper_revise',
-    project_id: projectId,
+  const result = await appendWorkflowEventAndWait(projectId, 'paper.revise.requested', {
+    payload: {
     section_id: body.section_id,
-    heading: '',
-    source: '',
+    },
+    source: 'api',
+    correlation_id: `paper-revise:${Date.now()}`,
+    idempotency_key: `paper-revise:${Date.now()}`,
+    target_node_id: 'paper.revise',
   })
-  return context.json(projectWorkflowSuccess(workflowResult), 201)
+  return context.json(result, 201)
 })
 app.post('/api/projects/:projectId/compile-plan', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -1150,11 +1019,62 @@ app.post('/api/projects/:projectId/claim-reviews/:reviewId/decision', async cont
 app.get('/api/projects/:projectId/audit', async context => context.json(await rows('SELECT * FROM audit_events WHERE project_id=$1 ORDER BY created_at DESC', [await projectIdForReference(context.req.param('projectId'))])))
 app.get('/api/projects/:projectId/workflow-graph', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  return context.json(await mastraGet(`/internal/workflows/project/${projectId}/graph`))
+  return context.json(await workflowGraphSnapshot(projectId))
 })
 app.get('/api/projects/:projectId/workflow-runs', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  return context.json(await mastraGet(`/internal/workflows/project/${projectId}/runs`))
+  return context.json({ runs: await listProjectWorkflowNodeRuns(projectId) })
+})
+app.post('/api/projects/:projectId/workflow/events', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  const body = await jsonBody(context, workflowEventAppendInputSchema)
+  return context.json(await appendWorkflowEventFromInput(projectId, body), 201)
+})
+app.get('/api/projects/:projectId/workflow/runtime', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  const runtime = await projectWorkflowRuntime(projectId)
+  if (!runtime) throw new ApiError(404, 'workflow_runtime_not_found', '项目工作流运行时尚未初始化。')
+  return context.json(runtime)
+})
+app.get('/api/projects/:projectId/workflow/definition', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json(await workflowGraphSnapshot(projectId))
+})
+app.get('/api/projects/:projectId/workflow/graph', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json(await workflowGraphSnapshot(projectId))
+})
+app.get('/api/projects/:projectId/workflow/node-runs', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json({ node_runs: await listProjectWorkflowNodeRuns(projectId) })
+})
+app.get('/api/projects/:projectId/workflow/tasks', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json({ tasks: await listProjectWorkflowTasks(projectId) })
+})
+app.get('/api/projects/:projectId/workflow/events', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return context.json({ events: await listWorkflowEvents(projectId) })
+})
+app.get('/api/projects/:projectId/workflow/stream', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  return streamSSE(context, async stream => {
+    const initial = await workflowGraphSnapshot(projectId)
+    await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(initial) })
+    let lastCursor = initial.runtime.event_cursor
+    const timer = setInterval(async () => {
+      try {
+        const latest = await workflowGraphSnapshot(projectId)
+        if (latest.runtime.event_cursor !== lastCursor) {
+          lastCursor = latest.runtime.event_cursor
+          await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(latest) })
+        }
+      } catch {
+        await stream.writeSSE({ event: 'error', data: JSON.stringify({ code: 'workflow_stream_failed', message: '工作流状态读取失败。' }) })
+      }
+    }, 2_000)
+    stream.onAbort(() => clearInterval(timer))
+  })
 })
 app.post('/api/projects/:projectId/state', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -1164,6 +1084,8 @@ app.post('/api/projects/:projectId/state', async context => {
   const target = body.action === 'pause' ? 'paused' : body.action === 'resume' ? 'active' : 'cancelled'
   if (body.action === 'resume' && project.status !== 'paused') throw new ApiError(409, 'project_not_paused', '只有暂停项目可以恢复。')
   await database.query('UPDATE projects SET status=$2,updated_at=NOW() WHERE id=$1', [projectId, target])
+  if (target === 'paused') await pauseProjectWorkflow(projectId, body.reason)
+  if (target === 'active') await resumeProjectWorkflow(projectId)
   if (body.action !== 'resume') {
     const active = await rows<{ id: string }>("SELECT id FROM experiments WHERE project_id=$1 AND status IN ('queued','running')", [projectId])
     for (const run of active) await cancelRun(run.id)
@@ -1230,7 +1152,15 @@ app.post('/api/uploads', async context => {
   const sha256 = createHash('sha256').update(bytes).digest('hex')
   await database.query('INSERT INTO uploaded_files(id,session_id,project_id,name,relative_path,mime_type,size_bytes,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, sessionId, session.project_id, safeName, relativePath, file.type || 'application/octet-stream', bytes.length, sha256, { scan: 'windows_defender_clean', evidence_status: 'untrusted_uploaded_material' }])
   let indexTask: { id: string } | null = null
-  if (session.project_id && supermemoryEnabled()) indexTask = await enqueue(session.project_id, 'material_index', { uploaded_file_id: id }, `material-index:${id}`)
+  if (session.project_id && supermemoryEnabled()) {
+    const event = await appendWorkflowEvent(session.project_id, 'material.uploaded', {
+      payload: { uploaded_file_id: id },
+      source: 'upload-api',
+      correlation_id: `material:${id}`,
+      idempotency_key: `material-uploaded:${id}`,
+    })
+    indexTask = { id: event.id }
+  }
   return context.json({ artifact_id: id, name: safeName, size_bytes: bytes.length, sha256, evidence_status: 'untrusted_uploaded_material', semantic_index_status: indexTask ? 'queued' : 'disabled', index_task_id: indexTask?.id ?? null }, 201)
 })
 
@@ -1305,6 +1235,9 @@ if (!isTestRuntime) {
   await migrateProjectArtifactFiles()
   await recoverInterruptedWork()
   await resumeQueuedRelatedWorkRuns()
+  const workflowLoader = new WorkflowDefinitionLoader()
+  await workflowLoader.scanAll()
+  workflowLoader.start()
   const port = Number(process.env.RESEARCH_API_PORT || 8080)
   serve({ fetch: app.fetch, hostname: '127.0.0.1', port }, info => console.log(`Research OS native TypeScript server: http://127.0.0.1:${info.port}`))
   startTaskWorker()

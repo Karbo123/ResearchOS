@@ -32,6 +32,83 @@ CREATE INDEX IF NOT EXISTS ix_reports_project_created ON reports(project_id,crea
 CREATE TABLE IF NOT EXISTS tasks (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), kind VARCHAR(100) NOT NULL, status VARCHAR(30) NOT NULL DEFAULT 'queued', payload JSONB NOT NULL DEFAULT '{}', attempts INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 5, idempotency_key VARCHAR(255), next_attempt_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), leased_until TIMESTAMPTZ, lease_token VARCHAR(64), error TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE UNIQUE INDEX IF NOT EXISTS uq_tasks_idempotency_key ON tasks (idempotency_key) WHERE idempotency_key IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ix_tasks_queue_claim ON tasks (status, next_attempt_at, leased_until, created_at);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_definition_version INTEGER;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_node_id VARCHAR(200);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_node_run_id UUID;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_trigger_event_id UUID;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_correlation_id VARCHAR(255);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS worker_id VARCHAR(64);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS heartbeat_until TIMESTAMPTZ;
+CREATE INDEX IF NOT EXISTS ix_tasks_workflow_node_run ON tasks(workflow_node_run_id) WHERE workflow_node_run_id IS NOT NULL;
+CREATE TABLE IF NOT EXISTS workflow_definitions (
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  version INTEGER NOT NULL,
+  source_sha256 VARCHAR(64) NOT NULL,
+  git_commit VARCHAR(120),
+  status VARCHAR(30) NOT NULL DEFAULT 'active',
+  graph_json JSONB NOT NULL DEFAULT '{}',
+  compiled_ref TEXT,
+  validation_error TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  activated_at TIMESTAMPTZ,
+  deactivated_at TIMESTAMPTZ,
+  PRIMARY KEY (project_id, version)
+);
+CREATE INDEX IF NOT EXISTS ix_workflow_definitions_project_status ON workflow_definitions(project_id,status,version);
+CREATE TABLE IF NOT EXISTS project_workflow_runtime (
+  project_id VARCHAR(120) PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
+  active_definition_version INTEGER NOT NULL DEFAULT 0,
+  state_version INTEGER NOT NULL DEFAULT 0,
+  event_cursor INTEGER NOT NULL DEFAULT 0,
+  status VARCHAR(30) NOT NULL DEFAULT 'waiting',
+  coordinator_lease_token VARCHAR(64),
+  lease_until TIMESTAMPTZ,
+  last_error TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS workflow_events (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  sequence INTEGER NOT NULL,
+  event_type VARCHAR(120) NOT NULL,
+  payload JSONB NOT NULL DEFAULT '{}',
+  source VARCHAR(200) NOT NULL,
+  definition_version INTEGER NOT NULL,
+  causation_id UUID,
+  correlation_id VARCHAR(255) NOT NULL,
+  idempotency_key VARCHAR(255) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  processed_at TIMESTAMPTZ,
+  UNIQUE (project_id, sequence),
+  UNIQUE (project_id, idempotency_key)
+);
+CREATE INDEX IF NOT EXISTS ix_workflow_events_project_sequence ON workflow_events(project_id,sequence);
+CREATE INDEX IF NOT EXISTS ix_workflow_events_project_unprocessed ON workflow_events(project_id,processed_at,sequence) WHERE processed_at IS NULL;
+CREATE TABLE IF NOT EXISTS workflow_node_runs (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  node_id VARCHAR(200) NOT NULL,
+  node_run_id VARCHAR(255) NOT NULL,
+  definition_version INTEGER NOT NULL,
+  trigger_event_id UUID NOT NULL,
+  correlation_id VARCHAR(255) NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'queued',
+  attempt INTEGER NOT NULL DEFAULT 0,
+  input_ref JSONB NOT NULL DEFAULT '{}',
+  output_ref JSONB,
+  blocked_reason TEXT,
+  error_code TEXT,
+  started_at TIMESTAMPTZ,
+  finished_at TIMESTAMPTZ,
+  task_id UUID,
+  worker_id VARCHAR(64),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (project_id, correlation_id, node_id, definition_version)
+);
+CREATE INDEX IF NOT EXISTS ix_workflow_node_runs_project_status ON workflow_node_runs(project_id,status,created_at);
+CREATE INDEX IF NOT EXISTS ix_workflow_node_runs_correlation ON workflow_node_runs(project_id,correlation_id,node_id);
+ALTER TABLE workflow_node_runs ADD COLUMN IF NOT EXISTS capability VARCHAR(120);
 CREATE TABLE IF NOT EXISTS checkpoints (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), stage VARCHAR(100) NOT NULL, idea_version INTEGER NOT NULL, git_commit VARCHAR(64), data_version VARCHAR(255), state JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS valid BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE checkpoints ADD COLUMN IF NOT EXISTS invalidated_reason TEXT;
@@ -393,6 +470,7 @@ export async function migrate(): Promise<void> {
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0014-project-slug-aliases') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0015-research-status-source-binding') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0017-chat-workspace-scope') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0018-workflow-v2-runtime') ON CONFLICT DO NOTHING")
 }
 
 /**

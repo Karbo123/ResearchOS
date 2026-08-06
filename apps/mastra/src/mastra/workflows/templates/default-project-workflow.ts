@@ -1,28 +1,164 @@
-import {
-  createFinalizeStep,
-  createProjectContextStep,
-  createResearchLifecycleWorkflow,
-  projectWorkflowOutputSchema,
-  projectWorkflowStudioInputSchema,
-  type ProjectWorkflowContext,
-} from '@research-os/workflow-kit'
-import { createWorkflow } from '@mastra/core/workflows'
+// Research OS Workflow v2: declarative project research graph.
+// This file defines the project's semantic workflow, capabilities and event
+// triggers. It must not import runtime APIs, perform I/O, or expose secrets.
 
-export const workflowManifest = {
-  schemaVersion: 1,
-  templateVersion: 'default-project-workflow@1',
-  entryStep: 'workflow-entry',
-  exitStep: 'workflow-exit',
+const workflow = {
+  schemaVersion: 2,
+  templateVersion: 'research-lifecycle@2',
+  groups: [
+    { id: 'project_context', label_key: 'workflow.group.projectContext', description_key: 'workflow.group.projectContextDescription' },
+    { id: 'conversation', label_key: 'workflow.group.conversation', description_key: 'workflow.group.conversationDescription' },
+    { id: 'literature', label_key: 'workflow.group.literature', description_key: 'workflow.group.literatureDescription' },
+    { id: 'method_and_experiment', label_key: 'workflow.group.methodExperiment', description_key: 'workflow.group.methodExperimentDescription' },
+    { id: 'paper', label_key: 'workflow.group.paper', description_key: 'workflow.group.paperDescription' },
+    { id: 'reporting', label_key: 'workflow.group.reporting', description_key: 'workflow.group.reportingDescription' },
+    { id: 'governance', label_key: 'workflow.group.governance', description_key: 'workflow.group.governanceDescription' },
+    { id: 'workflow_editing', label_key: 'workflow.group.workflowEditing', description_key: 'workflow.group.workflowEditingDescription' },
+  ],
+  nodes: [
+    {
+      id: 'context.snapshot',
+      group: 'project_context',
+      capability: 'context.project_snapshot',
+      label_key: 'workflow.node.contextSnapshot',
+      description_key: 'workflow.node.contextSnapshotDescription',
+      requires: [],
+      retry: { max_attempts: 3, backoff_seconds: 5 },
+      timeout_seconds: 120,
+      concurrency: 'parallel',
+    },
+    {
+      id: 'conversation.agent_turn',
+      group: 'conversation',
+      capability: 'conversation.agent_turn',
+      label_key: 'workflow.node.agentTurn',
+      description_key: 'workflow.node.agentTurnDescription',
+      requires: ['context.snapshot'],
+      retry: 'explicit',
+      timeout_seconds: 300,
+      concurrency: 'thread-serial',
+    },
+    {
+      id: 'material.extract',
+      group: 'project_context',
+      capability: 'material.extract',
+      label_key: 'workflow.node.materialExtract',
+      description_key: 'workflow.node.materialExtractDescription',
+      retry: { max_attempts: 3, backoff_seconds: 5 },
+      timeout_seconds: 300,
+      concurrency: 'parallel',
+    },
+    {
+      id: 'literature.search',
+      group: 'literature',
+      capability: 'literature.search',
+      label_key: 'workflow.node.literatureSearch',
+      description_key: 'workflow.node.literatureSearchDescription',
+      retry: 'explicit',
+      timeout_seconds: 300,
+      concurrency: 'parallel',
+    },
+    {
+      id: 'literature.review',
+      group: 'literature',
+      capability: 'literature.review',
+      label_key: 'workflow.node.literatureReview',
+      description_key: 'workflow.node.literatureReviewDescription',
+      requires: ['literature.search'],
+      retry: { max_attempts: 2, backoff_seconds: 5 },
+      timeout_seconds: 300,
+      concurrency: 'thread-serial',
+    },
+    {
+      id: 'experiment.plan',
+      group: 'method_and_experiment',
+      capability: 'experiment.plan',
+      label_key: 'workflow.node.experimentPlan',
+      description_key: 'workflow.node.experimentPlanDescription',
+      retry: 'explicit',
+      timeout_seconds: 300,
+      concurrency: 'project-serial',
+    },
+    {
+      id: 'paper.translate',
+      group: 'paper',
+      capability: 'paper.translate',
+      label_key: 'workflow.node.paperTranslate',
+      description_key: 'workflow.node.paperTranslateDescription',
+      retry: 'explicit',
+      timeout_seconds: 300,
+      concurrency: 'thread-serial',
+    },
+    {
+      id: 'paper.revise',
+      group: 'paper',
+      capability: 'paper.revise',
+      label_key: 'workflow.node.paperRevise',
+      description_key: 'workflow.node.paperReviseDescription',
+      retry: 'explicit',
+      timeout_seconds: 300,
+      concurrency: 'thread-serial',
+    },
+    {
+      id: 'report.generate',
+      group: 'reporting',
+      capability: 'report.generate',
+      label_key: 'workflow.node.reportGenerate',
+      description_key: 'workflow.node.reportGenerateDescription',
+      retry: { max_attempts: 2, backoff_seconds: 5 },
+      timeout_seconds: 300,
+      concurrency: 'project-serial',
+    },
+    {
+      id: 'governance.approval',
+      group: 'governance',
+      capability: 'governance.approval',
+      label_key: 'workflow.node.approval',
+      description_key: 'workflow.node.approvalDescription',
+      retry: { max_attempts: 1, backoff_seconds: 5 },
+      timeout_seconds: 60,
+      concurrency: 'thread-serial',
+    },
+    {
+      id: 'workflow.edit',
+      group: 'workflow_editing',
+      capability: 'workflow.edit',
+      label_key: 'workflow.node.workflowEdit',
+      description_key: 'workflow.node.workflowEditDescription',
+      retry: 'explicit',
+      timeout_seconds: 300,
+      concurrency: 'project-serial',
+    },
+    {
+      id: 'context.finalize',
+      group: 'project_context',
+      capability: 'context.finalize',
+      label_key: 'workflow.node.finalize',
+      description_key: 'workflow.node.finalizeDescription',
+      requires: [],
+      retry: { max_attempts: 1, backoff_seconds: 5 },
+      timeout_seconds: 30,
+      concurrency: 'parallel',
+    },
+  ],
+  edges: [
+    { from: 'context.snapshot', to: 'conversation.agent_turn', condition: 'success' },
+    { from: 'literature.search', to: 'literature.review', condition: 'success' },
+    { from: 'conversation.agent_turn', to: 'context.finalize', condition: 'success' },
+    { from: 'report.generate', to: 'context.finalize', condition: 'success' },
+  ],
+  triggers: [
+    { event_type: 'chat.message.received', node_id: 'context.snapshot', mode: 'root' },
+    { event_type: 'material.uploaded', node_id: 'material.extract', mode: 'root' },
+    { event_type: 'literature.operation.requested', node_id: 'literature.search', mode: 'root' },
+    { event_type: 'experiment.plan.requested', node_id: 'experiment.plan', mode: 'root' },
+    { event_type: 'paper.translate.requested', node_id: 'paper.translate', mode: 'root' },
+    { event_type: 'paper.revise.requested', node_id: 'paper.revise', mode: 'root' },
+    { event_type: 'report.window.reached', node_id: 'report.generate', mode: 'root' },
+    { event_type: 'workflow.edit.requested', node_id: 'workflow.edit', mode: 'root' },
+    { event_type: 'approval.decided', node_id: 'governance.approval', mode: 'root' },
+  ],
 }
 
-export default function defineProjectWorkflow(ctx: ProjectWorkflowContext) {
-  return createWorkflow({
-    id: ctx.workflowId,
-    inputSchema: projectWorkflowStudioInputSchema,
-    outputSchema: projectWorkflowOutputSchema,
-  })
-    .then(createProjectContextStep(ctx))
-    .then(createResearchLifecycleWorkflow(ctx))
-    .then(createFinalizeStep(ctx))
-    .commit()
-}
+export default workflow
+export const workflowManifest = workflow

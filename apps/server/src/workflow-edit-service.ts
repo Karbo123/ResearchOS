@@ -8,6 +8,7 @@ import { mastraJson } from './mastra-client.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot, runtimeRoot } from './paths.js'
 import { requireProject } from './project-service.js'
+import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
 
 type WorkflowEditProposalResult = {
   proposal_id: string
@@ -63,14 +64,11 @@ export function applyWorkflowDiff(projectId: string, diff: string): string {
 }
 
 export async function validateWorkflowSource(projectId: string, source: string): Promise<{ valid: boolean; errors: string[]; step_ids: string[] }> {
-  const result = await mastraJson<{ valid: boolean; errors: string[]; graph: unknown[]; step_ids: string[] }>(
-    `/internal/workflows/project/${projectId}/preview`,
-    { source },
-  )
+  const result = await new WorkflowDefinitionLoader().validateSource(projectId, source)
   if (!result.valid) {
     throw new ApiError(422, 'workflow_validation_failed', `工作流校验失败：${result.errors.join('；') || '未知错误'}`)
   }
-  return { valid: true, errors: [], step_ids: result.step_ids }
+  return { valid: true, errors: [], step_ids: result.definition?.nodes.map(node => node.id) || [] }
 }
 
 export async function createWorkflowEditProposal(projectId: string, instruction: string, projectContext: Record<string, unknown>): Promise<WorkflowEditProposalResult> {

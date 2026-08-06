@@ -272,6 +272,11 @@ export class ProjectWorkflowRuntime {
       return
     }
     const source = readFileSync(sourcePath, 'utf8')
+    if (/\bschemaVersion\s*:\s*2\b/.test(source)) {
+      // Workflow v2 is owned by the native Research OS runtime. Keep the legacy
+      // Mastra loader from registering declarative v2 projects as Mastra runs.
+      return
+    }
     const hash = sha256(`${source}\n${this.kitHash}`)
     const state = this.states.get(projectId)
     if (state?.active?.sourceHash === hash) {

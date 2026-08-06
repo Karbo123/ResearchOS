@@ -2,11 +2,11 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { resolve } from 'node:path'
 import { audit, database, rows } from './database.js'
 import { runtimeRoot } from './paths.js'
+import { appendWorkflowEvent } from './project-workflow/event-store.js'
 
 type ScheduleState = Record<string, string>
 
 const stateFile = resolve(runtimeRoot, 'report-scheduler-state.json')
-const mastraBase = () => (process.env.MASTRA_BASE_URL || 'http://127.0.0.1:4111').replace(/\/$/, '')
 const timezone = process.env.REPORT_TIMEZONE || 'Asia/Shanghai'
 const dailyTime = process.env.RESEARCH_REPORT_DAILY_TIME || '09:00'
 const weeklyTime = process.env.RESEARCH_REPORT_WEEKLY_TIME || '09:30'
@@ -73,22 +73,20 @@ function atOrAfter(now: Date, schedule: string): boolean {
 }
 
 async function dispatchReport(projectId: string, period: 'daily' | 'weekly', stateKey: string): Promise<void> {
-  const response = await fetch(`${mastraBase()}/internal/workflows/project/${encodeURIComponent(projectId)}/run`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ action: 'reports', project_id: projectId, period }),
-    signal: AbortSignal.timeout(Number(process.env.RESEARCH_REPORT_TIMEOUT_SECONDS || 180) * 1000),
+  const event = await appendWorkflowEvent(projectId, 'report.window.reached', {
+    payload: { period },
+    source: 'report-scheduler',
+    correlation_id: `report:${period}:${stateKey}`,
+    idempotency_key: `report:${projectId}:${period}:${stateKey}`,
   })
-  const body = await response.json().catch(() => ({})) as { status?: unknown; run_id?: unknown }
-  if (!response.ok) throw new Error(`workflow_reports_http_${response.status}`)
-  if (body.status !== 'success' && body.status !== 'failed') throw new Error(`workflow_reports_unexpected_${String(body.status || 'unknown')}`)
   const state = readState()
   state[`${projectId}:${period}`] = stateKey
   writeState(state)
   await audit('workflow.reports_scheduled', projectId, {
     period,
-    run_id: body.run_id ?? null,
-    status: body.status,
+    event_id: event.id,
+    event_sequence: event.sequence,
+    status: 'queued',
   })
 }
 

@@ -26,10 +26,11 @@ function addLeadingCommentDiff(): string {
   return [
     '--- workflow.ts',
     '+++ workflow.ts',
-    '@@ -1,2 +1,3 @@',
+    '@@ -1,3 +1,4 @@',
     '+// workflow edit test',
-    ' import {',
-    '   createFinalizeStep,',
+    ' // Research OS Workflow v2: declarative project research graph.',
+    ' // This file defines the project\'s semantic workflow, capabilities and event',
+    ' // triggers. It must not import runtime APIs, perform I/O, or expose secrets.',
     '',
   ].join('\n')
 }
