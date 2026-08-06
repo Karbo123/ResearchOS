@@ -11,6 +11,7 @@ import { projectArtifactPath, projectArtifactRelativePath } from './project-stor
 import { fingerprintValue, registerLineageDependencies, type LineageNode } from './impact-service.js'
 import { artifactMimeType, MetricsValidationError, parseMetricsJsonl, type MetricsSeries } from './metrics-service.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
+import { appendWorkflowEvent } from './project-workflow/event-store.js'
 
 type ExperimentRequest = z.infer<typeof experimentRequest>
 type RunState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled'
@@ -114,6 +115,25 @@ async function terminateTree(child: ChildProcess): Promise<void> {
   }
 }
 
+async function appendExperimentWorkflowEvent(projectId: string, runId: string, eventType: 'experiment.run.completed' | 'experiment.run.failed', payload: Record<string, unknown>): Promise<void> {
+  try {
+    const runtime = await one<{ active_definition_version: number }>('SELECT active_definition_version FROM project_workflow_runtime WHERE project_id=$1', [projectId])
+    if (!runtime) return
+    await appendWorkflowEvent(projectId, eventType, {
+      payload: { run_id: runId, ...payload },
+      source: 'experiment-runner',
+      correlation_id: `experiment:${runId}`,
+      idempotency_key: `experiment:${runId}:${eventType}`,
+    })
+  } catch (error) {
+    await audit('workflow.experiment_event_failed', projectId, {
+      run_id: runId,
+      event_type: eventType,
+      error: error instanceof Error ? error.message : String(error),
+    })
+  }
+}
+
 async function execute(runId: string, request: ExperimentRequest): Promise<void> {
   const projectRoot = pathInside(projectsRoot, request.project_id)
   const runDirectory = projectArtifactPath(request.project_id, `runs/${runId}`)
@@ -137,6 +157,7 @@ async function execute(runId: string, request: ExperimentRequest): Promise<void>
     }
     const { metrics, checkpoint, metricsSeries } = readValidatedResults(runDirectory)
     await database.query("UPDATE experiments SET status='succeeded', metrics=$2, finished_at=NOW() WHERE id=$1", [runId, metrics])
+    await appendExperimentWorkflowEvent(request.project_id, runId, 'experiment.run.completed', { status: 'succeeded' })
     const artifactIds: string[] = []
     for (const file of collectFiles(runDirectory)) {
       const relativePath = projectArtifactRelativePath(relative(pathInside(projectsRoot, request.project_id), file).replaceAll('\\', '/'))
@@ -195,6 +216,7 @@ async function execute(runId: string, request: ExperimentRequest): Promise<void>
     activeRuns.delete(runId)
     const message = error instanceof MetricsValidationError ? error.code : error instanceof Error ? error.message : 'experiment_failed'
     await database.query("UPDATE experiments SET status='failed', error=$2, finished_at=NOW() WHERE id=$1", [runId, message])
+    await appendExperimentWorkflowEvent(request.project_id, runId, 'experiment.run.failed', { status: 'failed', error: message })
     await audit('experiment.failed', request.project_id, { run_id: runId, code: message })
   }
 }

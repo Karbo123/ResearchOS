@@ -57,6 +57,25 @@ function testDefinition() {
         timeout_seconds: 10,
         concurrency: 'parallel',
       },
+      {
+        id: 'unrelated_context',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'unrelated_context',
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'parallel',
+      },
+      {
+        id: 'unrelated_turn',
+        group: 'test',
+        capability: 'noop',
+        label_key: 'unrelated_turn',
+        requires: ['unrelated_context'],
+        retry: { max_attempts: 1, backoff_seconds: 1 },
+        timeout_seconds: 10,
+        concurrency: 'thread-serial',
+      },
     ],
     edges: [{ from: 'a', to: 'b' }],
     triggers: [
@@ -120,6 +139,8 @@ describe('workflow v2 runtime', () => {
     const b = await waitForNodeRun('b', 'succeeded')
     expect(a.output_ref).toMatchObject({ ok: true })
     expect(b.output_ref).toMatchObject({ ok: true })
+    const finalSnapshot = await workflowGraphSnapshot(projectId)
+    expect(finalSnapshot.node_runs.filter(run => ['unrelated_context', 'unrelated_turn'].includes(run.node_id))).toHaveLength(0)
   })
 
   it('keeps event append idempotent', async () => {

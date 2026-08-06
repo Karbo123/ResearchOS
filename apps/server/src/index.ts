@@ -27,9 +27,9 @@ import { transcribeVoice } from './voice-transcription.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
 import { createProjectWorkspace, listProjectSummaries, projectDetail, reorderProjectGroup, requireProject, type ProjectRow } from './project-service.js'
 import { isCurrentProjectSlug, isProjectUuidReference, normalizeProjectSlug } from './project-slug.js'
-import { createOperationalReport, diagnostics, searchLiterature } from './research-services.js'
+import { createOperationalReport, diagnostics } from './research-services.js'
 import { ingestEvidence } from './evidence-service.js'
-import { createCompileProposal, createPaperDraftProposal, createPaperSectionProposal, revisePaperSection, translatePaperSection } from './paper-service.js'
+import { createPaperDraftProposal, createPaperSectionProposal, revisePaperSection, translatePaperSection } from './paper-service.js'
 import { paperWorkspaceDetail } from './paper-workspace-service.js'
 import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.js'
 import { assertWorkflowPatchValid, createWorkflowEditProposal } from './workflow-edit-service.js'
@@ -62,7 +62,7 @@ import { createExperimentPlan as createProjectExperimentPlan } from './experimen
 import { appendWorkflowEvent, appendWorkflowEventFromInput, listWorkflowEvents } from './project-workflow/event-store.js'
 import { appendWorkflowEventAndWait } from './project-workflow/task-wait.js'
 import { workflowGraphSnapshot } from './project-workflow/graph-service.js'
-import { deleteProjectWorkflow, initializeProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks } from './project-workflow/runtime-service.js'
+import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks } from './project-workflow/runtime-service.js'
 import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
 import { workflowEventAppendInputSchema } from './project-workflow/contracts.js'
 
@@ -120,6 +120,16 @@ async function chatDispatch(input: z.infer<typeof chatRequest>): Promise<Record<
   })
   if (!inner || typeof inner !== 'object' || Array.isArray(inner)) throw new ApiError(502, 'workflow_invalid_result', '项目工作流返回了无效的对话结果。')
   return inner as Record<string, unknown>
+}
+
+async function appendWorkflowEventIfRuntime(
+  projectId: string,
+  eventType: Parameters<typeof appendWorkflowEvent>[1],
+  options: Parameters<typeof appendWorkflowEvent>[2],
+): Promise<unknown | null> {
+  const runtime = await one<{ active_definition_version: number }>('SELECT active_definition_version FROM project_workflow_runtime WHERE project_id=$1', [projectId])
+  if (!runtime) return null
+  return appendWorkflowEvent(projectId, eventType, options)
 }
 
 app.get('/api/health', async context => context.json({ status: 'ok', runtime: 'native-typescript', database: 'pglite', container_runtime_required: false, secrets_exposed: false }))
@@ -508,7 +518,14 @@ app.post('/api/projects/:projectId/related-work/runs/:runId/execute', async cont
   const body = await jsonBody(context, relatedWorkRunExecuteRequest)
   const run = await one<{ id: string; proposal_id: string }>('SELECT id,proposal_id FROM related_work_recursive_runs WHERE id=$1 AND project_id=$2', [runId, projectId])
   if (!run) throw new ApiError(404, 'related_work_run_not_found', '相关工作递归运行不存在。')
-  return context.json(await startRelatedWorkRun(projectId, run.proposal_id, body.actor))
+  const result = await startRelatedWorkRun(projectId, run.proposal_id, body.actor)
+  await appendWorkflowEventIfRuntime(projectId, 'literature.recursive.requested', {
+    payload: { proposal_id: run.proposal_id, actor: body.actor },
+    source: 'api',
+    correlation_id: `related-work:${run.proposal_id}`,
+    idempotency_key: `related-work-start:${run.proposal_id}`,
+  })
+  return context.json(result)
 })
 app.post('/api/projects/:projectId/related-work/runs/:runId/cancel', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -522,7 +539,16 @@ app.post('/api/search', async context => {
   const project = await requireProject(body.project_id, true)
   const searchDetail = await projectDetail(body.project_id)
   requireConfirmedSpecFields(body.project_id, searchDetail.spec, searchDetail.idea_versions || [])
-  return context.json(await searchLiterature(body.project_id, body.query || project.title, body.limit))
+  const query = body.query || project.title
+  const queryHash = createHash('sha256').update(query).digest('hex').slice(0, 20)
+  const result = await appendWorkflowEventAndWait(body.project_id, 'literature.operation.requested', {
+    payload: { query, limit: body.limit },
+    source: 'api',
+    correlation_id: `literature-search:${Date.now()}:${body.limit}`,
+    idempotency_key: `literature-search:${body.project_id}:${queryHash}:${body.limit}`,
+    target_node_id: 'literature.search',
+  })
+  return context.json(result)
 })
 app.get('/api/projects/:projectId/research-status', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -732,6 +758,7 @@ app.post('/api/proposals/:proposalId/decision', async context => {
     if (proposal.payload.patch_kind === 'workflow') await assertWorkflowPatchValid(proposal.project_id, proposal.payload)
     const previousGitCommit = typeof proposal.payload.base_git_commit === 'string' ? proposal.payload.base_git_commit : null
     gitCommit = applyApprovedPatch(proposal.project_id, proposal.payload, body.actor)
+    if (proposal.payload.patch_kind === 'workflow') await scanProjectWorkflow(proposal.project_id)
     if (previousGitCommit) lineageInvalidation = await invalidateFromNodes(proposal.project_id, [{ type: 'git_commit', id: previousGitCommit }], 'approved_code_change', body.actor)
   }
   let ideaRevision: unknown = null
@@ -815,7 +842,15 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   const impact = automaticExecution ? { ...proposal.impact, automatic_execution: automaticExecution } : proposal.impact
   await database.query('UPDATE proposals SET status=$2,decided_by=$3,decision_comment=$4,impact=$5,decided_at=NOW() WHERE id=$1', [proposalId, body.decision, body.actor, body.comment ?? null, impact])
   let relatedWorkRun: { run_id: string; status: string } | null = null
-  if (body.decision === 'approved' && proposal.kind === 'related_work_recursive') relatedWorkRun = await startRelatedWorkRun(proposal.project_id, proposalId, body.actor)
+  if (body.decision === 'approved' && proposal.kind === 'related_work_recursive') {
+    relatedWorkRun = await startRelatedWorkRun(proposal.project_id, proposalId, body.actor)
+    await appendWorkflowEventIfRuntime(proposal.project_id, 'literature.recursive.requested', {
+      payload: { proposal_id: proposalId, actor: body.actor },
+      source: 'approval-api',
+      correlation_id: `related-work:${proposalId}`,
+      idempotency_key: `related-work-start:${proposalId}`,
+    })
+  }
   let relatedWorkEnrichment: Record<string, unknown> | null = null
   if (body.decision === 'approved' && proposal.kind === 'related_work_field_enrichment') relatedWorkEnrichment = await executeRelatedWorkEnrichment(proposal.project_id, proposalId, body.actor)
   if (body.decision === 'approved' && proposal.kind === 'config_change' && typeof proposal.payload.rule === 'string') await database.query('INSERT INTO policies(id,project_id,rule,rationale) VALUES ($1,$2,$3,$4)', [crypto.randomUUID(), proposal.project_id, proposal.payload.rule, body.comment ?? null])
@@ -858,14 +893,21 @@ app.post('/api/projects/:projectId/paper-translate', async context => {
 app.post('/api/projects/:projectId/paper-revise', async context => {
   const body = await jsonBody(context, paperSectionModelRequest)
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  const result = await appendWorkflowEventAndWait(projectId, 'paper.revise.requested', {
-    payload: {
-    section_id: body.section_id,
-    },
+  const sectionTargets: Record<string, { event_type: 'paper.introduction.revise.requested' | 'paper.related_work.revise.requested' | 'paper.method.revise.requested' | 'paper.experiments.revise.requested' | 'paper.conclusion.revise.requested'; node_id: string }> = {
+    introduction: { event_type: 'paper.introduction.revise.requested', node_id: 'paper.introduction' },
+    paper_related_work: { event_type: 'paper.related_work.revise.requested', node_id: 'paper.related_work' },
+    paper_method: { event_type: 'paper.method.revise.requested', node_id: 'paper.method' },
+    paper_experiments: { event_type: 'paper.experiments.revise.requested', node_id: 'paper.experiments' },
+    conclusion: { event_type: 'paper.conclusion.revise.requested', node_id: 'paper.conclusion' },
+  }
+  const target = sectionTargets[body.section_id]
+  if (!target) throw new ApiError(422, 'paper_section_unknown', '论文章节修订只支持引言、相关工作、方法、实验和结论五章。')
+  const result = await appendWorkflowEventAndWait(projectId, target.event_type, {
+    payload: { section_id: body.section_id },
     source: 'api',
-    correlation_id: `paper-revise:${Date.now()}`,
-    idempotency_key: `paper-revise:${Date.now()}`,
-    target_node_id: 'paper.revise',
+    correlation_id: `paper-revise:${body.section_id}:${Date.now()}`,
+    idempotency_key: `paper-revise:${projectId}:${body.section_id}:${Date.now()}`,
+    target_node_id: target.node_id,
   })
   return context.json(result, 201)
 })
@@ -873,7 +915,14 @@ app.post('/api/projects/:projectId/compile-plan', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
   const compileDetail = await projectDetail(projectId)
   requireConfirmedSpecFields(projectId, compileDetail.spec, compileDetail.idea_versions || [])
-  return context.json(await createCompileProposal(projectId), 201)
+  const result = await appendWorkflowEventAndWait(projectId, 'paper.compile.requested', {
+    payload: {},
+    source: 'api',
+    correlation_id: `paper-compile:${Date.now()}`,
+    idempotency_key: `paper-compile:${projectId}:${Date.now()}`,
+    target_node_id: 'paper.compile',
+  })
+  return context.json(result, 201)
 })
 app.post('/api/projects/:projectId/checkpoints/:checkpointId/rerun', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -903,6 +952,12 @@ app.post('/api/experiments', async context => {
   const runId = crypto.randomUUID()
   await database.query('INSERT INTO experiments(id,project_id,proposal_id,experiment_type,config,run_id) VALUES ($1,$2,$3,$4,$5,$6)', [runId, body.project_id, body.proposal_id, body.experiment_type, { ...body.config, execution_backend: body.execution_backend, random_seeds: body.random_seeds, topic_plan: body.topic_plan ?? null }, runId])
   submitRun(runId, body)
+  await appendWorkflowEventIfRuntime(body.project_id, 'experiment.run.requested', {
+    payload: { run_id: runId },
+    source: 'api',
+    correlation_id: `experiment-run:${runId}`,
+    idempotency_key: `experiment-run-requested:${runId}`,
+  })
   return context.json({ run_id: runId, status: 'queued' }, 202)
 })
 app.post('/api/experiments/:runId/sync', async context => {
@@ -1061,12 +1116,22 @@ app.get('/api/projects/:projectId/workflow/stream', async context => {
   return streamSSE(context, async stream => {
     const initial = await workflowGraphSnapshot(projectId)
     await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(initial) })
-    let lastCursor = initial.runtime.event_cursor
+    const signature = (value: {
+      runtime: { event_cursor: number; state_version: number }
+      node_runs: Array<{ updated_at: string }>
+      tasks: Array<{ updated_at: string }>
+    }) => {
+      const nodeTimes = value.node_runs.map(run => Date.parse(run.updated_at) || 0)
+      const taskTimes = value.tasks.map(task => Date.parse(task.updated_at) || 0)
+      return `${value.runtime.event_cursor}:${value.runtime.state_version}:${Math.max(0, ...nodeTimes, ...taskTimes)}`
+    }
+    let lastSignature = signature(initial)
     const timer = setInterval(async () => {
       try {
         const latest = await workflowGraphSnapshot(projectId)
-        if (latest.runtime.event_cursor !== lastCursor) {
-          lastCursor = latest.runtime.event_cursor
+        const nextSignature = signature(latest)
+        if (nextSignature !== lastSignature) {
+          lastSignature = nextSignature
           await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(latest) })
         }
       } catch {

@@ -3,6 +3,11 @@ import { app } from '../src/index.js'
 import { database, migrate } from '../src/database.js'
 import { specFieldStatus, unconfirmedCoreFields } from '../src/spec-field-status.js'
 import { testProjectSlug } from './test-project.js'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { pathInside, projectsRoot, repositoryRoot } from '../src/paths.js'
+import { initializeProjectWorkflow } from '../src/project-workflow/runtime-service.js'
+import { startTaskWorker } from '../src/task-worker.js'
 
 const confirmedProjectId = testProjectSlug('spec-confirmed')
 const blockedProjectId = testProjectSlug('spec-blocked')
@@ -17,6 +22,7 @@ async function requestJson(path: string, init: RequestInit = {}) {
 
 describe('specification field status and downstream gating', () => {
   const fetchMock = vi.spyOn(globalThis, 'fetch')
+  let worker: ReturnType<typeof startTaskWorker>
 
   beforeAll(async () => {
     await migrate()
@@ -24,6 +30,14 @@ describe('specification field status and downstream gating', () => {
       confirmedProjectId, confirmedProjectId, 'Confirmed Spec Project',
       blockedProjectId, blockedProjectId, 'Blocked Spec Project',
     ])
+    mkdirSync(pathInside(projectsRoot, confirmedProjectId), { recursive: true })
+    writeFileSync(
+      pathInside(projectsRoot, confirmedProjectId, 'workflow.ts'),
+      readFileSync(resolve(repositoryRoot, 'apps/mastra/src/mastra/workflows/templates/default-project-workflow.ts'), 'utf8'),
+      'utf8',
+    )
+    await initializeProjectWorkflow(confirmedProjectId)
+    worker = startTaskWorker()
     const fullSpec = {
       schema_version: '1.0',
       idea: {
@@ -50,10 +64,17 @@ describe('specification field status and downstream gating', () => {
   })
 
   afterAll(async () => {
+    worker?.stop()
     fetchMock.mockRestore()
     await database.query('DELETE FROM audit_events WHERE project_id IN ($1,$2)', [confirmedProjectId, blockedProjectId])
+    await database.query('DELETE FROM workflow_events WHERE project_id=$1', [confirmedProjectId])
+    await database.query('DELETE FROM workflow_node_runs WHERE project_id=$1', [confirmedProjectId])
+    await database.query('DELETE FROM tasks WHERE project_id=$1', [confirmedProjectId])
+    await database.query('DELETE FROM workflow_definitions WHERE project_id=$1', [confirmedProjectId])
+    await database.query('DELETE FROM project_workflow_runtime WHERE project_id=$1', [confirmedProjectId])
     await database.query('DELETE FROM idea_versions WHERE project_id IN ($1,$2)', [confirmedProjectId, blockedProjectId])
     await database.query('DELETE FROM projects WHERE id IN ($1,$2)', [confirmedProjectId, blockedProjectId])
+    rmSync(pathInside(projectsRoot, confirmedProjectId), { recursive: true, force: true })
   })
 
   it('marks user-provided initial spec fields as user-confirmed', async () => {

@@ -73,6 +73,7 @@ async function insertNodeRun(
   definition: ProjectWorkflowDefinitionV2,
   node: WorkflowNode,
   blockedReason: string | null,
+  inputPayload: Record<string, unknown> = event.payload,
 ): Promise<NodeRunRow> {
   const existing = await nodeRun(transaction, projectId, event.correlation_id, node.id, event.definition_version)
   if (existing) return existing
@@ -91,49 +92,58 @@ async function insertNodeRun(
       event.id,
       event.correlation_id,
       status,
-      JSON.stringify({ event_type: event.event_type, payload: event.payload }),
+      JSON.stringify({ event_type: event.event_type, payload: inputPayload }),
       blockedReason,
       node.capability,
     ],
   )).rows[0]
   if (!inserted) throw new Error('workflow_node_run_insert_failed')
-  if (!blockedReason) {
-    const retry = node.retry === 'explicit' ? { max_attempts: 3, backoff_seconds: 5 } : node.retry
-    const taskId = crypto.randomUUID()
-    const taskIdempotencyKey = `workflow-node:${projectId}:${event.correlation_id}:${node.id}:${event.definition_version}`
-    await transaction.query(
-      `INSERT INTO tasks(
-        id,project_id,kind,status,payload,idempotency_key,max_attempts,workflow_definition_version,
-        workflow_node_id,workflow_node_run_id,workflow_trigger_event_id,workflow_correlation_id,created_at,updated_at
-       ) VALUES ($1,$2,'workflow_node_task','queued',$3::jsonb,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
-       ON CONFLICT (idempotency_key) WHERE idempotency_key IS NOT NULL DO NOTHING`,
-      [
-        taskId,
-        projectId,
-        JSON.stringify({
-          workflow: {
-            project_id: projectId,
-            node_id: node.id,
-            node_run_id: id,
-            definition_version: event.definition_version,
-            trigger_event_id: event.id,
-            correlation_id: event.correlation_id,
-          },
-          capability: node.capability,
-          input: event.payload,
-        }),
-        taskIdempotencyKey,
-        retry.max_attempts,
-        event.definition_version,
-        node.id,
-        id,
-        event.id,
-        event.correlation_id,
-      ],
-    )
-    await transaction.query('UPDATE workflow_node_runs SET task_id=$2,updated_at=NOW() WHERE id=$1', [id, taskId])
-  }
+  if (!blockedReason) await queueNodeTask(transaction, event, projectId, node, id, inputPayload)
   return inserted
+}
+
+async function queueNodeTask(
+  transaction: Transaction,
+  event: WorkflowEvent,
+  projectId: string,
+  node: WorkflowNode,
+  nodeRunId: string,
+  inputPayload: Record<string, unknown>,
+): Promise<void> {
+  const retry = node.retry === 'explicit' ? { max_attempts: 3, backoff_seconds: 5 } : node.retry
+  const taskId = crypto.randomUUID()
+  const taskIdempotencyKey = `workflow-node:${projectId}:${event.correlation_id}:${node.id}:${event.definition_version}`
+  await transaction.query(
+    `INSERT INTO tasks(
+      id,project_id,kind,status,payload,idempotency_key,max_attempts,workflow_definition_version,
+      workflow_node_id,workflow_node_run_id,workflow_trigger_event_id,workflow_correlation_id,created_at,updated_at
+     ) VALUES ($1,$2,'workflow_node_task','queued',$3::jsonb,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
+     ON CONFLICT (idempotency_key) WHERE idempotency_key IS NOT NULL DO NOTHING`,
+    [
+      taskId,
+      projectId,
+      JSON.stringify({
+        workflow: {
+          project_id: projectId,
+          node_id: node.id,
+          node_run_id: nodeRunId,
+          definition_version: event.definition_version,
+          trigger_event_id: event.id,
+          correlation_id: event.correlation_id,
+        },
+        capability: node.capability,
+        input: inputPayload,
+      }),
+      taskIdempotencyKey,
+      retry.max_attempts,
+      event.definition_version,
+      node.id,
+      nodeRunId,
+      event.id,
+      event.correlation_id,
+    ],
+  )
+  await transaction.query('UPDATE workflow_node_runs SET task_id=$2,updated_at=NOW() WHERE id=$1', [nodeRunId, taskId])
 }
 
 async function ensureNodeReady(
@@ -142,12 +152,13 @@ async function ensureNodeReady(
   definition: ProjectWorkflowDefinitionV2,
   nodeId: string,
   stack: Set<string>,
+  inputPayload: Record<string, unknown> = event.payload,
 ): Promise<void> {
   if (stack.has(nodeId)) throw new Error(`workflow_dependency_cycle_${nodeId}`)
   const node = definition.nodes.find(candidate => candidate.id === nodeId)
   if (!node) return
   const existing = await nodeRun(transaction, event.project_id, event.correlation_id, nodeId, event.definition_version)
-  if (existing && ['succeeded', 'failed', 'blocked', 'cancelled'].includes(existing.status)) return
+  if (existing && ['succeeded', 'failed', 'cancelled'].includes(existing.status)) return
   if (existing && ['queued', 'running', 'waiting_approval'].includes(existing.status)) return
 
   const dependencyIds = [
@@ -157,7 +168,7 @@ async function ensureNodeReady(
   stack.add(nodeId)
   let blockedReason: string | null = null
   for (const dependencyId of dependencyIds) {
-    await ensureNodeReady(transaction, event, definition, dependencyId, stack)
+    await ensureNodeReady(transaction, event, definition, dependencyId, stack, inputPayload)
     const dependencyRun = await nodeRun(transaction, event.project_id, event.correlation_id, dependencyId, event.definition_version)
     if (!dependencyRun || !['succeeded'].includes(dependencyRun.status)) {
       blockedReason = `workflow_dependency_not_ready_${dependencyId}_${dependencyRun?.status || 'missing'}`
@@ -165,27 +176,58 @@ async function ensureNodeReady(
     }
   }
   stack.delete(nodeId)
-  if (!blockedReason) await insertNodeRun(transaction, event, event.project_id, definition, node, null)
-  else await insertNodeRun(transaction, event, event.project_id, definition, node, blockedReason)
+  if (blockedReason) {
+    if (existing?.status === 'blocked') {
+      await transaction.query('UPDATE workflow_node_runs SET blocked_reason=$2,updated_at=NOW() WHERE id=$1', [existing.id, blockedReason])
+    }
+    return
+  }
+  if (existing?.status === 'blocked') {
+    await transaction.query(
+      `UPDATE workflow_node_runs SET status='queued',blocked_reason=NULL,updated_at=NOW() WHERE id=$1`,
+      [existing.id],
+    )
+    await queueNodeTask(transaction, event, event.project_id, node, existing.id, inputPayload)
+    return
+  }
+  await insertNodeRun(transaction, event, event.project_id, definition, node, null, inputPayload)
+}
+
+async function dispatchDownstream(
+  transaction: Transaction,
+  definition: ProjectWorkflowDefinitionV2,
+  event: WorkflowEvent,
+  completedNodeId: string,
+): Promise<void> {
+  const downstreamIds = new Set<string>()
+  for (const edge of definition.edges) {
+    if (edge.from === completedNodeId) downstreamIds.add(edge.to)
+  }
+  for (const node of definition.nodes) {
+    if (node.requires.includes(completedNodeId)) downstreamIds.add(node.id)
+  }
+  const completedRun = await nodeRun(transaction, event.project_id, event.correlation_id, completedNodeId, event.definition_version)
+  const completedInput = completedRun?.input_ref as { payload?: Record<string, unknown> } | null
+  const inputPayload = completedInput?.payload && typeof completedInput.payload === 'object' && !Array.isArray(completedInput.payload)
+    ? completedInput.payload
+    : event.payload
+  console.error('[workflow-v2-debug] completed=', completedNodeId, 'downstream=', [...downstreamIds])
+  for (const nodeId of downstreamIds) {
+    await ensureNodeReady(transaction, event, definition, nodeId, new Set(), inputPayload)
+  }
 }
 
 async function dispatchEvent(transaction: Transaction, definition: ProjectWorkflowDefinitionV2, event: WorkflowEvent): Promise<void> {
   const matchingTriggers = definition.triggers.filter(trigger => trigger.event_type === event.event_type)
   if (matchingTriggers.length) {
     for (const trigger of matchingTriggers) {
-      await ensureNodeReady(transaction, event, definition, trigger.node_id, new Set())
+      await ensureNodeReady(transaction, event, definition, trigger.node_id, new Set(), event.payload)
     }
     return
   }
-  for (const node of definition.nodes) {
-    const dependencyIds = [
-      ...node.requires,
-      ...definition.edges.filter(edge => edge.to === node.id).map(edge => edge.from),
-    ]
-    if (!dependencyIds.length) continue
-    const existing = await nodeRun(transaction, event.project_id, event.correlation_id, node.id, event.definition_version)
-    if (existing) continue
-    await ensureNodeReady(transaction, event, definition, node.id, new Set())
+  if (event.event_type === 'workflow.task.completed') {
+    const completedNodeId = typeof event.payload.node_id === 'string' ? event.payload.node_id : null
+    if (completedNodeId) await dispatchDownstream(transaction, definition, event, completedNodeId)
   }
 }
 
