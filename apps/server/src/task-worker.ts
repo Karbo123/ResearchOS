@@ -264,6 +264,7 @@ export function startTaskWorker(options?: { concurrency?: number }): TaskWorkerH
           await tick(workerId)
         } catch (error) {
           await database.query('UPDATE tasks SET status=$2,error=$3 WHERE status=\'running\' AND worker_id=$1', [workerId, 'retrying', error instanceof Error ? error.message : String(error)])
+            .catch(innerError => console.error('workflow task worker recovery failed', innerError))
         }
         await new Promise(resolve => setTimeout(resolve, 250))
       }

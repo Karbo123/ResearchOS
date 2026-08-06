@@ -1322,6 +1322,9 @@ app.notFound(context => {
 
 const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
 if (!isTestRuntime) {
+  process.on('unhandledRejection', reason => {
+    console.error('Unhandled promise rejection in Research OS API', reason)
+  })
   await migrate()
   await migrateProjectSlugs()
   await migrateProjectPrimaryKeyToSlug()
