@@ -120,7 +120,7 @@ export class WorkflowDefinitionLoader {
   private recordScanError(projectId: string, error: unknown): void {
     void audit('workflow_v2.scan_failed', projectId === '*' ? null : projectId, {
       error: error instanceof Error ? error.message : String(error),
-    })
+    }).catch(inner => console.error('workflow scan audit failed', inner))
   }
 
   async scanAll(): Promise<void> {

@@ -508,7 +508,7 @@ Supermemory 继续负责长文本、事实、对话记录、文献知识和多�
 
 > 验收记录（2026-08-06）：`scripts/workflow-v2-browser-check.mjs` 在真实 Chrome 中通过 `zh-CN/zh-TW/en/es` 四语言 × `light/dark` 两主题的桌面检查，以及同样的四语言 × 两主题 390px 移动端检查，并验证 `prefers-reduced-motion: reduce` 生效；确认 8 个语义分组、20 个节点、5 个筛选、分组折叠、节点详情、失败筛选、事件驱动实时更新和事件时间线跳转到关联节点均正常，`lang`/`data-theme` 与设置一致且无横向溢出；截图保存在 `runtime/workflow-v2-browser/`，`mimo-v2.5` 复核 `zh-TW`、`es` 的浅/暗主题与移动端 Workflow 图组件 Apple 风格无问题。本轮同时收紧了中性状态标签与次要文本对比度、筛选与分组卡片间距，并强化暗色主题的玻璃层级。`npm run workflow:v2:check` 通过真实 `approval.decided` 事件，`governance.approval` 节点到达 `succeeded` 并写入 Proposal/audit；209 个服务端测试、全量 typecheck、build、docs/UI/language/navigation/idea-cases/ops:status 均通过。`npm run acceptance` 在运行时临时配置可用文档模型（`gpt-5.6-terra`）后通过；默认 `deepseek-v4-flash`/`gpt-5.6-sol` 在网关的 Responses 兼容性/RegionError 问题属于上游，未配置可用模型时保持结构化失败。
 
-> 补充验收记录（2026-08-06）：新增 `POST /api/projects/:projectId/workflow/tasks/:taskId/cancel` 与任务取消链路。`project-workflow-runtime.test.ts` 真实触发 `test.project_serial` 长任务，等待 `project_serial_a` 进入 `running` 后调用取消接口，节点 run 最终关闭为 `cancelled`、`error_code='cancelled'`，任务不再被新 worker 认领；认领后的节点 run 会立即更新为 `running`，图面板状态不再停留在 `queued`。迁移新增 `tasks.cancel_requested`，删除项目清理已包含任务/节点/事件。浏览器验收改为按事件 `correlation_id` 断言实时更新，并对 SSE 客户端断开时的轮询拒绝做了隔离，避免把整个 API 进程带崩。
+> 补充验收记录（2026-08-06）：新增 `POST /api/projects/:projectId/workflow/tasks/:taskId/cancel` 与任务取消链路。`project-workflow-runtime.test.ts` 真实触发 `test.project_serial` 长任务，等待 `project_serial_a` 进入 `running` 后调用取消接口，节点 run 最终关闭为 `cancelled`、`error_code='cancelled'`，任务不再被新 worker 认领；认领后的节点 run 会立即更新为 `running`，图面板状态不再停留在 `queued`。迁移新增 `tasks.cancel_requested`，删除项目清理已包含任务/节点/事件。浏览器验收改为按事件 `correlation_id` 断言实时更新，并对 SSE 客户端断开时的轮询拒绝、任务心跳、报告调度、definition 扫描审计和相关工作后台启动做了隔离，避免后台定时器把整个 API 进程带崩。
 
 ### Phase 7：可靠性和未来执行后端（P1）
 

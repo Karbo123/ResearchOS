@@ -1062,7 +1062,9 @@ export async function startRelatedWorkRun(projectId: string, proposalId: string,
   if (proposal.status !== 'approved') throw new ApiError(409, 'related_work_proposal_not_approved', '相关工作递归必须先获得明确批准。')
   const existing = await one<RunRow>('SELECT * FROM related_work_recursive_runs WHERE proposal_id=$1', [proposalId])
   if (existing) {
-    if (existing.status === 'queued' && !runningControllers.has(existing.id)) void startRun(existing, actor)
+    if (existing.status === 'queued' && !runningControllers.has(existing.id)) {
+      void startRun(existing, actor).catch(error => console.error('related work run start failed', error))
+    }
     return { run_id: existing.id, status: existing.status }
   }
   const payload = z.object({ seed_ids: z.array(z.string().uuid()), depth: z.number().int(), width: z.number().int(), max_total: z.number().int(), providers: z.array(z.enum(['crossref', 'openalex', 'semantic_scholar', 'dblp', 'arxiv'])) }).parse(proposal.payload)
@@ -1070,7 +1072,7 @@ export async function startRelatedWorkRun(projectId: string, proposalId: string,
   await database.query(`INSERT INTO related_work_recursive_runs(id,project_id,proposal_id,seed_ids,providers,depth,width,max_total)
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [runId, projectId, proposalId, payload.seed_ids, payload.providers, payload.depth, payload.width, payload.max_total])
   const run = (await one<RunRow>('SELECT * FROM related_work_recursive_runs WHERE id=$1', [runId]))!
-  void startRun(run, actor)
+  void startRun(run, actor).catch(error => console.error('related work run start failed', error))
   return { run_id: runId, status: 'queued' }
 }
 
@@ -1078,7 +1080,9 @@ export async function resumeQueuedRelatedWorkRuns(actor = 'restart-recovery'): P
   const runs = await rows<RunRow>(`SELECT * FROM related_work_recursive_runs
     WHERE status='queued' AND cancel_requested=FALSE ORDER BY created_at,id`)
   for (const run of runs) {
-    if (!runningControllers.has(run.id)) void startRun(run, actor)
+    if (!runningControllers.has(run.id)) {
+      void startRun(run, actor).catch(error => console.error('related work run start failed', error))
+    }
   }
   return runs.length
 }
