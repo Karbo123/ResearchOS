@@ -506,7 +506,7 @@ Supermemory 继续负责长文本、事实、对话记录、文献知识和多�
 - [x] `V2-062` 完成四语言、浅/暗主题、桌面/移动端、键盘操作、无障碍、无重叠和 reduced-motion 验收。 [Apple 设计验收]
 - [x] `V2-063` 使用真实项目、真实事件和真实失败状态进行浏览器截图检查；fixture 只能补充边界，不得替代真实链路。 [Apple 设计验收]
 
-> 验收记录（2026-08-06）：`scripts/workflow-v2-browser-check.mjs` 在真实 Chrome 中通过四语言（zh-CN/en）与浅/暗主题的桌面检查、390px 移动端检查，确认 8 个语义分组、20 个节点、5 个筛选、分组折叠、节点详情、失败筛选和事件驱动实时更新均正常，且无横向溢出；截图保存在 `runtime/workflow-v2-browser/`，`mimo-v2.5` 复核浅色/暗色/移动端 Apple 风格。`npm run workflow:v2:check` 通过真实 `approval.decided` 事件，`governance.approval` 节点到达 `succeeded` 并写入 Proposal/audit；208 个服务端测试、全量 typecheck、build、docs/UI/language/navigation/idea-cases/ops:status 均通过。`npm run acceptance` 在运行时临时配置可用文档模型（`gpt-5.6-terra`）后通过；默认 `deepseek-v4-flash`/`gpt-5.6-sol` 在网关的 Responses 兼容性/RegionError 问题属于上游，未配置可用模型时保持结构化失败。
+> 验收记录（2026-08-06）：`scripts/workflow-v2-browser-check.mjs` 在真实 Chrome 中通过 `zh-CN/zh-TW/en/es` 四语言 × `light/dark` 两主题的桌面检查，以及同样的四语言 × 两主题 390px 移动端检查，并验证 `prefers-reduced-motion: reduce` 生效；确认 8 个语义分组、20 个节点、5 个筛选、分组折叠、节点详情、失败筛选、事件驱动实时更新和事件时间线跳转到关联节点均正常，`lang`/`data-theme` 与设置一致且无横向溢出；截图保存在 `runtime/workflow-v2-browser/`，`mimo-v2.5` 复核 `zh-TW`、`es` 的浅/暗主题与移动端 Workflow 图组件 Apple 风格无问题。本轮同时收紧了中性状态标签与次要文本对比度、筛选与分组卡片间距，并强化暗色主题的玻璃层级。`npm run workflow:v2:check` 通过真实 `approval.decided` 事件，`governance.approval` 节点到达 `succeeded` 并写入 Proposal/audit；208 个服务端测试、全量 typecheck、build、docs/UI/language/navigation/idea-cases/ops:status 均通过。`npm run acceptance` 在运行时临时配置可用文档模型（`gpt-5.6-terra`）后通过；默认 `deepseek-v4-flash`/`gpt-5.6-sol` 在网关的 Responses 兼容性/RegionError 问题属于上游，未配置可用模型时保持结构化失败。
 
 ### Phase 7：可靠性和未来执行后端（P1）
 

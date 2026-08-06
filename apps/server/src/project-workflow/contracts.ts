@@ -176,6 +176,7 @@ export const workflowGraphSnapshotSchema = z.object({
   node_runs: z.array(z.object({
     id: z.string().uuid(),
     node_id: z.string(),
+    correlation_id: z.string(),
     status: workflowNodeRunStatusSchema,
     attempt: z.number().int().nonnegative(),
     error_code: z.string().nullable(),

@@ -69,40 +69,59 @@ function wait(milliseconds) {
 await send('Page.enable')
 await send('Runtime.enable')
 await send('Emulation.setFocusEmulationEnabled', { enabled: true })
-
-const states = []
-for (const [locale, theme] of [['zh-CN', 'light'], ['en', 'light'], ['zh-CN', 'dark'], ['en', 'dark']]) {
-  await navigate(locale, theme, 1440, 900, false)
-  const state = await evaluate(`(() => {
-    const section = document.querySelector('.workflow-graph-section')
-    return {
-      visible: !!section,
-      groups: document.querySelectorAll('.workflow-graph-group').length,
-      nodes: document.querySelectorAll('.workflow-graph-node').length,
-      filters: document.querySelectorAll('.workflow-graph-filter').length,
-      status: document.querySelector('.workflow-graph-status')?.textContent?.trim() || null,
-      version: section?.textContent?.includes('Version') || section?.textContent?.includes('版本') || false,
-      sourceHash: section?.textContent?.includes('Source') || section?.textContent?.includes('哈希') || false,
-      events: !!document.querySelector('.workflow-graph-list'),
-      overflowX: document.documentElement.scrollWidth > window.innerWidth,
-      lang: document.documentElement.lang || null,
-      theme: document.documentElement.dataset.theme || null,
-    }
-  })()`)
-  states.push({ locale, theme, ...state })
-  await capture(`workflow-v2-${locale}-${theme}-desktop.png`)
+await send('Page.navigate', { url: `${appBase}/project/${projectSlug}/overview/overview` })
+await send('Page.bringToFront')
+for (let attempt = 0; attempt < 60; attempt += 1) {
+  const ready = await evaluate(`location.origin === ${JSON.stringify(appBase)} && document.readyState === 'complete' && !!document.querySelector('.workflow-graph-section')`)
+  if (ready) break
+  await new Promise(resolveTimeout => setTimeout(resolveTimeout, 250))
 }
 
-await navigate('zh-CN', 'light', 390, 844, true)
-const mobile = await evaluate(`(() => {
-  const section = document.querySelector('.workflow-graph-section')
-  return {
-    visible: !!section,
-    groups: document.querySelectorAll('.workflow-graph-group').length,
-    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+const locales = ['zh-CN', 'zh-TW', 'en', 'es']
+const themes = ['light', 'dark']
+const states = []
+for (const locale of locales) {
+  for (const theme of themes) {
+    await navigate(locale, theme, 1440, 900, false)
+    const state = await evaluate(`(() => {
+      const section = document.querySelector('.workflow-graph-section')
+      return {
+        visible: !!section,
+        groups: document.querySelectorAll('.workflow-graph-group').length,
+        nodes: document.querySelectorAll('.workflow-graph-node').length,
+        filters: document.querySelectorAll('.workflow-graph-filter').length,
+        status: document.querySelector('.workflow-graph-status')?.textContent?.trim() || null,
+        version: section?.textContent?.includes('Version') || section?.textContent?.includes('版本') || false,
+        sourceHash: section?.textContent?.includes('Source') || section?.textContent?.includes('哈希') || false,
+        events: !!document.querySelector('.workflow-graph-list'),
+        overflowX: document.documentElement.scrollWidth > window.innerWidth,
+        lang: document.documentElement.lang || null,
+        theme: document.documentElement.dataset.theme || null,
+      }
+    })()`)
+    states.push({ locale, theme, ...state })
+    await capture(`workflow-v2-${locale}-${theme}-desktop.png`)
   }
-})()`)
-await capture('workflow-v2-zh-CN-mobile.png')
+}
+
+const mobileStates = []
+for (const locale of locales) {
+  for (const theme of themes) {
+    await navigate(locale, theme, 390, 844, true)
+    const state = await evaluate(`(() => {
+      const section = document.querySelector('.workflow-graph-section')
+      return {
+        visible: !!section,
+        groups: document.querySelectorAll('.workflow-graph-group').length,
+        overflowX: document.documentElement.scrollWidth > window.innerWidth,
+        lang: document.documentElement.lang || null,
+        theme: document.documentElement.dataset.theme || null,
+      }
+    })()`)
+    mobileStates.push({ locale, theme, ...state })
+    await capture(`workflow-v2-${locale}-${theme}-mobile.png`)
+  }
+}
 
 await navigate('en', 'light', 1440, 900, false)
 const firstGroupBefore = await evaluate(`(() => {
@@ -193,28 +212,67 @@ const liveUpdate = await new Promise(resolveLive => {
 await wait(800)
 await capture('workflow-v2-live-update.png')
 
+const eventJumpBefore = await evaluate(`(() => {
+  const row = Array.from(document.querySelectorAll('.workflow-graph-event-row')).find(candidate => candidate.dataset.nodeId)
+  row?.click()
+  return { clicked: !!row, nodeId: row?.dataset.nodeId || null }
+})()`)
+await wait(450)
+const eventJump = {
+  ...eventJumpBefore,
+  ...await evaluate(`(() => {
+    const selected = document.querySelector('.workflow-graph-node.is-selected')
+    return {
+      selected: !!selected,
+      selectedNodeId: selected?.dataset.nodeId || null,
+      detail: !!document.querySelector('.workflow-graph-node-detail'),
+    }
+  })()`),
+}
+
+await send('Emulation.setEmulatedMedia', {
+  media: 'screen',
+  features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+})
+await navigate('en', 'light', 1440, 900, false)
+const reducedMotion = await evaluate(`({
+  matches: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  section: !!document.querySelector('.workflow-graph-section'),
+})`)
+await capture('workflow-v2-reduced-motion.png')
+
 const failures = []
 for (const state of states) {
-  if (!state.visible || state.groups < 8 || state.nodes < 18 || state.filters !== 5 || state.overflowX || !state.status) {
+  if (!state.visible || state.groups < 8 || state.nodes < 18 || state.filters !== 5 || state.overflowX || !state.status || state.lang !== state.locale || state.theme !== state.theme) {
     failures.push(state)
   }
 }
-if (!mobile.visible || mobile.groups < 8 || mobile.overflowX) failures.push({ mobile })
+for (const state of mobileStates) {
+  if (!state.visible || state.groups < 8 || state.overflowX || state.lang !== state.locale || state.theme !== state.theme) {
+    failures.push({ mobile: state })
+  }
+}
+if (!reducedMotion.matches || !reducedMotion.section) failures.push({ reducedMotion })
 if (!firstGroup.hasFocus || firstGroup.expandedBefore !== 'true' || firstGroup.expandedAfter !== 'false' || !firstGroup.collapsed) failures.push({ firstGroup })
 if (!nodeDetail.opened || !nodeDetail.hasMeta) failures.push({ nodeDetail })
 if (!failedFilter.clicked || failedFilter.active !== 'true' || failedFilter.visibleNodes >= totalNodesBeforeFilter) failures.push({ failedFilter, totalNodesBeforeFilter })
 if (!event?.id || !liveUpdate) failures.push({ event, liveUpdate })
+if (!eventJump.clicked || !eventJump.selected || eventJump.selectedNodeId !== eventJump.nodeId || !eventJump.detail) failures.push({ eventJump })
 
 console.log(JSON.stringify({
   status: failures.length ? 'failed' : 'passed',
   states,
-  mobile,
+  mobileStates,
   firstGroup,
   nodeDetail,
   failedFilter,
   event: event?.id || null,
   liveUpdate,
+  eventJump,
+  reducedMotion,
   screenshots: outputDir,
   failures,
 }, null, 2))
+socket.close()
+process.exit(0)
 if (failures.length) process.exit(1)

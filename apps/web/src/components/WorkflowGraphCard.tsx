@@ -18,6 +18,7 @@ import {
 import { api, errorMessage } from '../api'
 import { formatDateTime, useTranslation, type TranslationKey } from '../i18n'
 import type {
+  WorkflowEventRun,
   WorkflowGraphNode,
   WorkflowGraphSnapshot,
   WorkflowNodeRun,
@@ -244,6 +245,26 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
     const run = latestNodeRun(node.id, snapshot.node_runs)
     return run?.status === filter
   }
+  const jumpToNode = (event: WorkflowEventRun) => {
+    const target = snapshot.node_runs.find(run => run.correlation_id === event.correlation_id)
+    if (!target) return
+    const node = snapshot.nodes.find(candidate => candidate.id === target.node_id)
+    setFilter('all')
+    setCollapsedGroups(current => {
+      if (!node) return current
+      const next = new Set(current)
+      next.delete(node.group)
+      return next
+    })
+    setSelectedNodeId(target.node_id)
+    setTimeout(() => {
+      const row = document.querySelector(`[data-node-id="${target.node_id}"]`)
+      row?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'center',
+      })
+    }, 80)
+  }
 
   return (
     <div className="section workflow-graph-section">
@@ -319,6 +340,7 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
                           <button
                             className={`workflow-graph-node${run ? ` status-${run.status}` : ''}${selected ? ' is-selected' : ''}`}
                             type="button"
+                            data-node-id={node.id}
                             aria-expanded={selected}
                             onClick={() => setSelectedNodeId(selected ? null : node.id)}
                           >
@@ -372,15 +394,26 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
           <h3><Clock3 size={14} />{t('workflowGraph.eventTimeline')}</h3>
           {snapshot.events.length ? (
             <div className="data-list">
-              {snapshot.events.slice(0, 16).map(event => (
-                <div className="data-row" key={event.sequence}>
-                  <div>
-                    <h4><code>{event.sequence}</code> · {event.event_type}</h4>
-                    <p>{t('workflowGraph.eventMeta', { source: event.source, version: event.definition_version, time: formatDateTime(event.created_at, locale) })}</p>
-                  </div>
-                  <span className="badge neutral">{event.correlation_id.slice(0, 10)}</span>
-                </div>
-              ))}
+              {snapshot.events.slice(0, 16).map(event => {
+                const eventNodeId = snapshot.node_runs.find(run => run.correlation_id === event.correlation_id)?.node_id ?? ''
+                return (
+                  <button
+                    className="data-row workflow-graph-event-row"
+                    type="button"
+                    key={event.sequence}
+                    data-node-id={eventNodeId}
+                    title={t('workflowGraph.jumpToNode')}
+                    aria-label={t('workflowGraph.jumpToNode')}
+                    onClick={() => jumpToNode(event)}
+                  >
+                    <div>
+                      <h4><code>{event.sequence}</code> · {event.event_type}</h4>
+                      <p>{t('workflowGraph.eventMeta', { source: event.source, version: event.definition_version, time: formatDateTime(event.created_at, locale) })}</p>
+                    </div>
+                    <span className="badge neutral">{event.correlation_id.slice(0, 10)}</span>
+                  </button>
+                )
+              })}
             </div>
           ) : <p className="empty-inline">{t('workflowGraph.noEvents')}</p>}
         </div>

@@ -115,6 +115,7 @@ export async function workflowGraphSnapshot(projectId: string): Promise<Workflow
     node_runs: nodeRuns.map(run => ({
       id: run.id,
       node_id: run.node_id,
+      correlation_id: run.correlation_id,
       status: run.status,
       attempt: run.attempt,
       error_code: run.error_code,

@@ -319,6 +319,7 @@ export interface WorkflowRuntimeSnapshot {
 export interface WorkflowNodeRun {
   id: string
   node_id: string
+  correlation_id: string
   status: WorkflowNodeRunStatus
   attempt: number
   error_code: string | null

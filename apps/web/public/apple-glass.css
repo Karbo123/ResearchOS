@@ -4241,20 +4241,23 @@ code {
 /* Workflow graph dark-theme polish: the semantic cards, badges, code blocks,
    and details use the same glass variables as the rest of the workspace. */
 :root[data-theme='dark'] .workflow-graph-group {
-  background: var(--surface);
-  border-color: var(--line);
+  background: linear-gradient(180deg, rgba(58, 58, 60, .64), rgba(44, 44, 46, .74));
+  border-color: rgba(255, 255, 255, .16);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .08);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
 }
 :root[data-theme='dark'] .workflow-graph-group-head {
-  background: var(--surface-2);
+  background: linear-gradient(180deg, rgba(58, 58, 60, .58), rgba(44, 44, 46, .68));
   color: var(--ink);
 }
 :root[data-theme='dark'] .workflow-graph-group-head:hover {
-  background: var(--surface-elevated);
+  background: linear-gradient(180deg, rgba(72, 72, 74, .72), rgba(58, 58, 60, .80));
 }
 :root[data-theme='dark'] .workflow-graph-filter {
-  background: var(--surface-2);
-  border-color: var(--line);
-  color: var(--muted);
+  background: rgba(44, 44, 46, .66);
+  border-color: rgba(255, 255, 255, .16);
+  color: var(--muted-strong);
 }
 :root[data-theme='dark'] .workflow-graph-filter:hover {
   color: var(--ink);
@@ -4280,8 +4283,18 @@ code {
 :root[data-theme='dark'] .workflow-graph-node-detail,
 :root[data-theme='dark'] .workflow-graph-edge-list,
 :root[data-theme='dark'] .workflow-graph-list {
-  background: var(--surface);
-  border-color: var(--line);
+  background: linear-gradient(180deg, rgba(58, 58, 60, .58), rgba(44, 44, 46, .72));
+  border-color: rgba(255, 255, 255, .14);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .06);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+}
+:root[data-theme='dark'] .workflow-graph-node {
+  background: linear-gradient(180deg, rgba(58, 58, 60, .66), rgba(44, 44, 46, .76));
+  border-color: rgba(255, 255, 255, .13);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .20), inset 0 1px 0 rgba(255, 255, 255, .07);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 :root[data-theme='dark'] .workflow-graph-node.status-succeeded {
   border-color: rgba(48, 209, 88, .42);

@@ -660,7 +660,7 @@ h1 { font-size: 20px; line-height: 1.25; }
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 12px;
   padding: 0 2px 12px;
 }
@@ -782,7 +782,7 @@ h1 { font-size: 20px; line-height: 1.25; }
 .workflow-graph-toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
   padding: 0 2px 12px;
 }
@@ -812,7 +812,7 @@ h1 { font-size: 20px; line-height: 1.25; }
 }
 .workflow-graph-groups {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 .workflow-graph-group {
   border: 1px solid var(--line);
@@ -848,11 +848,12 @@ h1 { font-size: 20px; line-height: 1.25; }
   font-size: 14px;
 }
 .workflow-graph-group-head small {
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 11px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .workflow-graph-group-counts {
   display: inline-flex;
@@ -872,7 +873,7 @@ h1 { font-size: 20px; line-height: 1.25; }
 .workflow-graph-group-counts span.failed { color: var(--red); background: #fff1f1; }
 .workflow-graph-group-body {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   padding: 14px 16px 16px;
 }
 .workflow-graph-node-wrap { min-width: 0; }
@@ -929,11 +930,13 @@ h1 { font-size: 20px; line-height: 1.25; }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 11px;
 }
 .workflow-graph-node-meta { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .workflow-graph-tag.failed { color: var(--red); background: #fff1f1; }
+.workflow-graph-node-meta .badge.neutral,
+.workflow-graph-list .badge.neutral { color: var(--muted-strong); }
 .workflow-graph-node-detail {
   margin-top: 8px;
   padding: 14px 16px;
@@ -949,7 +952,7 @@ h1 { font-size: 20px; line-height: 1.25; }
 }
 .workflow-graph-detail-head strong { font-size: 14px; }
 .workflow-graph-detail-head .icon-btn { width: 28px; height: 28px; }
-.workflow-graph-node-detail > p { margin: 8px 0 10px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.workflow-graph-node-detail > p { margin: 8px 0 10px; color: var(--muted); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
 .workflow-graph-detail-meta {
   display: flex;
   align-items: center;
@@ -1038,8 +1041,9 @@ h1 { font-size: 20px; line-height: 1.25; }
   gap: 8px;
   flex-wrap: wrap;
   padding: 4px 0;
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 11px;
+  overflow-wrap: anywhere;
 }
 .workflow-graph-edge code {
   padding: 2px 6px;
@@ -1063,6 +1067,21 @@ h1 { font-size: 20px; line-height: 1.25; }
   -webkit-backdrop-filter: blur(14px);
 }
 .workflow-graph-list .data-list { max-height: 360px; overflow: auto; }
+.workflow-graph-event-row {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .18s ease;
+}
+.workflow-graph-event-row:hover { background: var(--green-soft); }
+.workflow-graph-event-row:focus-visible {
+  outline: 2px solid var(--blue-soft);
+  outline-offset: -2px;
+}
 .workflow-graph-list .data-row h4 {
   overflow: hidden;
   text-overflow: ellipsis;

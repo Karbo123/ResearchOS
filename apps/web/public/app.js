@@ -14034,6 +14034,7 @@
     "workflowGraph.noTasks": "\u8FD8\u6CA1\u6709\u8282\u70B9\u4EFB\u52A1\u3002",
     "workflowGraph.filterEmpty": "\u5F53\u524D\u7B5B\u9009\u6761\u4EF6\u4E0B\u6CA1\u6709\u8282\u70B9\u3002",
     "workflowGraph.gitCommit": "\u63D0\u4EA4 {commit}",
+    "workflowGraph.jumpToNode": "\u8DF3\u8F6C\u5230\u6B64\u4E8B\u4EF6\u5173\u8054\u7684\u8282\u70B9",
     "workflow.group.projectContext": "\u9879\u76EE\u4E0A\u4E0B\u6587",
     "workflow.group.projectContextDescription": "\u9879\u76EE\u72B6\u6001\u3001Idea \u7248\u672C\u3001\u6743\u9650\u4E0E\u5F53\u524D\u5DE5\u4F5C\u533A\u4E0A\u4E0B\u6587\u3002",
     "workflow.group.conversation": "\u9879\u76EE\u5BF9\u8BDD",
@@ -15737,6 +15738,7 @@
     "workflowGraph.noTasks": "\u9084\u6C92\u6709\u7BC0\u9EDE\u4EFB\u52D9\u3002",
     "workflowGraph.filterEmpty": "\u76EE\u524D\u7BE9\u9078\u689D\u4EF6\u4E0B\u6C92\u6709\u7BC0\u9EDE\u3002",
     "workflowGraph.gitCommit": "\u63D0\u4EA4 {commit}",
+    "workflowGraph.jumpToNode": "\u8DF3\u5230\u6B64\u4E8B\u4EF6\u95DC\u806F\u7684\u7BC0\u9EDE",
     "workflow.group.projectContext": "\u5C08\u6848\u4E0A\u4E0B\u6587",
     "workflow.group.projectContextDescription": "\u5C08\u6848\u72C0\u614B\u3001Idea \u7248\u672C\u3001\u6B0A\u9650\u8207\u76EE\u524D\u5DE5\u4F5C\u5340\u4E0A\u4E0B\u6587\u3002",
     "workflow.group.conversation": "\u5C08\u6848\u5C0D\u8A71",
@@ -17440,6 +17442,7 @@
     "workflowGraph.noTasks": "No node tasks yet.",
     "workflowGraph.filterEmpty": "No nodes match the current filter.",
     "workflowGraph.gitCommit": "Commit {commit}",
+    "workflowGraph.jumpToNode": "Jump to the node related to this event",
     "workflow.group.projectContext": "Project Context",
     "workflow.group.projectContextDescription": "Project state, Idea version, permissions, and current workspace context.",
     "workflow.group.conversation": "Project Conversation",
@@ -19143,6 +19146,7 @@
     "workflowGraph.noTasks": "A\xFAn no hay tareas de nodos.",
     "workflowGraph.filterEmpty": "Ning\xFAn nodo coincide con el filtro actual.",
     "workflowGraph.gitCommit": "Commit {commit}",
+    "workflowGraph.jumpToNode": "Ir al nodo relacionado con este evento",
     "workflow.group.projectContext": "Contexto del Proyecto",
     "workflow.group.projectContextDescription": "Estado del proyecto, versi\xF3n de Idea, permisos y contexto del espacio de trabajo actual.",
     "workflow.group.conversation": "Conversaci\xF3n del Proyecto",
@@ -23312,6 +23316,26 @@
       const run = latestNodeRun(node.id, snapshot.node_runs);
       return run?.status === filter;
     };
+    const jumpToNode = (event) => {
+      const target = snapshot.node_runs.find((run) => run.correlation_id === event.correlation_id);
+      if (!target) return;
+      const node = snapshot.nodes.find((candidate) => candidate.id === target.node_id);
+      setFilter("all");
+      setCollapsedGroups((current) => {
+        if (!node) return current;
+        const next = new Set(current);
+        next.delete(node.group);
+        return next;
+      });
+      setSelectedNodeId(target.node_id);
+      setTimeout(() => {
+        const row = document.querySelector(`[data-node-id="${target.node_id}"]`);
+        row?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "center"
+        });
+      }, 80);
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "section workflow-graph-section", children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         SectionHeading,
@@ -23390,6 +23414,7 @@
                   {
                     className: `workflow-graph-node${run ? ` status-${run.status}` : ""}${selected ? " is-selected" : ""}`,
                     type: "button",
+                    "data-node-id": node.id,
                     "aria-expanded": selected,
                     onClick: () => setSelectedNodeId(selected ? null : node.id),
                     children: [
@@ -23439,17 +23464,32 @@
             /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Clock3, { size: 14 }),
             t("workflowGraph.eventTimeline")
           ] }),
-          snapshot.events.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: snapshot.events.slice(0, 16).map((event) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "data-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("h4", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: event.sequence }),
-                " \xB7 ",
-                event.event_type
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { children: t("workflowGraph.eventMeta", { source: event.source, version: event.definition_version, time: formatDateTime(event.created_at, locale) }) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "badge neutral", children: event.correlation_id.slice(0, 10) })
-          ] }, event.sequence)) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "empty-inline", children: t("workflowGraph.noEvents") })
+          snapshot.events.length ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "data-list", children: snapshot.events.slice(0, 16).map((event) => {
+            const eventNodeId = snapshot.node_runs.find((run) => run.correlation_id === event.correlation_id)?.node_id ?? "";
+            return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
+              "button",
+              {
+                className: "data-row workflow-graph-event-row",
+                type: "button",
+                "data-node-id": eventNodeId,
+                title: t("workflowGraph.jumpToNode"),
+                "aria-label": t("workflowGraph.jumpToNode"),
+                onClick: () => jumpToNode(event),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("h4", { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: event.sequence }),
+                      " \xB7 ",
+                      event.event_type
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { children: t("workflowGraph.eventMeta", { source: event.source, version: event.definition_version, time: formatDateTime(event.created_at, locale) }) })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "badge neutral", children: event.correlation_id.slice(0, 10) })
+                ]
+              },
+              event.sequence
+            );
+          }) }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "empty-inline", children: t("workflowGraph.noEvents") })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "workflow-graph-list", children: [
           /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("h3", { children: [
