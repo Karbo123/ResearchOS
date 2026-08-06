@@ -23,6 +23,7 @@ export const modelConfigSchema = z.object({
   url: z.string().url().max(500),
   key: z.string().min(1).max(1000),
   reasoningEffort: reasoningEffortSchema,
+  useProxy: z.boolean(),
 }).strict()
 export type ModelConfig = z.infer<typeof modelConfigSchema>
 

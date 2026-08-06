@@ -13,7 +13,6 @@ const DEFAULTS: Record<ModelTier, { model: string; reasoningEffort: 'low' | 'med
 export class ModelConfigurationError extends Error {}
 
 export interface ProxyConfig {
-  enabled: boolean
   url: string
 }
 
@@ -49,27 +48,27 @@ function environmentSettings(tier: ModelTier): ModelConfig {
   const suffix = tier.toUpperCase()
   return {
     model: (process.env[`RESEARCH_MODEL_${suffix}`] || DEFAULTS[tier].model).trim(),
-    url: (process.env[`RESEARCH_MODEL_URL_${suffix}`] || (tier === 'document' ? 'http://127.0.0.1:3000/v1' : tier === 'vision' ? 'http://10.31.107.77:3000/v1' : '')).trim(),
+    url: (process.env[`RESEARCH_MODEL_URL_${suffix}`] || (tier === 'document' ? 'http://127.0.0.1:3000/v1' : tier === 'vision' ? 'http://127.0.0.1:3000/v1' : '')).trim(),
     key: (process.env[`RESEARCH_MODEL_KEY_${suffix}`] || (tier === 'document' ? process.env.RESEARCH_MODEL_KEY_MEDIUM : tier === 'vision' ? process.env.RESEARCH_MODEL_KEY_MEDIUM : '') || '').trim(),
     reasoningEffort: (
       process.env[`RESEARCH_REASONING_${suffix}`] || DEFAULTS[tier].reasoningEffort
     ).trim() as ModelConfig['reasoningEffort'],
+    useProxy: tier === 'vision',
   }
 }
 
 function environmentProxy(): ProxyConfig {
   const url = (process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy || '').trim()
-  return { enabled: Boolean(url), url }
+  return { url }
 }
 
 export function loadProxyConfig(): ProxyConfig {
   const result = environmentProxy()
   const path = modelSettingsPath
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8')) as { proxy?: Partial<ProxyConfig> }
+    const parsed = JSON.parse(readFileSync(path, 'utf8')) as { proxy?: { url?: unknown } }
     const savedProxy = parsed.proxy
-    if (savedProxy && typeof savedProxy.enabled === 'boolean' && typeof savedProxy.url === 'string') {
-      result.enabled = savedProxy.enabled
+    if (savedProxy && typeof savedProxy === 'object' && typeof savedProxy.url === 'string') {
       result.url = savedProxy.url.trim()
     }
   } catch (error) {
@@ -101,6 +100,7 @@ function applyGlobalModelSettings(tier: ModelTier, merged: ModelConfig): ModelCo
     }
     const effort = typeof item.reasoning_effort === 'string' ? item.reasoning_effort.trim() : ''
     if (effort) merged.reasoningEffort = effort as ModelConfig['reasoningEffort']
+    if (typeof item.use_proxy === 'boolean') merged.useProxy = item.use_proxy
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
       if (error instanceof ModelConfigurationError) throw error
@@ -135,6 +135,7 @@ function loadProjectModelConfig(tier: ModelTier, projectId: string): ModelConfig
     }
     const effort = typeof item.reasoning_effort === 'string' ? item.reasoning_effort.trim() : ''
     if (effort) merged.reasoningEffort = effort as ModelConfig['reasoningEffort']
+    if (typeof item.use_proxy === 'boolean') merged.useProxy = item.use_proxy
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
       if (error instanceof ModelConfigurationError) throw error

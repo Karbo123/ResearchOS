@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FileText, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { DocumentModelSettings } from '../types'
-import { ModelTestButton, StatusDot } from './ui'
+import { ModelProxySwitch, ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 import { useModelCatalog } from '../hooks/useModelCatalog'
 import { ModelSelect } from './ModelCatalogFields'
@@ -26,14 +26,14 @@ export function DocumentModelSettingsForm({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [dirty, setDirty] = useState(false)
-  const catalog = useModelCatalog(projectId, values?.url || '', values?.key || '')
+  const catalog = useModelCatalog(projectId, values?.url || '', values?.key || '', 'document', values?.use_proxy)
 
   const load = async () => {
     setLoading(true)
     setError('')
     try {
       const result = await api<DocumentModelSettings>(`/api/projects/${projectId}/settings/document`)
-      setValues({ ...result, key: '' })
+      setValues({ ...result, key: '', use_proxy: Boolean(result.use_proxy) })
       setDirty(false)
       onDirtyChange?.(false)
     } catch (err) {
@@ -48,7 +48,7 @@ export function DocumentModelSettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
 
-  const update = (field: 'model' | 'url' | 'key', value: string) => {
+  const update = (field: 'model' | 'url' | 'key' | 'use_proxy', value: string | boolean) => {
     setValues(previous => previous ? { ...previous, [field]: value } : previous)
     setDirty(true)
     onDirtyChange?.(true)
@@ -66,9 +66,10 @@ export function DocumentModelSettingsForm({
           model: values.model.trim(),
           url: values.url.trim(),
           key: values.key,
+          use_proxy: values.use_proxy,
         }),
       })
-      setValues({ ...result, key: '' })
+      setValues({ ...result, key: '', use_proxy: Boolean(result.use_proxy) })
       setDirty(false)
       onDirtyChange?.(false)
       onChanged()
@@ -100,7 +101,12 @@ export function DocumentModelSettingsForm({
             </div>
           </div>
           <div className="model-tier-tools">
-            <ModelTestButton kind="document" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
+            <ModelProxySwitch
+              checked={values.use_proxy}
+              onChange={value => update('use_proxy', value)}
+              label={t('settings.modelProxyLabel')}
+            />
+            <ModelTestButton kind="document" projectId={projectId} useProxy={values.use_proxy} fields={{ model: values.model, url: values.url, key: values.key }} />
           </div>
         </div>
         <div className="model-tier-grid">

@@ -195,10 +195,11 @@ async function proxyRequest(
   return tunneledHttpsRequest(url, proxy, method, headers, body, signal)
 }
 
-export function createProxyFetch(): FetchFunction {
+export function createProxyFetch(options: { useProxy?: boolean } = {}): FetchFunction {
   return async (input: string | URL | Request, init: RequestInit = {}) => {
     const url = requestUrl(input)
     const proxySettings = loadProxyConfig()
+    const proxyUrl = proxySettings.url.trim()
     const headers = new Headers(init.headers)
     const { buffer, contentType } = await serializeBody(init)
     if (contentType && !headers.has('content-type')) headers.set('content-type', contentType)
@@ -206,9 +207,9 @@ export function createProxyFetch(): FetchFunction {
     for (const [key, value] of headers.entries()) headerRecord[key] = value
     const method = (init.method || 'GET').toUpperCase()
     const signal = init.signal ?? null
-    const useProxy = proxySettings.enabled && Boolean(proxySettings.url) && !isDirectAddress(url)
+    const useProxy = options.useProxy === true && Boolean(proxyUrl) && !isDirectAddress(url)
     const result = useProxy
-      ? await proxyRequest(url, new URL(proxySettings.url), method, headerRecord, buffer, signal)
+      ? await proxyRequest(url, new URL(proxyUrl), method, headerRecord, buffer, signal)
       : await directRequest(url, method, headerRecord, buffer, signal)
     return new Response(toWebStream(result.stream, signal), {
       status: result.status,
@@ -219,5 +220,5 @@ export function createProxyFetch(): FetchFunction {
 }
 
 export function proxyFetch(): FetchFunction {
-  return createProxyFetch()
+  return createProxyFetch({ useProxy: false })
 }

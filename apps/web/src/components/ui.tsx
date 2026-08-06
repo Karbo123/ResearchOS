@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { AlertTriangle, Ban, CheckCircle2, Clock3, FileQuestion, Inbox, Loader2, LockKeyhole, RotateCw, X, Zap } from 'lucide-react'
-import { api, errorMessage } from '../api'
+import { AlertTriangle, Ban, CheckCircle2, Clock3, FileQuestion, Globe, Inbox, Loader2, LockKeyhole, RotateCw, X, Zap } from 'lucide-react'
+import { api, ApiError, errorMessage } from '../api'
 import type { ModelTestKind } from '../types'
 import { useTranslation, type TranslationKey } from '../i18n'
 
@@ -107,24 +107,53 @@ export function StatusDot({ ready }: { ready: boolean }) {
   return <span className={`status-dot ${ready ? 'ready' : ''}`} />
 }
 
+export function ModelProxySwitch({ checked, onChange, label }: { checked: boolean; onChange: (next: boolean) => void; label: string }) {
+  return (
+    <label className="settings-switch settings-model-proxy" title={label}>
+      <input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} />
+      <span className="settings-switch-track" aria-hidden="true"><span /></span>
+      <span>{label}</span>
+    </label>
+  )
+}
+
+function modelTestFailureMessage(error: unknown, t: (key: TranslationKey) => string): string {
+  if (!(error instanceof ApiError)) return errorMessage(error)
+  const keyByCode: Partial<Record<string, TranslationKey>> = {
+    model_test_invalid_response: 'settings.testInvalidResponse',
+    model_test_timeout: 'settings.testTimeout',
+    model_test_unreachable: 'settings.testUnreachable',
+    model_test_upstream_error: 'settings.testUpstreamError',
+    proxy_test_timeout: 'settings.proxyTestTimeout',
+    proxy_test_unreachable: 'settings.proxyTestUnreachable',
+    proxy_test_upstream_error: 'settings.proxyTestUpstreamError',
+  }
+  const key = keyByCode[error.code]
+  return key ? t(key) : errorMessage(error)
+}
+
 export function ModelTestButton({
   kind,
   fields,
   projectId,
+  useProxy,
   onResult,
 }: {
   kind: ModelTestKind
   fields: { model: string; url: string; key: string }
   projectId?: string
+  useProxy?: boolean
   onResult?: (ok: boolean) => void
 }) {
   const { t } = useTranslation()
   const [state, setState] = useState<'idle' | 'testing' | 'ok' | 'failed'>('idle')
   const [message, setMessage] = useState('')
+  const [detail, setDetail] = useState('')
   const run = async () => {
     if (state === 'testing') return
     setState('testing')
     setMessage(t('settings.testing'))
+    setDetail('')
     try {
       const result = await api<{ ok: boolean; elapsed: number; message: string }>('/api/settings/model-test', {
         method: 'POST',
@@ -133,15 +162,18 @@ export function ModelTestButton({
           model: fields.model.trim(),
           url: fields.url.trim(),
           key: fields.key,
+          use_proxy: useProxy,
           project_id: projectId || undefined,
         }),
       })
       setState('ok')
-      setMessage(result.message)
+      setMessage(t('settings.testSucceeded'))
+      setDetail(result.message)
       onResult?.(true)
     } catch (err) {
       setState('failed')
-      setMessage(errorMessage(err))
+      setMessage(modelTestFailureMessage(err, t))
+      setDetail(err instanceof Error ? err.message : '')
       onResult?.(false)
     }
   }
@@ -152,7 +184,46 @@ export function ModelTestButton({
         {t('settings.test')}
       </button>
       {state !== 'idle' ? (
-        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite">
+        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite" title={detail || message}>
+          {message}
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
+export function ProxyTestButton({ url }: { url: string }) {
+  const { t } = useTranslation()
+  const [state, setState] = useState<'idle' | 'testing' | 'ok' | 'failed'>('idle')
+  const [message, setMessage] = useState('')
+  const [detail, setDetail] = useState('')
+  const run = async () => {
+    if (state === 'testing') return
+    setState('testing')
+    setMessage(t('settings.testing'))
+    setDetail('')
+    try {
+      const result = await api<{ ok: boolean; elapsed: number; message: string }>('/api/settings/proxy-test', {
+        method: 'POST',
+        body: JSON.stringify({ url: url.trim() }),
+      })
+      setState('ok')
+      setMessage(t('settings.proxyTestSucceeded'))
+      setDetail(result.message)
+    } catch (err) {
+      setState('failed')
+      setMessage(modelTestFailureMessage(err, t))
+      setDetail(err instanceof Error ? err.message : '')
+    }
+  }
+  return (
+    <span className="model-test-control">
+      <button className="secondary model-test-button" type="button" disabled={state === 'testing'} onClick={() => void run()}>
+        {state === 'testing' ? <Loader2 size={14} className="spin" /> : <Globe size={14} />}
+        {t('settings.testProxy')}
+      </button>
+      {state !== 'idle' ? (
+        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite" title={detail || message}>
           {message}
         </span>
       ) : null}
@@ -163,19 +234,23 @@ export function ModelTestButton({
 export function EmbeddingTestButton({
   fields,
   projectId,
+  useProxy,
   onResult,
 }: {
   fields: { mode: 'global' | 'custom'; provider: 'local' | 'openai'; model: string; dimensions: number; base_url: string; key: string }
   projectId: string
+  useProxy?: boolean
   onResult?: (ok: boolean) => void
 }) {
   const { t } = useTranslation()
   const [state, setState] = useState<'idle' | 'testing' | 'ok' | 'failed'>('idle')
   const [message, setMessage] = useState('')
+  const [detail, setDetail] = useState('')
   const run = async () => {
     if (state === 'testing') return
     setState('testing')
     setMessage(t('settings.testing'))
+    setDetail('')
     try {
       const result = await api<{ ok: boolean; elapsed: number; message: string }>(`/api/projects/${projectId}/embedding-test`, {
         method: 'POST',
@@ -186,14 +261,17 @@ export function EmbeddingTestButton({
           dimensions: Number(fields.dimensions) || 1024,
           base_url: fields.base_url.trim(),
           key: fields.key,
+          use_proxy: useProxy,
         }),
       })
       setState('ok')
-      setMessage(result.message)
+      setMessage(t('settings.testSucceeded'))
+      setDetail(result.message)
       onResult?.(true)
     } catch (err) {
       setState('failed')
       setMessage(errorMessage(err))
+      setDetail(err instanceof Error ? err.message : '')
       onResult?.(false)
     }
   }
@@ -204,7 +282,7 @@ export function EmbeddingTestButton({
         {t('settings.test')}
       </button>
       {state !== 'idle' ? (
-        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite">
+        <span className={`model-test-message ${state === 'ok' ? 'ok' : state === 'failed' ? 'failed' : ''}`} role="status" aria-live="polite" title={detail || message}>
           {message}
         </span>
       ) : null}

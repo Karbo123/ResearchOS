@@ -6,10 +6,9 @@ import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
-import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
 import {
-  approvalDecision, chatRequest, documentModelSettingsRequest, embeddingTestRequest, experimentRequest, imageGenerationSettingsRequest, modelCatalogRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest, workspaceArea, workspaceTab,
+  approvalDecision, chatRequest, documentModelSettingsRequest, embeddingTestRequest, experimentRequest, imageGenerationSettingsRequest, modelCatalogRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest, proxyTestRequest, workspaceArea, workspaceTab,
   claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectRenameRequest, projectSlug, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
   workflowEditProposalRequest,
@@ -22,6 +21,8 @@ import { privateModelSettings, publicDocumentSettings, publicImageGenerationSett
 import { privateProjectModelSettings, publicProjectDocumentSettings, publicProjectImageGenerationSettings, publicProjectModelSettings, publicProjectVisionSettings, publicProjectVoiceSettings, saveProjectDocumentSettings, saveProjectImageGenerationSettings, saveProjectModelSettings, saveProjectVisionSettings, saveProjectVoiceSettings } from './project-settings.js'
 import { testModelConnection } from './model-test.js'
 import { fetchModelCatalog } from './model-catalog.js'
+import { modelProxyFetch } from './model-proxy.js'
+import { testProxyConnection } from './proxy-test.js'
 import { publicVoiceSettings, saveVoiceSettings } from './voice-settings.js'
 import { transcribeVoice } from './voice-transcription.js'
 import { pathInside, projectsRoot, publicRoot, runtimeRoot } from './paths.js'
@@ -35,7 +36,6 @@ import { applyApprovedPatch, gitCommit as readGitCommit } from './patch-service.
 import { assertWorkflowPatchValid } from './workflow-edit-service.js'
 import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { startReportScheduler } from './report-scheduler.js'
-import { scanFile } from './malware-scanner.js'
 import { canonicalRepositoryUrl, discoverRepositoryCandidates, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
 import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
@@ -65,6 +65,7 @@ import { workflowGraphSnapshot } from './project-workflow/graph-service.js'
 import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks, cancelProjectWorkflowTask, recoverProjectWorkflowRuntimes } from './project-workflow/runtime-service.js'
 import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
 import { workflowEventAppendInputSchema } from './project-workflow/contracts.js'
+import { streamServerEvents } from './sse.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown>; scope: string }
 type ProposalRow = { id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown>; impact: Record<string, unknown> }
@@ -155,8 +156,12 @@ app.put('/api/settings/image-generation', async context => {
 })
 app.post('/api/settings/model-test', async context => {
   const body = await jsonBody(context, modelTestRequest)
-  const { project_id: projectId, ...testFields } = body
-  return context.json(await testModelConnection(body.kind, { ...testFields, ...(projectId ? { project_id: projectId } : {}) }))
+  const { project_id: projectId, use_proxy, ...testFields } = body
+  return context.json(await testModelConnection(body.kind, {
+    ...testFields,
+    ...(projectId ? { project_id: projectId } : {}),
+    ...(use_proxy !== undefined ? { use_proxy } : {}),
+  }))
 })
 app.post('/api/projects/:projectId/settings/model-catalog', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -164,12 +169,20 @@ app.post('/api/projects/:projectId/settings/model-catalog', async context => {
   const body = await jsonBody(context, modelCatalogRequest)
   const settings = privateProjectModelSettings(projectId)
   const fallbackKey = settings.simple.key || settings.medium.key || settings.complex.key || settings.document.key || settings.vision.key
-  return context.json(await fetchModelCatalog({ url: body.url, key: body.key }, fallbackKey))
+  return context.json(await fetchModelCatalog(
+    { url: body.url, key: body.key, ...(body.use_proxy !== undefined ? { use_proxy: body.use_proxy } : {}) },
+    fallbackKey,
+    modelProxyFetch(body.kind, projectId, body.use_proxy),
+  ))
 })
 app.get('/api/settings/proxy', context => context.json(publicProxySettings()))
 app.put('/api/settings/proxy', async context => {
   const body = await jsonBody(context, proxySettingsRequest)
   return context.json(saveProxySettings(body))
+})
+app.post('/api/settings/proxy-test', async context => {
+  const body = await jsonBody(context, proxyTestRequest)
+  return context.json(await testProxyConnection(body.url))
 })
 app.get('/api/settings/voice', context => context.json(publicVoiceSettings()))
 app.put('/api/settings/voice', async context => {
@@ -281,7 +294,12 @@ app.post('/api/projects/:projectId/embedding-test', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
   const body = await jsonBody(context, embeddingTestRequest)
-  return context.json(await testEmbeddingConnection({ ...body, project_id: projectId }))
+  const { use_proxy, ...testFields } = body
+  return context.json(await testEmbeddingConnection({
+    ...testFields,
+    project_id: projectId,
+    ...(use_proxy !== undefined ? { use_proxy } : {}),
+  }))
 })
 app.get('/api/projects/:projectId/memory/links', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -352,12 +370,13 @@ app.get('/api/projects/:projectRef/chat-session', async context => {
 app.post('/api/chat', async context => context.json(await chatDispatch(await jsonBody(context, chatRequest))))
 app.post('/api/chat/stream', async context => {
   const body = await jsonBody(context, chatRequest)
-  return streamSSE(context, async stream => {
-    await stream.writeSSE({ event: 'stage', data: JSON.stringify({ stage: 'model_request' }) })
-    try { await stream.writeSSE({ event: 'result', data: JSON.stringify(await chatDispatch(body)) }) }
+  return streamServerEvents(context, async stream => {
+    await stream.write({ event: 'stage', data: JSON.stringify({ stage: 'model_request' }) })
+    try { await stream.write({ event: 'result', data: JSON.stringify(await chatDispatch(body)) }) }
     catch (error) {
+      if (stream.signal.aborted) return
       const failure = error instanceof ApiError ? { code: error.code, message: error.message, status: error.status } : { code: 'internal_error', message: '服务器处理请求失败。', status: 500 }
-      await stream.writeSSE({ event: 'error', data: JSON.stringify(failure) })
+      await stream.write({ event: 'error', data: JSON.stringify(failure) })
     }
   })
 })
@@ -1136,9 +1155,7 @@ app.get('/api/projects/:projectId/workflow/events', async context => {
 })
 app.get('/api/projects/:projectId/workflow/stream', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
-  return streamSSE(context, async stream => {
-    const initial = await workflowGraphSnapshot(projectId)
-    await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(initial) })
+  return streamServerEvents(context, async stream => {
     const signature = (value: {
       runtime: { event_cursor: number; state_version: number }
       node_runs: Array<{ updated_at: string }>
@@ -1148,26 +1165,23 @@ app.get('/api/projects/:projectId/workflow/stream', async context => {
       const taskTimes = value.tasks.map(task => Date.parse(task.updated_at) || 0)
       return `${value.runtime.event_cursor}:${value.runtime.state_version}:${Math.max(0, ...nodeTimes, ...taskTimes)}`
     }
-    let lastSignature = signature(initial)
-    const timer = setInterval(() => {
-      void (async () => {
-        try {
-          const latest = await workflowGraphSnapshot(projectId)
-          const nextSignature = signature(latest)
-          if (nextSignature !== lastSignature) {
-            lastSignature = nextSignature
-            await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(latest) })
-          }
-        } catch {
-          try {
-            await stream.writeSSE({ event: 'error', data: JSON.stringify({ code: 'workflow_stream_failed', message: '工作流状态读取失败。' }) })
-          } catch {
-            // The client disconnected; the abort handler clears this interval.
-          }
+    try {
+      const initial = await workflowGraphSnapshot(projectId)
+      await stream.write({ event: 'snapshot', data: JSON.stringify(initial) })
+      let lastSignature = signature(initial)
+      while (await stream.sleep(2_000)) {
+        const latest = await workflowGraphSnapshot(projectId)
+        const nextSignature = signature(latest)
+        if (nextSignature !== lastSignature) {
+          lastSignature = nextSignature
+          await stream.write({ event: 'snapshot', data: JSON.stringify(latest) })
         }
-      })()
-    }, 2_000)
-    stream.onAbort(() => clearInterval(timer))
+      }
+    } catch {
+      if (!stream.signal.aborted) {
+        await stream.write({ event: 'error', data: JSON.stringify({ code: 'workflow_stream_failed', message: '工作流状态读取失败。' }) })
+      }
+    }
   })
 })
 app.post('/api/projects/:projectId/state', async context => {
@@ -1242,9 +1256,8 @@ app.post('/api/uploads', async context => {
     : pathInside(runtimeRoot, ...relativePath.split('/'))
   mkdirSync(dirname(target), { recursive: true })
   writeFileSync(target, bytes, { flag: 'wx' })
-  try { await scanFile(target) } catch (error) { try { await import('node:fs').then(module => module.rmSync(target)) } catch { /* Preserve scanner error. */ } throw error }
   const sha256 = createHash('sha256').update(bytes).digest('hex')
-  await database.query('INSERT INTO uploaded_files(id,session_id,project_id,name,relative_path,mime_type,size_bytes,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, sessionId, session.project_id, safeName, relativePath, file.type || 'application/octet-stream', bytes.length, sha256, { scan: 'windows_defender_clean', evidence_status: 'untrusted_uploaded_material' }])
+  await database.query('INSERT INTO uploaded_files(id,session_id,project_id,name,relative_path,mime_type,size_bytes,sha256,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, sessionId, session.project_id, safeName, relativePath, file.type || 'application/octet-stream', bytes.length, sha256, { evidence_status: 'untrusted_uploaded_material' }])
   let indexTask: { id: string } | null = null
   if (session.project_id && supermemoryEnabled()) {
     const event = await appendWorkflowEvent(session.project_id, 'material.uploaded', {
@@ -1322,9 +1335,6 @@ app.notFound(context => {
 
 const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
 if (!isTestRuntime) {
-  process.on('unhandledRejection', reason => {
-    console.error('Unhandled promise rejection in Research OS API', reason)
-  })
   await migrate()
   await migrateProjectSlugs()
   await migrateProjectPrimaryKeyToSlug()

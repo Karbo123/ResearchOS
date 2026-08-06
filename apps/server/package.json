@@ -12,11 +12,11 @@
     "db:migrate": "tsx src/migrate.ts"
   },
   "dependencies": {
-    "@electric-sql/pglite": "0.3.7",
-    "@hono/node-server": "^2.0.12",
+    "@electric-sql/pglite": "0.3.10",
+    "@hono/node-server": "^2.1.0",
     "esbuild": "0.25.3",
     "fast-xml-parser": "5.10.1",
-    "hono": "^4.12.32",
+    "hono": "^4.13.0",
     "pdfjs-dist": "5.1.91",
     "supermemory": "^4.24.2",
     "tar": "7.5.22",

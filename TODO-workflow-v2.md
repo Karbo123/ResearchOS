@@ -510,7 +510,7 @@ Supermemory 继续负责长文本、事实、对话记录、文献知识和多�
 
 > 补充验收记录（2026-08-06）：新增 `POST /api/projects/:projectId/workflow/tasks/:taskId/cancel` 与任务取消链路。`project-workflow-runtime.test.ts` 真实触发 `test.project_serial` 长任务，等待 `project_serial_a` 进入 `running` 后调用取消接口，节点 run 最终关闭为 `cancelled`、`error_code='cancelled'`，任务不再被新 worker 认领；认领后的节点 run 会立即更新为 `running`，图面板状态不再停留在 `queued`。迁移新增 `tasks.cancel_requested`，删除项目清理已包含任务/节点/事件。浏览器验收改为按事件 `correlation_id` 断言实时更新，并对 SSE 客户端断开时的轮询拒绝、任务心跳、报告调度、definition 扫描审计和相关工作后台启动做了隔离，避免后台定时器把整个 API 进程带崩。
 
-> 缺陷修复记录（2026-08-06）：真实浏览器验收在 reduced-motion 步骤反复断开/重连 workflow SSE 时发现 API 仍会因未捕获的 `reader.cancel()` 拒绝崩溃（Node 26 默认 fatal unhandled rejection）。根因在 Hono 4.12.32 的 `StreamingApi`，其 abort 订阅器把 `reader.cancel()` 作为裸 Promise 触发，客户端断开且 cancel 拒绝时直接逃逸。新增 `scripts/patch-hono-stream.ts` 与 `postinstall`，只给该取消补 `.catch(() => {})`；同时为任务 worker 恢复失败和 API 顶层增加未处理拒绝日志兜底。修复后重跑完整检查、`workflow:v2:check`、浏览器验收和 `ops:status`，API 进程在多次 SSE 重载后仍存活。
+> 缺陷更正与完成记录（2026-08-06）：此前把问题归因于 Hono `reader.cancel()` 并增加依赖补丁、worker 恢复兜底和全局 `unhandledRejection` 日志，只阻止了部分表面崩溃。复查确认 workflow SSE callback 在首帧后立即返回，Hono 正常关闭响应而 `onAbort` 不触发，遗留 `setInterval` 持续查询；前端 REST polling 又掩盖了 SSE 失效。与此同时 `@electric-sql/pglite@0.3.7` 命中上游已修复的 `MessageContext` 泄漏，实际 API 增长到约 2.55GB RSS 后出现 WASM `memory access out of bounds`，“workflow task worker recovery failed”只是死数据库上的二次失败。现已用项目内 abort-aware `ReadableStream` 替换两处 SSE、移除 Hono patch/REST fallback/全局 rejection 兜底，升级到经真实库副本验证兼容的 PGlite 0.3.10，并把 worker 改为单调度器、有界并发、指数空闲退避和活动任务心跳。单元/集成测试验证首帧后持续连接、同连接实时更新、取消清理、重复断连无残留、空闲查询有界与致命数据库错误停止；真实 Chrome 在无 REST fallback 下验证事件实时更新，API 累计 2700 次 SSE 压力后保持健康且 RSS 增长斜率收敛。
 
 ### Phase 7：可靠性和未来执行后端（P1）
 

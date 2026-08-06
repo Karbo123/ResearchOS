@@ -10,6 +10,7 @@ export interface ProjectEmbeddingSettings {
   dimensions: number
   base_url: string
   key: string
+  use_proxy: boolean
   pool_key: string
 }
 
@@ -43,6 +44,7 @@ function envDefaults(): Omit<ProjectEmbeddingSettings, 'pool_key'> {
     dimensions,
     base_url: process.env.SUPERMEMORY_EMBEDDING_BASE_URL?.trim() || '',
     key: process.env.SUPERMEMORY_EMBEDDING_API_KEY?.trim() || '',
+    use_proxy: false,
   }
 }
 
@@ -66,6 +68,7 @@ function readProjectOverrides(): Record<string, ProjectEmbeddingSettings> {
       const model = String(value.model || defaults.model)
       const baseUrl = String(value.base_url || '')
       const key = String(value.key || '')
+      const useProxy = typeof value.use_proxy === 'boolean' ? value.use_proxy : defaults.use_proxy
       const dimensionsResolved = Number.isInteger(dimensions) && dimensions > 0 ? dimensions : defaults.dimensions
       result[projectId] = {
         provider,
@@ -73,6 +76,7 @@ function readProjectOverrides(): Record<string, ProjectEmbeddingSettings> {
         dimensions: dimensionsResolved,
         base_url: baseUrl,
         key,
+        use_proxy: useProxy,
         pool_key: String(value.pool_key || poolKeyOf({ provider, model, dimensions: dimensionsResolved, base_url: baseUrl, key })),
       }
     }
@@ -152,6 +156,7 @@ export function publicProjectEmbeddingSettings(projectId: string) {
     env_base_url: envBaseUrl,
     key_configured: Boolean(effective.key),
     source: saved ? 'project_override' : 'env_default',
+    use_proxy: effective.use_proxy,
     pool_key: effective.pool_key,
   }
 }
@@ -163,10 +168,11 @@ function allocatePort(pools: Record<string, EmbeddingPool>): number {
 }
 
 function registerPool(settings: Omit<ProjectEmbeddingSettings, 'pool_key'>): string {
-  const key = poolKeyOf(settings)
+  const { use_proxy: _useProxy, ...poolSettings } = settings
+  const key = poolKeyOf(poolSettings)
   const pools = readPools()
   if (!pools[key]) {
-    pools[key] = { ...settings, port: allocatePort(pools) }
+    pools[key] = { ...poolSettings, port: allocatePort(pools) }
     writePools(pools)
   }
   return key
@@ -183,6 +189,7 @@ export function computedEmbeddingSettings(projectId: string, input: ProjectEmbed
     dimensions: input.dimensions,
     base_url: input.base_url.trim(),
     key: input.key.trim() || previous.key,
+    use_proxy: input.use_proxy,
   }
   if (provider !== 'local' && !settings.base_url) throw new Error('embedding_remote_base_url_required')
   if (provider !== 'local' && !settings.key) throw new Error('embedding_remote_key_required')

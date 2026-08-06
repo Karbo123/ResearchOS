@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Mic, Save, ShieldCheck } from 'lucide-react'
 import { ApiError, api, errorMessage } from '../api'
 import type { VoiceProvider, VoiceSettingsResponse } from '../types'
-import { ModelTestButton, StatusDot } from './ui'
+import { ModelProxySwitch, ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
 interface FormValues {
@@ -10,6 +10,7 @@ interface FormValues {
   model: string
   url: string
   key: string
+  use_proxy: boolean
   key_configured: boolean
 }
 
@@ -35,6 +36,7 @@ export function VoiceSettingsForm({ projectId, onChanged }: { projectId: string;
         model: result.model,
         url: result.url,
         key: '',
+        use_proxy: Boolean(result.use_proxy),
         key_configured: result.key_configured,
       })
       setDirty(false)
@@ -68,9 +70,10 @@ export function VoiceSettingsForm({ projectId, onChanged }: { projectId: string;
           model: values.model.trim(),
           url: values.url.trim(),
           key: values.key,
+          use_proxy: values.use_proxy,
         }),
       })
-      setValues(previous => previous ? { ...previous, ...result, key: '', key_configured: result.key_configured } : previous)
+      setValues(previous => previous ? { ...previous, ...result, key: '', use_proxy: Boolean(result.use_proxy), key_configured: result.key_configured } : previous)
       setDirty(false)
       onChanged()
       window.dispatchEvent(new Event('researchos:voice-settings-changed'))
@@ -100,7 +103,12 @@ export function VoiceSettingsForm({ projectId, onChanged }: { projectId: string;
           </div>
           {apiMode ? (
             <div className="model-tier-tools">
-              <ModelTestButton kind="voice" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
+              <ModelProxySwitch
+                checked={values.use_proxy}
+                onChange={value => update('use_proxy', value)}
+                label={t('settings.modelProxyLabel')}
+              />
+              <ModelTestButton kind="voice" projectId={projectId} useProxy={values.use_proxy} fields={{ model: values.model, url: values.url, key: values.key }} />
             </div>
           ) : null}
         </div>

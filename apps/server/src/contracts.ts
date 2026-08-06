@@ -90,6 +90,7 @@ export const modelTierSettings = z.object({
     .refine(isResponsesBaseUrl, 'model URL must be a Responses API base URL, not an operation endpoint'),
   key: z.string().max(1000),
   reasoning_effort: z.enum(['low', 'medium', 'high']),
+  use_proxy: z.boolean().default(false),
 }).strict()
 export const documentModelSettings = z.object({
   model: z.string().trim().min(1).max(200),
@@ -97,6 +98,7 @@ export const documentModelSettings = z.object({
     .refine(isAllowedModelUrl, 'document model URL must use HTTPS or loopback/private HTTP')
     .refine(isResponsesBaseUrl, 'document model URL must be a Responses API base URL, not an operation endpoint'),
   key: z.string().max(1000),
+  use_proxy: z.boolean().default(false),
 }).strict()
 export const documentModelSettingsRequest = documentModelSettings
 export const visionModelSettings = z.object({
@@ -105,6 +107,7 @@ export const visionModelSettings = z.object({
     .refine(isAllowedModelUrl, 'vision model URL must use HTTPS or loopback/private HTTP')
     .refine(isResponsesBaseUrl, 'vision model URL must be a Responses API base URL, not an operation endpoint'),
   key: z.string().max(1000),
+  use_proxy: z.boolean().default(true),
 }).strict()
 export const visionModelSettingsRequest = visionModelSettings
 export const imageGenerationResolution = z.enum(['1k', '2k', '4k'])
@@ -116,12 +119,12 @@ export const imageGenerationSettings = z.object({
   key: z.string().max(1000),
   resolution: imageGenerationResolution.default('1k'),
   quality: imageGenerationQuality.default('low'),
+  use_proxy: z.boolean().default(true),
 }).strict()
 export const imageGenerationSettingsRequest = imageGenerationSettings
 export const proxySettings = z.object({
-  enabled: z.boolean(),
   url: z.string().trim().max(500),
-}).strict().refine(value => !value.enabled || /^https?:\/\//i.test(value.url), 'proxy URL must start with http:// or https://')
+}).strict().refine(value => !value.url || /^https?:\/\//i.test(value.url), 'proxy URL must start with http:// or https://')
 export const proxySettingsRequest = proxySettings
 export const modelSettingsRequest = z.object({
   simple: modelTierSettings,
@@ -130,11 +133,15 @@ export const modelSettingsRequest = z.object({
   proxy: proxySettings.optional(),
 }).strict()
 export const projectModelSettingsRequest = modelSettingsRequest.omit({ proxy: true })
+export const modelCatalogKind = z.enum(['simple', 'medium', 'complex', 'document', 'vision'])
+export type ModelCatalogKind = z.infer<typeof modelCatalogKind>
 export const modelCatalogRequest = z.object({
+  kind: modelCatalogKind,
   url: z.string().url().max(500)
     .refine(isAllowedModelUrl, 'model URL must use HTTPS or loopback/private HTTP')
     .refine(isResponsesBaseUrl, 'model URL must be a Responses API base URL, not an operation endpoint'),
   key: z.string().max(1000).default(''),
+  use_proxy: z.boolean().optional(),
 }).strict()
 export type ModelCatalogRequest = z.infer<typeof modelCatalogRequest>
 export const modelTestKind = z.enum(['simple', 'medium', 'complex', 'document', 'vision', 'image', 'voice'])
@@ -144,6 +151,7 @@ export const modelTestRequest = z.object({
   model: z.string().trim().max(200).default(''),
   url: z.string().trim().max(500).default(''),
   key: z.string().max(1000).default(''),
+  use_proxy: z.boolean().optional(),
   project_id: projectSlug.optional(),
 }).strict()
 
@@ -156,6 +164,7 @@ export const voiceSettingsRequest = z.object({
   url: z.string().trim().max(500).default('')
     .refine(value => !value || isAllowedModelUrl(value), 'voice URL must be HTTPS or loopback/private HTTP'),
   key: z.string().max(1000).default(''),
+  use_proxy: z.boolean().default(true),
 }).strict()
 export type VoiceSettingsRequest = z.infer<typeof voiceSettingsRequest>
 
@@ -169,6 +178,7 @@ export const projectEmbeddingSettingsRequest = z.object({
   dimensions: z.number().int().min(1).max(4096).default(1024),
   base_url: z.string().trim().max(500).default(''),
   key: z.string().max(2000).default(''),
+  use_proxy: z.boolean().default(false),
   reset_data: z.boolean().default(false),
 }).strict()
 export type ProjectEmbeddingSettingsRequest = z.infer<typeof projectEmbeddingSettingsRequest>
@@ -180,9 +190,14 @@ export const embeddingTestRequest = z.object({
   dimensions: z.number().int().min(1).max(4096).default(1024),
   base_url: z.string().trim().max(500).default(''),
   key: z.string().max(2000).default(''),
+  use_proxy: z.boolean().optional(),
   project_id: projectSlug.optional(),
 }).strict()
 export type EmbeddingTestRequest = z.infer<typeof embeddingTestRequest>
+
+export const proxyTestRequest = z.object({
+  url: z.string().trim().max(500).default(''),
+}).strict()
 
 export const proposalCreateRequest = z.object({
   project_id: projectSlug,

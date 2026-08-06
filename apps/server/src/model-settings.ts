@@ -8,10 +8,10 @@ interface TierSettings {
   url: string
   key: string
   reasoning_effort: 'low' | 'medium' | 'high'
+  use_proxy: boolean
 }
 
 interface ProxySettings {
-  enabled: boolean
   url: string
 }
 
@@ -19,12 +19,14 @@ interface DocumentSettings {
   model: string
   url: string
   key: string
+  use_proxy: boolean
 }
 
 interface VisionSettings {
   model: string
   url: string
   key: string
+  use_proxy: boolean
 }
 
 interface ImageGenerationSettings {
@@ -33,6 +35,7 @@ interface ImageGenerationSettings {
   key: string
   resolution: '1k' | '2k' | '4k'
   quality: 'low' | 'medium' | 'high'
+  use_proxy: boolean
 }
 
 type ModelSettings = Record<ModelTier, TierSettings> & {
@@ -62,12 +65,13 @@ function envTier(suffix: string, model: string, effort: 'low' | 'medium' | 'high
     url: process.env[`RESEARCH_MODEL_URL_${suffix}`]?.trim() || '',
     key: process.env[`RESEARCH_MODEL_KEY_${suffix}`]?.trim() || '',
     reasoning_effort: (process.env[`RESEARCH_REASONING_${suffix}`]?.trim() || effort) as 'low' | 'medium' | 'high',
+    use_proxy: false,
   }
 }
 
 function envProxy(): ProxySettings {
   const url = (process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy || '').trim()
-  return { enabled: Boolean(url), url }
+  return { url }
 }
 
 function envDocument(): DocumentSettings {
@@ -75,14 +79,16 @@ function envDocument(): DocumentSettings {
     model: process.env.RESEARCH_DOCUMENT_MODEL?.trim() || 'deepseek-v4-flash',
     url: process.env.RESEARCH_DOCUMENT_MODEL_URL?.trim() || 'http://127.0.0.1:3000/v1',
     key: process.env.RESEARCH_DOCUMENT_MODEL_KEY?.trim() || process.env.RESEARCH_MODEL_KEY_MEDIUM?.trim() || '',
+    use_proxy: false,
   }
 }
 
 function envVision(): VisionSettings {
   return {
     model: process.env.RESEARCH_VISION_MODEL?.trim() || 'mimo-v2.5',
-    url: process.env.RESEARCH_VISION_MODEL_URL?.trim() || 'http://10.31.107.77:3000/v1',
+    url: process.env.RESEARCH_VISION_MODEL_URL?.trim() || 'http://127.0.0.1:3000/v1',
     key: process.env.RESEARCH_VISION_MODEL_KEY?.trim() || process.env.RESEARCH_MODEL_KEY_MEDIUM?.trim() || '',
+    use_proxy: true,
   }
 }
 
@@ -93,6 +99,7 @@ function envImageGeneration(): ImageGenerationSettings {
     key: process.env.RESEARCH_IMAGE_MODEL_KEY?.trim() || '',
     resolution: (process.env.RESEARCH_IMAGE_RESOLUTION?.trim() || '1k') as ImageGenerationSettings['resolution'],
     quality: (process.env.RESEARCH_IMAGE_QUALITY?.trim() || 'low') as ImageGenerationSettings['quality'],
+    use_proxy: true,
   }
 }
 
@@ -104,22 +111,26 @@ export function privateModelSettings() {
     const item = saved[tier]
     if (!item) continue
     for (const field of ['model', 'url', 'key', 'reasoning_effort'] as const) if (item[field]) merged[tier][field] = item[field] as never
+    if (typeof item.use_proxy === 'boolean') merged[tier].use_proxy = item.use_proxy
   }
   const savedProxy = saved.proxy
-  if (savedProxy && typeof savedProxy.enabled === 'boolean' && typeof savedProxy.url === 'string') {
-    merged.proxy = { enabled: savedProxy.enabled, url: savedProxy.url }
+  if (savedProxy && typeof savedProxy === 'object') {
+    const proxyUrl = typeof (savedProxy as unknown as Record<string, unknown>).url === 'string' ? (savedProxy as { url: string }).url.trim() : ''
+    merged.proxy = { url: proxyUrl }
   }
   const savedDocument = saved.document
   if (savedDocument && typeof savedDocument === 'object') {
     for (const field of ['model', 'url', 'key'] as const) {
       if (typeof savedDocument[field] === 'string' && savedDocument[field]) merged.document[field] = savedDocument[field] as never
     }
+    if (typeof savedDocument.use_proxy === 'boolean') merged.document.use_proxy = savedDocument.use_proxy
   }
   const savedVision = saved.vision
   if (savedVision && typeof savedVision === 'object') {
     for (const field of ['model', 'url', 'key'] as const) {
       if (typeof savedVision[field] === 'string' && savedVision[field]) merged.vision[field] = savedVision[field] as never
     }
+    if (typeof savedVision.use_proxy === 'boolean') merged.vision.use_proxy = savedVision.use_proxy
   }
   const savedImage = saved.image_generation
   if (savedImage && typeof savedImage === 'object') {
@@ -127,6 +138,7 @@ export function privateModelSettings() {
       const value = savedImage[field]
       if (typeof value === 'string' && value) merged.image_generation[field] = value as never
     }
+    if (typeof savedImage.use_proxy === 'boolean') merged.image_generation.use_proxy = savedImage.use_proxy
   }
   return merged
 }
@@ -137,6 +149,7 @@ export function publicModelSettings() {
     model: settings[tier].model,
     url: settings[tier].url,
     reasoning_effort: settings[tier].reasoning_effort,
+    use_proxy: settings[tier].use_proxy,
     key_configured: Boolean(settings[tier].key),
     source: existsSync(settingsPath) ? 'runtime_override' : 'env_default',
   }]))
@@ -151,6 +164,7 @@ export function publicDocumentSettings() {
   return {
     model: settings.document.model,
     url: settings.document.url,
+    use_proxy: settings.document.use_proxy,
     key_configured: Boolean(settings.document.key),
     source: existsSync(settingsPath) ? 'runtime_override' : 'env_default',
   }
@@ -161,6 +175,7 @@ export function publicVisionSettings() {
   return {
     model: settings.vision.model,
     url: settings.vision.url,
+    use_proxy: settings.vision.use_proxy,
     key_configured: Boolean(settings.vision.key),
     source: existsSync(settingsPath) ? 'runtime_override' : 'env_default',
   }
@@ -171,6 +186,7 @@ export function publicImageGenerationSettings() {
   return {
     model: settings.image_generation.model,
     url: settings.image_generation.url,
+    use_proxy: settings.image_generation.use_proxy,
     key_configured: Boolean(settings.image_generation.key),
     resolution: settings.image_generation.resolution,
     quality: settings.image_generation.quality,
@@ -182,10 +198,10 @@ export function saveModelSettings(input: unknown) {
   const parsed = modelSettingsRequest.parse(input)
   const current = privateModelSettings()
   for (const tier of ['simple', 'medium', 'complex'] as const) {
-    current[tier] = { ...parsed[tier], key: parsed[tier].key.trim() || current[tier].key }
+    current[tier] = { ...parsed[tier], key: parsed[tier].key.trim() || current[tier].key, use_proxy: parsed[tier].use_proxy }
   }
   if (parsed.proxy) {
-    current.proxy = { enabled: parsed.proxy.enabled, url: parsed.proxy.url.trim() }
+    current.proxy = { url: parsed.proxy.url.trim() }
   }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
@@ -200,6 +216,7 @@ export function saveDocumentSettings(input: unknown) {
     model: parsed.model.trim(),
     url: parsed.url.trim(),
     key: parsed.key.trim() || current.document.key,
+    use_proxy: parsed.use_proxy,
   }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
@@ -214,6 +231,7 @@ export function saveVisionSettings(input: unknown) {
     model: parsed.model.trim(),
     url: parsed.url.trim(),
     key: parsed.key.trim() || current.vision.key,
+    use_proxy: parsed.use_proxy,
   }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
@@ -230,6 +248,7 @@ export function saveImageGenerationSettings(input: unknown) {
     key: parsed.key.trim() || current.image_generation.key,
     resolution: parsed.resolution,
     quality: parsed.quality,
+    use_proxy: parsed.use_proxy,
   }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
@@ -240,7 +259,7 @@ export function saveImageGenerationSettings(input: unknown) {
 export function saveProxySettings(input: unknown) {
   const parsed = proxySettingsRequest.parse(input)
   const current = privateModelSettings()
-  current.proxy = { enabled: parsed.enabled, url: parsed.url.trim() }
+  current.proxy = { url: parsed.url.trim() }
   const temporary = `${settingsPath}.tmp`
   writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
   renameSync(temporary, settingsPath)

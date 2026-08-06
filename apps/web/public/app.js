@@ -13150,10 +13150,10 @@
     "settings.eyebrow": "\u8FD0\u884C\u65F6\u8BBE\u7F6E",
     "settings.title": "\u914D\u7F6E",
     "settings.generalTab": "\u901A\u7528",
-    "settings.generalDescription": "\u5728\u6B64\u7BA1\u7406\u754C\u9762\u5916\u89C2\u3001\u9879\u76EE\u7EA7\u6A21\u578B\u4E0E\u7CFB\u7EDF\u7EA7\u7F51\u7EDC\u4EE3\u7406\uFF1B\u9664\u8BED\u8A00/\u4E3B\u9898\u4E0E\u5168\u5C40\u4EE3\u7406\u5916\uFF0C\u6A21\u578B\u8BBE\u7F6E\u6309\u9879\u76EE\u72EC\u7ACB\u4FDD\u5B58\u3002",
+    "settings.generalDescription": "\u5728\u6B64\u7BA1\u7406\u754C\u9762\u5916\u89C2\u4E0E\u9879\u76EE\u7EA7\u6A21\u578B\uFF1B\u4EE3\u7406\u5730\u5740\u5728\u201C\u7CFB\u7EDF\u201D\u9875\u914D\u7F6E\uFF0C\u662F\u5426\u4F7F\u7528\u7531\u6BCF\u4E2A\u6A21\u578B\u72EC\u7ACB\u63A7\u5236\u3002",
     "settings.appearanceDescription": "\u754C\u9762\u8BED\u8A00\u4E0E\u6D45\u8272/\u6697\u8272\u4E3B\u9898\u662F\u5168\u5C40\u8BBE\u7F6E\uFF0C\u6240\u6709\u9879\u76EE\u5171\u4EAB\uFF1B\u4FDD\u5B58\u540E\u7ACB\u5373\u751F\u6548\u3002",
     "settings.systemTab": "\u7CFB\u7EDF",
-    "settings.systemDescription": "\u5168\u5C40\u7F51\u7EDC\u4EE3\u7406\u4E3A\u7CFB\u7EDF\u7EA7\u8BBE\u7F6E\uFF0C\u5F00\u542F\u540E\u5F71\u54CD\u6A21\u578B\u3001\u8BED\u97F3\u8BC6\u522B\u4E0E Embedding \u7B49\u670D\u52A1\u51FA\u53E3\uFF1B\u56DE\u73AF\u4E0E\u79C1\u6709\u5730\u5740\u59CB\u7EC8\u76F4\u8FDE\u3002",
+    "settings.systemDescription": "\u914D\u7F6E\u4EE3\u7406\u5730\u5740\u4FE1\u606F\uFF1B\u6BCF\u4E2A\u6A21\u578B\u662F\u5426\u8D70\u4EE3\u7406\u7531\u201C\u6A21\u578B\u201D\u9875\u4E2D\u7684\u72EC\u7ACB\u5F00\u5173\u63A7\u5236\u3002",
     "settings.sourceProject": "\u9879\u76EE\u7EA7\u8986\u76D6",
     "settings.modelsDescription": "\u6A21\u578B\u8BBE\u7F6E\u6309\u9879\u76EE\u72EC\u7ACB\u4FDD\u5B58\uFF1A\u4EE3\u7801\u6A21\u578B\u5206\u8F7B\u91CF\u7EA7\u3001\u901A\u7528\u3001\u6700\u5F3A\u5927\u4E09\u6863\uFF0C\u53E6\u8BBE\u6587\u6863\u6587\u672C\u3001\u56FE\u7247\u8BC6\u522B\u3001\u56FE\u7247\u751F\u6210\u3001Embedding \u4E0E\u8BED\u97F3\u8BC6\u522B\u6A21\u578B\u3002",
     "settings.embeddingDescription": "\u6BCF\u4E2A\u79D1\u7814\u9879\u76EE\u53EF\u4EE5\u72EC\u7ACB\u914D\u7F6E\u8BED\u4E49\u8BB0\u5FC6 Embedding\uFF1B\u4E0D\u8986\u76D6\u65F6\u4F7F\u7528\u5168\u5C40\u9ED8\u8BA4\uFF08\u5B9E\u6D4B\u672C\u5730 bge-m3 \u6BD4\u8FDC\u7A0B\u5FEB\u7EA6 10 \u500D\uFF09\u3002",
@@ -13178,7 +13178,7 @@
     "visionModel.title": "\u56FE\u7247\u8BC6\u522B\u6A21\u578B",
     "visionModel.defaultModel": "\u9ED8\u8BA4 mimo-v2.5",
     "visionModel.modelPlaceholder": "mimo-v2.5",
-    "visionModel.urlPlaceholder": "http://10.31.107.77:3000/v1",
+    "visionModel.urlPlaceholder": "http://127.0.0.1:3000/v1",
     "visionModel.description": "\u5F53\u804A\u5929\u6216 Idea \u8BA8\u8BBA\u5305\u542B\u56FE\u7247\u9644\u4EF6\u65F6\uFF0C\u4F18\u5148\u4F7F\u7528\u8BE5\u6A21\u578B\u7406\u89E3\u56FE\u7247\u5185\u5BB9\uFF1B\u4ECD\u6309\u5931\u8D25\u5173\u95ED\u5904\u7406\uFF0C\u4E0D\u9759\u9ED8\u964D\u7EA7\u3002",
     "imageModel.title": "\u56FE\u7247\u751F\u6210\u6A21\u578B",
     "imageModel.defaultModel": "\u9ED8\u8BA4 gpt-image-2-official",
@@ -13198,6 +13198,16 @@
     "settings.testing": "\u6B63\u5728\u6D4B\u8BD5\u8FDE\u63A5\u2026",
     "settings.testOk": "\u8FDE\u63A5\u6B63\u5E38\uFF08{elapsed} \u79D2\uFF09",
     "settings.testFailed": "\u8FDE\u63A5\u6D4B\u8BD5\u5931\u8D25\uFF1A{error}",
+    "settings.testSucceeded": "\u8FDE\u63A5\u6B63\u5E38",
+    "settings.testUnreachable": "\u65E0\u6CD5\u8FDE\u63A5\uFF0C\u8BF7\u68C0\u67E5\u670D\u52A1\u6216\u4EE3\u7406",
+    "settings.testUpstreamError": "\u4E0A\u6E38\u62D2\u7EDD\u4E86\u8BF7\u6C42",
+    "settings.testTimeout": "\u8FDE\u63A5\u8D85\u65F6\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u6216\u4EE3\u7406",
+    "settings.testInvalidResponse": "\u54CD\u5E94\u683C\u5F0F\u4E0D\u517C\u5BB9",
+    "settings.testProxy": "\u6D4B\u8BD5\u4EE3\u7406",
+    "settings.proxyTestSucceeded": "\u4EE3\u7406\u8FDE\u63A5\u6B63\u5E38",
+    "settings.proxyTestTimeout": "\u4EE3\u7406\u8FDE\u63A5\u8D85\u65F6\uFF0C\u8BF7\u68C0\u67E5\u4EE3\u7406\u670D\u52A1",
+    "settings.proxyTestUnreachable": "\u65E0\u6CD5\u901A\u8FC7\u8BE5\u4EE3\u7406\u8BBF\u95EE\u76EE\u6807",
+    "settings.proxyTestUpstreamError": "\u4EE3\u7406\u5DF2\u8FDE\u901A\u4F46\u76EE\u6807\u8FD4\u56DE\u9519\u8BEF",
     "documentModel.title": "\u6587\u6863\u6587\u672C\u6A21\u578B",
     "documentModel.defaultModel": "\u9ED8\u8BA4 deepseek-v4-flash",
     "documentModel.description": "\u804A\u5929\u4E2D\u7684\u89E3\u91CA\u6027\u56DE\u590D\u3001\u8BF4\u660E\u548C\u6587\u6863\u5F0F\u6587\u672C\u9ED8\u8BA4\u7531\u8BE5\u6A21\u578B\u751F\u6210\uFF1B\u4EE3\u7801\u4E0E\u7ED3\u6784\u5316\u63A8\u7406\u4ECD\u7531\u4E0A\u9762\u7684\u4EE3\u7801\u6A21\u578B\u5B8C\u6210\u3002",
@@ -13211,11 +13221,12 @@
     "settings.urlReady": "URL \u5DF2\u5C31\u7EEA",
     "settings.urlPending": "\u5F85\u914D\u7F6E URL",
     "settings.default": "\u9ED8\u8BA4",
-    "settings.proxyTitle": "\u5168\u5C40\u4EE3\u7406",
-    "settings.proxyEnabled": "\u542F\u7528\u4EE3\u7406",
+    "settings.proxyTitle": "\u4EE3\u7406\u4FE1\u606F\u8BBE\u7F6E",
+    "settings.proxyEnabled": "\u4F7F\u7528\u4EE3\u7406",
     "settings.proxyDisabled": "\u76F4\u8FDE",
     "settings.proxyUrl": "\u4EE3\u7406 URL",
-    "settings.proxyNote": "\u5F00\u542F\u540E\uFF0C\u6A21\u578B\u3001\u8BED\u97F3\u8BC6\u522B\u4E0E Embedding \u51FA\u53E3\u90FD\u901A\u8FC7\u8BE5\u4EE3\u7406\uFF1B\u56DE\u73AF\u4E0E\u79C1\u6709\u5730\u5740\u59CB\u7EC8\u76F4\u8FDE\u3002\u5173\u95ED\u540E\u5168\u90E8\u76F4\u8FDE\uFF0C\u4E0D\u518D\u53D7\u542F\u52A8\u65F6\u73AF\u5883\u53D8\u91CF\u5F71\u54CD\u3002",
+    "settings.proxyNote": "\u8FD9\u91CC\u53EA\u4FDD\u5B58\u4EE3\u7406\u5730\u5740\u3002\u662F\u5426\u8D70\u4EE3\u7406\u7531\u6BCF\u4E2A\u6A21\u578B\u9875\u5185\u7684\u72EC\u7ACB\u5F00\u5173\u63A7\u5236\uFF1B\u4EE3\u7801/\u6587\u6863/Embedding \u9ED8\u8BA4\u76F4\u8FDE\uFF0C\u56FE\u7247\u8BC6\u522B/\u56FE\u7247\u751F\u6210/\u8BED\u97F3\u8BC6\u522B\u9ED8\u8BA4\u8D70\u4EE3\u7406\u3002\u56DE\u73AF\u4E0E\u79C1\u6709\u5730\u5740\u59CB\u7EC8\u76F4\u8FDE\u3002",
+    "settings.modelProxyLabel": "\u4EE3\u7406",
     "settings.urlLabel": "URL",
     "settings.keyLabel": "key",
     "settings.modelName": "\u6A21\u578B\u540D\u79F0",
@@ -13994,6 +14005,7 @@
     "workflowGraph.runtimePaused": "\u5DF2\u6682\u505C",
     "workflowGraph.runtimeUnknown": "\u672A\u77E5\u72B6\u6001",
     "workflowGraph.streamParseFailed": "\u5DE5\u4F5C\u6D41\u5B9E\u65F6\u72B6\u6001\u89E3\u6790\u5931\u8D25\u3002",
+    "workflowGraph.streamUnavailable": "\u5DE5\u4F5C\u6D41\u5B9E\u65F6\u8FDE\u63A5\u6682\u65F6\u4E0D\u53EF\u7528\uFF0C\u6B63\u5728\u91CD\u65B0\u8FDE\u63A5\u3002",
     "workflowGraph.filterAll": "\u5168\u90E8",
     "workflowGraph.filterSucceeded": "\u6210\u529F",
     "workflowGraph.filterRunning": "\u8FD0\u884C\u4E2D",
@@ -14977,10 +14989,10 @@
     "settings.eyebrow": "\u57F7\u884C\u968E\u6BB5\u8A2D\u5B9A",
     "settings.title": "\u8A2D\u5B9A",
     "settings.generalTab": "\u4E00\u822C",
-    "settings.generalDescription": "\u5728\u6B64\u7BA1\u7406\u4ECB\u9762\u5916\u89C0\u3001\u5C08\u6848\u7D1A\u6A21\u578B\u8207\u7CFB\u7D71\u7D1A\u7DB2\u8DEF\u4EE3\u7406\uFF1B\u9664\u8A9E\u8A00/\u4E3B\u984C\u8207\u5168\u57DF\u4EE3\u7406\u5916\uFF0C\u6A21\u578B\u8A2D\u5B9A\u6309\u5C08\u6848\u7368\u7ACB\u5132\u5B58\u3002",
+    "settings.generalDescription": "\u5728\u6B64\u7BA1\u7406\u4ECB\u9762\u5916\u89C0\u8207\u5C08\u6848\u7D1A\u6A21\u578B\uFF1B\u4EE3\u7406\u4F4D\u5740\u5728\u300C\u7CFB\u7D71\u300D\u9801\u8A2D\u5B9A\uFF0C\u662F\u5426\u4F7F\u7528\u7531\u6BCF\u500B\u6A21\u578B\u7368\u7ACB\u63A7\u5236\u3002",
     "settings.appearanceDescription": "\u4ECB\u9762\u8A9E\u8A00\u8207\u6DFA\u8272/\u6697\u8272\u4E3B\u984C\u662F\u5168\u57DF\u8A2D\u5B9A\uFF0C\u6240\u6709\u5C08\u6848\u5171\u4EAB\uFF1B\u5132\u5B58\u5F8C\u7ACB\u5373\u751F\u6548\u3002",
     "settings.systemTab": "\u7CFB\u7D71",
-    "settings.systemDescription": "\u5168\u57DF\u7DB2\u8DEF\u4EE3\u7406\u70BA\u7CFB\u7D71\u7D1A\u8A2D\u5B9A\uFF0C\u958B\u555F\u5F8C\u5F71\u97FF\u6A21\u578B\u3001\u8A9E\u97F3\u8FA8\u8B58\u8207 Embedding \u7B49\u670D\u52D9\u51FA\u53E3\uFF1B\u56DE\u74B0\u8207\u79C1\u6709\u5730\u5740\u59CB\u7D42\u76F4\u9023\u3002",
+    "settings.systemDescription": "\u8A2D\u5B9A\u4EE3\u7406\u4F4D\u5740\u8CC7\u8A0A\uFF1B\u6BCF\u500B\u6A21\u578B\u662F\u5426\u8D70\u4EE3\u7406\u7531\u300C\u6A21\u578B\u300D\u9801\u4E2D\u7684\u7368\u7ACB\u958B\u95DC\u63A7\u5236\u3002",
     "settings.sourceProject": "\u5C08\u6848\u7D1A\u8986\u84CB",
     "settings.modelsDescription": "\u6A21\u578B\u8A2D\u5B9A\u4F9D\u5C08\u6848\u7368\u7ACB\u5132\u5B58\uFF1A\u7A0B\u5F0F\u78BC\u6A21\u578B\u5206\u8F15\u91CF\u7D1A\u3001\u901A\u7528\u3001\u6700\u5F37\u5927\u4E09\u6A94\uFF0C\u53E6\u8A2D\u6587\u4EF6\u6587\u5B57\u3001\u5716\u7247\u8FA8\u8B58\u3001\u5716\u7247\u751F\u6210\u3001Embedding \u8207\u8A9E\u97F3\u8FA8\u8B58\u6A21\u578B\u3002",
     "settings.embeddingDescription": "\u6BCF\u500B\u79D1\u7814\u5C08\u6848\u53EF\u4EE5\u7368\u7ACB\u8A2D\u5B9A\u8A9E\u610F\u8A18\u61B6 Embedding\uFF1B\u4E0D\u8986\u84CB\u6642\u4F7F\u7528\u5168\u57DF\u9810\u8A2D\uFF08\u5BE6\u6E2C\u672C\u6A5F bge-m3 \u6BD4\u9060\u7AEF\u5FEB\u7D04 10 \u500D\uFF09\u3002",
@@ -15005,7 +15017,7 @@
     "visionModel.title": "\u5716\u7247\u8FA8\u8B58\u6A21\u578B",
     "visionModel.defaultModel": "\u9810\u8A2D mimo-v2.5",
     "visionModel.modelPlaceholder": "mimo-v2.5",
-    "visionModel.urlPlaceholder": "http://10.31.107.77:3000/v1",
+    "visionModel.urlPlaceholder": "http://127.0.0.1:3000/v1",
     "visionModel.description": "\u7576\u804A\u5929\u6216 Idea \u8A0E\u8AD6\u5305\u542B\u5716\u7247\u9644\u4EF6\u6642\uFF0C\u512A\u5148\u4F7F\u7528\u8A72\u6A21\u578B\u7406\u89E3\u5716\u7247\u5167\u5BB9\uFF1B\u4ECD\u4F9D\u5931\u6557\u95DC\u9589\u8655\u7406\uFF0C\u4E0D\u6703\u975C\u9ED8\u964D\u7D1A\u3002",
     "imageModel.title": "\u5716\u7247\u751F\u6210\u6A21\u578B",
     "imageModel.defaultModel": "\u9810\u8A2D gpt-image-2-official",
@@ -15025,6 +15037,16 @@
     "settings.testing": "\u6B63\u5728\u6E2C\u8A66\u9023\u7DDA\u2026",
     "settings.testOk": "\u9023\u7DDA\u6B63\u5E38\uFF08{elapsed} \u79D2\uFF09",
     "settings.testFailed": "\u9023\u7DDA\u6E2C\u8A66\u5931\u6557\uFF1A{error}",
+    "settings.testSucceeded": "\u9023\u7DDA\u6B63\u5E38",
+    "settings.testUnreachable": "\u7121\u6CD5\u9023\u7DDA\uFF0C\u8ACB\u6AA2\u67E5\u670D\u52D9\u6216\u4EE3\u7406",
+    "settings.testUpstreamError": "\u4E0A\u6E38\u62D2\u7D55\u4E86\u8ACB\u6C42",
+    "settings.testTimeout": "\u9023\u7DDA\u903E\u6642\uFF0C\u8ACB\u6AA2\u67E5\u7DB2\u8DEF\u6216\u4EE3\u7406",
+    "settings.testInvalidResponse": "\u56DE\u61C9\u683C\u5F0F\u4E0D\u76F8\u5BB9",
+    "settings.testProxy": "\u6E2C\u8A66\u4EE3\u7406",
+    "settings.proxyTestSucceeded": "\u4EE3\u7406\u9023\u7DDA\u6B63\u5E38",
+    "settings.proxyTestTimeout": "\u4EE3\u7406\u9023\u7DDA\u903E\u6642\uFF0C\u8ACB\u6AA2\u67E5\u4EE3\u7406\u670D\u52D9",
+    "settings.proxyTestUnreachable": "\u7121\u6CD5\u900F\u904E\u8A72\u4EE3\u7406\u5B58\u53D6\u76EE\u6A19",
+    "settings.proxyTestUpstreamError": "\u4EE3\u7406\u5DF2\u9023\u901A\u4F46\u76EE\u6A19\u56DE\u50B3\u932F\u8AA4",
     "documentModel.title": "\u6587\u4EF6\u6587\u5B57\u6A21\u578B",
     "documentModel.defaultModel": "\u9810\u8A2D deepseek-v4-flash",
     "documentModel.description": "\u804A\u5929\u4E2D\u7684\u89E3\u91CB\u6027\u56DE\u8986\u3001\u8AAA\u660E\u8207\u6587\u4EF6\u5F0F\u6587\u5B57\u9810\u8A2D\u7531\u8A72\u6A21\u578B\u7522\u751F\uFF1B\u7A0B\u5F0F\u78BC\u8207\u7D50\u69CB\u5316\u63A8\u7406\u4ECD\u7531\u4E0A\u9762\u7684\u7A0B\u5F0F\u78BC\u6A21\u578B\u5B8C\u6210\u3002",
@@ -15038,11 +15060,12 @@
     "settings.urlReady": "URL \u5DF2\u5C31\u7DD2",
     "settings.urlPending": "\u5F85\u8A2D\u5B9A URL",
     "settings.default": "\u9810\u8A2D",
-    "settings.proxyTitle": "\u5168\u57DF\u4EE3\u7406",
-    "settings.proxyEnabled": "\u555F\u7528\u4EE3\u7406",
+    "settings.proxyTitle": "\u4EE3\u7406\u8CC7\u8A0A\u8A2D\u5B9A",
+    "settings.proxyEnabled": "\u4F7F\u7528\u4EE3\u7406",
     "settings.proxyDisabled": "\u76F4\u9023",
     "settings.proxyUrl": "\u4EE3\u7406 URL",
-    "settings.proxyNote": "\u958B\u555F\u5F8C\uFF0C\u6A21\u578B\u3001\u8A9E\u97F3\u8FA8\u8B58\u8207 Embedding \u51FA\u53E3\u90FD\u900F\u904E\u8A72\u4EE3\u7406\uFF1B\u56DE\u74B0\u8207\u79C1\u6709\u5730\u5740\u59CB\u7D42\u76F4\u9023\u3002\u95DC\u9589\u5F8C\u5168\u90E8\u76F4\u9023\uFF0C\u4E0D\u518D\u53D7\u555F\u52D5\u6642\u74B0\u5883\u8B8A\u6578\u5F71\u97FF\u3002",
+    "settings.proxyNote": "\u9019\u88E1\u53EA\u5132\u5B58\u4EE3\u7406\u4F4D\u5740\u3002\u662F\u5426\u8D70\u4EE3\u7406\u7531\u6BCF\u500B\u6A21\u578B\u9801\u5167\u7684\u7368\u7ACB\u958B\u95DC\u63A7\u5236\uFF1B\u7A0B\u5F0F\u78BC/\u6587\u4EF6/Embedding \u9810\u8A2D\u76F4\u9023\uFF0C\u5716\u7247\u8FA8\u8B58/\u5716\u7247\u751F\u6210/\u8A9E\u97F3\u8FA8\u8B58\u9810\u8A2D\u8D70\u4EE3\u7406\u3002\u56DE\u74B0\u8207\u79C1\u6709\u5730\u5740\u59CB\u7D42\u76F4\u9023\u3002",
+    "settings.modelProxyLabel": "\u4EE3\u7406",
     "settings.urlLabel": "URL",
     "settings.keyLabel": "key",
     "settings.modelName": "\u6A21\u578B\u540D\u7A31",
@@ -15698,6 +15721,7 @@
     "workflowGraph.runtimePaused": "\u5DF2\u66AB\u505C",
     "workflowGraph.runtimeUnknown": "\u672A\u77E5\u72C0\u614B",
     "workflowGraph.streamParseFailed": "\u5DE5\u4F5C\u6D41\u5373\u6642\u72C0\u614B\u89E3\u6790\u5931\u6557\u3002",
+    "workflowGraph.streamUnavailable": "\u5DE5\u4F5C\u6D41\u5373\u6642\u9023\u7DDA\u66AB\u6642\u7121\u6CD5\u4F7F\u7528\uFF0C\u6B63\u5728\u91CD\u65B0\u9023\u7DDA\u3002",
     "workflowGraph.filterAll": "\u5168\u90E8",
     "workflowGraph.filterSucceeded": "\u6210\u529F",
     "workflowGraph.filterRunning": "\u57F7\u884C\u4E2D",
@@ -16681,10 +16705,10 @@
     "settings.eyebrow": "Runtime settings",
     "settings.title": "Configuration",
     "settings.generalTab": "General",
-    "settings.generalDescription": "Manage appearance, per-project model overrides, and the system proxy here. Language/theme and proxy are global; model settings are saved per project and follow the active project.",
+    "settings.generalDescription": "Manage appearance and per-project model overrides here. Proxy information lives in System, and each model decides independently whether to use it.",
     "settings.appearanceDescription": "Interface language and light/dark theme are global settings shared by every project; they apply immediately after saving.",
     "settings.systemTab": "System",
-    "settings.systemDescription": "The global network proxy is a system-level setting. When enabled it affects model, speech recognition, and Embedding traffic; loopback and private addresses always stay direct.",
+    "settings.systemDescription": "Configure proxy address information. Each model has its own proxy switch under Models; loopback and private addresses always stay direct.",
     "settings.sourceProject": "Project override",
     "settings.modelsDescription": "Model settings are saved per project: code models have lightweight, general, and most powerful tiers, plus document text, image recognition, image generation, Embedding, and speech recognition models.",
     "settings.embeddingDescription": "Each research project can configure semantic memory Embedding independently; without an override the global default is used (local bge-m3 is about 10x faster than remote in testing).",
@@ -16709,7 +16733,7 @@
     "visionModel.title": "Image recognition model",
     "visionModel.defaultModel": "Default mimo-v2.5",
     "visionModel.modelPlaceholder": "mimo-v2.5",
-    "visionModel.urlPlaceholder": "http://10.31.107.77:3000/v1",
+    "visionModel.urlPlaceholder": "http://127.0.0.1:3000/v1",
     "visionModel.description": "When chat or Idea discussion contains image attachments, this model is used to understand them first; failures stay fail-closed with no silent fallback.",
     "imageModel.title": "Image generation model",
     "imageModel.defaultModel": "Default gpt-image-2-official",
@@ -16729,6 +16753,16 @@
     "settings.testing": "Testing connection\u2026",
     "settings.testOk": "Connection OK ({elapsed}s)",
     "settings.testFailed": "Connection test failed: {error}",
+    "settings.testSucceeded": "Connection OK",
+    "settings.testUnreachable": "Cannot connect; check the service or proxy",
+    "settings.testUpstreamError": "The upstream service rejected the request",
+    "settings.testTimeout": "Connection timed out; check the network or proxy",
+    "settings.testInvalidResponse": "Incompatible response format",
+    "settings.testProxy": "Test proxy",
+    "settings.proxyTestSucceeded": "Proxy connection OK",
+    "settings.proxyTestTimeout": "Proxy connection timed out; check the proxy service",
+    "settings.proxyTestUnreachable": "Cannot reach the target through this proxy",
+    "settings.proxyTestUpstreamError": "Proxy connected but the target returned an error",
     "documentModel.title": "Document text model",
     "documentModel.defaultModel": "Default deepseek-v4-flash",
     "documentModel.description": "Explanatory chat replies, notes, and document-style text use this model by default; code and structured reasoning still use the code models above.",
@@ -16742,11 +16776,12 @@
     "settings.urlReady": "URL ready",
     "settings.urlPending": "URL pending",
     "settings.default": "Default",
-    "settings.proxyTitle": "Global proxy",
+    "settings.proxyTitle": "Proxy information",
     "settings.proxyEnabled": "Use proxy",
     "settings.proxyDisabled": "Direct connection",
     "settings.proxyUrl": "Proxy URL",
-    "settings.proxyNote": "When enabled, model, speech recognition, and Embedding traffic go through this proxy; loopback and private addresses always stay direct. When disabled, all traffic is direct and startup proxy environment variables are ignored.",
+    "settings.proxyNote": "Only the proxy address is stored here. Whether each model uses it is controlled by the independent switch on its model page: code, document, and Embedding default to direct, while image recognition, image generation, and voice recognition default to using the proxy. Loopback and private addresses always stay direct.",
+    "settings.modelProxyLabel": "Proxy",
     "settings.urlLabel": "URL",
     "settings.keyLabel": "key",
     "settings.modelName": "Model name",
@@ -17402,6 +17437,7 @@
     "workflowGraph.runtimePaused": "Paused",
     "workflowGraph.runtimeUnknown": "Unknown status",
     "workflowGraph.streamParseFailed": "Failed to parse live workflow state.",
+    "workflowGraph.streamUnavailable": "The live workflow connection is unavailable. Reconnecting.",
     "workflowGraph.filterAll": "All",
     "workflowGraph.filterSucceeded": "Succeeded",
     "workflowGraph.filterRunning": "Running",
@@ -18385,10 +18421,10 @@
     "settings.eyebrow": "Configuraci\xF3n en tiempo de ejecuci\xF3n",
     "settings.title": "Configuraci\xF3n",
     "settings.generalTab": "General",
-    "settings.generalDescription": "Administre la apariencia, las coberturas de modelo por proyecto y el proxy del sistema aqu\xED. El idioma/tema y el proxy son globales; los ajustes de modelo se guardan por proyecto y siguen al proyecto activo.",
+    "settings.generalDescription": "Administre aqu\xED la apariencia y las coberturas de modelo por proyecto. La informaci\xF3n del proxy vive en Sistema y cada modelo decide de forma independiente si la usa.",
     "settings.appearanceDescription": "El idioma de la interfaz y el tema claro/oscuro son ajustes globales compartidos por todos los proyectos; se aplican inmediatamente despu\xE9s de guardar.",
     "settings.systemTab": "Sistema",
-    "settings.systemDescription": "El proxy de red global es un ajuste a nivel de sistema. Si est\xE1 habilitado afecta al tr\xE1fico de modelos, reconocimiento de voz y Embedding; las direcciones de bucle local y privadas siempre van directas.",
+    "settings.systemDescription": "Configure la informaci\xF3n de la direcci\xF3n del proxy. Cada modelo tiene su propio interruptor en Modelos; las direcciones de bucle local y privadas siempre van directas.",
     "settings.sourceProject": "Anulaci\xF3n del proyecto",
     "settings.modelsDescription": "La configuraci\xF3n de modelos se guarda por proyecto: niveles ligero, general y m\xE1s potente para c\xF3digo, m\xE1s texto de documentos, reconocimiento de im\xE1genes, generaci\xF3n de im\xE1genes, Embedding y reconocimiento de voz.",
     "settings.embeddingDescription": "Cada proyecto de investigaci\xF3n puede configurar su propio Embedding de memoria sem\xE1ntica; sin anulaci\xF3n se usa el predeterminado global (bge-m3 local es unas 10 veces m\xE1s r\xE1pido que remoto en pruebas).",
@@ -18413,7 +18449,7 @@
     "visionModel.title": "Modelo de reconocimiento de im\xE1genes",
     "visionModel.defaultModel": "Por defecto mimo-v2.5",
     "visionModel.modelPlaceholder": "mimo-v2.5",
-    "visionModel.urlPlaceholder": "http://10.31.107.77:3000/v1",
+    "visionModel.urlPlaceholder": "http://127.0.0.1:3000/v1",
     "visionModel.description": "Cuando el chat o la discusi\xF3n de Idea incluye adjuntos de imagen, este modelo se usa primero para entenderlos; los fallos cierran sin degradaci\xF3n silenciosa.",
     "imageModel.title": "Modelo de generaci\xF3n de im\xE1genes",
     "imageModel.defaultModel": "Por defecto gpt-image-2-official",
@@ -18433,6 +18469,16 @@
     "settings.testing": "Probando conexi\xF3n\u2026",
     "settings.testOk": "Conexi\xF3n correcta ({elapsed}s)",
     "settings.testFailed": "La prueba de conexi\xF3n fall\xF3: {error}",
+    "settings.testSucceeded": "Conexi\xF3n correcta",
+    "settings.testUnreachable": "No se puede conectar; revisa el servicio o proxy",
+    "settings.testUpstreamError": "El servicio remoto rechaz\xF3 la solicitud",
+    "settings.testTimeout": "La conexi\xF3n agot\xF3 el tiempo; revisa la red o proxy",
+    "settings.testInvalidResponse": "Formato de respuesta incompatible",
+    "settings.testProxy": "Probar proxy",
+    "settings.proxyTestSucceeded": "Conexi\xF3n con el proxy correcta",
+    "settings.proxyTestTimeout": "Tiempo de espera del proxy agotado; revisa el servicio",
+    "settings.proxyTestUnreachable": "No se puede alcanzar el destino a trav\xE9s del proxy",
+    "settings.proxyTestUpstreamError": "El proxy conect\xF3 pero el destino devolvi\xF3 un error",
     "documentModel.title": "Modelo de texto de documentos",
     "documentModel.defaultModel": "Por defecto deepseek-v4-flash",
     "documentModel.description": "Las respuestas explicativas del chat, las notas y el texto con estilo documental usan este modelo por defecto; el c\xF3digo y el razonamiento estructurado siguen usando los modelos de c\xF3digo anteriores.",
@@ -18446,11 +18492,12 @@
     "settings.urlReady": "URL lista",
     "settings.urlPending": "URL pendiente",
     "settings.default": "Predeterminado",
-    "settings.proxyTitle": "Proxy global",
+    "settings.proxyTitle": "Informaci\xF3n del proxy",
     "settings.proxyEnabled": "Usar proxy",
     "settings.proxyDisabled": "Conexi\xF3n directa",
     "settings.proxyUrl": "URL del proxy",
-    "settings.proxyNote": "Cuando est\xE1 activado, el tr\xE1fico de modelos, reconocimiento de voz y Embedding pasa por este proxy; las direcciones de bucle local y privadas siempre van directas. Cuando est\xE1 desactivado, todo va directo e ignora las variables de proxy del entorno al iniciar.",
+    "settings.proxyNote": "Aqu\xED solo se guarda la direcci\xF3n del proxy. Cada modelo decide si usarla con su propio interruptor: c\xF3digo, documentos y Embedding van directos por defecto; reconocimiento y generaci\xF3n de im\xE1genes y voz usan el proxy por defecto. Las direcciones de bucle local y privadas siempre van directas.",
+    "settings.modelProxyLabel": "Proxy",
     "settings.urlLabel": "URL",
     "settings.keyLabel": "clave",
     "settings.modelName": "Nombre del modelo",
@@ -19106,6 +19153,7 @@
     "workflowGraph.runtimePaused": "Pausado",
     "workflowGraph.runtimeUnknown": "Estado desconocido",
     "workflowGraph.streamParseFailed": "No se pudo analizar el estado en vivo del flujo de trabajo.",
+    "workflowGraph.streamUnavailable": "La conexi\xF3n en vivo del flujo de trabajo no est\xE1 disponible. Reconectando.",
     "workflowGraph.filterAll": "Todos",
     "workflowGraph.filterSucceeded": "Correctos",
     "workflowGraph.filterRunning": "En ejecuci\xF3n",
@@ -20235,8 +20283,16 @@
   ];
   var GitFork = createLucideIcon("git-fork", __iconNode35);
 
-  // ../../node_modules/lucide-react/dist/esm/icons/grip-vertical.mjs
+  // ../../node_modules/lucide-react/dist/esm/icons/globe.mjs
   var __iconNode36 = [
+    ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+    ["path", { d: "M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20", key: "13o1zl" }],
+    ["path", { d: "M2 12h20", key: "9i4pu4" }]
+  ];
+  var Globe = createLucideIcon("globe", __iconNode36);
+
+  // ../../node_modules/lucide-react/dist/esm/icons/grip-vertical.mjs
+  var __iconNode37 = [
     ["circle", { cx: "9", cy: "12", r: "1", key: "1vctgf" }],
     ["circle", { cx: "9", cy: "5", r: "1", key: "hp0tcf" }],
     ["circle", { cx: "9", cy: "19", r: "1", key: "fkjjf6" }],
@@ -20244,10 +20300,10 @@
     ["circle", { cx: "15", cy: "5", r: "1", key: "19l28e" }],
     ["circle", { cx: "15", cy: "19", r: "1", key: "f4zoj3" }]
   ];
-  var GripVertical = createLucideIcon("grip-vertical", __iconNode36);
+  var GripVertical = createLucideIcon("grip-vertical", __iconNode37);
 
   // ../../node_modules/lucide-react/dist/esm/icons/house.mjs
-  var __iconNode37 = [
+  var __iconNode38 = [
     ["path", { d: "M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8", key: "5wwlr5" }],
     [
       "path",
@@ -20257,28 +20313,28 @@
       }
     ]
   ];
-  var House = createLucideIcon("house", __iconNode37);
+  var House = createLucideIcon("house", __iconNode38);
 
   // ../../node_modules/lucide-react/dist/esm/icons/image-plus.mjs
-  var __iconNode38 = [
+  var __iconNode39 = [
     ["path", { d: "M16 5h6", key: "1vod17" }],
     ["path", { d: "M19 2v6", key: "4bpg5p" }],
     ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
   ];
-  var ImagePlus = createLucideIcon("image-plus", __iconNode38);
+  var ImagePlus = createLucideIcon("image-plus", __iconNode39);
 
   // ../../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode39 = [
+  var __iconNode40 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image = createLucideIcon("image", __iconNode39);
+  var Image = createLucideIcon("image", __iconNode40);
 
   // ../../node_modules/lucide-react/dist/esm/icons/inbox.mjs
-  var __iconNode40 = [
+  var __iconNode41 = [
     ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
     [
       "path",
@@ -20288,10 +20344,10 @@
       }
     ]
   ];
-  var Inbox = createLucideIcon("inbox", __iconNode40);
+  var Inbox = createLucideIcon("inbox", __iconNode41);
 
   // ../../node_modules/lucide-react/dist/esm/icons/languages.mjs
-  var __iconNode41 = [
+  var __iconNode42 = [
     ["path", { d: "m5 8 6 6", key: "1wu5hv" }],
     ["path", { d: "m4 14 6-6 2-3", key: "1k1g8d" }],
     ["path", { d: "M2 5h12", key: "or177f" }],
@@ -20299,38 +20355,38 @@
     ["path", { d: "m22 22-5-10-5 10", key: "don7ne" }],
     ["path", { d: "M14 18h6", key: "1m8k6r" }]
   ];
-  var Languages = createLucideIcon("languages", __iconNode41);
+  var Languages = createLucideIcon("languages", __iconNode42);
 
   // ../../node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
-  var __iconNode42 = [
+  var __iconNode43 = [
     ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
     ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
     ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
     ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
   ];
-  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode42);
+  var LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode43);
 
   // ../../node_modules/lucide-react/dist/esm/icons/library.mjs
-  var __iconNode43 = [
+  var __iconNode44 = [
     ["path", { d: "m16 6 4 14", key: "ji33uf" }],
     ["path", { d: "M12 6v14", key: "1n7gus" }],
     ["path", { d: "M8 8v12", key: "1gg7y9" }],
     ["path", { d: "M4 4v16", key: "6qkkli" }]
   ];
-  var Library = createLucideIcon("library", __iconNode43);
+  var Library = createLucideIcon("library", __iconNode44);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list-checks.mjs
-  var __iconNode44 = [
+  var __iconNode45 = [
     ["path", { d: "M13 5h8", key: "a7qcls" }],
     ["path", { d: "M13 12h8", key: "h98zly" }],
     ["path", { d: "M13 19h8", key: "c3s6r1" }],
     ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
     ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }]
   ];
-  var ListChecks = createLucideIcon("list-checks", __iconNode44);
+  var ListChecks = createLucideIcon("list-checks", __iconNode45);
 
   // ../../node_modules/lucide-react/dist/esm/icons/list.mjs
-  var __iconNode45 = [
+  var __iconNode46 = [
     ["path", { d: "M3 5h.01", key: "18ugdj" }],
     ["path", { d: "M3 12h.01", key: "nlz23k" }],
     ["path", { d: "M3 19h.01", key: "noohij" }],
@@ -20338,31 +20394,31 @@
     ["path", { d: "M8 12h13", key: "1za7za" }],
     ["path", { d: "M8 19h13", key: "m83p4d" }]
   ];
-  var List = createLucideIcon("list", __iconNode45);
+  var List = createLucideIcon("list", __iconNode46);
 
   // ../../node_modules/lucide-react/dist/esm/icons/loader-circle.mjs
-  var __iconNode46 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-  var LoaderCircle = createLucideIcon("loader-circle", __iconNode46);
+  var __iconNode47 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+  var LoaderCircle = createLucideIcon("loader-circle", __iconNode47);
 
   // ../../node_modules/lucide-react/dist/esm/icons/lock-keyhole.mjs
-  var __iconNode47 = [
+  var __iconNode48 = [
     ["circle", { cx: "12", cy: "16", r: "1", key: "1au0dj" }],
     ["rect", { x: "3", y: "10", width: "18", height: "12", rx: "2", key: "6s8ecr" }],
     ["path", { d: "M7 10V7a5 5 0 0 1 10 0v3", key: "1pqi11" }]
   ];
-  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode47);
+  var LockKeyhole = createLucideIcon("lock-keyhole", __iconNode48);
 
   // ../../node_modules/lucide-react/dist/esm/icons/maximize-2.mjs
-  var __iconNode48 = [
+  var __iconNode49 = [
     ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
     ["path", { d: "m21 3-7 7", key: "1l2asr" }],
     ["path", { d: "m3 21 7-7", key: "tjx5ai" }],
     ["path", { d: "M9 21H3v-6", key: "wtvkvv" }]
   ];
-  var Maximize2 = createLucideIcon("maximize-2", __iconNode48);
+  var Maximize2 = createLucideIcon("maximize-2", __iconNode49);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-  var __iconNode49 = [
+  var __iconNode50 = [
     [
       "path",
       {
@@ -20371,10 +20427,10 @@
       }
     ]
   ];
-  var MessageCircle = createLucideIcon("message-circle", __iconNode49);
+  var MessageCircle = createLucideIcon("message-circle", __iconNode50);
 
   // ../../node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconNode50 = [
+  var __iconNode51 = [
     [
       "path",
       {
@@ -20383,37 +20439,37 @@
       }
     ]
   ];
-  var MessageSquare = createLucideIcon("message-square", __iconNode50);
+  var MessageSquare = createLucideIcon("message-square", __iconNode51);
 
   // ../../node_modules/lucide-react/dist/esm/icons/mic.mjs
-  var __iconNode51 = [
+  var __iconNode52 = [
     ["path", { d: "M12 19v3", key: "npa21l" }],
     ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
     ["rect", { x: "9", y: "2", width: "6", height: "13", rx: "3", key: "s6n7sd" }]
   ];
-  var Mic = createLucideIcon("mic", __iconNode51);
+  var Mic = createLucideIcon("mic", __iconNode52);
 
   // ../../node_modules/lucide-react/dist/esm/icons/minimize-2.mjs
-  var __iconNode52 = [
+  var __iconNode53 = [
     ["path", { d: "m14 10 7-7", key: "oa77jy" }],
     ["path", { d: "M20 10h-6V4", key: "mjg0md" }],
     ["path", { d: "m3 21 7-7", key: "tjx5ai" }],
     ["path", { d: "M4 14h6v6", key: "rmj7iw" }]
   ];
-  var Minimize2 = createLucideIcon("minimize-2", __iconNode52);
+  var Minimize2 = createLucideIcon("minimize-2", __iconNode53);
 
   // ../../node_modules/lucide-react/dist/esm/icons/network.mjs
-  var __iconNode53 = [
+  var __iconNode54 = [
     ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
     ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
     ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
     ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
     ["path", { d: "M12 12V8", key: "2874zd" }]
   ];
-  var Network = createLucideIcon("network", __iconNode53);
+  var Network = createLucideIcon("network", __iconNode54);
 
   // ../../node_modules/lucide-react/dist/esm/icons/package-check.mjs
-  var __iconNode54 = [
+  var __iconNode55 = [
     ["path", { d: "M12 22V12", key: "d0xqtd" }],
     ["path", { d: "m16 17 2 2 4-4", key: "uh5qu3" }],
     [
@@ -20426,10 +20482,10 @@
     ["path", { d: "M3.29 7 12 12l8.71-5", key: "19ckod" }],
     ["path", { d: "m7.5 4.27 8.997 5.148", key: "9yrvtv" }]
   ];
-  var PackageCheck = createLucideIcon("package-check", __iconNode54);
+  var PackageCheck = createLucideIcon("package-check", __iconNode55);
 
   // ../../node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconNode55 = [
+  var __iconNode56 = [
     [
       "path",
       {
@@ -20442,17 +20498,17 @@
     ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
     ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
   ];
-  var Palette = createLucideIcon("palette", __iconNode55);
+  var Palette = createLucideIcon("palette", __iconNode56);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pause.mjs
-  var __iconNode56 = [
+  var __iconNode57 = [
     ["rect", { x: "14", y: "3", width: "5", height: "18", rx: "1", key: "kaeet6" }],
     ["rect", { x: "5", y: "3", width: "5", height: "18", rx: "1", key: "1wsw3u" }]
   ];
-  var Pause = createLucideIcon("pause", __iconNode56);
+  var Pause = createLucideIcon("pause", __iconNode57);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pen-line.mjs
-  var __iconNode57 = [
+  var __iconNode58 = [
     ["path", { d: "M13 21h8", key: "1jsn5i" }],
     [
       "path",
@@ -20462,10 +20518,10 @@
       }
     ]
   ];
-  var PenLine = createLucideIcon("pen-line", __iconNode57);
+  var PenLine = createLucideIcon("pen-line", __iconNode58);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin-off.mjs
-  var __iconNode58 = [
+  var __iconNode59 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     ["path", { d: "M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89", key: "znwnzq" }],
     ["path", { d: "m2 2 20 20", key: "1ooewy" }],
@@ -20477,10 +20533,10 @@
       }
     ]
   ];
-  var PinOff = createLucideIcon("pin-off", __iconNode58);
+  var PinOff = createLucideIcon("pin-off", __iconNode59);
 
   // ../../node_modules/lucide-react/dist/esm/icons/pin.mjs
-  var __iconNode59 = [
+  var __iconNode60 = [
     ["path", { d: "M12 17v5", key: "bb1du9" }],
     [
       "path",
@@ -20490,10 +20546,10 @@
       }
     ]
   ];
-  var Pin = createLucideIcon("pin", __iconNode59);
+  var Pin = createLucideIcon("pin", __iconNode60);
 
   // ../../node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconNode60 = [
+  var __iconNode61 = [
     [
       "path",
       {
@@ -20502,17 +20558,17 @@
       }
     ]
   ];
-  var Play = createLucideIcon("play", __iconNode60);
+  var Play = createLucideIcon("play", __iconNode61);
 
   // ../../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode61 = [
+  var __iconNode62 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode61);
+  var Plus = createLucideIcon("plus", __iconNode62);
 
   // ../../node_modules/lucide-react/dist/esm/icons/quote.mjs
-  var __iconNode62 = [
+  var __iconNode63 = [
     [
       "path",
       {
@@ -20528,41 +20584,41 @@
       }
     ]
   ];
-  var Quote = createLucideIcon("quote", __iconNode62);
+  var Quote = createLucideIcon("quote", __iconNode63);
 
   // ../../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode63 = [
+  var __iconNode64 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode63);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode64);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconNode64 = [
+  var __iconNode65 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
     ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
   ];
-  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode64);
+  var RotateCcwClock = createLucideIcon("rotate-ccw-clock", __iconNode65);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode65 = [
+  var __iconNode66 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode65);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode66);
 
   // ../../node_modules/lucide-react/dist/esm/icons/rotate-cw.mjs
-  var __iconNode66 = [
+  var __iconNode67 = [
     ["path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8", key: "1p45f6" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }]
   ];
-  var RotateCw = createLucideIcon("rotate-cw", __iconNode66);
+  var RotateCw = createLucideIcon("rotate-cw", __iconNode67);
 
   // ../../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode67 = [
+  var __iconNode68 = [
     [
       "path",
       {
@@ -20573,10 +20629,10 @@
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode67);
+  var Save = createLucideIcon("save", __iconNode68);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scan-text.mjs
-  var __iconNode68 = [
+  var __iconNode69 = [
     ["path", { d: "M3 7V5a2 2 0 0 1 2-2h2", key: "aa7l1z" }],
     ["path", { d: "M17 3h2a2 2 0 0 1 2 2v2", key: "4qcy5o" }],
     ["path", { d: "M21 17v2a2 2 0 0 1-2 2h-2", key: "6vwrx8" }],
@@ -20585,10 +20641,10 @@
     ["path", { d: "M7 12h10", key: "b7w52i" }],
     ["path", { d: "M7 16h6", key: "1vyc9m" }]
   ];
-  var ScanText = createLucideIcon("scan-text", __iconNode68);
+  var ScanText = createLucideIcon("scan-text", __iconNode69);
 
   // ../../node_modules/lucide-react/dist/esm/icons/scroll-text.mjs
-  var __iconNode69 = [
+  var __iconNode70 = [
     ["path", { d: "M15 12h-5", key: "r7krc0" }],
     ["path", { d: "M15 8h-5", key: "1khuty" }],
     ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -20600,17 +20656,17 @@
       }
     ]
   ];
-  var ScrollText = createLucideIcon("scroll-text", __iconNode69);
+  var ScrollText = createLucideIcon("scroll-text", __iconNode70);
 
   // ../../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode70 = [
+  var __iconNode71 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode70);
+  var Search = createLucideIcon("search", __iconNode71);
 
   // ../../node_modules/lucide-react/dist/esm/icons/send.mjs
-  var __iconNode71 = [
+  var __iconNode72 = [
     [
       "path",
       {
@@ -20620,10 +20676,10 @@
     ],
     ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
   ];
-  var Send = createLucideIcon("send", __iconNode71);
+  var Send = createLucideIcon("send", __iconNode72);
 
   // ../../node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconNode72 = [
+  var __iconNode73 = [
     [
       "path",
       {
@@ -20633,20 +20689,20 @@
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Settings = createLucideIcon("settings", __iconNode72);
+  var Settings = createLucideIcon("settings", __iconNode73);
 
   // ../../node_modules/lucide-react/dist/esm/icons/share-2.mjs
-  var __iconNode73 = [
+  var __iconNode74 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode73);
+  var Share2 = createLucideIcon("share-2", __iconNode74);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-alert.mjs
-  var __iconNode74 = [
+  var __iconNode75 = [
     [
       "path",
       {
@@ -20657,10 +20713,10 @@
     ["path", { d: "M12 8v4", key: "1got3b" }],
     ["path", { d: "M12 16h.01", key: "1drbdi" }]
   ];
-  var ShieldAlert = createLucideIcon("shield-alert", __iconNode74);
+  var ShieldAlert = createLucideIcon("shield-alert", __iconNode75);
 
   // ../../node_modules/lucide-react/dist/esm/icons/shield-check.mjs
-  var __iconNode75 = [
+  var __iconNode76 = [
     [
       "path",
       {
@@ -20670,10 +20726,10 @@
     ],
     ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
   ];
-  var ShieldCheck = createLucideIcon("shield-check", __iconNode75);
+  var ShieldCheck = createLucideIcon("shield-check", __iconNode76);
 
   // ../../node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconNode76 = [
+  var __iconNode77 = [
     [
       "path",
       {
@@ -20685,36 +20741,36 @@
     ["path", { d: "M22 4h-4", key: "gwowj6" }],
     ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
   ];
-  var Sparkles = createLucideIcon("sparkles", __iconNode76);
+  var Sparkles = createLucideIcon("sparkles", __iconNode77);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square-check-big.mjs
-  var __iconNode77 = [
+  var __iconNode78 = [
     [
       "path",
       { d: "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344", key: "2acyp4" }
     ],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode77);
+  var SquareCheckBig = createLucideIcon("square-check-big", __iconNode78);
 
   // ../../node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconNode78 = [
+  var __iconNode79 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
   ];
-  var Square = createLucideIcon("square", __iconNode78);
+  var Square = createLucideIcon("square", __iconNode79);
 
   // ../../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode79 = [
+  var __iconNode80 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode79);
+  var Trash2 = createLucideIcon("trash-2", __iconNode80);
 
   // ../../node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-  var __iconNode80 = [
+  var __iconNode81 = [
     [
       "path",
       {
@@ -20725,10 +20781,10 @@
     ["path", { d: "M12 9v4", key: "juzpu7" }],
     ["path", { d: "M12 17h.01", key: "p32p05" }]
   ];
-  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode80);
+  var TriangleAlert = createLucideIcon("triangle-alert", __iconNode81);
 
   // ../../node_modules/lucide-react/dist/esm/icons/waypoints.mjs
-  var __iconNode81 = [
+  var __iconNode82 = [
     ["path", { d: "m10.586 5.414-5.172 5.172", key: "4mc350" }],
     ["path", { d: "m18.586 13.414-5.172 5.172", key: "8c96vv" }],
     ["path", { d: "M6 12h12", key: "8npq4p" }],
@@ -20737,25 +20793,25 @@
     ["circle", { cx: "20", cy: "12", r: "2", key: "1xzzfp" }],
     ["circle", { cx: "4", cy: "12", r: "2", key: "1hvhnz" }]
   ];
-  var Waypoints = createLucideIcon("waypoints", __iconNode81);
+  var Waypoints = createLucideIcon("waypoints", __iconNode82);
 
   // ../../node_modules/lucide-react/dist/esm/icons/workflow.mjs
-  var __iconNode82 = [
+  var __iconNode83 = [
     ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
     ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
     ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
   ];
-  var Workflow = createLucideIcon("workflow", __iconNode82);
+  var Workflow = createLucideIcon("workflow", __iconNode83);
 
   // ../../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode83 = [
+  var __iconNode84 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode83);
+  var X = createLucideIcon("x", __iconNode84);
 
   // ../../node_modules/lucide-react/dist/esm/icons/zap.mjs
-  var __iconNode84 = [
+  var __iconNode85 = [
     [
       "path",
       {
@@ -20764,7 +20820,7 @@
       }
     ]
   ];
-  var Zap = createLucideIcon("zap", __iconNode84);
+  var Zap = createLucideIcon("zap", __iconNode85);
 
   // src/components/HomeSidebar.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
@@ -21135,19 +21191,43 @@
   function StatusDot({ ready }) {
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `status-dot ${ready ? "ready" : ""}` });
   }
+  function ModelProxySwitch({ checked, onChange, label }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("label", { className: "settings-switch settings-model-proxy", title: label, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { type: "checkbox", checked, onChange: (event) => onChange(event.target.checked) }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "settings-switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: label })
+    ] });
+  }
+  function modelTestFailureMessage(error, t) {
+    if (!(error instanceof ApiError)) return errorMessage(error);
+    const keyByCode = {
+      model_test_invalid_response: "settings.testInvalidResponse",
+      model_test_timeout: "settings.testTimeout",
+      model_test_unreachable: "settings.testUnreachable",
+      model_test_upstream_error: "settings.testUpstreamError",
+      proxy_test_timeout: "settings.proxyTestTimeout",
+      proxy_test_unreachable: "settings.proxyTestUnreachable",
+      proxy_test_upstream_error: "settings.proxyTestUpstreamError"
+    };
+    const key = keyByCode[error.code];
+    return key ? t(key) : errorMessage(error);
+  }
   function ModelTestButton({
     kind,
     fields,
     projectId,
+    useProxy,
     onResult
   }) {
     const { t } = useTranslation();
     const [state, setState] = (0, import_react7.useState)("idle");
     const [message, setMessage] = (0, import_react7.useState)("");
+    const [detail, setDetail] = (0, import_react7.useState)("");
     const run = async () => {
       if (state === "testing") return;
       setState("testing");
       setMessage(t("settings.testing"));
+      setDetail("");
       try {
         const result = await api("/api/settings/model-test", {
           method: "POST",
@@ -21156,15 +21236,18 @@
             model: fields.model.trim(),
             url: fields.url.trim(),
             key: fields.key,
+            use_proxy: useProxy,
             project_id: projectId || void 0
           })
         });
         setState("ok");
-        setMessage(result.message);
+        setMessage(t("settings.testSucceeded"));
+        setDetail(result.message);
         onResult?.(true);
       } catch (err) {
         setState("failed");
-        setMessage(errorMessage(err));
+        setMessage(modelTestFailureMessage(err, t));
+        setDetail(err instanceof Error ? err.message : "");
         onResult?.(false);
       }
     };
@@ -21173,21 +21256,56 @@
         state === "testing" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LoaderCircle, { size: 14, className: "spin" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Zap, { size: 14 }),
         t("settings.test")
       ] }),
-      state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", children: message }) : null
+      state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", title: detail || message, children: message }) : null
+    ] });
+  }
+  function ProxyTestButton({ url }) {
+    const { t } = useTranslation();
+    const [state, setState] = (0, import_react7.useState)("idle");
+    const [message, setMessage] = (0, import_react7.useState)("");
+    const [detail, setDetail] = (0, import_react7.useState)("");
+    const run = async () => {
+      if (state === "testing") return;
+      setState("testing");
+      setMessage(t("settings.testing"));
+      setDetail("");
+      try {
+        const result = await api("/api/settings/proxy-test", {
+          method: "POST",
+          body: JSON.stringify({ url: url.trim() })
+        });
+        setState("ok");
+        setMessage(t("settings.proxyTestSucceeded"));
+        setDetail(result.message);
+      } catch (err) {
+        setState("failed");
+        setMessage(modelTestFailureMessage(err, t));
+        setDetail(err instanceof Error ? err.message : "");
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "model-test-control", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { className: "secondary model-test-button", type: "button", disabled: state === "testing", onClick: () => void run(), children: [
+        state === "testing" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LoaderCircle, { size: 14, className: "spin" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Globe, { size: 14 }),
+        t("settings.testProxy")
+      ] }),
+      state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", title: detail || message, children: message }) : null
     ] });
   }
   function EmbeddingTestButton({
     fields,
     projectId,
+    useProxy,
     onResult
   }) {
     const { t } = useTranslation();
     const [state, setState] = (0, import_react7.useState)("idle");
     const [message, setMessage] = (0, import_react7.useState)("");
+    const [detail, setDetail] = (0, import_react7.useState)("");
     const run = async () => {
       if (state === "testing") return;
       setState("testing");
       setMessage(t("settings.testing"));
+      setDetail("");
       try {
         const result = await api(`/api/projects/${projectId}/embedding-test`, {
           method: "POST",
@@ -21197,15 +21315,18 @@
             model: fields.model.trim(),
             dimensions: Number(fields.dimensions) || 1024,
             base_url: fields.base_url.trim(),
-            key: fields.key
+            key: fields.key,
+            use_proxy: useProxy
           })
         });
         setState("ok");
-        setMessage(result.message);
+        setMessage(t("settings.testSucceeded"));
+        setDetail(result.message);
         onResult?.(true);
       } catch (err) {
         setState("failed");
         setMessage(errorMessage(err));
+        setDetail(err instanceof Error ? err.message : "");
         onResult?.(false);
       }
     };
@@ -21214,7 +21335,7 @@
         state === "testing" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LoaderCircle, { size: 14, className: "spin" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Zap, { size: 14 }),
         t("settings.test")
       ] }),
-      state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", children: message }) : null
+      state !== "idle" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `model-test-message ${state === "ok" ? "ok" : state === "failed" ? "failed" : ""}`, role: "status", "aria-live": "polite", title: detail || message, children: message }) : null
     ] });
   }
   function EmptyState({ text: text2, action }) {
@@ -23228,7 +23349,6 @@
     const [selectedNodeId, setSelectedNodeId] = (0, import_react14.useState)(null);
     (0, import_react14.useEffect)(() => {
       let cancelled = false;
-      let fallbackTimer;
       let source = null;
       const applySnapshot = (next) => {
         if (cancelled) return;
@@ -23256,16 +23376,12 @@
           }
         });
         source.onerror = () => {
-          source?.close();
-          if (!cancelled && fallbackTimer === void 0) {
-            fallbackTimer = window.setInterval(() => void load(), 5e3);
-          }
+          if (!cancelled) setError(t("workflowGraph.streamUnavailable"));
         };
       }
       return () => {
         cancelled = true;
         source?.close();
-        if (fallbackTimer !== void 0) window.clearInterval(fallbackTimer);
       };
     }, [projectId]);
     const groupedNodes = (0, import_react14.useMemo)(() => {
@@ -29027,7 +29143,7 @@
   // src/components/SystemSettingsForm.tsx
   var import_react28 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
-  var EMPTY_PROXY = { enabled: false, url: "" };
+  var EMPTY_PROXY = { url: "" };
   function SystemSettingsForm({
     onChanged,
     onDirtyChange
@@ -29069,7 +29185,6 @@
         const result = await api("/api/settings/proxy", {
           method: "PUT",
           body: JSON.stringify({
-            enabled: proxy.enabled,
             url: proxy.url.trim()
           })
         });
@@ -29083,7 +29198,7 @@
         setSaving(false);
       }
     };
-    const proxyReady = !proxy.enabled || Boolean(proxy.url);
+    const proxyReady = Boolean(proxy.url);
     return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("form", { className: "model-settings-form", onSubmit: save, children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: "model-tier settings-proxy-card", children: [
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "model-tier-heading", children: [
@@ -29091,44 +29206,25 @@
             /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { children: t("settings.proxyTitle") }),
             /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "tier-status", children: [
               /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(StatusDot, { ready: proxyReady }),
-              loading ? t("common.waiting") : proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
+              loading ? t("common.waiting") : proxy.url ? t("settings.urlReady") : t("settings.proxyDisabled")
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "tier-default", children: [
-            t("settings.default"),
-            " ",
-            proxy.enabled ? t("settings.proxyEnabled") : t("settings.proxyDisabled")
-          ] })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ProxyTestButton, { url: proxy.url }) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "settings-proxy-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { className: "settings-switch", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-              "input",
-              {
-                type: "checkbox",
-                checked: proxy.enabled,
-                disabled: loading,
-                onChange: (event) => updateProxy("enabled", event.target.checked)
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "settings-switch-track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", {}) }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("settings.proxyEnabled") })
-          ] }),
-          proxy.enabled ? /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { className: "settings-proxy-url", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("settings.proxyUrl") }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-              "input",
-              {
-                type: "url",
-                value: proxy.url,
-                disabled: loading,
-                maxLength: 500,
-                placeholder: "http://127.0.0.1:7890",
-                onChange: (event) => updateProxy("url", event.target.value)
-              }
-            )
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "settings-proxy-state", children: t("settings.proxyDisabled") })
-        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "settings-proxy-row", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { className: "settings-proxy-url settings-proxy-url-full", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("settings.proxyUrl") }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+            "input",
+            {
+              type: "url",
+              value: proxy.url,
+              disabled: loading,
+              maxLength: 500,
+              placeholder: "http://127.0.0.1:7890",
+              onChange: (event) => updateProxy("url", event.target.value)
+            }
+          )
+        ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { className: "settings-note", children: [
           /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ShieldCheck, { size: 16 }),
           /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { children: t("settings.proxyNote") })
@@ -29151,7 +29247,7 @@
   // src/hooks/useModelCatalog.ts
   var import_react29 = __toESM(require_react(), 1);
   var DEFAULT_REASONING_EFFORTS = ["low", "medium", "high"];
-  function useModelCatalog(projectId, url, key, delayMs = 400) {
+  function useModelCatalog(projectId, url, key, kind, useProxy, delayMs = 400) {
     const [models, setModels] = (0, import_react29.useState)([]);
     const [reasoningEfforts, setReasoningEfforts] = (0, import_react29.useState)(DEFAULT_REASONING_EFFORTS);
     const [status, setStatus] = (0, import_react29.useState)("idle");
@@ -29172,7 +29268,7 @@
         setError("");
         api(`/api/projects/${projectId}/settings/model-catalog`, {
           method: "POST",
-          body: JSON.stringify({ url: normalizedUrl, key: normalizedKey })
+          body: JSON.stringify({ kind, url: normalizedUrl, key: normalizedKey, use_proxy: useProxy })
         }).then((result) => {
           if (cancelled) return;
           setModels(result.models || []);
@@ -29191,7 +29287,7 @@
         cancelled = true;
         window.clearTimeout(timer);
       };
-    }, [projectId, normalizedUrl, normalizedKey, delayMs]);
+    }, [projectId, normalizedUrl, normalizedKey, kind, useProxy, delayMs]);
     return { models, reasoning_efforts: reasoningEfforts, status, error };
   }
 
@@ -29211,8 +29307,9 @@
     const hasCatalog = catalog.models.length > 0;
     const showCurrent = Boolean(value) && !catalog.models.includes(value);
     const disabled = catalog.status === "loading" && !hasCatalog;
+    const readyMessage = catalog.status === "ready" ? t("settings.modelCatalogReady", { count: catalog.models.length }) : "";
     return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("select", { value: value || "", disabled, onChange: (event) => onChange(event.target.value), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("select", { value: value || "", disabled, title: readyMessage || void 0, onChange: (event) => onChange(event.target.value), children: [
         !value ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", children: catalog.status === "loading" ? t("settings.modelCatalogLoading") : t("settings.modelCatalogPlaceholder") }) : null,
         catalog.models.map((model) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: model, children: model }, model)),
         showCurrent ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value, children: value }) : null
@@ -29222,7 +29319,7 @@
         t("settings.modelCatalogLoading")
       ] }) : null,
       catalog.status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "model-catalog-status error", role: "alert", title: catalog.error, children: t("settings.modelCatalogUnavailable") }) : null,
-      catalog.status === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "model-catalog-status ok", children: t("settings.modelCatalogReady", { count: catalog.models.length }) }) : null
+      catalog.status === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "sr-only", role: "status", "aria-live": "polite", children: readyMessage }) : null
     ] });
   }
   function ReasoningEffortSelect({
@@ -29262,9 +29359,9 @@
     const [saving, setSaving] = (0, import_react30.useState)(false);
     const [error, setError] = (0, import_react30.useState)("");
     const [dirty, setDirty] = (0, import_react30.useState)(false);
-    const simpleCatalog = useModelCatalog(projectId, values?.simple?.url || "", values?.simple?.key || "");
-    const mediumCatalog = useModelCatalog(projectId, values?.medium?.url || "", values?.medium?.key || "");
-    const complexCatalog = useModelCatalog(projectId, values?.complex?.url || "", values?.complex?.key || "");
+    const simpleCatalog = useModelCatalog(projectId, values?.simple?.url || "", values?.simple?.key || "", "simple", values?.simple?.use_proxy);
+    const mediumCatalog = useModelCatalog(projectId, values?.medium?.url || "", values?.medium?.key || "", "medium", values?.medium?.use_proxy);
+    const complexCatalog = useModelCatalog(projectId, values?.complex?.url || "", values?.complex?.key || "", "complex", values?.complex?.use_proxy);
     const catalogs = { simple: simpleCatalog, medium: mediumCatalog, complex: complexCatalog };
     (0, import_react30.useEffect)(() => {
       setLoading(true);
@@ -29278,6 +29375,7 @@
             url: item.url || "",
             key: "",
             reasoning_effort: item.reasoning_effort || tier.defaultEffort,
+            use_proxy: Boolean(item.use_proxy),
             key_configured: item.key_configured,
             sources: item.sources
           };
@@ -29308,7 +29406,8 @@
             model: item.model.trim(),
             url: item.url.trim(),
             key: item.key,
-            reasoning_effort: item.reasoning_effort || tier.defaultEffort
+            reasoning_effort: item.reasoning_effort || tier.defaultEffort,
+            use_proxy: item.use_proxy
           };
         }
         const result = await api(`/api/projects/${projectId}/settings/models`, {
@@ -29323,6 +29422,7 @@
             url: item.url || "",
             key: "",
             reasoning_effort: item.reasoning_effort || tier.defaultEffort,
+            use_proxy: Boolean(item.use_proxy),
             key_configured: item.key_configured,
             sources: item.sources
           };
@@ -29366,7 +29466,17 @@
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelTestButton, { kind: tier.id, projectId, fields: { model: item.model, url: item.url, key: item.key } }) })
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-tools", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+                ModelProxySwitch,
+                {
+                  checked: item.use_proxy,
+                  onChange: (value) => update(tier.id, "use_proxy", value),
+                  label: t("settings.modelProxyLabel")
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ModelTestButton, { kind: tier.id, projectId, useProxy: item.use_proxy, fields: { model: item.model, url: item.url, key: item.key } })
+            ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "model-tier-grid", children: [
             /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { children: [
@@ -29458,13 +29568,13 @@
     const [saving, setSaving] = (0, import_react31.useState)(false);
     const [error, setError] = (0, import_react31.useState)("");
     const [dirty, setDirty] = (0, import_react31.useState)(false);
-    const catalog = useModelCatalog(projectId, values?.url || "", values?.key || "");
+    const catalog = useModelCatalog(projectId, values?.url || "", values?.key || "", "document", values?.use_proxy);
     const load = async () => {
       setLoading(true);
       setError("");
       try {
         const result = await api(`/api/projects/${projectId}/settings/document`);
-        setValues({ ...result, key: "" });
+        setValues({ ...result, key: "", use_proxy: Boolean(result.use_proxy) });
         setDirty(false);
         onDirtyChange?.(false);
       } catch (err) {
@@ -29492,10 +29602,11 @@
           body: JSON.stringify({
             model: values.model.trim(),
             url: values.url.trim(),
-            key: values.key
+            key: values.key,
+            use_proxy: values.use_proxy
           })
         });
-        setValues({ ...result, key: "" });
+        setValues({ ...result, key: "", use_proxy: Boolean(result.use_proxy) });
         setDirty(false);
         onDirtyChange?.(false);
         onChanged();
@@ -29532,7 +29643,17 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ModelTestButton, { kind: "document", projectId, fields: { model: values.model, url: values.url, key: values.key } }) })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "model-tier-tools", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              ModelProxySwitch,
+              {
+                checked: values.use_proxy,
+                onChange: (value) => update("use_proxy", value),
+                label: t("settings.modelProxyLabel")
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ModelTestButton, { kind: "document", projectId, useProxy: values.use_proxy, fields: { model: values.model, url: values.url, key: values.key } })
+          ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("label", { children: [
@@ -29612,13 +29733,13 @@
     const [saving, setSaving] = (0, import_react32.useState)(false);
     const [error, setError] = (0, import_react32.useState)("");
     const [dirty, setDirty] = (0, import_react32.useState)(false);
-    const catalog = useModelCatalog(projectId, values?.url || "", values?.key || "");
+    const catalog = useModelCatalog(projectId, values?.url || "", values?.key || "", "vision", values?.use_proxy);
     const load = async () => {
       setLoading(true);
       setError("");
       try {
         const result = await api(`/api/projects/${projectId}/settings/vision`);
-        setValues({ ...result, key: "" });
+        setValues({ ...result, key: "", use_proxy: Boolean(result.use_proxy) });
         setDirty(false);
         onDirtyChange?.(false);
       } catch (err) {
@@ -29646,10 +29767,11 @@
           body: JSON.stringify({
             model: values.model.trim(),
             url: values.url.trim(),
-            key: values.key
+            key: values.key,
+            use_proxy: values.use_proxy
           })
         });
-        setValues({ ...result, key: "" });
+        setValues({ ...result, key: "", use_proxy: Boolean(result.use_proxy) });
         setDirty(false);
         onDirtyChange?.(false);
         onChanged();
@@ -29686,7 +29808,17 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ModelTestButton, { kind: "vision", projectId, fields: { model: values.model, url: values.url, key: values.key } }) })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "model-tier-tools", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+              ModelProxySwitch,
+              {
+                checked: values.use_proxy,
+                onChange: (value) => update("use_proxy", value),
+                label: t("settings.modelProxyLabel")
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ModelTestButton, { kind: "vision", projectId, useProxy: values.use_proxy, fields: { model: values.model, url: values.url, key: values.key } })
+          ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { children: [
@@ -29771,7 +29903,7 @@
       setError("");
       try {
         const result = await api(`/api/projects/${projectId}/settings/image-generation`);
-        setValues({ ...result, key: "" });
+        setValues({ ...result, key: "", use_proxy: Boolean(result.use_proxy) });
         setDirty(false);
         onDirtyChange?.(false);
       } catch (err) {
@@ -29801,10 +29933,11 @@
             url: values.url.trim(),
             key: values.key,
             resolution: values.resolution,
-            quality: values.quality
+            quality: values.quality,
+            use_proxy: values.use_proxy
           })
         });
-        setValues({ ...result, key: "" });
+        setValues({ ...result, key: "", use_proxy: Boolean(result.use_proxy) });
         setDirty(false);
         onDirtyChange?.(false);
         onChanged();
@@ -29841,7 +29974,17 @@
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(ModelTestButton, { kind: "image", projectId, fields: { model: values.model, url: values.url, key: values.key } }) })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "model-tier-tools", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+              ModelProxySwitch,
+              {
+                checked: values.use_proxy,
+                onChange: (value) => update("use_proxy", value),
+                label: t("settings.modelProxyLabel")
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(ModelTestButton, { kind: "image", projectId, useProxy: values.use_proxy, fields: { model: values.model, url: values.url, key: values.key } })
+          ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { children: [
@@ -29964,6 +30107,7 @@
           base_url: result.base_url,
           env_base_url: result.env_base_url || "",
           key: "",
+          use_proxy: Boolean(result.use_proxy),
           key_configured: result.key_configured
         });
         setInstance(result.instance);
@@ -30003,10 +30147,11 @@
             dimensions: Number(values.dimensions) || 1024,
             base_url: values.base_url.trim(),
             key: values.key,
+            use_proxy: values.use_proxy,
             reset_data: resetData
           })
         });
-        setValues((previous) => previous ? { ...previous, key: "", key_configured: result.key_configured } : previous);
+        setValues((previous) => previous ? { ...previous, key: "", use_proxy: Boolean(result.use_proxy), key_configured: result.key_configured } : previous);
         setInstance(result.instance);
         setDirty(false);
         setConfirmReset(false);
@@ -30042,6 +30187,14 @@
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "model-tier-tools", children: [
+              custom ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+                ModelProxySwitch,
+                {
+                  checked: values.use_proxy,
+                  onChange: (value) => update("use_proxy", value),
+                  label: t("settings.modelProxyLabel")
+                }
+              ) : null,
               /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
                 EmbeddingTestButton,
                 {
@@ -30053,7 +30206,8 @@
                     dimensions: values.dimensions,
                     base_url: values.base_url,
                     key: values.key
-                  }
+                  },
+                  useProxy: values.use_proxy
                 }
               ),
               instance?.mode === "custom" && instance.port ? /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "tier-default", children: [
@@ -30211,6 +30365,7 @@
           model: result.model,
           url: result.url,
           key: "",
+          use_proxy: Boolean(result.use_proxy),
           key_configured: result.key_configured
         });
         setDirty(false);
@@ -30239,10 +30394,11 @@
             provider: values.provider,
             model: values.model.trim(),
             url: values.url.trim(),
-            key: values.key
+            key: values.key,
+            use_proxy: values.use_proxy
           })
         });
-        setValues((previous) => previous ? { ...previous, ...result, key: "", key_configured: result.key_configured } : previous);
+        setValues((previous) => previous ? { ...previous, ...result, key: "", use_proxy: Boolean(result.use_proxy), key_configured: result.key_configured } : previous);
         setDirty(false);
         onChanged();
         window.dispatchEvent(new Event("researchos:voice-settings-changed"));
@@ -30266,7 +30422,17 @@
               apiMode ? values.key_configured ? t("voice.keyConfigured") : t("voice.keyPending") : t("voice.providerBrowser")
             ] })
           ] }),
-          apiMode ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "model-tier-tools", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(ModelTestButton, { kind: "voice", projectId, fields: { model: values.model, url: values.url, key: values.key } }) }) : null
+          apiMode ? /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "model-tier-tools", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+              ModelProxySwitch,
+              {
+                checked: values.use_proxy,
+                onChange: (value) => update("use_proxy", value),
+                label: t("settings.modelProxyLabel")
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(ModelTestButton, { kind: "voice", projectId, useProxy: values.use_proxy, fields: { model: values.model, url: values.url, key: values.key } })
+          ] }) : null
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "model-tier-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "settings-voice-field", children: [
@@ -31547,6 +31713,7 @@ lucide-react/dist/esm/icons/gavel.mjs:
 lucide-react/dist/esm/icons/git-branch.mjs:
 lucide-react/dist/esm/icons/git-compare.mjs:
 lucide-react/dist/esm/icons/git-fork.mjs:
+lucide-react/dist/esm/icons/globe.mjs:
 lucide-react/dist/esm/icons/grip-vertical.mjs:
 lucide-react/dist/esm/icons/house.mjs:
 lucide-react/dist/esm/icons/image-plus.mjs:

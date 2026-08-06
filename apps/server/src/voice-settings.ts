@@ -8,6 +8,7 @@ export interface VoiceSettings {
   model: string
   url: string
   key: string
+  use_proxy: boolean
 }
 
 const settingsPath = resolve(runtimeRoot, 'voice-settings.json')
@@ -29,6 +30,7 @@ export function envDefaults(): VoiceSettings {
       || process.env.RESEARCH_VOICE_GROQ_URL?.trim()
       || 'https://api.groq.com/openai/v1',
     key: process.env.RESEARCH_VOICE_API_KEY?.trim() || process.env.GROQ_API_KEY?.trim() || '',
+    use_proxy: true,
   }
 }
 
@@ -56,6 +58,7 @@ export function privateVoiceSettings(): VoiceSettings {
     model: String(saved.model || defaults.model),
     url: String(saved.url || defaults.url),
     key: typeof saved.key === 'string' && saved.key ? saved.key : defaults.key,
+    use_proxy: typeof saved.use_proxy === 'boolean' ? saved.use_proxy : defaults.use_proxy,
   }
 }
 
@@ -65,6 +68,7 @@ export function publicVoiceSettings() {
     provider: settings.provider,
     model: settings.model,
     url: settings.url,
+    use_proxy: settings.use_proxy,
     key_configured: Boolean(settings.key),
     source: existsSync(settingsPath) ? 'runtime_override' : 'env_default',
   }
@@ -78,6 +82,7 @@ export function saveVoiceSettings(input: unknown) {
     model: parsed.model.trim() || current.model,
     url: parsed.url.trim() || current.url,
     key: parsed.key.trim() || current.key,
+    use_proxy: parsed.use_proxy,
   }
   atomicWrite(settingsPath, next)
   return publicVoiceSettings()

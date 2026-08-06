@@ -6,6 +6,7 @@ import { executeWorkflowCapability } from './project-workflow/capabilities.js'
 import { appendWorkflowEvent } from './project-workflow/event-store.js'
 import type { WorkflowTaskInput } from './project-workflow/capabilities.js'
 import { ApiError } from './http.js'
+import { startTaskWorkerDispatcher } from './task-worker-dispatcher.js'
 
 type Task = {
   id: string
@@ -167,7 +168,6 @@ async function runWorkflowNodeTask(task: Task): Promise<void> {
   if (!node) throw new Error('workflow_node_run_not_found')
   const output = await executeWorkflowCapability(node.capability as Parameters<typeof executeWorkflowCapability>[0], task.project_id, task.id, input)
   await markNodeRunSucceeded(task, output)
-  await markTaskSucceeded(task)
 }
 
 async function runTask(task: Task): Promise<void> {
@@ -215,14 +215,26 @@ async function runTask(task: Task): Promise<void> {
   throw new Error('task_kind_not_allowlisted')
 }
 
-async function tick(workerId: string): Promise<void> {
-  const task = await claim(workerId)
-  if (!task) return
-  await markNodeRunRunning(task)
+export function isFatalDatabaseError(error: unknown): boolean {
+  const visited = new Set<unknown>()
+  let current: unknown = error
+  while (current && !visited.has(current)) {
+    visited.add(current)
+    if (current instanceof WebAssembly.RuntimeError) return true
+    const message = current instanceof Error ? current.message : String(current)
+    if (/memory access out of bounds|\bAborted\(\)|PGlite (?:is |has been )?closed|PGlite failed to initialize properly/i.test(message)) return true
+    current = current instanceof Error && 'cause' in current ? current.cause : undefined
+  }
+  return false
+}
+
+async function executeClaimedTask(task: Task): Promise<void> {
   try {
+    await markNodeRunRunning(task)
     await runTask(task)
     await markTaskSucceeded(task)
   } catch (error) {
+    if (isFatalDatabaseError(error)) throw error
     const message = error instanceof Error ? error.message : 'task_failed'
     if (task.kind === 'material_index') {
       const uploadedFileId = typeof task.payload.uploaded_file_id === 'string' ? task.payload.uploaded_file_id : ''
@@ -249,38 +261,26 @@ export async function recoverInterruptedWork(): Promise<void> {
   await database.query("UPDATE related_work_recursive_runs SET status='queued',started_at=NULL,finished_at=NULL,error='native_process_restarted' WHERE status='running' AND cancel_requested=FALSE")
 }
 
-export type TaskWorkerHandle = { stop(): void }
+export type TaskWorkerHandle = { stop(): void; readonly done: Promise<void> }
 
 export function startTaskWorker(options?: { concurrency?: number }): TaskWorkerHandle {
   const concurrency = Math.max(1, Math.min(32, options?.concurrency ?? Number(process.env.RESEARCH_TASK_WORKER_CONCURRENCY || 4)))
-  const running = new Set<ReturnType<typeof setInterval>>()
-  const workers = new Set<Promise<void>>()
-  let stopped = false
-  for (let index = 0; index < concurrency; index += 1) {
-    const workerId = `worker-${process.pid}-${index}-${crypto.randomUUID().slice(0, 6)}`
-    const worker = (async () => {
-      while (!stopped) {
-        try {
-          await tick(workerId)
-        } catch (error) {
-          await database.query('UPDATE tasks SET status=$2,error=$3 WHERE status=\'running\' AND worker_id=$1', [workerId, 'retrying', error instanceof Error ? error.message : String(error)])
-            .catch(innerError => console.error('workflow task worker recovery failed', innerError))
-        }
-        await new Promise(resolve => setTimeout(resolve, 250))
-      }
-    })()
-    workers.add(worker)
-  }
-  const heartbeat = setInterval(() => {
-    void database.query("UPDATE tasks SET leased_until=NOW()+INTERVAL '2 minutes',heartbeat_until=NOW() WHERE status='running' AND worker_id IS NOT NULL")
-      .catch(error => console.error('workflow task heartbeat failed', error))
-  }, 30_000)
-  running.add(heartbeat)
-  return {
-    stop() {
-      stopped = true
-      clearInterval(heartbeat)
-      running.clear()
+  return startTaskWorkerDispatcher<Task>({
+    claim,
+    execute: executeClaimedTask,
+    async heartbeat(workerIds) {
+      await database.query(
+        "UPDATE tasks SET leased_until=NOW()+INTERVAL '2 minutes',heartbeat_until=NOW() WHERE status='running' AND worker_id = ANY($1::text[])",
+        [workerIds],
+      )
     },
-  }
+    isFatal: isFatalDatabaseError,
+    onFatal(error) {
+      console.error('Fatal PGlite task worker failure; terminating Research OS API', error)
+      setImmediate(() => { throw error })
+    },
+    onError(error) {
+      console.error('workflow task worker operation failed', error)
+    },
+  }, { concurrency })
 }

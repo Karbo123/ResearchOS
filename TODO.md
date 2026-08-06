@@ -108,7 +108,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 - 开发、编辑、构建、测试和运维命令全部在 WSL2 shell 中执行；默认开发 shell 是 WSL2，不使用 Windows cmd/PowerShell。
 - Windows 只作为调试浏览器客户端：固定使用 Windows Chrome，通过 mirrored 网络/端口转发以 `http://127.0.0.1:<port>` 访问 WSL2；不恢复 Windows 原生应用运行目标，不依赖 Docker。
 - 当前唯一代码副本是 `/mnt/d/ResearchOS`，对应 Windows 的 `D:\ResearchOS`；禁止复制一份再同步导致双份事实源。
-- 实验、Supermemory、Mastra、API、LaTeX 和数据库都在 WSL2 进程内运行；Windows Defender 只作为上传扫描的受控互操作依赖。
+- 实验、Supermemory、Mastra、API、LaTeX 和数据库都在 WSL2 进程内运行；上传材料不做 Windows Defender 强制扫描，只做大小、扩展名和会话数量/总量限制。
 - 所有监听器默认只绑定回环地址。`0.0.0.0` 不能作为产品默认监听地址。
 
 ### 2.3 模型、Mastra 与失败关闭
@@ -223,7 +223,11 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 > 验收记录（2026-08-06）：`mimo-v2.5` 视觉模型复核真实浏览器截图：重命名铅笔图标紧贴项目名称右侧，间距约 8-12px，垂直居中，样式符合 Apple 设计；弹层截图确认毛玻璃浮层正常。项目级设置路径已改为 `projects/<project-id>/.researchos/model-settings.json`，API 实测保存到 `projects/pointcloud-classification-0000/.researchos/model-settings.json`，项目 Git `check-ignore` 确认该文件被忽略；服务端设置测试、全量类型检查、构建、docs/UI/i18n/language/navigation 检查通过。
 - [~] `P0-WORKFLOW-125` 按 `TODO-workflow.md` 实施项目级单一 Mastra Workflow：每个项目一个 `projects/<project-id>/workflow.ts`，默认模板初始化，运行期热加载，自然语言经审批修改工作流，并使用 Mastra Studio/序列化图实现可视化。Phase 0-5 主体已完成并通过核心检查（见 `TODO-workflow.md`）；Phase 6 收尾中：真实浏览器截图验收、部分 API 动作直接调用 Agent 的迁移、全量文档同步与提交推送。 [Apple 设计验收]
 - [x] `P0-WORKFLOW-V2-001` 根据 `TODO-workflow-v2.md` 重新设计项目 workflow 执行模型：保留每个项目独立的 `workflow.ts` 科研语义图，但不再把整个项目绑定为一个永不结束的 Mastra Workflow Run；改为持久化项目事件/协调器、可恢复的有限节点任务、真正可并行的 worker 池、版本化热加载和 Research OS 自绘运行图。旧 `P0-WORKFLOW-125` 的 Mastra Workflow 总编排目标转为历史基线。v2 后端事件账本、协调器、有限节点任务、可并行 worker、版本化热加载、workflow API、默认科研语义模板、前端自绘图、运行中/排队任务取消和浏览器验收均已完成；`TODO-workflow-v2.md` 记录 Phase 0-6 与验收证据。 [Apple 设计验收]
-- [x] `P0-PROCESS-146` 修复 API 在 SSE 客户端断开时偶发崩溃：Hono `StreamingApi` 的 `reader.cancel()` 拒绝会变成未捕获 Promise rejection；通过 `scripts/patch-hono-stream.ts` 在依赖安装后给该取消加 `.catch(() => {})`，并给任务 worker 恢复失败与 API 进程增加未处理拒绝日志兜底；用真实浏览器多次重载/断开 workflow 事件流验证 API 进程保持存活。 [Apple 设计验收]
+- [x] `P0-PROCESS-146` 彻底修复 API 的 SSE 生命周期、PGlite 内存泄漏与任务 worker 空闲轮询问题：用项目内可取消原生 `ReadableStream` 替换聊天/workflow 两处 Hono `streamSSE`，producer 在断连前持续存活并通过 `AbortSignal` 立即清理休眠；移除 Hono 依赖源码补丁、前端静默 REST polling 和全局 `unhandledRejection` 假存活兜底。PGlite 从存在已知 `MessageContext` 泄漏的 0.3.7 升到数据格式兼容的 0.3.10（0.5.4 无法打开真实库副本，未用于运行库），Hono/Node adapter 升到 4.13.0/2.1.0。四个 250ms worker 循环改为单调度器、并发槽位、250ms→5s 空闲指数退避和仅活动任务心跳；WASM/PGlite 致命错误跳过恢复写入并明确终止进程。新增真实 SSE 持续/更新/取消、20 次重复断连、空闲查询有界、并发补槽和致命错误回归测试；217 个服务端测试、全量 typecheck/build/docs/UI/language/navigation/idea-cases、workflow v2 与真实 Chrome 四语言/两主题/桌面移动端验收通过。真实 API 累计 2700 次 SSE 建连、首帧、断连压力后健康，RSS 从预热约 459MB 增至约 585MB 后静置回落至约 548MB，增长斜率收敛且无残留错误；主链 acceptance 仅在无关的默认文档模型处按预期失败关闭为上游 403 RegionError，未使用 fallback。 [Apple 设计验收]
+- [x] `P0-SETTINGS-147` 修复设置面板模型测试与紧凑布局：语音识别测试改为发送 250ms/8kHz/mono 的最小有效 WAV multipart 请求，图片识别测试真实携带 1x1 PNG，图片生成保持 1k/low/n=1 最低成本请求；公网模型按全局代理开关路由，回环/RFC1918 地址始终直连，并按“私网服务未监听 / 公网直连可考虑代理 / 已启用代理需检查代理服务”返回结构化诊断。测试结果统一位于按钮下方右对齐，成功只显示“连接正常”、完整细节保留 tooltip；模型目录成功数量改为下拉框 tooltip 与无障碍 live status，不再参与表单布局。验收：新增 4 项最小请求协议回归和 2 项代理路由回归，本机临时代理实测开启代理时公网 URL 经过代理、回环 URL 仍绕过代理；服务端完整套件 50 文件/221 测试及新增定向 13 测试、前后端 typecheck/build、docs/UI/i18n/theme 检查通过。真实 API 验证 Embedding 成功，Groq 直连真实返回 403，图片生成公网直连不可达并提示启用代理，`10.31.107.77` 私网视觉服务当前未监听且明确提示直连检查；Windows Chrome 强制加载 `ui181` 后完成桌面中文/英文与 390px 移动端截图、文本位置和无横向溢出验收。当前用户配置中的全局代理为关闭且 URL 为空，未伪造真实上游成功。 [Apple 设计验收]
+- [x] `P0-SETTINGS-148` 代理改为“系统只保存代理地址 + 每模型独立开关”：移除系统页全局代理开关，改名为“代理信息设置”并提供代理连通性测试；代码三档、文档文本、图片识别、图片生成、Embedding、语音识别各自保存项目级 `use_proxy`，默认代码/文档/Embedding 直连、图片识别/图片生成/语音识别走代理；模型测试、模型目录、Mastra Agent、语音转写与远程 Embedding 出口都按各自开关路由。`proxyFetch` 默认改为直连，全局 Supermemory 子进程只尊重显式 `SUPERMEMORY_PROXY_URL`，自定义 Embedding 池按项目开关注入或清空代理并跟踪代理状态，开关变化时自动重启池实例。同步 `10.31.107.77` 本地地址默认改为 `127.0.0.1`，并更新契约、测试、i18n、README/AGENTS/operations。 [Apple 设计验收]
+
+> 验收记录（2026-08-07）：新增 `supermemory-env` 与代理默认直连回归测试；服务端完整套件 52 文件/229 测试、全量 typecheck/build/docs/UI/i18n/language/navigation 检查通过。API 重启后实测项目视觉设置返回 `use_proxy:true`、系统代理接口返回 `{"url":""}`、空 URL 代理测试返回结构化 `proxy_test_missing_url`。Windows Chrome 真实浏览器检查：系统页标题为 “Proxy information”、无开关、有“测试代理”按钮、无横向溢出；代码模型页 3 个代理开关 + 3 个测试按钮，图片识别页 1 个开关 + 1 个测试按钮。前端资源版本升至 `ui182`。
 
 ### 4.0 当前唯一优先：项目工作台重构（2026-08-03，必须严格按顺序）
 

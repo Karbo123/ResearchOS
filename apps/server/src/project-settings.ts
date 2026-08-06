@@ -20,18 +20,21 @@ interface TierSettings {
   url: string
   key: string
   reasoning_effort: 'low' | 'medium' | 'high'
+  use_proxy: boolean
 }
 
 interface DocumentSettings {
   model: string
   url: string
   key: string
+  use_proxy: boolean
 }
 
 interface VisionSettings {
   model: string
   url: string
   key: string
+  use_proxy: boolean
 }
 
 interface ImageGenerationSettings {
@@ -40,6 +43,7 @@ interface ImageGenerationSettings {
   key: string
   resolution: '1k' | '2k' | '4k'
   quality: 'low' | 'medium' | 'high'
+  use_proxy: boolean
 }
 
 export interface ProjectModelSettings {
@@ -56,6 +60,7 @@ export interface ProjectVoiceSettings {
   model: string
   url: string
   key: string
+  use_proxy: boolean
 }
 
 interface ProjectSettings {
@@ -135,6 +140,7 @@ function mergeTier(base: TierSettings, saved: Partial<TierSettings> | undefined)
     reasoning_effort: modelTierSettings.shape.reasoning_effort.safeParse(saved.reasoning_effort).success
       ? saved.reasoning_effort as TierSettings['reasoning_effort']
       : base.reasoning_effort,
+    use_proxy: typeof saved.use_proxy === 'boolean' ? saved.use_proxy : base.use_proxy,
   }
 }
 
@@ -144,6 +150,7 @@ function mergeDocument(base: DocumentSettings, saved: Partial<DocumentSettings> 
     model: String(saved.model || base.model),
     url: String(saved.url || base.url),
     key: typeof saved.key === 'string' && saved.key ? saved.key : base.key,
+    use_proxy: typeof saved.use_proxy === 'boolean' ? saved.use_proxy : base.use_proxy,
   }
 }
 
@@ -163,6 +170,7 @@ function mergeImage(base: ImageGenerationSettings, saved: Partial<ImageGeneratio
     quality: imageGenerationSettingsRequest.shape.quality.safeParse(saved.quality).success
       ? saved.quality as ImageGenerationSettings['quality']
       : base.quality,
+    use_proxy: typeof saved.use_proxy === 'boolean' ? saved.use_proxy : base.use_proxy,
   }
 }
 
@@ -198,6 +206,7 @@ export function privateProjectVoiceSettings(projectId: string): ProjectVoiceSett
     model: String(saved?.model || base.model),
     url: String(saved?.url || base.url),
     key: typeof saved?.key === 'string' && saved.key ? saved.key : base.key,
+    use_proxy: typeof saved?.use_proxy === 'boolean' ? saved.use_proxy : base.use_proxy,
   }
 }
 
@@ -217,24 +226,28 @@ export function publicProjectModelSettings(projectId: string) {
       model: settings[tier].model,
       url: settings[tier].url,
       reasoning_effort: settings[tier].reasoning_effort,
+      use_proxy: settings[tier].use_proxy,
       key_configured: Boolean(settings[tier].key),
       sources: { url: source, key: source },
     }])),
     document: {
       model: settings.document.model,
       url: settings.document.url,
+      use_proxy: settings.document.use_proxy,
       key_configured: Boolean(settings.document.key),
       source,
     },
     vision: {
       model: settings.vision.model,
       url: settings.vision.url,
+      use_proxy: settings.vision.use_proxy,
       key_configured: Boolean(settings.vision.key),
       source,
     },
     image_generation: {
       model: settings.image_generation.model,
       url: settings.image_generation.url,
+      use_proxy: settings.image_generation.use_proxy,
       key_configured: Boolean(settings.image_generation.key),
       resolution: settings.image_generation.resolution,
       quality: settings.image_generation.quality,
@@ -249,6 +262,7 @@ export function publicProjectDocumentSettings(projectId: string) {
     project_id: projectId,
     model: settings.document.model,
     url: settings.document.url,
+    use_proxy: settings.document.use_proxy,
     key_configured: Boolean(settings.document.key),
     source: sourceOf(projectId, 'model'),
   }
@@ -260,6 +274,7 @@ export function publicProjectVisionSettings(projectId: string) {
     project_id: projectId,
     model: settings.vision.model,
     url: settings.vision.url,
+    use_proxy: settings.vision.use_proxy,
     key_configured: Boolean(settings.vision.key),
     source: sourceOf(projectId, 'model'),
   }
@@ -271,6 +286,7 @@ export function publicProjectImageGenerationSettings(projectId: string) {
     project_id: projectId,
     model: settings.image_generation.model,
     url: settings.image_generation.url,
+    use_proxy: settings.image_generation.use_proxy,
     key_configured: Boolean(settings.image_generation.key),
     resolution: settings.image_generation.resolution,
     quality: settings.image_generation.quality,
@@ -285,6 +301,7 @@ export function publicProjectVoiceSettings(projectId: string) {
     provider: settings.provider,
     model: settings.model,
     url: settings.url,
+    use_proxy: settings.use_proxy,
     key_configured: Boolean(settings.key),
     source: sourceOf(projectId, 'voice'),
   }
@@ -296,9 +313,9 @@ export function saveProjectModelSettings(projectId: string, input: unknown) {
   const previous = savedModel(projectId) || {}
   const current = privateProjectModelSettings(projectId)
   const next: Partial<ProjectModelSettings> = {
-    simple: { ...parsed.simple, key: parsed.simple.key.trim() || current.simple.key },
-    medium: { ...parsed.medium, key: parsed.medium.key.trim() || current.medium.key },
-    complex: { ...parsed.complex, key: parsed.complex.key.trim() || current.complex.key },
+    simple: { ...parsed.simple, key: parsed.simple.key.trim() || current.simple.key, use_proxy: parsed.simple.use_proxy },
+    medium: { ...parsed.medium, key: parsed.medium.key.trim() || current.medium.key, use_proxy: parsed.medium.use_proxy },
+    complex: { ...parsed.complex, key: parsed.complex.key.trim() || current.complex.key, use_proxy: parsed.complex.use_proxy },
   }
   if (previous.document) next.document = previous.document
   if (previous.vision) next.vision = previous.vision
@@ -319,6 +336,7 @@ export function saveProjectDocumentSettings(projectId: string, input: unknown) {
       model: parsed.model.trim(),
       url: parsed.url.trim(),
       key: parsed.key.trim() || current.document.key,
+      use_proxy: parsed.use_proxy,
     },
   }
   overrides.model = model
@@ -337,6 +355,7 @@ export function saveProjectVisionSettings(projectId: string, input: unknown) {
       model: parsed.model.trim(),
       url: parsed.url.trim(),
       key: parsed.key.trim() || current.vision.key,
+      use_proxy: parsed.use_proxy,
     },
   }
   overrides.model = model
@@ -357,6 +376,7 @@ export function saveProjectImageGenerationSettings(projectId: string, input: unk
       key: parsed.key.trim() || current.image_generation.key,
       resolution: parsed.resolution,
       quality: parsed.quality,
+      use_proxy: parsed.use_proxy,
     },
   }
   overrides.model = model
@@ -373,6 +393,7 @@ export function saveProjectVoiceSettings(projectId: string, input: unknown) {
     model: parsed.model.trim() || current.model,
     url: parsed.url.trim() || current.url,
     key: parsed.key.trim() || current.key,
+    use_proxy: parsed.use_proxy,
   }
   overrides.voice = next
   writeProjectOverrides(projectId, overrides)

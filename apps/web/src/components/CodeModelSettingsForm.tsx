@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ModelSettingsResponse, ModelTierSettings, ReasoningEffort, TierId } from '../types'
-import { ModelTestButton, StatusDot } from './ui'
+import { ModelProxySwitch, ModelTestButton, StatusDot } from './ui'
 import { useTranslation, type TranslationKey } from '../i18n'
 import { useModelCatalog } from '../hooks/useModelCatalog'
 import { ModelSelect, ReasoningEffortSelect } from './ModelCatalogFields'
@@ -15,6 +15,7 @@ const TIERS: Array<{ id: TierId; labelKey: TranslationKey; descriptionKey: Trans
 
 interface TierFormValues extends ModelTierSettings {
   key: string
+  use_proxy: boolean
 }
 
 function sourceLabelKey(value?: string) {
@@ -39,9 +40,9 @@ export function CodeModelSettingsForm({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [dirty, setDirty] = useState(false)
-  const simpleCatalog = useModelCatalog(projectId, values?.simple?.url || '', values?.simple?.key || '')
-  const mediumCatalog = useModelCatalog(projectId, values?.medium?.url || '', values?.medium?.key || '')
-  const complexCatalog = useModelCatalog(projectId, values?.complex?.url || '', values?.complex?.key || '')
+  const simpleCatalog = useModelCatalog(projectId, values?.simple?.url || '', values?.simple?.key || '', 'simple', values?.simple?.use_proxy)
+  const mediumCatalog = useModelCatalog(projectId, values?.medium?.url || '', values?.medium?.key || '', 'medium', values?.medium?.use_proxy)
+  const complexCatalog = useModelCatalog(projectId, values?.complex?.url || '', values?.complex?.key || '', 'complex', values?.complex?.use_proxy)
   const catalogs = { simple: simpleCatalog, medium: mediumCatalog, complex: complexCatalog }
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export function CodeModelSettingsForm({
             url: item.url || '',
             key: '',
             reasoning_effort: item.reasoning_effort || tier.defaultEffort,
+            use_proxy: Boolean(item.use_proxy),
             key_configured: item.key_configured,
             sources: item.sources,
           }
@@ -70,7 +72,7 @@ export function CodeModelSettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
 
-  const update = (tier: TierId, field: keyof TierFormValues, value: string | ReasoningEffort) => {
+  const update = (tier: TierId, field: keyof TierFormValues, value: string | boolean | ReasoningEffort) => {
     setValues(previous => previous ? {
       ...previous,
       [tier]: { ...previous[tier], [field]: value },
@@ -85,7 +87,7 @@ export function CodeModelSettingsForm({
     setSaving(true)
     setError('')
     try {
-      const payload = {} as Record<TierId, { model: string; url: string; key: string; reasoning_effort: ReasoningEffort }>
+      const payload = {} as Record<TierId, { model: string; url: string; key: string; reasoning_effort: ReasoningEffort; use_proxy: boolean }>
       for (const tier of TIERS) {
         const item = values[tier.id]
         payload[tier.id] = {
@@ -93,6 +95,7 @@ export function CodeModelSettingsForm({
           url: item.url.trim(),
           key: item.key,
           reasoning_effort: item.reasoning_effort || tier.defaultEffort,
+          use_proxy: item.use_proxy,
         }
       }
       const result = await api<ModelSettingsResponse>(`/api/projects/${projectId}/settings/models`, {
@@ -107,6 +110,7 @@ export function CodeModelSettingsForm({
           url: item.url || '',
           key: '',
           reasoning_effort: item.reasoning_effort || tier.defaultEffort,
+          use_proxy: Boolean(item.use_proxy),
           key_configured: item.key_configured,
           sources: item.sources,
         }
@@ -145,7 +149,12 @@ export function CodeModelSettingsForm({
                 </div>
               </div>
               <div className="model-tier-tools">
-                <ModelTestButton kind={tier.id} projectId={projectId} fields={{ model: item.model, url: item.url, key: item.key }} />
+                <ModelProxySwitch
+                  checked={item.use_proxy}
+                  onChange={value => update(tier.id, 'use_proxy', value)}
+                  label={t('settings.modelProxyLabel')}
+                />
+                <ModelTestButton kind={tier.id} projectId={projectId} useProxy={item.use_proxy} fields={{ model: item.model, url: item.url, key: item.key }} />
               </div>
             </div>
             <div className="model-tier-grid">

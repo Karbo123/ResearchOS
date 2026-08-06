@@ -24,7 +24,7 @@ Reports have an additional read-time lineage gate. Each new report stores its pr
 
 ## Uploads and Evidence
 
-Uploads are size- and extension-limited and scanned with Windows Defender. On WSL2/Linux hosts the scanner is reached through the interop mount (`/mnt/c/ProgramData/.../MpCmdRun.exe`) with `wslpath -w` path conversion. Scanner absence, threat detection, timeout, or scan failure rejects the upload (fail closed). Uploaded material remains untrusted context and is not executed.
+Uploads are size- and extension-limited. Uploaded material remains untrusted context and is not executed; no Windows Defender scan is enforced.
 
 PDF evidence is downloaded only from a fixed HTTPS host allowlist, limited to 25 MB, checked for a PDF signature, hashed, parsed without evaluation, and stored with page locators. Extracted passages are candidates for claim-level review, not automatic proof.
 

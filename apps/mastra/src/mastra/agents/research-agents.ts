@@ -3,7 +3,7 @@ import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { agentRequestContextSchema, type ModelTier } from '../contracts.js'
 import { loadModelConfig, ModelConfigurationError } from '../model-config.js'
-import { proxyFetch } from '../proxy-fetch.js'
+import { createProxyFetch } from '../proxy-fetch.js'
 import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, paperRevisionSkill, paperTranslationSkill, projectSlugSkill, supervisionIntentSkill, workflowEditSkill } from '../skills/research-skills.js'
 import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
@@ -15,7 +15,7 @@ export function configuredModel(tier: ModelTier, projectId?: string) {
   if (!model || model.includes('/')) {
     throw new ModelConfigurationError(`${tier} Responses 模型名无效`)
   }
-  return createOpenAI({ baseURL: config.url, apiKey: config.key, fetch: proxyFetch() }).responses(model)
+  return createOpenAI({ baseURL: config.url, apiKey: config.key, fetch: createProxyFetch({ useProxy: config.useProxy }) }).responses(model)
 }
 
 export function configuredVisionModel(projectId?: string) {

@@ -1,5 +1,5 @@
 import { ApiError } from './http.js'
-import { proxyFetch } from './proxy-fetch.js'
+import { createProxyFetch } from './proxy-fetch.js'
 import { privateProjectVoiceSettings } from './project-settings.js'
 import { privateVoiceSettings } from './voice-settings.js'
 
@@ -48,7 +48,7 @@ export async function transcribeVoice(file: UploadedAudio, language?: string, pr
 
   let response: Response
   try {
-    response = await proxyFetch()(`${baseUrl}/audio/transcriptions`, {
+    response = await createProxyFetch({ useProxy: settings.use_proxy })(`${baseUrl}/audio/transcriptions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${settings.key}` },
       body: form,

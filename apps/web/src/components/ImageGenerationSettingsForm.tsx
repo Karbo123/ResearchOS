@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ImagePlus, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ImageGenerationQuality, ImageGenerationResolution, ImageGenerationSettings } from '../types'
-import { ModelTestButton, StatusDot } from './ui'
+import { ModelProxySwitch, ModelTestButton, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
 interface FormValues extends ImageGenerationSettings {
@@ -30,7 +30,7 @@ export function ImageGenerationSettingsForm({
     setError('')
     try {
       const result = await api<ImageGenerationSettings>(`/api/projects/${projectId}/settings/image-generation`)
-      setValues({ ...result, key: '' })
+      setValues({ ...result, key: '', use_proxy: Boolean(result.use_proxy) })
       setDirty(false)
       onDirtyChange?.(false)
     } catch (err) {
@@ -45,7 +45,7 @@ export function ImageGenerationSettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
 
-  const update = (field: 'model' | 'url' | 'key' | 'resolution' | 'quality', value: string) => {
+  const update = (field: 'model' | 'url' | 'key' | 'resolution' | 'quality' | 'use_proxy', value: string | boolean) => {
     setValues(previous => previous ? { ...previous, [field]: value } : previous)
     setDirty(true)
     onDirtyChange?.(true)
@@ -65,9 +65,10 @@ export function ImageGenerationSettingsForm({
           key: values.key,
           resolution: values.resolution,
           quality: values.quality,
+          use_proxy: values.use_proxy,
         }),
       })
-      setValues({ ...result, key: '' })
+      setValues({ ...result, key: '', use_proxy: Boolean(result.use_proxy) })
       setDirty(false)
       onDirtyChange?.(false)
       onChanged()
@@ -99,7 +100,12 @@ export function ImageGenerationSettingsForm({
             </div>
           </div>
           <div className="model-tier-tools">
-            <ModelTestButton kind="image" projectId={projectId} fields={{ model: values.model, url: values.url, key: values.key }} />
+            <ModelProxySwitch
+              checked={values.use_proxy}
+              onChange={value => update('use_proxy', value)}
+              label={t('settings.modelProxyLabel')}
+            />
+            <ModelTestButton kind="image" projectId={projectId} useProxy={values.use_proxy} fields={{ model: values.model, url: values.url, key: values.key }} />
           </div>
         </div>
         <div className="model-tier-grid">

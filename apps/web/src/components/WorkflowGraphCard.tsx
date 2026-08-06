@@ -152,7 +152,6 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
 
   useEffect(() => {
     let cancelled = false
-    let fallbackTimer: number | undefined
     let source: EventSource | null = null
     const applySnapshot = (next: WorkflowGraphSnapshot) => {
       if (cancelled) return
@@ -180,16 +179,12 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
         }
       })
       source.onerror = () => {
-        source?.close()
-        if (!cancelled && fallbackTimer === undefined) {
-          fallbackTimer = window.setInterval(() => void load(), 5000)
-        }
+        if (!cancelled) setError(t('workflowGraph.streamUnavailable'))
       }
     }
     return () => {
       cancelled = true
       source?.close()
-      if (fallbackTimer !== undefined) window.clearInterval(fallbackTimer)
     }
   }, [projectId])
 

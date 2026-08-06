@@ -25,6 +25,10 @@ function modelRoutePath(poolKey: string): string {
   return resolve(poolDir(poolKey), 'model-route')
 }
 
+function proxyStatePath(poolKey: string): string {
+  return resolve(poolDir(poolKey), 'proxy-state')
+}
+
 async function healthOk(port: number): Promise<boolean> {
   try {
     const response = await fetch(`http://127.0.0.1:${port}`, { signal: AbortSignal.timeout(3000) })
@@ -73,7 +77,11 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
   const modelRequestBaseUrl = await ensureModelGatewayBridge()
   const routePath = modelRoutePath(poolKey)
   const routeMatches = existsSync(routePath) && readFileSync(routePath, 'utf8').trim() === modelRequestBaseUrl
-  if (await healthOk(pool.port) && routeMatches) return
+  const useEmbeddingProxy = projectsUsingPool(poolKey).some(projectId => projectEmbeddingSettings(projectId).use_proxy)
+  const expectedProxyState = useEmbeddingProxy ? 'proxy' : 'direct'
+  const statePath = proxyStatePath(poolKey)
+  const proxyMatches = existsSync(statePath) && readFileSync(statePath, 'utf8').trim() === expectedProxyState
+  if (await healthOk(pool.port) && routeMatches && proxyMatches) return
   if (await healthOk(pool.port)) await stopPoolInstance(poolKey)
   const outFd = openSync(resolve(poolDir(poolKey), 'supermemory.out.log'), 'a')
   const errFd = openSync(resolve(poolDir(poolKey), 'supermemory.err.log'), 'a')
@@ -95,10 +103,11 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
       OPENAI_BASE_URL: modelRequestBaseUrl,
       OPENAI_MODEL: process.env.RESEARCH_MODEL_MEDIUM || 'gpt-5.6-luna',
       OPENAI_API_KEY: process.env.RESEARCH_MODEL_KEY_MEDIUM || '',
-    }),
+    }, useEmbeddingProxy),
   })
   writeFileSync(pidPath(poolKey), String(child.pid ?? ''))
   writeFileSync(routePath, modelRequestBaseUrl)
+  writeFileSync(statePath, expectedProxyState)
   child.unref()
   const deadline = Date.now() + 240_000
   while (Date.now() < deadline) {
@@ -110,18 +119,20 @@ export async function ensurePoolInstance(poolKey: string): Promise<void> {
 
 export async function stopPoolInstance(poolKey: string): Promise<void> {
   const pidFile = pidPath(poolKey)
-  if (!existsSync(pidFile)) return
-  const pidText = readFileSync(pidFile, 'utf8').trim()
-  if (pidText) {
-    try {
-      process.kill(Number(pidText))
-    } catch (error) {
-      const code = (error as NodeJS.ErrnoException).code
-      if (code !== 'ESRCH') throw error
+  if (existsSync(pidFile)) {
+    const pidText = readFileSync(pidFile, 'utf8').trim()
+    if (pidText) {
+      try {
+        process.kill(Number(pidText))
+      } catch (error) {
+        const code = (error as NodeJS.ErrnoException).code
+        if (code !== 'ESRCH') throw error
+      }
     }
   }
   rmSync(pidFile, { force: true })
   rmSync(modelRoutePath(poolKey), { force: true })
+  rmSync(proxyStatePath(poolKey), { force: true })
 }
 
 export async function projectInstanceStatus(projectId: string): Promise<{ mode: 'global' | 'custom'; port: number | null; running: boolean; shared_projects: number }> {

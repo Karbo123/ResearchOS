@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../src/proxy-fetch.js', () => ({
   proxyFetch: () => globalThis.fetch as typeof fetch,
+  createProxyFetch: () => globalThis.fetch as typeof fetch,
 }))
 
 const savedEnvironment = new Map<string, string | undefined>()

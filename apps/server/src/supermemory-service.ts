@@ -9,7 +9,7 @@ import { isAllowedModelUrl } from './model-url.js'
 import { projectFilePath } from './project-storage.js'
 import { GLOBAL_POOL_KEY, poolForKey, projectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, resolveProjectBaseUrl } from './supermemory-instance.js'
-import { proxyFetch } from './proxy-fetch.js'
+import { createProxyFetch } from './proxy-fetch.js'
 
 const PROJECT_TAG_PREFIX = 'research-os-project-'
 const DEFAULT_LOCAL_BASE_URL = 'http://127.0.0.1:6767'
@@ -130,6 +130,7 @@ export async function testEmbeddingConnection(input: {
   dimensions: number
   base_url: string
   key: string
+  use_proxy?: boolean
   project_id?: string
 }) {
   const start = Date.now()
@@ -150,6 +151,7 @@ export async function testEmbeddingConnection(input: {
   const effectiveModel = input.mode === 'global'
     ? globalModel
     : (input.model || saved?.model || '')
+  const effectiveUseProxy = input.use_proxy ?? saved?.use_proxy ?? false
 
   if (effectiveProvider === 'local') {
     const projectId = input.project_id
@@ -184,7 +186,7 @@ export async function testEmbeddingConnection(input: {
   }
   const endpoint = `${baseUrl.replace(/\/+$/, '')}/embeddings`
   try {
-    const response = await proxyFetch()(endpoint, {
+    const response = await createProxyFetch({ useProxy: effectiveUseProxy })(endpoint, {
       method: 'POST',
       headers: {
         accept: 'application/json',

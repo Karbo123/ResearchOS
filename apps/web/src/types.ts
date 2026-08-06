@@ -81,6 +81,7 @@ export interface ModelTierSettings {
   url?: string
   key_configured?: boolean
   reasoning_effort?: ReasoningEffort
+  use_proxy?: boolean
   sources?: {
     url?: 'runtime_override' | 'env_default' | 'project_override'
     key?: 'runtime_override' | 'env_default' | 'project_override'
@@ -88,7 +89,6 @@ export interface ModelTierSettings {
 }
 
 export interface ProxySettings {
-  enabled: boolean
   url: string
 }
 
@@ -101,6 +101,7 @@ export interface ModelSettingsResponse {
 export interface DocumentModelSettings {
   model: string
   url: string
+  use_proxy: boolean
   key_configured: boolean
   source?: 'runtime_override' | 'env_default' | 'project_override'
 }
@@ -108,6 +109,7 @@ export interface DocumentModelSettings {
 export interface VisionModelSettings {
   model: string
   url: string
+  use_proxy: boolean
   key_configured: boolean
   source?: 'runtime_override' | 'env_default' | 'project_override'
 }
@@ -118,6 +120,7 @@ export type ImageGenerationQuality = 'low' | 'medium' | 'high'
 export interface ImageGenerationSettings {
   model: string
   url: string
+  use_proxy: boolean
   key_configured: boolean
   resolution: ImageGenerationResolution
   quality: ImageGenerationQuality
@@ -130,6 +133,7 @@ export interface VoiceSettingsResponse {
   provider: VoiceProvider
   model: string
   url: string
+  use_proxy: boolean
   key_configured: boolean
   source?: 'runtime_override' | 'env_default' | 'project_override'
 }
@@ -169,6 +173,7 @@ export interface ProjectEmbeddingSettingsResponse {
   dimensions: number
   base_url: string
   env_base_url: string
+  use_proxy: boolean
   key_configured: boolean
   source: string
   instance: ProjectEmbeddingInstanceStatus
@@ -185,6 +190,8 @@ export interface ModelCatalogResponse {
   models: string[]
   reasoning_efforts: string[]
 }
+
+export type ModelCatalogKind = 'simple' | 'medium' | 'complex' | 'document' | 'vision'
 
 export interface ProjectDetail {
   id: string

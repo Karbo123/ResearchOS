@@ -1,4 +1,4 @@
-<!-- DOCS_SYNC_VERSION: 2026-08-06-05 -->
+<!-- DOCS_SYNC_VERSION: 2026-08-06-06 -->
 
 # Research OS
 
@@ -8,7 +8,7 @@ Research OS 是一个本地、可审计的科研自动化 MVP。应用业务代�
 
 ## 当前状态
 
-完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本、Windows Defender 上传门禁（通过 WSL interop）和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理；核心测试、TypeScript 构建和适用的本地验收已在 WSL2 内通过，依赖外部服务或被外部条件阻塞的验收仍按 `TODO.md` 如实记录。开发在 WSL2 shell 内进行（默认开发 shell 就是 WSL2，不使用 Windows cmd/PowerShell）；Windows Chrome 是调试浏览器，通过 mirrored 网络/端口转发以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。GPU 主机验证仍是独立的后续工作。**原生 Windows 宿主不再受支持**：完整应用栈在 WSL2 内运行，Windows 只作为浏览器客户端。
+完整应用栈现已迁移到 WSL2（Ubuntu 22.04）内运行：TypeScript API、嵌入式 PostgreSQL 兼容状态库、Mastra 集成、持久工作流队列、React Web UI、审批门禁、Linux 原生实验监督器、产物账本和 Supermemory Local。Node.js 26.5.1 由 WSL2 内的 nvm 管理；核心测试、TypeScript 构建和适用的本地验收已在 WSL2 内通过，依赖外部服务或被外部条件阻塞的验收仍按 `TODO.md` 如实记录。开发在 WSL2 shell 内进行（默认开发 shell 就是 WSL2，不使用 Windows cmd/PowerShell）；Windows Chrome 是调试浏览器，通过 mirrored 网络/端口转发以 `http://127.0.0.1:<port>` 访问服务。默认 `runtime/research-os.pglite` 正在使用（16 个项目）；`.env` 保持 `RESEARCH_RUNTIME_DIR=runtime`。此前损坏的目录单独保留用于检查，不会被自动使用。GPU 主机验证仍是独立的后续工作。**原生 Windows 宿主不再受支持**：完整应用栈在 WSL2 内运行，Windows 只作为浏览器客户端。
 
 模型失败会直接返回结构化错误。系统不会改用本地回复、其他提供方或无关实验。
 
@@ -56,7 +56,6 @@ PGlite 是持久业务状态源。Mastra Memory 不能替代项目、审批、�
 - WSL2 内的 nvm，以及仓库默认的 Node.js `26.5.1`（`package.json` 仍兼容 Node.js `>=22.13`）
 - WSL2 内的 Git
 - Python 3（含 `python3-venv`），用于科研 Python 实验
-- Windows 主机上的 Windows Defender（WSL2 通过 interop 挂载调用）用于上传扫描
 - WSL2 内提供 `latexmk` 的 TeX 发行版，用于论文编译
 
 ## 快速启动
@@ -89,11 +88,11 @@ npm test
 
 ## 模型设置
 
-左下角设置面板有三个一级标签：`通用`（只放外观，即界面语言与浅色/暗色主题，两者是全局设置）、`模型`（所有模型设置，按项目独立保存并随项目切换）、`系统`（全局代理）。语言与主题先进入草稿状态，只有点击“保存配置”才会真正应用；未保存就关闭会保留原值。没有打开项目时，模型页会提示先打开项目，因为代码三档、文档文本、图片识别、图片生成、Embedding 与语音识别全部都是项目级配置。
+左下角设置面板有三个一级标签：`通用`（只放外观，即界面语言与浅色/暗色主题，两者是全局设置）、`模型`（所有模型设置，按项目独立保存并随项目切换）、`系统`（代理地址信息）。语言与主题先进入草稿状态，只有点击“保存配置”才会真正应用；未保存就关闭会保留原值。没有打开项目时，模型页会提示先打开项目，因为代码三档、文档文本、图片识别、图片生成、Embedding 与语音识别全部都是项目级配置。
 
 代码三档、文档文本与图片识别模型名称在填写 URL 与 API key 后会通过项目级 `model-catalog` 接口自动拉取可用模型列表，模型名使用下拉选择而不是手工输入；推理强度同样使用下拉，并优先采用网关返回的档位。列表拉取失败时保留当前值并显示结构化错误，不会静默替换模型。
 
-代码模型内部使用 `simple` / `medium` / `complex` 三档。界面档位只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档；模型名称字段会从网关自动加载为下拉列表并显示具体模型 ID。每档分别拥有 model、URL、key 和 reasoning effort。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`。项目级运行时覆盖保存在 `projects/<project-id>/.researchos/model-settings.json`（0600 权限、原子写入，删除项目时一并清理，且被项目 Git 工作区忽略）；没有覆盖时回退到项目 `.env` 默认。全局代理仍保存在 `runtime/model-settings.json`。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`projects/<project-id>/.researchos/model-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
+代码模型内部使用 `simple` / `medium` / `complex` 三档。界面档位只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档；模型名称字段会从网关自动加载为下拉列表并显示具体模型 ID。每档分别拥有 model、URL、key、reasoning effort 和代理开关。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`。项目级运行时覆盖保存在 `projects/<project-id>/.researchos/model-settings.json`（0600 权限、原子写入，删除项目时一并清理，且被项目 Git 工作区忽略）；没有覆盖时回退到项目 `.env` 默认。代理地址仍保存在 `runtime/model-settings.json`，每个模型的 `use_proxy` 则按项目保存。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`projects/<project-id>/.researchos/model-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
 项目 `.env` 当前将代码模型默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
 
@@ -101,7 +100,7 @@ npm test
 - `medium`：`RESEARCH_MODEL_MEDIUM`、`RESEARCH_MODEL_URL_MEDIUM`、`RESEARCH_MODEL_KEY_MEDIUM`、`RESEARCH_REASONING_MEDIUM`
 - `complex`：`RESEARCH_MODEL_COMPLEX`、`RESEARCH_MODEL_URL_COMPLEX`、`RESEARCH_MODEL_KEY_COMPLEX`、`RESEARCH_REASONING_COMPLEX`
 - `document`：`RESEARCH_DOCUMENT_MODEL`（默认 `deepseek-v4-flash`）、`RESEARCH_DOCUMENT_MODEL_URL`（默认 `http://127.0.0.1:3000/v1`）、`RESEARCH_DOCUMENT_MODEL_KEY`（留空回退到 `RESEARCH_MODEL_KEY_MEDIUM`）
-- `vision`：`RESEARCH_VISION_MODEL`（默认 `mimo-v2.5`）、`RESEARCH_VISION_MODEL_URL`（默认 `http://10.31.107.77:3000/v1`）、`RESEARCH_VISION_MODEL_KEY`（留空回退到 `RESEARCH_MODEL_KEY_MEDIUM`）
+- `vision`：`RESEARCH_VISION_MODEL`（默认 `mimo-v2.5`）、`RESEARCH_VISION_MODEL_URL`（默认 `http://127.0.0.1:3000/v1`）、`RESEARCH_VISION_MODEL_KEY`（留空回退到 `RESEARCH_MODEL_KEY_MEDIUM`）
 - `image_generation`：`RESEARCH_IMAGE_MODEL`（默认 `gpt-image-2-official`）、`RESEARCH_IMAGE_MODEL_URL`（默认 `https://api.apimart.ai/v1`）、`RESEARCH_IMAGE_MODEL_KEY`、`RESEARCH_IMAGE_RESOLUTION`（默认 `1k`）、`RESEARCH_IMAGE_QUALITY`（默认 `low`）
 - 共享请求时限：`MODEL_REQUEST_TIMEOUT_SECONDS`
 
@@ -111,7 +110,7 @@ npm test
 
 每个已配置模型（代码三档、文档文本、图片识别、图片生成、语音识别）都提供“测试连接”按钮，使用最小请求体验证 URL、key 与模型是否可用；图片生成测试会提交一个最省钱的真实任务，不会下载或展示生成图片。
 
-`系统` 页提供全局代理开关。开启时 URL 输入框与开关同一行显示，并控制 Mastra、Supermemory bridge、语音转写和远程 Embedding 出口；关闭时全部直连。回环与 RFC1918 私有地址始终绕过代理。
+`系统` 页只保存代理地址并提供代理连通性测试。每个模型页都有独立的代理开关：代码三档、文档文本与 Embedding 默认直连，图片识别、图片生成与语音识别默认走代理。Mastra 模型调用、模型目录请求、语音转写与远程 Embedding 出口都遵循各自开关。回环与 RFC1918 私有地址始终绕过代理。
 
 系统接受 HTTPS 端点；HTTP 只允许回环地址和 RFC1918 私有地址，包括本地 OpenAI-compatible 服务。
 
@@ -122,6 +121,8 @@ npm test
 每个科研项目在 `projects/<project-id>/workflow.ts` 拥有自己独立的 v2 声明式 workflow，并纳入项目内 Git。新项目从默认模板复制；已有项目通过幂等脚本补齐，不覆盖已定制文件。原生 API loader 轮询项目文件（`RESEARCH_WORKFLOW_POLL_INTERVAL_MS`，默认 2000ms），把变更源码编译到 `runtime/workflow-v2-cache/<project-id>/`，校验 Zod 契约、图闭合、capability 白名单、静态安全与循环依赖后原子替换为新版本，无需重启服务。非法文件保留上一有效版本并返回结构化错误；已启动的节点任务固定使用创建它的 definition 版本。`/mnt/d` 没有可靠 inotify，因此 definition 热加载使用轮询，loader/运行时源码变化仍需重启。
 
 PGlite 是 workflow 运行时事实源：`project_workflow_runtime`、`workflow_definitions`、`workflow_events` 和 `workflow_node_runs` 复用现有任务队列。项目协调器追加有限节点任务，原生 worker 池以租约、有限重试、线程/项目串行约束、心跳和重启恢复执行这些任务。项目对话、论文翻译/修订、实验规划、相关工作、报告窗口和工作流编辑都改为追加事件并等待有限节点运行，不再启动一个永不结束的 Mastra workflow run。
+
+业务数据库固定使用 PGlite 0.3.10：0.3.7 存在上游已修复的 `MessageContext` 泄漏，而 0.5.x 不能直接打开当前 0.3.x 数据目录；后续升级必须先在真实数据库副本上验证打开、查询、事务和关闭。workflow 与聊天 SSE 使用项目内感知取消的原生 `ReadableStream`，客户端断连会结束 producer，前端不会再用 REST polling 掩盖实时流故障。任务 worker 使用单调度器、有界并发和空闲指数退避；PGlite/WASM 致命错误会终止 API，不会再对失效数据库反复写入恢复状态。
 
 在项目对话中可以直接提出工作流修改需求。工作流编辑 Agent 只生成可审阅 diff，API 先在临时工作区校验，审批通过后写回项目 `workflow.ts` 并提交项目 Git，再由 loader 热加载。项目页渲染 `WorkflowGraphSnapshot`（语义分组、节点详情、运行/任务/事件时间线和状态筛选），并订阅 `/api/projects/:projectId/workflow/stream`；Mastra Studio 仅作为 Agent 与本地调试的开发辅助视图。
 
@@ -161,7 +162,7 @@ Provider 响应现在使用项目范围的 PGlite 请求缓存。缓存键包含
 
 ## 项目语义记忆
 
-Supermemory 默认通过本机自托管的 Supermemory Local 服务 `http://127.0.0.1:6767` 运行。Supermemory Local 将加密数据库保存在本机，并提供 Memory API、hybrid 语义检索、Graph 上下文和文档摄取，不依赖 Supermemory 云端服务。安装官方自托管二进制后，`npm run supermemory:start` 会先启动只监听回环地址的模型 bridge（默认 `127.0.0.1:3010`），再把 bridge 的 base 和 `.env` 中配置的 key 以后台隐藏方式传给 Supermemory；日志写入 `runtime/` 并等待健康端点；`npm run supermemory:stop` 停止记录的 Supermemory 进程和 bridge。当前二进制请保持 `SUPERMEMORY_MODEL_BRIDGE_ENABLED=true`，端口可用 `SUPERMEMORY_MODEL_BRIDGE_PORT` 调整。本机回环请求可以使用 Supermemory Local 的自动认证；如果使用非回环地址，则必须配置显式 `SUPERMEMORY_API_KEY`。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或经过 Defender 扫描的上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
+Supermemory 默认通过本机自托管的 Supermemory Local 服务 `http://127.0.0.1:6767` 运行。Supermemory Local 将加密数据库保存在本机，并提供 Memory API、hybrid 语义检索、Graph 上下文和文档摄取，不依赖 Supermemory 云端服务。安装官方自托管二进制后，`npm run supermemory:start` 会先启动只监听回环地址的模型 bridge（默认 `127.0.0.1:3010`），再把 bridge 的 base 和 `.env` 中配置的 key 以后台隐藏方式传给 Supermemory；日志写入 `runtime/` 并等待健康端点；`npm run supermemory:stop` 停止记录的 Supermemory 进程和 bridge。当前二进制请保持 `SUPERMEMORY_MODEL_BRIDGE_ENABLED=true`，端口可用 `SUPERMEMORY_MODEL_BRIDGE_PORT` 调整。本机回环请求可以使用 Supermemory Local 的自动认证；如果使用非回环地址，则必须配置显式 `SUPERMEMORY_API_KEY`。每次操作都使用不可变的项目 container tag 做隔离。API 已提供状态、摄取、项目范围 hybrid 检索、Graph Memory 上下文、关联记录查询，以及经过审批的 forget/delete 操作。PDF、图片和上传材料摄取仅允许已经校验的项目 Artifact 或受控上传文件；PDF/文本会执行有界分块，每个 chunk 保留上传文件 ID、SHA-256、页码或文本定位和证据状态，原始文件仍由本地 Artifact 保存。
 
 Embedding 通过 `.env` 中的 `SUPERMEMORY_EMBEDDING_PROVIDER`、`SUPERMEMORY_EMBEDDING_MODEL`、`SUPERMEMORY_EMBEDDING_DIMENSIONS`、`SUPERMEMORY_EMBEDDING_BASE_URL` 和项目保留的 `SUPERMEMORY_EMBEDDING_API_KEY` 配置。默认 provider 是 `local`，使用多语言 ONNX 模型 `Xenova/bge-m3`（1024 维）。远程 embedding（OpenAI / OpenAI-compatible / Gemini）只在官方 `server-v0.0.5` build 中实现；`server-v0.0.6` 与 `0.0.7-rc.2` 已回退到其内置的本地 ONNX worker（`Xenova/bge-base-en-v1.5`，768 维，仅英语；2026-08-01 已对 v0.0.6 与 rc.2 两个二进制隔离启动+摄入复核）。WSL2 运行副本固定使用 `server-v0.0.5` linux-x64 二进制：配置 `SUPERMEMORY_EMBEDDING_PROVIDER=openai` 时运行 `Qwen3-Embedding-8B`（1024 维，`https://ai.gitee.com/v1`），默认 `local` 时运行 `Xenova/bge-m3`（1024 维，多语言）；`scripts/start-supermemory.ts` 在配置远程 provider 时会拒绝启动非 v0.0.5 二进制，API 守卫也会以 `supermemory_embedding_unsupported` 失败关闭，绝不静默使用本地向量。2026-08-01 实测：配置可用 `SUPERMEMORY_EMBEDDING_API_KEY` 后，摄入会真实发起 `POST /v1/embeddings` 并成功 upsert 向量（1024 维）。用户要求的 2000 维仍被一个上游硬限制挡住（详见 TODO 053-C）：服务端 pgvector HNSW 在向量 upsert 阶段有约 1024 维上限（隔离实测 1024 维端到端可用；1536 维与 2000 维均报 `Failed to upsert chunk embeddings`，API 已正确返回对应维度向量，失败发生在索引写入），因此 1024 维是已验证可用配置，二进制补丁无法解决该限制；另一个 800ms 搜索超时限制（v0.0.5 二进制中 query embedding 超时硬编码 `interactive:800ms`，`/v4/search` 写死 interactive profile，schema 不接受 profile，官方配置无超时项，常规配置无法绕过，而 `ai.gitee.com` 实测 0.65-1.1s）已由补丁解除。**经用户批准，2026-08-01 已部署字节级补丁**：该常量在二进制偏移约 220680316 处以明文 JS 存在，将 `sdk:800` 等长替换为 `sdk:20000` 后二进制可正常启动；3s 延迟 embedding 端点搜索实测成功（timing 3026ms、score 1），生产环境对 `ai.gitee.com` 实测成功（timing 4398ms、score 0.79）。补丁不改变 `--version`（仍报 0.0.5），不解决 2000 维 HNSW 上限。原版二进制备份：`/home/karbo/bin/supermemory-server-linux-x64.v0.0.5-orig.bak`（sha256 `b2fccca3ff2b5607ce41028c759f375c4ecf5461adc9f3306f41c2757edaf375`）；在用补丁版 sha256 `7d19ddadf484a0539dd813227c2e24ad0e191b8e5db291c2caf2c1ef63a2e7d6`。为什么打补丁：Supermemory 服务端源码为闭源（公开 monorepo 不含 server），v0.0.5 之后没有任何官方 build 实现远程 embedding，API 无超时覆盖项，而摄入与 `/v3/search` 链路实测完整可用——要让语义搜索在延迟 >800ms 的端点（如 `ai.gitee.com` 0.65-1.1s）上工作，唯一现实路径就是补丁二进制。切换模型或维度必须使用全新的 Supermemory 数据目录或完整重索引。
 

@@ -9,14 +9,22 @@ const PROXY_KEYS = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy', 'A
  * proxy address (for example an old `/etc/resolv.conf` host IP captured by a
  * `set_proxy.sh` script) makes every outbound embedding or model-download
  * request fail with `Unable to connect`. Proxy variables are therefore never
- * inherited blindly: when `SUPERMEMORY_PROXY_URL` is explicitly configured it is
- * forwarded to the child; when the model settings proxy is enabled it takes
- * precedence, otherwise the child runs without any proxy variables.
+ * inherited blindly. The second argument controls per-project Embedding pools:
+ * `true` applies the system proxy URL (or an explicit SUPERMEMORY_PROXY_URL),
+ * `false` clears all proxy variables, and `undefined` keeps an explicit
+ * SUPERMEMORY_PROXY_URL but never applies the global system URL automatically.
  */
-export function supermemoryChildEnv(overrides: Record<string, string | undefined> = {}): NodeJS.ProcessEnv {
-  const modelProxy = privateModelSettings().proxy
+export function supermemoryChildEnv(
+  overrides: Record<string, string | undefined> = {},
+  useEmbeddingProxy?: boolean,
+): NodeJS.ProcessEnv {
+  const systemProxyUrl = privateModelSettings().proxy.url.trim()
   const configuredProxy = process.env.SUPERMEMORY_PROXY_URL?.trim()
-  const effectiveProxy = modelProxy.enabled && modelProxy.url ? modelProxy.url : configuredProxy
+  const effectiveProxy = useEmbeddingProxy === undefined
+    ? (configuredProxy || '')
+    : useEmbeddingProxy
+      ? (systemProxyUrl || configuredProxy)
+      : ''
   const env: NodeJS.ProcessEnv = {}
   for (const [key, value] of Object.entries(process.env)) {
     if (value === undefined) continue

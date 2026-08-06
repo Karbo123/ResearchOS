@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, errorMessage } from '../api'
-import type { ModelCatalogResponse } from '../types'
+import type { ModelCatalogKind, ModelCatalogResponse } from '../types'
 
 export type ModelCatalogStatus = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -13,7 +13,14 @@ export interface ModelCatalogState {
 
 const DEFAULT_REASONING_EFFORTS = ['low', 'medium', 'high']
 
-export function useModelCatalog(projectId: string, url: string, key: string, delayMs = 400): ModelCatalogState {
+export function useModelCatalog(
+  projectId: string,
+  url: string,
+  key: string,
+  kind: ModelCatalogKind,
+  useProxy?: boolean,
+  delayMs = 400,
+): ModelCatalogState {
   const [models, setModels] = useState<string[]>([])
   const [reasoningEfforts, setReasoningEfforts] = useState<string[]>(DEFAULT_REASONING_EFFORTS)
   const [status, setStatus] = useState<ModelCatalogStatus>('idle')
@@ -35,7 +42,7 @@ export function useModelCatalog(projectId: string, url: string, key: string, del
       setError('')
       api<ModelCatalogResponse>(`/api/projects/${projectId}/settings/model-catalog`, {
         method: 'POST',
-        body: JSON.stringify({ url: normalizedUrl, key: normalizedKey }),
+        body: JSON.stringify({ kind, url: normalizedUrl, key: normalizedKey, use_proxy: useProxy }),
       })
         .then(result => {
           if (cancelled) return
@@ -56,7 +63,7 @@ export function useModelCatalog(projectId: string, url: string, key: string, del
       cancelled = true
       window.clearTimeout(timer)
     }
-  }, [projectId, normalizedUrl, normalizedKey, delayMs])
+  }, [projectId, normalizedUrl, normalizedKey, kind, useProxy, delayMs])
 
   return { models, reasoning_efforts: reasoningEfforts, status, error }
 }

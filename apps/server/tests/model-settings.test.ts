@@ -47,7 +47,7 @@ describe('public model settings', () => {
     expect(() => loadModelConfig('simple')).toThrow(ModelConfigurationError)
   })
 
-  it('persists the global proxy setting without exposing it as a tier key', async () => {
+  it('persists the proxy address without exposing it as a tier key', async () => {
     setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-model-settings-${process.pid}`)
     vi.resetModules()
     const { saveModelSettings, publicProxySettings } = await import('../src/model-settings.js')
@@ -56,19 +56,19 @@ describe('public model settings', () => {
       simple: tier('luna'),
       medium: { ...tier('terra'), reasoning_effort: 'medium' },
       complex: { ...tier('sol'), reasoning_effort: 'high' },
-      proxy: { enabled: true, url: 'http://127.0.0.1:7890' },
+      proxy: { url: 'http://127.0.0.1:7890' },
     })
-    expect(publicProxySettings()).toEqual({ enabled: true, url: 'http://127.0.0.1:7890' })
+    expect(publicProxySettings()).toEqual({ url: 'http://127.0.0.1:7890' })
   })
 
-  it('saves the proxy through its own endpoint without touching model tiers', async () => {
+  it('saves the proxy address through its own endpoint without touching model tiers', async () => {
     setEnvironment('RESEARCH_RUNTIME_DIR', `runtime/test-proxy-settings-${process.pid}`)
     vi.resetModules()
     const { privateModelSettings, saveProxySettings } = await import('../src/model-settings.js')
     const before = privateModelSettings()
-    const saved = saveProxySettings({ enabled: true, url: 'http://127.0.0.1:7890' })
+    const saved = saveProxySettings({ url: 'http://127.0.0.1:7890' })
     const after = privateModelSettings()
-    expect(saved).toEqual({ enabled: true, url: 'http://127.0.0.1:7890' })
+    expect(saved).toEqual({ url: 'http://127.0.0.1:7890' })
     expect(after.proxy).toEqual(saved)
     expect(after.simple.model).toBe(before.simple.model)
     expect(after.simple.key).toBe(before.simple.key)
@@ -105,13 +105,14 @@ describe('public model settings', () => {
     const { privateModelSettings, publicVisionSettings, saveVisionSettings } = await import('../src/model-settings.js')
     const saved = saveVisionSettings({
       model: 'mimo-v2.5',
-      url: 'http://10.31.107.77:3000/v1',
+      url: 'http://127.0.0.1:3000/v1',
       key: 'vision-key',
     })
     expect(saved).toMatchObject({
       model: 'mimo-v2.5',
-      url: 'http://10.31.107.77:3000/v1',
+      url: 'http://127.0.0.1:3000/v1',
       key_configured: true,
+      use_proxy: true,
     })
     expect(publicVisionSettings()).not.toHaveProperty('key')
     expect(privateModelSettings().vision.key).toBe('vision-key')

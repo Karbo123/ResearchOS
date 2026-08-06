@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { chatRequest, experimentRequest, modelSettingsRequest } from '../src/contracts.js'
-import { isAllowedModelUrl, isResponsesBaseUrl } from '../src/model-url.js'
+import { isAllowedModelUrl, isPrivateModelUrl, isResponsesBaseUrl } from '../src/model-url.js'
 import { testProjectSlug } from './test-project.js'
 
 describe('strict application contracts', () => {
@@ -34,13 +34,18 @@ describe('strict application contracts', () => {
     expect(isAllowedModelUrl('http://192.168.1.5/v1')).toBe(true)
     expect(isAllowedModelUrl('http://8.8.8.8/v1')).toBe(false)
     expect(isAllowedModelUrl('file:///tmp/model')).toBe(false)
+    expect(isPrivateModelUrl('http://127.0.0.1:3000/v1')).toBe(true)
+    expect(isPrivateModelUrl('http://10.31.107.77:3000/v1')).toBe(true)
+    expect(isPrivateModelUrl('http://172.31.0.1/v1')).toBe(true)
+    expect(isPrivateModelUrl('https://api.groq.com/openai/v1')).toBe(false)
     const tier = (url: string) => ({ model: 'model', url, key: 'secret', reasoning_effort: 'low' as const })
     expect(() => modelSettingsRequest.parse({ simple: tier('file:///tmp/model'), medium: tier('http://127.0.0.1:3000/v1'), complex: tier('http://127.0.0.1:3000/v1') })).toThrow()
   })
-  it('requires an HTTP(S) proxy URL when the proxy is enabled', () => {
+  it('accepts only HTTP(S) proxy URLs and permits an empty proxy address', () => {
     const tier = (model: string) => ({ model, url: 'http://127.0.0.1:3000/v1', key: 'secret', reasoning_effort: 'low' as const })
     const base = { simple: tier('luna'), medium: tier('terra'), complex: tier('sol') }
-    expect(() => modelSettingsRequest.parse({ ...base, proxy: { enabled: true, url: 'socks5://127.0.0.1:1080' } })).toThrow(/proxy URL/)
-    expect(modelSettingsRequest.parse({ ...base, proxy: { enabled: true, url: 'http://127.0.0.1:7890' } }).proxy).toMatchObject({ enabled: true, url: 'http://127.0.0.1:7890' })
+    expect(() => modelSettingsRequest.parse({ ...base, proxy: { url: 'socks5://127.0.0.1:1080' } })).toThrow(/proxy URL/)
+    expect(modelSettingsRequest.parse({ ...base, proxy: { url: 'http://127.0.0.1:7890' } }).proxy).toMatchObject({ url: 'http://127.0.0.1:7890' })
+    expect(modelSettingsRequest.parse({ ...base, proxy: { url: '' } }).proxy).toEqual({ url: '' })
   })
 })

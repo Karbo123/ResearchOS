@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Database, Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import type { ProjectEmbeddingSettingsResponse } from '../types'
-import { ConfirmDialog, EmbeddingTestButton, StatusDot } from './ui'
+import { ConfirmDialog, EmbeddingTestButton, ModelProxySwitch, StatusDot } from './ui'
 import { useTranslation } from '../i18n'
 
 interface FormValues {
@@ -13,6 +13,7 @@ interface FormValues {
   base_url: string
   env_base_url: string
   key: string
+  use_proxy: boolean
   key_configured: boolean
 }
 
@@ -24,6 +25,7 @@ const EMPTY: FormValues = {
   base_url: '',
   env_base_url: '',
   key: '',
+  use_proxy: false,
   key_configured: false,
 }
 
@@ -50,6 +52,7 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
         base_url: result.base_url,
         env_base_url: result.env_base_url || '',
         key: '',
+        use_proxy: Boolean(result.use_proxy),
         key_configured: result.key_configured,
       })
       setInstance(result.instance)
@@ -94,10 +97,11 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
           dimensions: Number(values.dimensions) || 1024,
           base_url: values.base_url.trim(),
           key: values.key,
+          use_proxy: values.use_proxy,
           reset_data: resetData,
         }),
       })
-      setValues(previous => previous ? { ...previous, key: '', key_configured: result.key_configured } : previous)
+      setValues(previous => previous ? { ...previous, key: '', use_proxy: Boolean(result.use_proxy), key_configured: result.key_configured } : previous)
       setInstance(result.instance)
       setDirty(false)
       setConfirmReset(false)
@@ -134,6 +138,13 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
               </div>
             </div>
             <div className="model-tier-tools">
+              {custom ? (
+                <ModelProxySwitch
+                  checked={values.use_proxy}
+                  onChange={value => update('use_proxy', value)}
+                  label={t('settings.modelProxyLabel')}
+                />
+              ) : null}
               <EmbeddingTestButton
                 projectId={projectId}
                 fields={{
@@ -144,6 +155,7 @@ export function ProjectEmbeddingSettingsForm({ projectId, onChanged }: { project
                   base_url: values.base_url,
                   key: values.key,
                 }}
+                useProxy={values.use_proxy}
               />
               {instance?.mode === 'custom' && instance.port ? (
                 <span className="tier-default">{t('embedding.instance')} :{instance.port}{instance.running ? t('embedding.running') : t('embedding.notRunning')}

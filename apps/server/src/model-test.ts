@@ -1,9 +1,12 @@
 import { ApiError } from './http.js'
-import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
-import { proxyFetch } from './proxy-fetch.js'
+import { isAllowedModelUrl, isPrivateModelUrl, isResponsesBaseUrl } from './model-url.js'
+import { privateModelSettings } from './model-settings.js'
+import { modelUsesProxy } from './model-proxy.js'
+import { createProxyFetch } from './proxy-fetch.js'
 import { privateProjectModelSettings, privateProjectVoiceSettings } from './project-settings.js'
 
 const TEST_TIMEOUT_MS = 25_000
+const TEST_IMAGE_DATA_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='
 
 interface TestTarget {
   url: string
@@ -49,24 +52,32 @@ function upstreamMessage(body: unknown): string {
   return message || '上游服务返回了错误。'
 }
 
-async function fetchTarget(target: TestTarget, url: string, init: RequestInit): Promise<Response> {
+async function fetchTarget(target: TestTarget, url: string, init: RequestInit, useProxy: boolean): Promise<Response> {
+  const headers = new Headers(init.headers)
+  headers.set('accept', 'application/json')
+  headers.set('authorization', `Bearer ${target.key}`)
+  headers.set('user-agent', 'research-os-model-test/1')
+  if (!(init.body instanceof FormData) && !headers.has('content-type')) {
+    headers.set('content-type', 'application/json')
+  }
   try {
-    return await proxyFetch()(url, {
+    return await createProxyFetch({ useProxy })(url, {
       ...init,
-      headers: {
-        accept: 'application/json',
-        authorization: `Bearer ${target.key}`,
-        'content-type': 'application/json',
-        'user-agent': 'research-os-model-test/1',
-        ...(init.headers as Record<string, string> | undefined),
-      },
+      headers,
       signal: AbortSignal.timeout(TEST_TIMEOUT_MS),
     })
   } catch (error) {
+    const proxyUrl = privateModelSettings().proxy.url
+    const privateAddress = isPrivateModelUrl(target.url)
+    const networkHint = privateAddress
+      ? '该回环或私有地址始终直连，请确认目标服务正在监听。'
+      : useProxy && proxyUrl
+        ? '当前模型已启用代理，请检查代理地址和代理服务。'
+        : '当前模型未启用代理，正在直连；如需代理请打开该模型的代理开关。'
     if (error instanceof Error && error.name === 'TimeoutError') {
-      throw new ApiError(504, 'model_test_timeout', '连接测试超时，请检查网络与代理设置。')
+      throw new ApiError(504, 'model_test_timeout', `连接测试超时。${networkHint}`)
     }
-    throw new ApiError(502, 'model_test_unreachable', '无法连接模型服务，请检查 URL、网络与代理设置。')
+    throw new ApiError(502, 'model_test_unreachable', `无法连接模型服务。${networkHint}`)
   }
 }
 
@@ -76,7 +87,7 @@ function assertConfigured(target: TestTarget): void {
   if (!target.url) throw new ApiError(422, 'model_test_missing_url', '请先填写 API 地址。')
 }
 
-async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision', input: { model: string; url: string; key: string }, projectId?: string) {
+async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision', input: { model: string; url: string; key: string }, projectId?: string, useProxy?: boolean) {
   const target = targetFor(kind, input, projectId)
   assertConfigured(target)
   if (!isAllowedModelUrl(target.url) || !isResponsesBaseUrl(target.url)) {
@@ -87,11 +98,19 @@ async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'docum
     method: 'POST',
     body: JSON.stringify({
       model: target.model,
-      input: [{ role: 'user', content: [{ type: 'input_text', text: 'ping' }] }],
+      input: [{
+        role: 'user',
+        content: kind === 'vision'
+          ? [
+              { type: 'input_text', text: 'Reply with OK.' },
+              { type: 'input_image', image_url: TEST_IMAGE_DATA_URL, detail: 'low' },
+            ]
+          : [{ type: 'input_text', text: 'ping' }],
+      }],
       max_output_tokens: 8,
       stream: false,
     }),
-  })
+  }, useProxy ?? modelUsesProxy(kind, projectId))
   const body = await response.json().catch(() => null)
   const elapsed = Math.round((Date.now() - started) / 100) / 10
   if (response.ok) {
@@ -102,28 +121,53 @@ async function testResponsesModel(kind: 'simple' | 'medium' | 'complex' | 'docum
   throw new ApiError(502, 'model_test_upstream_error', `模型服务已响应但返回错误（HTTP ${response.status}）：${upstreamMessage(body)}`)
 }
 
-async function testVoiceModel(input: { model: string; url: string; key: string }, projectId?: string) {
+function silentWav(): Blob {
+  const sampleRate = 8_000
+  const samples = sampleRate / 4
+  const dataLength = samples * 2
+  const buffer = Buffer.alloc(44 + dataLength)
+  buffer.write('RIFF', 0)
+  buffer.writeUInt32LE(36 + dataLength, 4)
+  buffer.write('WAVE', 8)
+  buffer.write('fmt ', 12)
+  buffer.writeUInt32LE(16, 16)
+  buffer.writeUInt16LE(1, 20)
+  buffer.writeUInt16LE(1, 22)
+  buffer.writeUInt32LE(sampleRate, 24)
+  buffer.writeUInt32LE(sampleRate * 2, 28)
+  buffer.writeUInt16LE(2, 32)
+  buffer.writeUInt16LE(16, 34)
+  buffer.write('data', 36)
+  buffer.writeUInt32LE(dataLength, 40)
+  return new Blob([buffer], { type: 'audio/wav' })
+}
+
+async function testVoiceModel(input: { model: string; url: string; key: string }, projectId?: string, useProxy?: boolean) {
   const target = targetFor('voice', input, projectId)
   assertConfigured(target)
   if (!isAllowedModelUrl(target.url)) {
     throw new ApiError(422, 'model_test_invalid_url', '语音识别地址必须是 HTTPS 或回环/私有 HTTP。')
   }
+  const form = new FormData()
+  form.append('model', target.model)
+  form.append('response_format', 'json')
+  form.append('temperature', '0')
+  form.append('file', silentWav(), 'connectivity-test.wav')
   const started = Date.now()
   const response = await fetchTarget(target, `${target.url.replace(/\/+$/, '')}/audio/transcriptions`, {
     method: 'POST',
-    body: JSON.stringify({
-      model: target.model,
-      input: 'ping',
-      response_format: 'json',
-    }),
-  })
+    body: form,
+  }, useProxy ?? modelUsesProxy('voice', projectId))
   const body = await response.json().catch(() => null)
   const elapsed = Math.round((Date.now() - started) / 100) / 10
-  if (response.ok) throw new ApiError(502, 'model_test_invalid_response', '语音识别接口不应接受 JSON 文本输入，请检查接口类型。')
+  if (response.ok && body && typeof body === 'object' && typeof body.text === 'string') {
+    return { ok: true, elapsed, message: '语音识别接口连接正常。' }
+  }
+  if (response.ok) throw new ApiError(502, 'model_test_invalid_response', '语音识别服务返回了无效响应。')
   throw new ApiError(502, 'model_test_upstream_error', `语音识别服务已响应（HTTP ${response.status}）：${upstreamMessage(body)}`)
 }
 
-async function testImageGenerationModel(input: { model: string; url: string; key: string }, projectId?: string) {
+async function testImageGenerationModel(input: { model: string; url: string; key: string }, projectId?: string, useProxy?: boolean) {
   const target = targetFor('image', input, projectId)
   assertConfigured(target)
   if (!isAllowedModelUrl(target.url)) {
@@ -140,7 +184,7 @@ async function testImageGenerationModel(input: { model: string; url: string; key
       quality: 'low',
       n: 1,
     }),
-  })
+  }, useProxy ?? modelUsesProxy('image', projectId))
   const body = await response.json().catch(() => null)
   const elapsed = Math.round((Date.now() - started) / 100) / 10
   const data = body?.data
@@ -157,10 +201,10 @@ async function testImageGenerationModel(input: { model: string; url: string; key
 
 export async function testModelConnection(
   kind: 'simple' | 'medium' | 'complex' | 'document' | 'vision' | 'image' | 'voice',
-  input: { model: string; url: string; key: string; project_id?: string },
+  input: { model: string; url: string; key: string; use_proxy?: boolean; project_id?: string },
 ) {
   const projectId = input.project_id
-  if (kind === 'image') return testImageGenerationModel(input, projectId)
-  if (kind === 'voice') return testVoiceModel(input, projectId)
-  return testResponsesModel(kind, input, projectId)
+  if (kind === 'image') return testImageGenerationModel(input, projectId, input.use_proxy)
+  if (kind === 'voice') return testVoiceModel(input, projectId, input.use_proxy)
+  return testResponsesModel(kind, input, projectId, input.use_proxy)
 }

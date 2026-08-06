@@ -2515,18 +2515,21 @@ a.secondary { text-decoration: none; color: var(--ink); }
   align-items: flex-end;
   gap: 6px;
   min-width: 0;
+  max-width: 240px;
 }
 .model-test-button {
   flex: none;
 }
 .model-test-message {
   min-width: 0;
-  max-width: min(360px, 100%);
+  max-width: 100%;
   font-size: 12px;
   line-height: 1.4;
   color: var(--muted);
   text-align: right;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .model-test-message.ok {
   color: var(--green-dark);
@@ -2609,10 +2612,13 @@ a.secondary { text-decoration: none; color: var(--ink); }
 }
 .settings-proxy-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   align-items: center;
   margin-top: 2px;
+}
+.settings-proxy-url-full {
+  grid-column: 1 / -1;
 }
 .settings-proxy-url {
   display: grid;
@@ -2676,6 +2682,22 @@ a.secondary { text-decoration: none; color: var(--ink); }
 .settings-switch input:focus-visible + .settings-switch-track {
   outline: 0;
   box-shadow: 0 0 0 4px var(--blue-soft);
+}
+.model-tier-tools .settings-model-proxy {
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.model-tier-tools .settings-model-proxy .settings-switch-track {
+  width: 34px;
+  height: 20px;
+}
+.model-tier-tools .settings-model-proxy .settings-switch-track span {
+  width: 14px;
+  height: 14px;
+}
+.model-tier-tools .settings-model-proxy input:checked + .settings-switch-track span {
+  transform: translateX(14px);
 }
 
 @media (max-width: 560px) {

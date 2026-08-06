@@ -22,10 +22,11 @@ export function ModelSelect({
   const hasCatalog = catalog.models.length > 0
   const showCurrent = Boolean(value) && !catalog.models.includes(value)
   const disabled = catalog.status === 'loading' && !hasCatalog
+  const readyMessage = catalog.status === 'ready' ? t('settings.modelCatalogReady', { count: catalog.models.length }) : ''
 
   return (
     <>
-      <select value={value || ''} disabled={disabled} onChange={event => onChange(event.target.value)}>
+      <select value={value || ''} disabled={disabled} title={readyMessage || undefined} onChange={event => onChange(event.target.value)}>
         {!value ? (
           <option value="">
             {catalog.status === 'loading' ? t('settings.modelCatalogLoading') : t('settings.modelCatalogPlaceholder')}
@@ -48,7 +49,7 @@ export function ModelSelect({
         </span>
       ) : null}
       {catalog.status === 'ready' ? (
-        <span className="model-catalog-status ok">{t('settings.modelCatalogReady', { count: catalog.models.length })}</span>
+        <span className="sr-only" role="status" aria-live="polite">{readyMessage}</span>
       ) : null}
     </>
   )

@@ -45,7 +45,7 @@ function reasoningEffortsFromModels(value: unknown): string[] {
 }
 
 export async function fetchModelCatalog(
-  input: { url: string; key: string },
+  input: { url: string; key: string; use_proxy?: boolean },
   fallbackKey = '',
   fetcher: FetchFunction = proxyFetch(),
 ): Promise<ModelCatalog> {

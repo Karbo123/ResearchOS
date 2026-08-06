@@ -11,6 +11,7 @@ import { appendWorkflowEventAndWait } from '../src/project-workflow/task-wait.js
 import { startTaskWorker, recoverInterruptedWork } from '../src/task-worker.js'
 import { workflowGraphSnapshot } from '../src/project-workflow/graph-service.js'
 import { cancelProjectWorkflowTask } from '../src/project-workflow/runtime-service.js'
+import { app } from '../src/index.js'
 
 const projectId = testProjectSlug()
 
@@ -223,6 +224,37 @@ describe('workflow v2 runtime', () => {
     })
     expect(second.id).toBe(first.id)
   })
+
+  it('keeps the workflow SSE open and delivers a later snapshot on the same connection', async () => {
+    const response = await app.request(`/api/projects/${projectId}/workflow/stream`)
+    expect(response.status).toBe(200)
+    expect(response.headers.get('content-type')).toContain('text/event-stream')
+    const reader = response.body!.getReader()
+    const first = await reader.read()
+    expect(first.done).toBe(false)
+    expect(new TextDecoder().decode(first.value)).toContain('event: snapshot')
+
+    const nextChunk = reader.read()
+    const earlyResult = await Promise.race([
+      nextChunk.then(() => 'closed'),
+      new Promise<'open'>(resolve => setTimeout(() => resolve('open'), 100)),
+    ])
+    expect(earlyResult).toBe('open')
+
+    await appendWorkflowEvent(projectId, 'test.parallel', {
+      payload: { sleep_ms: 10 },
+      source: 'sse-test',
+      correlation_id: 'sse-live-update',
+      idempotency_key: 'sse-live-update',
+    })
+    const update = await Promise.race([
+      nextChunk,
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('sse_update_timeout')), 3_500)),
+    ])
+    expect(update.done).toBe(false)
+    expect(new TextDecoder().decode(update.value)).toContain('event: snapshot')
+    await reader.cancel('test_complete')
+  }, 10_000)
 
   it('deduplicates repeated idempotent events into one node task', async () => {
     const correlationId = 'idempotent-task'

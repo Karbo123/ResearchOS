@@ -13,7 +13,6 @@ flowchart LR
   API --> Runner["Native experiment supervisor"]
   Runner --> Project["Project Git workspace and .venv"]
   Runner --> Artifacts["Artifact and metric ledger"]
-  API --> Defender["Windows Defender upload scan (WSL interop)"]
   API --> Memory["Project-scoped Supermemory"]
   Memory --> Chunks["Bounded PDF/text chunks + source hashes"]
 ```
@@ -69,7 +68,7 @@ The database is the business state source. Supermemory is the project-scoped sem
 
 ## Material Indexing
 
-After Defender-scanned upload, the durable queue dispatches a fixed `material_index` task. PDF text is extracted from a bounded page range and text-like files are normalized into bounded overlapping chunks. Images and PDFs with no extractable text are sent as controlled multimodal documents. Each semantic write includes the immutable project container tag and source metadata. `/materials/search` calls Supermemory directly with the current project scope; missing configuration or remote failure is returned as a structured error, never as a local keyword fallback.
+After upload, the durable queue dispatches a fixed `material_index` task. PDF text is extracted from a bounded page range and text-like files are normalized into bounded overlapping chunks. Images and PDFs with no extractable text are sent as controlled multimodal documents. Each semantic write includes the immutable project container tag and source metadata. `/materials/search` calls Supermemory directly with the current project scope; missing configuration or remote failure is returned as a structured error, never as a local keyword fallback.
 
 ## Experiment Boundary
 

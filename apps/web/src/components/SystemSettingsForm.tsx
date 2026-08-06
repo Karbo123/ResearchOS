@@ -3,9 +3,9 @@ import { Save, ShieldCheck } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import { useTranslation } from '../i18n'
 import type { ProxySettings } from '../types'
-import { StatusDot } from './ui'
+import { ProxyTestButton, StatusDot } from './ui'
 
-const EMPTY_PROXY: ProxySettings = { enabled: false, url: '' }
+const EMPTY_PROXY: ProxySettings = { url: '' }
 
 export function SystemSettingsForm({
   onChanged,
@@ -41,7 +41,7 @@ export function SystemSettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const updateProxy = (field: 'enabled' | 'url', value: boolean | string) => {
+  const updateProxy = (field: 'url', value: string) => {
     setProxy(previous => ({ ...previous, [field]: value }))
     setDirty(true)
     onDirtyChange?.(true)
@@ -56,7 +56,6 @@ export function SystemSettingsForm({
       const result = await api<ProxySettings>('/api/settings/proxy', {
         method: 'PUT',
         body: JSON.stringify({
-          enabled: proxy.enabled,
           url: proxy.url.trim(),
         }),
       })
@@ -71,7 +70,7 @@ export function SystemSettingsForm({
     }
   }
 
-  const proxyReady = !proxy.enabled || Boolean(proxy.url)
+  const proxyReady = Boolean(proxy.url)
 
   return (
     <form className="model-settings-form" onSubmit={save}>
@@ -81,37 +80,25 @@ export function SystemSettingsForm({
             <h3>{t('settings.proxyTitle')}</h3>
             <div className="tier-status">
               <StatusDot ready={proxyReady} />
-              {loading ? t('common.waiting') : proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}
+              {loading ? t('common.waiting') : proxy.url ? t('settings.urlReady') : t('settings.proxyDisabled')}
             </div>
           </div>
-          <span className="tier-default">{t('settings.default')} {proxy.enabled ? t('settings.proxyEnabled') : t('settings.proxyDisabled')}</span>
+          <div className="model-tier-tools">
+            <ProxyTestButton url={proxy.url} />
+          </div>
         </div>
         <div className="settings-proxy-row">
-          <label className="settings-switch">
+          <label className="settings-proxy-url settings-proxy-url-full">
+            <span>{t('settings.proxyUrl')}</span>
             <input
-              type="checkbox"
-              checked={proxy.enabled}
+              type="url"
+              value={proxy.url}
               disabled={loading}
-              onChange={event => updateProxy('enabled', event.target.checked)}
+              maxLength={500}
+              placeholder="http://127.0.0.1:7890"
+              onChange={event => updateProxy('url', event.target.value)}
             />
-            <span className="settings-switch-track" aria-hidden="true"><span /></span>
-            <span>{t('settings.proxyEnabled')}</span>
           </label>
-          {proxy.enabled ? (
-            <label className="settings-proxy-url">
-              <span>{t('settings.proxyUrl')}</span>
-              <input
-                type="url"
-                value={proxy.url}
-                disabled={loading}
-                maxLength={500}
-                placeholder="http://127.0.0.1:7890"
-                onChange={event => updateProxy('url', event.target.value)}
-              />
-            </label>
-          ) : (
-            <span className="settings-proxy-state">{t('settings.proxyDisabled')}</span>
-          )}
         </div>
         <p className="settings-note">
           <ShieldCheck size={16} />
