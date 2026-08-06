@@ -10,6 +10,7 @@ import { appendWorkflowEvent } from '../src/project-workflow/event-store.js'
 import { appendWorkflowEventAndWait } from '../src/project-workflow/task-wait.js'
 import { startTaskWorker, recoverInterruptedWork } from '../src/task-worker.js'
 import { workflowGraphSnapshot } from '../src/project-workflow/graph-service.js'
+import { cancelProjectWorkflowTask } from '../src/project-workflow/runtime-service.js'
 
 const projectId = testProjectSlug()
 
@@ -303,6 +304,24 @@ describe('workflow v2 runtime', () => {
     await waitForNodeRun('project_serial_a', 'succeeded')
     await waitForNodeRun('project_serial_b', 'succeeded')
   }, 20_000)
+
+  it('cancels a running workflow task and marks the node run cancelled', async () => {
+    await appendWorkflowEvent(projectId, 'test.project_serial', {
+      payload: { sleep_ms: 3000 },
+      source: 'test',
+      correlation_id: 'cancel-running',
+      idempotency_key: 'cancel-running-event',
+    })
+    const running = await waitForNodeRun('project_serial_a', 'running')
+    const taskId = running.task_id as string
+    expect(taskId).toBeTruthy()
+
+    const cancelled = await cancelProjectWorkflowTask(projectId, taskId)
+    expect(cancelled.status).toBe('cancelled')
+
+    const run = await waitForNodeRun('project_serial_a', 'cancelled')
+    expect(run.error_code).toBe('cancelled')
+  }, 15_000)
 
   it('pins running node runs to their definition version across hot reload', async () => {
     const waitForOldChain = appendWorkflowEventAndWait(projectId, 'test.version_pin', {

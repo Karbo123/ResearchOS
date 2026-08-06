@@ -121,6 +121,8 @@ async function tick(now = new Date()): Promise<void> {
 }
 
 export function startReportScheduler(): NodeJS.Timeout {
-  void tick()
-  return setInterval(() => void tick(), Number(process.env.RESEARCH_REPORT_POLL_SECONDS || 30) * 1000)
+  void tick().catch(error => console.error('report scheduler tick failed', error))
+  return setInterval(() => {
+    void tick().catch(error => console.error('report scheduler tick failed', error))
+  }, Number(process.env.RESEARCH_REPORT_POLL_SECONDS || 30) * 1000)
 }

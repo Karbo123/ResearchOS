@@ -401,6 +401,7 @@ export function WorkflowGraphCard({ projectId }: { projectId: string }) {
                     className="data-row workflow-graph-event-row"
                     type="button"
                     key={event.sequence}
+                    data-correlation-id={event.correlation_id}
                     data-node-id={eventNodeId}
                     title={t('workflowGraph.jumpToNode')}
                     aria-label={t('workflowGraph.jumpToNode')}

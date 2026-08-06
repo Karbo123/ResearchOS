@@ -62,7 +62,7 @@ import { createExperimentPlan as createProjectExperimentPlan } from './experimen
 import { appendWorkflowEvent, appendWorkflowEventFromInput, listWorkflowEvents } from './project-workflow/event-store.js'
 import { appendWorkflowEventAndWait } from './project-workflow/task-wait.js'
 import { workflowGraphSnapshot } from './project-workflow/graph-service.js'
-import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks, recoverProjectWorkflowRuntimes } from './project-workflow/runtime-service.js'
+import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, pauseProjectWorkflow, resumeProjectWorkflow, projectWorkflowRuntime, listProjectWorkflowNodeRuns, listProjectWorkflowTasks, cancelProjectWorkflowTask, recoverProjectWorkflowRuntimes } from './project-workflow/runtime-service.js'
 import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
 import { workflowEventAppendInputSchema } from './project-workflow/contracts.js'
 
@@ -1125,6 +1125,11 @@ app.get('/api/projects/:projectId/workflow/tasks', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
   return context.json({ tasks: await listProjectWorkflowTasks(projectId) })
 })
+app.post('/api/projects/:projectId/workflow/tasks/:taskId/cancel', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  const taskId = z.string().uuid().parse(context.req.param('taskId'))
+  return context.json(await cancelProjectWorkflowTask(projectId, taskId))
+})
 app.get('/api/projects/:projectId/workflow/events', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
   return context.json({ events: await listWorkflowEvents(projectId) })
@@ -1144,17 +1149,23 @@ app.get('/api/projects/:projectId/workflow/stream', async context => {
       return `${value.runtime.event_cursor}:${value.runtime.state_version}:${Math.max(0, ...nodeTimes, ...taskTimes)}`
     }
     let lastSignature = signature(initial)
-    const timer = setInterval(async () => {
-      try {
-        const latest = await workflowGraphSnapshot(projectId)
-        const nextSignature = signature(latest)
-        if (nextSignature !== lastSignature) {
-          lastSignature = nextSignature
-          await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(latest) })
+    const timer = setInterval(() => {
+      void (async () => {
+        try {
+          const latest = await workflowGraphSnapshot(projectId)
+          const nextSignature = signature(latest)
+          if (nextSignature !== lastSignature) {
+            lastSignature = nextSignature
+            await stream.writeSSE({ event: 'snapshot', data: JSON.stringify(latest) })
+          }
+        } catch {
+          try {
+            await stream.writeSSE({ event: 'error', data: JSON.stringify({ code: 'workflow_stream_failed', message: '工作流状态读取失败。' }) })
+          } catch {
+            // The client disconnected; the abort handler clears this interval.
+          }
         }
-      } catch {
-        await stream.writeSSE({ event: 'error', data: JSON.stringify({ code: 'workflow_stream_failed', message: '工作流状态读取失败。' }) })
-      }
+      })()
     }, 2_000)
     stream.onAbort(() => clearInterval(timer))
   })

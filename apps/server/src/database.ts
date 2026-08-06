@@ -30,6 +30,7 @@ ALTER TABLE reports ADD COLUMN IF NOT EXISTS status VARCHAR(30) NOT NULL DEFAULT
 ALTER TABLE reports ADD COLUMN IF NOT EXISTS source_snapshot JSONB NOT NULL DEFAULT '{}';
 CREATE INDEX IF NOT EXISTS ix_reports_project_created ON reports(project_id,created_at);
 CREATE TABLE IF NOT EXISTS tasks (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), kind VARCHAR(100) NOT NULL, status VARCHAR(30) NOT NULL DEFAULT 'queued', payload JSONB NOT NULL DEFAULT '{}', attempts INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 5, idempotency_key VARCHAR(255), next_attempt_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), leased_until TIMESTAMPTZ, lease_token VARCHAR(64), error TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS cancel_requested BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE UNIQUE INDEX IF NOT EXISTS uq_tasks_idempotency_key ON tasks (idempotency_key) WHERE idempotency_key IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ix_tasks_queue_claim ON tasks (status, next_attempt_at, leased_until, created_at);
 ALTER TABLE tasks ADD COLUMN IF NOT EXISTS workflow_definition_version INTEGER;

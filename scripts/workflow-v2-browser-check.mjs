@@ -43,17 +43,30 @@ async function evaluate(expression) {
   return result.result.value
 }
 
+async function waitForAppPage() {
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    try {
+      const ready = await evaluate(`location.origin === ${JSON.stringify(appBase)} && document.readyState === 'complete' && document.querySelectorAll('.workflow-graph-group').length > 0`)
+      if (ready) return true
+    } catch {
+      // The tab can still be on an interstitial or initial document while navigating.
+    }
+    await wait(500)
+  }
+  return false
+}
+
 async function navigate(locale, theme, width, height, mobile = false) {
-  await evaluate(`localStorage.setItem('researchos.locale', ${JSON.stringify(locale)})`)
-  await evaluate(`localStorage.setItem('researchos.theme', ${JSON.stringify(theme)})`)
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile })
   await send('Page.navigate', { url: `${appBase}/project/${projectSlug}/overview/overview` })
   await send('Page.bringToFront')
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    const ready = await evaluate(`document.readyState === 'complete' && !!document.querySelector('.workflow-graph-section')`)
-    if (ready) break
-    await new Promise(resolveTimeout => setTimeout(resolveTimeout, 250))
-  }
+  if (!await waitForAppPage()) throw new Error('Research OS workflow page did not become ready')
+  await evaluate(`localStorage.setItem('researchos.locale', ${JSON.stringify(locale)})`)
+  await evaluate(`localStorage.setItem('researchos.theme', ${JSON.stringify(theme)})`)
+  await send('Page.navigate', { url: 'about:blank' })
+  await send('Page.navigate', { url: `${appBase}/project/${projectSlug}/overview/overview` })
+  await send('Page.bringToFront')
+  if (!await waitForAppPage()) throw new Error('Research OS workflow page did not become ready after reload')
   await new Promise(resolveTimeout => setTimeout(resolveTimeout, 1200))
 }
 
@@ -71,11 +84,7 @@ await send('Runtime.enable')
 await send('Emulation.setFocusEmulationEnabled', { enabled: true })
 await send('Page.navigate', { url: `${appBase}/project/${projectSlug}/overview/overview` })
 await send('Page.bringToFront')
-for (let attempt = 0; attempt < 60; attempt += 1) {
-  const ready = await evaluate(`location.origin === ${JSON.stringify(appBase)} && document.readyState === 'complete' && !!document.querySelector('.workflow-graph-section')`)
-  if (ready) break
-  await new Promise(resolveTimeout => setTimeout(resolveTimeout, 250))
-}
+if (!await waitForAppPage()) throw new Error('Research OS workflow page did not become ready')
 
 const locales = ['zh-CN', 'zh-TW', 'en', 'es']
 const themes = ['light', 'dark']
@@ -187,7 +196,6 @@ const failedFilter = {
   })()`),
 }
 
-const governanceRunsBefore = await evaluate(`Array.from(document.querySelectorAll('.workflow-graph-list .data-row')).filter(row => row.textContent.includes('governance.approval')).length`)
 const event = await fetch(`${appBase}/api/projects/${projectSlug}/workflow/events`, {
   method: 'POST',
   headers: { 'content-type': 'application/json' },
@@ -203,7 +211,9 @@ const event = await fetch(`${appBase}/api/projects/${projectSlug}/workflow/event
 const liveUpdate = await new Promise(resolveLive => {
   const deadline = Date.now() + 20_000
   const poll = async () => {
-    const found = await evaluate(`Array.from(document.querySelectorAll('.workflow-graph-list .data-row')).filter(row => row.textContent.includes('governance.approval')).length > ${governanceRunsBefore}`)
+    const found = event?.correlation_id
+      ? await evaluate(`!!document.querySelector('.workflow-graph-event-row[data-correlation-id="${event.correlation_id}"]')`)
+      : false
     if (found || Date.now() > deadline) resolveLive(found)
     else setTimeout(poll, 500)
   }

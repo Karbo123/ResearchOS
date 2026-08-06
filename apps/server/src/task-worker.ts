@@ -23,6 +23,7 @@ type Task = {
   workflow_concurrency: string | null
   workflow_thread_key: string | null
   worker_id: string | null
+  cancel_requested: boolean
 }
 
 type NodeRunUpdate = {
@@ -39,6 +40,7 @@ async function claim(workerId: string): Promise<Task | null> {
     WHERE id=(
       SELECT candidate.id FROM tasks candidate
       WHERE candidate.status IN ('queued','retrying')
+        AND candidate.cancel_requested=FALSE
         AND candidate.next_attempt_at<=NOW()
         AND (candidate.leased_until IS NULL OR candidate.leased_until<NOW())
         AND NOT EXISTS (
@@ -60,11 +62,44 @@ async function claim(workerId: string): Promise<Task | null> {
 }
 
 async function markTaskSucceeded(task: Task): Promise<void> {
+  const current = await one<{ cancel_requested: boolean }>('SELECT cancel_requested FROM tasks WHERE id=$1', [task.id])
+  if (current?.cancel_requested) {
+    await database.query("UPDATE tasks SET status='cancelled',lease_token=NULL,leased_until=NULL,heartbeat_until=NULL,updated_at=NOW() WHERE id=$1", [task.id])
+    return
+  }
   await database.query("UPDATE tasks SET status='succeeded',lease_token=NULL,leased_until=NULL,heartbeat_until=NULL,updated_at=NOW() WHERE id=$1", [task.id])
+}
+
+async function markNodeRunRunning(task: Task): Promise<void> {
+  if (!task.workflow_node_run_id) return
+  await database.query(
+    `UPDATE workflow_node_runs
+     SET status='running',worker_id=$2,started_at=COALESCE(started_at,NOW()),updated_at=NOW()
+     WHERE id=$1 AND status NOT IN ('succeeded','failed','cancelled')`,
+    [task.workflow_node_run_id, task.worker_id],
+  )
 }
 
 async function markNodeRunSucceeded(task: Task, output: unknown): Promise<void> {
   if (!task.workflow_node_run_id) return
+  const current = await one<{ cancel_requested: boolean }>('SELECT cancel_requested FROM tasks WHERE id=$1', [task.id])
+  if (current?.cancel_requested) {
+    await database.query(
+      `UPDATE workflow_node_runs
+       SET status='cancelled',error_code='cancelled',blocked_reason='用户取消任务',worker_id=NULL,started_at=COALESCE(started_at,NOW()),finished_at=NOW(),updated_at=NOW()
+       WHERE id=$1`,
+      [task.workflow_node_run_id],
+    )
+    await appendWorkflowEvent(task.project_id, 'workflow.task.cancelled', {
+      payload: { task_id: task.id, node_run_id: task.workflow_node_run_id, node_id: task.workflow_node_id },
+      source: 'task-worker',
+      correlation_id: `cancel:${task.id}`,
+      idempotency_key: `workflow-task-cancelled:${task.id}`,
+      causation_id: task.workflow_trigger_event_id,
+      ...(task.workflow_definition_version ? { definition_version: task.workflow_definition_version } : {}),
+    })
+    return
+  }
   const run = await one<NodeRunUpdate>(
     `SELECT id,project_id,correlation_id,node_id,definition_version FROM workflow_node_runs
      WHERE id=$1 AND project_id=$2`,
@@ -183,6 +218,7 @@ async function runTask(task: Task): Promise<void> {
 async function tick(workerId: string): Promise<void> {
   const task = await claim(workerId)
   if (!task) return
+  await markNodeRunRunning(task)
   try {
     await runTask(task)
     await markTaskSucceeded(task)
@@ -236,6 +272,7 @@ export function startTaskWorker(options?: { concurrency?: number }): TaskWorkerH
   }
   const heartbeat = setInterval(() => {
     void database.query("UPDATE tasks SET leased_until=NOW()+INTERVAL '2 minutes',heartbeat_until=NOW() WHERE status='running' AND worker_id IS NOT NULL")
+      .catch(error => console.error('workflow task heartbeat failed', error))
   }, 30_000)
   running.add(heartbeat)
   return {
