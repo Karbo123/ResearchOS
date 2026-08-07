@@ -8,10 +8,10 @@ import { MastraStorageExporter, Observability, SamplingStrategyType } from '@mas
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import {
-  configuredModel, configuredVisionModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent, visionModelName, workflowEditAgent,
+  configuredModel, configuredVisionModel, documentReplyAgent, experimentPlanningAgent, ideaClarificationAgent, knowledgeDocumentDraftAgent, paperRevisionAgent, paperTranslationAgent, projectSlugAgent, researchCoordinatorAgent, supervisionIntentAgent, visionModelName, workflowEditAgent,
 } from './agents/research-agents.js'
 import {
-  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, paperSectionReviseRequestSchema, paperSectionReviseResultSchema, paperSectionTranslateRequestSchema, paperSectionTranslateResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
+  adaptiveClarificationResultSchema, agentRequestContextSchema, clarifyRequestSchema, documentReplyRequestSchema, documentReplyResultSchema, knowledgeDocumentDraftRequestSchema, knowledgeDocumentDraftResultSchema, paperSectionReviseRequestSchema, paperSectionReviseResultSchema, paperSectionTranslateRequestSchema, paperSectionTranslateResultSchema, projectSlugRequestSchema, projectSlugResultSchema,
   coordinatorRequestSchema, coordinatorResultSchema, experimentPlanRequestSchema, experimentPlanSchema,
   supervisionIntentSchema, supervisionRequestSchema, workflowEditRequestSchema, workflowEditResultSchema, type ModelTier,
 } from './contracts.js'
@@ -174,17 +174,19 @@ const apiRoutes = [
         const context = requestContext(
           body.tier,
           undefined,
-          body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null,
+          body.project_id || (body.memory_resource?.startsWith('project:') ? body.memory_resource.slice('project:'.length) : null),
           body.memory_thread?.startsWith('session:') ? body.memory_thread.slice('session:'.length) : null,
           body.workspace_context ? `${body.workspace_context.area}/${body.workspace_context.tab}` : null,
         )
+        const supervisionOptions = generationOptions(context)
         const response = await supervisionIntentAgent.generate(structuredJsonValue({
           latest_user_message: body.message,
           project_context: body.project_context,
           recent_conversation: body.transcript,
           workspace_context: body.workspace_context,
+          research_context: body.context_packet,
         }), {
-          ...generationOptions(context),
+          ...supervisionOptions,
           ...(body.memory_resource && body.memory_thread ? {
             memory: { resource: body.memory_resource, thread: body.memory_thread },
           } : {}),
@@ -292,6 +294,34 @@ const apiRoutes = [
         return c.json({ result: experimentPlanSchema.parse(response.object) })
       } catch (error) {
         const failure = routeError(error, '实验计划模型调用')
+        return c.json(failure.body, safeStatus(failure.status))
+      }
+    },
+  }),
+  registerApiRoute('/internal/agents/knowledge-document-draft', {
+    method: 'POST',
+    handler: async c => {
+      try {
+        const body = await parsedBody(c, knowledgeDocumentDraftRequestSchema)
+        const context = requestContext('document', undefined, body.project_id)
+        const response = await knowledgeDocumentDraftAgent.generate(structuredJsonValue({
+          project_id: body.project_id,
+          document_kind: body.kind,
+          title: body.title,
+          instruction: body.instruction,
+          current_source: body.current_source,
+          context_packet: body.context_packet,
+          source_snapshot: body.source_snapshot,
+          evidence_boundary: body.evidence_boundary,
+        }), {
+          ...generationOptions(context),
+          structuredOutput: { schema: knowledgeDocumentDraftResultSchema, errorStrategy: 'strict', jsonPromptInjection: false },
+        })
+        const result = knowledgeDocumentDraftResultSchema.parse(response.object)
+        const config = context.get('modelConfig')
+        return c.json({ result, route: { tier: 'document', model: config.model, reasoning_effort: config.reasoningEffort } })
+      } catch (error) {
+        const failure = routeError(error, '科研知识文档生成')
         return c.json(failure.body, safeStatus(failure.status))
       }
     },

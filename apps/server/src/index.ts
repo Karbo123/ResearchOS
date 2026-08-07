@@ -9,7 +9,7 @@ import { bodyLimit } from 'hono/body-limit'
 import { z } from 'zod'
 import {
   approvalDecision, chatRequest, documentModelSettingsRequest, embeddingTestRequest, experimentRequest, imageGenerationSettingsRequest, modelCatalogRequest, modelSettingsRequest, modelTestRequest, paperSectionEditRequest, paperSectionModelRequest, projectEmbeddingSettingsRequest, projectModelSettingsRequest, proxyTestRequest, workspaceArea, workspaceTab,
-  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectRenameRequest, projectSlug, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
+  claimReviewDecisionRequest, claimReviewRequest, feedbackProposalRequest, humanFeedbackDecisionRequest, humanFeedbackRequest, knowledgeDocumentIndexRequest, knowledgeDocumentReconcileRequest, knowledgeRebuildExecuteRequest, knowledgeSearchRequest, memoryIngestRequest, memoryRevokeRequest, memorySearchRequest, policyRequest, projectCreateRequest, projectDeleteRequest, projectOrderRequest, projectPinRequest, projectRenameRequest, projectSlug, projectStateRequest, proposalCreateRequest, proxySettingsRequest, reportRequest, repositoryCandidateRequest, repositoryDependencyPlanRequest, repositoryReproductionRunRequest, uuid, voiceSettingsRequest,
   visionModelSettingsRequest,
   workflowEditProposalRequest,
 } from './contracts.js'
@@ -38,7 +38,7 @@ import { recoverInterruptedWork, startTaskWorker } from './task-worker.js'
 import { startReportScheduler } from './report-scheduler.js'
 import { canonicalRepositoryUrl, discoverRepositoryCandidates, parseRepositoryUrl, validateDownloadGate, verifyRepositoryCandidate } from './repository-service.js'
 import { applyApprovedIdeaRevision } from './idea-service.js'
-import { assertCheckpointRecoverable, invalidateFromNodes } from './impact-service.js'
+import { assertCheckpointRecoverable, createLineageImpactProposal, invalidateFromNodes, listLineageImpactReports } from './impact-service.js'
 import { applyMemoryRevocation, ingestProjectMemory, listProjectMemoryLinks, memoryGraph, memoryStatus, searchProjectMemory, supermemoryEnabled, SupermemoryArtifactError, SupermemoryConfigurationError, testEmbeddingConnection } from './supermemory-service.js'
 import { computedEmbeddingSettings, projectEmbeddingSettings, publicProjectEmbeddingSettings, saveProjectEmbeddingSettings } from './project-embedding-settings.js'
 import { projectInstanceStatus, stopPoolInstance } from './supermemory-instance.js'
@@ -57,6 +57,12 @@ import { migrateProjectArtifactFiles } from './project-artifact-migration.js'
 import { migrateProjectSlugs } from './project-slug-migration.js'
 import { migrateProjectIdentifierStorage } from './project-identifier-migration.js'
 import { projectArtifactPath, projectArtifactRelativePath, projectFilePath } from './project-storage.js'
+import { KnowledgeDocumentError, listKnowledgeDocuments, readKnowledgeDocument, reconcileKnowledgeDocuments } from './knowledge-document-service.js'
+import { knowledgeDocumentManualProposalRequest, knowledgeDocumentProposalRequest } from './knowledge-document-contracts.js'
+import { applyApprovedKnowledgeDocumentPatch, createKnowledgeDocumentProposal, createManualKnowledgeDocumentProposal } from './knowledge-document-proposal-service.js'
+import { createMemoryV2MigrationProposals, memoryV2MigrationPreview, memoryV2MigrationProposalRequest } from './memory-v2-migration-service.js'
+import { projectKnowledgeGraph } from './knowledge-graph-service.js'
+import { executeKnowledgeIndexRebuild, IndexingError, indexKnowledgeDocument, knowledgeIndexRebuildPlan, queueKnowledgeReindex, reconcileKnowledgeRemoteDeletes, resetKnowledgeIndexForEmbeddingChange, searchActiveKnowledge } from './indexing-service.js'
 import { projectChatTurn, clarifyChatTurn } from './chat-service.js'
 import { createExperimentPlan as createProjectExperimentPlan } from './experiment-plan-service.js'
 import { appendWorkflowEvent, appendWorkflowEventFromInput, listWorkflowEvents } from './project-workflow/event-store.js'
@@ -66,6 +72,8 @@ import { deleteProjectWorkflow, initializeProjectWorkflow, scanProjectWorkflow, 
 import { WorkflowDefinitionLoader } from './project-workflow/definition-loader.js'
 import { workflowEventAppendInputSchema } from './project-workflow/contracts.js'
 import { streamServerEvents } from './sse.js'
+import { startKnowledgeDocumentWatcher } from './knowledge-document-watcher.js'
+import { ContextPlannerError, getContextManifest } from './context-planner.js'
 
 type SessionRow = { id: string; project_id: string | null; phase: string; draft: Record<string, unknown>; scope: string }
 type ProposalRow = { id: string; project_id: string; kind: string; status: string; payload: Record<string, unknown>; impact: Record<string, unknown> }
@@ -88,6 +96,12 @@ app.onError((error, context) => {
   if (error instanceof SupermemoryConfigurationError || error instanceof SupermemoryArtifactError) {
     return context.json({ code: error.code, message: error.message }, error.status)
   }
+  if (error instanceof KnowledgeDocumentError || error instanceof IndexingError) {
+    return context.json({ code: error.code, message: error.message, ...(error instanceof IndexingError && error.details ? { details: error.details } : {}) }, error.status)
+  }
+  if (error instanceof ContextPlannerError) {
+    return context.json({ code: error.code, message: error.message }, error.status)
+  }
   return errorResponse(error, context)
 })
 app.use('/api/uploads', bodyLimit({ maxSize: 50 * 1024 * 1024, onError: context => context.json({ code: 'upload_too_large', message: '文件超过 50 MB 限制。' }, 413) }))
@@ -103,19 +117,29 @@ async function projectIdForChat(input: z.infer<typeof chatRequest>): Promise<str
 async function chatDispatch(input: z.infer<typeof chatRequest>): Promise<Record<string, unknown>> {
   const projectId = await projectIdForChat(input)
   if (!projectId) return await clarifyChatTurn(input) as unknown as Record<string, unknown>
+  const turnId = input.request_id || crypto.randomUUID()
+  const correlationId = `chat:${turnId}`
+  const eventPayload = {
+    request_id: turnId,
+    session_id: input.session_id ?? null,
+    message: input.message,
+    attachments: input.attachments,
+    clarification_mode: input.clarification_mode,
+    workspace_area: input.workspace_area,
+    workspace_tab: input.workspace_tab,
+    workspace_label: input.workspace_label,
+  }
+  const existing = await one<{ matches: boolean }>(
+    `SELECT event_type='chat.message.received' AND correlation_id=$3 AND payload=$4::jsonb AS matches
+     FROM workflow_events WHERE project_id=$1 AND idempotency_key=$2`,
+    [projectId, correlationId, correlationId, JSON.stringify(eventPayload)],
+  )
+  if (existing && !existing.matches) throw new ApiError(409, 'chat_turn_identity_conflict', '对话请求标识已用于另一条不同的消息。')
   const inner = await appendWorkflowEventAndWait(projectId, 'chat.message.received', {
-    payload: {
-      session_id: input.session_id ?? null,
-      message: input.message,
-      attachments: input.attachments,
-      clarification_mode: input.clarification_mode,
-      workspace_area: input.workspace_area,
-      workspace_tab: input.workspace_tab,
-      workspace_label: input.workspace_label,
-    },
+    payload: eventPayload,
     source: 'api',
-    correlation_id: `chat:${input.session_id || 'new'}:${Date.now()}`,
-    idempotency_key: `chat:${input.message}:${Date.now()}`,
+    correlation_id: correlationId,
+    idempotency_key: correlationId,
     target_node_id: 'conversation.agent_turn',
     timeout_ms: Number(process.env.MODEL_REQUEST_TIMEOUT_SECONDS || 240) * 1000,
   })
@@ -263,6 +287,100 @@ app.get('/api/projects/:projectId/memory/status', async context => {
   await requireProject(projectId)
   return context.json(await memoryStatus(projectId))
 })
+app.get('/api/projects/:projectId/knowledge/documents', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  const includeMissing = context.req.query('include_missing') === 'true'
+  return context.json({ project_id: projectId, documents: await listKnowledgeDocuments(projectId, includeMissing) })
+})
+app.post('/api/projects/:projectId/knowledge/reconcile', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, knowledgeDocumentReconcileRequest)
+  return context.json(await reconcileKnowledgeDocuments(projectId, body.source))
+})
+app.post('/api/projects/:projectId/knowledge/proposals', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, knowledgeDocumentProposalRequest)
+  return context.json(await createKnowledgeDocumentProposal(projectId, body), 201)
+})
+app.post('/api/projects/:projectId/knowledge/manual-proposals', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, knowledgeDocumentManualProposalRequest)
+  return context.json(await createManualKnowledgeDocumentProposal(projectId, body), 201)
+})
+app.get('/api/projects/:projectId/knowledge/migration', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(await memoryV2MigrationPreview(projectId))
+})
+app.post('/api/projects/:projectId/knowledge/migration/proposals', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, memoryV2MigrationProposalRequest)
+  return context.json(await createMemoryV2MigrationProposals(projectId, body.candidate_ids), 201)
+})
+app.get('/api/projects/:projectId/knowledge/graph', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(await projectKnowledgeGraph(projectId))
+})
+app.get('/api/projects/:projectId/knowledge/documents/:documentId', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  let documentId: string
+  try { documentId = decodeURIComponent(context.req.param('documentId')) } catch { throw new ApiError(404, 'knowledge_document_not_found', '知识文档不存在。') }
+  return context.json(await readKnowledgeDocument(projectId, documentId))
+})
+app.post('/api/projects/:projectId/knowledge/index', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, knowledgeDocumentIndexRequest)
+  return context.json(await indexKnowledgeDocument(projectId, body.document_id))
+})
+app.get('/api/projects/:projectId/knowledge/rebuild-plan', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  return context.json(await knowledgeIndexRebuildPlan(projectId))
+})
+app.post('/api/projects/:projectId/knowledge/rebuild', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const body = await jsonBody(context, knowledgeRebuildExecuteRequest)
+  return context.json(await executeKnowledgeIndexRebuild(projectId, body.plan_hash), 202)
+})
+app.post('/api/projects/:projectId/knowledge/search', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  const body = await jsonBody(context, knowledgeSearchRequest)
+  return context.json(await searchActiveKnowledge(projectId, body.query, body.limit))
+})
+app.post('/api/projects/:projectId/knowledge/reconcile-remote-deletes', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  return context.json(await reconcileKnowledgeRemoteDeletes(projectId))
+})
+app.get('/api/projects/:projectId/context-manifests/:manifestId', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  const manifestId = uuid.parse(context.req.param('manifestId'))
+  return context.json(await getContextManifest(projectId, manifestId))
+})
+app.get('/api/projects/:projectId/knowledge/impacts', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId)
+  const limit = z.coerce.number().int().min(1).max(100).default(20).parse(context.req.query('limit'))
+  return context.json({ project_id: projectId, reports: await listLineageImpactReports(projectId, limit) })
+})
+app.post('/api/projects/:projectId/knowledge/impacts/:impactId/proposal', async context => {
+  const projectId = await projectIdForReference(context.req.param('projectId'))
+  await requireProject(projectId, true)
+  const impactId = uuid.parse(context.req.param('impactId'))
+  const body = await jsonBody(context, z.object({ actor: z.string().trim().min(1).max(200).default('local-user') }).strict())
+  return context.json(await createLineageImpactProposal(projectId, impactId, body.actor), 201)
+})
 app.get('/api/projects/:projectId/embedding-settings', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
   await requireProject(projectId)
@@ -275,11 +393,20 @@ app.put('/api/projects/:projectId/embedding-settings', async context => {
   const body = await jsonBody(context, projectEmbeddingSettingsRequest)
   const previous = projectEmbeddingSettings(projectId)
   const computed = computedEmbeddingSettings(projectId, body, previous)
-  if (computed.settings !== null && computed.reset_required && !body.reset_data) {
+  const indexedDocuments = await one<{ count: number }>('SELECT COUNT(*)::integer AS count FROM knowledge_index_generations WHERE project_id=$1 AND status IN (\'active\',\'superseded\',\'failed\')', [projectId])
+  const resetRequired = computed.reset_required && (computed.settings !== null ? computed.settings.provider !== previous.provider || computed.settings.model !== previous.model || computed.settings.dimensions !== previous.dimensions || (indexedDocuments?.count ?? 0) > 0 : (indexedDocuments?.count ?? 0) > 0)
+  if (resetRequired && !body.reset_data) {
     throw new ApiError(409, 'embedding_requires_reset', '切换 embedding 模型或维度会为该项目分配新的配置池（全新数据目录），现有语义记忆需要重新摄入。请确认后重试。')
+  }
+  let reset: { generations: number; remote_deleted: number; delete_failed: number } | null = null
+  let reindex: { queued: number; document_ids: string[] } | null = null
+  if (resetRequired) {
+    reset = await resetKnowledgeIndexForEmbeddingChange(projectId)
+    if (reset.delete_failed > 0) throw new ApiError(503, 'embedding_reindex_cleanup_failed', '旧 embedding 索引未能完整清理，配置未切换；请稍后重试以继续清理。', reset)
   }
   const { released_pool_keys } = saveProjectEmbeddingSettings(projectId, body)
   for (const poolKey of released_pool_keys) await stopPoolInstance(poolKey)
+  if (resetRequired) reindex = await queueKnowledgeReindex(projectId)
   await audit('embedding.settings_updated', projectId, {
     mode: body.mode,
     provider: body.mode === 'custom' ? body.provider : 'global_default',
@@ -288,7 +415,7 @@ app.put('/api/projects/:projectId/embedding-settings', async context => {
     pool_key: body.mode === 'custom' ? computed.pool_key : 'global_default',
   })
   const instance = await projectInstanceStatus(projectId)
-  return context.json({ ...publicProjectEmbeddingSettings(projectId), instance })
+  return context.json({ ...publicProjectEmbeddingSettings(projectId), instance, ...(reset ? { embedding_reset: reset } : {}), ...(reindex ? { knowledge_reindex: reindex } : {}) })
 })
 app.post('/api/projects/:projectId/embedding-test', async context => {
   const projectId = await projectIdForReference(context.req.param('projectId'))
@@ -348,7 +475,7 @@ app.get('/api/sessions/:sessionId/messages', async context => {
   const sessionId = uuid.parse(context.req.param('sessionId'))
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE id=$1', [sessionId])
   if (!session) throw new ApiError(404, 'session_not_found', '对话会话不存在。')
-  const messages = await rows<Record<string, unknown>>('SELECT id,role,content,metadata,created_at FROM messages WHERE session_id=$1 ORDER BY created_at,id', [sessionId])
+  const messages = await rows<Record<string, unknown>>("SELECT id,role,content,metadata,created_at FROM messages WHERE session_id=$1 AND COALESCE(metadata->>'delivery_status','complete')='complete' ORDER BY created_at,id", [sessionId])
   return context.json({ session_id: sessionId, messages })
 })
 
@@ -360,10 +487,19 @@ app.get('/api/projects/:projectRef/chat-session', async context => {
   const scope = `${area.data}/${tab.data}`
   const session = await one<{ id: string }>('SELECT id FROM conversation_sessions WHERE project_id=$1 AND scope=$2 ORDER BY updated_at DESC LIMIT 1', [projectId, scope])
   if (!session) return context.json({ session_id: null, messages: [] })
-  const messages = await rows<Record<string, unknown>>('SELECT id,role,content,metadata,created_at FROM messages WHERE session_id=$1 ORDER BY created_at,id', [session.id])
+  const messages = await rows<Record<string, unknown>>("SELECT id,role,content,metadata,created_at FROM messages WHERE session_id=$1 AND COALESCE(metadata->>'delivery_status','complete')='complete' ORDER BY created_at,id", [session.id])
   return context.json({
     session_id: session.id,
-    messages: messages.map(row => ({ id: row.id, role: row.role, text: row.content })),
+    messages: messages.map(row => {
+      const metadata = row.metadata && typeof row.metadata === 'object' ? row.metadata as Record<string, unknown> : {}
+      return {
+        id: row.id,
+        role: row.role,
+        text: row.content,
+        context_manifest_id: typeof metadata.context_manifest_id === 'string' ? metadata.context_manifest_id : undefined,
+        context_status: typeof metadata.context_status === 'string' ? metadata.context_status : undefined,
+      }
+    }),
   })
 })
 
@@ -794,6 +930,8 @@ app.post('/api/proposals/:proposalId/decision', async context => {
   }
   let ideaRevision: unknown = null
   if (body.decision === 'approved' && proposal.kind === 'idea_revision') ideaRevision = await applyApprovedIdeaRevision(proposal.project_id, proposal.payload, body.actor)
+  let knowledgeDocument: Awaited<ReturnType<typeof applyApprovedKnowledgeDocumentPatch>> | null = null
+  if (body.decision === 'approved' && proposal.kind === 'knowledge_document_patch') knowledgeDocument = await applyApprovedKnowledgeDocumentPatch(proposal.project_id, proposal.payload, body.actor)
   let repositoryDownload: Awaited<ReturnType<typeof downloadRepositoryForReproduction>> | null = null
   if (body.decision === 'approved' && proposal.kind === 'repository_download') {
     const repositoryId = uuid.parse(String(proposal.payload.repository_id || ''))
@@ -894,7 +1032,7 @@ app.post('/api/proposals/:proposalId/decision', async context => {
       policy_version: body.policy_version,
     } : null,
   }, body.actor)
-  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, idea_revision: ideaRevision, repository_download: repositoryDownload, reproduction_dependencies: reproductionDependencies, reproduction_run: reproductionRun, reproduction_artifacts: reproductionArtifacts, lineage_invalidation: lineageInvalidation, automatic_execution: automaticExecution, memory_revocation: memoryRevocation, related_work_run: relatedWorkRun, related_work_enrichment: relatedWorkEnrichment })
+  return context.json({ proposal_id: proposalId, status: body.decision, git_commit: gitCommit, idea_revision: ideaRevision, knowledge_document: knowledgeDocument, repository_download: repositoryDownload, reproduction_dependencies: reproductionDependencies, reproduction_run: reproductionRun, reproduction_artifacts: reproductionArtifacts, lineage_invalidation: lineageInvalidation, automatic_execution: automaticExecution, memory_revocation: memoryRevocation, related_work_run: relatedWorkRun, related_work_enrichment: relatedWorkEnrichment })
 })
 
 app.post('/api/projects/:projectId/paper-draft', async context => {
@@ -1350,4 +1488,5 @@ if (!isTestRuntime) {
   serve({ fetch: app.fetch, hostname: '127.0.0.1', port }, info => console.log(`Research OS native TypeScript server: http://127.0.0.1:${info.port}`))
   startTaskWorker()
   startReportScheduler()
+  startKnowledgeDocumentWatcher()
 }

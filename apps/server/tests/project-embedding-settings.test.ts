@@ -173,6 +173,24 @@ describe('project-level embedding settings', () => {
     expect(baseUrlOnly.pool_key).not.toBe(previous.pool_key)
   })
 
+  it('requires an explicit reset when moving an indexed project across global and custom vector spaces', () => {
+    const projectId = testProjectSlug('embedding-boundary')
+    const globalPrevious = projectEmbeddingSettings(projectId)
+    const custom = {
+      mode: 'custom' as const,
+      provider: 'local' as const,
+      model: 'Xenova/bge-m3',
+      dimensions: 1024,
+      base_url: '',
+      key: '',
+      reset_data: false,
+    }
+    expect(computedEmbeddingSettings(projectId, custom, globalPrevious).reset_required).toBe(true)
+    saveProjectEmbeddingSettings(projectId, custom)
+    const customPrevious = projectEmbeddingSettings(projectId)
+    expect(computedEmbeddingSettings(projectId, { mode: 'global', provider: 'local', model: '', dimensions: 1024, base_url: '', key: '', reset_data: false }, customPrevious).reset_required).toBe(true)
+  })
+
   it('removes the override when switching back to the global mode', () => {
     const projectId = testProjectSlug()
     saveProjectEmbeddingSettings(projectId, localCustom)

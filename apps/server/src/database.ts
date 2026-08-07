@@ -15,12 +15,16 @@ CREATE TABLE IF NOT EXISTS conversation_sessions (id UUID PRIMARY KEY, project_i
 ALTER TABLE conversation_sessions ADD COLUMN IF NOT EXISTS scope VARCHAR(120) NOT NULL DEFAULT 'project';
 CREATE INDEX IF NOT EXISTS ix_conversation_sessions_project_scope ON conversation_sessions(project_id, scope);
 CREATE TABLE IF NOT EXISTS messages (id UUID PRIMARY KEY, session_id UUID NOT NULL REFERENCES conversation_sessions(id), role VARCHAR(20) NOT NULL, content TEXT NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS turn_id UUID;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_messages_session_turn_role ON messages(session_id,turn_id,role) WHERE turn_id IS NOT NULL;
 CREATE TABLE IF NOT EXISTS uploaded_files (id UUID PRIMARY KEY, session_id UUID NOT NULL REFERENCES conversation_sessions(id), project_id VARCHAR(120) REFERENCES projects(id), name VARCHAR(255) NOT NULL, relative_path TEXT NOT NULL, mime_type VARCHAR(120) NOT NULL, size_bytes INTEGER NOT NULL, sha256 VARCHAR(64) NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS idea_versions (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), version INTEGER NOT NULL, spec JSONB NOT NULL, change_reason TEXT, supersedes_id UUID, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(project_id, version));
 CREATE TABLE IF NOT EXISTS papers (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), title TEXT NOT NULL, doi VARCHAR(255), source_url TEXT NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', bibtex TEXT, verified BOOLEAN NOT NULL DEFAULT FALSE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 ALTER TABLE papers ADD COLUMN IF NOT EXISTS confirmed BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE TABLE IF NOT EXISTS evidence (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), paper_id UUID REFERENCES papers(id), claim TEXT NOT NULL, quote TEXT NOT NULL, locator VARCHAR(255), source_url TEXT NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS proposals (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), kind VARCHAR(60) NOT NULL, status VARCHAR(30) NOT NULL DEFAULT 'pending', reason TEXT NOT NULL, summary TEXT NOT NULL, diff TEXT, impact JSONB NOT NULL DEFAULT '{}', estimated_cost_usd DOUBLE PRECISION NOT NULL DEFAULT 0, payload JSONB NOT NULL DEFAULT '{}', decided_by VARCHAR(200), decision_comment TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), decided_at TIMESTAMPTZ);
+ALTER TABLE proposals ADD COLUMN IF NOT EXISTS origin_turn_id UUID;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_proposals_project_origin_turn ON proposals(project_id,origin_turn_id) WHERE origin_turn_id IS NOT NULL;
 CREATE TABLE IF NOT EXISTS experiments (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), proposal_id UUID NOT NULL REFERENCES proposals(id), status VARCHAR(30) NOT NULL DEFAULT 'queued', experiment_type VARCHAR(80) NOT NULL, config JSONB NOT NULL DEFAULT '{}', metrics JSONB NOT NULL DEFAULT '{}', run_id VARCHAR(255), error TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), finished_at TIMESTAMPTZ);
 CREATE TABLE IF NOT EXISTS artifacts (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), experiment_id UUID REFERENCES experiments(id), kind VARCHAR(80) NOT NULL, name VARCHAR(255) NOT NULL, relative_path TEXT NOT NULL, mime_type VARCHAR(120) NOT NULL, sha256 VARCHAR(64) NOT NULL, metadata JSONB NOT NULL DEFAULT '{}', valid BOOLEAN NOT NULL DEFAULT TRUE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS policies (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), rule TEXT NOT NULL, rationale TEXT, active BOOLEAN NOT NULL DEFAULT TRUE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
@@ -168,12 +172,164 @@ CREATE INDEX IF NOT EXISTS ix_reproduction_runs_reproduction ON reproduction_run
 ALTER TABLE artifacts ADD COLUMN IF NOT EXISTS reproduction_run_id UUID REFERENCES reproduction_runs(id);
 CREATE TABLE IF NOT EXISTS artifact_dependencies (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), artifact_id UUID NOT NULL REFERENCES artifacts(id), upstream_type VARCHAR(40) NOT NULL, upstream_id VARCHAR(255) NOT NULL, relation VARCHAR(80) NOT NULL DEFAULT 'generated_from', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 CREATE TABLE IF NOT EXISTS lineage_dependencies (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), downstream_type VARCHAR(40) NOT NULL, downstream_id VARCHAR(255) NOT NULL, upstream_type VARCHAR(40) NOT NULL, upstream_id VARCHAR(255) NOT NULL, upstream_fingerprint VARCHAR(64) NOT NULL, relation VARCHAR(120) NOT NULL, valid BOOLEAN NOT NULL DEFAULT TRUE, invalidated_reason TEXT, invalidated_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(project_id,downstream_type,downstream_id,upstream_type,upstream_id,relation));
+ALTER TABLE lineage_dependencies ADD COLUMN IF NOT EXISTS impact_policy VARCHAR(40);
 CREATE INDEX IF NOT EXISTS ix_lineage_upstream ON lineage_dependencies(project_id,upstream_type,upstream_id,valid);
 CREATE INDEX IF NOT EXISTS ix_lineage_downstream ON lineage_dependencies(project_id,downstream_type,downstream_id,valid);
 CREATE TABLE IF NOT EXISTS memory_links (id UUID PRIMARY KEY, project_id VARCHAR(120) NOT NULL REFERENCES projects(id), source_type VARCHAR(80) NOT NULL, source_id UUID, artifact_id UUID REFERENCES artifacts(id), uploaded_file_id UUID REFERENCES uploaded_files(id), content_sha256 VARCHAR(64) NOT NULL, custom_id VARCHAR(100) NOT NULL, supermemory_id VARCHAR(255) NOT NULL, container_tag VARCHAR(120) NOT NULL, task_type VARCHAR(20) NOT NULL DEFAULT 'memory', status VARCHAR(30) NOT NULL DEFAULT 'active', metadata JSONB NOT NULL DEFAULT '{}', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), revoked_at TIMESTAMPTZ, deleted_at TIMESTAMPTZ, UNIQUE(project_id,source_type,source_id,content_sha256));
 ALTER TABLE memory_links ADD COLUMN IF NOT EXISTS uploaded_file_id UUID REFERENCES uploaded_files(id);
+ALTER TABLE memory_links ADD COLUMN IF NOT EXISTS source_key VARCHAR(255);
 CREATE INDEX IF NOT EXISTS ix_memory_links_project ON memory_links(project_id,status,created_at);
 CREATE INDEX IF NOT EXISTS ix_memory_links_remote ON memory_links(project_id,supermemory_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_memory_links_source_key_hash ON memory_links(project_id,source_type,source_key,content_sha256) WHERE source_key IS NOT NULL;
+CREATE TABLE IF NOT EXISTS knowledge_documents (
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  document_id VARCHAR(192) NOT NULL,
+  relative_path TEXT NOT NULL,
+  kind VARCHAR(60) NOT NULL,
+  schema_version VARCHAR(80) NOT NULL,
+  author_status VARCHAR(30) NOT NULL,
+  system_health VARCHAR(30) NOT NULL DEFAULT 'index_stale',
+  current_sha256 VARCHAR(64) NOT NULL,
+  current_git_commit VARCHAR(40),
+  git_dirty BOOLEAN NOT NULL DEFAULT TRUE,
+  file_size_bytes BIGINT NOT NULL,
+  file_mtime_ms DOUBLE PRECISION NOT NULL,
+  active_index_generation UUID,
+  metadata JSONB NOT NULL DEFAULT '{}',
+  present BOOLEAN NOT NULL DEFAULT TRUE,
+  last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  missing_since TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY(project_id,document_id),
+  UNIQUE(project_id,relative_path)
+);
+CREATE INDEX IF NOT EXISTS ix_knowledge_documents_scope ON knowledge_documents(project_id,kind,author_status,system_health,present);
+CREATE TABLE IF NOT EXISTS knowledge_document_revisions (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL,
+  document_id VARCHAR(192) NOT NULL,
+  content_sha256 VARCHAR(64) NOT NULL,
+  body_sha256 VARCHAR(64) NOT NULL,
+  git_commit VARCHAR(40),
+  git_dirty BOOLEAN NOT NULL DEFAULT TRUE,
+  file_size_bytes BIGINT NOT NULL,
+  frontmatter JSONB NOT NULL DEFAULT '{}',
+  parser_version VARCHAR(100) NOT NULL,
+  observed_source VARCHAR(40) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  FOREIGN KEY(project_id,document_id) REFERENCES knowledge_documents(project_id,document_id) ON DELETE CASCADE,
+  UNIQUE(project_id,document_id,content_sha256)
+);
+CREATE INDEX IF NOT EXISTS ix_knowledge_revisions_document ON knowledge_document_revisions(project_id,document_id,created_at);
+CREATE TABLE IF NOT EXISTS knowledge_index_generations (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL,
+  document_id VARCHAR(192) NOT NULL,
+  document_sha256 VARCHAR(64) NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'pending',
+  adapter VARCHAR(60) NOT NULL DEFAULT 'researchos_ast_superrag',
+  embedding_fingerprint VARCHAR(64),
+  chunk_count INTEGER NOT NULL DEFAULT 0,
+  failure_code VARCHAR(120),
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  superseded_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  FOREIGN KEY(project_id,document_id) REFERENCES knowledge_documents(project_id,document_id) ON DELETE CASCADE,
+  UNIQUE(project_id,document_id,document_sha256,adapter,embedding_fingerprint)
+);
+CREATE INDEX IF NOT EXISTS ix_knowledge_generations_active ON knowledge_index_generations(project_id,document_id,status,created_at);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_knowledge_generations_one_active ON knowledge_index_generations(project_id,document_id) WHERE status='active';
+CREATE TABLE IF NOT EXISTS knowledge_index_entries (
+  id UUID PRIMARY KEY,
+  generation_id UUID NOT NULL REFERENCES knowledge_index_generations(id) ON DELETE CASCADE,
+  project_id VARCHAR(120) NOT NULL,
+  document_id VARCHAR(192) NOT NULL,
+  chunk_key VARCHAR(64) NOT NULL,
+  ordinal INTEGER NOT NULL,
+  heading_path JSONB NOT NULL DEFAULT '[]',
+  line_start INTEGER NOT NULL,
+  line_end INTEGER NOT NULL,
+  token_count INTEGER NOT NULL,
+  content_sha256 VARCHAR(64) NOT NULL,
+  remote_document_id VARCHAR(255),
+  memory_link_id UUID REFERENCES memory_links(id),
+  task_type VARCHAR(20) NOT NULL DEFAULT 'superrag',
+  status VARCHAR(30) NOT NULL DEFAULT 'pending',
+  delete_attempts INTEGER NOT NULL DEFAULT 0,
+  last_error VARCHAR(200),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ,
+  FOREIGN KEY(project_id,document_id) REFERENCES knowledge_documents(project_id,document_id) ON DELETE CASCADE,
+  UNIQUE(generation_id,chunk_key)
+);
+CREATE INDEX IF NOT EXISTS ix_knowledge_entries_active ON knowledge_index_entries(project_id,document_id,status,generation_id);
+CREATE TABLE IF NOT EXISTS context_manifests (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  purpose VARCHAR(40) NOT NULL,
+  workspace_scope VARCHAR(129) NOT NULL,
+  query TEXT NOT NULL DEFAULT '',
+  plan JSONB NOT NULL DEFAULT '{}',
+  document_ids JSONB NOT NULL DEFAULT '[]',
+  entity_ids JSONB NOT NULL DEFAULT '[]',
+  source_refs JSONB NOT NULL DEFAULT '[]',
+  search_metadata JSONB NOT NULL DEFAULT '{}',
+  token_budget INTEGER NOT NULL,
+  output_reserve INTEGER NOT NULL,
+  included_tokens INTEGER NOT NULL DEFAULT 0,
+  excluded JSONB NOT NULL DEFAULT '[]',
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_context_manifests_project_created ON context_manifests(project_id,created_at DESC);
+CREATE TABLE IF NOT EXISTS conversation_turns (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  session_id UUID NOT NULL REFERENCES conversation_sessions(id) ON DELETE CASCADE,
+  request_sha256 VARCHAR(64) NOT NULL,
+  status VARCHAR(24) NOT NULL DEFAULT 'processing',
+  context_manifest_id UUID NOT NULL,
+  user_message_id UUID NOT NULL,
+  assistant_message_id UUID NOT NULL,
+  last_error_status INTEGER,
+  last_error_code VARCHAR(120),
+  last_error_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_conversation_turns_project_session ON conversation_turns(project_id,session_id,created_at);
+CREATE TABLE IF NOT EXISTS lineage_impact_reports (
+  id UUID PRIMARY KEY,
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  reason TEXT NOT NULL,
+  actor VARCHAR(200) NOT NULL,
+  changed_nodes JSONB NOT NULL DEFAULT '[]',
+  status VARCHAR(30) NOT NULL DEFAULT 'open',
+  summary JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  resolved_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_lineage_impact_reports_project ON lineage_impact_reports(project_id,status,created_at DESC);
+CREATE TABLE IF NOT EXISTS lineage_impact_items (
+  id UUID PRIMARY KEY,
+  report_id UUID NOT NULL REFERENCES lineage_impact_reports(id) ON DELETE CASCADE,
+  project_id VARCHAR(120) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  node_type VARCHAR(40) NOT NULL,
+  node_id VARCHAR(255) NOT NULL,
+  policy VARCHAR(40) NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'open',
+  relation VARCHAR(120) NOT NULL,
+  reason TEXT NOT NULL,
+  path JSONB NOT NULL DEFAULT '[]',
+  depth INTEGER NOT NULL,
+  proposal_id UUID REFERENCES proposals(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  resolved_at TIMESTAMPTZ,
+  UNIQUE(report_id,node_type,node_id,policy)
+);
+CREATE INDEX IF NOT EXISTS ix_lineage_impact_items_project ON lineage_impact_items(project_id,status,node_type,node_id,created_at DESC);
 CREATE TABLE IF NOT EXISTS related_work_seeds (
   id UUID PRIMARY KEY,
   project_id VARCHAR(120) NOT NULL REFERENCES projects(id),
@@ -474,6 +630,11 @@ export async function migrate(): Promise<void> {
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0015-research-status-source-binding') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0017-chat-workspace-scope') ON CONFLICT DO NOTHING")
   await database.query("INSERT INTO schema_migrations(version) VALUES ('0018-workflow-v2-runtime') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0019-memory-v2') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0020-memory-v2-context') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0021-memory-v2-impact') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0022-memory-v2-chat-turn-idempotency') ON CONFLICT DO NOTHING")
+  await database.query("INSERT INTO schema_migrations(version) VALUES ('0023-memory-v2-index-rebuild') ON CONFLICT DO NOTHING")
 }
 
 /**

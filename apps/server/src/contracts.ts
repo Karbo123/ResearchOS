@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isAllowedModelUrl, isResponsesBaseUrl } from './model-url.js'
+import { knowledgeDocumentId } from './knowledge-document-contracts.js'
 
 export const uuid = z.string().uuid()
 export const projectSlug = z.string().regex(/^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$/)
@@ -40,6 +41,7 @@ export const ideaDraft = z.object({
 }).strict()
 
 export const chatRequest = z.object({
+  request_id: uuid.optional(),
   session_id: uuid.nullable().optional(),
   project_id: projectSlug.nullable().optional(),
   message: z.string().trim().min(1).max(20_000),
@@ -318,6 +320,10 @@ export const memoryIngestRequest = z.object({
 })
 export const memorySearchRequest = z.object({ query: z.string().trim().min(1).max(2000), limit: z.number().int().min(1).max(20).default(8), search_mode: z.enum(['memories', 'hybrid', 'documents']).default('hybrid') }).strict()
 export const memoryRevokeRequest = z.object({ reason: z.string().trim().min(3).max(2000), operation: z.enum(['forget', 'delete']).default('forget') }).strict()
+export const knowledgeDocumentReconcileRequest = z.object({ source: z.enum(['api', 'poller', 'startup', 'test']).default('api') }).strict()
+export const knowledgeDocumentIndexRequest = z.object({ document_id: knowledgeDocumentId }).strict()
+export const knowledgeSearchRequest = z.object({ query: z.string().trim().min(1).max(2000), limit: z.number().int().min(1).max(20).default(8) }).strict()
+export const knowledgeRebuildExecuteRequest = z.object({ plan_hash: z.string().regex(/^[a-f0-9]{64}$/) }).strict()
 
 export function emptyIdeaDraft(): z.infer<typeof ideaDraft> {
   return ideaDraft.parse({})

@@ -148,13 +148,14 @@ export async function requireProject(projectId: string, active = false): Promise
 export async function createProjectWorkspace(projectId: string, slug: string, spec: object): Promise<string> {
   const root = pathInside(projectsRoot, projectId)
   if (existsSync(root)) throw new Error('project_workspace_exists')
-  for (const directory of ['code', 'experiment', 'paper', 'literature', 'data', 'artifacts']) mkdirSync(pathInside(root, directory), { recursive: true })
+  for (const directory of ['code', 'experiment', 'paper', 'literature', 'data', 'artifacts', 'research']) mkdirSync(pathInside(root, directory), { recursive: true })
   writeFileSync(pathInside(root, 'idea.json'), `${JSON.stringify(spec, null, 2)}\n`, 'utf8')
   writeFileSync(pathInside(root, 'README.md'), `# ${slug}\n\nResearch OS project workspace.\n`, 'utf8')
   writeFileSync(pathInside(root, '.gitignore'), PROJECT_GITIGNORE, 'utf8')
+  writeFileSync(pathInside(root, 'research', '.gitkeep'), '', 'utf8')
   writeFileSync(pathInside(root, 'workflow.ts'), readFileSync(defaultWorkflowTemplatePath, 'utf8'), 'utf8')
   execFileSync(gitBinary(), ['init', '--initial-branch=main'], { cwd: root, stdio: 'ignore' })
-  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md', '.gitignore', 'workflow.ts'], { cwd: root, stdio: 'ignore' })
+  execFileSync(gitBinary(), ['add', 'idea.json', 'README.md', '.gitignore', 'research/.gitkeep', 'workflow.ts'], { cwd: root, stdio: 'ignore' })
   execFileSync(gitBinary(), ['-c', 'user.name=Research OS', '-c', 'user.email=local@research-os.invalid', 'commit', '-m', 'chore: initialize research project'], { cwd: root, stdio: 'ignore' })
   await audit('project.workspace_created', projectId, { slug })
   return root

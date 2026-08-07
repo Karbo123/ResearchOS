@@ -12,6 +12,8 @@ import { ExperimentWorkspace } from './tabs/ExperimentWorkspace'
 import { ResizableDivider } from './ResizableDivider'
 import { useTranslation, type TranslationKey } from '../i18n'
 import { WORKSPACE_TAB_META } from '../navigation'
+import { KnowledgeWorkspace } from './KnowledgeWorkspace'
+import { KnowledgeGraphDialog } from './KnowledgeGraphDialog'
 
 type ProjectTab = { id: TabId }
 type ProjectArea = { id: ResearchArea; labelKey: TranslationKey; icon: React.ReactNode; tabs: ProjectTab[] }
@@ -137,6 +139,7 @@ export function ProjectView({
     const stored = Number(window.localStorage.getItem('researchos.projectChatWidth'))
     return Number.isFinite(stored) ? Math.min(PROJECT_CHAT_MAX_WIDTH, Math.max(PROJECT_CHAT_MIN_WIDTH, stored)) : PROJECT_CHAT_DEFAULT_WIDTH
   })
+  const [knowledgeGraphOpen, setKnowledgeGraphOpen] = useState(false)
   const projectLayoutRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     window.localStorage.setItem('researchos.projectChatWidth', String(projectChatWidth))
@@ -199,7 +202,7 @@ export function ProjectView({
             {fullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
           </button>
           {activeTab === 'overview' || activeTab === 'idea' ? <OverviewTab {...tabProps} tab={activeTab} /> : null}
-          {activeTab === 'approvals' ? <ApprovalsTab {...tabProps} /> : null}
+          {activeTab === 'approvals' ? <ApprovalsTab {...tabProps} onOpenKnowledgeGraph={() => setKnowledgeGraphOpen(true)} /> : null}
           {activeTab === 'reports' ? <ReportsTab {...tabProps} /> : null}
           {activeTab === 'literature' || activeTab === 'seed_expansion' ? <LiteratureTab {...tabProps} searchCandidates={searchCandidates} tab={activeTab === 'seed_expansion' ? 'seed_expansion' : 'literature'} /> : null}
           {activeTab === 'visualization' ? <WorkflowStageTab project={project} tab={activeTab} /> : null}
@@ -207,6 +210,16 @@ export function ProjectView({
           {['introduction', 'paper_related_work', 'paper_method', 'paper_experiments', 'conclusion'].includes(activeTab)
             ? <PaperWorkspace project={project} tab={activeTab} onNavigate={onTabChange} onRefresh={onRefresh} showToast={showToast} />
             : null}
+          {activeTab !== 'approvals' ? (
+            <KnowledgeWorkspace
+              project={project}
+              area={activeArea}
+              tab={activeTab}
+              onRefresh={onRefresh}
+              onOpenGraph={() => setKnowledgeGraphOpen(true)}
+              showToast={showToast}
+            />
+          ) : null}
         </div>
         <button
           className="secondary mobile-chat-toggle"
@@ -237,6 +250,12 @@ export function ProjectView({
           mobileOpen={mobileChatOpen}
         />
       </div>
+      <KnowledgeGraphDialog
+        open={knowledgeGraphOpen}
+        projectId={project.id}
+        onClose={() => setKnowledgeGraphOpen(false)}
+        showToast={showToast}
+      />
     </section>
   )
 }

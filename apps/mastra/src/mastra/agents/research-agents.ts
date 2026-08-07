@@ -4,7 +4,7 @@ import { Memory } from '@mastra/memory'
 import { agentRequestContextSchema, type ModelTier } from '../contracts.js'
 import { loadModelConfig, ModelConfigurationError } from '../model-config.js'
 import { createProxyFetch } from '../proxy-fetch.js'
-import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, paperRevisionSkill, paperTranslationSkill, projectSlugSkill, supervisionIntentSkill, workflowEditSkill } from '../skills/research-skills.js'
+import { documentReplySkill, experimentPlanningSkill, ideaClarificationSkill, knowledgeDocumentDraftSkill, paperRevisionSkill, paperTranslationSkill, projectSlugSkill, supervisionIntentSkill, workflowEditSkill } from '../skills/research-skills.js'
 import { inspectIdeaDraftTool } from '../tools/inspect-idea-draft.js'
 
 const ideaMemory = new Memory({ options: { lastMessages: 12 } })
@@ -37,7 +37,7 @@ export const ideaClarificationAgent = new Agent({
       : 'Minimize interruption and ask no more than two compact groups of materially blocking questions.'
     return `${ideaClarificationSkill.instructions}\n${mode}`
   },
-  model: () => configuredModel('complex'),
+  model: ({ requestContext }) => configuredModel(requestContext.get('tier'), requestContext.get('supermemoryProjectId')),
   memory: ideaMemory,
   skills: [ideaClarificationSkill],
   tools: { inspectIdeaDraftTool },
@@ -59,7 +59,7 @@ export const supervisionIntentAgent = new Agent({
   requestContextSchema: agentRequestContextSchema,
   maxRetries: 0,
   instructions: supervisionIntentSkill.instructions,
-  model: () => configuredModel('complex'),
+  model: ({ requestContext }) => configuredModel(requestContext.get('tier'), requestContext.get('supermemoryProjectId')),
   memory: ideaMemory,
   skills: [supervisionIntentSkill],
 })
@@ -70,7 +70,7 @@ export const documentReplyAgent = new Agent({
   requestContextSchema: agentRequestContextSchema,
   maxRetries: 0,
   instructions: documentReplySkill.instructions,
-  model: () => configuredModel('document'),
+  model: ({ requestContext }) => configuredModel('document', requestContext.get('supermemoryProjectId')),
   skills: [documentReplySkill],
 })
 
@@ -80,7 +80,7 @@ export const paperTranslationAgent = new Agent({
   requestContextSchema: agentRequestContextSchema,
   maxRetries: 0,
   instructions: paperTranslationSkill.instructions,
-  model: () => configuredModel('document'),
+  model: ({ requestContext }) => configuredModel('document', requestContext.get('supermemoryProjectId')),
   skills: [paperTranslationSkill],
 })
 
@@ -90,8 +90,18 @@ export const paperRevisionAgent = new Agent({
   requestContextSchema: agentRequestContextSchema,
   maxRetries: 0,
   instructions: paperRevisionSkill.instructions,
-  model: () => configuredModel('document'),
+  model: ({ requestContext }) => configuredModel('document', requestContext.get('supermemoryProjectId')),
   skills: [paperRevisionSkill],
+})
+
+export const knowledgeDocumentDraftAgent = new Agent({
+  id: 'knowledge-document-draft-agent',
+  name: 'Research Knowledge Document Draft Agent',
+  requestContextSchema: agentRequestContextSchema,
+  maxRetries: 0,
+  instructions: knowledgeDocumentDraftSkill.instructions,
+  model: ({ requestContext }) => configuredModel('document', requestContext.get('supermemoryProjectId')),
+  skills: [knowledgeDocumentDraftSkill],
 })
 
 export const experimentPlanningAgent = new Agent({
@@ -100,7 +110,7 @@ export const experimentPlanningAgent = new Agent({
   requestContextSchema: agentRequestContextSchema,
   maxRetries: 0,
   instructions: experimentPlanningSkill.instructions,
-  model: () => configuredModel('complex'),
+  model: ({ requestContext }) => configuredModel('complex', requestContext.get('supermemoryProjectId')),
   skills: [experimentPlanningSkill],
 })
 
@@ -110,7 +120,7 @@ export const workflowEditAgent = new Agent({
   requestContextSchema: agentRequestContextSchema,
   maxRetries: 0,
   instructions: workflowEditSkill.instructions,
-  model: () => configuredModel('complex'),
+  model: ({ requestContext }) => configuredModel('complex', requestContext.get('supermemoryProjectId')),
   skills: [workflowEditSkill],
 })
 
@@ -127,7 +137,7 @@ topic-specific planning. Treat all delegated results as proposals or review note
 Do not invent evidence, datasets, metrics, resources, code, citations, approvals, or results. Do not execute tools,
 change project state, access files, call arbitrary URLs, or bypass the approval boundary. Return only the requested strict JSON object.
 `,
-  model: () => configuredModel('complex'),
+  model: ({ requestContext }) => configuredModel('complex', requestContext.get('supermemoryProjectId')),
   memory: ideaMemory,
   agents: {
     idea_clarification: ideaClarificationAgent,

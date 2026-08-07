@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-os.local/schemas/knowledge-document-front-matter.schema.json",
+  "title": "Research OS Memory v2 knowledge document front matter",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "researchos/knowledge-document@1" },
+    "project_id": { "type": "string", "pattern": "^[a-z]{2,32}-[a-z]{2,32}-[a-z0-9]{4}$" },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 192,
+      "pattern": "^[a-z][a-z0-9_-]{0,31}:[a-z0-9][a-z0-9._/-]{0,159}$",
+      "description": "Readable namespace:value identity; UUID-shaped document identities are rejected by the application contract."
+    },
+    "kind": {
+      "enum": ["idea", "decision", "paper_summary", "related_work_synthesis", "benchmark_protocol", "experiment_plan", "run_result", "experiment_synthesis", "writing_outline", "claim_map", "writing_brief", "report"]
+    },
+    "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+    "status": { "enum": ["draft", "reviewed", "confirmed", "superseded", "archived"] },
+    "depends_on": {
+      "type": "array",
+      "maxItems": 200,
+      "default": [],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$" },
+          "relation": { "type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[a-z][a-z0-9_-]*$" },
+          "impact": { "enum": ["notify", "review_required", "regenerate_required", "evidence_blocked", "rerun_required"] }
+        },
+        "required": ["id", "relation", "impact"]
+      }
+    },
+    "workspace_scopes": {
+      "type": "array",
+      "maxItems": 40,
+      "default": [],
+      "items": { "type": "string", "minLength": 3, "maxLength": 129, "pattern": "^[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_-]{0,63}$" }
+    },
+    "paper_id": { "type": "string", "format": "uuid" },
+    "experiment_id": { "type": "string", "format": "uuid" },
+    "run_id": { "type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$" },
+    "artifact_ids": { "type": "array", "maxItems": 200, "default": [], "items": { "type": "string", "format": "uuid" } },
+    "evidence_ids": { "type": "array", "maxItems": 200, "default": [], "items": { "type": "string", "format": "uuid" } },
+    "read_scope": { "enum": ["metadata", "abstract", "partial", "full_text"] }
+  },
+  "required": ["schema", "project_id", "id", "kind", "title", "status"]
+}

@@ -870,6 +870,151 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'error'
   text: string
   meta?: string
+  context_manifest_id?: string
+  context_status?: 'complete' | 'partial' | 'blocked' | 'empty'
+}
+
+export interface ContextManifestSourceRef {
+  source: 'knowledge_document' | 'conversation_message' | 'structured_state'
+  document_id: string | null
+  entity_id: string | null
+  entity_type: string | null
+  document_sha256: string | null
+  locator: string
+  line_start: number | null
+  line_end: number | null
+  author_status: string | null
+  system_health: string | null
+  evidence_level: string
+}
+
+export interface ContextManifest {
+  id: string
+  project_id: string
+  purpose: string
+  workspace_scope: string
+  plan: {
+    search_mode?: string
+    max_documents?: number
+  }
+  source_refs: ContextManifestSourceRef[]
+  search_metadata: {
+    mode?: string
+    attempted?: boolean
+    result_count?: number
+    local_result_count?: number
+    filtered_stale_results?: number
+    blocked_code?: string | null
+  }
+  token_budget: number
+  output_reserve: number
+  included_tokens: number
+  excluded: Array<{ kind: string; id?: string; reason: string }>
+  status: 'complete' | 'partial' | 'blocked' | 'empty'
+  created_at: string
+}
+
+export interface KnowledgeDocumentRow {
+  project_id: string
+  document_id: string
+  relative_path: string
+  kind: string
+  author_status: string
+  system_health: 'current' | 'stale' | 'blocked' | 'indexing' | 'index_stale' | 'index_failed' | string
+  current_sha256: string
+  current_git_commit: string | null
+  git_dirty: boolean
+  active_index_generation: string | null
+  metadata: {
+    title?: string
+    workspace_scopes?: string[]
+    paper_id?: string | null
+    experiment_id?: string | null
+    run_id?: string | null
+    read_scope?: string | null
+    evidence_ids?: string[]
+    artifact_ids?: string[]
+    unresolved_dependencies?: Array<{ id: string; code: string; impact: string }>
+    [key: string]: unknown
+  }
+  present: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface KnowledgeDocumentDetail {
+  row: KnowledgeDocumentRow
+  source: string
+  parsed: {
+    frontmatter: Record<string, unknown>
+    body: string
+    body_sha256: string
+    document_sha256: string
+    headings: Array<{ depth: number; title: string; line: number }>
+    chunks: Array<{ chunk_key: string; heading_path: string[]; line_start: number; line_end: number; token_count: number }>
+  }
+}
+
+export interface KnowledgeImpactItem {
+  id: string
+  report_id: string
+  node_type: string
+  node_id: string
+  policy: 'notify' | 'review_required' | 'regenerate_required' | 'evidence_blocked' | 'rerun_required' | string
+  status: 'open' | 'proposal_created' | string
+  reason: string
+  depth: number
+  path: Array<Record<string, unknown>>
+  proposal_id: string | null
+  created_at: string
+}
+
+export interface KnowledgeImpactReport {
+  id: string
+  project_id: string
+  reason: string
+  actor: string
+  changed_nodes: Array<{ type: string; id: string }>
+  policy_counts: Record<string, number>
+  cycle_count: number
+  truncated: boolean
+  status: string
+  items: KnowledgeImpactItem[]
+  created_at: string
+}
+
+export interface KnowledgeGraphNode {
+  id: string
+  node_type: string
+  entity_id: string
+  label: string
+  category: 'knowledge_document' | 'entity' | 'version'
+  status: string
+  kind: string | null
+  locator: string
+  document_sha256: string | null
+  author_status: string | null
+  system_health: string | null
+  permission: 'project_scoped'
+  metadata: Record<string, unknown>
+}
+
+export interface KnowledgeGraphEdge {
+  id: string
+  source: string
+  target: string
+  relation: string
+  impact_policy: string | null
+  valid: boolean
+  invalidated_reason: string | null
+}
+
+export interface KnowledgeGraphResponse {
+  project_id: string
+  graph_status: 'ready' | 'empty'
+  nodes: KnowledgeGraphNode[]
+  edges: KnowledgeGraphEdge[]
+  truncated: boolean
 }
 
 export interface ThinkingStage {

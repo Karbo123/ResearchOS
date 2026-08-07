@@ -1,9 +1,97 @@
 import { useEffect, useRef, useState } from 'react'
-import { CircleUserRound, Send, Sparkles, X } from 'lucide-react'
-import type { ChatMessage } from '../types'
+import { BookOpenText, ChevronDown, CircleUserRound, FileText, Loader2, Send, Sparkles, X } from 'lucide-react'
+import { api, errorMessage } from '../api'
+import type { ChatMessage, ContextManifest, ContextManifestSourceRef } from '../types'
 import { useTranslation } from '../i18n'
 import { VoiceInputButton } from './VoiceInputButton'
 import { useComposerTextarea, useVoiceInsertion } from '../hooks/useComposerInput'
+
+function shortHash(value: string | null): string {
+  return value ? value.slice(0, 10) : ''
+}
+
+function sourceIdentity(source: ContextManifestSourceRef): string {
+  return source.document_id || (source.entity_type && source.entity_id ? `${source.entity_type}:${source.entity_id}` : source.locator)
+}
+
+function ContextSources({ projectId, manifestId }: { projectId: string; manifestId: string }) {
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [manifest, setManifest] = useState<ContextManifest | null>(null)
+  const [failure, setFailure] = useState('')
+
+  const toggle = async () => {
+    const next = !open
+    setOpen(next)
+    if (!next || manifest || loading) return
+    setLoading(true)
+    setFailure('')
+    try {
+      setManifest(await api<ContextManifest>(`/api/projects/${encodeURIComponent(projectId)}/context-manifests/${encodeURIComponent(manifestId)}`))
+    } catch (error) {
+      setFailure(errorMessage(error))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const documentCount = manifest
+    ? new Set(manifest.source_refs.map(source => source.document_id).filter(Boolean)).size
+    : 0
+
+  return (
+    <div className="context-sources" data-open={open ? 'true' : 'false'}>
+      <button
+        className="context-sources-trigger"
+        type="button"
+        aria-expanded={open}
+        onClick={() => void toggle()}
+      >
+        {loading ? <Loader2 className="spin" size={13} /> : <BookOpenText size={13} />}
+        <span>{t('chat.sources')}</span>
+        <ChevronDown className="context-sources-chevron" size={13} />
+      </button>
+      {open ? (
+        <div className="context-sources-panel">
+          {failure ? <div className="context-sources-error" role="alert">{failure}</div> : null}
+          {loading ? <div className="context-sources-loading" role="status">{t('chat.sourcesLoading')}</div> : null}
+          {manifest ? (
+            <>
+              <div className="context-sources-summary">
+                <span>{t('chat.sourcesSummary', { documents: documentCount, sources: manifest.source_refs.length })}</span>
+                <span>{t('chat.sourcesTokens', { used: manifest.included_tokens, budget: manifest.token_budget - manifest.output_reserve })}</span>
+              </div>
+              {manifest.source_refs.length ? (
+                <ul className="context-source-list">
+                  {manifest.source_refs.map((source, index) => (
+                    <li key={`${sourceIdentity(source)}-${source.locator}-${index}`}>
+                      <FileText size={14} aria-hidden="true" />
+                      <div>
+                        <strong>{sourceIdentity(source)}</strong>
+                        <span>{source.locator}</span>
+                        {source.document_sha256 ? (
+                          <code title={source.document_sha256}>{t('chat.sourceVersion', { hash: shortHash(source.document_sha256) })}</code>
+                        ) : null}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : <div className="context-sources-empty">{t('chat.sourcesEmpty')}</div>}
+              {manifest.excluded.length ? (
+                <details className="context-sources-excluded">
+                  <summary>{t('chat.sourcesExcluded', { count: manifest.excluded.length })}</summary>
+                  <ul>{manifest.excluded.map((item, index) => <li key={`${item.kind}-${item.id || index}`}>{item.reason}</li>)}</ul>
+                </details>
+              ) : null}
+              <div className="context-sources-note">{t('chat.sourcesEvidenceNote')}</div>
+            </>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
 function ProjectProgress() {
   const { t } = useTranslation()
@@ -96,6 +184,9 @@ export function ProjectChat({
               <div className="message-content">
                 <div className="bubble">{message.text}</div>
                 {message.meta ? <div className="message-meta">{message.meta}</div> : null}
+                {message.role === 'assistant' && message.context_manifest_id && projectId
+                  ? <ContextSources projectId={projectId} manifestId={message.context_manifest_id} />
+                  : null}
               </div>
             </div>
           )

@@ -35,6 +35,8 @@
     "supermemory:start": "tsx scripts/start-supermemory.ts",
     "supermemory:stop": "tsx scripts/start-supermemory.ts stop",
     "supermemory:acceptance": "tsx scripts/supermemory-acceptance.ts",
+    "memory:v2:spike": "tsx scripts/memory-v2-supermemory-spike.ts",
+    "memory:v2:capacity": "tsx scripts/memory-v2-capacity.ts",
     "workflow:v2:check": "tsx scripts/verify-workflow-v2.ts",
     "mastra:evals:check": "tsx scripts/mastra-evals-check.ts",
     "model-failure:check": "tsx scripts/verify-model-failure.ts",

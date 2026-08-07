@@ -3,17 +3,20 @@ import { api, errorMessage } from '../../api'
 import type { ProjectDetail, Proposal, TabId } from '../../types'
 import { Badge, ButtonRow, EmptyState, SectionHeading } from '../ui'
 import { formatDateTime, useTranslation } from '../../i18n'
+import { KnowledgeImpactSheet } from '../KnowledgeImpactSheet'
 
 export function ApprovalsTab({
   project,
   onRefresh,
   showToast,
   onNavigate,
+  onOpenKnowledgeGraph,
 }: {
   project: ProjectDetail
   onRefresh: () => Promise<void>
   showToast: (message: string) => void
   onNavigate: (tab: TabId) => void
+  onOpenKnowledgeGraph: () => void
 }) {
   const { t, locale } = useTranslation()
   const decide = async (proposalId: string, decision: 'approved' | 'rejected') => {
@@ -53,6 +56,7 @@ export function ApprovalsTab({
 
   return (
     <>
+      <KnowledgeImpactSheet projectId={project.id} onRefresh={onRefresh} showToast={showToast} onOpenGraph={onOpenKnowledgeGraph} />
       <SectionHeading title={t('approvals.title')} hint={t('approvals.hint')} />
       {project.proposals?.length ? (
         <div className="data-list">

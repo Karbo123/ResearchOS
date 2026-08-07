@@ -70,6 +70,12 @@ The database is the business state source. Supermemory is the project-scoped sem
 
 After upload, the durable queue dispatches a fixed `material_index` task. PDF text is extracted from a bounded page range and text-like files are normalized into bounded overlapping chunks. Images and PDFs with no extractable text are sent as controlled multimodal documents. Each semantic write includes the immutable project container tag and source metadata. `/materials/search` calls Supermemory directly with the current project scope; missing configuration or remote failure is returned as a structured error, never as a local keyword fallback.
 
+## Memory v2 Knowledge Documents
+
+Project knowledge is authored in the Git-versioned `projects/<project-id>/research/**/*.md` tree. The first Memory v2 foundation registers only structured metadata in PGlite (`knowledge_documents`, `knowledge_document_revisions`, `knowledge_index_generations`, and `knowledge_index_entries`); it never copies Markdown bodies into SQL. Each document starts with the strict `researchos/knowledge-document@1` YAML contract documented in `docs/schemas/knowledge-document-front-matter.schema.json`. Paths are kind-specific and allowlisted, document identities are readable namespace/value IDs, and symlinks or project mismatches fail closed.
+
+The TypeScript AST parser retains headings, Markdown block boundaries, original line locations, and bounded token counts. Chunks are derived index units rather than user editing units. Reconciliation uses the file SHA-256 and Git metadata to make unchanged files idempotent, preserve a stable ID across a file rename, record a new revision for content changes, and mark missing files blocked. Supermemory remains a replaceable project-scoped index; active-generation replacement and Context Planner assembly are later Memory v2 phases and must not be implied by this foundation alone.
+
 ## Experiment Boundary
 
 An approved request selects an allowlisted type and project semantic slug. The supervisor derives all paths. Scientific Python executes with the project `.venv` on the fixed Linux backend (`python3 -m venv` + `.venv/bin/python`). Native Windows hosting is not supported; the legacy `windows`/`wsl2` launchers were removed. The child receives a minimal environment without application model keys.

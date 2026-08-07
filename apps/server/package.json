@@ -16,10 +16,16 @@
     "@hono/node-server": "^2.1.0",
     "esbuild": "0.25.3",
     "fast-xml-parser": "5.10.1",
+    "gpt-tokenizer": "^3.4.0",
     "hono": "^4.13.0",
+    "mdast-util-to-string": "^4.0.0",
     "pdfjs-dist": "5.1.91",
+    "remark-frontmatter": "^5.0.0",
+    "remark-parse": "^11.0.0",
     "supermemory": "^4.24.2",
     "tar": "7.5.22",
+    "unified": "^11.0.5",
+    "yaml": "^2.9.0",
     "zod": "4.1.12"
   },
   "devDependencies": {

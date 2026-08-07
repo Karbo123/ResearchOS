@@ -329,6 +329,7 @@ export function App() {
       const result = await api<Record<string, any>>('/api/chat', {
         method: 'POST',
         body: JSON.stringify({
+          request_id: crypto.randomUUID(),
           session_id: sessionIdsByScope[scope] ?? null,
           project_id: project.id,
           message,
@@ -343,7 +344,14 @@ export function App() {
       setSessionIdsByScope(previous => ({ ...previous, [scope]: result.session_id || previous[scope] || null }))
       setProjectMessages(previous => ({
         ...previous,
-        [scope]: [...(previous[scope] || []), { id: nextMessageId(), role: 'assistant', text: result.reply || '', meta: routeMeta || undefined }],
+        [scope]: [...(previous[scope] || []), {
+          id: nextMessageId(),
+          role: 'assistant',
+          text: result.reply || '',
+          meta: routeMeta || undefined,
+          context_manifest_id: typeof result.context_manifest_id === 'string' ? result.context_manifest_id : undefined,
+          context_status: result.context_status,
+        }],
       }))
       if (result.action_required) {
         await refreshProject()

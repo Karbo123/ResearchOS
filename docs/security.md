@@ -26,6 +26,8 @@ Reports have an additional read-time lineage gate. Each new report stores its pr
 
 Uploads are size- and extension-limited. Uploaded material remains untrusted context and is not executed; no Windows Defender scan is enforced.
 
+Memory v2 knowledge documents are also untrusted input. The registry accepts only Markdown below the current project's `research/` directory, validates strict YAML front matter and semantic kind/path pairs, rejects traversal and symlink paths, verifies the immutable project slug, and fails the entire reconciliation on duplicate IDs or malformed documents. PGlite stores hashes, source metadata, status, and dependency/index bookkeeping rather than a second full-text copy. A future index adapter must use the local active-generation allowlist; a stale or failed remote index must never be allowed to leak old content into a model context.
+
 PDF evidence is downloaded only from a fixed HTTPS host allowlist, limited to 25 MB, checked for a PDF signature, hashed, parsed without evaluation, and stored with page locators. Extracted passages are candidates for claim-level review, not automatic proof.
 
 Claim Review endpoints accept only evidence IDs owned by the current project, allow exactly one terminal decision, preserve the `page_quote_requires_claim_review` status, and write creation/decision audit events. Acceptance records human review of the selected quote; it does not establish a scientific conclusion.

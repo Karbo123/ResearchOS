@@ -29,6 +29,10 @@ const REMOTE_EMBEDDING_SUPPORTED = true
 const MAX_ARTIFACT_BYTES = 100 * 1024 * 1024
 const allowedArtifactTypes = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/webp', 'image/gif'])
 export type MemoryIngestRequest = z.infer<typeof memoryIngestRequest>
+export type InternalMemoryIngestRequest = Omit<MemoryIngestRequest, 'source_type'> & {
+  source_type: MemoryIngestRequest['source_type'] | 'knowledge_document_chunk'
+  source_key?: string
+}
 
 // Supermemory's upload endpoint expects the SDK fileType vocabulary
 // (text, pdf, tweet, google_doc, google_slide, google_sheet, image, video,
@@ -75,6 +79,7 @@ export type MemoryLink = {
   project_id: string
   source_type: string
   source_id: string | null
+  source_key: string | null
   artifact_id: string | null
   uploaded_file_id: string | null
   content_sha256: string
@@ -297,8 +302,9 @@ function sha256(content: string | Uint8Array): string {
   return createHash('sha256').update(content).digest('hex')
 }
 
-function customId(projectId: string, contentSha256: string): string {
-  return `research-os-memory-${projectId.replaceAll('-', '')}-${contentSha256}`.slice(0, 100)
+function customId(projectId: string, contentSha256: string, sourceKey?: string): string {
+  const sourcePart = sourceKey ? `${sha256(sourceKey).slice(0, 16)}-` : ''
+  return `research-os-memory-${projectId.replaceAll('-', '')}-${sourcePart}${contentSha256}`.slice(0, 100)
 }
 
 function sanitizeResult(item: Record<string, unknown>, link?: MemoryLink | null) {
@@ -314,6 +320,7 @@ function sanitizeResult(item: Record<string, unknown>, link?: MemoryLink | null)
     local_memory_link_id: link?.id ?? null,
     source_type: link?.source_type ?? null,
     source_id: link?.source_id ?? null,
+    source_key: link?.source_key ?? null,
     artifact_id: link?.artifact_id ?? null,
     uploaded_file_id: link?.uploaded_file_id ?? null,
     evidence_status: link?.metadata?.evidence_status ?? 'semantic_candidate',
@@ -350,7 +357,7 @@ export async function memoryGraph(projectId: string, query: string, limit: numbe
   return { project_id: projectId, query, nodes: [...nodes.values()], edges, source: 'supermemory_graph_context', evidence_status: 'semantic_candidates_not_scientific_evidence' }
 }
 
-function metadataFor(input: MemoryIngestRequest, projectId: string, contentSha256: string, artifact?: Record<string, unknown>): FlatMetadata {
+function metadataFor(input: InternalMemoryIngestRequest, projectId: string, contentSha256: string, artifact?: Record<string, unknown>): FlatMetadata {
   const metadata: FlatMetadata = {
     source: 'research-os',
     project_id: projectId,
@@ -386,7 +393,7 @@ function artifactPath(artifact: Record<string, unknown>): string {
   return path
 }
 
-export async function ingestProjectMemory(projectId: string, input: MemoryIngestRequest) {
+export async function ingestProjectMemory(projectId: string, input: InternalMemoryIngestRequest) {
   const artifact = input.artifact_id
     ? await one<Record<string, unknown>>('SELECT * FROM artifacts WHERE id=$1 AND project_id=$2 AND valid=TRUE', [input.artifact_id, projectId])
     : null
@@ -397,18 +404,20 @@ export async function ingestProjectMemory(projectId: string, input: MemoryIngest
   if (input.uploaded_file_id && !uploadedFile) throw new SupermemoryArtifactError('uploaded_file_not_found', '当前项目中不存在可摄取的上传文件。', 404)
   const sourceFile = artifact || uploadedFile
   const contentSha256 = input.content ? sha256(input.content) : sourceFile ? String(sourceFile.sha256) : sha256(String(input.content))
-  const existing = await one<MemoryLink>('SELECT * FROM memory_links WHERE project_id=$1 AND source_type=$2 AND source_id IS NOT DISTINCT FROM $3 AND content_sha256=$4 ORDER BY created_at DESC LIMIT 1', [projectId, input.source_type, input.source_id ?? null, contentSha256])
+  const existing = input.source_key
+    ? await one<MemoryLink>('SELECT * FROM memory_links WHERE project_id=$1 AND source_type=$2 AND source_key=$3 AND content_sha256=$4 ORDER BY created_at DESC LIMIT 1', [projectId, input.source_type, input.source_key, contentSha256])
+    : await one<MemoryLink>('SELECT * FROM memory_links WHERE project_id=$1 AND source_type=$2 AND source_key IS NULL AND source_id IS NOT DISTINCT FROM $3 AND content_sha256=$4 ORDER BY created_at DESC LIMIT 1', [projectId, input.source_type, input.source_id ?? null, contentSha256])
   if (existing?.status === 'active' || existing?.status === 'revoked') return { link: existing, idempotent: true }
   if (existing?.status === 'pending') throw new SupermemoryArtifactError('memory_ingestion_in_progress', '相同语义内容正在摄取，请稍后重试。', 409)
 
   const linkId = existing?.id || crypto.randomUUID()
   const tag = projectContainerTag(projectId)
-  const remoteCustomId = customId(projectId, contentSha256)
+  const remoteCustomId = customId(projectId, contentSha256, input.source_key)
   const metadata = metadataFor(input, projectId, contentSha256, sourceFile || undefined)
   if (existing) {
-    await database.query('UPDATE memory_links SET custom_id=$2,supermemory_id=$3,container_tag=$4,task_type=$5,metadata=$6,status=\'pending\',revoked_at=NULL,deleted_at=NULL WHERE id=$1', [linkId, remoteCustomId, `pending-${linkId}`, tag, input.task_type, metadata])
+    await database.query('UPDATE memory_links SET source_key=$2,custom_id=$3,supermemory_id=$4,container_tag=$5,task_type=$6,metadata=$7,status=\'pending\',revoked_at=NULL,deleted_at=NULL WHERE id=$1', [linkId, input.source_key ?? null, remoteCustomId, `pending-${linkId}`, tag, input.task_type, metadata])
   } else {
-    await database.query('INSERT INTO memory_links(id,project_id,source_type,source_id,artifact_id,uploaded_file_id,content_sha256,custom_id,supermemory_id,container_tag,task_type,status,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,\'pending\',$12)', [linkId, projectId, input.source_type, input.source_id ?? null, input.artifact_id ?? null, input.uploaded_file_id ?? null, contentSha256, remoteCustomId, `pending-${linkId}`, tag, input.task_type, metadata])
+    await database.query('INSERT INTO memory_links(id,project_id,source_type,source_id,source_key,artifact_id,uploaded_file_id,content_sha256,custom_id,supermemory_id,container_tag,task_type,status,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,\'pending\',$13)', [linkId, projectId, input.source_type, input.source_id ?? null, input.source_key ?? null, input.artifact_id ?? null, input.uploaded_file_id ?? null, contentSha256, remoteCustomId, `pending-${linkId}`, tag, input.task_type, metadata])
   }
   try {
     const client = await api(projectId)
@@ -481,8 +490,10 @@ async function withProcessingRetry<T>(operation: () => Promise<T>, attempts = 20
 export async function applyMemoryRevocation(projectId: string, linkId: string, operation: 'forget' | 'delete', actor: string) {
   const link = await one<MemoryLink>('SELECT * FROM memory_links WHERE id=$1 AND project_id=$2', [linkId, projectId])
   if (!link) throw new SupermemoryArtifactError('memory_link_not_found', '项目语义记忆关联不存在。', 404)
-  if (link.status === 'revoked' || link.status === 'deleted') return { link, idempotent: true }
-  if (link.status !== 'active') throw new SupermemoryArtifactError('memory_link_not_active', '只有 active 语义记忆可以撤销或删除。', 409)
+  if (link.status === 'deleted' || (operation === 'forget' && link.status === 'revoked')) return { link, idempotent: true }
+  if (link.status !== 'active' && !(operation === 'delete' && link.status === 'revoked')) {
+    throw new SupermemoryArtifactError('memory_link_not_active', '只有 active 语义记忆可以撤销；delete 也允许清理已 revoked 的远端文档。', 409)
+  }
   if (operation === 'forget') {
     // The v4 forget endpoint operates on extracted memory entities, not on the
     // source document id. Resolve the memory entry ids for this document from

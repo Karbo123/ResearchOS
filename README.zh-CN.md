@@ -92,7 +92,7 @@ npm test
 
 代码三档、文档文本与图片识别模型名称在填写 URL 与 API key 后会通过项目级 `model-catalog` 接口自动拉取可用模型列表，模型名使用下拉选择而不是手工输入；推理强度同样使用下拉，并优先采用网关返回的档位。列表拉取失败时保留当前值并显示结构化错误，不会静默替换模型。
 
-代码模型内部使用 `simple` / `medium` / `complex` 三档。界面档位只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档；模型名称字段会从网关自动加载为下拉列表并显示具体模型 ID。每档分别拥有 model、URL、key、reasoning effort 和代理开关。当前 `.env.example` 映射为 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`。项目级运行时覆盖保存在 `projects/<project-id>/.researchos/model-settings.json`（0600 权限、原子写入，删除项目时一并清理，且被项目 Git 工作区忽略）；没有覆盖时回退到项目 `.env` 默认。代理地址仍保存在 `runtime/model-settings.json`，每个模型的 `use_proxy` 则按项目保存。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`projects/<project-id>/.researchos/model-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
+代码模型内部使用 `simple` / `medium` / `complex` 三档。界面档位只显示“轻量级模型 / 通用模型 / 最强大的模型”，不绑定任何厂商或系列，因此不同供应商都可以填充这三档；模型名称字段会从网关自动加载为下拉列表并显示具体模型 ID。每档分别拥有 model、URL、key、reasoning effort 和代理开关。当前 `.env.example` 将轻量级档设为 `deepseek-v4-flash`（替代当前不可用的 `gpt-5.6-luna`），通用档与最强档仍为 `gpt-5.6-terra`、`gpt-5.6-sol`。项目级运行时覆盖保存在 `projects/<project-id>/.researchos/model-settings.json`（0600 权限、原子写入，删除项目时一并清理，且被项目 Git 工作区忽略）；没有覆盖时回退到项目 `.env` 默认。代理地址仍保存在 `runtime/model-settings.json`，每个模型的 `use_proxy` 则按项目保存。设置读取接口只返回 `key_configured`，不会返回 key。运行时代码只读取项目 `.env`、`projects/<project-id>/.researchos/model-settings.json` 和 `runtime/model-settings.json`，不会读取 Codex 配置或认证文件。
 
 项目 `.env` 当前将代码模型默认 URL 都设为本地 OpenAI-compatible Responses API base `http://127.0.0.1:3000/v1`（模型网关运行在 Windows 主机，WSL2 通过 mirrored 回环访问）。Research OS 会自行追加 `/responses`；不要把 `/chat/completions`、`/completions` 或 `/responses` 这样的操作地址填入配置。运行时设置仍可完全独立地覆盖每一档。
 

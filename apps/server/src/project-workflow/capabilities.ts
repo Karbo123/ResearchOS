@@ -6,8 +6,8 @@ import { projectChatTurn } from '../chat-service.js'
 import { createWorkflowEditProposal } from '../workflow-edit-service.js'
 import { paperServiceCapability } from '../paper-capability-bridge.js'
 import { database, one } from '../database.js'
-import { extractMaterialChunks, type MaterialFile } from '../material-indexer.js'
-import { ingestProjectMemory, supermemoryEnabled } from '../supermemory-service.js'
+import { indexUploadedMaterial } from '../indexing-service.js'
+import { ingestProjectMemory } from '../supermemory-service.js'
 import type { WorkflowCapability } from './contracts.js'
 
 export type WorkflowTaskInput = {
@@ -22,34 +22,6 @@ export type WorkflowTaskInput = {
   input: Record<string, unknown>
 }
 
-async function indexUploadedMaterial(projectId: string, uploadedFileId: string, taskId: string): Promise<{ indexed: number; parse_status: string }> {
-  if (!supermemoryEnabled()) throw new Error('supermemory_not_configured')
-  const file = await one<Record<string, unknown>>('SELECT * FROM uploaded_files WHERE id=$1 AND project_id=$2', [uploadedFileId, projectId])
-  if (!file) throw new Error('uploaded_file_not_found')
-  const extracted = await extractMaterialChunks(file as MaterialFile)
-  let indexed = 0
-  if (extracted.raw_upload) {
-    await ingestProjectMemory(projectId, {
-      source_type: 'artifact', source_id: null, artifact_id: null, uploaded_file_id: uploadedFileId,
-      content: null, source_url: null, quote: null, locator: null,
-      metadata: { task_id: taskId, parse_status: extracted.parse_status, evidence_status: 'untrusted_uploaded_material' },
-      task_type: 'memory', idempotency_key: `material-index:${uploadedFileId}:raw`,
-    })
-    indexed += 1
-  }
-  for (const chunk of extracted.chunks) {
-    await ingestProjectMemory(projectId, {
-      source_type: 'artifact', source_id: null, artifact_id: null, uploaded_file_id: uploadedFileId,
-      content: chunk.content, source_url: null, quote: chunk.content, locator: chunk.locator,
-      metadata: { task_id: taskId, chunk_index: chunk.index, parse_status: extracted.parse_status, content_sha256: chunk.content_sha256, evidence_status: 'untrusted_uploaded_material' },
-      task_type: 'superrag', idempotency_key: `material-index:${uploadedFileId}:chunk:${chunk.content_sha256}`,
-    })
-    indexed += 1
-  }
-  await database.query('UPDATE uploaded_files SET metadata=$2 WHERE id=$1 AND project_id=$3', [uploadedFileId, { ...((file.metadata || {}) as Record<string, unknown>), semantic_index_status: 'active', semantic_index_task_id: taskId, semantic_indexed_items: indexed, parse_status: extracted.parse_status }, projectId])
-  return { indexed, parse_status: extracted.parse_status }
-}
-
 export async function executeWorkflowCapability(capability: WorkflowCapability, projectId: string, taskId: string, input: WorkflowTaskInput): Promise<unknown> {
   const payload = input.input || {}
   switch (capability) {
@@ -62,6 +34,7 @@ export async function executeWorkflowCapability(capability: WorkflowCapability, 
     case 'conversation.agent_turn': {
       const { chatRequest } = await import('../contracts.js')
       const body = chatRequest.parse({
+        request_id: payload.request_id,
         project_id: projectId,
         session_id: payload.session_id ?? null,
         message: payload.message,

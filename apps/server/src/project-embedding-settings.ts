@@ -180,7 +180,11 @@ function registerPool(settings: Omit<ProjectEmbeddingSettings, 'pool_key'>): str
 
 export function computedEmbeddingSettings(projectId: string, input: ProjectEmbeddingSettingsRequest, previous: ProjectEmbeddingSettings) {
   const defaults = envDefaults()
-  if (input.mode === 'global') return { settings: null as null, pool_key: GLOBAL_POOL_KEY, reset_required: false }
+  if (input.mode === 'global') {
+    const vectorSpaceChanged = previous.provider !== defaults.provider || previous.model !== defaults.model || previous.dimensions !== defaults.dimensions
+    const poolBoundaryChanged = previous.pool_key !== GLOBAL_POOL_KEY
+    return { settings: null as null, pool_key: GLOBAL_POOL_KEY, reset_required: vectorSpaceChanged || poolBoundaryChanged }
+  }
   const provider = input.provider
   const model = input.model.trim() || (provider === 'local' ? DEFAULT_LOCAL_EMBEDDING_MODEL : '')
   const settings = {
@@ -194,12 +198,9 @@ export function computedEmbeddingSettings(projectId: string, input: ProjectEmbed
   if (provider !== 'local' && !settings.base_url) throw new Error('embedding_remote_base_url_required')
   if (provider !== 'local' && !settings.key) throw new Error('embedding_remote_key_required')
   const poolKey = poolKeyOf(settings)
-  const poolChanged = previous.pool_key !== poolKey
-  const resetRequired = poolChanged && previous.pool_key !== GLOBAL_POOL_KEY && (
-    previous.provider !== settings.provider ||
-    previous.model !== settings.model ||
-    previous.dimensions !== settings.dimensions
-  )
+  const vectorSpaceChanged = previous.provider !== settings.provider || previous.model !== settings.model || previous.dimensions !== settings.dimensions
+  const poolBoundaryChanged = previous.pool_key !== poolKey
+  const resetRequired = vectorSpaceChanged || (poolBoundaryChanged && (previous.pool_key === GLOBAL_POOL_KEY || poolKey === GLOBAL_POOL_KEY))
   void defaults
   return { settings: { ...settings, pool_key: poolKey }, pool_key: poolKey, reset_required: resetRequired }
 }

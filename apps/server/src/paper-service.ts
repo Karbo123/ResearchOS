@@ -9,6 +9,7 @@ import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot } from './paths.js'
 import { projectDetail, requireProject } from './project-service.js'
 import { ingestProjectMemory, supermemoryEnabled } from './supermemory-service.js'
+import { buildContextPacket, contextPacketPrompt } from './context-planner.js'
 
 const TEMPLATE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../assets/paper-template')
 const CVPR_STYLE = readFileSync(resolve(TEMPLATE_ROOT, 'cvpr.sty'), 'utf8')
@@ -42,13 +43,21 @@ function sectionIdForHeading(heading: string): string | null {
   return null
 }
 
+function paperSectionEnd(source: string, sectionStart: number, nextSectionStart?: number): number {
+  if (nextSectionStart !== undefined) return nextSectionStart
+  const terminalMarkers = ['\\bibliographystyle', '\\bibliography', '\\end{document}']
+    .map(marker => source.indexOf(marker, sectionStart))
+    .filter(index => index >= 0)
+  return terminalMarkers.length ? Math.min(...terminalMarkers) : source.length
+}
+
 function replacePaperSection(source: string, sectionId: string, content: string): string {
   const matches = [...source.matchAll(/\\section\*?\{([^}]+)\}/g)]
   for (let index = 0; index < matches.length; index += 1) {
     const match = matches[index]!
     if (sectionIdForHeading(match[1]!) !== sectionId) continue
     const start = match.index! + match[0].length
-    const end = matches[index + 1]?.index ?? source.length
+    const end = paperSectionEnd(source, start, matches[index + 1]?.index)
     return `${source.slice(0, start)}\n${content}\n${source.slice(end)}`
   }
   const heading = PAPER_SECTION_HEADINGS[sectionId] || sectionId
@@ -65,22 +74,50 @@ function extractPaperSection(source: string, sectionId: string): { heading: stri
     const match = matches[index]!
     if (sectionIdForHeading(match[1]!) !== sectionId) continue
     const start = match.index! + match[0].length
-    const end = matches[index + 1]?.index ?? source.length
+    const end = paperSectionEnd(source, start, matches[index + 1]?.index)
     return { heading: match[1]!.trim(), body: source.slice(start, end).trim() }
   }
   return null
 }
 
-function paperProjectContext(project: Record<string, unknown>): string {
-  const ideaVersions = project.idea_versions as Array<Record<string, unknown>> | undefined
-  const idea = (ideaVersions?.[0] as Record<string, unknown> | undefined)?.spec as Record<string, unknown> | undefined
-  const experiments = (project.experiments as Array<Record<string, unknown>> | undefined) || []
-  const papers = (project.papers as Array<Record<string, unknown>> | undefined) || []
-  return JSON.stringify({
-    idea,
-    experiment_statuses: experiments.map(item => ({ type: item.experiment_type, status: item.status })),
-    confirmed_papers: papers.filter(item => item.confirmed).map(item => ({ title: item.title, year: item.year })),
-  }).slice(0, 12_000)
+const WRITING_BRIEF_IDS: Record<string, string> = {
+  introduction: 'writing:introduction',
+  paper_related_work: 'writing:related-work',
+  paper_method: 'writing:method',
+  paper_experiments: 'writing:experiments',
+  conclusion: 'writing:conclusion',
+}
+
+async function paperSectionContext(projectId: string, sectionId: string, query: string) {
+  const briefId = WRITING_BRIEF_IDS[sectionId]
+  if (!briefId) throw new ApiError(422, 'paper_section_unknown', '论文章节不在允许范围内。')
+  const packet = await buildContextPacket({
+    project_id: projectId,
+    purpose: 'paper_section',
+    workspace_area: 'paper',
+    workspace_tab: sectionId,
+    workspace_scope: `paper/${sectionId}`,
+    query,
+    requested_document_ids: [briefId],
+    search_mode: 'hybrid',
+  })
+  if (packet.status === 'blocked') throw new ApiError(503, 'paper_context_blocked', '论文写作上下文无法安全装配。', { context_manifest_id: packet.manifest_id })
+  if (!packet.blocks.some(block => block.provenance.document_id === briefId)) {
+    throw new ApiError(422, 'writing_brief_required', '该章节必须先生成并批准对应的 writing brief。', { context_manifest_id: packet.manifest_id, writing_brief_id: briefId })
+  }
+  return packet
+}
+
+async function reviseSectionWithContext(projectId: string, sectionId: string, section: { heading: string; body: string }) {
+  const packet = await paperSectionContext(projectId, sectionId, `Draft or revise the ${section.heading} paper section from confirmed project knowledge.`)
+  const result = await mastraJson<{ result: { revised_source: string; summary: string } }>('/internal/agents/paper-revise', {
+    section_id: sectionId,
+    heading: section.heading,
+    source: section.body,
+    project_context: contextPacketPrompt(packet),
+    project_id: projectId,
+  })
+  return { ...result.result, context_manifest_id: packet.manifest_id, context_sources: packet.blocks.map(block => block.provenance) }
 }
 
 export async function createPaperDraftProposal(projectId: string) {
@@ -143,7 +180,7 @@ Metadata candidates are not full-text evidence. System integration results do no
   operations.push(existing
     ? { action: 'replace', path: 'paper/main.tex', content, expected_sha256: createHash('sha256').update(existing).digest('hex') }
     : { action: 'create', path: 'paper/main.tex', content })
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded CVPR LaTeX draft', 'Create evidence-grounded CVPR paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic CVPR draft`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations, evidence_ids: evidence.map(item => item.id), claim_review_ids: acceptedReviews.map(item => item.id), reviewed_evidence_ids: [...reviewedEvidenceIds] }])
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [proposalId, projectId, 'code_patch', 'Generate an evidence-grounded CVPR LaTeX draft', 'Create evidence-grounded CVPR paper/main.tex', `--- paper/main.tex\n+++ paper/main.tex\n+ Evidence-grounded deterministic CVPR scaffold`, { patch_kind: 'latex', base_git_commit: gitCommit(projectId), operations, evidence_ids: evidence.map(item => item.id), claim_review_ids: acceptedReviews.map(item => item.id), reviewed_evidence_ids: [...reviewedEvidenceIds], scaffold_only: true }])
   if (supermemoryEnabled()) {
     await ingestProjectMemory(projectId, {
       source_type: 'related_work',
@@ -209,20 +246,14 @@ export async function translatePaperSection(projectId: string, sectionId: string
 }
 
 export async function revisePaperSection(projectId: string, sectionId: string) {
-  const project = await projectDetail(projectId)
+  await requireProject(projectId)
   const target = pathInside(projectsRoot, projectId, 'paper', 'main.tex')
   if (!existsSync(target)) throw new ApiError(422, 'paper_source_missing', '项目尚无 paper/main.tex。')
   const source = readFileSync(target)
   const section = extractPaperSection(source.toString('utf8'), sectionId)
   if (!section) throw new ApiError(422, 'paper_section_missing', '论文中尚未包含该章节。')
-  const result = await mastraJson<{ result: { revised_source: string; summary: string } }>('/internal/agents/paper-revise', {
-    section_id: sectionId,
-    heading: section.heading,
-    source: section.body,
-    project_context: paperProjectContext(project),
-    project_id: projectId,
-  })
-  const revised = replacePaperSection(source.toString('utf8'), sectionId, result.result.revised_source)
+  const result = await reviseSectionWithContext(projectId, sectionId, section)
+  const revised = replacePaperSection(source.toString('utf8'), sectionId, result.revised_source)
   const proposalId = crypto.randomUUID()
   await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)', [
     proposalId, projectId, 'code_patch', 'AI-assisted paper section revision requires approval', `Revise paper section ${sectionId}`,
@@ -232,10 +263,12 @@ export async function revisePaperSection(projectId: string, sectionId: string) {
       base_git_commit: gitCommit(projectId),
       operations: [{ action: 'replace', path: 'paper/main.tex', content: revised, expected_sha256: createHash('sha256').update(source).digest('hex') }],
       paper_section: sectionId,
-      revision_summary: result.result.summary,
+      revision_summary: result.summary,
+      context_manifest_id: result.context_manifest_id,
+      context_sources: result.context_sources,
     },
   ])
-  return { proposal_id: proposalId, status: 'pending', revised_source: result.result.revised_source, summary: result.result.summary }
+  return { proposal_id: proposalId, status: 'pending', revised_source: result.revised_source, summary: result.summary, context_manifest_id: result.context_manifest_id }
 }
 
 function readTranslationSections(paperRoot: string): Record<string, Array<{ en: string; zh: string | null }>> {

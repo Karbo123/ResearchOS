@@ -8,7 +8,8 @@ const sourceDirectory = dirname(fileURLToPath(import.meta.url))
 const repositoryRoot = resolve(sourceDirectory, '..')
 const envPath = resolve(repositoryRoot, '.env')
 if (existsSync(envPath) && typeof process.loadEnvFile === 'function') process.loadEnvFile(envPath)
-process.env.RESEARCH_RUNTIME_DIR = resolve(repositoryRoot, 'runtime', 'acceptance-supermemory')
+const acceptanceRuntime = resolve(repositoryRoot, 'runtime', `acceptance-supermemory-${Date.now()}`)
+process.env.RESEARCH_RUNTIME_DIR = acceptanceRuntime
 
 const { database, migrate } = await import('../apps/server/src/database.js')
 const {
@@ -448,6 +449,7 @@ try {
   }
   for (const file of createdArtifactFiles) rmSync(file, { force: true })
   await database.close().catch(() => undefined)
+  rmSync(acceptanceRuntime, { recursive: true, force: true })
 }
 
 result.completed_at = new Date().toISOString()

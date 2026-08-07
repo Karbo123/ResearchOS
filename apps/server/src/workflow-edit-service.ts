@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { ApiError } from './http.js'
-import { audit, database } from './database.js'
+import { audit, database, one } from './database.js'
 import { mastraJson } from './mastra-client.js'
 import { gitCommit } from './patch-service.js'
 import { pathInside, projectsRoot, runtimeRoot } from './paths.js'
@@ -71,8 +71,26 @@ export async function validateWorkflowSource(projectId: string, source: string):
   return { valid: true, errors: [], step_ids: result.definition?.nodes.map(node => node.id) || [] }
 }
 
-export async function createWorkflowEditProposal(projectId: string, instruction: string, projectContext: Record<string, unknown>): Promise<WorkflowEditProposalResult> {
+export async function createWorkflowEditProposal(projectId: string, instruction: string, projectContext: Record<string, unknown>, options: { originTurnId?: string } = {}): Promise<WorkflowEditProposalResult> {
   await requireProject(projectId, true)
+  if (options.originTurnId) {
+    const existing = await one<{ id: string; status: string; diff: string | null; summary: string; impact: Record<string, unknown>; payload: Record<string, unknown> }>('SELECT id,status,diff,summary,impact,payload FROM proposals WHERE project_id=$1 AND origin_turn_id=$2', [projectId, options.originTurnId])
+    if (existing) {
+      const validation = existing.payload.validation
+      const operations = Array.isArray(existing.payload.operations) ? existing.payload.operations as Array<Record<string, unknown>> : []
+      const content = typeof operations[0]?.content === 'string' ? operations[0].content : ''
+      if (existing.status !== 'pending' || !existing.diff || !validation || typeof validation !== 'object' || Array.isArray(validation) || !content) throw new ApiError(409, 'chat_proposal_state_conflict', '该对话轮次已有不兼容的 Workflow Proposal 状态。')
+      return {
+        proposal_id: existing.id,
+        status: 'pending',
+        diff: existing.diff,
+        summary: existing.summary,
+        affected_step_ids: Array.isArray(existing.payload.affected_step_ids) ? existing.payload.affected_step_ids.filter((item): item is string => typeof item === 'string') : [],
+        validation: validation as WorkflowEditProposalResult['validation'],
+        new_source_hash: sha256(content),
+      }
+    }
+  }
   const current = readWorkflowSource(projectId)
   const modelResult = await mastraJson<{
     result: { summary: string; diff: string; affected_step_ids: string[]; planned_validation: string[] }
@@ -89,7 +107,7 @@ export async function createWorkflowEditProposal(projectId: string, instruction:
   const validation = await validateWorkflowSource(projectId, next)
   const proposalId = crypto.randomUUID()
   const baseGitCommit = gitCommit(projectId)
-  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,impact,payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [
+  await database.query('INSERT INTO proposals(id,project_id,kind,reason,summary,diff,impact,payload,origin_turn_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [
     proposalId,
     projectId,
     'code_patch',
@@ -105,6 +123,7 @@ export async function createWorkflowEditProposal(projectId: string, instruction:
       affected_step_ids: proposed.affected_step_ids,
       validation,
     },
+    options.originTurnId || null,
   ])
   await audit('workflow.edit_proposal_created', projectId, {
     proposal_id: proposalId,

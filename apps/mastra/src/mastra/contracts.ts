@@ -82,13 +82,14 @@ export const supervisionIntentSchema = z.object({
   intent: z.enum([
     'explanation', 'advice', 'change_request', 'policy_change',
     'pause_request', 'resume_request', 'cancel_request',
-    'approval_request', 'rejection_request', 'workflow_change_request', 'ambiguous',
+    'approval_request', 'rejection_request', 'workflow_change_request', 'idea_knowledge_request', 'ambiguous',
   ]),
   target_field: z.enum([
     'title', 'research_question', 'domain', 'available_data', 'ethics_and_compliance',
   ]).nullable(),
   proposed_value: z.string().max(4000).nullable(),
   policy_rule: z.string().max(2000).nullable(),
+  knowledge_instruction: z.string().max(12_000).nullable(),
   clarification_question: z.string().max(2000).nullable(),
   assistant_reply: z.string().min(1).max(6000),
 }).strict()
@@ -110,7 +111,7 @@ export const workflowEditResultSchema = z.object({
 
 export const documentReplyRequestSchema = z.object({
   user_message: z.string().trim().min(1).max(20_000),
-  context: z.string().max(12_000).default(''),
+  context: z.string().max(60_000).default(''),
   draft_reply: z.string().max(6000).default(''),
   purpose: z.enum(['clarify', 'supervise']).default('supervise'),
   project_id: projectSlugSchema.optional(),
@@ -138,12 +139,37 @@ export const paperSectionReviseRequestSchema = z.object({
   section_id: paperSectionIdSchema,
   heading: z.string().max(120),
   source: z.string().max(20_000),
-  project_context: z.string().max(12_000).default(''),
+  project_context: z.string().max(100_000).default(''),
   project_id: projectSlugSchema.optional(),
 }).strict()
 export const paperSectionReviseResultSchema = z.object({
   revised_source: z.string().min(1).max(20_000),
   summary: z.string().min(1).max(1200),
+}).strict()
+
+export const knowledgeDocumentDraftKindSchema = z.enum([
+  'idea',
+  'paper_summary',
+  'related_work_synthesis',
+  'experiment_plan',
+  'run_result',
+  'experiment_synthesis',
+  'writing_brief',
+])
+export const knowledgeDocumentDraftRequestSchema = z.object({
+  project_id: projectSlugSchema,
+  kind: knowledgeDocumentDraftKindSchema,
+  title: z.string().trim().min(1).max(300),
+  instruction: z.string().trim().min(5).max(12_000),
+  current_source: z.string().max(240_000),
+  context_packet: z.string().max(240_000),
+  source_snapshot: z.record(z.string(), z.unknown()),
+  evidence_boundary: z.string().trim().min(1).max(4_000),
+}).strict()
+export const knowledgeDocumentDraftResultSchema = z.object({
+  markdown_body: z.string().trim().min(1).max(180_000),
+  summary: z.string().trim().min(1).max(2_000),
+  open_verification_items: z.array(z.string().trim().min(1).max(2_000)).max(50),
 }).strict()
 
 const uuidList = (max: number) => z.array(z.string().uuid()).max(max)
@@ -234,12 +260,14 @@ export const clarifyRequestSchema = z.object({
 }).strict()
 
 export const supervisionRequestSchema = z.object({
+  project_id: projectSlugSchema.optional(),
   message: z.string().min(1).max(20000),
   project_context: z.record(z.string(), z.unknown()),
   transcript: z.array(z.object({ role: z.string(), content: z.string() }).strict()).max(12),
   tier: modelTierSchema,
   memory_resource: z.string().min(1).max(200).optional(),
   memory_thread: z.string().min(1).max(200).optional(),
+  context_packet: z.string().max(60_000).default(''),
   workspace_context: workspaceContextSchema.nullable().optional(),
 }).strict()
 
