@@ -1,6 +1,6 @@
 # Research OS TODO
 
-最后更新：2026-08-06（Asia/Shanghai）
+最后更新：2026-08-07（Asia/Shanghai）
 
 状态只使用：`[ ]` 待处理、`[~]` 进行中、`[x]` 已完成且已验证、`[!]` 外部阻塞。
 
@@ -8,7 +8,7 @@
 
 ## 排序原则（2026-08-07 更新）
 
-1. **当前架构优先：`P0-SUPERMEMORY-RS-160`。** 这是用户已确认的闭源官方 Supermemory 替换，必须按 `TODO-supermemory-server-rs.md` 的 Phase 0-8 顺序推进；未通过影子验收前不得切换 6767。
+1. **当前架构优先：`P0-SUPERMEMORY-RS-160`。** 这是用户已确认的闭源官方 Supermemory 替换，必须按 `TODO-supermemory-server-rs.md` 的 Phase 0-5 顺序推进；未通过兼容验收前不得切换 6767。
 2. **`P0-WORKSPACE-108A` 至 `108H` 是已完成的工作台基线。** 后续 Memory v2、Rust 服务和页面工作必须保持其项目 slug、项目隔离、常驻对话和失败关闭契约，不能恢复旧导航。
 3. **之前的 TODO 统一收进“旧任务池”。** 它们仍然保留在本文档中，但明确是非当前优先；只有当前架构任务完成并通过验收后，才重新评估。
 4. **外部阻塞单独列出。** 等待外部环境或人工操作才能继续，不代表可以跳过或伪造通过。
@@ -228,14 +228,17 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 - [x] `P0-SETTINGS-147` 修复设置面板模型测试与紧凑布局：语音识别测试改为发送 250ms/8kHz/mono 的最小有效 WAV multipart 请求，图片识别测试真实携带 1x1 PNG，图片生成保持 1k/low/n=1 最低成本请求；公网模型按全局代理开关路由，回环/RFC1918 地址始终直连，并按“私网服务未监听 / 公网直连可考虑代理 / 已启用代理需检查代理服务”返回结构化诊断。测试结果统一位于按钮下方右对齐，成功只显示“连接正常”、完整细节保留 tooltip；模型目录成功数量改为下拉框 tooltip 与无障碍 live status，不再参与表单布局。验收：新增 4 项最小请求协议回归和 2 项代理路由回归，本机临时代理实测开启代理时公网 URL 经过代理、回环 URL 仍绕过代理；服务端完整套件 50 文件/221 测试及新增定向 13 测试、前后端 typecheck/build、docs/UI/i18n/theme 检查通过。真实 API 验证 Embedding 成功，Groq 直连真实返回 403，图片生成公网直连不可达并提示启用代理，`10.31.107.77` 私网视觉服务当前未监听且明确提示直连检查；Windows Chrome 强制加载 `ui181` 后完成桌面中文/英文与 390px 移动端截图、文本位置和无横向溢出验收。当前用户配置中的全局代理为关闭且 URL 为空，未伪造真实上游成功。 [Apple 设计验收]
 - [x] `P0-SETTINGS-148` 代理改为“系统只保存代理地址 + 每模型独立开关”：移除系统页全局代理开关，改名为“代理信息设置”并提供代理连通性测试；代码三档、文档文本、图片识别、图片生成、Embedding、语音识别各自保存项目级 `use_proxy`，默认代码/文档/Embedding 直连、图片识别/图片生成/语音识别走代理；模型测试、模型目录、Mastra Agent、语音转写与远程 Embedding 出口都按各自开关路由。`proxyFetch` 默认改为直连，全局 Supermemory 子进程只尊重显式 `SUPERMEMORY_PROXY_URL`，自定义 Embedding 池按项目开关注入或清空代理并跟踪代理状态，开关变化时自动重启池实例。同步 `10.31.107.77` 本地地址默认改为 `127.0.0.1`，并更新契约、测试、i18n、README/AGENTS/operations。 [Apple 设计验收]
 
+- [x] `P1-MEMORY-DESIGN-149` 把“项目 Markdown 作为可编辑、可版本化的科研知识源，PGlite 管理状态与依赖，Supermemory 仅作为可重建的语义索引”细化为 `TODO-memory.md`：覆盖 Idea、逐篇文献、复现、本方法实验、论文写作的目录与文档契约，定义版本替换、依赖传播、上下文预算、语义分块、索引退役和分阶段实施/验收计划；本项只代表设计文档完成，不代表 Memory v2 已实现。未来相关界面仍须满足 Apple 设计验收。文档同步检查与 `git diff --check` 已通过。 [Apple 设计验收]
+- [~] `P1-MEMORY-V2-150` 按 `TODO-memory.md` 实施 Memory v2：项目 Markdown 成为可编辑、可 Git 管理的科研知识源，PGlite 管理文档版本/依赖/索引代次/审计，Supermemory 只保留项目隔离且可重建的派生索引，并由受控 Context Planner 按页面与任务读取完整文件、章节和检索候选；进度、范围、验证与阻塞必须即时写回 `TODO-memory.md`，不得把局部代码或静态 UI 标为完整实现。 [Apple 设计验收]
+
 > 验收记录（2026-08-07）：新增 `supermemory-env` 与代理默认直连回归测试；服务端完整套件 52 文件/229 测试、全量 typecheck/build/docs/UI/i18n/language/navigation 检查通过。API 重启后实测项目视觉设置返回 `use_proxy:true`、系统代理接口返回 `{"url":""}`、空 URL 代理测试返回结构化 `proxy_test_missing_url`。Windows Chrome 真实浏览器检查：系统页标题为 “Proxy information”、无开关、有“测试代理”按钮、无横向溢出；代码模型页 3 个代理开关 + 3 个测试按钮，图片识别页 1 个开关 + 1 个测试按钮。前端资源版本升至 `ui182`。
 
 ### 4.0.3 Supermemory Rust 自研替换（2026-08-07 用户确认）
 
 - [~] `P0-SUPERMEMORY-RS-160` 停止等待闭源官方 `supermemory-server` 二进制修复，以 MIT 许可的 `eersnington/supermemory-rs` 为源码基座进行 Research OS 定向二次开发，最终完整替换官方二进制；迁移必须保持项目 slug/container 双重隔离、Memory v2 active-generation allowlist、项目级 Embedding 配置池、Graph/对话语义记忆、确定性撤销、失败关闭、审计和可重建索引，不能把尚未覆盖的接口描述为兼容。详细实施合同、阶段任务、API 差距、迁移/回滚和验收门槛以 `TODO-supermemory-server-rs.md` 为准。
-  - [x] `P0-SUPERMEMORY-RS-160A` 完成上游源码基线审计与详细计划书：核对基线 commit、MIT 许可、现有 Rust 路由/存储/Embedding/LLM 能力和 Research OS 实际调用面，明确仓库布局、Rust 窄范围例外、文件提取职责、数据重建、影子验证和退役顺序。
-  - [ ] `P0-SUPERMEMORY-RS-160B` 按计划完成 fork 引入、Research OS 必需 API、bge-m3/远程 Embedding、项目隔离、对话/撤销/Graph、运维和兼容测试；未通过影子验收前不切换生产端口。
-  - [ ] `P0-SUPERMEMORY-RS-160C` 从可审计源数据重建 Rust 索引，显式切换到 Rust 服务并完成观察期；通过全部验收后停止、归档并移除官方二进制、补丁、旧启动分支和过时文档。
+  - [x] `P0-SUPERMEMORY-RS-160A` 完成上游源码基线审计与详细计划书：核对基线 commit、MIT 许可、现有 Rust 路由/存储/Embedding/LLM 能力和 Research OS 实际调用面，明确仓库布局、Rust 窄范围例外、文件提取职责、数据重建、兼容验收和退役顺序。
+  - [ ] `P0-SUPERMEMORY-RS-160B` 按计划完成 fork 引入、Research OS 必需 API、bge-m3/远程 Embedding、项目隔离、对话/撤销/Graph、运维和兼容测试；未通过兼容验收前不切换生产端口。
+  - [ ] `P0-SUPERMEMORY-RS-160C` 从可审计源数据重建 Rust 索引，显式切换到 Rust 服务并完成兼容验收；通过全部验收后停止、归档并移除官方二进制、补丁、旧启动分支和过时文档。
 
 ### 4.0 已完成基线：项目工作台重构（2026-08-03，保留为约束）
 
@@ -600,7 +603,7 @@ Research OS 的首页是项目入口，不是 Idea 聊天页。首页像一个�
 
 ## 6. 执行顺序
 
-1. 当前严格执行 `P0-SUPERMEMORY-RS-160` 的 Phase 0 -> Phase 8；具体任务以 `TODO-supermemory-server-rs.md` 为准，Rust 尚未完成项目隔离、Embedding、撤销和影子验收前不得停止官方实例。
+1. 当前严格执行 `P0-SUPERMEMORY-RS-160` 的 Phase 0 -> Phase 5；具体任务以 `TODO-supermemory-server-rs.md` 为准，Rust 尚未完成项目隔离、Embedding、撤销和兼容验收前不得停止官方实例。
 2. Memory v2 `P1-MEMORY-V2-150` 与 Rust 迁移必须保持同一套 PGlite ledger、active-generation allowlist、项目 scope 和失败关闭契约；涉及 backend binding 的范围变化要同时更新两份 TODO。
 3. `108A-H` 只作为已完成的前端工作台基线，后续页面/视觉修复不得恢复旧导航或另建全局 memory。
 4. 旧任务池中的后台支撑、文档同步和平台稳定性任务只在当前架构确实依赖时穿插推进；任何外部阻塞保持 `[!]` 并写清解除条件，不得用 fallback 跳过。
